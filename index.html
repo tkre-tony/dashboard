@@ -2,614 +2,421 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8"/>
-<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
 <title>SG Market Intelligence | TKRE</title>
-<link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
-:root {
-  --green:     #21513b;
-  --green2:    #2d7a57;
-  --green3:    #3da670;
-  --green-lt:  #e8f5ef;
-  --green-mid: #c2e0d0;
-  --bg:        #f5f7f6;
-  --surface:   #ffffff;
-  --surface2:  #f0f4f2;
-  --border:    #dde8e3;
-  --text:      #1a2e24;
-  --muted:     #6b8c7a;
-  --dim:       #c2d4cb;
-}
 *{box-sizing:border-box;margin:0;padding:0}
-html,body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;min-height:100vh;font-size:14px}
-/* ── Layout ── */
-.shell{display:flex;flex-direction:column;min-height:100vh}
-.topbar{display:flex;align-items:center;gap:14px;padding:0 28px;height:60px;background:var(--green);position:sticky;top:0;z-index:100;box-shadow:0 2px 8px rgba(33,81,59,.15)}
-.logo-mark{width:34px;height:34px;background:rgba(255,255,255,.15);border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0;border:1px solid rgba(255,255,255,.2)}
-.topbar-title{font-weight:700;font-size:16px;color:#fff;letter-spacing:-.01em}
-.topbar-sub{color:rgba(255,255,255,.55);font-size:12px;margin-left:2px}
-.topbar-right{margin-left:auto;display:flex;align-items:center;gap:8px}
-.badge{background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.2);padding:3px 10px;border-radius:20px;font-size:11px;color:rgba(255,255,255,.8);font-family:'DM Mono',monospace}
-.tabs{display:flex;gap:0;padding:0 28px;background:var(--green);border-bottom:2px solid rgba(255,255,255,.1)}
-.tab{padding:12px 18px;font-size:13px;font-weight:500;color:rgba(255,255,255,.6);cursor:pointer;border-bottom:2px solid transparent;margin-bottom:-2px;transition:all .15s;white-space:nowrap}
-.tab:hover{color:rgba(255,255,255,.9)}
-.tab.active{color:#fff;border-bottom-color:#fff}
-.content{flex:1;padding:24px 28px;max-width:1400px;width:100%;margin:0 auto}
-/* ── KPI Cards ── */
-.kpi-row{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:20px}
-.kpi{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:18px 20px;border-left:4px solid var(--green)}
-.kpi-label{font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;margin-bottom:8px;font-weight:500}
-.kpi-val{font-size:24px;font-weight:700;letter-spacing:-.02em;line-height:1;color:var(--green)}
-.kpi-val.neutral{color:var(--text)}
-.kpi-sub{font-size:11px;color:var(--muted);margin-top:5px}
-/* ── Chart Cards ── */
-.chart-card{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:20px 24px;margin-bottom:20px;box-shadow:0 1px 4px rgba(33,81,59,.04)}
-.chart-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;flex-wrap:wrap;gap:8px}
-.chart-title{font-weight:600;font-size:14px;color:var(--text)}
-.toggle-row{display:flex;gap:6px;flex-wrap:wrap}
-.toggle-btn{padding:4px 12px;border-radius:6px;border:1px solid var(--border);background:transparent;color:var(--muted);font-size:11px;cursor:pointer;transition:all .15s;font-family:'DM Sans',sans-serif;font-weight:500}
-.toggle-btn:hover{border-color:var(--green);color:var(--green)}
-.toggle-btn.on{color:#fff;border-color:transparent;font-weight:600}
-.mode-btn{padding:5px 14px;border-radius:6px;border:1px solid var(--border);background:transparent;color:var(--muted);font-size:12px;cursor:pointer;font-family:'DM Sans',sans-serif;transition:all .15s;font-weight:500}
-.mode-btn.active{background:var(--green);color:#fff;border-color:var(--green)}
-/* ── Bar chart ── */
-#bar-chart{width:100%;height:320px;position:relative}
-/* ── Legend ── */
-.legend{display:flex;flex-wrap:wrap;gap:8px;margin-top:14px}
-.legend-item{display:flex;align-items:center;gap:5px;font-size:11px;color:var(--muted);padding:3px 8px;border-radius:4px}
-.legend-dot{width:8px;height:8px;border-radius:2px;flex-shrink:0}
-/* ── Type breakdown ── */
-.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:20px}
-.type-bar-row{display:flex;align-items:center;gap:10px;margin-bottom:10px}
-.type-bar-label{font-size:12px;width:145px;flex-shrink:0;color:var(--text);font-weight:500}
-.type-bar-track{flex:1;height:6px;background:var(--surface2);border-radius:3px;overflow:hidden}
-.type-bar-fill{height:100%;border-radius:3px;transition:width .6s cubic-bezier(.4,0,.2,1)}
-.type-bar-val{font-size:11px;color:var(--muted);width:80px;text-align:right;font-family:'DM Mono',monospace}
-/* ── News ── */
-.news-grid{display:grid;gap:10px}
-.news-card{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:14px 16px;cursor:pointer;transition:border-color .15s;box-shadow:0 1px 3px rgba(33,81,59,.04)}
-.news-card:hover{border-color:var(--green-mid)}
-.news-card.expanded .news-summary{display:block}
-.news-summary{display:none;color:var(--muted);font-size:12px;line-height:1.6;margin-top:8px;padding-top:8px;border-top:1px solid var(--border)}
-.news-meta{display:flex;align-items:center;gap:8px;margin-bottom:6px;flex-wrap:wrap}
-.news-date{font-size:11px;color:var(--muted);font-family:'DM Mono',monospace}
-.news-source{font-size:11px;color:var(--muted)}
-.pill{padding:2px 8px;border-radius:4px;font-size:10px;font-weight:600;letter-spacing:.04em;text-transform:uppercase}
-.pill-pos{background:rgba(33,81,59,.1);color:var(--green)}
-.pill-neg{background:rgba(220,53,69,.1);color:#dc3545}
-.pill-neu{background:var(--surface2);color:var(--muted)}
-.pill-tag{background:var(--green-lt);color:var(--green2);border:1px solid var(--green-mid)}
-.news-title{font-size:13px;font-weight:500;line-height:1.4;color:var(--text)}
-.filter-row{display:flex;gap:6px;margin-bottom:14px;flex-wrap:wrap}
-.filter-chip{padding:5px 14px;border-radius:20px;border:1px solid var(--border);background:var(--surface);color:var(--muted);font-size:11px;cursor:pointer;font-family:'DM Sans',sans-serif;transition:all .15s;font-weight:500}
-.filter-chip:hover{border-color:var(--green);color:var(--green)}
-.filter-chip.on{background:var(--green);border-color:var(--green);color:#fff;font-weight:600}
-/* ── Pipeline ── */
-.pipeline-table{width:100%;border-collapse:collapse}
-.pipeline-table th{font-size:11px;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);text-align:left;padding:10px 14px;border-bottom:2px solid var(--border);font-weight:600;background:var(--surface2)}
-.pipeline-table td{padding:12px 14px;border-bottom:1px solid var(--border);font-size:12px;vertical-align:top}
-.pipeline-table tr:last-child td{border-bottom:none}
-.pipeline-table tr:hover td{background:var(--green-lt)}
-.pipeline-notes{color:var(--muted);font-size:11px;line-height:1.5;margin-top:4px}
-/* ── Tooltip ── */
-#tooltip{position:fixed;background:var(--green);border-radius:8px;padding:10px 14px;font-size:12px;pointer-events:none;z-index:999;display:none;max-width:220px;line-height:1.6;color:#fff;box-shadow:0 4px 16px rgba(33,81,59,.3)}
-#tooltip strong{color:#fff;display:block;margin-bottom:3px;font-weight:600}
-/* ── Scrollbar ── */
-::-webkit-scrollbar{width:6px}::-webkit-scrollbar-track{background:var(--bg)}::-webkit-scrollbar-thumb{background:var(--dim);border-radius:3px}
-/* ── Tab panels ── */
-.panel{display:none}.panel.active{display:block}
-/* ── Section divider ── */
-.section-label{font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);margin-bottom:10px;padding-bottom:6px;border-bottom:1px solid var(--border)}
-/* ── Responsive ── */
-@media(max-width:768px){.kpi-row{grid-template-columns:1fr 1fr}.grid-2{grid-template-columns:1fr}.tabs{overflow-x:auto;padding:0 16px}.content{padding:16px}.topbar{padding:0 16px}}
+:root{--g1:#21513b;--g2:#2d7a57;--g3:#3da670;--glt:#e8f5ef;--gmd:#c2e0d0;--bg:#f5f7f6;--srf:#fff;--srf2:#f0f4f2;--bdr:#dde8e3;--txt:#1a2e24;--mut:#6b8c7a;--red:#dc3545}
+html,body{background:var(--bg);color:var(--txt);font-family:'DM Sans',sans-serif;font-size:14px;min-height:100vh}
+.topbar{display:flex;align-items:center;gap:12px;padding:0 24px;height:58px;background:var(--g1);position:sticky;top:0;z-index:200}
+.logo{width:32px;height:32px;background:rgba(255,255,255,.15);border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:17px;border:1px solid rgba(255,255,255,.2)}
+.topbar h1{font-size:15px;font-weight:700;color:#fff;letter-spacing:-.01em}
+.topbar span{color:rgba(255,255,255,.5);font-size:12px}
+.topbar-r{margin-left:auto;background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.2);padding:3px 10px;border-radius:16px;font-size:11px;color:rgba(255,255,255,.75);font-family:'DM Mono',monospace}
+.navtabs{display:flex;background:var(--g1);padding:0 24px;border-bottom:1px solid rgba(255,255,255,.12)}
+.navtab{padding:11px 16px;font-size:13px;font-weight:500;color:rgba(255,255,255,.55);cursor:pointer;border-bottom:2px solid transparent;margin-bottom:-1px;transition:all .15s}
+.navtab:hover{color:rgba(255,255,255,.85)}
+.navtab.on{color:#fff;border-bottom-color:#fff}
+.wrap{max-width:1380px;margin:0 auto;padding:22px 24px}
+.panel{display:none}.panel.on{display:block}
+.kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:18px}
+.kpi{background:var(--srf);border:1px solid var(--bdr);border-radius:10px;padding:16px 18px;border-left:3px solid var(--g1)}
+.kpi-lbl{font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.07em;color:var(--mut);margin-bottom:7px}
+.kpi-val{font-size:22px;font-weight:700;letter-spacing:-.02em;color:var(--g1)}
+.kpi-val.dk{color:var(--txt)}
+.kpi-sub{font-size:11px;color:var(--mut);margin-top:4px}
+.card{background:var(--srf);border:1px solid var(--bdr);border-radius:10px;padding:18px 22px;margin-bottom:16px;box-shadow:0 1px 3px rgba(33,81,59,.04)}
+.card-hdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;flex-wrap:wrap;gap:8px}
+.card-title{font-weight:600;font-size:13px}
+.fbar{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:12px}
+.fbar-label{font-size:10px;font-weight:600;color:var(--mut);text-transform:uppercase;letter-spacing:.06em;white-space:nowrap;min-width:40px}
+.fchip{padding:4px 12px;border-radius:16px;border:1px solid var(--bdr);background:var(--srf);color:var(--mut);font-size:11px;cursor:pointer;font-family:'DM Sans',sans-serif;transition:all .15s;font-weight:500}
+.fchip:hover{border-color:var(--g1);color:var(--g1)}
+.fchip.on{background:var(--g1);border-color:var(--g1);color:#fff;font-weight:600}
+.range-sel{display:flex;gap:4px}
+.rbtn{padding:4px 11px;border-radius:6px;border:1px solid var(--bdr);background:transparent;color:var(--mut);font-size:11px;cursor:pointer;font-family:'DM Sans',sans-serif;transition:all .15s;font-weight:500}
+.rbtn:hover{border-color:var(--g1);color:var(--g1)}
+.rbtn.on{background:var(--g1);color:#fff;border-color:var(--g1)}
+.mode-row{display:flex;gap:4px}
+.mbtn{padding:5px 13px;border-radius:6px;border:1px solid var(--bdr);background:transparent;color:var(--mut);font-size:12px;cursor:pointer;font-family:'DM Sans',sans-serif;transition:all .15s;font-weight:500}
+.mbtn.on{background:var(--g1);color:#fff;border-color:var(--g1)}
+.tbar-row{display:flex;align-items:center;gap:10px;margin-bottom:9px}
+.tbar-lbl{font-size:12px;width:148px;flex-shrink:0;font-weight:500}
+.tbar-track{flex:1;height:6px;background:var(--srf2);border-radius:3px;overflow:hidden}
+.tbar-fill{height:100%;border-radius:3px}
+.tbar-val{font-size:11px;color:var(--mut);width:75px;text-align:right;font-family:'DM Mono',monospace}
+.news-item{background:var(--srf);border:1px solid var(--bdr);border-radius:9px;padding:12px 15px;cursor:pointer;transition:border-color .15s;margin-bottom:9px}
+.news-item:hover{border-color:var(--gmd)}
+.news-body{display:none;color:var(--mut);font-size:12px;line-height:1.6;margin-top:8px;padding-top:8px;border-top:1px solid var(--bdr)}
+.news-item.open .news-body{display:block}
+.news-meta{display:flex;gap:6px;align-items:center;flex-wrap:wrap;margin-bottom:5px}
+.pill{padding:2px 7px;border-radius:4px;font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.04em}
+.p-pos{background:rgba(33,81,59,.1);color:var(--g1)}
+.p-neg{background:rgba(220,53,69,.1);color:var(--red)}
+.p-neu{background:var(--srf2);color:var(--mut)}
+.p-tag{background:var(--glt);color:var(--g2);border:1px solid var(--gmd)}
+.news-title{font-size:13px;font-weight:500;line-height:1.4}
+.ptable{width:100%;border-collapse:collapse}
+.ptable th{font-size:10px;text-transform:uppercase;letter-spacing:.06em;color:var(--mut);text-align:left;padding:9px 13px;border-bottom:2px solid var(--bdr);font-weight:600;background:var(--srf2)}
+.ptable td{padding:11px 13px;border-bottom:1px solid var(--bdr);font-size:12px;vertical-align:top}
+.ptable tr:last-child td{border-bottom:none}
+.ptable tr:hover td{background:var(--glt)}
+#tt{position:fixed;background:var(--g1);border-radius:7px;padding:9px 13px;font-size:12px;pointer-events:none;z-index:999;display:none;color:#fff;line-height:1.6;max-width:200px;box-shadow:0 4px 14px rgba(33,81,59,.3)}
+#tt b{display:block;font-weight:600;margin-bottom:2px}
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:16px}
+::-webkit-scrollbar{width:5px}::-webkit-scrollbar-track{background:var(--bg)}::-webkit-scrollbar-thumb{background:var(--gmd);border-radius:3px}
+@media(max-width:768px){.kpis{grid-template-columns:1fr 1fr}.g2{grid-template-columns:1fr}.wrap{padding:14px 16px}}
 </style>
 </head>
 <body>
-<div class="shell">
-
-<!-- Top bar -->
 <div class="topbar">
-  <div class="logo-mark">🦁</div>
-  <span class="topbar-title">SG Market Intelligence</span>
-  <span class="topbar-sub">by TKRE</span>
-  <div class="topbar-right">
-    <span class="badge" id="last-updated">Updated Mar 2026</span>
-  </div>
+  <div class="logo">🦁</div>
+  <h1>SG Market Intelligence</h1>
+  <span>by TKRE</span>
+  <div class="topbar-r">Updated Mar 2026</div>
 </div>
-
-<!-- Tabs -->
-<div class="tabs">
-  <div class="tab active" data-tab="overview">Overview</div>
-  <div class="tab" data-tab="analytics">Analytics</div>
-  <div class="tab" data-tab="news">News Feed</div>
-  <div class="tab" data-tab="pipeline">Pipeline</div>
+<div class="navtabs">
+  <div class="navtab on" data-tab="overview">Overview</div>
+  <div class="navtab" data-tab="analytics">Analytics</div>
+  <div class="navtab" data-tab="news">News Feed</div>
+  <div class="navtab" data-tab="pipeline">Pipeline</div>
 </div>
+<div id="tt"></div>
+<div class="wrap">
 
-<!-- Tooltip -->
-<div id="tooltip"></div>
-
-<!-- Content -->
-<div class="content">
-
-  <!-- OVERVIEW TAB -->
-  <div class="panel active" id="tab-overview">
-    <div class="kpi-row">
-      <div class="kpi">
-        <div class="kpi-label">Total Transaction Value</div>
-        <div class="kpi-val" id="kpi-total-val">—</div>
-        <div class="kpi-sub">2015 – 2026 YTD</div>
-      </div>
-      <div class="kpi">
-        <div class="kpi-label">Total Transactions</div>
-        <div class="kpi-val neutral" id="kpi-total-cnt">—</div>
-        <div class="kpi-sub">Strata, Investment &amp; En Bloc</div>
-      </div>
-      <div class="kpi">
-        <div class="kpi-label">2025 Full Year Value</div>
-        <div class="kpi-val neutral" id="kpi-2025-val">—</div>
-        <div class="kpi-sub" id="kpi-2025-cnt">—</div>
-      </div>
-      <div class="kpi">
-        <div class="kpi-label">2026 YTD Value</div>
-        <div class="kpi-val" id="kpi-2026-val">—</div>
-        <div class="kpi-sub" id="kpi-2026-cnt">—</div>
-      </div>
+  <div class="panel on" id="tab-overview">
+    <div class="kpis">
+      <div class="kpi"><div class="kpi-lbl">Total Transaction Value</div><div class="kpi-val" id="k-totval">—</div><div class="kpi-sub" id="k-totsub">—</div></div>
+      <div class="kpi"><div class="kpi-lbl">Total Transactions</div><div class="kpi-val dk" id="k-totcnt">—</div><div class="kpi-sub">Strata, Investment &amp; En Bloc</div></div>
+      <div class="kpi"><div class="kpi-lbl">2025 Full Year Value</div><div class="kpi-val dk" id="k-y25val">—</div><div class="kpi-sub" id="k-y25cnt">—</div></div>
+      <div class="kpi"><div class="kpi-lbl">2026 YTD Value</div><div class="kpi-val" id="k-y26val">—</div><div class="kpi-sub" id="k-y26cnt">—</div></div>
     </div>
-
-    <!-- Bar Chart -->
-    <div class="chart-card">
-      <div class="chart-header">
-        <div class="chart-title">Annual Transaction Volume by Property Type</div>
-        <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
-          <div class="toggle-row" id="mode-btns">
-            <button class="mode-btn active" data-mode="val">S$ Value</button>
-            <button class="mode-btn" data-mode="cnt">No. of Deals</button>
-          </div>
+    <div class="card">
+      <div class="card-hdr">
+        <div class="card-title">Annual Transaction Volume by Property Type</div>
+        <div class="mode-row">
+          <button class="mbtn on" id="m-val">S$ Value</button>
+          <button class="mbtn" id="m-cnt">No. of Deals</button>
         </div>
       </div>
-      <div class="toggle-row" id="type-toggles" style="margin-bottom:14px"></div>
-      <div id="bar-chart"></div>
-      <div class="legend" id="chart-legend"></div>
+      <div class="fbar">
+        <span class="fbar-label">Range</span>
+        <div class="range-sel" id="range-btns">
+          <button class="rbtn" data-range="L12">Last 12 Mths</button>
+          <button class="rbtn" data-range="5Y">5 Years</button>
+          <button class="rbtn" data-range="10Y">10 Years</button>
+          <button class="rbtn on" data-range="ALL">All (1995–)</button>
+        </div>
+      </div>
+      <div class="fbar" id="type-chips"></div>
+      <div id="bar-wrap" style="width:100%;min-height:280px"></div>
+      <div style="display:flex;flex-wrap:wrap;gap:8px;margin-top:12px" id="legend"></div>
     </div>
-
-    <!-- Type breakdown + News preview -->
-    <div class="grid-2">
-      <div class="chart-card">
-        <div class="chart-header"><div class="chart-title">By Property Type — All Time</div></div>
-        <div id="type-breakdown"></div>
-      </div>
-      <div class="chart-card">
-        <div class="chart-header"><div class="chart-title">Latest News</div></div>
-        <div id="news-preview"></div>
-      </div>
+    <div class="g2">
+      <div class="card"><div class="card-hdr"><div class="card-title">By Property Type — Selected Period</div></div><div id="type-breakdown"></div></div>
+      <div class="card"><div class="card-hdr"><div class="card-title">Latest News</div></div><div id="news-preview"></div></div>
     </div>
   </div>
 
-  <!-- ANALYTICS TAB -->
   <div class="panel" id="tab-analytics">
-    <div class="chart-card">
-      <div class="chart-header"><div class="chart-title">Year-on-Year Comparison</div></div>
-      <div id="yoy-chart"></div>
-    </div>
-    <div class="chart-card" style="margin-top:16px">
-      <div class="chart-header"><div class="chart-title">Cumulative Value by Property Type</div></div>
-      <div id="cumulative-bars"></div>
-    </div>
+    <div class="card"><div class="card-hdr"><div class="card-title">Year-on-Year Comparison (S$ Value)</div></div><div id="yoy-wrap" style="width:100%;min-height:240px"></div></div>
+    <div class="card"><div class="card-hdr"><div class="card-title">Cumulative Value by Property Type (All Time)</div></div><div id="cum-bars"></div></div>
   </div>
 
-  <!-- NEWS TAB -->
   <div class="panel" id="tab-news">
-    <div class="filter-row" id="news-filters"></div>
-    <div class="news-grid" id="news-list"></div>
+    <div class="fbar" id="news-cats"></div>
+    <div id="news-list"></div>
   </div>
 
-  <!-- PIPELINE TAB -->
   <div class="panel" id="tab-pipeline">
-    <div class="chart-card">
-      <div class="chart-header"><div class="chart-title">Active Deal Pipeline</div></div>
-      <table class="pipeline-table" id="pipeline-table"></table>
-    </div>
+    <div class="card"><div class="card-hdr"><div class="card-title">Active Deal Pipeline</div></div><table class="ptable" id="ptable"></table></div>
   </div>
 
-</div>
 </div>
 
 <script>
-// ═══════════════════════════════════════════════════════════════════
-// DATA
-// ═══════════════════════════════════════════════════════════════════
+var YEARS=[1995,1996,1997,1998,1999,2000,2001,2002,2003,2004,2005,2006,2007,2008,2009,2010,2011,2012,2013,2014,2015,2016,2017,2018,2019,2020,2021,2022,2023,2024,2025,2026];
+var TYPES=["office","retail","shophouse","multiUser","singleUser","bizPark","warehouse"];
+var TLABEL={"office":"Office","retail":"Retail","shophouse":"Shophouse","multiUser":"Multi-User Factory","singleUser":"Single-User Factory","bizPark":"Business Park","warehouse":"Warehouse"};
+var TCOLOR={"office":"#21513b","retail":"#2d7a57","shophouse":"#3da670","multiUser":"#52c98a","singleUser":"#7dd9a8","bizPark":"#a8e8c8","warehouse":"#c8e8d8"};
+var VAL_ARR=[[382.87,299.74,123.93,327.15,109.36,0,113.2],[1150.79,401.34,211.84,638.39,236.72,0,300.73],[395.93,262.44,159.51,327.9,300.99,0,122.55],[293.92,159.49,62.47,114.96,365.0,0,37.83],[405.93,271.84,300.62,550.18,534.75,0,80.42],[380.56,299.26,303.94,409.76,688.16,0,83.56],[468.98,1387.73,305.43,311.88,593.75,6.86,49.65],[251.19,491.53,330.81,413.61,505.58,12.5,44.88],[118.3,750.14,371.8,362.24,701.29,0,52.42],[434.8,317.32,362.73,339.52,1274.23,0,37.18],[1093.75,2556.86,445.06,215.83,928.97,23.4,26.82],[2101.69,2267.18,633.44,379.37,2188.46,98.6,51.61],[6833.69,564.97,1419.74,1277.06,2224.29,0,78.76],[1939.44,232.56,519.51,871.61,2853.99,384.8,48.51],[644.93,313.32,647.49,1050.31,1251.51,0,97.21],[2637.86,1756.03,1205.09,1925.52,2936.86,145.0,265.84],[2296.3,844.71,1143.5,3338.66,2469.84,364.15,475.8],[3702.58,1988.55,1379.69,4231.87,2897.94,183.0,617.7],[2661.6,5206.03,1265.96,3186.75,2129.89,735.44,503.66],[3196.53,1333.21,585.09,2092.01,1787.69,0,148.06],[2704.02,1037.18,657.3,1248.98,1274.05,112.0,234.99],[2098.6,591.65,713.72,986.46,942.44,2200.0,81.83],[1990.3,2690.03,1029.68,854.74,3362.95,0,128.72],[2275.82,672.32,1432.0,1127.58,1122.71,28.0,637.53],[1936.46,2110.65,915.94,1091.5,1723.08,0,301.16],[1588.98,596.9,910.23,1189.17,794.61,300.76,350.42],[5112.94,738.3,1935.14,2247.17,1419.11,247.96,562.1],[2465.86,1775.48,1626.36,2222.37,1188.11,0,368.21],[2231.65,871.75,1118.63,1992.14,1177.03,0,623.3],[2117.61,872.29,699.29,2073.41,919.07,0,746.9],[1132.21,1214.18,634.78,2087.75,1629.77,0,1198.21],[284.52,584.53,53.41,212.48,69.0,0,156.19]];
+var CNT_ARR=[[362,448,73,289,38,0,91],[424,509,99,463,59,0,212],[209,349,72,404,65,0,98],[127,269,60,149,97,0,34],[249,411,184,819,175,0,46],[209,362,162,596,192,0,98],[138,299,185,575,173,1,64],[200,433,203,982,192,2,66],[133,361,245,764,173,0,69],[284,414,224,674,191,0,59],[277,376,293,433,196,4,42],[468,418,332,750,294,4,56],[719,636,526,1768,318,0,86],[217,230,227,1411,204,3,69],[214,323,271,1705,204,0,88],[478,652,391,3071,307,1,272],[521,743,298,4174,279,4,392],[1153,1518,289,4341,244,1,407],[742,1305,205,2851,157,3,218],[518,510,106,1907,149,0,99],[242,248,104,1236,103,1,95],[286,242,109,927,89,2,58],[344,219,148,885,121,0,57],[337,256,170,939,96,1,64],[314,223,123,1070,103,0,65],[217,151,144,1090,101,2,70],[351,295,253,1748,140,2,123],[316,264,191,1874,131,0,114],[321,272,131,1483,124,0,129],[334,250,87,1622,96,0,162],[355,301,89,1509,163,0,149],[40,42,8,142,11,0,16]];
+var TYPETOT={"office":57330.6,"retail":35459.5,"shophouse":23504.1,"multiUser":39698.3,"singleUser":42601.2,"bizPark":4842.5,"warehouse":8626.0};
 
-const YEARS   = [1995, 1996, 1997, 1998, 1999, 2000, 2001, 2002, 2003, 2004, 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2013, 2014, 2015, 2016, 2017, 2018, 2019, 2020, 2021, 2022, 2023, 2024, 2025, 2026];
-const TYPES   = ["office", "retail", "shophouse", "multiUser", "singleUser", "bizPark", "warehouse"];
-const TLABEL  = {"office": "Office", "retail": "Retail", "shophouse": "Shophouse", "multiUser": "Multi-User Factory", "singleUser": "Single-User Factory", "bizPark": "Business Park", "warehouse": "Warehouse"};
-const TCOLOR  = {"office": "#21513b", "retail": "#2d7a57", "shophouse": "#3da670", "multiUser": "#52c98a", "singleUser": "#7dd9a8", "bizPark": "#a8e8c8", "warehouse": "#d4f4e4"};
-const VAL_M   = [[382.9, 299.7, 123.9, 327.1, 109.4, 0, 113.2], [1150.8, 401.3, 211.8, 638.4, 236.7, 0, 300.7], [395.9, 262.4, 159.5, 327.9, 301.0, 0, 122.5], [293.9, 159.5, 62.5, 115.0, 365.0, 0, 37.8], [405.9, 271.8, 300.6, 550.2, 534.8, 0, 80.4], [380.6, 299.3, 303.9, 409.8, 688.2, 0, 83.6], [469.0, 1387.7, 305.4, 311.9, 593.7, 6.9, 49.6], [251.2, 491.5, 330.8, 413.6, 505.6, 12.5, 44.9], [118.3, 750.1, 371.8, 362.2, 701.3, 0, 52.4], [434.8, 317.3, 362.7, 339.5, 1274.2, 0, 37.2], [1093.8, 2556.9, 445.1, 215.8, 929.0, 23.4, 26.8], [2101.7, 2267.2, 633.4, 379.4, 2188.5, 98.6, 51.6], [6833.7, 565.0, 1419.7, 1277.1, 2224.3, 0, 78.8], [1939.4, 232.6, 519.5, 871.6, 2854.0, 384.8, 48.5], [644.9, 313.3, 647.5, 1050.3, 1251.5, 0, 97.2], [2637.9, 1756.0, 1205.1, 1925.5, 2936.9, 145.0, 265.8], [2296.3, 844.7, 1143.5, 3338.7, 2469.8, 364.1, 475.8], [3702.6, 1988.5, 1379.7, 4231.9, 2897.9, 183.0, 617.7], [2661.6, 5206.0, 1266.0, 3186.8, 2129.9, 735.4, 503.7], [3196.5, 1333.2, 585.1, 2092.0, 1787.7, 0, 148.1], [2704.0, 1037.2, 657.3, 1249.0, 1274.0, 112.0, 235.0], [2098.6, 591.7, 713.7, 986.5, 942.4, 2200.0, 81.8], [1990.3, 2690.0, 1029.7, 854.7, 3362.9, 0, 128.7], [2275.8, 672.3, 1432.0, 1127.6, 1122.7, 28.0, 637.5], [1936.5, 2110.7, 915.9, 1091.5, 1723.1, 0, 301.2], [1589.0, 596.9, 910.2, 1189.2, 794.6, 300.8, 350.4], [5112.9, 738.3, 1935.1, 2247.2, 1419.1, 248.0, 562.1], [2465.9, 1775.5, 1626.4, 2222.4, 1188.1, 0, 368.2], [2231.7, 871.7, 1118.6, 1992.1, 1177.0, 0, 623.3], [2117.6, 872.3, 699.3, 2073.4, 919.1, 0, 746.9], [1132.2, 1214.2, 634.8, 2087.7, 1629.8, 0, 1198.2], [284.5, 584.5, 53.4, 212.5, 69.0, 0, 156.2]];
-const CNT_M   = [[362, 448, 73, 289, 38, 0, 91], [424, 509, 99, 463, 59, 0, 212], [209, 349, 72, 404, 65, 0, 98], [127, 269, 60, 149, 97, 0, 34], [249, 411, 184, 819, 175, 0, 46], [209, 362, 162, 596, 192, 0, 98], [138, 299, 185, 575, 173, 1, 64], [200, 433, 203, 982, 192, 2, 66], [133, 361, 245, 764, 173, 0, 69], [284, 414, 224, 674, 191, 0, 59], [277, 376, 293, 433, 196, 4, 42], [468, 418, 332, 750, 294, 4, 56], [719, 636, 526, 1768, 318, 0, 86], [217, 230, 227, 1411, 204, 3, 69], [214, 323, 271, 1705, 204, 0, 88], [478, 652, 391, 3071, 307, 1, 272], [521, 743, 298, 4174, 279, 4, 392], [1153, 1518, 289, 4341, 244, 1, 407], [742, 1305, 205, 2851, 157, 3, 218], [518, 510, 106, 1907, 149, 0, 99], [242, 248, 104, 1236, 103, 1, 95], [286, 242, 109, 927, 89, 2, 58], [344, 219, 148, 885, 121, 0, 57], [337, 256, 170, 939, 96, 1, 64], [314, 223, 123, 1070, 103, 0, 65], [217, 151, 144, 1090, 101, 2, 70], [351, 295, 253, 1748, 140, 2, 123], [316, 264, 191, 1874, 131, 0, 114], [321, 272, 131, 1483, 124, 0, 129], [334, 250, 87, 1622, 96, 0, 162], [355, 301, 89, 1509, 163, 0, 149], [40, 42, 8, 142, 11, 0, 16]];
-const TOTVAL  = 212062.2;
-const TOTCNT  = 81765;
-const TYPETOT = {"office": 57330.6, "retail": 35459.5, "shophouse": 23504.1, "multiUser": 39698.3, "singleUser": 42601.2, "bizPark": 4842.5, "warehouse": 8626.0};
-
-const NEWS = [
-  {id:1,date:"2026-02-26",title:"Lendlease REIT to Take Full Control of PLQ Mall in S$116.4M Deal",source:"Business Times",category:"Commercial",tag:"REIT",summary:"LREIT acquires remaining 30% stake in PLQ Mall from Lendlease Corp for S$116.4M. Agreed property value S$885M (2.2% discount to appraised S$905M). Full ownership enables refinancing saving ~S$2M p.a. DPU accretion +2.1%. Occupancy 99.4%. Finalises by 30 Jun 2026.",sentiment:"positive"},
-  {id:2,date:"2026-02-26",title:"URA Releases 2 Prime GLS Sites at Holland Plain and River Valley for Tender",source:"Business Times",category:"Commercial",tag:"GLS",summary:"URA launches Holland Plain (15,716 sqm, 280 units, 99-yr, tender closes 7 May) and Morrison Lane near Robertson Quay (6,669 sqm, 205 units, reserve list). Analysts expect 4–6 bids at S$1,400–1,500 psf ppr (~S$300M). CDL Newport Residences sold >50% at S$3,370 psf.",sentiment:"positive"},
-  {id:3,date:"2026-02-26",title:"Tan Boon Liat Building Up for Sale Again at Lower S$1B Reserve Price",source:"Business Times",category:"Commercial",tag:"En Bloc",summary:"Freehold 315 Outram Road relaunched at S$1.0B (down 13% from S$1.15B in 2025 which drew no bids). URA advising rezoning B1→residential+commercial; plot ratio 3.1→4.9. Potential GFA ~1.02M sqft. No ABSD for developer. Cushman & Wakefield. Closes 12 May 2026.",sentiment:"neutral"},
-  {id:4,date:"2026-02-26",title:"Serenity Park Condo in Yio Chu Kang Put on the Market at S$505M",source:"Business Times",category:"Commercial",tag:"En Bloc",summary:"179-unit freehold condo, Tamarind Road. First freehold residential en-bloc of 2026. S$1,453 psf ppr. Owner premium >40%. Mount Everest Properties. Closes 26 Mar 2026.",sentiment:"neutral"},
-  {id:5,date:"2026-02-26",title:"Receivers Put One-Seventh Stake in Cheong Family's Oxley Rise Mansion on the Block",source:"Business Times",category:"Commercial",tag:"Distressed",summary:"Alvarez & Marsal put 1/7 stake in 5 Oxley Rise (151,204 sqft freehold bungalow of late Hong Fok Corp founder Cheong Eak Chong) for sale. No indicative price. Previous S$300M+ attempts in 2022 failed. ERA. Closes 9 Apr 2026.",sentiment:"neutral"},
-  {id:6,date:"2026-02-26",title:"Singapore Land H2 Profit Down 11% at S$160.9M",source:"Business Times",category:"Commercial",tag:"Earnings",summary:"SingLand (UOL subsidiary) H2 2025 net profit S$160.9M (-11%); FY2025 S$272.3M (-4%). Revenue +7% to S$783.1M. Drag from higher finance costs (+23%) on Sydney 388 George Street acquisition. Associates +39% to S$44.8M. DPS S$0.045.",sentiment:"negative"},
-  {id:7,date:"2026-02-26",title:"Aspial Corp H2 Profit Rises 34% on Subsidiary's Strong Performance",source:"Business Times",category:"Commercial",tag:"Earnings",summary:"Aspial Corp H2 net profit S$13.5M (+34%); FY2025 S$21.5M (+514%). Aspial Lifestyle record FY revenue S$830.1M. RE segment drag: pre-tax losses S$41.5M on lower Australia 108 sales and Brisbane write-off.",sentiment:"positive"},
-  {id:8,date:"2026-02-26",title:"Hong Kong Hikes Stamp Duty for Luxury Homes as Sales Rebound",source:"Business Times",category:"Policy",tag:"Regional",summary:"HK raises stamp duty on transactions above HK$100M from 4.25% to 6.5%. Affects ~0.3% of deals; generates ~HK$1B annually. 81 deals above US$10M in Q4 2025. HK prices +3.3% in 2025. Contrast to SG Budget 2026 debate on 15% tier for properties above S$5M.",sentiment:"neutral"},
-  {id:9,date:"2026-02-26",title:"A Third of Ethnic Quota Appeals to Help Sell HDB Flats Granted in 2025",source:"Straits Times",category:"Policy",tag:"HDB",summary:"HDB granted 208 of 657 EIP appeals (~30%) in 2025. Five flats bought back as last resort. MND owns ~100 units for release via Sale of Balance Flats.",sentiment:"neutral"},
-  {id:10,date:"2026-02-26",title:"MPs Call for Wealth Taxes; 15% Stamp Duty Tier for Properties Above S$5M Proposed",source:"Straits Times",category:"Policy",tag:"Property Tax",summary:"Budget 2026 debate: calls for 15% marginal rate on residential properties above S$5M, reinstatement of estate duty, net annual value tax on GCBs. Raise property tax from 0.9% to 1.2% of GDP. SG wealth Gini 0.55. Fiscal surplus S$15.1B.",sentiment:"neutral"},
-  {id:11,date:"2026-02-26",title:"政府推出荷兰坪与马礼逊巷地段 料兴建485个住宅单位",source:"Zaobao",category:"Commercial",tag:"GLS",summary:"Zaobao: Huttons expects 5 developers for Holland Plain. Morrison Lane more likely to be triggered. MOGUL.sg notes Holland Plain lacks MRT connectivity. Bid range S$1,400–1,500 psf ppr. Three competing CCR sites in pipeline.",sentiment:"positive"},
-  {id:12,date:"2026-02-26",title:"联实全球商业REIT 1亿余元收购PLQ商场剩余30%股权",source:"Zaobao",category:"Commercial",tag:"REIT",summary:"Zaobao: LREIT acquires remaining 30% PLQ Mall stake. AUM rises to S$4.2B; SG assets ~90% of portfolio. S$196.6M preferential offering at S$0.558/unit. Gearing 37.6%.",sentiment:"positive"},
-  {id:13,date:"2026-02-25",title:"Altallo Asset Management Inks Option to Buy 158 Cecil Street for S$175M",source:"Business Times",category:"Commercial",tag:"Investment Sale",summary:"Altallo Asset Management (owned by Roger Tan & Seah Jun Hao) entered put-and-call option for 158 Cecil Street (Dapenso/Spazio Building) at S$175M — S$1,541 psf on NLA of 113,540 sqft. URA records strata area of 11,512 sqft giving a misleading S$15,201 psf; market PSF should be based on NLA. 99-yr lease from Jan 1982 (~55 yrs remaining). Price is 27% below S$240M paid by Denis Jen's family in 2015. Buyer plans refurbishment with office as core use, possible co-living element and rooftop bar subject to approval. Capital from multiple investors and family offices across Southeast Asia. Site area ~1,070 sqm — below 2,000 sqm threshold for URA CBD Incentive Scheme non-corner sites.",sentiment:"positive"},
-  {id:14,date:"2026-02-25",title:"Singapore Remains 'Bedrock' for Family Offices: StanChart's Private Bank Head",source:"Business Times",category:"Market Insight",tag:"Capital Flows",summary:"Singapore single-family offices exceeded 2,000 at end-2024, up 43% YoY per StanChart's Raymond Ang. As family offices grow larger they seek investable assets beyond residency — direct real estate a natural next step. HK recorded 3,384 family offices (+25% YoY); Dubai DIFC at 1,289 (+61% YoY). StanChart US$447B AUM in wealth & retail banking; net new money from affluent clients hit US$51.5B in 2025 vs US$27.1B in FY2023 — near doubling in two years. Focus on global Chinese and Indian HNW clients. Singapore's edge: safe haven, good governance, active capital market vs UAE's business access to West. Implication: growing pool of family office capital seeking Singapore commercial assets — supports investment sales demand particularly for freehold and long-leasehold office and shophouse.",sentiment:"positive"},
-  {id:18,date:"2026-02-27",title:"UI Boustead Reit Lodges IPO Prospectus to Raise S$1.2B",source:"Business Times",category:"Industrial",tag:"REIT IPO",summary:"UI Boustead Reit filed IPO prospectus 26 Feb 2026 seeking to raise S$1.2B at S$0.88/unit. Portfolio: 23 properties (21 leasehold SG + 2 freehold Japan), GFA 5.9M sqft, NLA 5.3M sqft, agreed value ~S$1.9B, transaction price ~S$1.12B. Types: logistics, business space, high-spec industrial, general industrial — includes Razer HQ. Occupancy 89.4% at Sep 30 2025, WALE 5.8 years. Sponsor UIB (United Industrial + Boustead, US$4B AUM across 82 assets) focused on SG and Japan, targeting logistics and data centres. Forecast yield 7.4% (Feb–Mar 2026 annualised), 7.8% projected FY Apr 2026–Mar 2027. Total return 12.2% from organic growth alone. Acquisition pipeline 19.6M sqft. Cornerstone investors: Amova, AMundi, JP Morgan AM, Jumbo Group, Lian Beng chairman Ong Pang Aik, Boustead CEO Wong Fong Fui. Key signal: industrial/logistics Reit IPO at S$1.9B portfolio valuation sets cap rate benchmark for SG industrial assets.",sentiment:"positive"},
-  {id:19,date:"2026-02-27",title:"UOL H2 Net Profit +21% to S$276.2M; Special Dividend Proposed; Office 'Attractive Proposition'",source:"Business Times",category:"Commercial",tag:"Earnings",summary:"UOL H2 FY2025 net profit S$276.2M (+21% YoY). Revenue S$1.685B (+11%). Special dividend S$0.07 + final S$0.18 = S$0.25/share total for FY2025 (up from S$0.18 in FY2024). Commercial assets posted 'very high' positive reversion in SG — office sector described as 'attractive proposition' with tight CBD supply. Marina Square partial redevelopment at final planning stage — hyper-mixed use (homes, serviced apts, hospitality, office), written permission pending. UOL + CapitaLand acquired Hougang Central mixed-use site for S$1.5B in Jan 2026. Residential development value hit S$5.1B in 2025 (~4x FY2024). Net gearing 0.2, interest cover 8x, credit facilities S$3.1B — 'underborrowed, should borrow more'. Full year: net profit S$481.7M (+34%), revenue S$3.2B (+16%). Outlook: year ahead uncertain on trade/geopolitics but opportunities exist; will be 'busy combing where to deploy capital'. Domestic retail and hospitality expected to remain stable.",sentiment:"positive"},
-  {id:20,date:"2026-02-27",title:"Soilbuild Construction H2 Net Profit +84.1% to S$35.3M on Industrial Project Surge",source:"Business Times",category:"Industrial",tag:"Construction",summary:"Soilbuild Construction H2 FY2025 net profit S$35.3M (+84.1% YoY). Revenue S$317.9M (+33.6%). Full year: net profit S$63.6M (+139.4%), revenue S$590.7M (+50.8%). Growth driven by sustained construction operations plus precast/prefabrication. Key projects: PSA Supply Chain Hub @ Tuas and industrial development at Tuas South Avenue. Final dividend S$0.025/share for FY2025 (up from total S$0.02 in FY2024). Signal for dashboard: strong industrial construction backlog confirms pipeline of new industrial supply in Tuas/western corridor — relevant context for warehouse and single-user factory supply-demand balance.",sentiment:"positive"},
-  {id:22,date:"2026-02-27",title:"Centurion Corporation H2 Earnings Drop 82% to S$40.9M on Lower Fair-Value Gains",source:"Business Times",category:"Industrial",tag:"Workers Accommodation",summary:"Centurion Corporation H2 FY2025 net profit S$40.9M (-82% YoY) from S$226.6M — decline entirely due to lower fair-value gain on investment properties (S$22.9M in 2025 vs exceptional S$219.1M in 2024). Revenue rose 20.1% to S$155.2M — underlying operations healthy. Full year: net profit S$114.8M (-67%), revenue S$295.9M (+17%). EPS S$0.1365 (from S$0.4101). DPS maintained at S$0.02 + special dividend in specie of 1 CAReit unit per 10 shares. Spin-off of CAReit (Centurion Accommodation REIT) in Sep 2025 cost S$50.8M in IPO expenses. Post spin-off, group well-positioned to pursue new opportunities at scale. Shares S$1.59 (+1.9%). Context for dashboard: Centurion is a major operator of Purpose-Built Workers Accommodation (PBWA) in Singapore — classified as industrial under URA. Fair-value movements in workers dorm assets reflect industrial land valuation trends. Revenue growth of 17–20% signals strong underlying demand for worker accommodation, consistent with construction and industrial activity uptick seen in Soilbuild and PSA Supply Chain Hub projects.",sentiment:"neutral"},source:"Business Times",category:"Market Insight",tag:"ESG",summary:"CapitaLand Development and Climate Group launched SG's first market-wide embodied carbon benchmark for concrete (Feb 26). Measures carbon intensity of concrete supplied in Singapore — volume-weighted average closer to upper range (300–500 kgCO2e/m³). SG upstream concrete emissions ~3.7M tonnes CO2e (~6% of national emissions). Annual consumption 11M cubic metres (1.9 m³/capita). Benchmark enables developers, regulators and financiers to assess climate impact of construction investments and procurement. Green Building Council to overlay against certification scheme. Dashboard implication: rising ESG compliance costs for new industrial and commercial developments — green premium on certified assets likely to widen; relevant for valuation of older non-green assets vs new supply.",sentiment:"neutral"},
-  {id:17,date:"2026-02-27",title:"Economists Raise 2026 GDP Forecast to 3.6%, Majority See MAS Holding in April",source:"Business Times",category:"Market Insight",tag:"Macro",summary:"MAS survey of 22 professional forecasters (Feb 26): 2026 GDP forecast raised to 3.6% (from 2.3% in Dec), near top of official 2–4% range. Q1 2026 GDP expected +5.8% YoY. Manufacturing +4.3%, wholesale & retail trade +4.0% (doubled from prior 2% estimate), NODX +4.5%. Factory output Jan 2026 +16.6% YoY on electronics surge. Headline and core inflation both 1.5% for 2026. Unemployment 2.1% end-2026. MAS: majority expect hold in April; expectations shifting toward tightening — no easing in sight. Key driver: AI-related electronics demand feeding into semiconductor and manufacturing ecosystem. Risks: geopolitical/trade tensions cited by 94.4%; AI bubble burst top downside risk (55.6%); US tariff policy uncertainty on Section 122 Trade Act and bilateral deals. RE implications: strong GDP + manufacturing = industrial demand stays robust; retail trade upgrade backs no-rent-cap story; low inflation + MAS hold supports stable cap rates; AI electronics boom = business park and high-spec industrial tailwind.",sentiment:"positive"},
-  {id:16,date:"2026-02-27",title:"Retail, F&B Rents Make Up Lower Share of Business Costs — PM Wong in Parliament",source:"Business Times",category:"Policy",tag:"Retail",summary:"PM Lawrence Wong cited Dept of Statistics data in Parliament (26 Feb 2026): F&B rental costs fell from 26% to 17% of total business costs (2019–2024); retail fell from 30% to 26%. Rent increases trended below nominal GDP growth and inflation. Government ruled out rent caps — 'not considering a fixed ceiling' as rents on the whole remain stable; rent caps in other jurisdictions yielded mixed results. Will monitor sharp localised increases and consider targeted interventions. Number of F&B and retail establishments continued to grow despite cost pressures. Labour costs flagged as bigger structural stress than rents — ageing population, tighter labour supply, DRC ceiling not being relaxed for F&B. Implication for retail landlords: government stance supports market-based pricing; no regulatory cap risk near-term. For retail/F&B assets in the dashboard, rental reversions remain a landlord-positive story.",sentiment:"positive"},
-  {id:15,date:"2026-02-20",title:"OUE Reit, UOB Gauging Market Interest for One Raffles Place at S$2.3B–S$2.4B",source:"Business Times",category:"Commercial",tag:"Investment Sale",summary:"OUBC (OUE Reit subsidiary) conducting market interest exercise with UOB for One Raffles Place — office and retail asset above Raffles Place MRT. Price guidance S$2.3B–S$2.4B for 100% stake. Ownership: OUBC 81.54%, UOB 18.46%; OUE Reit effective stake 67.95%. OUBC's 81.54% stake valued at S$1.93B as at 31 Dec 2025 → implied 100% value ~S$2.37B. GFA ~1.3M sqft (17x site area, exceeds 15x GPR under MP2025). Valuation benchmark: S$2,745 psf on NLA — confirms NLA-based PSF as market convention for investment sales. OUE Reit DPU S$0.0125 for 2H2025 (+10.6% YoY). Manager caveated 'no assurance any binding agreement or transaction will materialise'. If completed, would be largest Singapore office investment sale since at least 2021.",sentiment:"positive"},
-  {id:15,date:"2026-02-25",title:"City Plaza Secures Nod for S$970M Collective Sale After 2 Failed Bids",source:"Straits Times",category:"Commercial",tag:"En Bloc",summary:"City Plaza (Geylang, 18-storey freehold mixed-use) secured 80%+ mandate for S$970M collective sale on 24 Feb 2026 — third attempt after 2018 (S$1.05B, 53% support) and 2021 (S$970M, 79.3% support). CSC secured 83.05% by strata area and 81.26% by share value. 450 units: 384 strata retail + 66 residential. Site: 13,146 sqm, GFA 33,781 sqm, zoned commercial. Commercial unit payouts S$722K–S$32M; residential S$2.18M–S$3.44M (Huttons). Future concept: hospitality-style accommodation with lifestyle/wellness/commercial components — subject to planning review. Huttons to submit outline application for planning clarity before tender launch. Market context: commercial collective sale activity rising — Tan Boon Liat Bldg eyeing fresh tender at S$1B (below S$1.15B asking that drew no bids); Centrepoint rear block S$418M tender closing Feb 26; Cuppage Terrace EOI S$250M closed Feb 12.",sentiment:"positive"},
-
-  {id:23,date:"2026-02-28",title:"CDL Undertakes Review to Relook Strategy, Optimise Portfolio and Capital Recycling",source:"Business Times",category:"Commercial",tag:"Earnings",summary:"CDL H2 FY2025 net profit S$538.5M (+374.3% YoY); FY2025 total S$629.7M (3x FY2024). Revenue S$1,899.2M (+11.1%). Driven by robust SG home sales and capital recycling gains — S$834M sale of 50.1% South Beach stake to IOI Properties generating S$473.1M gain. FY2025 residential sales record 1,657 units at S$4.35B. 95% of The Orie (777 units) sold; 87% Zyon Grand; 66% Newport Residences. Strategic review: rightsizing portfolio across geographies — outcome by June 2026. UK platform (5 properties, ~S$800M carrying value) to be divested by end-2026. Contracted divestments ~S$2B in 2025. Lakeside Drive (570 units, Q3 2026 launch) at S$1,132 psf ppr. EC sites Woodlands Drive 17 (S$782 psf ppr) and Senja Close (S$771 psf ppr) to launch Q1 2027. Quayside Isle @ Sentosa Cove sold S$97.3M (Feb 2026). CDL shares +4.9% to S$9.82.",sentiment:"positive"},
-  {id:24,date:"2026-02-28",title:"Frasers Property Acquires Centrepoint Rear Block for S$391.9M",source:"Business Times",category:"Commercial",tag:"Investment Sale",summary:"Frasers Property acquired The Centrepoint rear block (66 apartments + 66 retail units, 99-yr leasehold, ~52 yrs remaining, 44,700 sqft plot) for S$391.9M — 6.2% below S$418M guide price. Effective land rate S$2,577 psf ppr after including LBC of ~S$253M to top up lease to fresh 99 years and build to max plot ratio 5.6. Frasers already owns ~96% of freehold front block (151 retail units). Consolidation enables future major redevelopment; potential to amalgamate with adjacent 51 Cuppage Road office building (99-yr, linked via bridge) for SDI Scheme bonus GFA. Retail owners receive S$840K–S$9.3M; residential owners S$2.7M–S$7.1M. Centrepoint occupancy ~98% as at Sep 30. Savills brokered. Cuppage Terrace (17 shophouses, 28,986 sqft, ~S$250M EOI) attracted 50+ inquiries from developers, family offices, boutique RE funds and corporates.",sentiment:"positive"},
-  {id:25,date:"2026-02-28",title:"Land Betterment Charges Raised: Non-Landed Residential +4.1%, Landed +4%, Industrial +3.2%",source:"Business Times",category:"Policy",tag:"LBC",summary:"SLA/URA raised LBC rates effective 1 Mar 2026. Non-landed residential: +4.1% average — biggest since Sep 2022. Sector 97 (Bedok South) +22.7% driven by S$1,330 psf ppr Bedok Rise GLS bid (36% above implied LBC land value). Sector 37 (Newton Circus) +10.2% on S$1,820 psf ppr Newton MRT site. Landed residential: +4.0% average. Industrial: +3.2% average (all 118 sectors raised 2–9%). Biggest industrial increases: Tampines/Bedok North/Kembangan +9.3% and Upper Thomson/Sembawang Hills +9.3% — referenced 680 Upper Thomson Rd S$665 psf ppr sale Oct 2025 (190% premium to Sep 1 2025 LBC rate). Commercial: +0.5%. Hotel/hospital/nursing home: unchanged. CBRE caution: residential LBC increase could raise developer acquisition costs and dampen already-weak collective sale market.",sentiment:"neutral"},
-  {id:26,date:"2026-02-28",title:"PropNex FY2025 Earnings Up 72% to S$70.4M on Record S$1.1B Revenue",source:"Business Times",category:"Market Insight",tag:"Earnings",summary:"PropNex FY2025 net profit S$70.4M (+72% from S$40.9M). Revenue S$1.1B (+42.6% from S$783M) — record in 25-year history. Project marketing revenue more than doubled to S$434M (~40% of total). Resale private home transactions +30% to S$234.2M; landed +50% to S$61.7M; commercial/industrial +20% to S$33.8M. Full-year dividend S$0.095/share (record high, ~99% payout). 2026 outlook: 13,500 homes reaching MOP (up from 8,000 in 2024); new launch supply lower (~11,116 units vs 12,769). 25,000–30,000 new citizens and 40,000 new PRs annually to support housing demand over 5 years. Shares -8.5% to S$2.04.",sentiment:"positive"},
-  {id:27,date:"2026-02-28",title:"Hong Fok H2 FY2025 Net Profit +14.7% to S$23.1M; Full-Year +20% to S$28.5M",source:"Business Times",category:"Commercial",tag:"Earnings",summary:"Hong Fok H2 FY2025 net profit S$23.1M (+14.7% from S$20.1M). Revenue H2 S$51.4M (-13.9%) — lower Concourse Skyline residential sales, partially offset by higher investment property rental income. Revaluation gain S$16.2M for FY2025 (+36.8% from S$11.8M). Full-year FY2025 earnings S$28.5M (+20% from S$23.7M). FY revenue -6% to S$98.3M. Acquired 5 units in International Building for S$27.8M during FY2025, now owning all units. NAV S$3.65 (from S$3.61). Dividend S$0.01/share (unchanged). Outlook: SG office rental income likely stable; office market resilient despite macro/political uncertainties. Shares unchanged at S$0.83.",sentiment:"positive"},
-  {id:28,date:"2026-02-28",title:"450 HNW Investors Granted Singapore PR Under Global Investor Programme (2015–2025)",source:"Business Times",category:"Policy",tag:"Capital Flows",summary:"~450 HNW investors granted PR under GIP between 2015–2025, injecting ~S$500M directly into Singapore entities (MOS Gan Siow Huang in Parliament, Feb 27). Over half to professional services, info-comms, financial services; S$430M to GIP-select funds. GIP investors created 30,000+ jobs 2010–2025. Three pathways: S$10M direct SG investment; S$25M GIP-select fund; SFO with S$200M AUM (min S$50M in EDB investments). ~50% direct, 40% via GIP funds, 10% SFOs. Thresholds raised in 2023 — no major change in applicant profile yet; GIP-select fund composition shifting away from local-only funds. Implication: GIP capital flows support SFO growth and demand for direct SG real estate, particularly shophouse and freehold commercial assets.",sentiment:"positive"},
-  {id:29,date:"2026-02-28",title:"Online LBC Estimator Launched; Government Exploring Longer Tenures for State Properties",source:"Business Times",category:"Policy",tag:"LBC",summary:"Government launched LBC Estimator on SLA OneMap portal (Feb 27) — allows developers to compute estimated LBC from key inputs and scenario-test development options upfront. Announced at REDAS Spring Festival lunch by Minister for Law Edwin Tong. Solar deployments classified under utility use since Sep 1 2025. Valuation process moved up for spot-assessment cases — could cut project timelines by up to 6 months. SLA to pilot digital conveyancing portal in 2026. Government also exploring longer tenures for state properties enabling innovative development — examples: New Bahru lifestyle cluster, The Foundry social impact hub. Adam Park heritage bungalows tendered for 30-yr serviced apartment leasehold. Formal tenure announcements expected in due course.",sentiment:"positive"},
-  {id:30,date:"2026-02-28",title:"Redas and NUS Launch Trainee and Internship Programme for Real Estate Talent Pipeline",source:"Business Times",category:"Market Insight",tag:"Industry",summary:"Redas partnered NUS to roll out management traineeships, internships and mentorships — announced at REDAS Spring Festival lunch (Feb 27) by Redas president Tan Swee Yiow. ~40 organisations expressed interest including BCA, CDL, DBS, Frasers Property, GuocoLand and Keppel. Over 50 internship opportunities committed. Roles: asset management, commercial leasing, fintech, project development. Context: declining enrolment in real estate studies at NUS Business School — real estate major competing with other disciplines since being folded into NUS Business School, with students selecting majors in May. Initiative aims to signal industry commitment and demonstrate scale and long-term career pathways. Minister for Law Edwin Tong endorsed: exactly the kind of forward-thinking partnership we need.",sentiment:"positive"},
+var NEWS=[
+  {id:1,date:"2026-02-26",title:"Lendlease REIT Takes Full Control of PLQ Mall in S$116.4M Deal",source:"Business Times",category:"Commercial",tag:"REIT",summary:"LREIT acquires remaining 30% stake in PLQ Mall for S$116.4M. Full ownership enables refinancing saving ~S$2M p.a. DPU accretion +2.1%. Occupancy 99.4%.",sentiment:"positive"},
+  {id:2,date:"2026-02-26",title:"URA Releases 2 Prime GLS Sites at Holland Plain and River Valley",source:"Business Times",category:"Commercial",tag:"GLS",summary:"Holland Plain (280 units, 99-yr, closes 7 May) and Morrison Lane near Robertson Quay (205 units, reserve list). Analysts expect 4-6 bids at S$1,400-1,500 psf ppr.",sentiment:"positive"},
+  {id:3,date:"2026-02-26",title:"Tan Boon Liat Building Up for Sale at Reduced S$1B Reserve Price",source:"Business Times",category:"Commercial",tag:"En Bloc",summary:"Freehold 315 Outram Road relaunched at S$1.0B (down 13% from S$1.15B in 2025 which drew no bids). Rezoning B1 to residential+commercial. Closes 12 May 2026.",sentiment:"neutral"},
+  {id:4,date:"2026-02-25",title:"Altallo Asset Management Buys 158 Cecil Street for S$175M",source:"Business Times",category:"Commercial",tag:"Investment Sale",summary:"Put-and-call option at S$175M — S$1,541 psf on NLA of 113,540 sqft. 99-yr lease (~55 yrs remaining). Price is 27% below S$240M paid in 2015. Plans refurbishment with office as core use.",sentiment:"positive"},
+  {id:5,date:"2026-02-25",title:"Singapore Remains Bedrock for Family Offices: StanChart",source:"Business Times",category:"Market Insight",tag:"Capital Flows",summary:"Singapore SFOs exceeded 2,000 at end-2024, up 43% YoY. Net new wealth management money hit US$51.5B in 2025. Growing pool of family office capital seeking SG commercial assets.",sentiment:"positive"},
+  {id:6,date:"2026-02-27",title:"UI Boustead Reit Files IPO Prospectus to Raise S$1.2B",source:"Business Times",category:"Industrial",tag:"REIT IPO",summary:"23-property portfolio, GFA 5.9M sqft, agreed value ~S$1.9B. Forecast yield 7.4%. Cornerstone investors include JP Morgan AM and Amundi. Sets cap rate benchmark for SG industrial assets.",sentiment:"positive"},
+  {id:7,date:"2026-02-27",title:"UOL H2 Net Profit +21% to S$276.2M; Office Described as Attractive",source:"Business Times",category:"Commercial",tag:"Earnings",summary:"Revenue S$1.685B (+11%). Special dividend S$0.07 + final S$0.18. Office sector: tight CBD supply. Marina Square redevelopment at final planning stage — hyper-mixed use.",sentiment:"positive"},
+  {id:8,date:"2026-02-27",title:"Soilbuild Construction H2 Profit +84% on Industrial Surge",source:"Business Times",category:"Industrial",tag:"Construction",summary:"H2 net profit S$35.3M (+84%). Revenue S$317.9M (+33.6%). Key projects: PSA Supply Chain Hub at Tuas. Strong industrial construction backlog confirms new supply pipeline.",sentiment:"positive"},
+  {id:9,date:"2026-02-27",title:"GDP Forecast Raised to 3.6%; Manufacturing Output +16.6% in Jan",source:"Business Times",category:"Market Insight",tag:"Macro",summary:"MAS survey: 2026 GDP forecast raised to 3.6%. Factory output Jan 2026 +16.6% YoY on electronics surge. AI demand feeding into semiconductor ecosystem. Industrial outlook remains robust.",sentiment:"positive"},
+  {id:10,date:"2026-02-27",title:"Retail and F&B Rents Make Up Lower Share of Business Costs",source:"Business Times",category:"Policy",tag:"Retail",summary:"PM Wong: F&B rental costs fell from 26% to 17% of total business costs (2019-2024). Government ruled out rent caps. Retail rent reversions remain landlord-positive.",sentiment:"positive"},
+  {id:11,date:"2026-02-28",title:"CDL H2 Net Profit +374% to S$538.5M; Strategic Review Underway",source:"Business Times",category:"Commercial",tag:"Earnings",summary:"Revenue S$1,899.2M (+11.1%). FY2025 residential sales record 1,657 units at S$4.35B. UK platform (~S$800M carrying value) to be divested by end-2026. Strategic review outcome by June 2026.",sentiment:"positive"},
+  {id:12,date:"2026-02-28",title:"Frasers Property Acquires Centrepoint Rear Block for S$391.9M",source:"Business Times",category:"Commercial",tag:"Investment Sale",summary:"6.2% below S$418M guide price. Effective land rate S$2,577 psf ppr after LBC. Consolidation enables future major redevelopment of Centrepoint.",sentiment:"positive"},
+  {id:13,date:"2026-02-28",title:"LBC Raised: Non-Landed Residential +4.1%, Industrial +3.2%",source:"Business Times",category:"Policy",tag:"LBC",summary:"SLA/URA raised LBC rates effective 1 Mar 2026. Biggest non-landed residential hike since Sep 2022. Industrial: all 118 sectors raised 2-9%. Commercial: +0.5%.",sentiment:"neutral"},
+  {id:14,date:"2026-02-28",title:"PropNex FY2025 Earnings Up 72% to S$70.4M on Record S$1.1B Revenue",source:"Business Times",category:"Market Insight",tag:"Earnings",summary:"Record in 25-year history. Project marketing revenue more than doubled to S$434M. Full-year dividend S$0.095/share (record high). 2026 outlook: 13,500 homes reaching MOP.",sentiment:"positive"},
+  {id:15,date:"2026-02-28",title:"City Plaza Secures Mandate for S$970M En Bloc After 2 Failed Attempts",source:"Straits Times",category:"Commercial",tag:"En Bloc",summary:"Secured 83.05% mandate — third attempt after 2018 and 2021. Freehold 18-storey, 450 units. Future concept: hospitality/wellness/commercial.",sentiment:"positive"},
+  {id:16,date:"2026-02-28",title:"OUE Reit Gauging Interest for One Raffles Place at S$2.3-2.4B",source:"Business Times",category:"Commercial",tag:"Investment Sale",summary:"OUBC + UOB gauging market interest for 100% stake. Would be largest SG office deal in years if completed. GFA ~1.3M sqft.",sentiment:"positive"},
+  {id:17,date:"2026-02-28",title:"Online LBC Estimator Launched; Longer State Property Tenures Explored",source:"Business Times",category:"Policy",tag:"LBC",summary:"LBC Estimator on SLA OneMap portal allows developers to compute LBC estimates upfront. Valuation process moved up — could cut project timelines by 6 months.",sentiment:"positive"},
+  {id:18,date:"2026-02-28",title:"450 HNW Investors Granted Singapore PR Under Global Investor Programme",source:"Business Times",category:"Policy",tag:"Capital Flows",summary:"~450 HNW investors granted PR under GIP (2015-2025), injecting ~S$500M. GIP capital supports SFO growth and demand for SG commercial real estate, particularly shophouse and freehold assets.",sentiment:"positive"},
+  {id:19,date:"2026-02-26",title:"MPs Call for 15% Stamp Duty Tier on Properties Above S$5M",source:"Straits Times",category:"Policy",tag:"Property Tax",summary:"Budget 2026 debate: calls for 15% marginal rate on residential properties above S$5M. Fiscal surplus S$15.1B. SG wealth Gini 0.55.",sentiment:"neutral"},
+  {id:20,date:"2026-02-26",title:"Singapore Land H2 Profit Down 11% at S$160.9M",source:"Business Times",category:"Commercial",tag:"Earnings",summary:"FY2025 net profit S$272.3M (-4%). Revenue +7% to S$783.1M. Drag from higher finance costs (+23%) on Sydney acquisition. DPS S$0.045.",sentiment:"negative"},
+  {id:21,date:"2026-02-20",title:"Serenity Park Condo in Yio Chu Kang Put on Market at S$505M",source:"Business Times",category:"Commercial",tag:"En Bloc",summary:"179-unit freehold condo, Tamarind Road. First freehold residential en-bloc of 2026. S$1,453 psf ppr. Owner premium >40%. Closes 26 Mar 2026.",sentiment:"neutral"}
 ];
-const PIPELINE = [
-  {asset:"One Raffles Place",type:"Investment Sale",subtype:"Office + Retail",agent:"UOB (market interest exercise)",estValue:"S$2.3B–S$2.4B",closes:"TBC — market interest stage",notes:"OUBC (OUE Reit subsidiary, 81.54%) + UOB (18.46%) gauging interest. Implied 100% value ~S$2.37B based on OUBC stake valuation of S$1.93B at 31 Dec 2025. GFA ~1.3M sqft, S$2,745 psf NLA. Exceeds 15x GPR under MP2025. OUE Reit confirmed via SGX filing 20 Feb 2026 — 'no assurance any binding agreement will materialise'. Would be largest SG office deal in years if completed."},
-  {asset:"Holland Plain GLS Site",type:"GLS Tender",subtype:"Residential",agent:"URA",estValue:"~S$300M",closes:"7 May 2026",notes:"280 units, 15,716 sqm, 99-yr. 4–6 bids at S$1,400–1,500 psf ppr."},
+
+var PIPELINE=[
+  {asset:"One Raffles Place",type:"Investment Sale",subtype:"Office + Retail",agent:"UOB",estValue:"S$2.3B-S$2.4B",closes:"TBC",notes:"OUBC (OUE Reit, 81.54%) + UOB (18.46%) gauging interest. Would be largest SG office deal in years."},
+  {asset:"Holland Plain GLS Site",type:"GLS Tender",subtype:"Residential",agent:"URA",estValue:"~S$300M",closes:"7 May 2026",notes:"280 units, 15,716 sqm, 99-yr. 4-6 bids at S$1,400-1,500 psf ppr."},
   {asset:"Morrison Lane GLS Site",type:"GLS Tender",subtype:"Residential",agent:"URA",estValue:"~S$150M",closes:"On application",notes:"205 units, 6,669 sqm. Reserve list. Near Robertson Quay."},
-  {asset:"Tan Boon Liat Bldg, 315 Outram Rd",type:"En Bloc",subtype:"Industrial → Resi+Comm",agent:"Cushman & Wakefield",estValue:"S$1.0B",closes:"12 May 2026",notes:"Freehold, 175,655 sqft. Rezoning B1→Resi+Comm. Plot ratio 3.1→4.9. No ABSD. Relaunched at S$1B (down 13% from S$1.15B in 2025 which drew no bids)."},
-  {asset:"City Plaza, Geylang",type:"En Bloc",subtype:"Commercial → Hospitality+Comm",agent:"Huttons Asia",estValue:"S$970M",closes:"Tender TBC",notes:"Freehold, 18-storey, 450 units (384 retail + 66 resi). Site 13,146 sqm, GFA 33,781 sqm. Secured 83.05% mandate 24 Feb 2026 — 3rd attempt (2018 S$1.05B failed, 2021 S$970M failed). Huttons filing outline planning application before tender launch. Concept: hospitality/wellness/commercial."},
-  {asset:"Centrepoint Rear Block",type:"En Bloc",subtype:"Commercial",agent:"CBRE",estValue:"S$418M",closes:"26 Feb 2026",notes:"66 strata retail units + 66 resi apartments. Tender closed 26 Feb 2026. Outcome pending."},
-  {asset:"Cuppage Terrace",type:"En Bloc",subtype:"Commercial",agent:"Undisclosed",estValue:"S$250M",closes:"EOI closed 12 Feb 2026",notes:"EOI closed 12 Feb 2026. Outcome pending."},
-  {asset:"Serenity Park, Tamarind Road",type:"En Bloc",subtype:"Residential",agent:"Mount Everest Properties",estValue:"S$505M",closes:"26 Mar 2026",notes:"179-unit freehold condo, 23,056 sqm, plot ratio 1.4. First freehold resi en-bloc of 2026."},
-  {asset:"5 Oxley Rise — 1/7 Stake",type:"Receivership",subtype:"Landed",agent:"ERA",estValue:"Undisclosed",closes:"9 Apr 2026",notes:"151,204 sqft freehold. Cheong family / Hong Fok Corp. Two prior attempts at S$300M+ failed."},
+  {asset:"Tan Boon Liat Bldg",type:"En Bloc",subtype:"Industrial to Resi+Comm",agent:"Cushman & Wakefield",estValue:"S$1.0B",closes:"12 May 2026",notes:"Freehold 315 Outram Road. Relaunched at S$1B, down 13% from S$1.15B in 2025."},
+  {asset:"City Plaza, Geylang",type:"En Bloc",subtype:"Commercial to Hospitality",agent:"Huttons Asia",estValue:"S$970M",closes:"Tender TBC",notes:"Freehold 18-storey, 450 units. Secured 83.05% mandate 24 Feb 2026 — 3rd attempt."},
+  {asset:"Serenity Park, Tamarind Rd",type:"En Bloc",subtype:"Residential",agent:"Mount Everest Properties",estValue:"S$505M",closes:"26 Mar 2026",notes:"179-unit freehold condo. First freehold resi en-bloc of 2026."},
+  {asset:"Centrepoint Rear Block",type:"Investment Sale",subtype:"Commercial",agent:"Savills",estValue:"S$391.9M",closes:"Completed",notes:"Acquired by Frasers Property. 6.2% below S$418M guide price."},
+  {asset:"158 Cecil Street",type:"Investment Sale",subtype:"Office",agent:"Undisclosed",estValue:"S$175M",closes:"Option signed",notes:"Altallo Asset Management. S$1,541 psf NLA. 27% below 2015 price of S$240M."},
+  {asset:"5 Oxley Rise - 1/7 Stake",type:"Receivership",subtype:"Landed",agent:"ERA",estValue:"Undisclosed",closes:"9 Apr 2026",notes:"151,204 sqft freehold. Cheong family. Two prior attempts at S$300M+ failed."}
 ];
 
-// ═══════════════════════════════════════════════════════════════════
 // STATE
-// ═══════════════════════════════════════════════════════════════════
-let activeTab   = 'overview';
-let chartMode   = 'val';
-let activeTypes = new Set(TYPES);
-let newsFilter  = 'All';
+var chartMode="val", activeRange="ALL", newsCat="All";
+var activeTypes={};
+TYPES.forEach(function(t){activeTypes[t]=true;});
 
-// ═══════════════════════════════════════════════════════════════════
 // UTILS
-// ═══════════════════════════════════════════════════════════════════
-const fmt = (v, unit='val') => {
-  if (unit === 'val') {
-    if (v >= 1000) return `S$${(v/1000).toFixed(1)}B`;
-    return `S$${v.toFixed(v >= 10 ? 0 : 1)}M`;
-  }
-  return v.toLocaleString();
-};
+function fmtV(v){if(v>=1000)return"S$"+(v/1000).toFixed(1)+"B";if(v>=1)return"S$"+Math.round(v)+"M";return"S$"+(v*1000).toFixed(0)+"K";}
+function fmtC(v){return v.toLocaleString();}
 
-const pill = (sentiment) => {
-  const cls = sentiment === 'positive' ? 'pill-pos' : sentiment === 'negative' ? 'pill-neg' : 'pill-neu';
-  const lbl = sentiment === 'positive' ? '▲ Positive' : sentiment === 'negative' ? '▼ Negative' : '● Neutral';
-  return `<span class="pill ${cls}">${lbl}</span>`;
-};
+function getIdxs(){
+  var cur=2026,r0,r1;
+  if(activeRange==="L12"){r0=2025;r1=2026;}
+  else if(activeRange==="5Y"){r0=cur-4;r1=cur;}
+  else if(activeRange==="10Y"){r0=cur-9;r1=cur;}
+  else{r0=YEARS[0];r1=YEARS[YEARS.length-1];}
+  return YEARS.reduce(function(a,y,i){if(y>=r0&&y<=r1)a.push(i);return a;},[]);
+}
+function getFY(){return getIdxs().map(function(i){return YEARS[i];});}
 
-// ═══════════════════════════════════════════════════════════════════
 // TABS
-// ═══════════════════════════════════════════════════════════════════
-document.querySelectorAll('.tab').forEach(t => {
-  t.addEventListener('click', () => {
-    activeTab = t.dataset.tab;
-    document.querySelectorAll('.tab').forEach(x => x.classList.remove('active'));
-    document.querySelectorAll('.panel').forEach(x => x.classList.remove('active'));
-    t.classList.add('active');
-    document.getElementById('tab-' + activeTab).classList.add('active');
-    if (activeTab === 'analytics') renderAnalytics();
+document.querySelectorAll(".navtab").forEach(function(t){
+  t.addEventListener("click",function(){
+    document.querySelectorAll(".navtab").forEach(function(x){x.classList.remove("on");});
+    document.querySelectorAll(".panel").forEach(function(x){x.classList.remove("on");});
+    t.classList.add("on");
+    var p=document.getElementById("tab-"+t.dataset.tab);
+    if(p)p.classList.add("on");
+    if(t.dataset.tab==="analytics")renderAnalytics();
   });
 });
 
-// ═══════════════════════════════════════════════════════════════════
-// KPI CARDS
-// ═══════════════════════════════════════════════════════════════════
-function renderKPIs() {
-  const yr2025_idx = YEARS.indexOf(2025);
-  const yr2026_idx = YEARS.indexOf(2026);
-  document.getElementById('kpi-total-val').textContent = fmt(TOTVAL);
-  document.getElementById('kpi-total-cnt').textContent = TOTCNT.toLocaleString();
-  if (yr2025_idx >= 0) {
-    const v25 = VAL_M[yr2025_idx].reduce((a,b)=>a+b,0);
-    const c25 = CNT_M[yr2025_idx].reduce((a,b)=>a+b,0);
-    document.getElementById('kpi-2025-val').textContent = fmt(v25);
-    document.getElementById('kpi-2025-cnt').textContent = c25.toLocaleString() + ' transactions';
-  }
-  if (yr2026_idx >= 0) {
-    const v26 = VAL_M[yr2026_idx].reduce((a,b)=>a+b,0);
-    const c26 = CNT_M[yr2026_idx].reduce((a,b)=>a+b,0);
-    document.getElementById('kpi-2026-val').textContent = fmt(v26);
-    document.getElementById('kpi-2026-cnt').textContent = c26.toLocaleString() + ' transactions YTD';
-  }
+// KPIs
+function renderKPIs(){
+  var idxs=getIdxs(),fy=getFY();
+  var tv=0,tc=0;
+  idxs.forEach(function(i){TYPES.forEach(function(t,ti){if(activeTypes[t]){tv+=VAL_ARR[i][ti];tc+=CNT_ARR[i][ti];}});});
+  document.getElementById("k-totval").textContent=fmtV(tv);
+  document.getElementById("k-totcnt").textContent=fmtC(tc);
+  document.getElementById("k-totsub").textContent=fy[0]+(fy.length>1?" – "+fy[fy.length-1]:"");
+  var i25=YEARS.indexOf(2025),i26=YEARS.indexOf(2026);
+  if(i25>=0){var v25=0,c25=0;TYPES.forEach(function(t,ti){if(activeTypes[t]){v25+=VAL_ARR[i25][ti];c25+=CNT_ARR[i25][ti];}});
+    document.getElementById("k-y25val").textContent=fmtV(v25);document.getElementById("k-y25cnt").textContent=fmtC(c25)+" transactions";}
+  if(i26>=0){var v26=0,c26=0;TYPES.forEach(function(t,ti){if(activeTypes[t]){v26+=VAL_ARR[i26][ti];c26+=CNT_ARR[i26][ti];}});
+    document.getElementById("k-y26val").textContent=fmtV(v26);document.getElementById("k-y26cnt").textContent=fmtC(c26)+" transactions YTD";}
 }
 
-// ═══════════════════════════════════════════════════════════════════
+// TYPE CHIPS
+function renderTypeChips(){
+  var el=document.getElementById("type-chips");
+  var h='<span class="fbar-label">Type</span>';
+  TYPES.forEach(function(t){
+    var on=activeTypes[t];
+    var s=on?"background:"+TCOLOR[t]+";border-color:"+TCOLOR[t]+";color:#fff":"";
+    h+='<button class="fchip'+(on?" on":"")+'" data-t="'+t+'" style="'+s+'">'+TLABEL[t]+"</button>";
+  });
+  el.innerHTML=h;
+  el.querySelectorAll(".fchip").forEach(function(b){
+    b.addEventListener("click",function(){
+      var t=b.dataset.t;
+      var n=TYPES.filter(function(x){return activeTypes[x];}).length;
+      if(activeTypes[t]&&n===1)return;
+      activeTypes[t]=!activeTypes[t];
+      renderAll();
+    });
+  });
+}
+
+// RANGE BTNS
+function initRangeBtns(){
+  document.getElementById("range-btns").querySelectorAll(".rbtn").forEach(function(b){
+    b.addEventListener("click",function(){
+      activeRange=b.dataset.range;
+      document.getElementById("range-btns").querySelectorAll(".rbtn").forEach(function(x){x.classList.remove("on");});
+      b.classList.add("on");
+      renderAll();
+    });
+  });
+}
+
 // BAR CHART
-// ═══════════════════════════════════════════════════════════════════
-function renderBarChart() {
-  const container = document.getElementById('bar-chart');
-  const W = container.clientWidth || 800;
-  const H = 300;
-  const PAD = { top: 16, right: 20, bottom: 40, left: 70 };
-  const cW = W - PAD.left - PAD.right;
-  const cH = H - PAD.top - PAD.bottom;
-  const activeArr = TYPES.filter(t => activeTypes.has(t));
-  const n = YEARS.length;
-  const barGroupW = cW / n;
-  const barW = Math.max(2, barGroupW * 0.85 / activeArr.length);
-  const matrix = chartMode === 'val' ? VAL_M : CNT_M;
-  const totals = YEARS.map((_,yi) => TYPES.reduce((s,t,ti) => activeTypes.has(t) ? s + matrix[yi][ti] : s, 0));
-  const maxVal = Math.max(...totals, 1);
-  const nTicks = 5;
-  const ticks = Array.from({length: nTicks+1}, (_,i) => i * maxVal / nTicks);
-
-  let svg = `<svg viewBox="0 0 ${W} ${H}" width="${W}" height="${H}" style="overflow:visible">`;
-
-  // Grid lines
-  ticks.forEach(tick => {
-    const y = PAD.top + cH - (tick / maxVal) * cH;
-    const label = chartMode === 'val'
-      ? (tick >= 1000 ? `S$${(tick/1000).toFixed(0)}B` : `S$${tick.toFixed(0)}M`)
-      : tick >= 1000 ? `${(tick/1000).toFixed(1)}K` : tick.toFixed(0);
-    svg += `<line x1="${PAD.left}" x2="${PAD.left+cW}" y1="${y}" y2="${y}" stroke="#dde8e3" stroke-width="1"/>`;
-    svg += `<text x="${PAD.left-6}" y="${y+4}" text-anchor="end" fill="#6b8c7a" font-size="10" font-family="DM Mono,monospace">${label}</text>`;
-  });
-
-  // Bars
-  YEARS.forEach((yr, yi) => {
-    const groupX = PAD.left + yi * barGroupW + barGroupW * 0.075;
-    activeArr.forEach((t, ai) => {
-      const ti = TYPES.indexOf(t);
-      const val = matrix[yi][ti];
-      const bh = (val / maxVal) * cH;
-      const bx = groupX + ai * (barGroupW * 0.85 / activeArr.length);
-      const by = PAD.top + cH - bh;
-      svg += `<rect x="${bx.toFixed(1)}" y="${by.toFixed(1)}" width="${barW.toFixed(1)}" height="${Math.max(bh,0).toFixed(1)}"
-        fill="${TCOLOR[t]}" rx="2"
-        style="cursor:pointer;transition:opacity .1s"
-        onmouseenter="showTip(event,'${yr}','${t}',${val})"
-        onmouseleave="hideTip()"/>`;
+function renderBarChart(){
+  var wrap=document.getElementById("bar-wrap");
+  var W=wrap.clientWidth||800,H=280;
+  var P={t:14,r:16,b:36,l:62};
+  var cW=W-P.l-P.r,cH=H-P.t-P.b;
+  var idxs=getIdxs(),fy=getFY();
+  var mat=chartMode==="val"?VAL_ARR:CNT_ARR;
+  var actT=TYPES.filter(function(t){return activeTypes[t];});
+  var tots=idxs.map(function(i){return actT.reduce(function(s,t){return s+(mat[i][TYPES.indexOf(t)]||0);},0);});
+  var mx=Math.max.apply(null,tots.concat([1]));
+  var svg='<svg height="'+H+'" viewBox="0 0 '+W+' '+H+'" style="width:100%;overflow:visible">';
+  for(var k=0;k<=5;k++){
+    var tv2=k*mx/5,ty=P.t+cH-(tv2/mx)*cH;
+    var tl=chartMode==="val"?(tv2>=1000?"S$"+(tv2/1000).toFixed(0)+"B":"S$"+Math.round(tv2)+"M"):(tv2>=1000?(tv2/1000).toFixed(1)+"K":Math.round(tv2).toString());
+    svg+='<line x1="'+P.l+'" x2="'+(P.l+cW)+'" y1="'+ty+'" y2="'+ty+'" stroke="#dde8e3" stroke-width="1"/>';
+    svg+='<text x="'+(P.l-5)+'" y="'+(ty+4)+'" text-anchor="end" fill="#6b8c7a" font-size="10" font-family="DM Mono,monospace">'+tl+'</text>';
+  }
+  var bGW=cW/idxs.length,bW=Math.max(1.5,bGW*0.82/actT.length);
+  idxs.forEach(function(di,gi){
+    var yr=fy[gi],gx=P.l+gi*bGW+bGW*0.09;
+    actT.forEach(function(t,ai){
+      var ti2=TYPES.indexOf(t),val=mat[di][ti2]||0;
+      var bh=(val/mx)*cH,bx=gx+ai*(bGW*0.82/actT.length),by=P.t+cH-bh;
+      var vs=chartMode==="val"?fmtV(val):fmtC(val)+" deals";
+      svg+='<rect x="'+bx.toFixed(1)+'" y="'+by.toFixed(1)+'" width="'+bW.toFixed(1)+'" height="'+Math.max(bh,0).toFixed(1)+'"'
+          +' fill="'+TCOLOR[t]+'" rx="2" style="cursor:pointer"'
+          +' onmouseenter="sT(event,\''+yr+'\',\''+t+'\',\''+vs+'\')" onmouseleave="hT()"/>';
     });
-    const lx = PAD.left + yi * barGroupW + barGroupW / 2;
-    svg += `<text x="${lx.toFixed(1)}" y="${PAD.top + cH + 16}" text-anchor="middle" fill="#6b8c7a" font-size="11" font-family="DM Sans,sans-serif">${yr}</text>`;
+    var sl=idxs.length<=15||gi%Math.ceil(idxs.length/15)===0||gi===idxs.length-1;
+    if(sl){var lx=P.l+gi*bGW+bGW/2;svg+='<text x="'+lx.toFixed(1)+'" y="'+(P.t+cH+15)+'" text-anchor="middle" fill="#6b8c7a" font-size="10" font-family="DM Sans">'+yr+'</text>';}
   });
-
-  svg += '</svg>';
-  container.innerHTML = svg;
+  svg+='</svg>';
+  wrap.innerHTML=svg;
 }
 
-function showTip(e, yr, type, val) {
-  const tip = document.getElementById('tooltip');
-  const valStr = chartMode === 'val' ? fmt(val) : val.toLocaleString() + ' deals';
-  tip.innerHTML = `<strong>${yr} — ${TLABEL[type]}</strong>${valStr}`;
-  tip.style.display = 'block';
-  moveTip(e);
-}
-function moveTip(e) {
-  const tip = document.getElementById('tooltip');
-  tip.style.left = (e.clientX + 14) + 'px';
-  tip.style.top  = (e.clientY - 10) + 'px';
-}
-function hideTip() { document.getElementById('tooltip').style.display = 'none'; }
-document.addEventListener('mousemove', e => {
-  if (document.getElementById('tooltip').style.display !== 'none') moveTip(e);
-});
+function sT(e,yr,t,vs){var el=document.getElementById("tt");el.innerHTML='<b>'+yr+' — '+TLABEL[t]+'</b>'+vs;el.style.display='block';mT(e);}
+function mT(e){var el=document.getElementById("tt");el.style.left=(e.clientX+14)+'px';el.style.top=(e.clientY-10)+'px';}
+function hT(){document.getElementById("tt").style.display='none';}
+document.addEventListener("mousemove",function(e){if(document.getElementById("tt").style.display!=="none")mT(e);});
 
-// ═══════════════════════════════════════════════════════════════════
-// TYPE TOGGLES
-// ═══════════════════════════════════════════════════════════════════
-function renderToggles() {
-  const row = document.getElementById('type-toggles');
-  row.innerHTML = TYPES.map(t => {
-    const on = activeTypes.has(t);
-    const style = on ? `background:${TCOLOR[t]};color:#fff;border-color:${TCOLOR[t]}` : '';
-    return `<button class="toggle-btn ${on?'on':''}" data-type="${t}" style="${style}">${TLABEL[t]}</button>`;
+function renderLegend(){
+  document.getElementById("legend").innerHTML=TYPES.filter(function(t){return activeTypes[t];}).map(function(t){
+    return'<div style="display:flex;align-items:center;gap:5px;font-size:11px;color:#6b8c7a"><div style="width:8px;height:8px;border-radius:2px;background:'+TCOLOR[t]+'"></div>'+TLABEL[t]+'</div>';
   }).join('');
-  row.querySelectorAll('.toggle-btn').forEach(btn => {
-    btn.addEventListener('click', () => {
-      const t = btn.dataset.type;
-      if (activeTypes.has(t)) { if (activeTypes.size > 1) activeTypes.delete(t); }
-      else activeTypes.add(t);
-      renderToggles(); renderBarChart();
-    });
-  });
 }
 
-function renderLegend() {
-  document.getElementById('chart-legend').innerHTML = TYPES.map(t =>
-    `<div class="legend-item"><div class="legend-dot" style="background:${TCOLOR[t]}"></div>${TLABEL[t]}</div>`
-  ).join('');
-}
-
-document.getElementById('mode-btns').querySelectorAll('.mode-btn').forEach(btn => {
-  btn.addEventListener('click', () => {
-    chartMode = btn.dataset.mode;
-    document.querySelectorAll('.mode-btn').forEach(b => b.classList.remove('active'));
-    btn.classList.add('active');
-    renderBarChart();
-  });
-});
-
-// ═══════════════════════════════════════════════════════════════════
 // TYPE BREAKDOWN
-// ═══════════════════════════════════════════════════════════════════
-function renderTypeBreakdown() {
-  const max = Math.max(...Object.values(TYPETOT));
-  document.getElementById('type-breakdown').innerHTML = TYPES.map(t => `
-    <div class="type-bar-row">
-      <div class="type-bar-label">${TLABEL[t]}</div>
-      <div class="type-bar-track">
-        <div class="type-bar-fill" style="width:${(TYPETOT[t]/max*100).toFixed(1)}%;background:${TCOLOR[t]}"></div>
-      </div>
-      <div class="type-bar-val">${fmt(TYPETOT[t])}</div>
-    </div>`).join('');
+function renderTypeBreakdown(){
+  var idxs=getIdxs();
+  var sums={};
+  TYPES.forEach(function(t,ti){sums[t]=idxs.reduce(function(s,i){return s+(VAL_ARR[i][ti]||0);},0);});
+  var mx=Math.max.apply(null,TYPES.map(function(t){return sums[t];}));
+  document.getElementById("type-breakdown").innerHTML=TYPES.filter(function(t){return activeTypes[t];}).map(function(t){
+    var p=mx>0?(sums[t]/mx*100).toFixed(1):0;
+    return'<div class="tbar-row"><div class="tbar-lbl">'+TLABEL[t]+'</div>'
+      +'<div class="tbar-track"><div class="tbar-fill" style="width:'+p+'%;background:'+TCOLOR[t]+'"></div></div>'
+      +'<div class="tbar-val">'+fmtV(sums[t])+'</div></div>';
+  }).join('');
 }
 
-// ═══════════════════════════════════════════════════════════════════
 // NEWS PREVIEW
-// ═══════════════════════════════════════════════════════════════════
-function renderNewsPreview() {
-  const top5 = [...NEWS].sort((a,b) => b.date.localeCompare(a.date)).slice(0,5);
-  document.getElementById('news-preview').innerHTML = top5.map(n => `
-    <div style="padding:8px 0;border-bottom:1px solid var(--border)">
-      <div style="display:flex;gap:6px;align-items:center;margin-bottom:3px;flex-wrap:wrap">
-        <span class="pill ${n.sentiment==='positive'?'pill-pos':n.sentiment==='negative'?'pill-neg':'pill-neu'}" style="font-size:9px">${n.sentiment}</span>
-        <span style="font-size:10px;color:var(--muted)">${n.date}</span>
-        <span class="pill pill-tag">${n.tag}</span>
-      </div>
-      <div style="font-size:12px;line-height:1.4;color:var(--text);font-weight:500">${n.title}</div>
-    </div>`).join('') +
-    `<div style="padding-top:10px"><a href="#" onclick="switchTab('news');return false" style="font-size:11px;color:var(--green);text-decoration:none;font-weight:600">View all ${NEWS.length} articles →</a></div>`;
+function renderNewsPreview(){
+  var sorted=NEWS.slice().sort(function(a,b){return b.date.localeCompare(a.date);}).slice(0,5);
+  document.getElementById("news-preview").innerHTML=sorted.map(function(n){
+    var pc=n.sentiment==="positive"?"p-pos":n.sentiment==="negative"?"p-neg":"p-neu";
+    return'<div style="padding:7px 0;border-bottom:1px solid #dde8e3">'
+      +'<div style="display:flex;gap:6px;align-items:center;margin-bottom:3px;flex-wrap:wrap">'
+      +'<span class="pill '+pc+'">'+n.sentiment+'</span>'
+      +'<span style="font-size:10px;color:#6b8c7a;font-family:\'DM Mono\',monospace">'+n.date+'</span>'
+      +'<span class="pill p-tag">'+n.tag+'</span></div>'
+      +'<div style="font-size:12px;line-height:1.4;font-weight:500">'+n.title+'</div></div>';
+  }).join('')+'<div style="padding-top:9px"><a href="#" onclick="document.querySelector(\'[data-tab=news]\').click();return false" style="font-size:11px;color:#21513b;text-decoration:none;font-weight:600">View all '+NEWS.length+' articles →</a></div>';
 }
 
-function switchTab(name) { document.querySelector(`.tab[data-tab="${name}"]`).click(); }
-
-// ═══════════════════════════════════════════════════════════════════
-// NEWS FULL LIST
-// ═══════════════════════════════════════════════════════════════════
-function renderNewsFilters() {
-  const categories = ['All', ...new Set(NEWS.map(n => n.category))];
-  const el = document.getElementById('news-filters');
-  el.innerHTML = categories.map(c =>
-    `<button class="filter-chip ${newsFilter===c?'on':''}" data-cat="${c}">${c}</button>`
-  ).join('');
-  el.querySelectorAll('.filter-chip').forEach(btn => {
-    btn.addEventListener('click', () => { newsFilter = btn.dataset.cat; renderNewsFilters(); renderNewsList(); });
-  });
+// NEWS FULL
+function renderNewsCats(){
+  var cats=["All"].concat(NEWS.map(function(n){return n.category;}).filter(function(v,i,a){return a.indexOf(v)===i;}).sort());
+  var el=document.getElementById("news-cats");
+  el.innerHTML=cats.map(function(c){return'<button class="fchip'+(newsCat===c?" on":"")+'" data-cat="'+c+'">'+c+'</button>';}).join('');
+  el.querySelectorAll(".fchip").forEach(function(b){b.addEventListener("click",function(){newsCat=b.dataset.cat;renderNewsCats();renderNewsList();});});
+}
+function renderNewsList(){
+  var list=newsCat==="All"?NEWS:NEWS.filter(function(n){return n.category===newsCat;});
+  document.getElementById("news-list").innerHTML=list.slice().sort(function(a,b){return b.date.localeCompare(a.date);}).map(function(n){
+    var pc=n.sentiment==="positive"?"p-pos":n.sentiment==="negative"?"p-neg":"p-neu";
+    return'<div class="news-item" onclick="this.classList.toggle(\'open\')">'
+      +'<div class="news-meta"><span style="font-size:10px;color:#6b8c7a;font-family:\'DM Mono\',monospace">'+n.date+'</span>'
+      +'<span style="font-size:11px;color:#6b8c7a">'+n.source+'</span>'
+      +'<span class="pill '+pc+'">'+n.sentiment+'</span>'
+      +'<span class="pill p-tag">'+n.tag+'</span></div>'
+      +'<div class="news-title">'+n.title+'</div>'
+      +'<div class="news-body">'+n.summary+'</div></div>';
+  }).join('');
 }
 
-function renderNewsList() {
-  const filtered = newsFilter === 'All' ? NEWS : NEWS.filter(n => n.category === newsFilter);
-  const sorted = [...filtered].sort((a,b) => b.date.localeCompare(a.date));
-  document.getElementById('news-list').innerHTML = sorted.map(n => `
-    <div class="news-card" onclick="this.classList.toggle('expanded')">
-      <div class="news-meta">
-        <span class="news-date">${n.date}</span>
-        <span class="news-source">${n.source}</span>
-        ${pill(n.sentiment)}
-        <span class="pill pill-tag">${n.tag}</span>
-      </div>
-      <div class="news-title">${n.title}</div>
-      <div class="news-summary">${n.summary}</div>
-    </div>`).join('');
-}
-
-// ═══════════════════════════════════════════════════════════════════
 // PIPELINE
-// ═══════════════════════════════════════════════════════════════════
-function renderPipeline() {
-  const typeColors = {
-    'Investment Sale': var(--green),
-    'En Bloc':         '#2d7a57',
-    'GLS Tender':      '#3da670',
-    'Receivership':    '#dc3545'
-  };
-  document.getElementById('pipeline-table').innerHTML = `
-    <thead><tr>
-      <th>Asset</th><th>Type</th><th>Est. Value</th><th>Closes</th><th>Agent</th>
-    </tr></thead>
-    <tbody>
-    ${PIPELINE.map(p => {
-      const colorMap = {'Investment Sale':'#21513b','En Bloc':'#2d7a57','GLS Tender':'#3da670','Receivership':'#dc3545'};
-      const c = colorMap[p.type] || '#6b8c7a';
-      return `<tr>
-        <td>
-          <div style="font-weight:600;color:var(--text)">${p.asset}</div>
-          <div style="font-size:11px;color:var(--muted)">${p.subtype}</div>
-          <div class="pipeline-notes">${p.notes||''}</div>
-        </td>
-        <td><span class="pill" style="background:${c}18;color:${c};border:1px solid ${c}40">${p.type}</span></td>
-        <td style="font-family:'DM Mono',monospace;font-size:12px;white-space:nowrap;font-weight:500">${p.estValue}</td>
-        <td style="font-size:12px;color:var(--muted);white-space:nowrap">${p.closes}</td>
-        <td style="font-size:12px;color:var(--muted)">${p.agent}</td>
-      </tr>`;
-    }).join('')}
-    </tbody>`;
+function renderPipeline(){
+  var cm={"Investment Sale":"#21513b","En Bloc":"#2d7a57","GLS Tender":"#3da670","Receivership":"#dc3545"};
+  document.getElementById("ptable").innerHTML='<thead><tr><th>Asset</th><th>Type</th><th>Est. Value</th><th>Closes</th><th>Agent</th></tr></thead><tbody>'
+    +PIPELINE.map(function(p){var c=cm[p.type]||"#6b8c7a";
+      return'<tr><td><div style="font-weight:600">'+p.asset+'</div><div style="font-size:11px;color:#6b8c7a">'+p.subtype+'</div>'
+        +(p.notes?'<div style="font-size:11px;color:#6b8c7a;margin-top:3px;line-height:1.5">'+p.notes+'</div>':'')+'</td>'
+        +'<td><span class="pill" style="background:'+c+'18;color:'+c+';border:1px solid '+c+'40">'+p.type+'</span></td>'
+        +'<td style="font-family:\'DM Mono\',monospace;font-size:12px;font-weight:500;white-space:nowrap">'+p.estValue+'</td>'
+        +'<td style="font-size:12px;color:#6b8c7a;white-space:nowrap">'+p.closes+'</td>'
+        +'<td style="font-size:12px;color:#6b8c7a">'+p.agent+'</td></tr>';
+    }).join('')+'</tbody>';
 }
 
-// ═══════════════════════════════════════════════════════════════════
 // ANALYTICS
-// ═══════════════════════════════════════════════════════════════════
-function renderAnalytics() {
-  const el = document.getElementById('yoy-chart');
-  const yoy = YEARS.map((yr, i) => {
-    if (i === 0) return null;
-    const prev = VAL_M[i-1].reduce((a,b)=>a+b,0);
-    const curr = VAL_M[i].reduce((a,b)=>a+b,0);
-    const pct = prev > 0 ? ((curr-prev)/prev*100).toFixed(1) : '—';
-    return {yr, curr, prev, pct, color: curr >= prev ? 'var(--green)' : '#dc3545'};
-  }).filter(Boolean);
-
-  const maxV = Math.max(...yoy.map(d => Math.max(d.curr, d.prev)));
-  const W = el.clientWidth || 800, H = 260;
-  const PAD = {top:16,right:20,bottom:40,left:70};
-  const cW = W-PAD.left-PAD.right, cH = H-PAD.top-PAD.bottom;
-  const bw = cW/yoy.length;
-
-  let svg = `<svg viewBox="0 0 ${W} ${H}" width="${W}" height="${H}">`;
-  yoy.forEach((d,i) => {
-    const x = PAD.left + i*bw + bw*0.1;
-    const bW = bw*0.35;
-    const ph = (d.prev/maxV)*cH;
-    svg += `<rect x="${x}" y="${PAD.top+cH-ph}" width="${bW}" height="${ph}" fill="var(--dim)" rx="2"/>`;
-    const ch = (d.curr/maxV)*cH;
-    svg += `<rect x="${x+bW+2}" y="${PAD.top+cH-ch}" width="${bW}" height="${ch}" fill="${d.color}" rx="2" opacity=".85"/>`;
-    const lbl = d.pct !== '—' ? (parseFloat(d.pct) > 0 ? `+${d.pct}%` : `${d.pct}%`) : '—';
-    const lc = parseFloat(d.pct) >= 0 ? 'var(--green)' : '#dc3545';
-    svg += `<text x="${x+bW+1}" y="${PAD.top+cH-Math.max(ch,ph)-6}" text-anchor="middle" fill="${lc}" font-size="10" font-family="DM Sans">${lbl}</text>`;
-    svg += `<text x="${x+bW+1}" y="${PAD.top+cH+16}" text-anchor="middle" fill="var(--muted)" font-size="11" font-family="DM Sans">${d.yr}</text>`;
+function renderAnalytics(){
+  var el=document.getElementById("yoy-wrap"),W=el.clientWidth||800,H=250;
+  var P={t:14,r:16,b:36,l:62},cW=W-P.l-P.r,cH=H-P.t-P.b;
+  var yoy=[];
+  for(var i=1;i<YEARS.length;i++){
+    var pv=VAL_ARR[i-1].reduce(function(s,v){return s+v;},0);
+    var cv=VAL_ARR[i].reduce(function(s,v){return s+v;},0);
+    yoy.push({yr:YEARS[i],pv:pv,cv:cv});
+  }
+  var mx=Math.max.apply(null,yoy.map(function(d){return Math.max(d.pv,d.cv);}));
+  var bw2=cW/yoy.length;
+  var svg='<svg height="'+H+'" viewBox="0 0 '+W+' '+H+'" style="width:100%;overflow:visible">';
+  yoy.forEach(function(d,i){
+    var x=P.l+i*bw2+bw2*0.08,bw=bw2*0.38;
+    var ph=(d.pv/mx)*cH,ch=(d.cv/mx)*cH;
+    svg+='<rect x="'+x.toFixed(1)+'" y="'+(P.t+cH-ph).toFixed(1)+'" width="'+bw.toFixed(1)+'" height="'+Math.max(ph,0).toFixed(1)+'" fill="#c2e0d0" rx="2"/>';
+    svg+='<rect x="'+(x+bw+2).toFixed(1)+'" y="'+(P.t+cH-ch).toFixed(1)+'" width="'+bw.toFixed(1)+'" height="'+Math.max(ch,0).toFixed(1)+'" fill="'+(d.cv>=d.pv?"#21513b":"#dc3545")+'" rx="2" opacity=".85"/>';
+    var sl=yoy.length<=15||i%Math.ceil(yoy.length/15)===0||i===yoy.length-1;
+    if(sl)svg+='<text x="'+(x+bw+1).toFixed(1)+'" y="'+(P.t+cH+15)+'" text-anchor="middle" fill="#6b8c7a" font-size="10" font-family="DM Sans">'+d.yr+'</text>';
   });
-  svg += `<rect x="${PAD.left}" y="${H-14}" width="10" height="8" fill="var(--dim)" rx="1"/>
-          <text x="${PAD.left+14}" y="${H-7}" fill="var(--muted)" font-size="10" font-family="DM Sans">Prior Year</text>
-          <rect x="${PAD.left+90}" y="${H-14}" width="10" height="8" fill="var(--green)" rx="1"/>
-          <text x="${PAD.left+104}" y="${H-7}" fill="var(--muted)" font-size="10" font-family="DM Sans">Current Year</text>`;
-  svg += '</svg>';
-  el.innerHTML = svg;
-
-  const max2 = Math.max(...Object.values(TYPETOT));
-  document.getElementById('cumulative-bars').innerHTML = TYPES.map(t => `
-    <div class="type-bar-row">
-      <div class="type-bar-label">${TLABEL[t]}</div>
-      <div class="type-bar-track" style="height:10px">
-        <div class="type-bar-fill" style="width:${(TYPETOT[t]/max2*100).toFixed(1)}%;background:${TCOLOR[t]};height:10px"></div>
-      </div>
-      <div class="type-bar-val">${fmt(TYPETOT[t])}</div>
-    </div>`).join('');
+  svg+='<rect x="'+P.l+'" y="'+(H-14)+'" width="10" height="8" fill="#c2e0d0" rx="1"/>'
+      +'<text x="'+(P.l+14)+'" y="'+(H-6)+'" fill="#6b8c7a" font-size="10" font-family="DM Sans">Prior Year</text>'
+      +'<rect x="'+(P.l+90)+'" y="'+(H-14)+'" width="10" height="8" fill="#21513b" rx="1"/>'
+      +'<text x="'+(P.l+104)+'" y="'+(H-6)+'" fill="#6b8c7a" font-size="10" font-family="DM Sans">Current Year</text></svg>';
+  el.innerHTML=svg;
+  var mx2=Math.max.apply(null,Object.keys(TYPETOT).map(function(t){return TYPETOT[t];}));
+  document.getElementById("cum-bars").innerHTML=TYPES.map(function(t){
+    var p=mx2>0?(TYPETOT[t]/mx2*100).toFixed(1):0;
+    return'<div class="tbar-row"><div class="tbar-lbl">'+TLABEL[t]+'</div>'
+      +'<div class="tbar-track" style="height:9px"><div class="tbar-fill" style="width:'+p+'%;background:'+TCOLOR[t]+';height:9px"></div></div>'
+      +'<div class="tbar-val">'+fmtV(TYPETOT[t])+'</div></div>';
+  }).join('');
 }
 
-// ═══════════════════════════════════════════════════════════════════
+// MODE
+document.getElementById("m-val").addEventListener("click",function(){chartMode="val";this.classList.add("on");document.getElementById("m-cnt").classList.remove("on");renderBarChart();});
+document.getElementById("m-cnt").addEventListener("click",function(){chartMode="cnt";this.classList.add("on");document.getElementById("m-val").classList.remove("on");renderBarChart();});
+
+function renderAll(){renderKPIs();renderTypeChips();renderLegend();renderBarChart();renderTypeBreakdown();renderNewsPreview();}
+window.addEventListener("resize",function(){renderBarChart();});
+
 // INIT
-// ═══════════════════════════════════════════════════════════════════
-function init() {
-  renderKPIs();
-  renderToggles();
-  renderLegend();
-  renderBarChart();
-  renderTypeBreakdown();
-  renderNewsPreview();
-  renderNewsFilters();
-  renderNewsList();
-  renderPipeline();
-}
-
-window.addEventListener('resize', () => {
-  if (activeTab === 'overview') renderBarChart();
-  if (activeTab === 'analytics') renderAnalytics();
-});
-
-init();
+initRangeBtns();
+renderAll();
+renderNewsCats();
+renderNewsList();
+renderPipeline();
 </script>
 </body>
 </html>
