@@ -79,6 +79,7 @@ html,body{background:var(--bg);color:var(--txt);font-family:'DM Sans',sans-serif
 <div class="navtabs">
   <div class="navtab on" data-tab="overview">Overview</div>
   <div class="navtab" data-tab="analytics">Analytics</div>
+  <div class="navtab" data-tab="transactions">Transactions</div>
   <div class="navtab" data-tab="news">News Feed</div>
   <div class="navtab" data-tab="pipeline">Pipeline</div>
 </div>
@@ -127,6 +128,67 @@ html,body{background:var(--bg);color:var(--txt);font-family:'DM Sans',sans-serif
   <div class="panel" id="tab-news">
     <div class="fbar" id="news-cats"></div>
     <div id="news-list"></div>
+  </div>
+
+  <div class="panel" id="tab-transactions">
+    <div class="card">
+      <div class="card-hdr">
+        <div class="card-title">Search Transactions</div>
+        <div style="font-size:11px;color:var(--mut)" id="tx-count">—</div>
+      </div>
+      <!-- Search filters -->
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:10px;margin-bottom:14px">
+        <input id="tx-project" placeholder="Project name..." style="padding:7px 11px;border:1px solid var(--bdr);border-radius:7px;font-size:12px;font-family:'DM Sans',sans-serif;outline:none;color:var(--txt);background:var(--srf)"/>
+        <select id="tx-type" style="padding:7px 11px;border:1px solid var(--bdr);border-radius:7px;font-size:12px;font-family:'DM Sans',sans-serif;outline:none;color:var(--txt);background:var(--srf)">
+          <option value="">All Property Types</option>
+          <option value="Multiple-user Factory">Multi-User Factory</option>
+          <option value="Single-user Factory">Single-User Factory</option>
+          <option value="Warehouse">Warehouse</option>
+          <option value="Business Park">Business Park</option>
+          <option value="Office">Office</option>
+          <option value="Retail">Retail</option>
+          <option value="Shop House">Shophouse</option>
+        </select>
+        <select id="tx-year" style="padding:7px 11px;border:1px solid var(--bdr);border-radius:7px;font-size:12px;font-family:'DM Sans',sans-serif;outline:none;color:var(--txt);background:var(--srf)">
+          <option value="">All Years</option>
+          <option value="2026">2026</option>
+          <option value="2025">2025</option>
+          <option value="2024">2024</option>
+          <option value="2023">2023</option>
+          <option value="2022">2022</option>
+          <option value="2021">2021</option>
+          <option value="2020">2020</option>
+          <option value="2019">2019</option>
+          <option value="2018">2018</option>
+          <option value="2017">2017</option>
+          <option value="2016">2016</option>
+          <option value="2015">2015</option>
+        </select>
+        <select id="tx-region" style="padding:7px 11px;border:1px solid var(--bdr);border-radius:7px;font-size:12px;font-family:'DM Sans',sans-serif;outline:none;color:var(--txt);background:var(--srf)">
+          <option value="">All Regions</option>
+          <option value="Central Region">Central</option>
+          <option value="East Region">East</option>
+          <option value="North Region">North</option>
+          <option value="North-East Region">North-East</option>
+          <option value="West Region">West</option>
+        </select>
+        <button onclick="searchTransactions()" style="padding:7px 16px;background:var(--g1);color:#fff;border:none;border-radius:7px;font-size:12px;font-family:'DM Sans',sans-serif;cursor:pointer;font-weight:600">Search</button>
+        <button onclick="clearSearch()" style="padding:7px 16px;background:var(--srf2);color:var(--mut);border:1px solid var(--bdr);border-radius:7px;font-size:12px;font-family:'DM Sans',sans-serif;cursor:pointer">Clear</button>
+      </div>
+      <!-- Results table -->
+      <div id="tx-loading" style="display:none;text-align:center;padding:30px;color:var(--mut);font-size:13px">Loading transactions...</div>
+      <div style="overflow-x:auto">
+        <table class="ptable" id="tx-table" style="display:none">
+          <thead><tr>
+            <th>Date</th><th>Project</th><th>Address</th><th>Type</th>
+            <th>Price</th><th>Area (sqft)</th><th>PSF</th><th>Tenure</th><th>Region</th>
+          </tr></thead>
+          <tbody id="tx-tbody"></tbody>
+        </table>
+      </div>
+      <div id="tx-pagination" style="display:flex;gap:8px;align-items:center;margin-top:12px;justify-content:center"></div>
+      <div id="tx-empty" style="display:none;text-align:center;padding:40px;color:var(--mut);font-size:13px">No transactions found. Try adjusting your search.</div>
+    </div>
   </div>
 
   <div class="panel" id="tab-pipeline">
@@ -410,6 +472,140 @@ document.getElementById("m-cnt").addEventListener("click",function(){chartMode="
 
 function renderAll(){renderKPIs();renderTypeChips();renderLegend();renderBarChart();renderTypeBreakdown();renderNewsPreview();}
 window.addEventListener("resize",function(){renderBarChart();});
+
+// ─── SUPABASE ─────────────────────────────────────────────────────────
+var SB_URL = "https://xywgocvjuygudzrduvwr.supabase.co";
+var SB_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inh5d2dvY3ZqdXlndWR6cmR1dndyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzI5MTE5OTgsImV4cCI6MjA4ODQ4Nzk5OH0.lGQ0utJV1E00ug-Sf0ZXh9lEYfhGHSONQpPkBblDLTM";
+var TX_PAGE = 0;
+var TX_PAGE_SIZE = 50;
+var TX_TOTAL = 0;
+var TX_LAST_QUERY = {};
+
+async function sbFetch(params){
+  var url = SB_URL + "/rest/v1/transactions?" + params + "&order=sale_date.desc";
+  var res = await fetch(url, {
+    headers: {
+      "apikey": SB_KEY,
+      "Authorization": "Bearer " + SB_KEY,
+      "Prefer": "count=exact"
+    }
+  });
+  var total = parseInt(res.headers.get("content-range")?.split("/")[1] || "0");
+  var data = await res.json();
+  return {data: data, total: total};
+}
+
+function buildQuery(page){
+  var parts = ["select=id,project_name,address,property_type,transacted_price,area_sqft,unit_price_psf,sale_date,tenure,planning_region,db_type"];
+  var proj = document.getElementById("tx-project").value.trim();
+  var type = document.getElementById("tx-type").value;
+  var year = document.getElementById("tx-year").value;
+  var region = document.getElementById("tx-region").value;
+  if(proj) parts.push("project_name=ilike.*" + encodeURIComponent(proj) + "*");
+  if(type) parts.push("property_type=ilike.*" + encodeURIComponent(type) + "*");
+  if(year){ parts.push("sale_date=gte." + year + "-01-01"); parts.push("sale_date=lte." + year + "-12-31"); }
+  if(region) parts.push("planning_region=eq." + encodeURIComponent(region));
+  var offset = page * TX_PAGE_SIZE;
+  parts.push("limit=" + TX_PAGE_SIZE + "&offset=" + offset);
+  return parts.join("&");
+}
+
+async function searchTransactions(page){
+  page = page || 0;
+  TX_PAGE = page;
+  document.getElementById("tx-loading").style.display = "block";
+  document.getElementById("tx-table").style.display = "none";
+  document.getElementById("tx-empty").style.display = "none";
+  document.getElementById("tx-pagination").innerHTML = "";
+  try {
+    var result = await sbFetch(buildQuery(page));
+    TX_TOTAL = result.total;
+    document.getElementById("tx-loading").style.display = "none";
+    document.getElementById("tx-count").textContent = TX_TOTAL.toLocaleString() + " transactions found";
+    if(!result.data || result.data.length === 0){
+      document.getElementById("tx-empty").style.display = "block";
+      return;
+    }
+    renderTxTable(result.data);
+    renderTxPagination();
+  } catch(e){
+    document.getElementById("tx-loading").style.display = "none";
+    document.getElementById("tx-count").textContent = "Error loading data";
+    console.error(e);
+  }
+}
+
+function renderTxTable(rows){
+  var tbody = document.getElementById("tx-tbody");
+  tbody.innerHTML = rows.map(function(r){
+    var price = r.transacted_price ? "S$" + Number(r.transacted_price).toLocaleString() : "-";
+    var area  = r.area_sqft ? Number(r.area_sqft).toLocaleString() : "-";
+    var psf   = r.unit_price_psf ? "S$" + Math.round(r.unit_price_psf) : "-";
+    var date  = r.sale_date ? r.sale_date.substring(0,10) : "-";
+    var type  = r.property_type || "-";
+    var tenure = r.tenure ? r.tenure.substring(0,20) : "-";
+    var region = (r.planning_region||"-").replace(" Region","");
+    var proj  = r.project_name || "-";
+    var addr  = r.address || "-";
+    return "<tr>"
+      + "<td style='white-space:nowrap;font-family:\"DM Mono\",monospace;font-size:11px'>" + date + "</td>"
+      + "<td style='font-weight:600;min-width:140px'>" + proj + "</td>"
+      + "<td style='font-size:11px;color:var(--mut);min-width:180px'>" + addr + "</td>"
+      + "<td><span class='pill' style='background:var(--glt);color:var(--g2);border:1px solid var(--gmd);white-space:nowrap'>" + type + "</span></td>"
+      + "<td style='font-family:\"DM Mono\",monospace;font-size:12px;font-weight:600;white-space:nowrap'>" + price + "</td>"
+      + "<td style='font-family:\"DM Mono\",monospace;font-size:12px;white-space:nowrap'>" + area + "</td>"
+      + "<td style='font-family:\"DM Mono\",monospace;font-size:12px;white-space:nowrap'>" + psf + "</td>"
+      + "<td style='font-size:11px;color:var(--mut)'>" + tenure + "</td>"
+      + "<td style='font-size:11px;color:var(--mut)'>" + region + "</td>"
+      + "</tr>";
+  }).join("");
+  document.getElementById("tx-table").style.display = "table";
+}
+
+function renderTxPagination(){
+  var totalPages = Math.ceil(TX_TOTAL / TX_PAGE_SIZE);
+  if(totalPages <= 1) return;
+  var el = document.getElementById("tx-pagination");
+  var html = "";
+  html += "<button onclick='searchTransactions(" + Math.max(0, TX_PAGE-1) + ")' "
+        + (TX_PAGE===0?"disabled style='opacity:.4'":"")
+        + " style='padding:5px 12px;border:1px solid var(--bdr);border-radius:6px;background:var(--srf);cursor:pointer;font-size:12px'>← Prev</button>";
+  html += "<span style='font-size:12px;color:var(--mut)'>Page " + (TX_PAGE+1) + " of " + totalPages + " (" + TX_TOTAL.toLocaleString() + " results)</span>";
+  html += "<button onclick='searchTransactions(" + Math.min(totalPages-1, TX_PAGE+1) + ")' "
+        + (TX_PAGE>=totalPages-1?"disabled style='opacity:.4'":"")
+        + " style='padding:5px 12px;border:1px solid var(--bdr);border-radius:6px;background:var(--srf);cursor:pointer;font-size:12px'>Next →</button>";
+  el.innerHTML = html;
+}
+
+function clearSearch(){
+  document.getElementById("tx-project").value = "";
+  document.getElementById("tx-type").value = "";
+  document.getElementById("tx-year").value = "";
+  document.getElementById("tx-region").value = "";
+  document.getElementById("tx-table").style.display = "none";
+  document.getElementById("tx-empty").style.display = "none";
+  document.getElementById("tx-count").textContent = "—";
+  document.getElementById("tx-pagination").innerHTML = "";
+}
+
+// Load transactions when tab is clicked
+document.querySelectorAll(".navtab").forEach(function(t){
+  if(t.dataset.tab === "transactions"){
+    t.addEventListener("click", function(){
+      if(document.getElementById("tx-tbody").innerHTML === ""){
+        searchTransactions(0);
+      }
+    });
+  }
+});
+
+// Search on Enter key
+document.addEventListener("DOMContentLoaded", function(){
+  ["tx-project"].forEach(function(id){
+    var el = document.getElementById(id);
+    if(el) el.addEventListener("keydown", function(e){ if(e.key==="Enter") searchTransactions(0); });
+  });
+});
 
 // INIT
 initRangeBtns();
