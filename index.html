@@ -682,8 +682,7 @@ function dirSetView(mode){
   document.getElementById("dir-view-grid").style.color    = mode==='grid'?'#fff':'var(--mut)';
   document.getElementById("dir-view-list").style.background = mode==='list'?'var(--g1)':'var(--srf2)';
   document.getElementById("dir-view-list").style.color    = mode==='list'?'#fff':'var(--mut)';
-  document.getElementById("dir-grid").style.display = mode==='grid'?'grid':'none';
-  document.getElementById("dir-list").style.display = mode==='list'?'block':'none';
+  dirSearch(dirPage); // re-render current page in new view
 }
 
 function dirSortCol(col){
