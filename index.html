@@ -160,18 +160,13 @@ html,body{background:var(--bg);color:var(--txt);font-family:'DM Sans',sans-serif
       </div>
     </div>
 
-    <div class="g2">
-      <div class="card"><div class="card-hdr"><div class="card-title">By Property Type — Selected Period</div></div><div id="type-breakdown"></div></div>
-      <div class="card"><div class="card-hdr"><div class="card-title">Latest News</div></div><div id="news-preview"></div></div>
-    </div>
-
-    <!-- Overview Transaction Results -->
-    <div class="card" id="ov-tx-card" style="display:none">
+    <!-- Overview Transaction Results — always visible, below chart+KPI row -->
+    <div class="card" id="ov-tx-card" style="margin-bottom:14px">
       <div class="card-hdr">
-        <div class="card-title" id="ov-tx-title">Recent Transactions</div>
-        <div style="font-size:11px;color:var(--mut)" id="ov-tx-count">—</div>
+        <div class="card-title" id="ov-tx-title">Recent Transactions — Last 12 Months</div>
+        <div style="font-size:11px;color:var(--mut)" id="ov-tx-count">Loading...</div>
       </div>
-      <div id="ov-tx-loading" style="display:none;text-align:center;padding:20px;color:var(--mut);font-size:13px">Loading...</div>
+      <div id="ov-tx-loading" style="text-align:center;padding:20px;color:var(--mut);font-size:13px">Loading transactions...</div>
       <div style="overflow-x:auto">
         <table class="ptable" id="ov-tx-table" style="display:none">
           <thead><tr>
@@ -181,9 +176,15 @@ html,body{background:var(--bg);color:var(--txt);font-family:'DM Sans',sans-serif
           <tbody id="ov-tx-tbody"></tbody>
         </table>
       </div>
-      <div id="ov-tx-empty" style="display:none;text-align:center;padding:30px;color:var(--mut);font-size:13px">No transactions found for this search.</div>
+      <div id="ov-tx-empty" style="display:none;text-align:center;padding:30px;color:var(--mut);font-size:13px">No transactions found.</div>
       <div id="ov-tx-pagination" style="display:flex;gap:8px;align-items:center;margin-top:12px;justify-content:center"></div>
     </div>
+
+    <div class="g2">
+      <div class="card"><div class="card-hdr"><div class="card-title">By Property Type — Selected Period</div></div><div id="type-breakdown"></div></div>
+      <div class="card"><div class="card-hdr"><div class="card-title">Latest News</div></div><div id="news-preview"></div></div>
+    </div>
+
   </div>
 
   <div class="panel" id="tab-analytics">
@@ -829,25 +830,56 @@ function renderOvTable(rows){
   document.getElementById("ov-tx-table").style.display = "table";
 }
 
-function renderOvPagination(q){
+async function loadDefaultTransactions(page){
+  page = page||0;
+  ovPage = page;
+  var dateFilter = "sale_date=gte." + getLast12MonthsDate();
+  var offset = page * 10;
+  var url = SB_URL + "/rest/v1/transactions?select=id,project_name,address,property_type,transacted_price,area_sqft,unit_price_psf,sale_date,tenure,planning_region&"
+    + dateFilter + "&order=sale_date.desc&limit=10&offset=" + offset;
+  var res = await fetch(url, {
+    headers:{"apikey":SB_KEY,"Authorization":"Bearer "+SB_KEY,"Prefer":"count=exact"}
+  });
+  var total = parseInt(res.headers.get("content-range")?.split("/")[1]||"0");
+  var data = await res.json();
+  ovTotal = total;
+  document.getElementById("ov-tx-loading").style.display = "none";
+  document.getElementById("ov-tx-count").textContent = total.toLocaleString() + " transactions in last 12 months";
+  if(data && data.length > 0){
+    renderOvTable(data);
+    renderOvPaginationDefault();
+  } else {
+    document.getElementById("ov-tx-empty").style.display = "block";
+  }
+}
+
+function renderOvPaginationDefault(){
   var totalPages = Math.ceil(ovTotal/10);
   if(totalPages<=1) return;
   var el = document.getElementById("ov-tx-pagination");
+  var q = document.getElementById("ov-search").value.trim();
+  var fn = q ? "ovSearch" : "loadDefaultTransactions";
   el.innerHTML =
-    "<button onclick='ovSearch("+Math.max(0,ovPage-1)+")' "+(ovPage===0?"disabled style='opacity:.4'":"")
+    "<button onclick='"+fn+"("+Math.max(0,ovPage-1)+")' "+(ovPage===0?"disabled style='opacity:.4'":"")
     +" style='padding:5px 12px;border:1px solid var(--bdr);border-radius:6px;background:var(--srf);cursor:pointer;font-size:12px'>← Prev</button>"
-    +"<span style='font-size:12px;color:var(--mut)'>Page "+(ovPage+1)+" of "+totalPages+" (last 12 mths)</span>"
-    +"<button onclick='ovSearch("+Math.min(totalPages-1,ovPage+1)+")' "+(ovPage>=totalPages-1?"disabled style='opacity:.4'":"")
+    +"<span style='font-size:12px;color:var(--mut)'>Page "+(ovPage+1)+" of "+totalPages+" ("+ovTotal.toLocaleString()+" results)</span>"
+    +"<button onclick='"+fn+"("+Math.min(totalPages-1,ovPage+1)+")' "+(ovPage>=totalPages-1?"disabled style='opacity:.4'":"")
     +" style='padding:5px 12px;border:1px solid var(--bdr);border-radius:6px;background:var(--srf);cursor:pointer;font-size:12px'>Next →</button>";
 }
 
 function ovClear(){
   document.getElementById("ov-search").value = "";
-  document.getElementById("ov-search-info").style.display = "none";
-  document.getElementById("ov-tx-card").style.display = "none";
+  document.getElementById("ov-search-info").style.display = "";
+  document.getElementById("ov-search-info").textContent = "";
   document.getElementById("ov-ac-dropdown").style.display = "none";
+  document.getElementById("ov-tx-title").textContent = "Recent Transactions — Last 12 Months";
+  document.getElementById("ov-tx-loading").style.display = "block";
+  document.getElementById("ov-tx-table").style.display = "none";
+  document.getElementById("ov-tx-empty").style.display = "none";
+  document.getElementById("ov-tx-pagination").innerHTML = "";
   CHART_OVERRIDE = null;
   renderAll();
+  loadDefaultTransactions(0);
 }
 
 function initOvAutocomplete(){
@@ -1002,6 +1034,7 @@ renderNewsList();
 renderPipeline();
 initAutocomplete();
 initOvAutocomplete();
+loadDefaultTransactions(0);
 </script>
 </body>
 </html>
