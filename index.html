@@ -85,6 +85,7 @@ html,body{background:var(--bg);color:var(--txt);font-family:'DM Sans',sans-serif
 <div class="navtabs">
   <div class="navtab on" data-tab="overview">Overview</div>
   <div class="navtab" data-tab="analytics">Analytics</div>
+  <div class="navtab" data-tab="directory">Directory</div>
   <div class="navtab" data-tab="transactions">Transactions</div>
   <div class="navtab" data-tab="news">News Feed</div>
   <div class="navtab" data-tab="pipeline">Pipeline</div>
@@ -185,6 +186,69 @@ html,body{background:var(--bg);color:var(--txt);font-family:'DM Sans',sans-serif
       <div class="card"><div class="card-hdr"><div class="card-title">Latest News</div></div><div id="news-preview"></div></div>
     </div>
 
+  </div>
+
+  <div class="panel" id="tab-directory">
+    <!-- Directory search bar -->
+    <div class="card" style="margin-bottom:14px">
+      <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap">
+        <div style="font-size:13px;font-weight:600;color:var(--g1);white-space:nowrap">🏢 Property Directory</div>
+        <input id="dir-search" placeholder="Search by building name or address..." autocomplete="off"
+          style="flex:1;min-width:200px;padding:8px 14px;border:1px solid var(--bdr);border-radius:8px;font-size:13px;font-family:'DM Sans',sans-serif;outline:none;color:var(--txt);background:var(--srf)"/>
+        <select id="dir-type" style="padding:8px 11px;border:1px solid var(--bdr);border-radius:8px;font-size:12px;font-family:'DM Sans',sans-serif;outline:none;color:var(--txt);background:var(--srf)">
+          <option value="">All Types</option>
+          <option value="Multiple-user Factory">Multi-User Factory</option>
+          <option value="Single-user Factory">Single-User Factory</option>
+          <option value="Warehouse">Warehouse</option>
+          <option value="Business Park">Business Park</option>
+          <option value="Office">Office</option>
+          <option value="Retail">Retail</option>
+          <option value="Shop House">Shophouse</option>
+        </select>
+        <select id="dir-region" style="padding:8px 11px;border:1px solid var(--bdr);border-radius:8px;font-size:12px;font-family:'DM Sans',sans-serif;outline:none;color:var(--txt);background:var(--srf)">
+          <option value="">All Regions</option>
+          <option value="Central Region">Central</option>
+          <option value="East Region">East</option>
+          <option value="North Region">North</option>
+          <option value="North-East Region">North-East</option>
+          <option value="West Region">West</option>
+        </select>
+        <button onclick="dirSearch(0)" style="padding:8px 18px;background:var(--g1);color:#fff;border:none;border-radius:8px;font-size:12px;font-family:'DM Sans',sans-serif;cursor:pointer;font-weight:600">Search</button>
+        <button onclick="dirClear()" style="padding:8px 14px;background:var(--srf2);color:var(--mut);border:1px solid var(--bdr);border-radius:8px;font-size:12px;font-family:'DM Sans',sans-serif;cursor:pointer">Clear</button>
+        <div style="font-size:11px;color:var(--mut)" id="dir-count">922 buildings</div>
+      </div>
+    </div>
+
+    <!-- Directory grid -->
+    <div id="dir-loading" style="text-align:center;padding:40px;color:var(--mut);font-size:13px">Loading directory...</div>
+    <div id="dir-grid" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:14px;margin-bottom:14px"></div>
+    <div id="dir-pagination" style="display:flex;gap:8px;align-items:center;justify-content:center;margin-bottom:16px"></div>
+
+    <!-- Building detail panel -->
+    <div id="dir-detail" style="display:none">
+      <div class="card">
+        <div style="display:flex;align-items:center;gap:12px;margin-bottom:16px">
+          <button onclick="dirCloseDetail()" style="padding:6px 14px;background:var(--srf2);color:var(--mut);border:1px solid var(--bdr);border-radius:7px;font-size:12px;cursor:pointer;font-family:'DM Sans',sans-serif">← Back</button>
+          <div style="font-size:16px;font-weight:700" id="det-name">—</div>
+          <span class="pill p-tag" id="det-type-pill">—</span>
+        </div>
+        <!-- Stats row -->
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:10px;margin-bottom:18px" id="det-stats"></div>
+        <!-- PSF Trend chart -->
+        <div style="font-weight:600;font-size:13px;margin-bottom:10px">PSF Trend by Year</div>
+        <div id="det-chart" style="width:100%;min-height:180px;margin-bottom:18px"></div>
+        <!-- Transaction history -->
+        <div style="font-weight:600;font-size:13px;margin-bottom:10px">Transaction History</div>
+        <div id="det-tx-loading" style="text-align:center;padding:20px;color:var(--mut);font-size:12px">Loading...</div>
+        <div style="overflow-x:auto">
+          <table class="ptable" id="det-tx-table" style="display:none">
+            <thead><tr><th>Date</th><th>Address</th><th>Price</th><th>Area (sqft)</th><th>PSF</th><th>Type of Sale</th><th>Tenure</th></tr></thead>
+            <tbody id="det-tx-tbody"></tbody>
+          </table>
+        </div>
+        <div id="det-tx-pagination" style="display:flex;gap:8px;align-items:center;margin-top:12px;justify-content:center"></div>
+      </div>
+    </div>
   </div>
 
   <div class="panel" id="tab-analytics">
@@ -549,6 +613,184 @@ function renderAll(){
   renderKPIs();renderTypeChips();renderLegend();renderBarChart();renderTypeBreakdown();renderNewsPreview();
 }
 window.addEventListener("resize",function(){renderBarChart();});
+
+// ─── DIRECTORY ───────────────────────────────────────────────────────
+var dirPage = 0, dirTotal = 0, dirPageSize = 24;
+var detTxPage = 0, detTxTotal = 0, detProject = '';
+
+async function dirSearch(page){
+  page = page||0; dirPage = page;
+  var q = document.getElementById("dir-search").value.trim();
+  var type = document.getElementById("dir-type").value;
+  var region = document.getElementById("dir-region").value;
+  document.getElementById("dir-loading").style.display = "block";
+  document.getElementById("dir-grid").innerHTML = "";
+  document.getElementById("dir-pagination").innerHTML = "";
+  document.getElementById("dir-detail").style.display = "none";
+  var parts = ["select=id,project_name,building_address,property_type,planning_area,planning_region,total_transactions,total_value_sgd,avg_psf,min_psf,max_psf,first_transaction,last_transaction,tenure"];
+  if(q) parts.push("or=(project_name.ilike.*"+encodeURIComponent(q)+"*,building_address.ilike.*"+encodeURIComponent(q)+"*)");
+  if(type) parts.push("property_type=ilike.*"+encodeURIComponent(type)+"*");
+  if(region) parts.push("planning_region=eq."+encodeURIComponent(region));
+  var offset = page * dirPageSize;
+  parts.push("order=total_transactions.desc&limit="+dirPageSize+"&offset="+offset);
+  var res = await fetch(SB_URL+"/rest/v1/properties?"+parts.join("&"),{headers:{"apikey":SB_KEY,"Authorization":"Bearer "+SB_KEY,"Prefer":"count=exact"}});
+  dirTotal = parseInt(res.headers.get("content-range")?.split("/")[1]||"0");
+  var data = await res.json();
+  document.getElementById("dir-loading").style.display = "none";
+  document.getElementById("dir-count").textContent = dirTotal.toLocaleString()+" buildings";
+  renderDirGrid(data);
+  renderDirPagination();
+}
+
+function renderDirGrid(rows){
+  var tmap={"Multiple-user Factory":"#52c98a","Single-user Factory":"#7dd9a8","Warehouse":"#c8e8d8","Business Park":"#a8e8c8","Office":"#21513b","Retail":"#2d7a57","Shop House":"#3da670"};
+  document.getElementById("dir-grid").innerHTML = rows.map(function(r){
+    var tc=tmap[r.property_type]||"#21513b";
+    var val=r.total_value_sgd?(r.total_value_sgd>=1e9?"S$"+(r.total_value_sgd/1e9).toFixed(1)+"B":"S$"+(r.total_value_sgd/1e6).toFixed(0)+"M"):"—";
+    var psf=r.avg_psf?"S$"+Math.round(r.avg_psf)+" psf":"—";
+    var lastDeal=r.last_transaction?r.last_transaction.substring(0,7):"—";
+    var region=(r.planning_region||"").replace(" Region","");
+    return '<div style="background:var(--srf);border:1px solid var(--bdr);border-radius:10px;padding:16px;cursor:pointer;transition:all .15s;border-top:3px solid '+tc+'" onmouseenter="this.style.borderColor=\''+tc+'\'" onmouseleave="this.style.borderColor=\'var(--bdr)\';this.style.borderTopColor=\''+tc+'\'" onclick="dirOpenDetail(\''+r.project_name.replace(/\\/g,"\\\\").replace(/'/g,"\\'")+'\',\''+r.property_type+'\')">'
+      +'<div style="font-weight:700;font-size:13px;margin-bottom:3px;line-height:1.3">'+r.project_name+'</div>'
+      +'<div style="font-size:11px;color:var(--mut);margin-bottom:9px">'+(r.building_address||"—")+(region?" · "+region:"")+'</div>'
+      +'<div style="display:flex;gap:5px;flex-wrap:wrap;margin-bottom:10px">'
+      +'<span class="pill" style="background:'+tc+'20;color:'+tc+';border:1px solid '+tc+'40">'+(r.property_type||"—")+'</span>'
+      +(r.tenure?'<span class="pill p-neu">'+r.tenure.substring(0,18)+'</span>':'')
+      +'</div>'
+      +'<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:5px">'
+      +'<div style="text-align:center;background:var(--srf2);border-radius:6px;padding:7px 4px"><div style="font-size:15px;font-weight:700;color:var(--g1)">'+r.total_transactions.toLocaleString()+'</div><div style="font-size:9px;color:var(--mut);text-transform:uppercase;letter-spacing:.04em">Deals</div></div>'
+      +'<div style="text-align:center;background:var(--srf2);border-radius:6px;padding:7px 4px"><div style="font-size:12px;font-weight:700;color:var(--txt)">'+val+'</div><div style="font-size:9px;color:var(--mut);text-transform:uppercase;letter-spacing:.04em">Total Value</div></div>'
+      +'<div style="text-align:center;background:var(--srf2);border-radius:6px;padding:7px 4px"><div style="font-size:12px;font-weight:700;color:var(--txt)">'+psf+'</div><div style="font-size:9px;color:var(--mut);text-transform:uppercase;letter-spacing:.04em">Avg PSF</div></div>'
+      +'</div>'
+      +'<div style="margin-top:8px;font-size:10px;color:var(--mut)">Last deal: '+lastDeal+'</div>'
+      +'</div>';
+  }).join('');
+}
+
+function renderDirPagination(){
+  var tp=Math.ceil(dirTotal/dirPageSize); if(tp<=1) return;
+  document.getElementById("dir-pagination").innerHTML =
+    '<button onclick="dirSearch('+Math.max(0,dirPage-1)+')" '+(dirPage===0?"disabled style='opacity:.4'":"")
+    +' style="padding:5px 12px;border:1px solid var(--bdr);border-radius:6px;background:var(--srf);cursor:pointer;font-size:12px">← Prev</button>'
+    +'<span style="font-size:12px;color:var(--mut)">Page '+(dirPage+1)+' of '+tp+' ('+dirTotal.toLocaleString()+' buildings)</span>'
+    +'<button onclick="dirSearch('+Math.min(tp-1,dirPage+1)+')" '+(dirPage>=tp-1?"disabled style='opacity:.4'":"")
+    +' style="padding:5px 12px;border:1px solid var(--bdr);border-radius:6px;background:var(--srf);cursor:pointer;font-size:12px">Next →</button>';
+}
+
+function dirClear(){
+  document.getElementById("dir-search").value="";
+  document.getElementById("dir-type").value="";
+  document.getElementById("dir-region").value="";
+  dirSearch(0);
+}
+
+async function dirOpenDetail(name, type){
+  detProject=name; detTxPage=0;
+  document.getElementById("dir-grid").style.display="none";
+  document.getElementById("dir-pagination").style.display="none";
+  document.getElementById("dir-detail").style.display="block";
+  document.getElementById("det-name").textContent=name;
+  document.getElementById("det-type-pill").textContent=type;
+  document.getElementById("det-tx-loading").style.display="block";
+  document.getElementById("det-tx-table").style.display="none";
+  document.getElementById("det-stats").innerHTML="";
+  document.getElementById("det-chart").innerHTML="";
+
+  var r1 = await fetch(SB_URL+"/rest/v1/properties?project_name=eq."+encodeURIComponent(name)+"&select=*",{headers:{"apikey":SB_KEY,"Authorization":"Bearer "+SB_KEY}});
+  var props = await r1.json(); var p=props[0]||{};
+  var val=p.total_value_sgd?(p.total_value_sgd>=1e9?"S$"+(p.total_value_sgd/1e9).toFixed(2)+"B":"S$"+(p.total_value_sgd/1e6).toFixed(1)+"M"):"—";
+  var stats=[
+    {l:"Total Deals",v:(p.total_transactions||0).toLocaleString()},
+    {l:"Total Value",v:val},
+    {l:"Avg PSF",v:p.avg_psf?"S$"+Math.round(p.avg_psf):"—"},
+    {l:"Min PSF",v:p.min_psf?"S$"+Math.round(p.min_psf):"—"},
+    {l:"Max PSF",v:p.max_psf?"S$"+Math.round(p.max_psf):"—"},
+    {l:"First Deal",v:p.first_transaction?p.first_transaction.substring(0,7):"—"},
+    {l:"Last Deal",v:p.last_transaction?p.last_transaction.substring(0,7):"—"},
+    {l:"Location",v:(p.planning_area||"—")+", "+(p.planning_region||"").replace(" Region","")},
+  ];
+  document.getElementById("det-stats").innerHTML=stats.map(function(s){
+    return '<div style="background:var(--srf2);border-radius:8px;padding:10px;text-align:center">'
+      +'<div style="font-size:15px;font-weight:700;color:var(--g1)">'+s.v+'</div>'
+      +'<div style="font-size:10px;color:var(--mut);text-transform:uppercase;letter-spacing:.04em;margin-top:2px">'+s.l+'</div></div>';
+  }).join('');
+
+  var r2=await fetch(SB_URL+"/rest/v1/transactions?project_name=eq."+encodeURIComponent(name)+"&select=sale_date,unit_price_psf&limit=50000",{headers:{"apikey":SB_KEY,"Authorization":"Bearer "+SB_KEY}});
+  var txAll=await r2.json();
+  renderDetChart(txAll);
+  loadDetTx(name,0);
+}
+
+function renderDetChart(rows){
+  var byYear={};
+  rows.forEach(function(r){
+    if(!r.sale_date||!r.unit_price_psf) return;
+    var yr=parseInt(r.sale_date.substring(0,4));
+    if(!byYear[yr]) byYear[yr]={sum:0,cnt:0};
+    byYear[yr].sum+=parseFloat(r.unit_price_psf); byYear[yr].cnt++;
+  });
+  var yrs=Object.keys(byYear).map(Number).sort();
+  if(!yrs.length){document.getElementById("det-chart").innerHTML='<div style="color:var(--mut);font-size:12px;padding:20px">No PSF data</div>';return;}
+  var vals=yrs.map(function(y){return Math.round(byYear[y].sum/byYear[y].cnt);});
+  var mx=Math.max.apply(null,vals);
+  var el=document.getElementById("det-chart"),W=el.clientWidth||700,H=180;
+  var P={t:10,r:10,b:30,l:55},cW=W-P.l-P.r,cH=H-P.t-P.b;
+  var bW=Math.max(4,cW/yrs.length*0.7);
+  var svg='<svg height="'+H+'" viewBox="0 0 '+W+' '+H+'" style="width:100%;overflow:visible">';
+  for(var k=0;k<=4;k++){var tv=k*mx/4,ty=P.t+cH-(tv/mx)*cH;
+    svg+='<line x1="'+P.l+'" x2="'+(P.l+cW)+'" y1="'+ty+'" y2="'+ty+'" stroke="#dde8e3" stroke-width="1"/>';
+    svg+='<text x="'+(P.l-5)+'" y="'+(ty+4)+'" text-anchor="end" fill="#6b8c7a" font-size="10" font-family="DM Mono">S$'+Math.round(tv)+'</text>';}
+  yrs.forEach(function(yr,i){
+    var bh=(vals[i]/mx)*cH,bx=P.l+i*(cW/yrs.length)+(cW/yrs.length-bW)/2,by=P.t+cH-bh;
+    svg+='<rect x="'+bx.toFixed(1)+'" y="'+by.toFixed(1)+'" width="'+bW.toFixed(1)+'" height="'+Math.max(bh,0).toFixed(1)+'" fill="#21513b" rx="2" opacity=".85"/>';
+    if(yrs.length<=15||i%Math.ceil(yrs.length/12)===0||i===yrs.length-1)
+      svg+='<text x="'+(bx+bW/2).toFixed(1)+'" y="'+(P.t+cH+15)+'" text-anchor="middle" fill="#6b8c7a" font-size="10" font-family="DM Sans">'+yr+'</text>';
+  });
+  svg+='</svg>';
+  el.innerHTML=svg;
+}
+
+async function loadDetTx(name,page){
+  detTxPage=page;
+  document.getElementById("det-tx-loading").style.display="block";
+  document.getElementById("det-tx-table").style.display="none";
+  var offset=page*20;
+  var res=await fetch(SB_URL+"/rest/v1/transactions?project_name=eq."+encodeURIComponent(name)+"&select=sale_date,address,transacted_price,area_sqft,unit_price_psf,type_of_sale,tenure&order=sale_date.desc&limit=20&offset="+offset,{headers:{"apikey":SB_KEY,"Authorization":"Bearer "+SB_KEY,"Prefer":"count=exact"}});
+  detTxTotal=parseInt(res.headers.get("content-range")?.split("/")[1]||"0");
+  var data=await res.json();
+  document.getElementById("det-tx-loading").style.display="none";
+  document.getElementById("det-tx-tbody").innerHTML=data.map(function(r){
+    return "<tr>"
+      +"<td style='white-space:nowrap;font-family:\"DM Mono\",monospace;font-size:11px'>"+(r.sale_date||"—")+"</td>"
+      +"<td style='font-size:11px;color:var(--mut)'>"+(r.address||"—")+"</td>"
+      +"<td style='font-family:\"DM Mono\",monospace;font-size:12px;font-weight:600'>S$"+(r.transacted_price?Number(r.transacted_price).toLocaleString():"—")+"</td>"
+      +"<td style='font-family:\"DM Mono\",monospace;font-size:12px'>"+(r.area_sqft?parseFloat(r.area_sqft).toFixed(0):"—")+"</td>"
+      +"<td style='font-family:\"DM Mono\",monospace;font-size:12px'>"+(r.unit_price_psf?"S$"+Math.round(r.unit_price_psf):"—")+"</td>"
+      +"<td style='font-size:11px'>"+(r.type_of_sale||"—")+"</td>"
+      +"<td style='font-size:11px;color:var(--mut)'>"+(r.tenure?r.tenure.substring(0,20):"—")+"</td>"
+      +"</tr>";
+  }).join('');
+  document.getElementById("det-tx-table").style.display="table";
+  var tp=Math.ceil(detTxTotal/20),pel=document.getElementById("det-tx-pagination");
+  if(tp>1){
+    var esc=name.replace(/\\/g,"\\\\").replace(/'/g,"\\'");
+    pel.innerHTML='<button onclick="loadDetTx(\''+esc+'\','+Math.max(0,page-1)+')" '+(page===0?"disabled style='opacity:.4'":"")
+      +' style="padding:5px 12px;border:1px solid var(--bdr);border-radius:6px;background:var(--srf);cursor:pointer;font-size:12px">← Prev</button>'
+      +'<span style="font-size:12px;color:var(--mut)">Page '+(page+1)+' of '+tp+' ('+detTxTotal.toLocaleString()+' transactions)</span>'
+      +'<button onclick="loadDetTx(\''+esc+'\','+Math.min(tp-1,page+1)+')" '+(page>=tp-1?"disabled style='opacity:.4'":"")
+      +' style="padding:5px 12px;border:1px solid var(--bdr);border-radius:6px;background:var(--srf);cursor:pointer;font-size:12px">Next →</button>';
+  } else { pel.innerHTML=''; }
+}
+
+function dirCloseDetail(){
+  document.getElementById("dir-detail").style.display="none";
+  document.getElementById("dir-grid").style.display="grid";
+  document.getElementById("dir-pagination").style.display="flex";
+}
+
+document.querySelectorAll(".navtab").forEach(function(t){
+  if(t.dataset.tab==="directory") t.addEventListener("click",function(){ if(document.getElementById("dir-grid").innerHTML==="") dirSearch(0); });
+});
 
 // ─── SUPABASE ─────────────────────────────────────────────────────────
 var SB_URL = "https://xywgocvjuygudzrduvwr.supabase.co";
