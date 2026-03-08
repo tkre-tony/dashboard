@@ -697,9 +697,9 @@ function dirSortCol(col){
 
 async function dirSearch(page){
   page = page||0; dirPage = page;
-  var q      = document.getElementById("dir-search").value.trim();
-  var region = document.getElementById("dir-region").value;
-  var sort   = document.getElementById("dir-sort").value || "project_name.asc";
+  var q       = document.getElementById("dir-search").value.trim();
+  var region  = document.getElementById("dir-region").value;
+  var sort    = document.getElementById("dir-sort").value || "project_name.asc";
   var sortCol = sort.split(".")[0], sortDir = sort.split(".")[1];
 
   document.getElementById("dir-loading").style.display = "block";
@@ -708,14 +708,18 @@ async function dirSearch(page){
   document.getElementById("dir-pagination").innerHTML = "";
   document.getElementById("dir-detail").style.display = "none";
 
-  var parts = ["select=id,project_name,building_address,property_type,planning_area,planning_region,total_transactions,total_value_sgd,avg_psf,min_psf,max_psf,first_transaction,last_transaction,tenure"];
-  if(q) parts.push("or=(project_name.ilike.*"+encodeURIComponent(q)+"*,building_address.ilike.*"+encodeURIComponent(q)+"*)");
-  if(dirActiveType) parts.push("property_type=ilike.*"+encodeURIComponent(dirActiveType)+"*");
-  if(region) parts.push("planning_region=eq."+encodeURIComponent(region));
-  var offset = page * dirPageSize;
-  parts.push("order="+sortCol+"."+sortDir+(sortDir==="asc"?"nullslast":"nullsfirst")+"&limit="+dirPageSize+"&offset="+offset);
+  var filters = [];
+  if(q) filters.push("or=(project_name.ilike.*"+encodeURIComponent(q)+"*,building_address.ilike.*"+encodeURIComponent(q)+"*)");
+  if(dirActiveType) filters.push("property_type=eq."+encodeURIComponent(dirActiveType));
+  if(region) filters.push("planning_region=eq."+encodeURIComponent(region));
 
-  var res = await fetch(SB_URL+"/rest/v1/properties?"+parts.join("&"),{
+  var offset = page * dirPageSize;
+  var qs = "select=id,project_name,building_address,property_type,planning_area,planning_region,total_transactions,total_value_sgd,avg_psf,min_psf,max_psf,first_transaction,last_transaction,tenure"
+    + (filters.length ? "&" + filters.join("&") : "")
+    + "&order=" + sortCol + "." + sortDir
+    + "&limit=" + dirPageSize + "&offset=" + offset;
+
+  var res = await fetch(SB_URL+"/rest/v1/properties?"+qs, {
     headers:{"apikey":SB_KEY,"Authorization":"Bearer "+SB_KEY,"Prefer":"count=exact"}
   });
   dirTotal = parseInt(res.headers.get("content-range")?.split("/")[1]||"0");
@@ -723,6 +727,12 @@ async function dirSearch(page){
 
   document.getElementById("dir-loading").style.display = "none";
   document.getElementById("dir-count").textContent = dirTotal.toLocaleString()+" buildings";
+
+  if(!Array.isArray(data) || data.length === 0){
+    document.getElementById("dir-grid").innerHTML = '<div style="padding:40px;text-align:center;color:var(--mut)">No buildings found.</div>';
+    document.getElementById("dir-loading").style.display = "none";
+    return;
+  }
 
   if(dirViewMode === 'grid'){
     document.getElementById("dir-grid").style.display = "grid";
@@ -910,7 +920,7 @@ function dirCloseDetail(){
 }
 
 document.querySelectorAll(".navtab").forEach(function(t){
-  if(t.dataset.tab==="directory") t.addEventListener("click",function(){ if(document.getElementById("dir-grid").innerHTML==="") dirSearch(0); });
+  if(t.dataset.tab==="directory") t.addEventListener("click",function(){ dirSearch(0); });
 });
 document.addEventListener("keydown",function(e){ if(e.key==="Enter"&&document.activeElement.id==="dir-search") dirSearch(0); });
 
