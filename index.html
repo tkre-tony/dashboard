@@ -57,6 +57,12 @@ html,body{background:var(--bg);color:var(--txt);font-family:'DM Sans',sans-serif
 .p-neu{background:var(--srf2);color:var(--mut)}
 .p-tag{background:var(--glt);color:var(--g2);border:1px solid var(--gmd)}
 .news-title{font-size:13px;font-weight:500;line-height:1.4}
+.ac-wrap{position:relative;width:100%}
+.ac-dropdown{position:absolute;top:100%;left:0;right:0;background:var(--srf);border:1px solid var(--bdr);border-radius:7px;box-shadow:0 4px 16px rgba(33,81,59,.1);z-index:300;max-height:220px;overflow-y:auto;display:none}
+.ac-item{padding:8px 12px;font-size:12px;cursor:pointer;border-bottom:1px solid var(--bdr);color:var(--txt)}
+.ac-item:last-child{border-bottom:none}
+.ac-item:hover,.ac-item.selected{background:var(--glt);color:var(--g1)}
+.ac-item b{color:var(--g1)}
 .ptable{width:100%;border-collapse:collapse}
 .ptable th{font-size:10px;text-transform:uppercase;letter-spacing:.06em;color:var(--mut);text-align:left;padding:9px 13px;border-bottom:2px solid var(--bdr);font-weight:600;background:var(--srf2)}
 .ptable td{padding:11px 13px;border-bottom:1px solid var(--bdr);font-size:12px;vertical-align:top}
@@ -114,9 +120,47 @@ html,body{background:var(--bg);color:var(--txt);font-family:'DM Sans',sans-serif
       <div id="bar-wrap" style="width:100%;min-height:280px"></div>
       <div style="display:flex;flex-wrap:wrap;gap:8px;margin-top:12px" id="legend"></div>
     </div>
+    <!-- Smart Search -->
+    <div class="card">
+      <div class="card-hdr">
+        <div class="card-title">Smart Search</div>
+        <div style="font-size:11px;color:var(--mut)">Search by project, street or district number — chart updates automatically</div>
+      </div>
+      <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap">
+        <div class="ac-wrap" style="flex:1;min-width:220px">
+          <input id="ov-search" placeholder="e.g. Tradehub 21, Tuas Avenue, 22 (district)..." autocomplete="off"
+            style="width:100%;padding:9px 14px;border:1px solid var(--bdr);border-radius:8px;font-size:13px;font-family:'DM Sans',sans-serif;outline:none;color:var(--txt);background:var(--srf)"/>
+          <div class="ac-dropdown" id="ov-ac-dropdown"></div>
+        </div>
+        <button onclick="ovSearch()" style="padding:9px 20px;background:var(--g1);color:#fff;border:none;border-radius:8px;font-size:13px;font-family:'DM Sans',sans-serif;cursor:pointer;font-weight:600;white-space:nowrap">Search</button>
+        <button onclick="ovClear()" style="padding:9px 16px;background:var(--srf2);color:var(--mut);border:1px solid var(--bdr);border-radius:8px;font-size:13px;font-family:'DM Sans',sans-serif;cursor:pointer;white-space:nowrap">Clear</button>
+      </div>
+      <div id="ov-search-info" style="margin-top:8px;font-size:11px;color:var(--mut);display:none"></div>
+    </div>
+
     <div class="g2">
       <div class="card"><div class="card-hdr"><div class="card-title">By Property Type — Selected Period</div></div><div id="type-breakdown"></div></div>
       <div class="card"><div class="card-hdr"><div class="card-title">Latest News</div></div><div id="news-preview"></div></div>
+    </div>
+
+    <!-- Overview Transaction Results -->
+    <div class="card" id="ov-tx-card" style="display:none">
+      <div class="card-hdr">
+        <div class="card-title" id="ov-tx-title">Recent Transactions</div>
+        <div style="font-size:11px;color:var(--mut)" id="ov-tx-count">—</div>
+      </div>
+      <div id="ov-tx-loading" style="display:none;text-align:center;padding:20px;color:var(--mut);font-size:13px">Loading...</div>
+      <div style="overflow-x:auto">
+        <table class="ptable" id="ov-tx-table" style="display:none">
+          <thead><tr>
+            <th>Date</th><th>Project</th><th>Address</th><th>Type</th>
+            <th>Price</th><th>Area (sqft)</th><th>PSF</th><th>Tenure</th>
+          </tr></thead>
+          <tbody id="ov-tx-tbody"></tbody>
+        </table>
+      </div>
+      <div id="ov-tx-empty" style="display:none;text-align:center;padding:30px;color:var(--mut);font-size:13px">No transactions found for this search.</div>
+      <div id="ov-tx-pagination" style="display:flex;gap:8px;align-items:center;margin-top:12px;justify-content:center"></div>
     </div>
   </div>
 
@@ -138,7 +182,10 @@ html,body{background:var(--bg);color:var(--txt);font-family:'DM Sans',sans-serif
       </div>
       <!-- Search filters -->
       <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:10px;margin-bottom:14px">
-        <input id="tx-project" placeholder="Project name..." style="padding:7px 11px;border:1px solid var(--bdr);border-radius:7px;font-size:12px;font-family:'DM Sans',sans-serif;outline:none;color:var(--txt);background:var(--srf)"/>
+        <div class="ac-wrap">
+          <input id="tx-project" placeholder="Project name..." autocomplete="off" style="padding:7px 11px;border:1px solid var(--bdr);border-radius:7px;font-size:12px;font-family:'DM Sans',sans-serif;outline:none;color:var(--txt);background:var(--srf);width:100%"/>
+          <div class="ac-dropdown" id="ac-dropdown"></div>
+        </div>
         <select id="tx-type" style="padding:7px 11px;border:1px solid var(--bdr);border-radius:7px;font-size:12px;font-family:'DM Sans',sans-serif;outline:none;color:var(--txt);background:var(--srf)">
           <option value="">All Property Types</option>
           <option value="Multiple-user Factory">Multi-User Factory</option>
@@ -328,7 +375,7 @@ function renderBarChart(){
   var P={t:14,r:16,b:36,l:62};
   var cW=W-P.l-P.r,cH=H-P.t-P.b;
   var idxs=getIdxs(),fy=getFY();
-  var mat=chartMode==="val"?VAL_ARR:CNT_ARR;
+  var mat=CHART_OVERRIDE ? CHART_OVERRIDE : (chartMode==="val"?VAL_ARR:CNT_ARR);
   var actT=TYPES.filter(function(t){return activeTypes[t];});
   var tots=idxs.map(function(i){return actT.reduce(function(s,t){return s+(mat[i][TYPES.indexOf(t)]||0);},0);});
   var mx=Math.max.apply(null,tots.concat([1]));
@@ -470,7 +517,10 @@ function renderAnalytics(){
 document.getElementById("m-val").addEventListener("click",function(){chartMode="val";this.classList.add("on");document.getElementById("m-cnt").classList.remove("on");renderBarChart();});
 document.getElementById("m-cnt").addEventListener("click",function(){chartMode="cnt";this.classList.add("on");document.getElementById("m-val").classList.remove("on");renderBarChart();});
 
-function renderAll(){renderKPIs();renderTypeChips();renderLegend();renderBarChart();renderTypeBreakdown();renderNewsPreview();}
+function renderAll(){
+  if(!document.getElementById("ov-search").value.trim()) CHART_OVERRIDE = null;
+  renderKPIs();renderTypeChips();renderLegend();renderBarChart();renderTypeBreakdown();renderNewsPreview();
+}
 window.addEventListener("resize",function(){renderBarChart();});
 
 // ─── SUPABASE ─────────────────────────────────────────────────────────
@@ -599,13 +649,324 @@ document.querySelectorAll(".navtab").forEach(function(t){
   }
 });
 
-// Search on Enter key
-document.addEventListener("DOMContentLoaded", function(){
-  ["tx-project"].forEach(function(id){
-    var el = document.getElementById(id);
-    if(el) el.addEventListener("keydown", function(e){ if(e.key==="Enter") searchTransactions(0); });
+// ─── OVERVIEW SMART SEARCH ────────────────────────────────────────────
+var ovPage = 0;
+var ovTotal = 0;
+var ovQuery = "";
+var ovTimer = null;
+var ovAcIndex = -1;
+
+function ovDetectType(q){
+  // Pure number = district
+  if(/^\d{1,2}$/.test(q.trim())) return {type:'district', val: parseInt(q.trim())};
+  return {type:'text', val: q.trim()};
+}
+
+function getLast12MonthsDate(){
+  var d = new Date();
+  d.setFullYear(d.getFullYear()-1);
+  return d.toISOString().substring(0,10);
+}
+
+async function ovFetchAgg(q){
+  var detected = ovDetectType(q);
+  var filter = detected.type === 'district'
+    ? "postal_district=eq." + detected.val
+    : "or=(project_name.ilike.*" + encodeURIComponent(detected.val) + "*,address.ilike.*" + encodeURIComponent(detected.val) + "*)";
+  // Fetch up to 50000 rows for chart aggregation
+  var url = SB_URL + "/rest/v1/transactions?select=sale_date,property_type,transacted_price&" + filter + "&limit=50000";
+  var res = await fetch(url, {headers:{"apikey":SB_KEY,"Authorization":"Bearer "+SB_KEY}});
+  return await res.json();
+}
+
+async function ovFetchRows(q, page){
+  var detected = ovDetectType(q);
+  var filter = detected.type === 'district'
+    ? "postal_district=eq." + detected.val
+    : "or=(project_name.ilike.*" + encodeURIComponent(detected.val) + "*,address.ilike.*" + encodeURIComponent(detected.val) + "*)";
+  var dateFilter = "&sale_date=gte." + getLast12MonthsDate();
+  var offset = page * 10;
+  var url = SB_URL + "/rest/v1/transactions?select=id,project_name,address,property_type,transacted_price,area_sqft,unit_price_psf,sale_date,tenure,planning_region&"
+    + filter + dateFilter + "&order=sale_date.desc&limit=10&offset=" + offset;
+  var res = await fetch(url, {
+    headers:{"apikey":SB_KEY,"Authorization":"Bearer "+SB_KEY,"Prefer":"count=exact"}
   });
-});
+  var total = parseInt(res.headers.get("content-range")?.split("/")[1]||"0");
+  var data = await res.json();
+  return {data:data, total:total};
+}
+
+async function ovSearch(page){
+  page = page||0;
+  ovPage = page;
+  var q = document.getElementById("ov-search").value.trim();
+  if(!q) return;
+  ovQuery = q;
+
+  // Show loading
+  document.getElementById("ov-tx-card").style.display = "block";
+  document.getElementById("ov-tx-loading").style.display = "block";
+  document.getElementById("ov-tx-table").style.display = "none";
+  document.getElementById("ov-tx-empty").style.display = "none";
+  document.getElementById("ov-tx-pagination").innerHTML = "";
+  document.getElementById("ov-ac-dropdown").style.display = "none";
+
+  var detected = ovDetectType(q);
+  var infoEl = document.getElementById("ov-search-info");
+  infoEl.style.display = "block";
+  infoEl.textContent = detected.type === 'district'
+    ? "Showing results for District " + detected.val
+    : "Showing results for: \"" + q + "\"";
+
+  try {
+    // Fetch aggregated data for chart + transaction rows in parallel
+    var [aggData, rowResult] = await Promise.all([
+      ovFetchAgg(q),
+      ovFetchRows(q, page)
+    ]);
+
+    // Update chart with filtered data
+    updateChartFromSearch(aggData, q);
+
+    // Update KPIs
+    var totalVal = aggData.reduce(function(s,r){return s+(parseFloat(r.transacted_price)||0);},0)/1000000;
+    document.getElementById("k-totval").textContent = fmtV(totalVal);
+    document.getElementById("k-totcnt").textContent = aggData.length.toLocaleString();
+    document.getElementById("k-totsub").textContent = detected.type==='district' ? "District "+detected.val : '"'+q+'"';
+
+    // Show transaction rows
+    ovTotal = rowResult.total;
+    document.getElementById("ov-tx-loading").style.display = "none";
+    document.getElementById("ov-tx-title").textContent = "Transactions — Last 12 Months";
+    document.getElementById("ov-tx-count").textContent = ovTotal.toLocaleString() + " transactions found";
+
+    if(!rowResult.data || rowResult.data.length === 0){
+      document.getElementById("ov-tx-empty").style.display = "block";
+    } else {
+      renderOvTable(rowResult.data);
+      renderOvPagination(q);
+    }
+  } catch(e){
+    document.getElementById("ov-tx-loading").style.display = "none";
+    console.error(e);
+  }
+}
+
+var CHART_OVERRIDE = null; // when set, chart uses this data instead of VAL_ARR
+
+function updateChartFromSearch(rows, q){
+  var agg = {};
+  YEARS.forEach(function(y){ agg[y] = {}; TYPES.forEach(function(t){ agg[y][t]=0; }); });
+
+  var typeMap = {
+    "multiple-user factory":"multiUser","single-user factory":"singleUser",
+    "warehouse":"warehouse","business park":"bizPark",
+    "office":"office","retail":"retail","shop house":"shophouse","shophouse":"shophouse"
+  };
+
+  rows.forEach(function(r){
+    if(!r.sale_date || !r.transacted_price) return;
+    var yr = parseInt(r.sale_date.substring(0,4));
+    if(!agg[yr]) return;
+    var pt = (r.property_type||"").toLowerCase();
+    var typ = null;
+    Object.keys(typeMap).forEach(function(k){ if(pt.indexOf(k)>=0) typ=typeMap[k]; });
+    if(!typ) return;
+    agg[yr][typ] += parseFloat(r.transacted_price)/1000000;
+  });
+
+  CHART_OVERRIDE = YEARS.map(function(y){
+    return TYPES.map(function(t){ return agg[y]?agg[y][t]||0:0; });
+  });
+  renderBarChart();
+}
+
+function renderOvTable(rows){
+  var tbody = document.getElementById("ov-tx-tbody");
+  tbody.innerHTML = rows.map(function(r){
+    var price = r.transacted_price ? "S$"+Number(r.transacted_price).toLocaleString() : "-";
+    var area  = r.area_sqft ? Number(parseFloat(r.area_sqft).toFixed(0)).toLocaleString() : "-";
+    var psf   = r.unit_price_psf ? "S$"+Math.round(r.unit_price_psf) : "-";
+    var date  = r.sale_date ? r.sale_date.substring(0,10) : "-";
+    var tenure = r.tenure ? r.tenure.substring(0,25) : "-";
+    return "<tr>"
+      +"<td style='white-space:nowrap;font-family:\"DM Mono\",monospace;font-size:11px'>"+date+"</td>"
+      +"<td style='font-weight:600;min-width:130px'>"+( r.project_name||"-")+"</td>"
+      +"<td style='font-size:11px;color:var(--mut);min-width:160px'>"+(r.address||"-")+"</td>"
+      +"<td><span class='pill p-tag' style='white-space:nowrap'>"+(r.property_type||"-")+"</span></td>"
+      +"<td style='font-family:\"DM Mono\",monospace;font-size:12px;font-weight:600;white-space:nowrap'>"+price+"</td>"
+      +"<td style='font-family:\"DM Mono\",monospace;font-size:12px;white-space:nowrap'>"+area+"</td>"
+      +"<td style='font-family:\"DM Mono\",monospace;font-size:12px;white-space:nowrap'>"+psf+"</td>"
+      +"<td style='font-size:11px;color:var(--mut)'>"+tenure+"</td>"
+      +"</tr>";
+  }).join("");
+  document.getElementById("ov-tx-table").style.display = "table";
+}
+
+function renderOvPagination(q){
+  var totalPages = Math.ceil(ovTotal/10);
+  if(totalPages<=1) return;
+  var el = document.getElementById("ov-tx-pagination");
+  el.innerHTML =
+    "<button onclick='ovSearch("+Math.max(0,ovPage-1)+")' "+(ovPage===0?"disabled style='opacity:.4'":"")
+    +" style='padding:5px 12px;border:1px solid var(--bdr);border-radius:6px;background:var(--srf);cursor:pointer;font-size:12px'>← Prev</button>"
+    +"<span style='font-size:12px;color:var(--mut)'>Page "+(ovPage+1)+" of "+totalPages+" (last 12 mths)</span>"
+    +"<button onclick='ovSearch("+Math.min(totalPages-1,ovPage+1)+")' "+(ovPage>=totalPages-1?"disabled style='opacity:.4'":"")
+    +" style='padding:5px 12px;border:1px solid var(--bdr);border-radius:6px;background:var(--srf);cursor:pointer;font-size:12px'>Next →</button>";
+}
+
+function ovClear(){
+  document.getElementById("ov-search").value = "";
+  document.getElementById("ov-search-info").style.display = "none";
+  document.getElementById("ov-tx-card").style.display = "none";
+  document.getElementById("ov-ac-dropdown").style.display = "none";
+  CHART_OVERRIDE = null;
+  renderAll();
+}
+
+function initOvAutocomplete(){
+  var inp = document.getElementById("ov-search");
+  var dd  = document.getElementById("ov-ac-dropdown");
+
+  inp.addEventListener("input", function(){
+    var q = inp.value.trim();
+    clearTimeout(ovTimer);
+    // If numeric, no autocomplete needed
+    if(/^\d+$/.test(q)){ dd.style.display="none"; return; }
+    if(q.length < 2){ dd.style.display="none"; return; }
+    ovTimer = setTimeout(async function(){
+      var url = SB_URL + "/rest/v1/transactions?select=project_name,address&or=(project_name.ilike.*"
+        + encodeURIComponent(q) + "*,address.ilike.*" + encodeURIComponent(q) + "*)&limit=200";
+      var res = await fetch(url, {headers:{"apikey":SB_KEY,"Authorization":"Bearer "+SB_KEY}});
+      var data = await res.json();
+      // Deduplicate projects + streets
+      var seen = {}, items = [];
+      data.forEach(function(r){
+        if(r.project_name && r.project_name!="N.A." && !seen["p:"+r.project_name]){
+          seen["p:"+r.project_name]=true;
+          items.push({label:r.project_name, type:"Project"});
+        }
+      });
+      // Extract unique street names
+      var streets = {};
+      data.forEach(function(r){
+        if(!r.address) return;
+        var parts = r.address.split(" ");
+        // Street = everything after unit number
+        var addr = r.address.replace(/^#[\S]+\s*/,"").replace(/^\d+\s*/,"");
+        var street = addr.replace(/\s+#.*/,"").trim();
+        if(street.length>4 && !streets[street] && street.toLowerCase().indexOf(q.toLowerCase())>=0){
+          streets[street]=true;
+          items.push({label:street, type:"Street"});
+        }
+      });
+      items = items.slice(0,10);
+      if(!items.length){ dd.style.display="none"; return; }
+      dd.innerHTML = items.map(function(item){
+        return '<div class="ac-item" onmousedown="ovSelectAC(\''+item.label.replace(/'/g,"\\'")+'\')"><span style="color:var(--mut);font-size:10px;margin-right:6px;background:var(--srf2);padding:1px 5px;border-radius:3px">'+item.type+'</span>'+highlightMatch(item.label,q)+'</div>';
+      }).join('');
+      dd.style.display = "block";
+    }, 250);
+  });
+
+  inp.addEventListener("keydown", function(e){
+    if(e.key==="Enter"){ dd.style.display="none"; ovSearch(0); }
+    if(e.key==="Escape"){ dd.style.display="none"; }
+  });
+
+  document.addEventListener("click", function(e){
+    if(!inp.contains(e.target) && !dd.contains(e.target)) dd.style.display="none";
+  });
+}
+
+function ovSelectAC(val){
+  document.getElementById("ov-search").value = val;
+  document.getElementById("ov-ac-dropdown").style.display = "none";
+  ovSearch(0);
+}
+var acTimer = null;
+var acIndex = -1;
+
+async function fetchSuggestions(query){
+  var url = SB_URL + "/rest/v1/transactions?select=project_name&project_name=ilike.*"
+    + encodeURIComponent(query) + "*&limit=200&order=project_name.asc";
+  var res = await fetch(url, {
+    headers: {"apikey": SB_KEY, "Authorization": "Bearer " + SB_KEY}
+  });
+  var data = await res.json();
+  // Deduplicate
+  var seen = {}, names = [];
+  data.forEach(function(r){
+    if(r.project_name && !seen[r.project_name]){
+      seen[r.project_name] = true;
+      names.push(r.project_name);
+    }
+  });
+  return names.slice(0, 10);
+}
+
+function highlightMatch(name, query){
+  var idx = name.toLowerCase().indexOf(query.toLowerCase());
+  if(idx < 0) return name;
+  return name.substring(0,idx) + "<b>" + name.substring(idx, idx+query.length) + "</b>" + name.substring(idx+query.length);
+}
+
+function showDropdown(names, query){
+  var dd = document.getElementById("ac-dropdown");
+  if(!names.length){ dd.style.display = "none"; return; }
+  acIndex = -1;
+  dd.innerHTML = names.map(function(n,i){
+    return '<div class="ac-item" data-val="'+n+'" onmousedown="selectAC(\''+n.replace(/'/g,"\\'")+'\')">' + highlightMatch(n, query) + '</div>';
+  }).join('');
+  dd.style.display = "block";
+}
+
+function selectAC(name){
+  document.getElementById("tx-project").value = name;
+  document.getElementById("ac-dropdown").style.display = "none";
+  searchTransactions(0);
+}
+
+function initAutocomplete(){
+  var inp = document.getElementById("tx-project");
+  var dd  = document.getElementById("ac-dropdown");
+
+  inp.addEventListener("input", function(){
+    var q = inp.value.trim();
+    clearTimeout(acTimer);
+    if(q.length < 2){ dd.style.display = "none"; return; }
+    acTimer = setTimeout(async function(){
+      var names = await fetchSuggestions(q);
+      showDropdown(names, q);
+    }, 250);
+  });
+
+  inp.addEventListener("keydown", function(e){
+    var items = dd.querySelectorAll(".ac-item");
+    if(e.key === "ArrowDown"){
+      acIndex = Math.min(acIndex+1, items.length-1);
+      items.forEach(function(x,i){ x.classList.toggle("selected", i===acIndex); });
+    } else if(e.key === "ArrowUp"){
+      acIndex = Math.max(acIndex-1, 0);
+      items.forEach(function(x,i){ x.classList.toggle("selected", i===acIndex); });
+    } else if(e.key === "Enter"){
+      if(acIndex >= 0 && items[acIndex]){
+        selectAC(items[acIndex].dataset.val);
+      } else {
+        dd.style.display = "none";
+        searchTransactions(0);
+      }
+    } else if(e.key === "Escape"){
+      dd.style.display = "none";
+    }
+  });
+
+  document.addEventListener("click", function(e){
+    if(!inp.contains(e.target) && !dd.contains(e.target)){
+      dd.style.display = "none";
+    }
+  });
+}
 
 // INIT
 initRangeBtns();
@@ -613,6 +974,8 @@ renderAll();
 renderNewsCats();
 renderNewsList();
 renderPipeline();
+initAutocomplete();
+initOvAutocomplete();
 </script>
 </body>
 </html>
