@@ -193,7 +193,13 @@ html,body{background:var(--bg);color:var(--txt);font-family:'DM Sans',sans-serif
 
   <div class="panel" id="tab-directory">
 
-    <!-- Type filter buttons -->
+    <!-- Ownership filter buttons -->
+    <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:10px" id="dir-own-btns">
+      <button class="dir-tbtn on" data-down="" onclick="dirSetOwnership(this,'')">All</button>
+      <button class="dir-tbtn" data-down="strata" onclick="dirSetOwnership(this,'strata')">🏠 Strata</button>
+      <button class="dir-tbtn" data-down="corporate" onclick="dirSetOwnership(this,'corporate')">🏢 Corporate</button>
+      <button class="dir-tbtn" data-down="reit" onclick="dirSetOwnership(this,'reit')">📊 REITs</button>
+    </div>
     <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px" id="dir-type-btns">
       <button class="dir-tbtn on" data-dtype="" onclick="dirSetType(this,'')">All Types</button>
       <button class="dir-tbtn" data-dtype="Office" onclick="dirSetType(this,'Office')">🏢 Office</button>
@@ -659,8 +665,9 @@ window.addEventListener("resize",function(){renderBarChart();});
 
 // ─── DIRECTORY ───────────────────────────────────────────────────────
 var dirPage = 0, dirTotal = 0, dirPageSize = 24;
-var dirViewMode = 'grid'; // 'grid' | 'list'
+var dirViewMode = 'grid';
 var dirActiveType = '';
+var dirActiveOwnership = '';
 var detTxPage = 0, detTxTotal = 0, detProject = '';
 
 var DIR_TYPE_COLORS = {
@@ -671,7 +678,14 @@ var DIR_TYPE_COLORS = {
 
 function dirSetType(btn, type){
   dirActiveType = type;
-  document.querySelectorAll(".dir-tbtn").forEach(function(b){ b.classList.remove("on"); });
+  document.querySelectorAll(".dir-tbtn[data-dtype]").forEach(function(b){ b.classList.remove("on"); });
+  btn.classList.add("on");
+  dirSearch(0);
+}
+
+function dirSetOwnership(btn, own){
+  dirActiveOwnership = own;
+  document.querySelectorAll(".dir-tbtn[data-down]").forEach(function(b){ b.classList.remove("on"); });
   btn.classList.add("on");
   dirSearch(0);
 }
@@ -710,6 +724,7 @@ async function dirSearch(page){
   var filters = [];
   if(q) filters.push("or=(project_name.ilike.*"+encodeURIComponent(q)+"*,building_address.ilike.*"+encodeURIComponent(q)+"*)");
   if(dirActiveType) filters.push("property_type=eq."+encodeURIComponent(dirActiveType));
+  if(dirActiveOwnership) filters.push("ownership_type=eq."+encodeURIComponent(dirActiveOwnership));
   if(region) filters.push("planning_region=eq."+encodeURIComponent(region));
 
   var offset = page * dirPageSize;
@@ -808,8 +823,11 @@ function dirClear(){
   document.getElementById("dir-region").value="";
   document.getElementById("dir-sort").value="project_name.asc";
   dirActiveType="";
-  document.querySelectorAll(".dir-tbtn").forEach(function(b){ b.classList.remove("on"); });
+  dirActiveOwnership="";
+  document.querySelectorAll(".dir-tbtn[data-dtype]").forEach(function(b){ b.classList.remove("on"); });
   document.querySelector(".dir-tbtn[data-dtype='']").classList.add("on");
+  document.querySelectorAll(".dir-tbtn[data-down]").forEach(function(b){ b.classList.remove("on"); });
+  document.querySelector(".dir-tbtn[data-down='']").classList.add("on");
   dirSearch(0);
 }
 
@@ -819,6 +837,7 @@ async function dirOpenDetail(name, type){
   document.getElementById("dir-list").style.display="none";
   document.getElementById("dir-pagination").style.display="none";
   document.getElementById("dir-type-btns").style.display="none";
+  document.getElementById("dir-own-btns").style.display="none";
   document.getElementById("dir-detail").style.display="block";
   document.getElementById("det-name").textContent=name;
   document.getElementById("det-type-pill").textContent=type;
@@ -915,6 +934,7 @@ async function loadDetTx(name,page){
 function dirCloseDetail(){
   document.getElementById("dir-detail").style.display="none";
   document.getElementById("dir-type-btns").style.display="flex";
+  document.getElementById("dir-own-btns").style.display="flex";
   document.getElementById("dir-pagination").style.display="flex";
   if(dirViewMode==='grid'){document.getElementById("dir-grid").style.display="grid";document.getElementById("dir-list").style.display="none";}
   else{document.getElementById("dir-list").style.display="block";document.getElementById("dir-grid").style.display="none";}
