@@ -52,6 +52,9 @@ html,body{background:var(--bg);color:var(--txt);font-family:'DM Sans',sans-serif
 .news-item.open .news-body{display:block}
 .news-meta{display:flex;gap:6px;align-items:center;flex-wrap:wrap;margin-bottom:5px}
 .pill{padding:2px 7px;border-radius:4px;font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.04em}
+.dir-tbtn{padding:7px 14px;border:1px solid var(--bdr);border-radius:20px;font-size:12px;font-family:'DM Sans',sans-serif;cursor:pointer;background:var(--srf);color:var(--mut);font-weight:500;transition:all .15s;white-space:nowrap}
+.dir-tbtn.on{background:var(--g1);color:#fff;border-color:var(--g1);font-weight:600}
+.dir-tbtn:hover:not(.on){border-color:var(--g2);color:var(--g1)}
 .p-pos{background:rgba(33,81,59,.1);color:var(--g1)}
 .p-neg{background:rgba(220,53,69,.1);color:var(--red)}
 .p-neu{background:var(--srf2);color:var(--mut)}
@@ -189,22 +192,24 @@ html,body{background:var(--bg);color:var(--txt);font-family:'DM Sans',sans-serif
   </div>
 
   <div class="panel" id="tab-directory">
-    <!-- Directory search bar -->
+
+    <!-- Type filter buttons -->
+    <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px" id="dir-type-btns">
+      <button class="dir-tbtn on" data-dtype="" onclick="dirSetType(this,'')">All Types</button>
+      <button class="dir-tbtn" data-dtype="Office" onclick="dirSetType(this,'Office')">🏢 Office</button>
+      <button class="dir-tbtn" data-dtype="Retail" onclick="dirSetType(this,'Retail')">🛍 Retail</button>
+      <button class="dir-tbtn" data-dtype="Shop House" onclick="dirSetType(this,'Shop House')">🏠 Shophouse</button>
+      <button class="dir-tbtn" data-dtype="Multiple-user Factory" onclick="dirSetType(this,'Multiple-user Factory')">🏭 Multi-User Factory</button>
+      <button class="dir-tbtn" data-dtype="Single-user Factory" onclick="dirSetType(this,'Single-user Factory')">🏗 Single-User Factory</button>
+      <button class="dir-tbtn" data-dtype="Business Park" onclick="dirSetType(this,'Business Park')">💼 Business Park</button>
+      <button class="dir-tbtn" data-dtype="Warehouse" onclick="dirSetType(this,'Warehouse')">📦 Warehouse</button>
+    </div>
+
+    <!-- Search + Sort + View controls -->
     <div class="card" style="margin-bottom:14px">
       <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap">
-        <div style="font-size:13px;font-weight:600;color:var(--g1);white-space:nowrap">🏢 Property Directory</div>
-        <input id="dir-search" placeholder="Search by building name or address..." autocomplete="off"
+        <input id="dir-search" placeholder="Search building name or address..." autocomplete="off"
           style="flex:1;min-width:200px;padding:8px 14px;border:1px solid var(--bdr);border-radius:8px;font-size:13px;font-family:'DM Sans',sans-serif;outline:none;color:var(--txt);background:var(--srf)"/>
-        <select id="dir-type" style="padding:8px 11px;border:1px solid var(--bdr);border-radius:8px;font-size:12px;font-family:'DM Sans',sans-serif;outline:none;color:var(--txt);background:var(--srf)">
-          <option value="">All Types</option>
-          <option value="Multiple-user Factory">Multi-User Factory</option>
-          <option value="Single-user Factory">Single-User Factory</option>
-          <option value="Warehouse">Warehouse</option>
-          <option value="Business Park">Business Park</option>
-          <option value="Office">Office</option>
-          <option value="Retail">Retail</option>
-          <option value="Shop House">Shophouse</option>
-        </select>
         <select id="dir-region" style="padding:8px 11px;border:1px solid var(--bdr);border-radius:8px;font-size:12px;font-family:'DM Sans',sans-serif;outline:none;color:var(--txt);background:var(--srf)">
           <option value="">All Regions</option>
           <option value="Central Region">Central</option>
@@ -213,31 +218,69 @@ html,body{background:var(--bg);color:var(--txt);font-family:'DM Sans',sans-serif
           <option value="North-East Region">North-East</option>
           <option value="West Region">West</option>
         </select>
+
+        <!-- Sort -->
+        <select id="dir-sort" onchange="dirSearch(0)" style="padding:8px 11px;border:1px solid var(--bdr);border-radius:8px;font-size:12px;font-family:'DM Sans',sans-serif;outline:none;color:var(--txt);background:var(--srf)">
+          <option value="project_name.asc">A → Z</option>
+          <option value="project_name.desc">Z → A</option>
+          <option value="total_transactions.desc">Volume ↓ High</option>
+          <option value="total_transactions.asc">Volume ↑ Low</option>
+          <option value="total_value_sgd.desc">Value ↓ High</option>
+          <option value="total_value_sgd.asc">Value ↑ Low</option>
+          <option value="avg_psf.desc">PSF ↓ High</option>
+          <option value="avg_psf.asc">PSF ↑ Low</option>
+        </select>
+
         <button onclick="dirSearch(0)" style="padding:8px 18px;background:var(--g1);color:#fff;border:none;border-radius:8px;font-size:12px;font-family:'DM Sans',sans-serif;cursor:pointer;font-weight:600">Search</button>
         <button onclick="dirClear()" style="padding:8px 14px;background:var(--srf2);color:var(--mut);border:1px solid var(--bdr);border-radius:8px;font-size:12px;font-family:'DM Sans',sans-serif;cursor:pointer">Clear</button>
-        <div style="font-size:11px;color:var(--mut)" id="dir-count">922 buildings</div>
+
+        <!-- View toggle -->
+        <div style="display:flex;border:1px solid var(--bdr);border-radius:8px;overflow:hidden">
+          <button id="dir-view-grid" onclick="dirSetView('grid')" title="Grid view" style="padding:7px 11px;border:none;background:var(--g1);color:#fff;cursor:pointer;font-size:13px">⊞</button>
+          <button id="dir-view-list" onclick="dirSetView('list')" title="List view" style="padding:7px 11px;border:none;background:var(--srf2);color:var(--mut);cursor:pointer;font-size:13px">☰</button>
+        </div>
+        <div style="font-size:11px;color:var(--mut);white-space:nowrap" id="dir-count">—</div>
       </div>
     </div>
 
-    <!-- Directory grid -->
-    <div id="dir-loading" style="text-align:center;padding:40px;color:var(--mut);font-size:13px">Loading directory...</div>
-    <div id="dir-grid" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:14px;margin-bottom:14px"></div>
+    <!-- Directory results -->
+    <div id="dir-loading" style="display:none;text-align:center;padding:40px;color:var(--mut);font-size:13px">Loading directory...</div>
+    <div id="dir-grid" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(290px,1fr));gap:14px;margin-bottom:14px"></div>
+
+    <!-- List view table -->
+    <div id="dir-list" style="display:none;margin-bottom:14px">
+      <div style="overflow-x:auto">
+        <table class="ptable" id="dir-list-table">
+          <thead><tr>
+            <th style="cursor:pointer" onclick="dirSortCol('project_name')">Building ↕</th>
+            <th>Type</th>
+            <th>Region</th>
+            <th>Tenure</th>
+            <th style="cursor:pointer;text-align:right" onclick="dirSortCol('total_transactions')">Deals ↕</th>
+            <th style="cursor:pointer;text-align:right" onclick="dirSortCol('total_value_sgd')">Total Value ↕</th>
+            <th style="cursor:pointer;text-align:right" onclick="dirSortCol('avg_psf')">Avg PSF ↕</th>
+            <th style="text-align:right">Min PSF</th>
+            <th style="text-align:right">Max PSF</th>
+            <th>Last Deal</th>
+          </tr></thead>
+          <tbody id="dir-list-tbody"></tbody>
+        </table>
+      </div>
+    </div>
+
     <div id="dir-pagination" style="display:flex;gap:8px;align-items:center;justify-content:center;margin-bottom:16px"></div>
 
     <!-- Building detail panel -->
     <div id="dir-detail" style="display:none">
       <div class="card">
         <div style="display:flex;align-items:center;gap:12px;margin-bottom:16px">
-          <button onclick="dirCloseDetail()" style="padding:6px 14px;background:var(--srf2);color:var(--mut);border:1px solid var(--bdr);border-radius:7px;font-size:12px;cursor:pointer;font-family:'DM Sans',sans-serif">← Back</button>
+          <button onclick="dirCloseDetail()" style="padding:6px 14px;background:var(--srf2);color:var(--mut);border:1px solid var(--bdr);border-radius:7px;font-size:12px;cursor:pointer;font-family:'DM Sans',sans-serif">← Back to Directory</button>
           <div style="font-size:16px;font-weight:700" id="det-name">—</div>
           <span class="pill p-tag" id="det-type-pill">—</span>
         </div>
-        <!-- Stats row -->
         <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:10px;margin-bottom:18px" id="det-stats"></div>
-        <!-- PSF Trend chart -->
         <div style="font-weight:600;font-size:13px;margin-bottom:10px">PSF Trend by Year</div>
         <div id="det-chart" style="width:100%;min-height:180px;margin-bottom:18px"></div>
-        <!-- Transaction history -->
         <div style="font-weight:600;font-size:13px;margin-bottom:10px">Transaction History</div>
         <div id="det-tx-loading" style="text-align:center;padding:20px;color:var(--mut);font-size:12px">Loading...</div>
         <div style="overflow-x:auto">
@@ -616,92 +659,168 @@ window.addEventListener("resize",function(){renderBarChart();});
 
 // ─── DIRECTORY ───────────────────────────────────────────────────────
 var dirPage = 0, dirTotal = 0, dirPageSize = 24;
+var dirViewMode = 'grid'; // 'grid' | 'list'
+var dirActiveType = '';
 var detTxPage = 0, detTxTotal = 0, detProject = '';
+
+var DIR_TYPE_COLORS = {
+  "Office":"#21513b","Retail":"#2d7a57","Shop House":"#3da670",
+  "Multiple-user Factory":"#52c98a","Single-user Factory":"#7dd9a8",
+  "Business Park":"#a8e8c8","Warehouse":"#c8e8d8"
+};
+
+function dirSetType(btn, type){
+  dirActiveType = type;
+  document.querySelectorAll(".dir-tbtn").forEach(function(b){ b.classList.remove("on"); });
+  btn.classList.add("on");
+  dirSearch(0);
+}
+
+function dirSetView(mode){
+  dirViewMode = mode;
+  document.getElementById("dir-view-grid").style.background = mode==='grid'?'var(--g1)':'var(--srf2)';
+  document.getElementById("dir-view-grid").style.color    = mode==='grid'?'#fff':'var(--mut)';
+  document.getElementById("dir-view-list").style.background = mode==='list'?'var(--g1)':'var(--srf2)';
+  document.getElementById("dir-view-list").style.color    = mode==='list'?'#fff':'var(--mut)';
+  document.getElementById("dir-grid").style.display = mode==='grid'?'grid':'none';
+  document.getElementById("dir-list").style.display = mode==='list'?'block':'none';
+}
+
+function dirSortCol(col){
+  var sel = document.getElementById("dir-sort");
+  var cur = sel.value;
+  // toggle asc/desc
+  if(cur === col+'.asc') sel.value = col+'.desc';
+  else sel.value = col+'.asc';
+  dirSearch(0);
+}
 
 async function dirSearch(page){
   page = page||0; dirPage = page;
-  var q = document.getElementById("dir-search").value.trim();
-  var type = document.getElementById("dir-type").value;
+  var q      = document.getElementById("dir-search").value.trim();
   var region = document.getElementById("dir-region").value;
+  var sort   = document.getElementById("dir-sort").value || "project_name.asc";
+  var sortCol = sort.split(".")[0], sortDir = sort.split(".")[1];
+
   document.getElementById("dir-loading").style.display = "block";
   document.getElementById("dir-grid").innerHTML = "";
+  document.getElementById("dir-list-tbody").innerHTML = "";
   document.getElementById("dir-pagination").innerHTML = "";
   document.getElementById("dir-detail").style.display = "none";
+
   var parts = ["select=id,project_name,building_address,property_type,planning_area,planning_region,total_transactions,total_value_sgd,avg_psf,min_psf,max_psf,first_transaction,last_transaction,tenure"];
   if(q) parts.push("or=(project_name.ilike.*"+encodeURIComponent(q)+"*,building_address.ilike.*"+encodeURIComponent(q)+"*)");
-  if(type) parts.push("property_type=ilike.*"+encodeURIComponent(type)+"*");
+  if(dirActiveType) parts.push("property_type=ilike.*"+encodeURIComponent(dirActiveType)+"*");
   if(region) parts.push("planning_region=eq."+encodeURIComponent(region));
   var offset = page * dirPageSize;
-  parts.push("order=total_transactions.desc&limit="+dirPageSize+"&offset="+offset);
-  var res = await fetch(SB_URL+"/rest/v1/properties?"+parts.join("&"),{headers:{"apikey":SB_KEY,"Authorization":"Bearer "+SB_KEY,"Prefer":"count=exact"}});
+  parts.push("order="+sortCol+"."+sortDir+(sortDir==="asc"?"nullslast":"nullsfirst")+"&limit="+dirPageSize+"&offset="+offset);
+
+  var res = await fetch(SB_URL+"/rest/v1/properties?"+parts.join("&"),{
+    headers:{"apikey":SB_KEY,"Authorization":"Bearer "+SB_KEY,"Prefer":"count=exact"}
+  });
   dirTotal = parseInt(res.headers.get("content-range")?.split("/")[1]||"0");
   var data = await res.json();
+
   document.getElementById("dir-loading").style.display = "none";
   document.getElementById("dir-count").textContent = dirTotal.toLocaleString()+" buildings";
-  renderDirGrid(data);
+
+  if(dirViewMode === 'grid'){
+    document.getElementById("dir-grid").style.display = "grid";
+    document.getElementById("dir-list").style.display = "none";
+    renderDirGrid(data);
+  } else {
+    document.getElementById("dir-grid").style.display = "none";
+    document.getElementById("dir-list").style.display = "block";
+    renderDirList(data);
+  }
   renderDirPagination();
 }
 
+function fmtVal(v){
+  if(!v) return "—";
+  return v>=1e9?"S$"+(v/1e9).toFixed(1)+"B":"S$"+(v/1e6).toFixed(0)+"M";
+}
+
 function renderDirGrid(rows){
-  var tmap={"Multiple-user Factory":"#52c98a","Single-user Factory":"#7dd9a8","Warehouse":"#c8e8d8","Business Park":"#a8e8c8","Office":"#21513b","Retail":"#2d7a57","Shop House":"#3da670"};
   document.getElementById("dir-grid").innerHTML = rows.map(function(r){
-    var tc=tmap[r.property_type]||"#21513b";
-    var val=r.total_value_sgd?(r.total_value_sgd>=1e9?"S$"+(r.total_value_sgd/1e9).toFixed(1)+"B":"S$"+(r.total_value_sgd/1e6).toFixed(0)+"M"):"—";
-    var psf=r.avg_psf?"S$"+Math.round(r.avg_psf)+" psf":"—";
-    var lastDeal=r.last_transaction?r.last_transaction.substring(0,7):"—";
-    var region=(r.planning_region||"").replace(" Region","");
-    return '<div style="background:var(--srf);border:1px solid var(--bdr);border-radius:10px;padding:16px;cursor:pointer;transition:all .15s;border-top:3px solid '+tc+'" onmouseenter="this.style.borderColor=\''+tc+'\'" onmouseleave="this.style.borderColor=\'var(--bdr)\';this.style.borderTopColor=\''+tc+'\'" onclick="dirOpenDetail(\''+r.project_name.replace(/\\/g,"\\\\").replace(/'/g,"\\'")+'\',\''+r.property_type+'\')">'
+    var tc = DIR_TYPE_COLORS[r.property_type]||"#21513b";
+    var region = (r.planning_region||"").replace(" Region","");
+    return '<div style="background:var(--srf);border:1px solid var(--bdr);border-radius:10px;padding:16px;cursor:pointer;transition:all .15s;border-top:3px solid '+tc+'" onmouseenter="this.style.boxShadow=\'0 4px 16px rgba(33,81,59,.12)\'" onmouseleave="this.style.boxShadow=\'none\'" onclick="dirOpenDetail(\''+r.project_name.replace(/\\/g,"\\\\").replace(/'/g,"\\'")+'\',\''+r.property_type+'\')">'
       +'<div style="font-weight:700;font-size:13px;margin-bottom:3px;line-height:1.3">'+r.project_name+'</div>'
-      +'<div style="font-size:11px;color:var(--mut);margin-bottom:9px">'+(r.building_address||"—")+(region?" · "+region:"")+'</div>'
+      +'<div style="font-size:11px;color:var(--mut);margin-bottom:9px">'+(r.building_address||"—")+(region?" &middot; "+region:"")+'</div>'
       +'<div style="display:flex;gap:5px;flex-wrap:wrap;margin-bottom:10px">'
       +'<span class="pill" style="background:'+tc+'20;color:'+tc+';border:1px solid '+tc+'40">'+(r.property_type||"—")+'</span>'
       +(r.tenure?'<span class="pill p-neu">'+r.tenure.substring(0,18)+'</span>':'')
       +'</div>'
       +'<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:5px">'
       +'<div style="text-align:center;background:var(--srf2);border-radius:6px;padding:7px 4px"><div style="font-size:15px;font-weight:700;color:var(--g1)">'+r.total_transactions.toLocaleString()+'</div><div style="font-size:9px;color:var(--mut);text-transform:uppercase;letter-spacing:.04em">Deals</div></div>'
-      +'<div style="text-align:center;background:var(--srf2);border-radius:6px;padding:7px 4px"><div style="font-size:12px;font-weight:700;color:var(--txt)">'+val+'</div><div style="font-size:9px;color:var(--mut);text-transform:uppercase;letter-spacing:.04em">Total Value</div></div>'
-      +'<div style="text-align:center;background:var(--srf2);border-radius:6px;padding:7px 4px"><div style="font-size:12px;font-weight:700;color:var(--txt)">'+psf+'</div><div style="font-size:9px;color:var(--mut);text-transform:uppercase;letter-spacing:.04em">Avg PSF</div></div>'
+      +'<div style="text-align:center;background:var(--srf2);border-radius:6px;padding:7px 4px"><div style="font-size:12px;font-weight:700;color:var(--txt)">'+fmtVal(r.total_value_sgd)+'</div><div style="font-size:9px;color:var(--mut);text-transform:uppercase;letter-spacing:.04em">Total Value</div></div>'
+      +'<div style="text-align:center;background:var(--srf2);border-radius:6px;padding:7px 4px"><div style="font-size:12px;font-weight:700;color:var(--txt)">'+(r.avg_psf?"S$"+Math.round(r.avg_psf):"—")+'</div><div style="font-size:9px;color:var(--mut);text-transform:uppercase;letter-spacing:.04em">Avg PSF</div></div>'
       +'</div>'
-      +'<div style="margin-top:8px;font-size:10px;color:var(--mut)">Last deal: '+lastDeal+'</div>'
+      +'<div style="margin-top:8px;font-size:10px;color:var(--mut)">Last deal: '+(r.last_transaction?r.last_transaction.substring(0,7):"—")+'</div>'
       +'</div>';
   }).join('');
 }
 
+function renderDirList(rows){
+  var tmap = DIR_TYPE_COLORS;
+  document.getElementById("dir-list-tbody").innerHTML = rows.map(function(r){
+    var tc = tmap[r.property_type]||"#21513b";
+    var region = (r.planning_region||"").replace(" Region","");
+    return '<tr style="cursor:pointer" onclick="dirOpenDetail(\''+r.project_name.replace(/\\/g,"\\\\").replace(/'/g,"\\'")+'\',\''+r.property_type+'\')">'
+      +'<td><span style="font-weight:600">'+r.project_name+'</span><div style="font-size:10px;color:var(--mut)">'+(r.building_address||"")+'</div></td>'
+      +'<td><span class="pill" style="background:'+tc+'20;color:'+tc+';border:1px solid '+tc+'40">'+(r.property_type||"—")+'</span></td>'
+      +'<td style="font-size:12px;color:var(--mut)">'+region+'</td>'
+      +'<td style="font-size:11px;color:var(--mut)">'+(r.tenure?r.tenure.substring(0,20):"—")+'</td>'
+      +'<td style="font-family:\'DM Mono\',monospace;font-size:12px;text-align:right;font-weight:600;color:var(--g1)">'+r.total_transactions.toLocaleString()+'</td>'
+      +'<td style="font-family:\'DM Mono\',monospace;font-size:12px;text-align:right;font-weight:600">'+fmtVal(r.total_value_sgd)+'</td>'
+      +'<td style="font-family:\'DM Mono\',monospace;font-size:12px;text-align:right">'+(r.avg_psf?"S$"+Math.round(r.avg_psf):"—")+'</td>'
+      +'<td style="font-family:\'DM Mono\',monospace;font-size:11px;text-align:right;color:var(--mut)">'+(r.min_psf?"S$"+Math.round(r.min_psf):"—")+'</td>'
+      +'<td style="font-family:\'DM Mono\',monospace;font-size:11px;text-align:right;color:var(--mut)">'+(r.max_psf?"S$"+Math.round(r.max_psf):"—")+'</td>'
+      +'<td style="font-size:11px;color:var(--mut)">'+(r.last_transaction?r.last_transaction.substring(0,7):"—")+'</td>'
+      +'</tr>';
+  }).join('');
+}
+
 function renderDirPagination(){
-  var tp=Math.ceil(dirTotal/dirPageSize); if(tp<=1) return;
+  var tp = Math.ceil(dirTotal/dirPageSize); if(tp<=1) return;
   document.getElementById("dir-pagination").innerHTML =
     '<button onclick="dirSearch('+Math.max(0,dirPage-1)+')" '+(dirPage===0?"disabled style='opacity:.4'":"")
     +' style="padding:5px 12px;border:1px solid var(--bdr);border-radius:6px;background:var(--srf);cursor:pointer;font-size:12px">← Prev</button>'
-    +'<span style="font-size:12px;color:var(--mut)">Page '+(dirPage+1)+' of '+tp+' ('+dirTotal.toLocaleString()+' buildings)</span>'
+    +'<span style="font-size:12px;color:var(--mut)">Page '+(dirPage+1)+' of '+tp+' · '+dirTotal.toLocaleString()+' buildings</span>'
     +'<button onclick="dirSearch('+Math.min(tp-1,dirPage+1)+')" '+(dirPage>=tp-1?"disabled style='opacity:.4'":"")
     +' style="padding:5px 12px;border:1px solid var(--bdr);border-radius:6px;background:var(--srf);cursor:pointer;font-size:12px">Next →</button>';
 }
 
 function dirClear(){
   document.getElementById("dir-search").value="";
-  document.getElementById("dir-type").value="";
   document.getElementById("dir-region").value="";
+  document.getElementById("dir-sort").value="project_name.asc";
+  dirActiveType="";
+  document.querySelectorAll(".dir-tbtn").forEach(function(b){ b.classList.remove("on"); });
+  document.querySelector(".dir-tbtn[data-dtype='']").classList.add("on");
   dirSearch(0);
 }
 
 async function dirOpenDetail(name, type){
   detProject=name; detTxPage=0;
   document.getElementById("dir-grid").style.display="none";
+  document.getElementById("dir-list").style.display="none";
   document.getElementById("dir-pagination").style.display="none";
+  document.getElementById("dir-type-btns").style.display="none";
   document.getElementById("dir-detail").style.display="block";
   document.getElementById("det-name").textContent=name;
   document.getElementById("det-type-pill").textContent=type;
   document.getElementById("det-tx-loading").style.display="block";
   document.getElementById("det-tx-table").style.display="none";
   document.getElementById("det-stats").innerHTML="";
-  document.getElementById("det-chart").innerHTML="";
+  document.getElementById("det-chart").innerHTML="<div style='color:var(--mut);font-size:12px;padding:10px'>Loading chart...</div>";
 
-  var r1 = await fetch(SB_URL+"/rest/v1/properties?project_name=eq."+encodeURIComponent(name)+"&select=*",{headers:{"apikey":SB_KEY,"Authorization":"Bearer "+SB_KEY}});
-  var props = await r1.json(); var p=props[0]||{};
-  var val=p.total_value_sgd?(p.total_value_sgd>=1e9?"S$"+(p.total_value_sgd/1e9).toFixed(2)+"B":"S$"+(p.total_value_sgd/1e6).toFixed(1)+"M"):"—";
+  var r1=await fetch(SB_URL+"/rest/v1/properties?project_name=eq."+encodeURIComponent(name)+"&select=*",{headers:{"apikey":SB_KEY,"Authorization":"Bearer "+SB_KEY}});
+  var props=await r1.json(); var p=props[0]||{};
   var stats=[
     {l:"Total Deals",v:(p.total_transactions||0).toLocaleString()},
-    {l:"Total Value",v:val},
+    {l:"Total Value",v:fmtVal(p.total_value_sgd)},
     {l:"Avg PSF",v:p.avg_psf?"S$"+Math.round(p.avg_psf):"—"},
     {l:"Min PSF",v:p.min_psf?"S$"+Math.round(p.min_psf):"—"},
     {l:"Max PSF",v:p.max_psf?"S$"+Math.round(p.max_psf):"—"},
@@ -716,8 +835,7 @@ async function dirOpenDetail(name, type){
   }).join('');
 
   var r2=await fetch(SB_URL+"/rest/v1/transactions?project_name=eq."+encodeURIComponent(name)+"&select=sale_date,unit_price_psf&limit=50000",{headers:{"apikey":SB_KEY,"Authorization":"Bearer "+SB_KEY}});
-  var txAll=await r2.json();
-  renderDetChart(txAll);
+  renderDetChart(await r2.json());
   loadDetTx(name,0);
 }
 
@@ -730,24 +848,25 @@ function renderDetChart(rows){
     byYear[yr].sum+=parseFloat(r.unit_price_psf); byYear[yr].cnt++;
   });
   var yrs=Object.keys(byYear).map(Number).sort();
-  if(!yrs.length){document.getElementById("det-chart").innerHTML='<div style="color:var(--mut);font-size:12px;padding:20px">No PSF data</div>';return;}
+  if(!yrs.length){document.getElementById("det-chart").innerHTML='<div style="color:var(--mut);font-size:12px;padding:20px">No PSF data available</div>';return;}
   var vals=yrs.map(function(y){return Math.round(byYear[y].sum/byYear[y].cnt);});
-  var mx=Math.max.apply(null,vals);
-  var el=document.getElementById("det-chart"),W=el.clientWidth||700,H=180;
-  var P={t:10,r:10,b:30,l:55},cW=W-P.l-P.r,cH=H-P.t-P.b;
-  var bW=Math.max(4,cW/yrs.length*0.7);
+  var mx=Math.max.apply(null,vals)||1;
+  var el=document.getElementById("det-chart"),W=el.clientWidth||700,H=200;
+  var P={t:10,r:10,b:30,l:60},cW=W-P.l-P.r,cH=H-P.t-P.b;
+  var bW=Math.max(4,Math.min(40,cW/yrs.length*0.7));
   var svg='<svg height="'+H+'" viewBox="0 0 '+W+' '+H+'" style="width:100%;overflow:visible">';
-  for(var k=0;k<=4;k++){var tv=k*mx/4,ty=P.t+cH-(tv/mx)*cH;
-    svg+='<line x1="'+P.l+'" x2="'+(P.l+cW)+'" y1="'+ty+'" y2="'+ty+'" stroke="#dde8e3" stroke-width="1"/>';
-    svg+='<text x="'+(P.l-5)+'" y="'+(ty+4)+'" text-anchor="end" fill="#6b8c7a" font-size="10" font-family="DM Mono">S$'+Math.round(tv)+'</text>';}
+  for(var k=0;k<=4;k++){var tv=Math.round(k*mx/4),ty=P.t+cH-(tv/mx)*cH;
+    svg+='<line x1="'+P.l+'" x2="'+(P.l+cW)+'" y1="'+ty+'" y2="'+ty+'" stroke="var(--bdr)" stroke-width="1"/>';
+    svg+='<text x="'+(P.l-6)+'" y="'+(ty+4)+'" text-anchor="end" fill="var(--mut)" font-size="10" font-family="DM Mono,monospace">S$'+tv+'</text>';}
   yrs.forEach(function(yr,i){
-    var bh=(vals[i]/mx)*cH,bx=P.l+i*(cW/yrs.length)+(cW/yrs.length-bW)/2,by=P.t+cH-bh;
-    svg+='<rect x="'+bx.toFixed(1)+'" y="'+by.toFixed(1)+'" width="'+bW.toFixed(1)+'" height="'+Math.max(bh,0).toFixed(1)+'" fill="#21513b" rx="2" opacity=".85"/>';
+    var bh=Math.max(2,(vals[i]/mx)*cH),bx=P.l+i*(cW/yrs.length)+(cW/yrs.length-bW)/2,by=P.t+cH-bh;
+    svg+='<rect x="'+bx.toFixed(1)+'" y="'+by.toFixed(1)+'" width="'+bW.toFixed(1)+'" height="'+bh.toFixed(1)+'" fill="var(--g1)" rx="2" opacity=".85"/>';
+    svg+='<title>'+yr+': S$'+vals[i]+' psf</title>';
     if(yrs.length<=15||i%Math.ceil(yrs.length/12)===0||i===yrs.length-1)
-      svg+='<text x="'+(bx+bW/2).toFixed(1)+'" y="'+(P.t+cH+15)+'" text-anchor="middle" fill="#6b8c7a" font-size="10" font-family="DM Sans">'+yr+'</text>';
+      svg+='<text x="'+(bx+bW/2).toFixed(1)+'" y="'+(P.t+cH+16)+'" text-anchor="middle" fill="var(--mut)" font-size="10" font-family="DM Sans">'+yr+'</text>';
   });
   svg+='</svg>';
-  el.innerHTML=svg;
+  document.getElementById("det-chart").innerHTML=svg;
 }
 
 async function loadDetTx(name,page){
@@ -762,7 +881,7 @@ async function loadDetTx(name,page){
   document.getElementById("det-tx-tbody").innerHTML=data.map(function(r){
     return "<tr>"
       +"<td style='white-space:nowrap;font-family:\"DM Mono\",monospace;font-size:11px'>"+(r.sale_date||"—")+"</td>"
-      +"<td style='font-size:11px;color:var(--mut)'>"+(r.address||"—")+"</td>"
+      +"<td style='font-size:11px;color:var(--mut);min-width:160px'>"+(r.address||"—")+"</td>"
       +"<td style='font-family:\"DM Mono\",monospace;font-size:12px;font-weight:600'>S$"+(r.transacted_price?Number(r.transacted_price).toLocaleString():"—")+"</td>"
       +"<td style='font-family:\"DM Mono\",monospace;font-size:12px'>"+(r.area_sqft?parseFloat(r.area_sqft).toFixed(0):"—")+"</td>"
       +"<td style='font-family:\"DM Mono\",monospace;font-size:12px'>"+(r.unit_price_psf?"S$"+Math.round(r.unit_price_psf):"—")+"</td>"
@@ -776,7 +895,7 @@ async function loadDetTx(name,page){
     var esc=name.replace(/\\/g,"\\\\").replace(/'/g,"\\'");
     pel.innerHTML='<button onclick="loadDetTx(\''+esc+'\','+Math.max(0,page-1)+')" '+(page===0?"disabled style='opacity:.4'":"")
       +' style="padding:5px 12px;border:1px solid var(--bdr);border-radius:6px;background:var(--srf);cursor:pointer;font-size:12px">← Prev</button>'
-      +'<span style="font-size:12px;color:var(--mut)">Page '+(page+1)+' of '+tp+' ('+detTxTotal.toLocaleString()+' transactions)</span>'
+      +'<span style="font-size:12px;color:var(--mut)">Page '+(page+1)+' of '+tp+' · '+detTxTotal.toLocaleString()+' transactions</span>'
       +'<button onclick="loadDetTx(\''+esc+'\','+Math.min(tp-1,page+1)+')" '+(page>=tp-1?"disabled style='opacity:.4'":"")
       +' style="padding:5px 12px;border:1px solid var(--bdr);border-radius:6px;background:var(--srf);cursor:pointer;font-size:12px">Next →</button>';
   } else { pel.innerHTML=''; }
@@ -784,13 +903,16 @@ async function loadDetTx(name,page){
 
 function dirCloseDetail(){
   document.getElementById("dir-detail").style.display="none";
-  document.getElementById("dir-grid").style.display="grid";
+  document.getElementById("dir-type-btns").style.display="flex";
   document.getElementById("dir-pagination").style.display="flex";
+  if(dirViewMode==='grid'){document.getElementById("dir-grid").style.display="grid";document.getElementById("dir-list").style.display="none";}
+  else{document.getElementById("dir-list").style.display="block";document.getElementById("dir-grid").style.display="none";}
 }
 
 document.querySelectorAll(".navtab").forEach(function(t){
   if(t.dataset.tab==="directory") t.addEventListener("click",function(){ if(document.getElementById("dir-grid").innerHTML==="") dirSearch(0); });
 });
+document.addEventListener("keydown",function(e){ if(e.key==="Enter"&&document.activeElement.id==="dir-search") dirSearch(0); });
 
 // ─── SUPABASE ─────────────────────────────────────────────────────────
 var SB_URL = "https://xywgocvjuygudzrduvwr.supabase.co";
