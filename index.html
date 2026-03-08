@@ -727,18 +727,20 @@ async function dirSearch(page){
   document.getElementById("dir-loading").style.display = "none";
   document.getElementById("dir-count").textContent = dirTotal.toLocaleString()+" buildings";
 
+  // Always reset both containers first
+  document.getElementById("dir-grid").style.display = "none";
+  document.getElementById("dir-list").style.display = "none";
+
   if(!Array.isArray(data) || data.length === 0){
+    document.getElementById("dir-grid").style.display = "grid";
     document.getElementById("dir-grid").innerHTML = '<div style="padding:40px;text-align:center;color:var(--mut)">No buildings found.</div>';
-    document.getElementById("dir-loading").style.display = "none";
     return;
   }
 
   if(dirViewMode === 'grid'){
     document.getElementById("dir-grid").style.display = "grid";
-    document.getElementById("dir-list").style.display = "none";
     renderDirGrid(data);
   } else {
-    document.getElementById("dir-grid").style.display = "none";
     document.getElementById("dir-list").style.display = "block";
     renderDirList(data);
   }
