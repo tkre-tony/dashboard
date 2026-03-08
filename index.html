@@ -72,7 +72,7 @@ html,body{background:var(--bg);color:var(--txt);font-family:'DM Sans',sans-serif
 #tt b{display:block;font-weight:600;margin-bottom:2px}
 .g2{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:16px}
 ::-webkit-scrollbar{width:5px}::-webkit-scrollbar-track{background:var(--bg)}::-webkit-scrollbar-thumb{background:var(--gmd);border-radius:3px}
-@media(max-width:768px){.kpis{grid-template-columns:1fr 1fr}.g2{grid-template-columns:1fr}.wrap{padding:14px 16px}}
+@media(max-width:768px){.kpis{grid-template-columns:1fr 1fr}.g2{grid-template-columns:1fr}.wrap{padding:14px 16px}.chart-kpi-grid{grid-template-columns:1fr !important}}
 </style>
 </head>
 <body>
@@ -93,49 +93,71 @@ html,body{background:var(--bg);color:var(--txt);font-family:'DM Sans',sans-serif
 <div class="wrap">
 
   <div class="panel on" id="tab-overview">
-    <div class="kpis">
-      <div class="kpi"><div class="kpi-lbl">Total Transaction Value</div><div class="kpi-val" id="k-totval">—</div><div class="kpi-sub" id="k-totsub">—</div></div>
-      <div class="kpi"><div class="kpi-lbl">Total Transactions</div><div class="kpi-val dk" id="k-totcnt">—</div><div class="kpi-sub">Strata, Investment &amp; En Bloc</div></div>
-      <div class="kpi"><div class="kpi-lbl">2025 Full Year Value</div><div class="kpi-val dk" id="k-y25val">—</div><div class="kpi-sub" id="k-y25cnt">—</div></div>
-      <div class="kpi"><div class="kpi-lbl">2026 YTD Value</div><div class="kpi-val" id="k-y26val">—</div><div class="kpi-sub" id="k-y26cnt">—</div></div>
-    </div>
-    <div class="card">
-      <div class="card-hdr">
-        <div class="card-title">Annual Transaction Volume by Property Type</div>
-        <div class="mode-row">
-          <button class="mbtn on" id="m-val">S$ Value</button>
-          <button class="mbtn" id="m-cnt">No. of Deals</button>
-        </div>
-      </div>
-      <div class="fbar">
-        <span class="fbar-label">Range</span>
-        <div class="range-sel" id="range-btns">
-          <button class="rbtn" data-range="L12">Last 12 Mths</button>
-          <button class="rbtn" data-range="5Y">5 Years</button>
-          <button class="rbtn" data-range="10Y">10 Years</button>
-          <button class="rbtn on" data-range="ALL">All (1995–)</button>
-        </div>
-      </div>
-      <div class="fbar" id="type-chips"></div>
-      <div id="bar-wrap" style="width:100%;min-height:280px"></div>
-      <div style="display:flex;flex-wrap:wrap;gap:8px;margin-top:12px" id="legend"></div>
-    </div>
-    <!-- Smart Search -->
-    <div class="card">
-      <div class="card-hdr">
-        <div class="card-title">Smart Search</div>
-        <div style="font-size:11px;color:var(--mut)">Search by project, street or district number — chart updates automatically</div>
-      </div>
+
+    <!-- Smart Search — top -->
+    <div class="card" style="margin-bottom:14px">
       <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap">
+        <div style="font-size:13px;font-weight:600;white-space:nowrap;color:var(--g1)">🔍 Smart Search</div>
         <div class="ac-wrap" style="flex:1;min-width:220px">
-          <input id="ov-search" placeholder="e.g. Tradehub 21, Tuas Avenue, 22 (district)..." autocomplete="off"
-            style="width:100%;padding:9px 14px;border:1px solid var(--bdr);border-radius:8px;font-size:13px;font-family:'DM Sans',sans-serif;outline:none;color:var(--txt);background:var(--srf)"/>
+          <input id="ov-search" placeholder="Project name, street or district number (e.g. 22)..." autocomplete="off"
+            style="width:100%;padding:8px 14px;border:1px solid var(--bdr);border-radius:8px;font-size:13px;font-family:'DM Sans',sans-serif;outline:none;color:var(--txt);background:var(--srf)"/>
           <div class="ac-dropdown" id="ov-ac-dropdown"></div>
         </div>
-        <button onclick="ovSearch()" style="padding:9px 20px;background:var(--g1);color:#fff;border:none;border-radius:8px;font-size:13px;font-family:'DM Sans',sans-serif;cursor:pointer;font-weight:600;white-space:nowrap">Search</button>
-        <button onclick="ovClear()" style="padding:9px 16px;background:var(--srf2);color:var(--mut);border:1px solid var(--bdr);border-radius:8px;font-size:13px;font-family:'DM Sans',sans-serif;cursor:pointer;white-space:nowrap">Clear</button>
+        <button onclick="ovSearch()" style="padding:8px 20px;background:var(--g1);color:#fff;border:none;border-radius:8px;font-size:13px;font-family:'DM Sans',sans-serif;cursor:pointer;font-weight:600;white-space:nowrap">Search</button>
+        <button onclick="ovClear()" style="padding:8px 14px;background:var(--srf2);color:var(--mut);border:1px solid var(--bdr);border-radius:8px;font-size:13px;font-family:'DM Sans',sans-serif;cursor:pointer;white-space:nowrap">Clear</button>
+        <div id="ov-search-info" style="font-size:11px;color:var(--g1);font-weight:500"></div>
       </div>
-      <div id="ov-search-info" style="margin-top:8px;font-size:11px;color:var(--mut);display:none"></div>
+    </div>
+
+    <!-- Chart + KPIs side by side -->
+    <div class="chart-kpi-grid" style="display:grid;grid-template-columns:1fr 200px;gap:14px;margin-bottom:14px;align-items:start">
+
+      <!-- Chart card (4/5) -->
+      <div class="card" style="margin-bottom:0">
+        <div class="card-hdr">
+          <div class="card-title">Annual Transaction Volume by Property Type</div>
+          <div class="mode-row">
+            <button class="mbtn on" id="m-val">S$ Value</button>
+            <button class="mbtn" id="m-cnt">No. of Deals</button>
+          </div>
+        </div>
+        <div class="fbar">
+          <span class="fbar-label">Range</span>
+          <div class="range-sel" id="range-btns">
+            <button class="rbtn" data-range="L12">Last 12 Mths</button>
+            <button class="rbtn" data-range="5Y">5 Years</button>
+            <button class="rbtn" data-range="10Y">10 Years</button>
+            <button class="rbtn on" data-range="ALL">All (1995–)</button>
+          </div>
+        </div>
+        <div class="fbar" id="type-chips"></div>
+        <div id="bar-wrap" style="width:100%;min-height:260px"></div>
+        <div style="display:flex;flex-wrap:wrap;gap:8px;margin-top:10px" id="legend"></div>
+      </div>
+
+      <!-- KPI stack (1/5) -->
+      <div style="display:flex;flex-direction:column;gap:10px">
+        <div class="kpi" style="border-left-color:var(--g1)">
+          <div class="kpi-lbl">2026 YTD Value</div>
+          <div class="kpi-val" id="k-y26val">—</div>
+          <div class="kpi-sub" id="k-y26cnt">—</div>
+        </div>
+        <div class="kpi" style="border-left-color:var(--g2)">
+          <div class="kpi-lbl">2026 YTD Transactions</div>
+          <div class="kpi-val dk" id="k-y26txn">—</div>
+          <div class="kpi-sub">deals so far</div>
+        </div>
+        <div class="kpi" style="border-left-color:var(--g3)">
+          <div class="kpi-lbl">2025 Total Value</div>
+          <div class="kpi-val dk" id="k-y25val">—</div>
+          <div class="kpi-sub" id="k-y25cnt">—</div>
+        </div>
+        <div class="kpi" style="border-left-color:#7dd9a8">
+          <div class="kpi-lbl">2025 Total Transactions</div>
+          <div class="kpi-val dk" id="k-y25txn">—</div>
+          <div class="kpi-sub">full year</div>
+        </div>
+      </div>
     </div>
 
     <div class="g2">
@@ -322,17 +344,21 @@ document.querySelectorAll(".navtab").forEach(function(t){
 
 // KPIs
 function renderKPIs(){
-  var idxs=getIdxs(),fy=getFY();
-  var tv=0,tc=0;
-  idxs.forEach(function(i){TYPES.forEach(function(t,ti){if(activeTypes[t]){tv+=VAL_ARR[i][ti];tc+=CNT_ARR[i][ti];}});});
-  document.getElementById("k-totval").textContent=fmtV(tv);
-  document.getElementById("k-totcnt").textContent=fmtC(tc);
-  document.getElementById("k-totsub").textContent=fy[0]+(fy.length>1?" – "+fy[fy.length-1]:"");
-  var i25=YEARS.indexOf(2025),i26=YEARS.indexOf(2026);
-  if(i25>=0){var v25=0,c25=0;TYPES.forEach(function(t,ti){if(activeTypes[t]){v25+=VAL_ARR[i25][ti];c25+=CNT_ARR[i25][ti];}});
-    document.getElementById("k-y25val").textContent=fmtV(v25);document.getElementById("k-y25cnt").textContent=fmtC(c25)+" transactions";}
-  if(i26>=0){var v26=0,c26=0;TYPES.forEach(function(t,ti){if(activeTypes[t]){v26+=VAL_ARR[i26][ti];c26+=CNT_ARR[i26][ti];}});
-    document.getElementById("k-y26val").textContent=fmtV(v26);document.getElementById("k-y26cnt").textContent=fmtC(c26)+" transactions YTD";}
+  var i25=YEARS.indexOf(2025), i26=YEARS.indexOf(2026);
+  if(i25>=0){
+    var v25=0,c25=0;
+    TYPES.forEach(function(t,ti){if(activeTypes[t]){v25+=VAL_ARR[i25][ti];c25+=CNT_ARR[i25][ti];}});
+    document.getElementById("k-y25val").textContent=fmtV(v25);
+    document.getElementById("k-y25cnt").textContent=fmtV(v25);
+    document.getElementById("k-y25txn").textContent=fmtC(c25);
+  }
+  if(i26>=0){
+    var v26=0,c26=0;
+    TYPES.forEach(function(t,ti){if(activeTypes[t]){v26+=VAL_ARR[i26][ti];c26+=CNT_ARR[i26][ti];}});
+    document.getElementById("k-y26val").textContent=fmtV(v26);
+    document.getElementById("k-y26cnt").textContent=fmtC(c26)+" transactions";
+    document.getElementById("k-y26txn").textContent=fmtC(c26);
+  }
 }
 
 // TYPE CHIPS
