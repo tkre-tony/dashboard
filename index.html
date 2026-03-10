@@ -123,19 +123,31 @@ html,body{background:var(--bg);color:var(--txt);font-family:'DM Sans',sans-serif
       <!-- Chart card (4/5) -->
       <div class="card" style="margin-bottom:0">
         <div class="card-hdr">
-          <div class="card-title">Annual Transaction Volume by Property Type</div>
+          <div class="card-title" id="chart-title">Transaction Volume — Last 18 Months</div>
           <div class="mode-row">
             <button class="mbtn on" id="m-val">S$ Value</button>
             <button class="mbtn" id="m-cnt">No. of Deals</button>
+            <div style="width:1px;height:16px;background:var(--bdr);margin:0 4px"></div>
+            <button class="mbtn" id="m-yoy" title="Toggle Year-on-Year view">YoY</button>
           </div>
         </div>
-        <div class="fbar">
-          <span class="fbar-label">Range</span>
-          <div class="range-sel" id="range-btns">
-            <button class="rbtn" data-range="L12">Last 12 Mths</button>
-            <button class="rbtn" data-range="5Y">5 Years</button>
-            <button class="rbtn" data-range="10Y">10 Years</button>
-            <button class="rbtn on" data-range="ALL">All (1995–)</button>
+        <div class="fbar" style="flex-direction:column;gap:8px;align-items:stretch">
+          <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap">
+            <span class="fbar-label">Period</span>
+            <div class="range-sel" id="range-btns">
+              <button class="rbtn on" data-range="L18">Last 18 Mths</button>
+              <button class="rbtn" data-range="L12">Last 12 Mths</button>
+              <button class="rbtn" data-range="5Y">5 Years</button>
+              <button class="rbtn" data-range="10Y">10 Years</button>
+              <button class="rbtn" data-range="ALL">All (1995–)</button>
+            </div>
+          </div>
+          <div style="display:flex;align-items:center;gap:10px" id="slider-row">
+            <span class="fbar-label" style="white-space:nowrap">Expand</span>
+            <input type="range" id="period-slider" min="6" max="32" value="18"
+              style="flex:1;accent-color:var(--g1);cursor:pointer;height:4px"
+              oninput="onSliderInput(this.value)">
+            <span id="slider-label" style="font-size:11px;color:var(--mut);font-family:'DM Mono',monospace;white-space:nowrap;min-width:60px">18 months</span>
           </div>
         </div>
         <div class="fbar" id="type-chips"></div>
@@ -582,7 +594,10 @@ var PIPELINE=[
 
 // STATE
 var chartMode="val"
-var activeRange="ALL";
+var activeRange="L18";
+var chartYoY=false;
+var sliderMonths=18;
+var MONTHLY_CACHE=null; // {labels:[], datasets:{type:[vals]}}
 var newsCat="All";
 var activeTypes={};
 TYPES.forEach(function(t){activeTypes[t]=true;});
@@ -591,15 +606,132 @@ TYPES.forEach(function(t){activeTypes[t]=true;});
 function fmtV(v){if(v>=1000)return"S$"+(v/1000).toFixed(1)+"B";if(v>=1)return"S$"+Math.round(v)+"M";return"S$"+(v*1000).toFixed(0)+"K";}
 function fmtC(v){return v.toLocaleString();}
 
+// Monthly data fetch from Supabase
+async function fetchMonthlyData(months){
+  var d=new Date();
+  d.setMonth(d.getMonth()-months);
+  var from=d.toISOString().substring(0,10);
+  var url=SB_URL+"/rest/v1/transactions?select=sale_date,property_type,transacted_price&sale_date=gte."+from+"&limit=50000";
+  try{
+    var r=await fetch(url,{headers:{"apikey":SB_KEY,"Authorization":"Bearer "+SB_KEY}});
+    var rows=await r.json();
+    // Aggregate by month + type
+    var agg={};
+    rows.forEach(function(row){
+      if(!row.sale_date||!row.transacted_price)return;
+      var mo=row.sale_date.substring(0,7); // YYYY-MM
+      var t=row.property_type||"Other";
+      if(!agg[mo])agg[mo]={};
+      if(!agg[mo][t])agg[mo][t]={val:0,cnt:0};
+      agg[mo][t].val+=(row.transacted_price/1e6);
+      agg[mo][t].cnt+=1;
+    });
+    // Build sorted labels
+    var labels=Object.keys(agg).sort();
+    return {labels:labels, agg:agg, raw:rows};
+  }catch(e){return null;}
+}
+
+// Format month label e.g. "2024-09" → "Sep 24"
+function fmtMo(ym){
+  var ms=["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
+  var p=ym.split("-");
+  return ms[parseInt(p[1])-1]+" "+p[0].substring(2);
+}
+
+// Slider handler
+function onSliderInput(v){
+  sliderMonths=parseInt(v);
+  document.getElementById("slider-label").textContent=v+" months";
+  activeRange="SLIDER";
+  document.getElementById("range-btns").querySelectorAll(".rbtn").forEach(function(x){x.classList.remove("on");});
+  loadAndRenderChart();
+}
+
 function getIdxs(){
   var cur=2026,r0,r1;
-  if(activeRange==="L12"){r0=2025;r1=2026;}
+  if(activeRange==="L18"||activeRange==="L12"||activeRange==="SLIDER"){r0=2024;r1=2026;}
   else if(activeRange==="5Y"){r0=cur-4;r1=cur;}
   else if(activeRange==="10Y"){r0=cur-9;r1=cur;}
   else{r0=YEARS[0];r1=YEARS[YEARS.length-1];}
   return YEARS.reduce(function(a,y,i){if(y>=r0&&y<=r1)a.push(i);return a;},[]);
 }
 function getFY(){return getIdxs().map(function(i){return YEARS[i];});}
+
+// Decide if we show monthly or annual chart
+function isMonthlyMode(){return activeRange==="L18"||activeRange==="L12"||activeRange==="SLIDER";}
+
+async function loadAndRenderChart(){
+  if(isMonthlyMode()&&!chartYoY){
+    var months=(activeRange==="L12")?12:(activeRange==="SLIDER")?sliderMonths:18;
+    document.getElementById("chart-title").textContent="Transaction Volume — Last "+months+" Months";
+    document.getElementById("slider-row").style.display="flex";
+    if(months!==sliderMonths){
+      document.getElementById("period-slider").value=months;
+      document.getElementById("slider-label").textContent=months+" months";
+      sliderMonths=months;
+    }
+    var data=await fetchMonthlyData(months);
+    if(data){MONTHLY_CACHE=data;renderMonthlyChart(data);}
+    else renderBarChart();
+  } else {
+    var moLabel=chartYoY?"Year-on-Year Comparison":"Annual Transaction Volume by Property Type";
+    var rangeLabel=activeRange==="5Y"?"5 Years":activeRange==="10Y"?"10 Years":activeRange==="ALL"?"All Years (1995–)":"";
+    document.getElementById("chart-title").textContent=moLabel+(rangeLabel?" — "+rangeLabel:"");
+    document.getElementById("slider-row").style.display=chartYoY?"none":"flex";
+    renderBarChart();
+  }
+}
+
+function renderMonthlyChart(data){
+  var wrap=document.getElementById("bar-wrap");
+  var W=wrap.clientWidth||800,H=280;
+  var P={t:14,r:16,b:40,l:62};
+  var cW=W-P.l-P.r,cH=H-P.t-P.b;
+  var labels=data.labels;
+  var actT=TYPES.filter(function(t){return activeTypes[t];});
+  var tots=labels.map(function(mo){
+    return actT.reduce(function(s,t){
+      var d=data.agg[mo]&&data.agg[mo][t];
+      return s+(d?(chartMode==="val"?d.val:d.cnt):0);
+    },0);
+  });
+  var mx=Math.max.apply(null,tots.concat([1]));
+  var svg='<svg height="'+H+'" viewBox="0 0 '+W+' '+H+'" style="width:100%;overflow:visible">';
+  // Grid lines
+  for(var k=0;k<=5;k++){
+    var tv2=k*mx/5,ty=P.t+cH-(tv2/mx)*cH;
+    var tl=chartMode==="val"?(tv2>=1000?"S$"+(tv2/1000).toFixed(0)+"B":"S$"+Math.round(tv2)+"M"):(tv2>=1000?(tv2/1000).toFixed(1)+"K":Math.round(tv2).toString());
+    svg+='<line x1="'+P.l+'" x2="'+(P.l+cW)+'" y1="'+ty+'" y2="'+ty+'" stroke="#dde8e3" stroke-width="1"/>';
+    svg+='<text x="'+(P.l-5)+'" y="'+(ty+4)+'" text-anchor="end" fill="#6b8c7a" font-size="10" font-family="DM Mono,monospace">'+tl+'</text>';
+  }
+  // Bars
+  var bGW=cW/labels.length;
+  var bW=Math.max(2,bGW*0.82/actT.length);
+  labels.forEach(function(mo,gi){
+    var gx=P.l+gi*bGW+bGW*0.09;
+    var yBase=P.t+cH;
+    actT.forEach(function(t,ai){
+      var d=data.agg[mo]&&data.agg[mo][t];
+      var val=d?(chartMode==="val"?d.val:d.cnt):0;
+      var bh=(val/mx)*cH;
+      var bx=gx+ai*(bGW*0.82/actT.length);
+      var by=yBase-bh;
+      var vs=chartMode==="val"?fmtV(val):fmtC(val)+" deals";
+      svg+='<rect x="'+bx.toFixed(1)+'" y="'+by.toFixed(1)+'" width="'+bW.toFixed(1)+'" height="'+Math.max(bh,0).toFixed(1)+'"'
+          +' fill="'+TCOLOR[t]+'" rx="2" style="cursor:pointer"'
+          +' onmouseenter="sT(event,\''+fmtMo(mo)+'\',\''+t+'\',\''+vs+'\')" onmouseleave="hT()"/>';
+    });
+    // X labels — show every 2nd or 3rd to avoid crowding
+    var step=labels.length<=12?1:labels.length<=18?2:3;
+    if(gi%step===0||gi===labels.length-1){
+      var lx=P.l+gi*bGW+bGW/2;
+      svg+='<text x="'+lx.toFixed(1)+'" y="'+(P.t+cH+16)+'" text-anchor="middle" fill="#6b8c7a" font-size="9.5" font-family="DM Sans">'+fmtMo(mo)+'</text>';
+    }
+  });
+  svg+='</svg>';
+  wrap.innerHTML=svg;
+}
 
 // TABS
 document.querySelectorAll(".navtab").forEach(function(t){
@@ -660,8 +792,33 @@ function initRangeBtns(){
       activeRange=b.dataset.range;
       document.getElementById("range-btns").querySelectorAll(".rbtn").forEach(function(x){x.classList.remove("on");});
       b.classList.add("on");
+      // sync slider
+      var mo=activeRange==="L18"?18:activeRange==="L12"?12:sliderMonths;
+      if(activeRange==="L18"||activeRange==="L12"){
+        document.getElementById("period-slider").value=mo;
+        document.getElementById("slider-label").textContent=mo+" months";
+        sliderMonths=mo;
+      }
       renderAll();
+      loadAndRenderChart();
     });
+  });
+  // YoY toggle
+  document.getElementById("m-yoy").addEventListener("click",function(){
+    chartYoY=!chartYoY;
+    this.classList.toggle("on",chartYoY);
+    // When YoY on, force annual view
+    if(chartYoY){
+      document.getElementById("range-btns").querySelectorAll(".rbtn").forEach(function(x){x.classList.remove("on");});
+      document.querySelector(".rbtn[data-range='ALL']").classList.add("on");
+      activeRange="ALL";
+      document.getElementById("slider-row").style.display="none";
+    } else {
+      document.querySelector(".rbtn[data-range='L18']").classList.add("on");
+      activeRange="L18";
+      document.getElementById("slider-row").style.display="flex";
+    }
+    loadAndRenderChart();
   });
 }
 
@@ -811,14 +968,14 @@ function renderAnalytics(){
 }
 
 // MODE
-document.getElementById("m-val").addEventListener("click",function(){chartMode="val";this.classList.add("on");document.getElementById("m-cnt").classList.remove("on");renderBarChart();});
-document.getElementById("m-cnt").addEventListener("click",function(){chartMode="cnt";this.classList.add("on");document.getElementById("m-val").classList.remove("on");renderBarChart();});
+document.getElementById("m-val").addEventListener("click",function(){chartMode="val";this.classList.add("on");document.getElementById("m-cnt").classList.remove("on");loadAndRenderChart();});
+document.getElementById("m-cnt").addEventListener("click",function(){chartMode="cnt";this.classList.add("on");document.getElementById("m-val").classList.remove("on");loadAndRenderChart();});
 
 function renderAll(){
   if(!document.getElementById("ov-search").value.trim()) CHART_OVERRIDE = null;
-  renderKPIs();renderTypeChips();renderLegend();renderBarChart();renderTypeBreakdown();renderNewsPreview();
+  renderKPIs();renderTypeChips();renderLegend();loadAndRenderChart();renderTypeBreakdown();renderNewsPreview();
 }
-window.addEventListener("resize",function(){renderBarChart();});
+window.addEventListener("resize",function(){if(isMonthlyMode()&&MONTHLY_CACHE)renderMonthlyChart(MONTHLY_CACHE);else renderBarChart();});
 
 // ─── DIRECTORY ───────────────────────────────────────────────────────
 var dirPage = 0, dirTotal = 0, dirPageSize = 24;
@@ -1589,8 +1746,8 @@ loadDefaultTransactions(0);
 // Defer chart render until after browser paint so clientWidth is available
 requestAnimationFrame(function(){
   renderAll();
-  // Re-render on resize too
-  window.addEventListener("resize", function(){ renderBarChart(); renderAnalytics && renderAnalytics(); });
+  loadAndRenderChart(); // default: 18-month monthly view
+  window.addEventListener("resize", function(){ if(isMonthlyMode()&&MONTHLY_CACHE)renderMonthlyChart(MONTHLY_CACHE);else renderBarChart(); renderAnalytics && renderAnalytics(); });
 });
 
 // ─── REIT DIRECTORY ──────────────────────────────────────────────────
