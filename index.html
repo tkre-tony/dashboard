@@ -407,43 +407,86 @@ html,body{background:var(--bg);color:var(--txt);font-family:'DM Sans',sans-serif
     </div>
 
     <div class="card" style="margin-bottom:14px">
-      <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-bottom:12px">
-        <input id="reit-search" placeholder="Search building name, address or area..." autocomplete="off"
-          style="flex:1;min-width:220px;padding:8px 14px;border:1px solid var(--bdr);border-radius:8px;font-size:13px;font-family:'DM Sans',sans-serif;outline:none;color:var(--txt);background:var(--srf)"
+
+      <!-- Row 1: Geo toggle + Entity toggle -->
+      <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-bottom:13px">
+        <!-- SG / Overseas pill toggle -->
+        <div style="display:flex;background:var(--srf2);border:1px solid var(--bdr);border-radius:9px;padding:3px;gap:2px">
+          <button id="geo-sg" onclick="reitSetGeo('SG')" style="padding:5px 16px;border:none;border-radius:7px;font-size:12px;font-weight:700;font-family:'DM Sans',sans-serif;cursor:pointer;background:var(--g1);color:#fff;transition:all .15s">🇸🇬 Singapore</button>
+          <button id="geo-ov" onclick="reitSetGeo('OV')" style="padding:5px 16px;border:none;border-radius:7px;font-size:12px;font-weight:600;font-family:'DM Sans',sans-serif;cursor:pointer;background:transparent;color:var(--mut);transition:all .15s">🌏 Overseas</button>
+          <button id="geo-all" onclick="reitSetGeo('ALL')" style="padding:5px 16px;border:none;border-radius:7px;font-size:12px;font-weight:600;font-family:'DM Sans',sans-serif;cursor:pointer;background:transparent;color:var(--mut);transition:all .15s">All</button>
+        </div>
+        <!-- Entity type toggle -->
+        <div style="display:flex;background:var(--srf2);border:1px solid var(--bdr);border-radius:9px;padding:3px;gap:2px">
+          <button id="ent-all" onclick="reitSetEntity('ALL')" style="padding:5px 14px;border:none;border-radius:7px;font-size:12px;font-weight:700;font-family:'DM Sans',sans-serif;cursor:pointer;background:var(--g1);color:#fff;transition:all .15s">All</button>
+          <button id="ent-reit" onclick="reitSetEntity('REIT')" style="padding:5px 14px;border:none;border-radius:7px;font-size:12px;font-weight:600;font-family:'DM Sans',sans-serif;cursor:pointer;background:transparent;color:var(--mut);transition:all .15s">REITs</button>
+          <button id="ent-dev" onclick="reitSetEntity('DEV')" style="padding:5px 14px;border:none;border-radius:7px;font-size:12px;font-weight:600;font-family:'DM Sans',sans-serif;cursor:pointer;background:transparent;color:var(--mut);transition:all .15s">Developers</button>
+        </div>
+        <div style="height:28px;width:1px;background:var(--bdr)"></div>
+        <input id="reit-search" placeholder="Search building, address, area..." autocomplete="off"
+          style="flex:1;min-width:180px;padding:7px 12px;border:1px solid var(--bdr);border-radius:8px;font-size:12px;font-family:'DM Sans',sans-serif;outline:none;color:var(--txt);background:var(--srf)"
           oninput="reitSearchDelay()" onkeydown="if(event.key==='Enter')reitSearch(0)"/>
-        <select id="reit-region" onchange="reitSearch(0)" style="padding:8px 11px;border:1px solid var(--bdr);border-radius:8px;font-size:12px;font-family:'DM Sans',sans-serif;outline:none;color:var(--txt);background:var(--srf)">
-          <option value="">All Regions</option>
-          <option value="Central Region">Central</option>
-          <option value="East Region">East</option>
-          <option value="North Region">North</option>
-          <option value="North East Region">North-East</option>
-          <option value="West Region">West</option>
+        <select id="reit-country" onchange="reitSearch(0)" style="padding:7px 10px;border:1px solid var(--bdr);border-radius:8px;font-size:12px;font-family:'DM Sans',sans-serif;outline:none;color:var(--txt);background:var(--srf);display:none">
+          <option value="">All Countries</option>
+          <option value="Australia">Australia</option>
+          <option value="China">China</option>
+          <option value="Germany">Germany</option>
+          <option value="Hong Kong">Hong Kong</option>
+          <option value="Japan">Japan</option>
+          <option value="Malaysia">Malaysia</option>
+          <option value="South Korea">South Korea</option>
+          <option value="UK">United Kingdom</option>
+          <option value="USA">United States</option>
+          <option value="Vietnam">Vietnam</option>
         </select>
-        <select id="reit-sort" onchange="reitSearch(0)" style="padding:8px 11px;border:1px solid var(--bdr);border-radius:8px;font-size:12px;font-family:'DM Sans',sans-serif;outline:none;color:var(--txt);background:var(--srf)">
+        <select id="reit-region" onchange="reitSearch(0)" style="padding:7px 10px;border:1px solid var(--bdr);border-radius:8px;font-size:12px;font-family:'DM Sans',sans-serif;outline:none;color:var(--txt);background:var(--srf)">
+          <option value="">All Regions</option>
+          <option value="Central">Central</option>
+          <option value="East">East</option>
+          <option value="North">North</option>
+          <option value="North-East">North-East</option>
+          <option value="West">West</option>
+          <option value="South">South</option>
+        </select>
+        <select id="reit-sort" onchange="reitSearch(0)" style="padding:7px 10px;border:1px solid var(--bdr);border-radius:8px;font-size:12px;font-family:'DM Sans',sans-serif;outline:none;color:var(--txt);background:var(--srf)">
           <option value="name.asc">A → Z</option>
           <option value="val.desc">Valuation ↓</option>
           <option value="val.asc">Valuation ↑</option>
           <option value="occ.desc">Occupancy ↓</option>
-          <option value="reit.asc">REIT Name</option>
+          <option value="entity.asc">Entity Name</option>
         </select>
-        <button onclick="reitSearch(0)" style="padding:8px 18px;background:var(--g1);color:#fff;border:none;border-radius:8px;font-size:12px;font-family:'DM Sans',sans-serif;cursor:pointer;font-weight:600">Search</button>
-        <button onclick="reitClear()" style="padding:8px 14px;background:var(--srf2);color:var(--mut);border:1px solid var(--bdr);border-radius:8px;font-size:12px;font-family:'DM Sans',sans-serif;cursor:pointer">Clear</button>
+        <button onclick="reitSearch(0)" style="padding:7px 16px;background:var(--g1);color:#fff;border:none;border-radius:8px;font-size:12px;font-family:'DM Sans',sans-serif;cursor:pointer;font-weight:600">Search</button>
+        <button onclick="reitClear()" style="padding:7px 12px;background:var(--srf2);color:var(--mut);border:1px solid var(--bdr);border-radius:8px;font-size:12px;font-family:'DM Sans',sans-serif;cursor:pointer">Clear</button>
         <div style="font-size:11px;color:var(--mut);white-space:nowrap" id="reit-count">—</div>
       </div>
-      <div style="display:flex;gap:6px;flex-wrap:wrap;align-items:center;margin-bottom:10px">
+
+      <!-- Row 2: Entity chips (REITs + Developers combined, shown/hidden by entity toggle) -->
+      <div id="chip-reit-row" style="display:flex;gap:6px;flex-wrap:wrap;align-items:center;margin-bottom:9px">
         <span class="fbar-label">REIT</span>
         <button class="dir-tbtn on" data-reitf="" onclick="reitSetFilter(this,'reit','')">All</button>
         <button class="dir-tbtn" data-reitf="AIMS APAC REIT" onclick="reitSetFilter(this,'reit','AIMS APAC REIT')">AIMS APAC</button>
         <button class="dir-tbtn" data-reitf="Alpha Integrated REIT (former Sabana)" onclick="reitSetFilter(this,'reit','Alpha Integrated REIT (former Sabana)')">Alpha/Sabana</button>
         <button class="dir-tbtn" data-reitf="CapitaLand Ascendas REIT (CLAR)" onclick="reitSetFilter(this,'reit','CapitaLand Ascendas REIT (CLAR)')">CLAR</button>
+        <button class="dir-tbtn" data-reitf="CapitaLand Integrated Commercial Trust" onclick="reitSetFilter(this,'reit','CapitaLand Integrated Commercial Trust')">CICT</button>
         <button class="dir-tbtn" data-reitf="CDL Hospitality Trusts" onclick="reitSetFilter(this,'reit','CDL Hospitality Trusts')">CDL Hosp</button>
         <button class="dir-tbtn" data-reitf="Frasers Centrepoint Trust" onclick="reitSetFilter(this,'reit','Frasers Centrepoint Trust')">Frasers CT</button>
         <button class="dir-tbtn" data-reitf="Frasers Logistics & Commercial Trust" onclick="reitSetFilter(this,'reit','Frasers Logistics & Commercial Trust')">Frasers LCT</button>
         <button class="dir-tbtn" data-reitf="Keppel DC REIT" onclick="reitSetFilter(this,'reit','Keppel DC REIT')">Keppel DC</button>
         <button class="dir-tbtn" data-reitf="Keppel REIT" onclick="reitSetFilter(this,'reit','Keppel REIT')">Keppel REIT</button>
         <button class="dir-tbtn" data-reitf="Lendlease Global Commercial REIT" onclick="reitSetFilter(this,'reit','Lendlease Global Commercial REIT')">Lendlease</button>
+        <button class="dir-tbtn" data-reitf="Mapletree Industrial Trust" onclick="reitSetFilter(this,'reit','Mapletree Industrial Trust')">MINT</button>
+        <button class="dir-tbtn" data-reitf="Mapletree Logistics Trust" onclick="reitSetFilter(this,'reit','Mapletree Logistics Trust')">MLT</button>
         <button class="dir-tbtn" data-reitf="OUE REIT" onclick="reitSetFilter(this,'reit','OUE REIT')">OUE REIT</button>
       </div>
+      <div id="chip-dev-row" style="display:flex;gap:6px;flex-wrap:wrap;align-items:center;margin-bottom:9px">
+        <span class="fbar-label">Developer</span>
+        <button class="dir-tbtn on" data-devf="" onclick="reitSetFilter(this,'dev','')">All</button>
+        <button class="dir-tbtn" data-devf="CDL" onclick="reitSetFilter(this,'dev','CDL')">CDL</button>
+        <button class="dir-tbtn" data-devf="SingLand" onclick="reitSetFilter(this,'dev','SingLand')">SingLand</button>
+        <button class="dir-tbtn" data-devf="UOL Group" onclick="reitSetFilter(this,'dev','UOL Group')">UOL Group</button>
+      </div>
+
+      <!-- Row 3: Asset type chips -->
       <div style="display:flex;gap:6px;flex-wrap:wrap;align-items:center">
         <span class="fbar-label">Type</span>
         <button class="dir-tbtn on" data-rasset="" onclick="reitSetFilter(this,'asset','')">All</button>
@@ -454,6 +497,8 @@ html,body{background:var(--bg);color:var(--txt);font-family:'DM Sans',sans-serif
         <button class="dir-tbtn" data-rasset="Hotel" onclick="reitSetFilter(this,'asset','Hotel')">Hotel</button>
         <button class="dir-tbtn" data-rasset="Business Park" onclick="reitSetFilter(this,'asset','Business Park')">Business Park</button>
         <button class="dir-tbtn" data-rasset="Logistics" onclick="reitSetFilter(this,'asset','Logistics')">Logistics</button>
+        <button class="dir-tbtn" data-rasset="Residential" onclick="reitSetFilter(this,'asset','Residential')">Residential</button>
+        <button class="dir-tbtn" data-rasset="Serviced Suites" onclick="reitSetFilter(this,'asset','Serviced Suites')">Serviced Suites</button>
       </div>
     </div>
 
@@ -1537,109 +1582,254 @@ requestAnimationFrame(function(){
 });
 
 // ─── REIT DIRECTORY ──────────────────────────────────────────────────
+// ─── SCHEMA: name,addr,type,entity,entity_type('REIT'|'DEV'),
+//   tenure,nla_sqm,occ,val,region,area,country,source,ar_year,status
 var REIT_DATA = [
-  // AIMS APAC REIT (25)
-  {name:"20 GUL WAY",addr:"20 Gul Way",type:"Warehouse",reit:"AIMS APAC REIT",tenure:"Leasehold to 2041",nla_sqm:147676,occ:89.5,val:244.5,region:"West Region",area:"Jurong West",source:"AIMS APAC REIT FY2025 AR"},
-  {name:"27 PENJURU LANE",addr:"27 Penjuru Lane",type:"Warehouse",reit:"AIMS APAC REIT",tenure:"Leasehold to 2049",nla_sqm:96238,occ:96.7,val:190.2,region:"West Region",area:"Jurong West",source:"AIMS APAC REIT FY2025 AR"},
-  {name:"8 & 10 PANDAN CRESCENT",addr:"8 & 10 Pandan Crescent",type:"Warehouse",reit:"AIMS APAC REIT",tenure:"Leasehold to 2068",nla_sqm:65832,occ:100,val:162.8,region:"West Region",area:"Queenstown",source:"AIMS APAC REIT FY2025 AR"},
-  {name:"7 BULIM STREET",addr:"7 Bulim Street",type:"Warehouse",reit:"AIMS APAC REIT",tenure:"Leasehold to 2042",nla_sqm:68190,occ:100,val:139.4,region:"West Region",area:"Jurong West",source:"AIMS APAC REIT FY2025 AR"},
-  {name:"NORTHTECH",addr:"29 Woodlands Industrial Park E1",type:"Industrial",reit:"AIMS APAC REIT",tenure:"Leasehold to 2055",nla_sqm:36646,occ:99.8,val:148.5,region:"North Region",area:"Woodlands",source:"AIMS APAC REIT FY2025 AR"},
-  {name:"30 TUAS WEST ROAD",addr:"30 Tuas West Road",type:"Warehouse",reit:"AIMS APAC REIT",tenure:"Leasehold to 2055",nla_sqm:25422,occ:100,val:56.4,region:"West Region",area:"Tuas",source:"AIMS APAC REIT FY2025 AR"},
-  {name:"3 TUAS AVENUE 2",addr:"3 Tuas Avenue 2",type:"Industrial",reit:"AIMS APAC REIT",tenure:"Leasehold to 2055",nla_sqm:24899,occ:100,val:56,region:"West Region",area:"Tuas",source:"AIMS APAC REIT FY2025 AR"},
-  {name:"51 MARSILING ROAD",addr:"51 Marsiling Road",type:"Industrial",reit:"AIMS APAC REIT",tenure:"Leasehold to 2044",nla_sqm:21529,occ:100,val:52.5,region:"North Region",area:"Woodlands",source:"AIMS APAC REIT FY2025 AR"},
-  {name:"1A INTERNATIONAL BUSINESS PARK",addr:"1A International Business Park",type:"Business Park",reit:"AIMS APAC REIT",tenure:"Leasehold to 2059",nla_sqm:16157,occ:61.3,val:72.1,region:"West Region",area:"Jurong East",source:"AIMS APAC REIT FY2025 AR"},
-  {name:"15 TAI SENG DRIVE",addr:"15 Tai Seng Drive",type:"Industrial",reit:"AIMS APAC REIT",tenure:"Leasehold to 2051",nla_sqm:17886,occ:98.5,val:33.5,region:"North East Region",area:"Tai Seng",source:"AIMS APAC REIT FY2025 AR"},
-  {name:"23 TAI SENG DRIVE",addr:"23 Tai Seng Drive",type:"Industrial",reit:"AIMS APAC REIT",tenure:"Leasehold to 2050",nla_sqm:9493,occ:100,val:41.6,region:"North East Region",area:"Tai Seng",source:"AIMS APAC REIT FY2025 AR"},
-  {name:"103 DEFU LANE 10",addr:"103 Defu Lane 10",type:"Warehouse",reit:"AIMS APAC REIT",tenure:"Leasehold to 2043",nla_sqm:17605,occ:100,val:30.8,region:"North East Region",area:"Hougang",source:"AIMS APAC REIT FY2025 AR"},
-  {name:"56 SERANGOON NORTH AVENUE 4",addr:"56 Serangoon North Ave 4",type:"Warehouse",reit:"AIMS APAC REIT",tenure:"Leasehold to 2055",nla_sqm:10088,occ:92.9,val:29.5,region:"North East Region",area:"Serangoon",source:"AIMS APAC REIT FY2025 AR"},
-  {name:"1 BUKIT BATOK STREET 22",addr:"1 Bukit Batok Street 22",type:"Industrial",reit:"AIMS APAC REIT",tenure:"Leasehold to 2055",nla_sqm:13705,occ:85.2,val:29,region:"West Region",area:"Bukit Batok",source:"AIMS APAC REIT FY2025 AR"},
-  {name:"3A JOO KOON CIRCLE (Alpha)",addr:"3A Joo Koon Circle",type:"Warehouse",reit:"Alpha Integrated REIT (former Sabana)",tenure:"Leasehold to 2047",nla_sqm:20254,occ:96.5,val:36.5,region:"West Region",area:"Jurong West",source:"Alpha REIT FY2024 AR"},
-  // Alpha/Sabana (16)
-  {name:"NEW TECH PARK",addr:"151 Lorong Chuan",type:"Industrial",reit:"Alpha Integrated REIT (former Sabana)",tenure:"Leasehold to 2055",nla_sqm:80462,occ:82.3,val:361.7,region:"North East Region",area:"Serangoon",source:"Alpha REIT FY2024 AR"},
-  {name:"8 COMMONWEALTH LANE",addr:"8 Commonwealth Lane",type:"Industrial",reit:"Alpha Integrated REIT (former Sabana)",tenure:"Leasehold to 2059",nla_sqm:15031,occ:76.2,val:54.7,region:"West Region",area:"Queenstown",source:"Alpha REIT FY2024 AR"},
-  {name:"33-35 PENJURU LANE",addr:"33, 33A & 35 Penjuru Lane",type:"Warehouse",reit:"Alpha Integrated REIT (former Sabana)",tenure:"Leasehold to 2049",nla_sqm:26583,occ:73.7,val:42,region:"West Region",area:"Jurong West",source:"Alpha REIT FY2024 AR"},
-  {name:"23 SERANGOON NORTH AVENUE 5",addr:"23 Serangoon North Avenue 5",type:"Industrial",reit:"Alpha Integrated REIT (former Sabana)",tenure:"Leasehold to 2056",nla_sqm:14804,occ:66.4,val:42.3,region:"North East Region",area:"Serangoon",source:"Alpha REIT FY2024 AR"},
-  {name:"51 PENJURU ROAD",addr:"51 Penjuru Road",type:"Warehouse",reit:"Alpha Integrated REIT (former Sabana)",tenure:"Leasehold to 2054",nla_sqm:22882,occ:93.1,val:31.3,region:"West Region",area:"Jurong West",source:"Alpha REIT FY2024 AR"},
-  {name:"34 PENJURU LANE",addr:"34 Penjuru Lane",type:"Warehouse",reit:"Alpha Integrated REIT (former Sabana)",tenure:"Leasehold to 2032",nla_sqm:38482,occ:98.8,val:29,region:"West Region",area:"Jurong West",source:"Alpha REIT FY2024 AR"},
-  {name:"2 TOH TUCK LINK",addr:"2 Toh Tuck Link",type:"Warehouse",reit:"Alpha Integrated REIT (former Sabana)",tenure:"Leasehold to 2056",nla_sqm:16880,occ:76.6,val:30.2,region:"West Region",area:"Buona Vista",source:"Alpha REIT FY2024 AR"},
-  // CLAR (selected key properties)
-  {name:"ONE@CHANGI CITY",addr:"1 Changi Business Park Ave 1",type:"Business Park",reit:"CapitaLand Ascendas REIT (CLAR)",tenure:"Leasehold",nla_sqm:null,occ:null,val:509.6,region:"East Region",area:"Changi",source:"CLAR FY2024 AR"},
-  {name:"DBS ASIA HUB",addr:"12 Changi Business Park Ave 1",type:"Business Park",reit:"CapitaLand Ascendas REIT (CLAR)",tenure:"Leasehold",nla_sqm:null,occ:null,val:211.5,region:"East Region",area:"Changi",source:"CLAR FY2024 AR"},
-  {name:"12-16 SCIENCE PARK DRIVE",addr:"12-16 Science Park Drive",type:"Business Park",reit:"CapitaLand Ascendas REIT (CLAR)",tenure:"Leasehold",nla_sqm:null,occ:null,val:495,region:"West Region",area:"Queenstown",source:"CLAR FY2024 AR"},
-  {name:"APERIA",addr:"8-12 Kallang Avenue",type:"Industrial",reit:"CapitaLand Ascendas REIT (CLAR)",tenure:"Leasehold",nla_sqm:null,occ:null,val:652,region:"Central Region",area:"Kallang",source:"CLAR FY2024 AR"},
-  {name:"40 PENJURU LANE",addr:"40 Penjuru Lane",type:"Logistics",reit:"CapitaLand Ascendas REIT (CLAR)",tenure:"Leasehold",nla_sqm:160939,occ:null,val:280,region:"West Region",area:"Jurong West",source:"CLAR FY2024 AR"},
-  {name:"NEXUS@ONE-NORTH",addr:"1 North Buona Vista Drive",type:"Business Park",reit:"CapitaLand Ascendas REIT (CLAR)",tenure:"Leasehold",nla_sqm:null,occ:null,val:null,region:"West Region",area:"Buona Vista",source:"CLAR FY2024 AR"},
-  {name:"GALAXIS",addr:"1 Fusionopolis Place",type:"Business Park",reit:"CapitaLand Ascendas REIT (CLAR)",tenure:"Leasehold",nla_sqm:null,occ:null,val:null,region:"West Region",area:"Buona Vista",source:"CLAR FY2024 AR"},
-  {name:"GRAB HEADQUARTERS",addr:"3 Media Close",type:"Business Park",reit:"CapitaLand Ascendas REIT (CLAR)",tenure:"Leasehold",nla_sqm:null,occ:null,val:null,region:"West Region",area:"Buona Vista",source:"CLAR FY2024 AR"},
-  {name:"KIM CHUAN TELECOM COMPLEX",addr:"38 Kim Chuan Road",type:"Data Centre",reit:"CapitaLand Ascendas REIT (CLAR)",tenure:"Leasehold",nla_sqm:null,occ:null,val:null,region:"North East Region",area:"Tai Seng",source:"CLAR FY2024 AR"},
-  {name:"TELEPARK",addr:"5 Tampines Central 6",type:"Data Centre",reit:"CapitaLand Ascendas REIT (CLAR)",tenure:"Leasehold",nla_sqm:null,occ:null,val:null,region:"East Region",area:"Tampines",source:"CLAR FY2024 AR"},
-  // Keppel REIT (4)
-  {name:"OCEAN FINANCIAL CENTRE",addr:"10 Collyer Quay",type:"Office",reit:"Keppel REIT",tenure:"99-year leasehold",nla_sqm:81107,occ:99.1,val:null,region:"Central Region",area:"Downtown Core",source:"Keppel REIT FY2024 AR"},
-  {name:"MARINA BAY FINANCIAL CENTRE",addr:"8-12 Marina Boulevard",type:"Office",reit:"Keppel REIT",tenure:"99-year leasehold",nla_sqm:288000,occ:98.5,val:null,region:"Central Region",area:"Downtown Core",source:"Keppel REIT FY2024 AR"},
-  {name:"ONE RAFFLES QUAY",addr:"1 Raffles Quay",type:"Office",reit:"Keppel REIT",tenure:"99-year leasehold",nla_sqm:121000,occ:99.5,val:null,region:"Central Region",area:"Downtown Core",source:"Keppel REIT FY2024 AR"},
-  {name:"KEPPEL BAY TOWER",addr:"1 HarbourFront Avenue",type:"Office",reit:"Keppel REIT",tenure:"99-year leasehold",nla_sqm:35862,occ:98.6,val:null,region:"Central Region",area:"Harbourfront",source:"Keppel REIT FY2024 AR"},
-  // Keppel DC REIT (8)
-  {name:"KDC SGP 1",addr:"25 Serangoon North Avenue 5",type:"Data Centre",reit:"Keppel DC REIT",tenure:"Leasehold to 2025+",nla_sqm:20988,occ:74.9,val:null,region:"North East Region",area:"Serangoon",source:"Keppel DC REIT FY2024 AR"},
-  {name:"KDC SGP 2",addr:"25 Tampines Street 92",type:"Data Centre",reit:"Keppel DC REIT",tenure:"Leasehold to 2051",nla_sqm:9916,occ:98.2,val:null,region:"East Region",area:"Tampines",source:"Keppel DC REIT FY2024 AR"},
-  {name:"KDC SGP 3",addr:"27 Tampines Street 92",type:"Data Centre",reit:"Keppel DC REIT",tenure:"Leasehold to 2052",nla_sqm:12438,occ:100,val:null,region:"East Region",area:"Tampines",source:"Keppel DC REIT FY2024 AR"},
-  {name:"KDC SGP 4",addr:"20 Tampines Street 92",type:"Data Centre",reit:"Keppel DC REIT",tenure:"Leasehold to 2050",nla_sqm:16886,occ:93.6,val:null,region:"East Region",area:"Tampines",source:"Keppel DC REIT FY2024 AR"},
-  {name:"KDC SGP 5",addr:"13 Sunview Way",type:"Data Centre",reit:"Keppel DC REIT",tenure:"Leasehold to 2050",nla_sqm:19334,occ:100,val:null,region:"West Region",area:"Jurong East",source:"Keppel DC REIT FY2024 AR"},
-  {name:"KDC SGP 7",addr:"82 Genting Lane",type:"Data Centre",reit:"Keppel DC REIT",tenure:"Leasehold",nla_sqm:null,occ:100,val:null,region:"Central Region",area:"Kallang",source:"Keppel DC REIT FY2024 AR"},
-  {name:"KDC SGP 8",addr:"82 Genting Lane",type:"Data Centre",reit:"Keppel DC REIT",tenure:"Leasehold",nla_sqm:null,occ:100,val:null,region:"Central Region",area:"Kallang",source:"Keppel DC REIT FY2024 AR"},
-  {name:"DC1",addr:"18 Riverside Road",type:"Data Centre",reit:"Keppel DC REIT",tenure:"Leasehold",nla_sqm:null,occ:null,val:null,region:"North Region",area:"Woodlands",source:"Keppel DC REIT FY2024 AR"},
-  // CDL Hospitality (5)
-  {name:"GRAND COPTHORNE WATERFRONT",addr:"392 Havelock Road",type:"Hotel",reit:"CDL Hospitality Trusts",tenure:"999-year leasehold",nla_sqm:91999,occ:null,val:null,region:"Central Region",area:"River Valley",source:"CDL Hospitality FY2024 AR"},
-  {name:"M HOTEL SINGAPORE",addr:"81 Anson Road",type:"Hotel",reit:"CDL Hospitality Trusts",tenure:"999-year leasehold",nla_sqm:null,occ:null,val:null,region:"Central Region",area:"Tanjong Pagar",source:"CDL Hospitality FY2024 AR"},
-  {name:"COPTHORNE KING'S HOTEL",addr:"403 Havelock Road",type:"Hotel",reit:"CDL Hospitality Trusts",tenure:"99-year leasehold",nla_sqm:null,occ:null,val:null,region:"Central Region",area:"River Valley",source:"CDL Hospitality FY2024 AR"},
-  {name:"STUDIO M HOTEL",addr:"3 Nanson Road",type:"Hotel",reit:"CDL Hospitality Trusts",tenure:"99-year leasehold",nla_sqm:null,occ:null,val:null,region:"Central Region",area:"River Valley",source:"CDL Hospitality FY2024 AR"},
-  {name:"W SINGAPORE SENTOSA COVE",addr:"21 Ocean Way",type:"Hotel",reit:"CDL Hospitality Trusts",tenure:"99-year leasehold",nla_sqm:null,occ:null,val:null,region:"Central Region",area:"Sentosa",source:"CDL Hospitality FY2024 AR"},
-  // OUE REIT (6)
-  {name:"OUE BAYFRONT",addr:"50, 60 & 62 Collyer Quay",type:"Office",reit:"OUE REIT",tenure:"99-year leasehold",nla_sqm:37133,occ:98.2,val:1388,region:"Central Region",area:"Downtown Core",source:"OUE REIT FY2024 AR"},
-  {name:"ONE RAFFLES PLACE",addr:"1 Raffles Place",type:"Office",reit:"OUE REIT",tenure:"Leasehold (841/99-yr)",nla_sqm:65373,occ:95.3,val:1926.3,region:"Central Region",area:"Downtown Core",source:"OUE REIT FY2024 AR"},
-  {name:"OUE DOWNTOWN OFFICE",addr:"6 Shenton Way",type:"Office",reit:"OUE REIT",tenure:"99-year leasehold",nla_sqm:49133,occ:91.9,val:930,region:"Central Region",area:"Tanjong Pagar",source:"OUE REIT FY2024 AR"},
-  {name:"MANDARIN GALLERY",addr:"333A Orchard Road",type:"Retail",reit:"OUE REIT",tenure:"99-yr leasehold from 1957",nla_sqm:11733,occ:98.2,val:451,region:"Central Region",area:"Orchard",source:"OUE REIT FY2024 AR"},
-  {name:"HILTON SINGAPORE ORCHARD",addr:"333 Orchard Road",type:"Hotel",reit:"OUE REIT",tenure:"99-yr leasehold from 1957",nla_sqm:91999,occ:null,val:1318.5,region:"Central Region",area:"Orchard",source:"OUE REIT FY2024 AR"},
-  {name:"CROWNE PLAZA CHANGI AIRPORT",addr:"75 Airport Boulevard",type:"Hotel",reit:"OUE REIT",tenure:"66-yr lease from 2017",nla_sqm:40913,occ:null,val:520,region:"East Region",area:"Changi",source:"OUE REIT FY2024 AR"},
-  // Lendlease GREIT (3)
-  {name:"JEM",addr:"50 & 52 Jurong Gateway Road",type:"Retail",reit:"Lendlease Global Commercial REIT",tenure:"99-yr leasehold from 2010",nla_sqm:82970,occ:99.9,val:2299,region:"West Region",area:"Jurong East",source:"Lendlease GREIT FY2025 AR"},
-  {name:"313@SOMERSET",addr:"313 Orchard Road",type:"Retail",reit:"Lendlease Global Commercial REIT",tenure:"99-yr leasehold from 2006",nla_sqm:26845,occ:98.8,val:1042,region:"Central Region",area:"Orchard",source:"Lendlease GREIT FY2025 AR"},
-  {name:"PARKWAY PARADE",addr:"80 Marine Parade Road",type:"Retail",reit:"Lendlease Global Commercial REIT",tenure:"Strata (10% interest)",nla_sqm:null,occ:null,val:86.1,region:"East Region",area:"Marine Parade",source:"Lendlease GREIT FY2025 AR"},
-  // Frasers LCT (2)
-  {name:"ALEXANDRA TECHNOPARK",addr:"438A/B/C Alexandra Road",type:"Business Park",reit:"Frasers Logistics & Commercial Trust",tenure:"Leasehold to 2108",nla_sqm:95696,occ:77.9,val:711,region:"Central Region",area:"Queenstown",source:"Frasers LCT FY2025 AR"},
-  {name:"2 TUAS SOUTH LINK 1",addr:"2 Tuas South Link 1",type:"Logistics",reit:"Frasers Logistics & Commercial Trust",tenure:"Leasehold to 2046",nla_sqm:56203,occ:91.6,val:145,region:"West Region",area:"Tuas",source:"Frasers LCT FY2025 AR"},
-  // Frasers CT (10)
-  {name:"NEX",addr:"23 Serangoon Central",type:"Retail",reit:"Frasers Centrepoint Trust",tenure:"99-yr from 2008",nla_sqm:58959,occ:100,val:2141,region:"North East Region",area:"Serangoon",source:"Frasers CT FY2025 AR"},
-  {name:"NORTHPOINT CITY",addr:"930 Yishun Avenue 2",type:"Retail",reit:"Frasers Centrepoint Trust",tenure:"99-yr from 1990/2015",nla_sqm:49380,occ:100,val:1933,region:"North Region",area:"Yishun",source:"Frasers CT FY2025 AR"},
-  {name:"CAUSEWAY POINT",addr:"1 Woodlands Square",type:"Retail",reit:"Frasers Centrepoint Trust",tenure:"99-yr from 1995",nla_sqm:38999,occ:92.3,val:1354,region:"North Region",area:"Woodlands",source:"Frasers CT FY2025 AR"},
-  {name:"WATERWAY POINT",addr:"83 Punggol Central",type:"Retail",reit:"Frasers Centrepoint Trust",tenure:"99-yr from 2011",nla_sqm:36273,occ:100,val:1331,region:"North East Region",area:"Punggol",source:"Frasers CT FY2025 AR"},
-  {name:"TAMPINES 1",addr:"10 Tampines Central 1",type:"Retail",reit:"Frasers Centrepoint Trust",tenure:"99-yr from 1990",nla_sqm:25832,occ:99.8,val:817,region:"East Region",area:"Tampines",source:"Frasers CT FY2025 AR"},
-  {name:"TIONG BAHRU PLAZA",addr:"302 Tiong Bahru Road",type:"Retail",reit:"Frasers Centrepoint Trust",tenure:"99-yr from 1991",nla_sqm:19928,occ:99.2,val:665,region:"Central Region",area:"Tiong Bahru",source:"Frasers CT FY2025 AR"},
-  {name:"CENTRAL PLAZA",addr:"298 Tiong Bahru Road",type:"Office",reit:"Frasers Centrepoint Trust",tenure:"99-yr from 1991",nla_sqm:15899,occ:94.6,val:219,region:"Central Region",area:"Tiong Bahru",source:"Frasers CT FY2025 AR"},
-  {name:"CENTURY SQUARE",addr:"2 Tampines Central 5",type:"Retail",reit:"Frasers Centrepoint Trust",tenure:"99-yr from 1992",nla_sqm:19628,occ:91.8,val:563,region:"East Region",area:"Tampines",source:"Frasers CT FY2025 AR"},
-  {name:"HOUGANG MALL",addr:"90 Hougang Avenue 10",type:"Retail",reit:"Frasers Centrepoint Trust",tenure:"99-yr from 1994",nla_sqm:15400,occ:73.5,val:467,region:"North East Region",area:"Hougang",source:"Frasers CT FY2025 AR"},
-  {name:"WHITE SANDS",addr:"1 Pasir Ris Central Street 3",type:"Retail",reit:"Frasers Centrepoint Trust",tenure:"99-yr from 1993",nla_sqm:13968,occ:100,val:431,region:"East Region",area:"Pasir Ris",source:"Frasers CT FY2025 AR"},
+  // ── AIMS APAC REIT (SG) ──
+  {name:"20 GUL WAY",addr:"20 Gul Way",type:"Logistics",entity:"AIMS APAC REIT",entity_type:"REIT",tenure:"Leasehold to 2041",nla_sqm:147676,occ:89.5,val:244.5,region:"West",area:"Jurong West",country:"Singapore",ar_year:"FY2025",source:"AIMS APAC REIT FY2025 AR"},
+  {name:"27 PENJURU LANE",addr:"27 Penjuru Lane",type:"Logistics",entity:"AIMS APAC REIT",entity_type:"REIT",tenure:"Leasehold to 2049",nla_sqm:96238,occ:96.7,val:190.2,region:"West",area:"Jurong West",country:"Singapore",ar_year:"FY2025",source:"AIMS APAC REIT FY2025 AR"},
+  {name:"8 & 10 PANDAN CRESCENT",addr:"8 & 10 Pandan Crescent",type:"Logistics",entity:"AIMS APAC REIT",entity_type:"REIT",tenure:"Leasehold to 2068",nla_sqm:65832,occ:100,val:162.8,region:"West",area:"Queenstown",country:"Singapore",ar_year:"FY2025",source:"AIMS APAC REIT FY2025 AR"},
+  {name:"7 BULIM STREET",addr:"7 Bulim Street",type:"Logistics",entity:"AIMS APAC REIT",entity_type:"REIT",tenure:"Leasehold to 2042",nla_sqm:68190,occ:100,val:139.4,region:"West",area:"Jurong West",country:"Singapore",ar_year:"FY2025",source:"AIMS APAC REIT FY2025 AR"},
+  {name:"NORTHTECH",addr:"29 Woodlands Industrial Park E1",type:"Industrial",entity:"AIMS APAC REIT",entity_type:"REIT",tenure:"Leasehold to 2055",nla_sqm:36646,occ:99.8,val:148.5,region:"North",area:"Woodlands",country:"Singapore",ar_year:"FY2025",source:"AIMS APAC REIT FY2025 AR"},
+  {name:"30 TUAS WEST ROAD",addr:"30 Tuas West Road",type:"Industrial",entity:"AIMS APAC REIT",entity_type:"REIT",tenure:"Leasehold to 2055",nla_sqm:25422,occ:100,val:56.4,region:"West",area:"Tuas",country:"Singapore",ar_year:"FY2025",source:"AIMS APAC REIT FY2025 AR"},
+  {name:"3 TUAS AVENUE 2",addr:"3 Tuas Avenue 2",type:"Industrial",entity:"AIMS APAC REIT",entity_type:"REIT",tenure:"Leasehold to 2055",nla_sqm:24899,occ:100,val:56,region:"West",area:"Tuas",country:"Singapore",ar_year:"FY2025",source:"AIMS APAC REIT FY2025 AR"},
+  {name:"51 MARSILING ROAD",addr:"51 Marsiling Road",type:"Industrial",entity:"AIMS APAC REIT",entity_type:"REIT",tenure:"Leasehold to 2044",nla_sqm:21529,occ:100,val:52.5,region:"North",area:"Woodlands",country:"Singapore",ar_year:"FY2025",source:"AIMS APAC REIT FY2025 AR"},
+  {name:"1A INTERNATIONAL BUSINESS PARK",addr:"1A International Business Park",type:"Business Park",entity:"AIMS APAC REIT",entity_type:"REIT",tenure:"Leasehold to 2059",nla_sqm:16157,occ:61.3,val:72.1,region:"West",area:"Jurong East",country:"Singapore",ar_year:"FY2025",source:"AIMS APAC REIT FY2025 AR"},
+  {name:"15 TAI SENG DRIVE",addr:"15 Tai Seng Drive",type:"Industrial",entity:"AIMS APAC REIT",entity_type:"REIT",tenure:"Leasehold to 2051",nla_sqm:17886,occ:98.5,val:33.5,region:"North-East",area:"Tai Seng",country:"Singapore",ar_year:"FY2025",source:"AIMS APAC REIT FY2025 AR"},
+  {name:"23 TAI SENG DRIVE",addr:"23 Tai Seng Drive",type:"Industrial",entity:"AIMS APAC REIT",entity_type:"REIT",tenure:"Leasehold to 2050",nla_sqm:9493,occ:100,val:41.6,region:"North-East",area:"Tai Seng",country:"Singapore",ar_year:"FY2025",source:"AIMS APAC REIT FY2025 AR"},
+  {name:"103 DEFU LANE 10",addr:"103 Defu Lane 10",type:"Logistics",entity:"AIMS APAC REIT",entity_type:"REIT",tenure:"Leasehold to 2043",nla_sqm:17605,occ:100,val:30.8,region:"North-East",area:"Hougang",country:"Singapore",ar_year:"FY2025",source:"AIMS APAC REIT FY2025 AR"},
+  {name:"56 SERANGOON NORTH AVENUE 4",addr:"56 Serangoon North Ave 4",type:"Logistics",entity:"AIMS APAC REIT",entity_type:"REIT",tenure:"Leasehold to 2055",nla_sqm:10088,occ:92.9,val:29.5,region:"North-East",area:"Serangoon",country:"Singapore",ar_year:"FY2025",source:"AIMS APAC REIT FY2025 AR"},
+  {name:"1 BUKIT BATOK STREET 22",addr:"1 Bukit Batok Street 22",type:"Industrial",entity:"AIMS APAC REIT",entity_type:"REIT",tenure:"Leasehold to 2055",nla_sqm:13705,occ:85.2,val:29,region:"West",area:"Bukit Batok",country:"Singapore",ar_year:"FY2025",source:"AIMS APAC REIT FY2025 AR"},
+  // AIMS overseas
+  {name:"WOOLWORTHS HQ",addr:"1 Woolworths Way, Bella Vista NSW",type:"Business Park",entity:"AIMS APAC REIT",entity_type:"REIT",tenure:"Freehold",nla_sqm:42000,occ:100,val:null,region:null,area:"Sydney",country:"Australia",ar_year:"FY2025",source:"AIMS APAC REIT FY2025 AR"},
+  {name:"OPTUS CENTRE",addr:"1 Charles St, Parramatta NSW",type:"Business Park",entity:"AIMS APAC REIT",entity_type:"REIT",tenure:"Freehold",nla_sqm:38000,occ:100,val:null,region:null,area:"Sydney",country:"Australia",ar_year:"FY2025",source:"AIMS APAC REIT FY2025 AR"},
+  // ── Alpha / Sabana (SG) ──
+  {name:"3A JOO KOON CIRCLE",addr:"3A Joo Koon Circle",type:"Logistics",entity:"Alpha Integrated REIT (former Sabana)",entity_type:"REIT",tenure:"Leasehold to 2047",nla_sqm:20254,occ:96.5,val:36.5,region:"West",area:"Jurong West",country:"Singapore",ar_year:"FY2024",source:"Alpha REIT FY2024 AR"},
+  {name:"NEW TECH PARK",addr:"151 Lorong Chuan",type:"Industrial",entity:"Alpha Integrated REIT (former Sabana)",entity_type:"REIT",tenure:"Leasehold to 2055",nla_sqm:80462,occ:82.3,val:361.7,region:"North-East",area:"Serangoon",country:"Singapore",ar_year:"FY2024",source:"Alpha REIT FY2024 AR"},
+  {name:"8 COMMONWEALTH LANE",addr:"8 Commonwealth Lane",type:"Industrial",entity:"Alpha Integrated REIT (former Sabana)",entity_type:"REIT",tenure:"Leasehold to 2059",nla_sqm:15031,occ:76.2,val:54.7,region:"West",area:"Queenstown",country:"Singapore",ar_year:"FY2024",source:"Alpha REIT FY2024 AR"},
+  {name:"33-35 PENJURU LANE",addr:"33, 33A & 35 Penjuru Lane",type:"Logistics",entity:"Alpha Integrated REIT (former Sabana)",entity_type:"REIT",tenure:"Leasehold to 2049",nla_sqm:26583,occ:73.7,val:42,region:"West",area:"Jurong West",country:"Singapore",ar_year:"FY2024",source:"Alpha REIT FY2024 AR"},
+  {name:"23 SERANGOON NORTH AVENUE 5",addr:"23 Serangoon North Avenue 5",type:"Industrial",entity:"Alpha Integrated REIT (former Sabana)",entity_type:"REIT",tenure:"Leasehold to 2056",nla_sqm:14804,occ:66.4,val:42.3,region:"North-East",area:"Serangoon",country:"Singapore",ar_year:"FY2024",source:"Alpha REIT FY2024 AR"},
+  {name:"51 PENJURU ROAD",addr:"51 Penjuru Road",type:"Logistics",entity:"Alpha Integrated REIT (former Sabana)",entity_type:"REIT",tenure:"Leasehold to 2054",nla_sqm:22882,occ:93.1,val:31.3,region:"West",area:"Jurong West",country:"Singapore",ar_year:"FY2024",source:"Alpha REIT FY2024 AR"},
+  {name:"34 PENJURU LANE",addr:"34 Penjuru Lane",type:"Logistics",entity:"Alpha Integrated REIT (former Sabana)",entity_type:"REIT",tenure:"Leasehold to 2032",nla_sqm:38482,occ:98.8,val:29,region:"West",area:"Jurong West",country:"Singapore",ar_year:"FY2024",source:"Alpha REIT FY2024 AR"},
+  {name:"2 TOH TUCK LINK",addr:"2 Toh Tuck Link",type:"Logistics",entity:"Alpha Integrated REIT (former Sabana)",entity_type:"REIT",tenure:"Leasehold to 2056",nla_sqm:16880,occ:76.6,val:30.2,region:"West",area:"Buona Vista",country:"Singapore",ar_year:"FY2024",source:"Alpha REIT FY2024 AR"},
+  // ── CLAR (selected SG) ──
+  {name:"ONE@CHANGI CITY",addr:"1 Changi Business Park Ave 1",type:"Business Park",entity:"CapitaLand Ascendas REIT (CLAR)",entity_type:"REIT",tenure:"Leasehold",nla_sqm:null,occ:null,val:509.6,region:"East",area:"Changi",country:"Singapore",ar_year:"FY2024",source:"CLAR FY2024 AR"},
+  {name:"DBS ASIA HUB",addr:"12 Changi Business Park Ave 1",type:"Business Park",entity:"CapitaLand Ascendas REIT (CLAR)",entity_type:"REIT",tenure:"Leasehold",nla_sqm:null,occ:null,val:211.5,region:"East",area:"Changi",country:"Singapore",ar_year:"FY2024",source:"CLAR FY2024 AR"},
+  {name:"12-16 SCIENCE PARK DRIVE",addr:"12-16 Science Park Drive",type:"Business Park",entity:"CapitaLand Ascendas REIT (CLAR)",entity_type:"REIT",tenure:"Leasehold",nla_sqm:null,occ:null,val:495,region:"West",area:"Queenstown",country:"Singapore",ar_year:"FY2024",source:"CLAR FY2024 AR"},
+  {name:"APERIA",addr:"8-12 Kallang Avenue",type:"Industrial",entity:"CapitaLand Ascendas REIT (CLAR)",entity_type:"REIT",tenure:"Leasehold",nla_sqm:null,occ:null,val:652,region:"Central",area:"Kallang",country:"Singapore",ar_year:"FY2024",source:"CLAR FY2024 AR"},
+  {name:"40 PENJURU LANE",addr:"40 Penjuru Lane",type:"Logistics",entity:"CapitaLand Ascendas REIT (CLAR)",entity_type:"REIT",tenure:"Leasehold",nla_sqm:160939,occ:null,val:280,region:"West",area:"Jurong West",country:"Singapore",ar_year:"FY2024",source:"CLAR FY2024 AR"},
+  {name:"NEXUS@ONE-NORTH",addr:"1 North Buona Vista Drive",type:"Business Park",entity:"CapitaLand Ascendas REIT (CLAR)",entity_type:"REIT",tenure:"Leasehold",nla_sqm:null,occ:null,val:null,region:"West",area:"Buona Vista",country:"Singapore",ar_year:"FY2024",source:"CLAR FY2024 AR"},
+  {name:"GALAXIS",addr:"1 Fusionopolis Place",type:"Business Park",entity:"CapitaLand Ascendas REIT (CLAR)",entity_type:"REIT",tenure:"Leasehold",nla_sqm:null,occ:null,val:null,region:"West",area:"Buona Vista",country:"Singapore",ar_year:"FY2024",source:"CLAR FY2024 AR"},
+  {name:"GRAB HEADQUARTERS",addr:"3 Media Close",type:"Business Park",entity:"CapitaLand Ascendas REIT (CLAR)",entity_type:"REIT",tenure:"Leasehold",nla_sqm:null,occ:null,val:null,region:"West",area:"Buona Vista",country:"Singapore",ar_year:"FY2024",source:"CLAR FY2024 AR"},
+  {name:"KIM CHUAN TELECOM COMPLEX",addr:"38 Kim Chuan Road",type:"Data Centre",entity:"CapitaLand Ascendas REIT (CLAR)",entity_type:"REIT",tenure:"Leasehold",nla_sqm:null,occ:null,val:null,region:"North-East",area:"Tai Seng",country:"Singapore",ar_year:"FY2024",source:"CLAR FY2024 AR"},
+  {name:"TELEPARK",addr:"5 Tampines Central 6",type:"Data Centre",entity:"CapitaLand Ascendas REIT (CLAR)",entity_type:"REIT",tenure:"Leasehold",nla_sqm:null,occ:null,val:null,region:"East",area:"Tampines",country:"Singapore",ar_year:"FY2024",source:"CLAR FY2024 AR"},
+  // ── CICT — Singapore ──
+  {name:"BEDOK MALL",addr:"311 New Upper Changi Road",type:"Retail",entity:"CapitaLand Integrated Commercial Trust",entity_type:"REIT",tenure:"Leasehold 99yr from 1980",nla_sqm:20703,occ:100,val:815,region:"East",area:"Bedok",country:"Singapore",ar_year:"FY2024",source:"CICT FY2024 AR"},
+  {name:"BUGIS JUNCTION",addr:"200 Victoria Street",type:"Retail",entity:"CapitaLand Integrated Commercial Trust",entity_type:"REIT",tenure:"99yr from 1990",nla_sqm:36576,occ:99.9,val:1141,region:"Central",area:"Bugis",country:"Singapore",ar_year:"FY2024",source:"CICT FY2024 AR"},
+  {name:"BUGIS+",addr:"201 Victoria Street",type:"Retail",entity:"CapitaLand Integrated Commercial Trust",entity_type:"REIT",tenure:"60yr from 2005",nla_sqm:19926,occ:100,val:359,region:"Central",area:"Bugis",country:"Singapore",ar_year:"FY2024",source:"CICT FY2024 AR"},
+  {name:"BUKIT PANJANG PLAZA",addr:"1 Jelebu Road",type:"Retail",entity:"CapitaLand Integrated Commercial Trust",entity_type:"REIT",tenure:"99yr from 1994",nla_sqm:17929,occ:null,val:389,region:"West",area:"Bukit Panjang",country:"Singapore",ar_year:"FY2024",source:"CICT FY2024 AR"},
+  {name:"CQ @ CLARKE QUAY",addr:"3179 River Valley Road",type:"Retail",entity:"CapitaLand Integrated Commercial Trust",entity_type:"REIT",tenure:"Leasehold",nla_sqm:null,occ:null,val:null,region:"Central",area:"Clarke Quay",country:"Singapore",ar_year:"FY2024",source:"CICT FY2024 AR"},
+  {name:"FUNAN",addr:"107 & 109 North Bridge Road",type:"Retail",entity:"CapitaLand Integrated Commercial Trust",entity_type:"REIT",tenure:"99yr from 1979",nla_sqm:29436,occ:99.4,val:849,region:"Central",area:"City Hall",country:"Singapore",ar_year:"FY2024",source:"CICT FY2024 AR"},
+  {name:"IMM BUILDING",addr:"2 Jurong East Street 21",type:"Retail",entity:"CapitaLand Integrated Commercial Trust",entity_type:"REIT",tenure:"30+30yr from 1989",nla_sqm:87725,occ:98.6,val:763,region:"West",area:"Jurong East",country:"Singapore",ar_year:"FY2024",source:"CICT FY2024 AR"},
+  {name:"ION ORCHARD",addr:"2 Orchard Turn",type:"Retail",entity:"CapitaLand Integrated Commercial Trust",entity_type:"REIT",tenure:"99yr from 2005",nla_sqm:null,occ:null,val:null,region:"Central",area:"Orchard",country:"Singapore",ar_year:"FY2024",source:"CICT FY2024 AR"},
+  {name:"JUNCTION 8",addr:"9 Bishan Place",type:"Retail",entity:"CapitaLand Integrated Commercial Trust",entity_type:"REIT",tenure:"99yr from 1991",nla_sqm:28583,occ:100,val:815,region:"Central",area:"Bishan",country:"Singapore",ar_year:"FY2024",source:"CICT FY2024 AR"},
+  {name:"LOT ONE SHOPPERS' MALL",addr:"21 Choa Chu Kang Ave 4",type:"Retail",entity:"CapitaLand Integrated Commercial Trust",entity_type:"REIT",tenure:"99yr from 1993",nla_sqm:null,occ:null,val:564,region:"West",area:"Choa Chu Kang",country:"Singapore",ar_year:"FY2024",source:"CICT FY2024 AR"},
+  {name:"PLAZA SINGAPURA",addr:"68 Orchard Road",type:"Retail",entity:"CapitaLand Integrated Commercial Trust",entity_type:"REIT",tenure:"99yr from 2005",nla_sqm:null,occ:null,val:null,region:"Central",area:"Dhoby Ghaut",country:"Singapore",ar_year:"FY2024",source:"CICT FY2024 AR"},
+  {name:"TAMPINES MALL",addr:"4 Tampines Central 5",type:"Retail",entity:"CapitaLand Integrated Commercial Trust",entity_type:"REIT",tenure:"99yr from 1992",nla_sqm:33094,occ:100,val:1151,region:"East",area:"Tampines",country:"Singapore",ar_year:"FY2024",source:"CICT FY2024 AR"},
+  {name:"WESTGATE",addr:"3 Gateway Drive",type:"Retail",entity:"CapitaLand Integrated Commercial Trust",entity_type:"REIT",tenure:"99yr from 2011",nla_sqm:null,occ:null,val:null,region:"West",area:"Jurong East",country:"Singapore",ar_year:"FY2024",source:"CICT FY2024 AR"},
+  {name:"ASIA SQUARE TOWER 2",addr:"12 Marina View",type:"Office",entity:"CapitaLand Integrated Commercial Trust",entity_type:"REIT",tenure:"99yr from 2008",nla_sqm:71909,occ:93.7,val:2245,region:"Central",area:"Marina Bay",country:"Singapore",ar_year:"FY2024",source:"CICT FY2024 AR"},
+  {name:"CAPITAGREEN",addr:"138 Market Street",type:"Office",entity:"CapitaLand Integrated Commercial Trust",entity_type:"REIT",tenure:"99yr from 2008",nla_sqm:null,occ:null,val:null,region:"Central",area:"Raffles Place",country:"Singapore",ar_year:"FY2024",source:"CICT FY2024 AR"},
+  {name:"CAPITAL TOWER",addr:"168 Robinson Road",type:"Office",entity:"CapitaLand Integrated Commercial Trust",entity_type:"REIT",tenure:"99yr from 1996",nla_sqm:68076,occ:98.6,val:1463,region:"Central",area:"Tanjong Pagar",country:"Singapore",ar_year:"FY2024",source:"CICT FY2024 AR"},
+  {name:"CAPITASKY",addr:"79 Robinson Road",type:"Office",entity:"CapitaLand Integrated Commercial Trust",entity_type:"REIT",tenure:"99yr from 2009",nla_sqm:null,occ:null,val:null,region:"Central",area:"Tanjong Pagar",country:"Singapore",ar_year:"FY2024",source:"CICT FY2024 AR"},
+  {name:"SIX BATTERY ROAD",addr:"6 Battery Road",type:"Office",entity:"CapitaLand Integrated Commercial Trust",entity_type:"REIT",tenure:"999yr from 1826",nla_sqm:45938,occ:99.7,val:1608,region:"Central",area:"Raffles Place",country:"Singapore",ar_year:"FY2024",source:"CICT FY2024 AR"},
+  {name:"RAFFLES CITY SINGAPORE",addr:"252 North Bridge Road",type:"Retail",entity:"CapitaLand Integrated Commercial Trust",entity_type:"REIT",tenure:"99yr from 1979",nla_sqm:null,occ:null,val:3332,region:"Central",area:"City Hall",country:"Singapore",ar_year:"FY2024",source:"CICT FY2024 AR"},
+  {name:"THE ATRIUM@ORCHARD",addr:"60A & 60B Orchard Road",type:"Retail",entity:"CapitaLand Integrated Commercial Trust",entity_type:"REIT",tenure:"99yr from 2008",nla_sqm:35841,occ:99.5,val:786,region:"Central",area:"Dhoby Ghaut",country:"Singapore",ar_year:"FY2024",source:"CICT FY2024 AR"},
+  // CICT overseas
+  {name:"GALLILEO",addr:"Gallusanlage 7, Frankfurt",type:"Office",entity:"CapitaLand Integrated Commercial Trust",entity_type:"REIT",tenure:"Freehold",nla_sqm:null,occ:null,val:null,region:null,area:"Frankfurt CBD",country:"Germany",ar_year:"FY2024",source:"CICT FY2024 AR"},
+  {name:"MAIN AIRPORT CENTER",addr:"Unterschweinstiege 2-14, Frankfurt",type:"Office",entity:"CapitaLand Integrated Commercial Trust",entity_type:"REIT",tenure:"Freehold",nla_sqm:60383,occ:81.8,val:331.6,region:null,area:"Frankfurt Airport",country:"Germany",ar_year:"FY2024",source:"CICT FY2024 AR"},
+  {name:"101-103 MILLER STREET & GREENWOOD PLAZA",addr:"101-103 Miller Street, North Sydney NSW",type:"Office",entity:"CapitaLand Integrated Commercial Trust",entity_type:"REIT",tenure:"Freehold",nla_sqm:46294,occ:92.6,val:282.7,region:null,area:"North Sydney CBD",country:"Australia",ar_year:"FY2024",source:"CICT FY2024 AR"},
+  {name:"66 GOULBURN STREET",addr:"66 Goulburn Street, Sydney NSW",type:"Office",entity:"CapitaLand Integrated Commercial Trust",entity_type:"REIT",tenure:"Freehold",nla_sqm:22889,occ:null,val:205.5,region:null,area:"Sydney CBD",country:"Australia",ar_year:"FY2024",source:"CICT FY2024 AR"},
+  {name:"100 ARTHUR STREET",addr:"100 Arthur Street, North Sydney NSW",type:"Office",entity:"CapitaLand Integrated Commercial Trust",entity_type:"REIT",tenure:"Freehold",nla_sqm:27027,occ:77.2,val:261,region:null,area:"North Sydney CBD",country:"Australia",ar_year:"FY2024",source:"CICT FY2024 AR"},
+  // ── Keppel REIT (SG) ──
+  {name:"OCEAN FINANCIAL CENTRE",addr:"10 Collyer Quay",type:"Office",entity:"Keppel REIT",entity_type:"REIT",tenure:"99yr leasehold",nla_sqm:81107,occ:99.1,val:null,region:"Central",area:"Downtown Core",country:"Singapore",ar_year:"FY2024",source:"Keppel REIT FY2024 AR"},
+  {name:"MARINA BAY FINANCIAL CENTRE",addr:"8-12 Marina Boulevard",type:"Office",entity:"Keppel REIT",entity_type:"REIT",tenure:"99yr leasehold",nla_sqm:288000,occ:98.5,val:null,region:"Central",area:"Downtown Core",country:"Singapore",ar_year:"FY2024",source:"Keppel REIT FY2024 AR"},
+  {name:"ONE RAFFLES QUAY",addr:"1 Raffles Quay",type:"Office",entity:"Keppel REIT",entity_type:"REIT",tenure:"99yr leasehold",nla_sqm:121000,occ:99.5,val:null,region:"Central",area:"Downtown Core",country:"Singapore",ar_year:"FY2024",source:"Keppel REIT FY2024 AR"},
+  {name:"KEPPEL BAY TOWER",addr:"1 HarbourFront Avenue",type:"Office",entity:"Keppel REIT",entity_type:"REIT",tenure:"99yr leasehold",nla_sqm:35862,occ:98.6,val:null,region:"Central",area:"Harbourfront",country:"Singapore",ar_year:"FY2024",source:"Keppel REIT FY2024 AR"},
+  // ── Keppel DC REIT (SG) ──
+  {name:"KDC SGP 1",addr:"25 Serangoon North Avenue 5",type:"Data Centre",entity:"Keppel DC REIT",entity_type:"REIT",tenure:"Leasehold",nla_sqm:20988,occ:74.9,val:null,region:"North-East",area:"Serangoon",country:"Singapore",ar_year:"FY2024",source:"Keppel DC REIT FY2024 AR"},
+  {name:"KDC SGP 2",addr:"25 Tampines Street 92",type:"Data Centre",entity:"Keppel DC REIT",entity_type:"REIT",tenure:"Leasehold to 2051",nla_sqm:9916,occ:98.2,val:null,region:"East",area:"Tampines",country:"Singapore",ar_year:"FY2024",source:"Keppel DC REIT FY2024 AR"},
+  {name:"KDC SGP 3",addr:"27 Tampines Street 92",type:"Data Centre",entity:"Keppel DC REIT",entity_type:"REIT",tenure:"Leasehold to 2052",nla_sqm:12438,occ:100,val:null,region:"East",area:"Tampines",country:"Singapore",ar_year:"FY2024",source:"Keppel DC REIT FY2024 AR"},
+  {name:"KDC SGP 4",addr:"20 Tampines Street 92",type:"Data Centre",entity:"Keppel DC REIT",entity_type:"REIT",tenure:"Leasehold to 2050",nla_sqm:16886,occ:93.6,val:null,region:"East",area:"Tampines",country:"Singapore",ar_year:"FY2024",source:"Keppel DC REIT FY2024 AR"},
+  {name:"KDC SGP 5",addr:"13 Sunview Way",type:"Data Centre",entity:"Keppel DC REIT",entity_type:"REIT",tenure:"Leasehold to 2050",nla_sqm:19334,occ:100,val:null,region:"West",area:"Jurong East",country:"Singapore",ar_year:"FY2024",source:"Keppel DC REIT FY2024 AR"},
+  {name:"KDC SGP 7",addr:"82 Genting Lane",type:"Data Centre",entity:"Keppel DC REIT",entity_type:"REIT",tenure:"Leasehold",nla_sqm:null,occ:100,val:null,region:"Central",area:"Kallang",country:"Singapore",ar_year:"FY2024",source:"Keppel DC REIT FY2024 AR"},
+  {name:"KDC SGP 8",addr:"82 Genting Lane",type:"Data Centre",entity:"Keppel DC REIT",entity_type:"REIT",tenure:"Leasehold",nla_sqm:null,occ:100,val:null,region:"Central",area:"Kallang",country:"Singapore",ar_year:"FY2024",source:"Keppel DC REIT FY2024 AR"},
+  {name:"DC1",addr:"18 Riverside Road",type:"Data Centre",entity:"Keppel DC REIT",entity_type:"REIT",tenure:"Leasehold",nla_sqm:null,occ:null,val:null,region:"North",area:"Woodlands",country:"Singapore",ar_year:"FY2024",source:"Keppel DC REIT FY2024 AR"},
+  // ── CDL Hospitality Trusts (SG) ──
+  {name:"GRAND COPTHORNE WATERFRONT",addr:"392 Havelock Road",type:"Hotel",entity:"CDL Hospitality Trusts",entity_type:"REIT",tenure:"999yr leasehold",nla_sqm:91999,occ:null,val:null,region:"Central",area:"River Valley",country:"Singapore",ar_year:"FY2024",source:"CDL Hospitality FY2024 AR"},
+  {name:"M HOTEL SINGAPORE",addr:"81 Anson Road",type:"Hotel",entity:"CDL Hospitality Trusts",entity_type:"REIT",tenure:"999yr leasehold",nla_sqm:null,occ:null,val:null,region:"Central",area:"Tanjong Pagar",country:"Singapore",ar_year:"FY2024",source:"CDL Hospitality FY2024 AR"},
+  {name:"COPTHORNE KING'S HOTEL",addr:"403 Havelock Road",type:"Hotel",entity:"CDL Hospitality Trusts",entity_type:"REIT",tenure:"99yr leasehold",nla_sqm:null,occ:null,val:null,region:"Central",area:"River Valley",country:"Singapore",ar_year:"FY2024",source:"CDL Hospitality FY2024 AR"},
+  {name:"STUDIO M HOTEL",addr:"3 Nanson Road",type:"Hotel",entity:"CDL Hospitality Trusts",entity_type:"REIT",tenure:"99yr leasehold",nla_sqm:null,occ:null,val:null,region:"Central",area:"River Valley",country:"Singapore",ar_year:"FY2024",source:"CDL Hospitality FY2024 AR"},
+  {name:"W SINGAPORE SENTOSA COVE",addr:"21 Ocean Way",type:"Hotel",entity:"CDL Hospitality Trusts",entity_type:"REIT",tenure:"99yr leasehold",nla_sqm:null,occ:null,val:null,region:"South",area:"Sentosa",country:"Singapore",ar_year:"FY2024",source:"CDL Hospitality FY2024 AR"},
+  // ── OUE REIT (SG) ──
+  {name:"OUE BAYFRONT",addr:"50, 60 & 62 Collyer Quay",type:"Office",entity:"OUE REIT",entity_type:"REIT",tenure:"99yr leasehold",nla_sqm:37133,occ:98.2,val:1388,region:"Central",area:"Downtown Core",country:"Singapore",ar_year:"FY2024",source:"OUE REIT FY2024 AR"},
+  {name:"ONE RAFFLES PLACE",addr:"1 Raffles Place",type:"Office",entity:"OUE REIT",entity_type:"REIT",tenure:"Leasehold (841/99yr)",nla_sqm:65373,occ:95.3,val:1926.3,region:"Central",area:"Downtown Core",country:"Singapore",ar_year:"FY2024",source:"OUE REIT FY2024 AR"},
+  {name:"OUE DOWNTOWN OFFICE",addr:"6 Shenton Way",type:"Office",entity:"OUE REIT",entity_type:"REIT",tenure:"99yr leasehold",nla_sqm:49133,occ:91.9,val:930,region:"Central",area:"Tanjong Pagar",country:"Singapore",ar_year:"FY2024",source:"OUE REIT FY2024 AR"},
+  {name:"MANDARIN GALLERY",addr:"333A Orchard Road",type:"Retail",entity:"OUE REIT",entity_type:"REIT",tenure:"99yr from 1957",nla_sqm:11733,occ:98.2,val:451,region:"Central",area:"Orchard",country:"Singapore",ar_year:"FY2024",source:"OUE REIT FY2024 AR"},
+  {name:"HILTON SINGAPORE ORCHARD",addr:"333 Orchard Road",type:"Hotel",entity:"OUE REIT",entity_type:"REIT",tenure:"99yr from 1957",nla_sqm:91999,occ:null,val:1318.5,region:"Central",area:"Orchard",country:"Singapore",ar_year:"FY2024",source:"OUE REIT FY2024 AR"},
+  {name:"CROWNE PLAZA CHANGI AIRPORT",addr:"75 Airport Boulevard",type:"Hotel",entity:"OUE REIT",entity_type:"REIT",tenure:"66yr from 2017",nla_sqm:40913,occ:null,val:520,region:"East",area:"Changi",country:"Singapore",ar_year:"FY2024",source:"OUE REIT FY2024 AR"},
+  // ── Lendlease GREIT (SG) ──
+  {name:"JEM",addr:"50 & 52 Jurong Gateway Road",type:"Retail",entity:"Lendlease Global Commercial REIT",entity_type:"REIT",tenure:"99yr from 2010",nla_sqm:82970,occ:99.9,val:2299,region:"West",area:"Jurong East",country:"Singapore",ar_year:"FY2025",source:"Lendlease GREIT FY2025 AR"},
+  {name:"313@SOMERSET",addr:"313 Orchard Road",type:"Retail",entity:"Lendlease Global Commercial REIT",entity_type:"REIT",tenure:"99yr from 2006",nla_sqm:26845,occ:98.8,val:1042,region:"Central",area:"Orchard",country:"Singapore",ar_year:"FY2025",source:"Lendlease GREIT FY2025 AR"},
+  {name:"PARKWAY PARADE",addr:"80 Marine Parade Road",type:"Retail",entity:"Lendlease Global Commercial REIT",entity_type:"REIT",tenure:"Strata (10%)",nla_sqm:null,occ:null,val:86.1,region:"East",area:"Marine Parade",country:"Singapore",ar_year:"FY2025",source:"Lendlease GREIT FY2025 AR"},
+  // Lendlease overseas
+  {name:"SKY@ELEVEN",addr:"Milan, Italy",type:"Retail",entity:"Lendlease Global Commercial REIT",entity_type:"REIT",tenure:"Leasehold",nla_sqm:null,occ:null,val:null,region:null,area:"Milan",country:"Italy",ar_year:"FY2025",source:"Lendlease GREIT FY2025 AR"},
+  // ── Frasers LCT (SG) ──
+  {name:"ALEXANDRA TECHNOPARK",addr:"438A/B/C Alexandra Road",type:"Business Park",entity:"Frasers Logistics & Commercial Trust",entity_type:"REIT",tenure:"Leasehold to 2108",nla_sqm:95696,occ:77.9,val:711,region:"Central",area:"Queenstown",country:"Singapore",ar_year:"FY2025",source:"Frasers LCT FY2025 AR"},
+  {name:"2 TUAS SOUTH LINK 1",addr:"2 Tuas South Link 1",type:"Logistics",entity:"Frasers Logistics & Commercial Trust",entity_type:"REIT",tenure:"Leasehold to 2046",nla_sqm:56203,occ:91.6,val:145,region:"West",area:"Tuas",country:"Singapore",ar_year:"FY2025",source:"Frasers LCT FY2025 AR"},
+  // Frasers LCT overseas (selected key)
+  {name:"CROSS LONDON MARKETS",addr:"Smithfield, London",type:"Office",entity:"Frasers Logistics & Commercial Trust",entity_type:"REIT",tenure:"Freehold",nla_sqm:null,occ:null,val:null,region:null,area:"London",country:"UK",ar_year:"FY2025",source:"Frasers LCT FY2025 AR"},
+  {name:"MAXIS BUSINESS PARK",addr:"Theale, Berkshire",type:"Business Park",entity:"Frasers Logistics & Commercial Trust",entity_type:"REIT",tenure:"Leasehold",nla_sqm:null,occ:null,val:null,region:null,area:"Berkshire",country:"UK",ar_year:"FY2025",source:"Frasers LCT FY2025 AR"},
+  // ── Frasers CT (SG) ──
+  {name:"NEX",addr:"23 Serangoon Central",type:"Retail",entity:"Frasers Centrepoint Trust",entity_type:"REIT",tenure:"99yr from 2008",nla_sqm:58959,occ:100,val:2141,region:"North-East",area:"Serangoon",country:"Singapore",ar_year:"FY2025",source:"Frasers CT FY2025 AR"},
+  {name:"NORTHPOINT CITY",addr:"930 Yishun Avenue 2",type:"Retail",entity:"Frasers Centrepoint Trust",entity_type:"REIT",tenure:"99yr from 1990/2015",nla_sqm:49380,occ:100,val:1933,region:"North",area:"Yishun",country:"Singapore",ar_year:"FY2025",source:"Frasers CT FY2025 AR"},
+  {name:"CAUSEWAY POINT",addr:"1 Woodlands Square",type:"Retail",entity:"Frasers Centrepoint Trust",entity_type:"REIT",tenure:"99yr from 1995",nla_sqm:38999,occ:92.3,val:1354,region:"North",area:"Woodlands",country:"Singapore",ar_year:"FY2025",source:"Frasers CT FY2025 AR"},
+  {name:"WATERWAY POINT",addr:"83 Punggol Central",type:"Retail",entity:"Frasers Centrepoint Trust",entity_type:"REIT",tenure:"99yr from 2011",nla_sqm:36273,occ:100,val:1331,region:"North-East",area:"Punggol",country:"Singapore",ar_year:"FY2025",source:"Frasers CT FY2025 AR"},
+  {name:"TAMPINES 1",addr:"10 Tampines Central 1",type:"Retail",entity:"Frasers Centrepoint Trust",entity_type:"REIT",tenure:"99yr from 1990",nla_sqm:25832,occ:99.8,val:817,region:"East",area:"Tampines",country:"Singapore",ar_year:"FY2025",source:"Frasers CT FY2025 AR"},
+  {name:"TIONG BAHRU PLAZA",addr:"302 Tiong Bahru Road",type:"Retail",entity:"Frasers Centrepoint Trust",entity_type:"REIT",tenure:"99yr from 1991",nla_sqm:19928,occ:99.2,val:665,region:"Central",area:"Tiong Bahru",country:"Singapore",ar_year:"FY2025",source:"Frasers CT FY2025 AR"},
+  {name:"CENTRAL PLAZA",addr:"298 Tiong Bahru Road",type:"Office",entity:"Frasers Centrepoint Trust",entity_type:"REIT",tenure:"99yr from 1991",nla_sqm:15899,occ:94.6,val:219,region:"Central",area:"Tiong Bahru",country:"Singapore",ar_year:"FY2025",source:"Frasers CT FY2025 AR"},
+  {name:"CENTURY SQUARE",addr:"2 Tampines Central 5",type:"Retail",entity:"Frasers Centrepoint Trust",entity_type:"REIT",tenure:"99yr from 1992",nla_sqm:19628,occ:91.8,val:563,region:"East",area:"Tampines",country:"Singapore",ar_year:"FY2025",source:"Frasers CT FY2025 AR"},
+  {name:"HOUGANG MALL",addr:"90 Hougang Avenue 10",type:"Retail",entity:"Frasers Centrepoint Trust",entity_type:"REIT",tenure:"99yr from 1994",nla_sqm:15400,occ:73.5,val:467,region:"North-East",area:"Hougang",country:"Singapore",ar_year:"FY2025",source:"Frasers CT FY2025 AR"},
+  {name:"WHITE SANDS",addr:"1 Pasir Ris Central Street 3",type:"Retail",entity:"Frasers Centrepoint Trust",entity_type:"REIT",tenure:"99yr from 1993",nla_sqm:13968,occ:100,val:431,region:"East",area:"Pasir Ris",country:"Singapore",ar_year:"FY2025",source:"Frasers CT FY2025 AR"},
+  // ── MLT — Singapore ──
+  {name:"MAPLETREE BENOI LOGISTICS HUB",addr:"84 Benoi Road",type:"Logistics",entity:"Mapletree Logistics Trust",entity_type:"REIT",tenure:"30yr from 2010",nla_sqm:89385,occ:100,val:132.8,region:"West",area:"Jurong West",country:"Singapore",ar_year:"FY2024/25",source:"MLT FY2024/25 AR"},
+  {name:"PRIMA",addr:"Prima Road",type:"Logistics",entity:"Mapletree Logistics Trust",entity_type:"REIT",tenure:"99yr from 1997",nla_sqm:58331,occ:100,val:48,region:"North",area:"Woodlands",country:"Singapore",ar_year:"FY2024/25",source:"MLT FY2024/25 AR"},
+  {name:"MAPLETREE LOGISTICS HUB TOH GUAN",addr:"51 Toh Guan Road East",type:"Logistics",entity:"Mapletree Logistics Trust",entity_type:"REIT",tenure:"30+30yr from 1990",nla_sqm:60976,occ:82,val:155.6,region:"West",area:"Jurong East",country:"Singapore",ar_year:"FY2024/25",source:"MLT FY2024/25 AR"},
+  {name:"25 PANDAN CRESCENT",addr:"25 Pandan Crescent",type:"Logistics",entity:"Mapletree Logistics Trust",entity_type:"REIT",tenure:"30+30yr from 1996",nla_sqm:35141,occ:96,val:60,region:"West",area:"Queenstown",country:"Singapore",ar_year:"FY2024/25",source:"MLT FY2024/25 AR"},
+  {name:"MAPLETREE PIONEER LOGISTICS HUB",addr:"Pioneer Road",type:"Logistics",entity:"Mapletree Logistics Trust",entity_type:"REIT",tenure:"30+30yr from 1993",nla_sqm:68662,occ:100,val:145.8,region:"West",area:"Jurong West",country:"Singapore",ar_year:"FY2024/25",source:"MLT FY2024/25 AR"},
+  {name:"SH COGENT (PENJURU CLOSE)",addr:"Penjuru Close",type:"Logistics",entity:"Mapletree Logistics Trust",entity_type:"REIT",tenure:"29yr from 2006",nla_sqm:37067,occ:100,val:31.6,region:"West",area:"Jurong West",country:"Singapore",ar_year:"FY2024/25",source:"MLT FY2024/25 AR"},
+  {name:"30 BOON LAY WAY",addr:"30 Boon Lay Way",type:"Logistics",entity:"Mapletree Logistics Trust",entity_type:"REIT",tenure:"30+15yr from 1989",nla_sqm:32979,occ:96,val:17.5,region:"West",area:"Jurong West",country:"Singapore",ar_year:"FY2024/25",source:"MLT FY2024/25 AR"},
+  {name:"29 TAI SENG AVENUE",addr:"29 Tai Seng Avenue",type:"Logistics",entity:"Mapletree Logistics Trust",entity_type:"REIT",tenure:"30+30yr from 2007",nla_sqm:16016,occ:100,val:50.6,region:"North-East",area:"Tai Seng",country:"Singapore",ar_year:"FY2024/25",source:"MLT FY2024/25 AR"},
+  {name:"6 MARSILING LANE",addr:"6 Marsiling Lane",type:"Logistics",entity:"Mapletree Logistics Trust",entity_type:"REIT",tenure:"60yr from 1978",nla_sqm:15244,occ:100,val:20.3,region:"North",area:"Woodlands",country:"Singapore",ar_year:"FY2024/25",source:"MLT FY2024/25 AR"},
+  {name:"5A JOO KOON CIRCLE",addr:"5A Joo Koon Circle",type:"Logistics",entity:"Mapletree Logistics Trust",entity_type:"REIT",tenure:"30+30yr from 1995",nla_sqm:null,occ:null,val:188,region:"West",area:"Jurong West",country:"Singapore",ar_year:"FY2024/25",source:"MLT FY2024/25 AR"},
+  // MLT overseas (summary by country)
+  {name:"MLT AUSTRALIA PORTFOLIO",addr:"Various — 14 properties across VIC/NSW/QLD",type:"Logistics",entity:"Mapletree Logistics Trust",entity_type:"REIT",tenure:"Various",nla_sqm:399250,occ:100,val:952.7,region:null,area:"Melbourne / Sydney / Brisbane",country:"Australia",ar_year:"FY2024/25",source:"MLT FY2024/25 AR"},
+  {name:"MLT JAPAN PORTFOLIO",addr:"Various — 22 properties across Greater Tokyo/Osaka",type:"Logistics",entity:"Mapletree Logistics Trust",entity_type:"REIT",tenure:"Various",nla_sqm:719464,occ:99.7,val:1917,region:null,area:"Greater Tokyo / Osaka",country:"Japan",ar_year:"FY2024/25",source:"MLT FY2024/25 AR"},
+  {name:"MLT MALAYSIA PORTFOLIO",addr:"Various — 10 properties across Shah Alam/Johor",type:"Logistics",entity:"Mapletree Logistics Trust",entity_type:"REIT",tenure:"Various",nla_sqm:597873,occ:97.1,val:702.3,region:null,area:"Shah Alam / Johor",country:"Malaysia",ar_year:"FY2024/25",source:"MLT FY2024/25 AR"},
+  {name:"MLT CHINA PORTFOLIO",addr:"Various — key logistics hubs across China",type:"Logistics",entity:"Mapletree Logistics Trust",entity_type:"REIT",tenure:"Various",nla_sqm:null,occ:93.2,val:null,region:null,area:"Multiple Cities",country:"China",ar_year:"FY2024/25",source:"MLT FY2024/25 AR"},
+  {name:"MLT SOUTH KOREA PORTFOLIO",addr:"Various — Greater Seoul",type:"Logistics",entity:"Mapletree Logistics Trust",entity_type:"REIT",tenure:"Various",nla_sqm:null,occ:null,val:null,region:null,area:"Greater Seoul",country:"South Korea",ar_year:"FY2024/25",source:"MLT FY2024/25 AR"},
+  {name:"MLT VIETNAM PORTFOLIO",addr:"Various — Ho Chi Minh City / Hanoi",type:"Logistics",entity:"Mapletree Logistics Trust",entity_type:"REIT",tenure:"Various",nla_sqm:null,occ:null,val:null,region:null,area:"Ho Chi Minh City / Hanoi",country:"Vietnam",ar_year:"FY2024/25",source:"MLT FY2024/25 AR"},
+  // ── MINT — Singapore (selected key assets) ──
+  {name:"MAPLETREE BUSINESS CITY",addr:"20 Pasir Panjang Road",type:"Business Park",entity:"Mapletree Industrial Trust",entity_type:"REIT",tenure:"Leasehold",nla_sqm:null,occ:null,val:null,region:"West",area:"Pasir Panjang",country:"Singapore",ar_year:"FY2024/25",source:"MINT FY2024/25 AR"},
+  {name:"MAPLETREE HI-TECH PARK @ KALLANG WAY",addr:"Kallang Way",type:"Industrial",entity:"Mapletree Industrial Trust",entity_type:"REIT",tenure:"Leasehold",nla_sqm:null,occ:null,val:null,region:"Central",area:"Kallang",country:"Singapore",ar_year:"FY2024/25",source:"MINT FY2024/25 AR"},
+  {name:"TATA COMMUNICATIONS EXCHANGE",addr:"Jurong East",type:"Data Centre",entity:"Mapletree Industrial Trust",entity_type:"REIT",tenure:"Leasehold",nla_sqm:null,occ:100,val:null,region:"West",area:"Jurong East",country:"Singapore",ar_year:"FY2024/25",source:"MINT FY2024/25 AR"},
+  {name:"MINT SINGAPORE PORTFOLIO (FLATTED FACTORIES)",addr:"Various — Singapore flatted factories",type:"Industrial",entity:"Mapletree Industrial Trust",entity_type:"REIT",tenure:"Leasehold",nla_sqm:null,occ:null,val:null,region:"West",area:"Multiple estates",country:"Singapore",ar_year:"FY2024/25",source:"MINT FY2024/25 AR"},
+  // MINT overseas
+  {name:"MINT NORTH AMERICA DATA CENTRE PORTFOLIO",addr:"Various — 56 data centres across USA/Canada",type:"Data Centre",entity:"Mapletree Industrial Trust",entity_type:"REIT",tenure:"Various",nla_sqm:null,occ:null,val:null,region:null,area:"Multiple US/Canada cities",country:"USA",ar_year:"FY2024/25",source:"MINT FY2024/25 AR"},
+  {name:"MINT JAPAN DATA CENTRES",addr:"Osaka, Japan",type:"Data Centre",entity:"Mapletree Industrial Trust",entity_type:"REIT",tenure:"Various",nla_sqm:null,occ:null,val:null,region:null,area:"Osaka",country:"Japan",ar_year:"FY2024/25",source:"MINT FY2024/25 AR"},
+
+  // ═══ DEVELOPERS ═══════════════════════════════════════════
+  // ── SingLand (SG) ──
+  {name:"SINGAPORE LAND TOWER",addr:"50 Raffles Place",type:"Office",entity:"SingLand",entity_type:"DEV",tenure:"999yr from 1826",nla_sqm:57500,occ:86,val:1930,region:"Central",area:"Raffles Place",country:"Singapore",ar_year:"FY2024",source:"SingLand AR 2024",status:"AEI in Progress"},
+  {name:"THE GATEWAY",addr:"150 & 152 Beach Road",type:"Office",entity:"SingLand",entity_type:"DEV",tenure:"99yr from 1982",nla_sqm:69803,occ:92,val:1240,region:"Central",area:"Beach Road",country:"Singapore",ar_year:"FY2024",source:"SingLand AR 2024",status:"Investment"},
+  {name:"MARINA SQUARE",addr:"6 Raffles Boulevard",type:"Retail",entity:"SingLand",entity_type:"DEV",tenure:"99yr from 1980",nla_sqm:74389,occ:100,val:1050,region:"Central",area:"Marina Bay",country:"Singapore",ar_year:"FY2024",source:"SingLand AR 2024",status:"Investment"},
+  {name:"UIC BUILDING",addr:"5 Shenton Way",type:"Office",entity:"SingLand",entity_type:"DEV",tenure:"99yr from 2011",nla_sqm:26373,occ:93,val:740,region:"Central",area:"Shenton Way",country:"Singapore",ar_year:"FY2024",source:"SingLand AR 2024",status:"Investment"},
+  {name:"SGX CENTRE 2",addr:"4 Shenton Way",type:"Office",entity:"SingLand",entity_type:"DEV",tenure:"99yr from 1995",nla_sqm:25800,occ:99,val:582,region:"Central",area:"Shenton Way",country:"Singapore",ar_year:"FY2024",source:"SingLand AR 2024",status:"Investment"},
+  {name:"WEST MALL",addr:"1 Bukit Batok Central Link",type:"Retail",entity:"SingLand",entity_type:"DEV",tenure:"99yr from 1995",nla_sqm:17042,occ:100,val:434,region:"West",area:"Bukit Batok",country:"Singapore",ar_year:"FY2024",source:"SingLand AR 2024",status:"AEI in Progress"},
+  {name:"NOVENA SQUARE",addr:"238 Thomson Road",type:"Office",entity:"SingLand",entity_type:"DEV",tenure:"99yr from 1997",nla_sqm:57339,occ:100,val:1473,region:"Central",area:"Novena",country:"Singapore",ar_year:"FY2024",source:"SingLand AR 2024",status:"Investment (JV 20%)"},
+  {name:"CLIFFORD CENTRE",addr:"24 Raffles Place",type:"Office",entity:"SingLand",entity_type:"DEV",tenure:"999yr from 1826",nla_sqm:null,occ:null,val:988,region:"Central",area:"Raffles Place",country:"Singapore",ar_year:"FY2024",source:"SingLand AR 2024",status:"Redevelopment"},
+  {name:"TAMPINES PLAZA 1",addr:"3 Tampines Central 1",type:"Office",entity:"SingLand",entity_type:"DEV",tenure:"99yr from 1996",nla_sqm:8397,occ:100,val:112,region:"East",area:"Tampines",country:"Singapore",ar_year:"FY2024",source:"SingLand AR 2024",status:"Investment"},
+  {name:"TAMPINES PLAZA 2",addr:"5 Tampines Central 1",type:"Office",entity:"SingLand",entity_type:"DEV",tenure:"99yr from 1996",nla_sqm:8397,occ:100,val:113,region:"East",area:"Tampines",country:"Singapore",ar_year:"FY2024",source:"SingLand AR 2024",status:"Investment"},
+  {name:"PAN PACIFIC SINGAPORE",addr:"7 Raffles Boulevard",type:"Hotel",entity:"SingLand",entity_type:"DEV",tenure:"99yr from 1980",nla_sqm:null,occ:79,val:null,region:"Central",area:"Marina Bay",country:"Singapore",ar_year:"FY2024",source:"SingLand AR 2024",status:"Hotel (JV 77%)"},
+  {name:"PARKROYAL COLLECTION MARINA BAY",addr:"6 Raffles Boulevard",type:"Hotel",entity:"SingLand",entity_type:"DEV",tenure:"99yr from 1980",nla_sqm:null,occ:79,val:null,region:"Central",area:"Marina Bay",country:"Singapore",ar_year:"FY2024",source:"SingLand AR 2024",status:"Hotel (JV 58%)"},
+  {name:"V ON SHENTON",addr:"Shenton Way",type:"Residential",entity:"SingLand",entity_type:"DEV",tenure:"99yr from 2011",nla_sqm:55846,occ:null,val:null,region:"Central",area:"Shenton Way",country:"Singapore",ar_year:"FY2024",source:"SingLand AR 2024",status:"Development — Completed"},
+  {name:"PINETREE HILL",addr:"Pine Grove",type:"Residential",entity:"SingLand",entity_type:"DEV",tenure:"99yr from 2022",nla_sqm:47323,occ:null,val:null,region:"West",area:"Ulu Pandan",country:"Singapore",ar_year:"FY2024",source:"SingLand AR 2024",status:"Development — Under Construction"},
+  {name:"WATTEN HOUSE",addr:"Shelford Road",type:"Residential",entity:"SingLand",entity_type:"DEV",tenure:"Freehold",nla_sqm:28646,occ:null,val:null,region:"Central",area:"Bukit Timah",country:"Singapore",ar_year:"FY2024",source:"SingLand AR 2024",status:"Development — Under Construction"},
+  {name:"MEYER BLUE",addr:"Meyer Road",type:"Residential",entity:"SingLand",entity_type:"DEV",tenure:"Freehold",nla_sqm:25147,occ:null,val:null,region:"East",area:"East Coast",country:"Singapore",ar_year:"FY2024",source:"SingLand AR 2024",status:"Development — Under Construction"},
+  {name:"PARKTOWN RESIDENCE",addr:"Tampines Avenue 11",type:"Residential",entity:"SingLand",entity_type:"DEV",tenure:"99yr from 2023",nla_sqm:126700,occ:null,val:null,region:"East",area:"Tampines",country:"Singapore",ar_year:"FY2024",source:"SingLand AR 2024",status:"Development — Under Construction"},
+  {name:"UPPERHOUSE AT ORCHARD BOULEVARD",addr:"Orchard Boulevard",type:"Residential",entity:"SingLand",entity_type:"DEV",tenure:"99yr from 2024",nla_sqm:24610,occ:null,val:null,region:"Central",area:"Orchard",country:"Singapore",ar_year:"FY2024",source:"SingLand AR 2024",status:"Development — Under Construction"},
+  // SingLand overseas
+  {name:"120 HOLBORN ISLAND",addr:"Midtown, London EC1N 2TD",type:"Office",entity:"SingLand",entity_type:"DEV",tenure:"Freehold",nla_sqm:32055,occ:84,val:307,region:null,area:"Midtown London",country:"UK",ar_year:"FY2024",source:"SingLand AR 2024"},
+  {name:"THE WESTIN TIANJIN",addr:"101 Nanjing Road, Tianjin",type:"Hotel",entity:"SingLand",entity_type:"DEV",tenure:"50yr from 2005",nla_sqm:null,occ:null,val:null,region:null,area:"Tianjin",country:"China",ar_year:"FY2024",source:"SingLand AR 2024"},
+  // ── UOL Group (SG) ──
+  {name:"UNITED SQUARE",addr:"101 Thomson Road",type:"Office",entity:"UOL Group",entity_type:"DEV",tenure:"Freehold",nla_sqm:46536,occ:99,val:1140.3,region:"Central",area:"Novena",country:"Singapore",ar_year:"FY2024",source:"UOL AR 2024",status:"Investment"},
+  {name:"NOVENA SQUARE (UOL)",addr:"238 Thomson Road",type:"Office",entity:"UOL Group",entity_type:"DEV",tenure:"99yr from 1997",nla_sqm:57339,occ:100,val:1472.5,region:"Central",area:"Novena",country:"Singapore",ar_year:"FY2024",source:"UOL AR 2024",status:"Investment (JV 70%)"},
+  {name:"ODEON 331",addr:"331 North Bridge Road",type:"Office",entity:"UOL Group",entity_type:"DEV",tenure:"999yr from 1827",nla_sqm:16637,occ:98,val:680.8,region:"Central",area:"City Hall",country:"Singapore",ar_year:"FY2024",source:"UOL AR 2024",status:"Investment"},
+  {name:"ODEON 333",addr:"333 North Bridge Road",type:"Office",entity:"UOL Group",entity_type:"DEV",tenure:"999yr from 1827",nla_sqm:5975,occ:89,val:null,region:"Central",area:"City Hall",country:"Singapore",ar_year:"FY2024",source:"UOL AR 2024",status:"Investment"},
+  {name:"KINEX",addr:"11 Tanjong Katong Road",type:"Retail",entity:"UOL Group",entity_type:"DEV",tenure:"Freehold",nla_sqm:19003,occ:98,val:370,region:"East",area:"Katong",country:"Singapore",ar_year:"FY2024",source:"UOL AR 2024",status:"Investment"},
+  {name:"ONE UPPER PICKERING",addr:"1 Upper Pickering Street",type:"Office",entity:"UOL Group",entity_type:"DEV",tenure:"99yr from 2008",nla_sqm:8089,occ:100,val:237.1,region:"Central",area:"Chinatown",country:"Singapore",ar_year:"FY2024",source:"UOL AR 2024",status:"Investment"},
+  {name:"PAN PACIFIC ORCHARD",addr:"10 Claymore Road",type:"Hotel",entity:"UOL Group",entity_type:"DEV",tenure:"Freehold",nla_sqm:19625,occ:78,val:464,region:"Central",area:"Orchard",country:"Singapore",ar_year:"FY2024",source:"UOL AR 2024",status:"Hotel"},
+  {name:"PARKROYAL COLLECTION PICKERING",addr:"3 Upper Pickering Street",type:"Hotel",entity:"UOL Group",entity_type:"DEV",tenure:"99yr from 2008",nla_sqm:21723,occ:88,val:532,region:"Central",area:"Chinatown",country:"Singapore",ar_year:"FY2024",source:"UOL AR 2024",status:"Hotel"},
+  {name:"PARKROYAL ON BEACH ROAD",addr:"7500C Beach Road",type:"Hotel",entity:"UOL Group",entity_type:"DEV",tenure:"99yr from 1968",nla_sqm:22047,occ:82,val:226,region:"Central",area:"Beach Road",country:"Singapore",ar_year:"FY2024",source:"UOL AR 2024",status:"Hotel"},
+  {name:"PAN PACIFIC SERVICED SUITES ORCHARD",addr:"96 Somerset Road",type:"Serviced Suites",entity:"UOL Group",entity_type:"DEV",tenure:"Freehold",nla_sqm:8821,occ:91,val:163,region:"Central",area:"Orchard",country:"Singapore",ar_year:"FY2024",source:"UOL AR 2024",status:"Serviced Suites"},
+  {name:"AMO RESIDENCE",addr:"Ang Mo Kio Avenue 1",type:"Residential",entity:"UOL Group",entity_type:"DEV",tenure:"99yr from 2021",nla_sqm:31669,occ:null,val:null,region:"North",area:"Ang Mo Kio",country:"Singapore",ar_year:"FY2024",source:"UOL AR 2024",status:"Development — Under Construction"},
+  {name:"MEYER BLUE (UOL)",addr:"Meyer Road",type:"Residential",entity:"UOL Group",entity_type:"DEV",tenure:"Freehold",nla_sqm:25147,occ:null,val:null,region:"East",area:"East Coast",country:"Singapore",ar_year:"FY2024",source:"UOL AR 2024",status:"Development — Under Construction"},
+  {name:"FABER HOUSE (NEW HOTEL)",addr:"230 Orchard Road",type:"Hotel",entity:"UOL Group",entity_type:"DEV",tenure:"Freehold",nla_sqm:11025,occ:null,val:null,region:"Central",area:"Orchard",country:"Singapore",ar_year:"FY2024",source:"UOL AR 2024",status:"Development — Under Construction"},
+  // UOL overseas
+  {name:"110 HIGH HOLBORN",addr:"Midtown London WC1V 6JS",type:"Office",entity:"UOL Group",entity_type:"DEV",tenure:"Part freehold / 999yr",nla_sqm:10690,occ:75,val:123.3,region:null,area:"Midtown London",country:"UK",ar_year:"FY2024",source:"UOL AR 2024"},
+  {name:"120 HOLBORN ISLAND (UOL)",addr:"Midtown London EC1N 2TD",type:"Office",entity:"UOL Group",entity_type:"DEV",tenure:"Freehold",nla_sqm:32055,occ:84,val:306.9,region:null,area:"Midtown London",country:"UK",ar_year:"FY2024",source:"UOL AR 2024"},
+  {name:"72 CHRISTIE STREET",addr:"72 Christie Street, St Leonards, Sydney",type:"Office",entity:"UOL Group",entity_type:"DEV",tenure:"Freehold",nla_sqm:11259,occ:100,val:81.7,region:null,area:"Sydney",country:"Australia",ar_year:"FY2024",source:"UOL AR 2024"},
+  {name:"PAN PACIFIC LONDON",addr:"London EC3A 7AB",type:"Hotel",entity:"UOL Group",entity_type:"DEV",tenure:"Freehold",nla_sqm:29161,occ:75,val:303.6,region:null,area:"London",country:"UK",ar_year:"FY2024",source:"UOL AR 2024"},
+  {name:"PARKROYAL DARLING HARBOUR",addr:"150 Day Street, Sydney",type:"Hotel",entity:"UOL Group",entity_type:"DEV",tenure:"Freehold",nla_sqm:24126,occ:89,val:135.5,region:null,area:"Sydney",country:"Australia",ar_year:"FY2024",source:"UOL AR 2024"},
+  {name:"PAN PACIFIC HANOI",addr:"1 Thanh Nien Road, Hanoi",type:"Hotel",entity:"UOL Group",entity_type:"DEV",tenure:"48yr from 1993",nla_sqm:39586,occ:69,val:70.6,region:null,area:"Hanoi",country:"Vietnam",ar_year:"FY2024",source:"UOL AR 2024"},
+  // ── CDL (SG) ──
+  {name:"REPUBLIC PLAZA",addr:"9 Raffles Place",type:"Office",entity:"CDL",entity_type:"DEV",tenure:"999yr",nla_sqm:71560,occ:null,val:null,region:"Central",area:"Raffles Place",country:"Singapore",ar_year:"FY2024",source:"CDL AR 2024",status:"Investment"},
+  {name:"SOUTH BEACH TOWER",addr:"30 Beach Road",type:"Office",entity:"CDL",entity_type:"DEV",tenure:"99yr wef 2007",nla_sqm:47290,occ:null,val:null,region:"Central",area:"Beach Road",country:"Singapore",ar_year:"FY2024",source:"CDL AR 2024",status:"Investment"},
+  {name:"CITY HOUSE",addr:"30 Robinson Road",type:"Office",entity:"CDL",entity_type:"DEV",tenure:"999yr",nla_sqm:14609,occ:null,val:null,region:"Central",area:"Raffles Place",country:"Singapore",ar_year:"FY2024",source:"CDL AR 2024",status:"Investment"},
+  {name:"PALAIS RENAISSANCE",addr:"390 Orchard Road",type:"Retail",entity:"CDL",entity_type:"DEV",tenure:"Freehold",nla_sqm:10311,occ:null,val:null,region:"Central",area:"Orchard",country:"Singapore",ar_year:"FY2024",source:"CDL AR 2024",status:"Investment"},
+  {name:"CITY SQUARE MALL",addr:"500 Kallang Road",type:"Retail",entity:"CDL",entity_type:"DEV",tenure:"Freehold",nla_sqm:44037,occ:null,val:null,region:"Central",area:"Kallang",country:"Singapore",ar_year:"FY2024",source:"CDL AR 2024",status:"Investment"},
+  {name:"SENGKANG GRAND MALL",addr:"Sengkang Central",type:"Retail",entity:"CDL",entity_type:"DEV",tenure:"99yr",nla_sqm:10143,occ:null,val:null,region:"North-East",area:"Sengkang",country:"Singapore",ar_year:"FY2024",source:"CDL AR 2024",status:"Investment (JV 50%)"},
+  {name:"KATONG SHOPPING CENTRE",addr:"865 Mountbatten Road",type:"Retail",entity:"CDL",entity_type:"DEV",tenure:"Freehold",nla_sqm:17396,occ:null,val:null,region:"East",area:"Katong",country:"Singapore",ar_year:"FY2024",source:"CDL AR 2024",status:"Investment"},
+  {name:"CITY INDUSTRIAL BUILDING",addr:"2 Tannery Lane",type:"Industrial",entity:"CDL",entity_type:"DEV",tenure:"Freehold",nla_sqm:11852,occ:null,val:null,region:"Central",area:"Tannery Lane",country:"Singapore",ar_year:"FY2024",source:"CDL AR 2024",status:"Investment"},
+  {name:"LE GROVE SERVICED RESIDENCES",addr:"21 Orange Grove Road",type:"Serviced Suites",entity:"CDL",entity_type:"DEV",tenure:"Freehold",nla_sqm:8214,occ:null,val:null,region:"Central",area:"Orchard",country:"Singapore",ar_year:"FY2024",source:"CDL AR 2024",status:"Investment"},
+  {name:"THE ST. REGIS SINGAPORE",addr:"29 Tanglin Road",type:"Hotel",entity:"CDL",entity_type:"DEV",tenure:"999yr",nla_sqm:null,occ:null,val:null,region:"Central",area:"Tanglin",country:"Singapore",ar_year:"FY2024",source:"CDL AR 2024",status:"Hotel"},
+  {name:"M SOCIAL SINGAPORE",addr:"90 Robertson Quay",type:"Hotel",entity:"CDL",entity_type:"DEV",tenure:"99yr wef 2011",nla_sqm:null,occ:null,val:null,region:"Central",area:"Robertson Quay",country:"Singapore",ar_year:"FY2024",source:"CDL AR 2024",status:"Hotel"},
+  {name:"JW MARRIOTT HOTEL SOUTH BEACH",addr:"30 Beach Road",type:"Hotel",entity:"CDL",entity_type:"DEV",tenure:"99yr wef 2007",nla_sqm:null,occ:null,val:null,region:"Central",area:"Beach Road",country:"Singapore",ar_year:"FY2024",source:"CDL AR 2024",status:"Hotel (JV 50.1%)"},
+  {name:"LUMINA GRAND EC",addr:"Bukit Batok West Avenue 5",type:"Residential",entity:"CDL",entity_type:"DEV",tenure:"99yr",nla_sqm:null,occ:null,val:null,region:"West",area:"Bukit Batok",country:"Singapore",ar_year:"FY2024",source:"CDL AR 2024",status:"Development — Under Construction"},
+  {name:"TEMBUSU GRAND",addr:"Jalan Tembusu",type:"Residential",entity:"CDL",entity_type:"DEV",tenure:"99yr",nla_sqm:null,occ:null,val:null,region:"East",area:"Katong",country:"Singapore",ar_year:"FY2024",source:"CDL AR 2024",status:"Development — Under Construction"},
+  {name:"UNION SQUARE RESIDENCES",addr:"Magazine Road",type:"Residential",entity:"CDL",entity_type:"DEV",tenure:"Mixed",nla_sqm:null,occ:null,val:null,region:"Central",area:"Clarke Quay",country:"Singapore",ar_year:"FY2024",source:"CDL AR 2024",status:"Development — Under Construction"},
+  {name:"NORWOOD GRAND",addr:"Champions Way",type:"Residential",entity:"CDL",entity_type:"DEV",tenure:"99yr",nla_sqm:null,occ:null,val:null,region:"North",area:"Woodlands",country:"Singapore",ar_year:"FY2024",source:"CDL AR 2024",status:"Development — Under Construction"},
+  // CDL overseas (key assets)
+  {name:"REPUBLIC PLAZA (LONDON)",addr:"125 Old Broad Street, London",type:"Office",entity:"CDL",entity_type:"DEV",tenure:"Freehold",nla_sqm:30547,occ:null,val:null,region:null,area:"City of London",country:"UK",ar_year:"FY2024",source:"CDL AR 2024"},
+  {name:"ALDGATE HOUSE",addr:"Aldgate, London",type:"Office",entity:"CDL",entity_type:"DEV",tenure:"Freehold",nla_sqm:19496,occ:null,val:null,region:null,area:"London",country:"UK",ar_year:"FY2024",source:"CDL AR 2024"},
+  {name:"ST KATHARINE DOCKS",addr:"Tower Bridge, London",type:"Office",entity:"CDL",entity_type:"DEV",tenure:"Freehold",nla_sqm:50149,occ:null,val:null,region:null,area:"London",country:"UK",ar_year:"FY2024",source:"CDL AR 2024"},
+  {name:"330 COLLINS STREET",addr:"Melbourne CBD",type:"Office",entity:"CDL",entity_type:"DEV",tenure:"Freehold",nla_sqm:18010,occ:null,val:null,region:null,area:"Melbourne CBD",country:"Australia",ar_year:"FY2024",source:"CDL AR 2024"},
+  {name:"HONG LEONG TECHNOLOGY PARK SHENZHEN",addr:"Longgang District, Shenzhen",type:"Business Park",entity:"CDL",entity_type:"DEV",tenure:"Leasehold to 2045",nla_sqm:75074,occ:null,val:null,region:null,area:"Shenzhen",country:"China",ar_year:"FY2024",source:"CDL AR 2024"},
+  {name:"THE BILTMORE LOS ANGELES",addr:"506 South Grand Avenue, Los Angeles",type:"Hotel",entity:"CDL",entity_type:"DEV",tenure:"Freehold",nla_sqm:null,occ:null,val:null,region:null,area:"Los Angeles",country:"USA",ar_year:"FY2024",source:"CDL AR 2024"},
+  {name:"MILLENNIUM HOTEL BROADWAY TIMES SQUARE",addr:"145 West 44th Street, New York",type:"Hotel",entity:"CDL",entity_type:"DEV",tenure:"Freehold",nla_sqm:null,occ:null,val:null,region:null,area:"New York",country:"USA",ar_year:"FY2024",source:"CDL AR 2024"},
+  {name:"THE BILTMORE MAYFAIR",addr:"44 Grosvenor Square, London",type:"Hotel",entity:"CDL",entity_type:"DEV",tenure:"Leasehold to 2096",nla_sqm:null,occ:null,val:null,region:null,area:"London",country:"UK",ar_year:"FY2024",source:"CDL AR 2024"},
 ];
 
-var REIT_COLORS = {
+var ENTITY_COLORS = {
   "AIMS APAC REIT":"#1a5276",
   "Alpha Integrated REIT (former Sabana)":"#6e2f8a",
   "CapitaLand Ascendas REIT (CLAR)":"#1e8449",
+  "CapitaLand Integrated Commercial Trust":"#1a6b3c",
   "CDL Hospitality Trusts":"#b7770d",
   "Keppel DC REIT":"#c0392b",
   "Keppel REIT":"#2874a6",
   "OUE REIT":"#7d6608",
   "Lendlease Global Commercial REIT":"#884ea0",
   "Frasers Logistics & Commercial Trust":"#1a7a4a",
-  "Frasers Centrepoint Trust":"#d35400"
+  "Frasers Centrepoint Trust":"#d35400",
+  "Mapletree Logistics Trust":"#2e6da4",
+  "Mapletree Industrial Trust":"#16697a",
+  "SingLand":"#21513b",
+  "UOL Group":"#8e3a00",
+  "CDL":"#9b1c1c"
 };
+var REIT_COLORS = ENTITY_COLORS;
 
 var REIT_TYPE_ICONS = {
   "Office":"🏙️","Retail":"🛍️","Industrial":"🏭","Data Centre":"💾",
-  "Hotel":"🏨","Business Park":"🏢","Logistics":"📦","Warehouse":"📦"
+  "Hotel":"🏨","Business Park":"🏢","Logistics":"📦","Warehouse":"📦",
+  "Residential":"🏘️","Serviced Suites":"🛎️"
 };
 
-var reitActiveReit = '';
+var reitActiveEntity = '';
+var reitActiveDev = '';
 var reitActiveAsset = '';
+var reitActiveGeo = 'SG';
+var reitActiveEntType = 'ALL';
 var reitPage = 0;
 var reitPageSize = 18;
 var reitSearchTimer = null;
@@ -1649,10 +1839,55 @@ function reitSearchDelay(){
   reitSearchTimer = setTimeout(function(){ reitSearch(0); }, 300);
 }
 
+function reitSetGeo(geo){
+  reitActiveGeo = geo;
+  ['sg','ov','all'].forEach(function(k){
+    var btn = document.getElementById('geo-'+k);
+    if(btn){
+      var active = (k.toUpperCase()===geo);
+      btn.style.background = active ? 'var(--g1)' : 'transparent';
+      btn.style.color = active ? '#fff' : 'var(--mut)';
+      btn.style.fontWeight = active ? '700' : '600';
+    }
+  });
+  var cSel = document.getElementById('reit-country');
+  var rSel = document.getElementById('reit-region');
+  if(geo==='OV'){ if(cSel) cSel.style.display=''; if(rSel) rSel.style.display='none'; }
+  else { if(cSel) cSel.style.display='none'; if(rSel) rSel.style.display=''; }
+  reitSearch(0);
+}
+
+function reitSetEntity(type){
+  reitActiveEntType = type;
+  reitActiveEntity = '';
+  reitActiveDev = '';
+  ['all','reit','dev'].forEach(function(k){
+    var btn = document.getElementById('ent-'+k);
+    if(btn){
+      var active = (k.toUpperCase()===type);
+      btn.style.background = active ? 'var(--g1)' : 'transparent';
+      btn.style.color = active ? '#fff' : 'var(--mut)';
+      btn.style.fontWeight = active ? '700' : '600';
+    }
+  });
+  var reitRow = document.getElementById('chip-reit-row');
+  var devRow = document.getElementById('chip-dev-row');
+  if(reitRow) reitRow.style.display = (type==='DEV') ? 'none' : 'flex';
+  if(devRow) devRow.style.display = (type==='REIT') ? 'none' : 'flex';
+  document.querySelectorAll('[data-reitf]').forEach(function(b){ b.classList.remove('on'); });
+  var a1 = document.querySelector('[data-reitf=""]'); if(a1) a1.classList.add('on');
+  document.querySelectorAll('[data-devf]').forEach(function(b){ b.classList.remove('on'); });
+  var a2 = document.querySelector('[data-devf=""]'); if(a2) a2.classList.add('on');
+  reitSearch(0);
+}
+
 function reitSetFilter(btn, kind, val){
   if(kind==='reit'){
-    reitActiveReit = val;
+    reitActiveEntity = val;
     document.querySelectorAll('[data-reitf]').forEach(function(b){ b.classList.remove('on'); });
+  } else if(kind==='dev'){
+    reitActiveDev = val;
+    document.querySelectorAll('[data-devf]').forEach(function(b){ b.classList.remove('on'); });
   } else {
     reitActiveAsset = val;
     document.querySelectorAll('[data-rasset]').forEach(function(b){ b.classList.remove('on'); });
@@ -1664,7 +1899,8 @@ function reitSetFilter(btn, kind, val){
 function reitSearch(page){
   page = page||0; reitPage = page;
   var q = (document.getElementById('reit-search').value||'').trim().toLowerCase();
-  var region = document.getElementById('reit-region').value;
+  var region = (document.getElementById('reit-region')||{}).value||'';
+  var country = (document.getElementById('reit-country')||{}).value||'';
   var sort = document.getElementById('reit-sort').value;
 
   document.getElementById('reit-detail').style.display='none';
@@ -1672,28 +1908,34 @@ function reitSearch(page){
   document.getElementById('reit-grid').innerHTML='';
 
   var filtered = REIT_DATA.filter(function(p){
-    if(reitActiveReit && p.reit !== reitActiveReit) return false;
+    var isSG = (p.country==='Singapore');
+    if(reitActiveGeo==='SG' && !isSG) return false;
+    if(reitActiveGeo==='OV' && isSG) return false;
+    if(reitActiveEntType==='REIT' && p.entity_type!=='REIT') return false;
+    if(reitActiveEntType==='DEV' && p.entity_type!=='DEV') return false;
+    if(reitActiveEntity && p.entity !== reitActiveEntity) return false;
+    if(reitActiveDev && p.entity !== reitActiveDev) return false;
     if(reitActiveAsset){
-      var t = p.type.toLowerCase();
+      var t = (p.type||'').toLowerCase();
       var a = reitActiveAsset.toLowerCase();
       if(a==='industrial' && t!=='industrial' && t!=='warehouse') return false;
       if(a!=='industrial' && t!==a) return false;
     }
     if(region && p.region !== region) return false;
+    if(country && p.country !== country) return false;
     if(q){
-      var hay = (p.name+' '+p.addr+' '+p.area+' '+p.reit).toLowerCase();
+      var hay = ((p.name||'')+' '+(p.addr||'')+' '+(p.area||'')+' '+(p.entity||'')+' '+(p.country||'')).toLowerCase();
       if(!hay.includes(q)) return false;
     }
     return true;
   });
 
-  // Sort
   filtered.sort(function(a,b){
     if(sort==='val.desc') return (b.val||0)-(a.val||0);
     if(sort==='val.asc') return (a.val||0)-(b.val||0);
     if(sort==='occ.desc') return (b.occ||0)-(a.occ||0);
-    if(sort==='reit.asc') return a.reit.localeCompare(b.reit);
-    return a.name.localeCompare(b.name);
+    if(sort==='entity.asc') return (a.entity||'').localeCompare(b.entity||'');
+    return (a.name||'').localeCompare(b.name||'');
   });
 
   document.getElementById('reit-kpi-props').textContent = filtered.length;
@@ -1704,43 +1946,51 @@ function reitSearch(page){
   var pageData = filtered.slice(start, start + reitPageSize);
 
   if(!pageData.length){
-    document.getElementById('reit-grid').innerHTML='<div style="grid-column:1/-1;padding:60px;text-align:center;color:var(--mut)">No REIT properties found. Try adjusting your filters.</div>';
+    document.getElementById('reit-grid').innerHTML='<div style="grid-column:1/-1;padding:60px;text-align:center;color:var(--mut)">No properties found. Try adjusting your filters.</div>';
     document.getElementById('reit-pagination').innerHTML='';
     return;
   }
 
-  // Build cards using DOM (avoids all quote escaping issues)
   var html = '';
   pageData.forEach(function(p, idx){
-    var rc = REIT_COLORS[p.reit]||'#21513b';
+    var rc = ENTITY_COLORS[p.entity]||'#21513b';
     var ic = REIT_TYPE_ICONS[p.type]||'🏢';
     var nla = p.nla_sqm ? (p.nla_sqm>=10000?(p.nla_sqm/1000).toFixed(0)+'K sqm':p.nla_sqm.toLocaleString()+' sqm') : '\u2014';
     var occ = p.occ ? p.occ.toFixed(1)+'%' : '\u2014';
     var val = p.val ? 'S$'+p.val.toLocaleString()+'M' : '\u2014';
     var globalIdx = reitPage * reitPageSize + idx;
+    var isDev = p.entity_type==='DEV';
+    var locLine = p.country==='Singapore'
+      ? (p.addr+(p.area?' \u00b7 '+p.area:''))
+      : (p.area ? p.area+', '+p.country : p.country);
+    var entBadge = '<span style="font-size:9px;font-weight:700;background:rgba(255,255,255,.22);color:#fff;border-radius:3px;padding:1px 5px;letter-spacing:.04em">'+(isDev?'DEV':'REIT')+'</span>';
+    var statusBadge = (isDev && p.status) ? '<span style="padding:2px 7px;border-radius:4px;font-size:9px;font-weight:600;background:#fff3cd;color:#7d5200;border:1px solid #f0c040">'+p.status.split(' — ').pop()+'</span>' : '';
+    var countryFlag = p.country!=='Singapore' ? ' \uD83C\uDF10 '+p.country : '';
     html += '<div data-reitidx="'+globalIdx+'" style="background:var(--srf);border:1px solid var(--bdr);border-radius:11px;padding:0;cursor:pointer;transition:box-shadow .15s,transform .15s;overflow:hidden;display:flex;flex-direction:column">'
-      +'<div style="background:'+rc+';padding:12px 16px 10px;display:flex;justify-content:space-between;align-items:flex-start">'
-      +'<div style="font-size:10px;font-weight:700;color:rgba(255,255,255,.85);text-transform:uppercase;letter-spacing:.05em;line-height:1.3;max-width:200px">'+p.reit+'</div>'
-      +'<span style="font-size:18px;opacity:.9">'+ic+'</span>'
+      +'<div style="background:'+rc+';padding:10px 14px 9px;display:flex;justify-content:space-between;align-items:flex-start">'
+      +'<div style="flex:1;min-width:0"><div style="font-size:10px;font-weight:700;color:rgba(255,255,255,.9);text-transform:uppercase;letter-spacing:.05em;line-height:1.3;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">'+p.entity+'</div>'
+      +'<div style="margin-top:3px">'+entBadge+'</div></div>'
+      +'<span style="font-size:18px;opacity:.9;margin-left:8px">'+ic+'</span>'
       +'</div>'
-      +'<div style="padding:14px 16px;flex:1;display:flex;flex-direction:column">'
-      +'<div style="font-weight:700;font-size:13px;margin-bottom:3px;line-height:1.3">'+p.name+'</div>'
-      +'<div style="font-size:11px;color:var(--mut);margin-bottom:10px">'+p.addr+(p.area?' &middot; '+p.area:'')+'</div>'
-      +'<div style="display:flex;gap:5px;flex-wrap:wrap;margin-bottom:12px">'
-      +'<span style="padding:2px 8px;border-radius:4px;font-size:10px;font-weight:600;background:'+rc+'18;color:'+rc+';border:1px solid '+rc+'30">'+p.type+'</span>'
-      +'<span class="pill p-neu">'+p.tenure.substring(0,22)+'</span>'
+      +'<div style="padding:12px 14px;flex:1;display:flex;flex-direction:column">'
+      +'<div style="font-weight:700;font-size:13px;margin-bottom:2px;line-height:1.3">'+p.name+'</div>'
+      +'<div style="font-size:10px;color:var(--mut);margin-bottom:8px">'+locLine+countryFlag+'</div>'
+      +'<div style="display:flex;gap:5px;flex-wrap:wrap;margin-bottom:10px">'
+      +'<span style="padding:2px 7px;border-radius:4px;font-size:10px;font-weight:600;background:'+rc+'18;color:'+rc+';border:1px solid '+rc+'30">'+p.type+'</span>'
+      +(p.tenure?'<span class="pill p-neu" style="font-size:10px">'+p.tenure.substring(0,20)+'</span>':'')
+      +statusBadge+'</div>'
+      +'<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:5px;margin-top:auto">'
+      +'<div style="background:var(--srf2);border-radius:7px;padding:7px 5px;text-align:center"><div style="font-size:12px;font-weight:700;color:var(--g1)">'+val+'</div><div style="font-size:8px;color:var(--mut);text-transform:uppercase;letter-spacing:.04em;margin-top:1px">Valuation</div></div>'
+      +'<div style="background:var(--srf2);border-radius:7px;padding:7px 5px;text-align:center"><div style="font-size:12px;font-weight:700;color:var(--txt)">'+occ+'</div><div style="font-size:8px;color:var(--mut);text-transform:uppercase;letter-spacing:.04em;margin-top:1px">Occupancy</div></div>'
+      +'<div style="background:var(--srf2);border-radius:7px;padding:7px 5px;text-align:center"><div style="font-size:11px;font-weight:700;color:var(--txt)">'+nla+'</div><div style="font-size:8px;color:var(--mut);text-transform:uppercase;letter-spacing:.04em;margin-top:1px">NLA</div></div>'
       +'</div>'
-      +'<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px;margin-top:auto">'
-      +'<div style="background:var(--srf2);border-radius:7px;padding:8px 6px;text-align:center"><div style="font-size:13px;font-weight:700;color:var(--g1)">'+val+'</div><div style="font-size:9px;color:var(--mut);text-transform:uppercase;letter-spacing:.04em;margin-top:1px">Valuation</div></div>'
-      +'<div style="background:var(--srf2);border-radius:7px;padding:8px 6px;text-align:center"><div style="font-size:13px;font-weight:700;color:var(--txt)">'+occ+'</div><div style="font-size:9px;color:var(--mut);text-transform:uppercase;letter-spacing:.04em;margin-top:1px">Occupancy</div></div>'
-      +'<div style="background:var(--srf2);border-radius:7px;padding:8px 6px;text-align:center"><div style="font-size:12px;font-weight:700;color:var(--txt)">'+nla+'</div><div style="font-size:9px;color:var(--mut);text-transform:uppercase;letter-spacing:.04em;margin-top:1px">NLA</div></div>'
-      +'</div>'
+      +'<div style="margin-top:7px;font-size:9px;color:var(--mut);text-align:right;font-style:italic">Figures from '+p.ar_year+' Annual Report</div>'
       +'</div>'
       +'</div>';
   });
+
   var grid = document.getElementById('reit-grid');
   grid.innerHTML = html;
-  // Attach click + hover via event delegation (no inline onclick needed)
   grid.querySelectorAll('[data-reitidx]').forEach(function(card){
     var idx = parseInt(card.dataset.reitidx);
     card.addEventListener('click', function(){ reitOpenDetail(idx); });
@@ -1748,15 +1998,14 @@ function reitSearch(page){
     card.addEventListener('mouseleave', function(){ this.style.boxShadow='none'; this.style.transform='none'; });
   });
 
-  // Pagination
   var tp = Math.ceil(filtered.length/reitPageSize);
   if(tp>1){
     document.getElementById('reit-pagination').innerHTML =
       '<button onclick="reitSearch('+Math.max(0,page-1)+')" '+(page===0?"disabled style='opacity:.4'":"")
-      +' style="padding:5px 12px;border:1px solid var(--bdr);border-radius:6px;background:var(--srf);cursor:pointer;font-size:12px">← Prev</button>'
-      +'<span style="font-size:12px;color:var(--mut)">Page '+(page+1)+' of '+tp+' · '+filtered.length+' properties</span>'
+      +' style="padding:5px 12px;border:1px solid var(--bdr);border-radius:6px;background:var(--srf);cursor:pointer;font-size:12px">\u2190 Prev</button>'
+      +'<span style="font-size:12px;color:var(--mut)">Page '+(page+1)+' of '+tp+' \u00b7 '+filtered.length+' properties</span>'
       +'<button onclick="reitSearch('+Math.min(tp-1,page+1)+')" '+(page>=tp-1?"disabled style='opacity:.4'":"")
-      +' style="padding:5px 12px;border:1px solid var(--bdr);border-radius:6px;background:var(--srf);cursor:pointer;font-size:12px">Next →</button>';
+      +' style="padding:5px 12px;border:1px solid var(--bdr);border-radius:6px;background:var(--srf);cursor:pointer;font-size:12px">Next \u2192</button>';
   } else {
     document.getElementById('reit-pagination').innerHTML='';
   }
@@ -1765,23 +2014,27 @@ function reitSearch(page){
 function reitOpenDetail(idx){
   var p = typeof idx==='number' ? REIT_DATA[idx] : REIT_DATA.find(function(x){ return x.name===idx; });
   if(!p) return;
-  var rc = REIT_COLORS[p.reit]||'#21513b';
+  var rc = ENTITY_COLORS[p.entity]||'#21513b';
   document.getElementById('reit-grid').style.display='none';
   document.getElementById('reit-pagination').style.display='none';
   document.getElementById('reit-detail').style.display='block';
   document.getElementById('rdet-name').textContent=p.name;
-  document.getElementById('rdet-reit-pill').textContent=p.reit;
+  document.getElementById('rdet-reit-pill').textContent=p.entity;
   document.getElementById('rdet-reit-pill').style.background=rc;
 
+  var regionLabel = p.country==='Singapore' ? 'Region' : 'Country';
+  var regionVal = p.country==='Singapore' ? (p.region||'\u2014') : p.country;
+  var areaLabel = p.country==='Singapore' ? 'Planning Area' : 'City / Area';
+
   var stats=[
-    {l:'Valuation',v:p.val?'S$'+p.val.toLocaleString()+'M':'—'},
-    {l:'Occupancy',v:p.occ?p.occ.toFixed(1)+'%':'—'},
-    {l:'NLA (sqm)',v:p.nla_sqm?p.nla_sqm.toLocaleString():'—'},
-    {l:'NLA (sqft)',v:p.nla_sqm?Math.round(p.nla_sqm*10.764).toLocaleString():'—'},
+    {l:'Valuation',v:p.val?'S$'+p.val.toLocaleString()+'M':'\u2014'},
+    {l:'Occupancy',v:p.occ?p.occ.toFixed(1)+'%':'\u2014'},
+    {l:'NLA (sqm)',v:p.nla_sqm?p.nla_sqm.toLocaleString():'\u2014'},
+    {l:'NLA (sqft)',v:p.nla_sqm?Math.round(p.nla_sqm*10.764).toLocaleString():'\u2014'},
     {l:'Asset Type',v:p.type},
-    {l:'Region',v:p.region.replace(' Region','')},
-    {l:'Planning Area',v:p.area||'—'},
-    {l:'Tenure',v:p.tenure},
+    {l:regionLabel,v:regionVal},
+    {l:areaLabel,v:p.area||'\u2014'},
+    {l:'Tenure',v:p.tenure||'\u2014'},
   ];
   document.getElementById('rdet-stats').innerHTML=stats.map(function(s){
     return '<div style="background:var(--srf2);border-radius:8px;padding:10px;text-align:center">'
@@ -1789,15 +2042,22 @@ function reitOpenDetail(idx){
       +'<div style="font-size:9px;color:var(--mut);text-transform:uppercase;letter-spacing:.04em;margin-top:2px">'+s.l+'</div></div>';
   }).join('');
 
+  var entityLabel = p.entity_type==='DEV' ? 'Developer' : 'REIT';
+  var statusHtml = p.status ? '<div style="background:var(--srf2);border-radius:8px;padding:14px"><div style="font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.06em;color:var(--mut);margin-bottom:8px">Status</div><div style="font-size:13px;font-weight:500">'+p.status+'</div></div>' : '';
+
   document.getElementById('rdet-extra').innerHTML=
     '<div style="background:var(--srf2);border-radius:8px;padding:14px">'
     +'<div style="font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.06em;color:var(--mut);margin-bottom:8px">Address</div>'
-    +'<div style="font-size:13px;font-weight:500">'+p.addr+'</div></div>'
+    +'<div style="font-size:13px;font-weight:500">'+p.addr+(p.country!=='Singapore'?', '+p.country:'')+'</div></div>'
     +'<div style="background:'+rc+'10;border:1px solid '+rc+'30;border-radius:8px;padding:14px">'
-    +'<div style="font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.06em;color:'+rc+';margin-bottom:8px">REIT</div>'
-    +'<div style="font-size:13px;font-weight:600;color:'+rc+'">'+p.reit+'</div></div>';
+    +'<div style="font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.06em;color:'+rc+';margin-bottom:8px">'+entityLabel+'</div>'
+    +'<div style="font-size:13px;font-weight:600;color:'+rc+'">'+p.entity+'</div></div>'
+    +statusHtml
+    +'<div style="background:#fffbf0;border:1px solid #f0e0a0;border-radius:8px;padding:12px">'
+    +'<div style="font-size:10px;font-weight:600;color:#7d5200;margin-bottom:4px">\u26a0\ufe0f Data Disclaimer</div>'
+    +'<div style="font-size:10px;color:#7d5200">Figures sourced from '+p.source+'. Values as reported in the '+p.ar_year+' Annual Report and may not reflect current market conditions.</div></div>';
 
-  document.getElementById('rdet-source').textContent='📋 Source: '+p.source+' · Data verified against primary source';
+  document.getElementById('rdet-source').textContent='\uD83D\uDCCB '+p.source+' \u00b7 Figures from '+p.ar_year+' AR';
 }
 
 function reitCloseDetail(){
@@ -1808,17 +2068,20 @@ function reitCloseDetail(){
 
 function reitClear(){
   document.getElementById('reit-search').value='';
-  document.getElementById('reit-region').value='';
+  var rr=document.getElementById('reit-region'); if(rr) rr.value='';
+  var rc=document.getElementById('reit-country'); if(rc) rc.value='';
   document.getElementById('reit-sort').value='name.asc';
-  reitActiveReit=''; reitActiveAsset='';
+  reitActiveEntity=''; reitActiveDev=''; reitActiveAsset='';
   document.querySelectorAll('[data-reitf]').forEach(function(b){ b.classList.remove('on'); });
-  document.querySelector('[data-reitf=""]').classList.add('on');
+  var a1=document.querySelector('[data-reitf=""]'); if(a1) a1.classList.add('on');
+  document.querySelectorAll('[data-devf]').forEach(function(b){ b.classList.remove('on'); });
+  var a2=document.querySelector('[data-devf=""]'); if(a2) a2.classList.add('on');
   document.querySelectorAll('[data-rasset]').forEach(function(b){ b.classList.remove('on'); });
-  document.querySelector('[data-rasset=""]').classList.add('on');
+  var a3=document.querySelector('[data-rasset=""]'); if(a3) a3.classList.add('on');
   reitSearch(0);
 }
 
-// Trigger REIT search on tab click
+// Trigger search on tab click
 document.querySelectorAll(".navtab").forEach(function(t){
   if(t.dataset.tab==="reit") t.addEventListener("click",function(){ reitSearch(0); });
 });
