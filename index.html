@@ -637,11 +637,7 @@ async function fetchMonthlyData(months){
       page++;
       if(page>60)break; // safety cap ~60k rows
     }
-    if(allRows.length===0){console.warn("fetchMonthlyData: no rows");return null;}
-    console.log("fetchMonthlyData: "+allRows.length+" rows fetched across "+(page+1)+" pages");
-    var ptypes={};
-    allRows.forEach(function(row){ptypes[row.property_type||"null"]=(ptypes[row.property_type||"null"]||0)+1;});
-    console.log("Property types:",JSON.stringify(ptypes));
+    if(allRows.length===0)return null;
     var agg={};
     allRows.forEach(function(row){
       if(!row.sale_date||!row.transacted_price)return;
@@ -656,9 +652,9 @@ async function fetchMonthlyData(months){
       agg[mo][t].cnt+=1;
     });
     var labels=Object.keys(agg).sort();
-    if(!labels.length){console.warn("fetchMonthlyData: no mapped types");return null;}
+    if(!labels.length)return null;
     return {labels:labels,agg:agg};
-  }catch(e){console.error("fetchMonthlyData error:",e);return null;}
+  }catch(e){return null;}
 }
 
 // Format month label e.g. "2024-09" → "Sep 24"
@@ -810,6 +806,13 @@ function renderTypeChips(){
       if(activeTypes[t]&&n===1)return;
       activeTypes[t]=!activeTypes[t];
       renderAll();
+      loadAndRenderChart();
+      // Sync transactions table if no active search
+      if(!document.getElementById("ov-search").value.trim()){
+        document.getElementById("ov-tx-table").style.display="none";
+        document.getElementById("ov-tx-loading").style.display="block";
+        loadDefaultTransactions(0);
+      }
     });
   });
 }
@@ -1573,8 +1576,26 @@ async function loadDefaultTransactions(page){
   ovPage = page;
   var dateFilter = "sale_date=gte." + getLast12MonthsDate();
   var offset = page * 10;
+
+  // Build property_type filter from activeTypes
+  var typeDbMap={
+    "office":"Office",
+    "retail":"Retail",
+    "shophouse":"Shop House",
+    "multiUser":"Multiple-User Factory",
+    "singleUser":"Single-User Factory",
+    "bizPark":"Business Park",
+    "warehouse":"Warehouse"
+  };
+  var activePtypes=TYPES.filter(function(t){return activeTypes[t];}).map(function(t){return typeDbMap[t];});
+  var allActive=activePtypes.length===TYPES.length;
+  var typeFilter="";
+  if(!allActive && activePtypes.length>0){
+    typeFilter="&or=("+activePtypes.map(function(p){return"property_type.ilike.*"+encodeURIComponent(p)+"*";}).join(",")+")";
+  }
+
   var url = SB_URL + "/rest/v1/transactions?select=id,project_name,address,property_type,transacted_price,area_sqft,unit_price_psf,sale_date,tenure,planning_region&"
-    + dateFilter + "&order=sale_date.desc&limit=10&offset=" + offset;
+    + dateFilter + typeFilter + "&order=sale_date.desc&limit=10&offset=" + offset;
   var res = await fetch(url, {
     headers:{"apikey":SB_KEY,"Authorization":"Bearer "+SB_KEY,"Prefer":"count=exact"}
   });
@@ -1582,12 +1603,14 @@ async function loadDefaultTransactions(page){
   var data = await res.json();
   ovTotal = total;
   document.getElementById("ov-tx-loading").style.display = "none";
-  document.getElementById("ov-tx-count").textContent = total.toLocaleString() + " transactions in last 12 months";
+  var typeLabel = allActive ? "all types" : activePtypes.join(", ");
+  document.getElementById("ov-tx-count").textContent = total.toLocaleString() + " transactions — " + typeLabel;
   if(data && data.length > 0){
     renderOvTable(data);
     renderOvPaginationDefault();
   } else {
     document.getElementById("ov-tx-empty").style.display = "block";
+    document.getElementById("ov-tx-table").style.display = "none";
   }
 }
 
@@ -1611,12 +1634,14 @@ function ovClear(){
   document.getElementById("ov-search-info").textContent = "";
   document.getElementById("ov-ac-dropdown").style.display = "none";
   document.getElementById("ov-tx-title").textContent = "Recent Transactions — Last 12 Months";
+  document.getElementById("ov-tx-count").textContent = "Loading...";
   document.getElementById("ov-tx-loading").style.display = "block";
   document.getElementById("ov-tx-table").style.display = "none";
   document.getElementById("ov-tx-empty").style.display = "none";
   document.getElementById("ov-tx-pagination").innerHTML = "";
   CHART_OVERRIDE = null;
   renderAll();
+  loadAndRenderChart();
   loadDefaultTransactions(0);
 }
 
