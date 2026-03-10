@@ -612,24 +612,37 @@ async function fetchMonthlyData(months){
   d.setMonth(d.getMonth()-months);
   var from=d.toISOString().substring(0,10);
   var url=SB_URL+"/rest/v1/transactions?select=sale_date,property_type,transacted_price&sale_date=gte."+from+"&limit=50000";
+  var typeMap={
+    "multiple-user factory":"multiUser","multi-user factory":"multiUser",
+    "single-user factory":"singleUser",
+    "warehouse":"warehouse",
+    "business park":"bizPark",
+    "office":"office",
+    "retail":"retail",
+    "shop house":"shophouse","shophouse":"shophouse"
+  };
   try{
     var r=await fetch(url,{headers:{"apikey":SB_KEY,"Authorization":"Bearer "+SB_KEY}});
     var rows=await r.json();
-    // Aggregate by month + type
+    if(!Array.isArray(rows)||rows.length===0)return null;
+    // Aggregate by month + mapped type
     var agg={};
     rows.forEach(function(row){
       if(!row.sale_date||!row.transacted_price)return;
       var mo=row.sale_date.substring(0,7); // YYYY-MM
-      var t=row.property_type||"Other";
+      var pt=(row.property_type||"").toLowerCase();
+      var t=null;
+      Object.keys(typeMap).forEach(function(k){if(pt.indexOf(k)>=0)t=typeMap[k];});
+      if(!t)return; // skip unmapped types
       if(!agg[mo])agg[mo]={};
       if(!agg[mo][t])agg[mo][t]={val:0,cnt:0};
-      agg[mo][t].val+=(row.transacted_price/1e6);
+      agg[mo][t].val+=(parseFloat(row.transacted_price)/1e6);
       agg[mo][t].cnt+=1;
     });
-    // Build sorted labels
     var labels=Object.keys(agg).sort();
+    if(!labels.length)return null;
     return {labels:labels, agg:agg, raw:rows};
-  }catch(e){return null;}
+  }catch(e){console.error("fetchMonthlyData error:",e);return null;}
 }
 
 // Format month label e.g. "2024-09" → "Sep 24"
