@@ -484,6 +484,7 @@ html,body{background:var(--bg);color:var(--txt);font-family:'DM Sans',sans-serif
         <button class="dir-tbtn" data-reitf="Mapletree Industrial Trust" onclick="reitSetFilter(this,'reit','Mapletree Industrial Trust')">MINT</button>
         <button class="dir-tbtn" data-reitf="Mapletree Logistics Trust" onclick="reitSetFilter(this,'reit','Mapletree Logistics Trust')">MLT</button>
         <button class="dir-tbtn" data-reitf="OUE REIT" onclick="reitSetFilter(this,'reit','OUE REIT')">OUE REIT</button>
+        <button class="dir-tbtn" data-reitf="Paragon REIT (Delisted)" onclick="reitSetFilter(this,'reit','Paragon REIT (Delisted)')">Paragon ⚫</button>
         <button class="dir-tbtn" data-reitf="Suntec REIT" onclick="reitSetFilter(this,'reit','Suntec REIT')">Suntec REIT</button>
         <button class="dir-tbtn" data-reitf="MPACT" onclick="reitSetFilter(this,'reit','MPACT')">MPACT</button>
         <button class="dir-tbtn" data-reitf="ESR-REIT" onclick="reitSetFilter(this,'reit','ESR-REIT')">ESR-REIT</button>
@@ -1717,6 +1718,14 @@ var REIT_DATA = [
   {name:"29 TAI SENG AVENUE",addr:"29 Tai Seng Avenue",type:"Logistics",entity:"Mapletree Logistics Trust",entity_type:"REIT",tenure:"30+30yr from 2007",nla_sqm:16016,occ:100,val:50.6,region:"North-East",area:"Tai Seng",country:"Singapore",ar_year:"FY2024/25",source:"MLT FY2024/25 AR"},
   {name:"6 MARSILING LANE",addr:"6 Marsiling Lane",type:"Logistics",entity:"Mapletree Logistics Trust",entity_type:"REIT",tenure:"60yr from 1978",nla_sqm:15244,occ:100,val:20.3,region:"North",area:"Woodlands",country:"Singapore",ar_year:"FY2024/25",source:"MLT FY2024/25 AR"},
   {name:"5A JOO KOON CIRCLE",addr:"5A Joo Koon Circle",type:"Logistics",entity:"Mapletree Logistics Trust",entity_type:"REIT",tenure:"30+30yr from 1995",nla_sqm:null,occ:null,val:188,region:"West",area:"Jurong West",country:"Singapore",ar_year:"FY2024/25",source:"MLT FY2024/25 AR"},
+  // ── PARAGON REIT — Delisted 2024 (AR FY2023, last filed) ──────────────────
+  // Note: Delisted from SGX. Assets absorbed back by sponsor Cuscaden Peak (consortium of HPL, Mapletree, CLA Real Estate)
+  {name:"PARAGON",addr:"290 Orchard Road, Singapore 238859",type:"Retail",entity:"Paragon REIT (Delisted)",entity_type:"REIT",tenure:"Leasehold 99yr from Jul 2013",nla_sqm:65870,occ:100.0,val:2730.0,region:"Central",area:"Orchard",country:"Singapore",ar_year:"FY2023",source:"Paragon REIT AR 2023",status:"DELISTED. Luxury flagship retail (495,156 sf NLA) + Paragon Medical office tower (223,098 sf NLA); cap rate 4.50% retail / 3.75% medical; GRI S$172.3M"},
+  {name:"THE CLEMENTI MALL",addr:"3155 Commonwealth Avenue West, Singapore 129588",type:"Retail",entity:"Paragon REIT (Delisted)",entity_type:"REIT",tenure:"Leasehold 99yr from Aug 2010",nla_sqm:18183,occ:100.0,val:609.0,region:"West",area:"Clementi",country:"Singapore",ar_year:"FY2023",source:"Paragon REIT AR 2023",status:"DELISTED. 195,772 sf NLA; anchored by FairPrice Finest; direct link to Clementi MRT & bus interchange; cap rate 4.50%"},
+  {name:"THE RAIL MALL",addr:"380–484 Upper Bukit Timah Road, Singapore 678040",type:"Retail",entity:"Paragon REIT (Delisted)",entity_type:"REIT",tenure:"Leasehold 99yr from Mar 1947",nla_sqm:null,occ:95.5,val:62.0,region:"West",area:"Bukit Timah",country:"Singapore",ar_year:"FY2023",source:"Paragon REIT AR 2023",status:"DELISTED. Shophouse-style strip mall; F&B destination; 22yr remaining lease; cap rate 6.00%"},
+  {name:"WESTFIELD MARION",addr:"297 Diagonal Road, Oaklands Park SA 5046, Adelaide",type:"Retail",entity:"Paragon REIT (Delisted)",entity_type:"REIT",tenure:"Freehold",nla_sqm:137875,occ:97.0,val:552.2,region:null,area:"Adelaide",country:"Australia",ar_year:"FY2023",source:"Paragon REIT AR 2023",status:"DELISTED. 50% stake; GLA 1,484,562 sf; largest super-regional SC in South Australia; next to Oaklands Train Station; cap rate 6.00%"},
+  {name:"FIGTREE GROVE",addr:"Princes Highway, Figtree NSW 2525, Wollongong",type:"Retail",entity:"Paragon REIT (Delisted)",entity_type:"REIT",tenure:"Freehold",nla_sqm:null,occ:97.9,val:168.6,region:null,area:"Wollongong",country:"Australia",ar_year:"FY2023",source:"Paragon REIT AR 2023",status:"DELISTED. Established suburban SC in Wollongong; anchor tenant 78,000 sf discount dept store; A$105M term loan secured on property"},
+
   // ═══ DEVELOPERS ═══════════════════════════════════════════
   // ── SingLand (SG) ──
   {name:"SINGAPORE LAND TOWER",addr:"50 Raffles Place",type:"Office",entity:"SingLand",entity_type:"DEV",tenure:"999yr from 1826",nla_sqm:57500,occ:86,val:1930,region:"Central",area:"Raffles Place",country:"Singapore",ar_year:"FY2024",source:"SingLand AR 2024",status:"AEI in Progress"},
@@ -1946,6 +1955,7 @@ var ENTITY_COLORS = {
   "Keppel DC REIT":"#c0392b",
   "Keppel REIT":"#2874a6",
   "OUE REIT":"#7d6608",
+  "Paragon REIT (Delisted)":"#616a6b",
   "Lendlease Global Commercial REIT":"#884ea0",
   "Frasers Logistics & Commercial Trust":"#1a7a4a",
   "Frasers Centrepoint Trust":"#d35400",
