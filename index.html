@@ -1709,26 +1709,23 @@ function reitSearch(page){
     return;
   }
 
-  document.getElementById('reit-grid').innerHTML = pageData.map(function(p){
+  // Build cards using DOM (avoids all quote escaping issues)
+  var html = '';
+  pageData.forEach(function(p, idx){
     var rc = REIT_COLORS[p.reit]||'#21513b';
     var ic = REIT_TYPE_ICONS[p.type]||'🏢';
-    var nla = p.nla_sqm ? (p.nla_sqm>=10000?(p.nla_sqm/1000).toFixed(0)+'K sqm':p.nla_sqm.toLocaleString()+' sqm') : '—';
-    var occ = p.occ ? p.occ.toFixed(1)+'%' : '—';
-    var val = p.val ? 'S$'+p.val.toLocaleString()+'M' : '—';
-    var pname = p.name.replace(/\/g,'\\').replace(/'/g,"\'");
-    return '<div style="background:var(--srf);border:1px solid var(--bdr);border-radius:11px;padding:0;cursor:pointer;transition:all .15s;overflow:hidden;display:flex;flex-direction:column" '
-      +'onmouseenter="this.style.boxShadow='0 4px 18px rgba(33,81,59,.13)';this.style.transform='translateY(-1px)'" '
-      +'onmouseleave="this.style.boxShadow='none';this.style.transform='none'" '
-      +'onclick="reitOpenDetail(''+pname+'')">'
-      // REIT color bar + icon
+    var nla = p.nla_sqm ? (p.nla_sqm>=10000?(p.nla_sqm/1000).toFixed(0)+'K sqm':p.nla_sqm.toLocaleString()+' sqm') : '\u2014';
+    var occ = p.occ ? p.occ.toFixed(1)+'%' : '\u2014';
+    var val = p.val ? 'S$'+p.val.toLocaleString()+'M' : '\u2014';
+    var globalIdx = reitPage * reitPageSize + idx;
+    html += '<div data-reitidx="'+globalIdx+'" style="background:var(--srf);border:1px solid var(--bdr);border-radius:11px;padding:0;cursor:pointer;transition:box-shadow .15s,transform .15s;overflow:hidden;display:flex;flex-direction:column">'
       +'<div style="background:'+rc+';padding:12px 16px 10px;display:flex;justify-content:space-between;align-items:flex-start">'
       +'<div style="font-size:10px;font-weight:700;color:rgba(255,255,255,.85);text-transform:uppercase;letter-spacing:.05em;line-height:1.3;max-width:200px">'+p.reit+'</div>'
       +'<span style="font-size:18px;opacity:.9">'+ic+'</span>'
       +'</div>'
-      // Body
       +'<div style="padding:14px 16px;flex:1;display:flex;flex-direction:column">'
       +'<div style="font-weight:700;font-size:13px;margin-bottom:3px;line-height:1.3">'+p.name+'</div>'
-      +'<div style="font-size:11px;color:var(--mut);margin-bottom:10px">'+p.addr+(p.area?' · '+p.area:'')+'</div>'
+      +'<div style="font-size:11px;color:var(--mut);margin-bottom:10px">'+p.addr+(p.area?' &middot; '+p.area:'')+'</div>'
       +'<div style="display:flex;gap:5px;flex-wrap:wrap;margin-bottom:12px">'
       +'<span style="padding:2px 8px;border-radius:4px;font-size:10px;font-weight:600;background:'+rc+'18;color:'+rc+';border:1px solid '+rc+'30">'+p.type+'</span>'
       +'<span class="pill p-neu">'+p.tenure.substring(0,22)+'</span>'
@@ -1740,7 +1737,16 @@ function reitSearch(page){
       +'</div>'
       +'</div>'
       +'</div>';
-  }).join('');
+  });
+  var grid = document.getElementById('reit-grid');
+  grid.innerHTML = html;
+  // Attach click + hover via event delegation (no inline onclick needed)
+  grid.querySelectorAll('[data-reitidx]').forEach(function(card){
+    var idx = parseInt(card.dataset.reitidx);
+    card.addEventListener('click', function(){ reitOpenDetail(idx); });
+    card.addEventListener('mouseenter', function(){ this.style.boxShadow='0 4px 18px rgba(33,81,59,.13)'; this.style.transform='translateY(-1px)'; });
+    card.addEventListener('mouseleave', function(){ this.style.boxShadow='none'; this.style.transform='none'; });
+  });
 
   // Pagination
   var tp = Math.ceil(filtered.length/reitPageSize);
@@ -1756,8 +1762,8 @@ function reitSearch(page){
   }
 }
 
-function reitOpenDetail(name){
-  var p = REIT_DATA.find(function(x){ return x.name===name; });
+function reitOpenDetail(idx){
+  var p = typeof idx==='number' ? REIT_DATA[idx] : REIT_DATA.find(function(x){ return x.name===idx; });
   if(!p) return;
   var rc = REIT_COLORS[p.reit]||'#21513b';
   document.getElementById('reit-grid').style.display='none';
