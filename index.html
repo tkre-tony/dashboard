@@ -524,7 +524,8 @@ var PIPELINE=[
 ];
 
 // STATE
-var chartMode="val", activeRange="ALL", newsCat="All";
+var chartMode="val"
+var activeRange="ALL";, activeRange="ALL", newsCat="All";
 var activeTypes={};
 TYPES.forEach(function(t){activeTypes[t]=true;});
 
@@ -1521,13 +1522,18 @@ function initAutocomplete(){
 
 // INIT
 initRangeBtns();
-renderAll();
 renderNewsCats();
 renderNewsList();
 renderPipeline();
 initAutocomplete();
 initOvAutocomplete();
 loadDefaultTransactions(0);
+// Defer chart render until after browser paint so clientWidth is available
+requestAnimationFrame(function(){
+  renderAll();
+  // Re-render on resize too
+  window.addEventListener("resize", function(){ renderBarChart(); renderAnalytics && renderAnalytics(); });
+});
 
 // ─── REIT DIRECTORY ──────────────────────────────────────────────────
 var REIT_DATA = [
