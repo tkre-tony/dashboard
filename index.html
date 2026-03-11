@@ -418,69 +418,91 @@ html,body{background:var(--bg);color:var(--txt);font-family:'DM Sans',sans-serif
       </div>
     </div>
 
-    <div class="card" style="margin-bottom:14px">
+    <div class="card" style="margin-bottom:14px;padding:0;overflow:hidden">
 
-      <!-- Row 1: Geo toggle + Entity toggle -->
-      <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-bottom:13px">
-        <!-- SG / Overseas pill toggle -->
-        <div style="display:flex;background:var(--srf2);border:1px solid var(--bdr);border-radius:9px;padding:3px;gap:2px">
-          <button id="geo-sg" onclick="reitSetGeo('SG')" style="padding:5px 16px;border:none;border-radius:7px;font-size:12px;font-weight:700;font-family:'DM Sans',sans-serif;cursor:pointer;background:var(--g1);color:#fff;transition:all .15s">🇸🇬 Singapore</button>
-          <button id="geo-ov" onclick="reitSetGeo('OV')" style="padding:5px 16px;border:none;border-radius:7px;font-size:12px;font-weight:600;font-family:'DM Sans',sans-serif;cursor:pointer;background:transparent;color:var(--mut);transition:all .15s">🌏 Overseas</button>
-          <button id="geo-all" onclick="reitSetGeo('ALL')" style="padding:5px 16px;border:none;border-radius:7px;font-size:12px;font-weight:600;font-family:'DM Sans',sans-serif;cursor:pointer;background:transparent;color:var(--mut);transition:all .15s">All</button>
+      <!-- Row 1: REITs | Developers tabs + Geo toggle -->
+      <div style="display:flex;align-items:center;justify-content:space-between;border-bottom:2px solid var(--bdr);padding:0 18px;background:var(--srf2)">
+        <div style="display:flex;gap:0">
+          <button id="retab-reit" onclick="reitSetEntity('REIT')"
+            style="padding:13px 24px;border:none;border-bottom:3px solid var(--g1);margin-bottom:-2px;font-size:14px;font-weight:700;font-family:'DM Sans',sans-serif;cursor:pointer;background:transparent;color:var(--g1);transition:all .2s">
+            📊 REITs
+          </button>
+          <button id="retab-dev" onclick="reitSetEntity('DEV')"
+            style="padding:13px 24px;border:none;border-bottom:3px solid transparent;margin-bottom:-2px;font-size:14px;font-weight:600;font-family:'DM Sans',sans-serif;cursor:pointer;background:transparent;color:var(--mut);transition:all .2s">
+            🏗 Developers
+          </button>
         </div>
-        <!-- Entity type toggle -->
-        <div style="display:flex;background:var(--srf2);border:1px solid var(--bdr);border-radius:9px;padding:3px;gap:2px">
-          <button id="ent-all" onclick="reitSetEntity('ALL')" style="padding:5px 14px;border:none;border-radius:7px;font-size:12px;font-weight:700;font-family:'DM Sans',sans-serif;cursor:pointer;background:var(--g1);color:#fff;transition:all .15s">All</button>
-          <button id="ent-reit" onclick="reitSetEntity('REIT')" style="padding:5px 14px;border:none;border-radius:7px;font-size:12px;font-weight:600;font-family:'DM Sans',sans-serif;cursor:pointer;background:transparent;color:var(--mut);transition:all .15s">REITs</button>
-          <button id="ent-dev" onclick="reitSetEntity('DEV')" style="padding:5px 14px;border:none;border-radius:7px;font-size:12px;font-weight:600;font-family:'DM Sans',sans-serif;cursor:pointer;background:transparent;color:var(--mut);transition:all .15s">Developers</button>
+        <div style="display:flex;background:var(--srf);border:1px solid var(--bdr);border-radius:8px;padding:3px;gap:2px">
+          <button id="geo-sg" onclick="reitSetGeo('SG')" style="padding:4px 12px;border:none;border-radius:6px;font-size:11px;font-weight:700;font-family:'DM Sans',sans-serif;cursor:pointer;background:var(--g1);color:#fff;transition:all .15s">🇸🇬 SG</button>
+          <button id="geo-ov" onclick="reitSetGeo('OV')" style="padding:4px 12px;border:none;border-radius:6px;font-size:11px;font-weight:600;font-family:'DM Sans',sans-serif;cursor:pointer;background:transparent;color:var(--mut);transition:all .15s">🌏 Overseas</button>
+          <button id="geo-all" onclick="reitSetGeo('ALL')" style="padding:4px 12px;border:none;border-radius:6px;font-size:11px;font-weight:600;font-family:'DM Sans',sans-serif;cursor:pointer;background:transparent;color:var(--mut);transition:all .15s">All</button>
         </div>
-        <div style="height:28px;width:1px;background:var(--bdr)"></div>
-        <input id="reit-search" placeholder="Search building, address, area..." autocomplete="off"
-          style="flex:1;min-width:180px;padding:7px 12px;border:1px solid var(--bdr);border-radius:8px;font-size:12px;font-family:'DM Sans',sans-serif;outline:none;color:var(--txt);background:var(--srf)"
-          oninput="reitSearchDelay()" onkeydown="if(event.key==='Enter')reitSearch(0)"/>
-        <select id="reit-country" onchange="reitSearch(0)" style="padding:7px 10px;border:1px solid var(--bdr);border-radius:8px;font-size:12px;font-family:'DM Sans',sans-serif;outline:none;color:var(--txt);background:var(--srf);display:none">
-          <option value="">All Countries</option>
-          <option value="Australia">Australia</option>
-          <option value="China">China</option>
-          <option value="Germany">Germany</option>
-          <option value="Hong Kong">Hong Kong</option>
-          <option value="India">India</option>
-          <option value="Ireland">Ireland</option>
-          <option value="Italy">Italy</option>
-          <option value="Japan">Japan</option>
-          <option value="Malaysia">Malaysia</option>
-          <option value="Maldives">Maldives</option>
-          <option value="Netherlands">Netherlands</option>
-          <option value="New Zealand">New Zealand</option>
-          <option value="South Korea">South Korea</option>
-          <option value="Switzerland">Switzerland</option>
-          <option value="United Kingdom">United Kingdom</option>
-          <option value="USA">United States</option>
-          <option value="Vietnam">Vietnam</option>
-        </select>
-        <select id="reit-region" onchange="reitSearch(0)" style="padding:7px 10px;border:1px solid var(--bdr);border-radius:8px;font-size:12px;font-family:'DM Sans',sans-serif;outline:none;color:var(--txt);background:var(--srf)">
-          <option value="">All Regions</option>
-          <option value="Central">Central</option>
-          <option value="East">East</option>
-          <option value="North">North</option>
-          <option value="North-East">North-East</option>
-          <option value="West">West</option>
-          <option value="South">South</option>
-        </select>
-        <select id="reit-sort" onchange="reitSearch(0)" style="padding:7px 10px;border:1px solid var(--bdr);border-radius:8px;font-size:12px;font-family:'DM Sans',sans-serif;outline:none;color:var(--txt);background:var(--srf)">
-          <option value="name.asc">A → Z</option>
-          <option value="val.desc">Valuation ↓</option>
-          <option value="val.asc">Valuation ↑</option>
-          <option value="occ.desc">Occupancy ↓</option>
-          <option value="entity.asc">Entity Name</option>
-        </select>
-        <button onclick="reitSearch(0)" style="padding:7px 16px;background:var(--g1);color:#fff;border:none;border-radius:8px;font-size:12px;font-family:'DM Sans',sans-serif;cursor:pointer;font-weight:600">Search</button>
-        <button onclick="reitClear()" style="padding:7px 12px;background:var(--srf2);color:var(--mut);border:1px solid var(--bdr);border-radius:8px;font-size:12px;font-family:'DM Sans',sans-serif;cursor:pointer">Clear</button>
-        <div style="font-size:11px;color:var(--mut);white-space:nowrap" id="reit-count">—</div>
       </div>
 
-      <!-- Row 2: Entity chips (REITs + Developers combined, shown/hidden by entity toggle) -->
-      <div id="chip-reit-row" style="display:flex;gap:6px;flex-wrap:wrap;align-items:center;margin-bottom:9px">
+      <div style="padding:14px 18px">
+        <!-- Row 2: Search + Region + Sort + Buttons -->
+        <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-bottom:12px">
+          <input id="reit-search" placeholder="Search building, address, area..." autocomplete="off"
+            style="flex:1;min-width:180px;padding:8px 13px;border:1px solid var(--bdr);border-radius:8px;font-size:12px;font-family:'DM Sans',sans-serif;outline:none;color:var(--txt);background:var(--srf)"
+            oninput="reitSearchDelay()" onkeydown="if(event.key==='Enter')reitSearch(0)"/>
+          <select id="reit-country" onchange="reitSearch(0)" style="padding:8px 10px;border:1px solid var(--bdr);border-radius:8px;font-size:12px;font-family:'DM Sans',sans-serif;outline:none;color:var(--txt);background:var(--srf);display:none">
+            <option value="">All Countries</option>
+            <option value="Australia">Australia</option>
+            <option value="China">China</option>
+            <option value="Germany">Germany</option>
+            <option value="Hong Kong">Hong Kong</option>
+            <option value="India">India</option>
+            <option value="Ireland">Ireland</option>
+            <option value="Italy">Italy</option>
+            <option value="Japan">Japan</option>
+            <option value="Malaysia">Malaysia</option>
+            <option value="Maldives">Maldives</option>
+            <option value="Netherlands">Netherlands</option>
+            <option value="New Zealand">New Zealand</option>
+            <option value="South Korea">South Korea</option>
+            <option value="Switzerland">Switzerland</option>
+            <option value="United Kingdom">United Kingdom</option>
+            <option value="USA">United States</option>
+            <option value="Vietnam">Vietnam</option>
+          </select>
+          <select id="reit-region" onchange="reitSearch(0)" style="padding:8px 10px;border:1px solid var(--bdr);border-radius:8px;font-size:12px;font-family:'DM Sans',sans-serif;outline:none;color:var(--txt);background:var(--srf)">
+            <option value="">All Regions</option>
+            <option value="Central">Central</option>
+            <option value="East">East</option>
+            <option value="North">North</option>
+            <option value="North-East">North-East</option>
+            <option value="West">West</option>
+            <option value="South">South</option>
+          </select>
+          <select id="reit-sort" onchange="reitSearch(0)" style="padding:8px 10px;border:1px solid var(--bdr);border-radius:8px;font-size:12px;font-family:'DM Sans',sans-serif;outline:none;color:var(--txt);background:var(--srf)">
+            <option value="name.asc">A → Z</option>
+            <option value="val.desc">Valuation ↓</option>
+            <option value="val.asc">Valuation ↑</option>
+            <option value="occ.desc">Occupancy ↓</option>
+            <option value="entity.asc">Entity Name</option>
+          </select>
+          <button onclick="reitSearch(0)" style="padding:8px 18px;background:var(--g1);color:#fff;border:none;border-radius:8px;font-size:12px;font-family:'DM Sans',sans-serif;cursor:pointer;font-weight:600">Search</button>
+          <button onclick="reitClear()" style="padding:8px 12px;background:var(--srf2);color:var(--mut);border:1px solid var(--bdr);border-radius:8px;font-size:12px;font-family:'DM Sans',sans-serif;cursor:pointer">Clear</button>
+          <div style="font-size:11px;color:var(--mut);white-space:nowrap" id="reit-count">—</div>
+        </div>
+
+        <!-- Row 3: Type chips -->
+        <div style="display:flex;gap:6px;flex-wrap:wrap;align-items:center;margin-bottom:12px">
+          <span class="fbar-label">Type</span>
+          <button class="dir-tbtn on" data-rasset="" onclick="reitSetFilter(this,'asset','')">All</button>
+          <button class="dir-tbtn" data-rasset="Office" onclick="reitSetFilter(this,'asset','Office')">Office</button>
+          <button class="dir-tbtn" data-rasset="Retail" onclick="reitSetFilter(this,'asset','Retail')">Retail</button>
+          <button class="dir-tbtn" data-rasset="Industrial" onclick="reitSetFilter(this,'asset','Industrial')">Industrial</button>
+          <button class="dir-tbtn" data-rasset="Data Centre" onclick="reitSetFilter(this,'asset','Data Centre')">Data Centre</button>
+          <button class="dir-tbtn" data-rasset="Hotel" onclick="reitSetFilter(this,'asset','Hotel')">Hotel</button>
+          <button class="dir-tbtn" data-rasset="Business Park" onclick="reitSetFilter(this,'asset','Business Park')">Business Park</button>
+          <button class="dir-tbtn" data-rasset="Logistics" onclick="reitSetFilter(this,'asset','Logistics')">Logistics</button>
+          <button class="dir-tbtn" data-rasset="Residential" onclick="reitSetFilter(this,'asset','Residential')">Residential</button>
+          <button class="dir-tbtn" data-rasset="Serviced Suites" onclick="reitSetFilter(this,'asset','Serviced Suites')">Serviced Suites</button>
+        </div>
+
+        <!-- Row 4: Entity chips (REIT or DEV, shown/hidden by tab) -->
+        <div id="chip-reit-row" style="display:flex;gap:6px;flex-wrap:wrap;align-items:center">
         <span class="fbar-label">REIT</span>
         <button class="dir-tbtn on" data-reitf="" onclick="reitSetFilter(this,'reit','')">All</button>
         <button class="dir-tbtn" data-reitf="Acrophyte Hospitality Trust" onclick="reitSetFilter(this,'reit','Acrophyte Hospitality Trust')">Acrophyte HT</button>
@@ -518,7 +540,7 @@ html,body{background:var(--bg);color:var(--txt);font-family:'DM Sans',sans-serif
         <button class="dir-tbtn" data-reitf="Starhill Global REIT" onclick="reitSetFilter(this,'reit','Starhill Global REIT')">Starhill Global</button>
         <button class="dir-tbtn" data-reitf="Suntec REIT" onclick="reitSetFilter(this,'reit','Suntec REIT')">Suntec REIT</button>
       </div>
-      <div id="chip-dev-row" style="display:flex;gap:6px;flex-wrap:wrap;align-items:center;margin-bottom:9px">
+      <div id="chip-dev-row" style="display:none;gap:6px;flex-wrap:wrap;align-items:center">
         <span class="fbar-label">Developer</span>
         <button class="dir-tbtn on" data-devf="" onclick="reitSetFilter(this,'dev','')">All</button>
         <button class="dir-tbtn" data-devf="Bukit Sembawang Estates" onclick="reitSetFilter(this,'dev','Bukit Sembawang Estates')">Bukit Sembawang</button>
@@ -541,21 +563,8 @@ html,body{background:var(--bg);color:var(--txt);font-family:'DM Sans',sans-serif
         <button class="dir-tbtn" data-devf="Wing Tai Holdings" onclick="reitSetFilter(this,'dev','Wing Tai Holdings')">Wing Tai</button>
       </div>
 
-      <!-- Row 3: Asset type chips -->
-      <div style="display:flex;gap:6px;flex-wrap:wrap;align-items:center">
-        <span class="fbar-label">Type</span>
-        <button class="dir-tbtn on" data-rasset="" onclick="reitSetFilter(this,'asset','')">All</button>
-        <button class="dir-tbtn" data-rasset="Office" onclick="reitSetFilter(this,'asset','Office')">Office</button>
-        <button class="dir-tbtn" data-rasset="Retail" onclick="reitSetFilter(this,'asset','Retail')">Retail</button>
-        <button class="dir-tbtn" data-rasset="Industrial" onclick="reitSetFilter(this,'asset','Industrial')">Industrial</button>
-        <button class="dir-tbtn" data-rasset="Data Centre" onclick="reitSetFilter(this,'asset','Data Centre')">Data Centre</button>
-        <button class="dir-tbtn" data-rasset="Hotel" onclick="reitSetFilter(this,'asset','Hotel')">Hotel</button>
-        <button class="dir-tbtn" data-rasset="Business Park" onclick="reitSetFilter(this,'asset','Business Park')">Business Park</button>
-        <button class="dir-tbtn" data-rasset="Logistics" onclick="reitSetFilter(this,'asset','Logistics')">Logistics</button>
-        <button class="dir-tbtn" data-rasset="Residential" onclick="reitSetFilter(this,'asset','Residential')">Residential</button>
-        <button class="dir-tbtn" data-rasset="Serviced Suites" onclick="reitSetFilter(this,'asset','Serviced Suites')">Serviced Suites</button>
-      </div>
-    </div>
+      </div><!-- /padding wrapper -->
+    </div><!-- /card -->
 
     <div id="reit-loading" style="display:none;text-align:center;padding:40px;color:var(--mut);font-size:13px">Loading REIT properties...</div>
     <div id="reit-grid" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(310px,1fr));gap:14px;margin-bottom:14px"></div>
@@ -789,17 +798,43 @@ function renderMonthlyChart(data){
   wrap.innerHTML=svg;
 }
 
-// TABS
+// TABS — with hash-based persistence (bug 5) and browser back support (bug 7)
+function showTab(tabName, pushHistory){
+  pushHistory = pushHistory !== false;
+  document.querySelectorAll(".navtab").forEach(function(x){x.classList.remove("on");});
+  document.querySelectorAll(".panel").forEach(function(x){x.classList.remove("on");});
+  var tab = document.querySelector('.navtab[data-tab="'+tabName+'"]');
+  var panel = document.getElementById("tab-"+tabName);
+  if(tab) tab.classList.add("on");
+  if(panel) panel.classList.add("on");
+  if(tabName==="analytics") renderAnalytics();
+  if(tabName==="reit") reitSearch(0);
+  if(tabName==="directory") dirSearch(0);
+  if(tabName==="transactions" && document.getElementById("tx-tbody").innerHTML==="") searchTransactions(0);
+  if(pushHistory) history.pushState({tab:tabName}, '', '#'+tabName);
+}
 document.querySelectorAll(".navtab").forEach(function(t){
-  t.addEventListener("click",function(){
-    document.querySelectorAll(".navtab").forEach(function(x){x.classList.remove("on");});
-    document.querySelectorAll(".panel").forEach(function(x){x.classList.remove("on");});
-    t.classList.add("on");
-    var p=document.getElementById("tab-"+t.dataset.tab);
-    if(p)p.classList.add("on");
-    if(t.dataset.tab==="analytics")renderAnalytics();
-  });
+  t.addEventListener("click",function(){ showTab(t.dataset.tab, true); });
 });
+// Restore tab on popstate (browser back/forward)
+window.addEventListener("popstate", function(e){
+  var tab = (e.state && e.state.tab) ? e.state.tab : 'overview';
+  if(e.state && e.state.reitDetail){
+    showTab('reit', false);
+  } else {
+    // If we were viewing a detail, close it first
+    var det = document.getElementById('reit-detail');
+    if(det && det.style.display!=='none') reitCloseDetail(false);
+    showTab(tab, false);
+  }
+});
+// On load: restore tab from hash
+(function(){
+  var hash = location.hash.replace('#','');
+  var valid = ['overview','analytics','directory','transactions','news','pipeline','reit'];
+  if(hash && valid.indexOf(hash)>=0){ showTab(hash, true); }
+  else { history.replaceState({tab:'overview'}, '', location.href); }
+})();
 
 // KPIs
 function renderKPIs(){
@@ -1317,9 +1352,7 @@ function dirCloseDetail(){
   else{document.getElementById("dir-list").style.display="block";document.getElementById("dir-grid").style.display="none";}
 }
 
-document.querySelectorAll(".navtab").forEach(function(t){
-  if(t.dataset.tab==="directory") t.addEventListener("click",function(){ dirSearch(0); });
-});
+// directory tab trigger handled by showTab()
 document.addEventListener("keydown",function(e){ if(e.key==="Enter"&&document.activeElement.id==="dir-search") dirSearch(0); });
 
 // ─── SUPABASE ─────────────────────────────────────────────────────────
@@ -1437,16 +1470,7 @@ function clearSearch(){
   document.getElementById("tx-pagination").innerHTML = "";
 }
 
-// Load transactions when tab is clicked
-document.querySelectorAll(".navtab").forEach(function(t){
-  if(t.dataset.tab === "transactions"){
-    t.addEventListener("click", function(){
-      if(document.getElementById("tx-tbody").innerHTML === ""){
-        searchTransactions(0);
-      }
-    });
-  }
-});
+// transactions tab trigger handled by showTab()
 
 // ─── OVERVIEW SMART SEARCH ────────────────────────────────────────────
 var ovPage = 0;
@@ -3572,14 +3596,16 @@ var REIT_TYPE_ICONS = {
   "Residential":"🏘️","Serviced Suites":"🛎️"
 };
 
+// ── REIT Directory state ─────────────────────────────────────────────────────
 var reitActiveEntity = '';
 var reitActiveDev = '';
 var reitActiveAsset = '';
 var reitActiveGeo = 'SG';
-var reitActiveEntType = 'ALL';
+var reitActiveEntType = 'REIT';  // default: REITs tab
 var reitPage = 0;
 var reitPageSize = 18;
 var reitSearchTimer = null;
+var reitFiltered = [];  // FIX 6: track filtered results for correct card→detail mapping
 
 function reitSearchDelay(){
   clearTimeout(reitSearchTimer);
@@ -3604,23 +3630,30 @@ function reitSetGeo(geo){
   reitSearch(0);
 }
 
+// FIX 1-4: reitSetEntity now drives the two prominent REITs/Developers tabs
 function reitSetEntity(type){
   reitActiveEntType = type;
   reitActiveEntity = '';
   reitActiveDev = '';
-  ['all','reit','dev'].forEach(function(k){
-    var btn = document.getElementById('ent-'+k);
-    if(btn){
-      var active = (k.toUpperCase()===type);
-      btn.style.background = active ? 'var(--g1)' : 'transparent';
-      btn.style.color = active ? '#fff' : 'var(--mut)';
-      btn.style.fontWeight = active ? '700' : '600';
-    }
-  });
+  // Update tab button styles
+  var tabReit = document.getElementById('retab-reit');
+  var tabDev  = document.getElementById('retab-dev');
+  if(tabReit){
+    tabReit.style.color = (type==='REIT') ? 'var(--g1)' : 'var(--mut)';
+    tabReit.style.fontWeight = (type==='REIT') ? '700' : '600';
+    tabReit.style.borderBottomColor = (type==='REIT') ? 'var(--g1)' : 'transparent';
+  }
+  if(tabDev){
+    tabDev.style.color = (type==='DEV') ? 'var(--g1)' : 'var(--mut)';
+    tabDev.style.fontWeight = (type==='DEV') ? '700' : '600';
+    tabDev.style.borderBottomColor = (type==='DEV') ? 'var(--g1)' : 'transparent';
+  }
+  // Show/hide chip rows
   var reitRow = document.getElementById('chip-reit-row');
-  var devRow = document.getElementById('chip-dev-row');
+  var devRow  = document.getElementById('chip-dev-row');
   if(reitRow) reitRow.style.display = (type==='DEV') ? 'none' : 'flex';
-  if(devRow) devRow.style.display = (type==='REIT') ? 'none' : 'flex';
+  if(devRow)  devRow.style.display  = (type==='REIT') ? 'none' : 'flex';
+  // Reset active chips
   document.querySelectorAll('[data-reitf]').forEach(function(b){ b.classList.remove('on'); });
   var a1 = document.querySelector('[data-reitf=""]'); if(a1) a1.classList.add('on');
   document.querySelectorAll('[data-devf]').forEach(function(b){ b.classList.remove('on'); });
@@ -3628,47 +3661,15 @@ function reitSetEntity(type){
   reitSearch(0);
 }
 
+// FIX 8: removed the geo-reset-to-ALL when clicking entity filter buttons
+// Entity filter and geo filter are now fully independent
 function reitSetFilter(btn, kind, val){
   if(kind==='reit'){
     reitActiveEntity = val;
     document.querySelectorAll('[data-reitf]').forEach(function(b){ b.classList.remove('on'); });
-    // Auto-switch geo to ALL when filtering by a specific entity
-    if(val){
-      reitActiveGeo = 'ALL';
-      ['sg','ov','all'].forEach(function(k){
-        var gb = document.getElementById('geo-'+k);
-        if(gb){
-          var active = (k==='all');
-          gb.style.background = active ? 'var(--g1)' : 'transparent';
-          gb.style.color = active ? '#fff' : 'var(--mut)';
-          gb.style.fontWeight = active ? '700' : '600';
-        }
-      });
-      var cSel = document.getElementById('reit-country');
-      var rSel = document.getElementById('reit-region');
-      if(cSel) cSel.style.display='none';
-      if(rSel) rSel.style.display='';
-    }
   } else if(kind==='dev'){
     reitActiveDev = val;
     document.querySelectorAll('[data-devf]').forEach(function(b){ b.classList.remove('on'); });
-    // Auto-switch geo to ALL when filtering by a specific entity
-    if(val){
-      reitActiveGeo = 'ALL';
-      ['sg','ov','all'].forEach(function(k){
-        var gb = document.getElementById('geo-'+k);
-        if(gb){
-          var active = (k==='all');
-          gb.style.background = active ? 'var(--g1)' : 'transparent';
-          gb.style.color = active ? '#fff' : 'var(--mut)';
-          gb.style.fontWeight = active ? '700' : '600';
-        }
-      });
-      var cSel = document.getElementById('reit-country');
-      var rSel = document.getElementById('reit-region');
-      if(cSel) cSel.style.display='none';
-      if(rSel) rSel.style.display='';
-    }
   } else {
     reitActiveAsset = val;
     document.querySelectorAll('[data-rasset]').forEach(function(b){ b.classList.remove('on'); });
@@ -3688,21 +3689,27 @@ function reitSearch(page){
   document.getElementById('reit-loading').style.display='block';
   document.getElementById('reit-grid').innerHTML='';
 
-  var filtered = REIT_DATA.filter(function(p){
+  // FIX 8: region filter only applies when geo is SG; clear it when switching to Overseas/All
+  // FIX 6: store full filtered array in reitFiltered so card clicks index correctly
+  reitFiltered = REIT_DATA.filter(function(p){
     var isSG = (p.country==='Singapore');
     if(reitActiveGeo==='SG' && !isSG) return false;
     if(reitActiveGeo==='OV' && isSG) return false;
+    // Entity type filter — driven by the REIT / Developers tab
     if(reitActiveEntType==='REIT' && p.entity_type!=='REIT') return false;
-    if(reitActiveEntType==='DEV' && p.entity_type!=='DEV') return false;
+    if(reitActiveEntType==='DEV'  && p.entity_type!=='DEV')  return false;
+    // Specific entity chip
     if(reitActiveEntity && p.entity !== reitActiveEntity) return false;
-    if(reitActiveDev && p.entity !== reitActiveDev) return false;
+    if(reitActiveDev    && p.entity !== reitActiveDev)    return false;
+    // Asset type
     if(reitActiveAsset){
       var t = (p.type||'').toLowerCase();
       var a = reitActiveAsset.toLowerCase();
       if(a==='industrial' && t!=='industrial' && t!=='warehouse') return false;
       if(a!=='industrial' && t!==a) return false;
     }
-    if(region && p.region !== region) return false;
+    // Region — only meaningful when geo=SG
+    if(region && reitActiveGeo!=='OV' && p.region !== region) return false;
     if(country && p.country !== country) return false;
     if(q){
       var hay = ((p.name||'')+' '+(p.addr||'')+' '+(p.area||'')+' '+(p.entity||'')+' '+(p.country||'')).toLowerCase();
@@ -3711,20 +3718,20 @@ function reitSearch(page){
     return true;
   });
 
-  filtered.sort(function(a,b){
+  reitFiltered.sort(function(a,b){
     if(sort==='val.desc') return (b.val||0)-(a.val||0);
-    if(sort==='val.asc') return (a.val||0)-(b.val||0);
+    if(sort==='val.asc')  return (a.val||0)-(b.val||0);
     if(sort==='occ.desc') return (b.occ||0)-(a.occ||0);
     if(sort==='entity.asc') return (a.entity||'').localeCompare(b.entity||'');
     return (a.name||'').localeCompare(b.name||'');
   });
 
-  document.getElementById('reit-kpi-props').textContent = filtered.length;
-  document.getElementById('reit-count').textContent = filtered.length + ' properties';
+  document.getElementById('reit-kpi-props').textContent = reitFiltered.length;
+  document.getElementById('reit-count').textContent = reitFiltered.length + ' properties';
   document.getElementById('reit-loading').style.display='none';
 
   var start = page * reitPageSize;
-  var pageData = filtered.slice(start, start + reitPageSize);
+  var pageData = reitFiltered.slice(start, start + reitPageSize);
 
   if(!pageData.length){
     document.getElementById('reit-grid').innerHTML='<div style="grid-column:1/-1;padding:60px;text-align:center;color:var(--mut)">No properties found. Try adjusting your filters.</div>';
@@ -3733,21 +3740,22 @@ function reitSearch(page){
   }
 
   var html = '';
-  pageData.forEach(function(p, idx){
+  pageData.forEach(function(p, localIdx){
+    // FIX 6: use index into reitFiltered (not REIT_DATA) so detail view opens the correct card
+    var filteredIdx = start + localIdx;
     var rc = ENTITY_COLORS[p.entity]||'#21513b';
     var ic = REIT_TYPE_ICONS[p.type]||'🏢';
     var nla = p.nla_sqm ? (p.nla_sqm>=10000?(p.nla_sqm/1000).toFixed(0)+'K sqm':p.nla_sqm.toLocaleString()+' sqm') : '\u2014';
     var occ = p.occ ? p.occ.toFixed(1)+'%' : '\u2014';
     var val = p.val ? 'S$'+p.val.toLocaleString()+'M' : '\u2014';
-    var globalIdx = reitPage * reitPageSize + idx;
     var isDev = p.entity_type==='DEV';
     var locLine = p.country==='Singapore'
       ? (p.addr+(p.area?' \u00b7 '+p.area:''))
       : (p.area ? p.area+', '+p.country : p.country);
     var entBadge = '<span style="font-size:9px;font-weight:700;background:rgba(255,255,255,.22);color:#fff;border-radius:3px;padding:1px 5px;letter-spacing:.04em">'+(isDev?'DEV':'REIT')+'</span>';
-    var statusBadge = (isDev && p.status) ? '<span style="padding:2px 7px;border-radius:4px;font-size:9px;font-weight:600;background:#fff3cd;color:#7d5200;border:1px solid #f0c040">'+p.status.split(' — ').pop()+'</span>' : '';
+    var statusBadge = (isDev && p.status) ? '<span style="padding:2px 7px;border-radius:4px;font-size:9px;font-weight:600;background:#fff3cd;color:#7d5200;border:1px solid #f0c040">'+p.status.split('--').pop()+'</span>' : '';
     var countryFlag = p.country!=='Singapore' ? ' \uD83C\uDF10 '+p.country : '';
-    html += '<div data-reitidx="'+globalIdx+'" style="background:var(--srf);border:1px solid var(--bdr);border-radius:11px;padding:0;cursor:pointer;transition:box-shadow .15s,transform .15s;overflow:hidden;display:flex;flex-direction:column">'
+    html += '<div data-reitidx="'+filteredIdx+'" style="background:var(--srf);border:1px solid var(--bdr);border-radius:11px;padding:0;cursor:pointer;transition:box-shadow .15s,transform .15s;overflow:hidden;display:flex;flex-direction:column">'
       +'<div style="background:'+rc+';padding:10px 14px 9px;display:flex;justify-content:space-between;align-items:flex-start">'
       +'<div style="flex:1;min-width:0"><div style="font-size:10px;font-weight:700;color:rgba(255,255,255,.9);text-transform:uppercase;letter-spacing:.05em;line-height:1.3;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">'+p.entity+'</div>'
       +'<div style="margin-top:3px">'+entBadge+'</div></div>'
@@ -3779,12 +3787,12 @@ function reitSearch(page){
     card.addEventListener('mouseleave', function(){ this.style.boxShadow='none'; this.style.transform='none'; });
   });
 
-  var tp = Math.ceil(filtered.length/reitPageSize);
+  var tp = Math.ceil(reitFiltered.length/reitPageSize);
   if(tp>1){
     document.getElementById('reit-pagination').innerHTML =
       '<button onclick="reitSearch('+Math.max(0,page-1)+')" '+(page===0?"disabled style='opacity:.4'":"")
       +' style="padding:5px 12px;border:1px solid var(--bdr);border-radius:6px;background:var(--srf);cursor:pointer;font-size:12px">\u2190 Prev</button>'
-      +'<span style="font-size:12px;color:var(--mut)">Page '+(page+1)+' of '+tp+' \u00b7 '+filtered.length+' properties</span>'
+      +'<span style="font-size:12px;color:var(--mut)">Page '+(page+1)+' of '+tp+' \u00b7 '+reitFiltered.length+' properties</span>'
       +'<button onclick="reitSearch('+Math.min(tp-1,page+1)+')" '+(page>=tp-1?"disabled style='opacity:.4'":"")
       +' style="padding:5px 12px;border:1px solid var(--bdr);border-radius:6px;background:var(--srf);cursor:pointer;font-size:12px">Next \u2192</button>';
   } else {
@@ -3793,7 +3801,10 @@ function reitSearch(page){
 }
 
 function reitOpenDetail(idx){
-  var p = typeof idx==='number' ? REIT_DATA[idx] : REIT_DATA.find(function(x){ return x.name===idx; });
+  // FIX 6: use reitFiltered so the correct card is opened regardless of filters
+  var p = typeof idx==='number'
+    ? (reitFiltered.length ? reitFiltered[idx] : REIT_DATA[idx])
+    : REIT_DATA.find(function(x){ return x.name===idx; });
   if(!p) return;
   var rc = ENTITY_COLORS[p.entity]||'#21513b';
   document.getElementById('reit-grid').style.display='none';
@@ -3853,6 +3864,14 @@ function reitClear(){
   var rc=document.getElementById('reit-country'); if(rc) rc.value='';
   document.getElementById('reit-sort').value='name.asc';
   reitActiveEntity=''; reitActiveDev=''; reitActiveAsset='';
+  reitActiveGeo='SG';
+  // Reset geo buttons
+  ['sg','ov','all'].forEach(function(k){
+    var gb=document.getElementById('geo-'+k);
+    if(gb){ gb.style.background=(k==='sg')?'var(--g1)':'transparent'; gb.style.color=(k==='sg')?'#fff':'var(--mut)'; gb.style.fontWeight=(k==='sg')?'700':'600'; }
+  });
+  var cSel=document.getElementById('reit-country'); if(cSel) cSel.style.display='none';
+  var rSel=document.getElementById('reit-region'); if(rSel) rSel.style.display='';
   document.querySelectorAll('[data-reitf]').forEach(function(b){ b.classList.remove('on'); });
   var a1=document.querySelector('[data-reitf=""]'); if(a1) a1.classList.add('on');
   document.querySelectorAll('[data-devf]').forEach(function(b){ b.classList.remove('on'); });
@@ -3862,10 +3881,18 @@ function reitClear(){
   reitSearch(0);
 }
 
-// Trigger search on tab click
-document.querySelectorAll(".navtab").forEach(function(t){
-  if(t.dataset.tab==="reit") t.addEventListener("click",function(){ reitSearch(0); });
-});
+// Tab triggers are now handled by showTab() — no duplicate listener needed
+
+// ── Init: set default REIT tab appearance (retab-reit active) ───────────────
+(function initReitTabAppearance(){
+  var tabReit = document.getElementById('retab-reit');
+  var tabDev  = document.getElementById('retab-dev');
+  if(tabReit){ tabReit.style.color='var(--g1)'; tabReit.style.fontWeight='700'; tabReit.style.borderBottomColor='var(--g1)'; }
+  if(tabDev){ tabDev.style.color='var(--mut)'; tabDev.style.fontWeight='600'; tabDev.style.borderBottomColor='transparent'; }
+  // chip-reit-row visible, chip-dev-row hidden by default
+  var cr=document.getElementById('chip-reit-row'); if(cr) cr.style.display='flex';
+  var cd=document.getElementById('chip-dev-row');  if(cd) cd.style.display='none';
+})();
 
 </script>
 </body>
