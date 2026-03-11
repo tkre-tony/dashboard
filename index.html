@@ -832,8 +832,13 @@ window.addEventListener("popstate", function(e){
 (function(){
   var hash = location.hash.replace('#','');
   var valid = ['overview','analytics','directory','transactions','news','pipeline','reit'];
-  if(hash && valid.indexOf(hash)>=0){ showTab(hash, true); }
-  else { history.replaceState({tab:'overview'}, '', location.href); }
+  if(hash && valid.indexOf(hash)>=0){
+    showTab(hash, false);
+    history.replaceState({tab:hash}, '', '#'+hash);  // replace, never push on initial load
+  } else {
+    showTab('overview', false);
+    history.replaceState({tab:'overview'}, '', location.href);
+  }
 })();
 
 // KPIs
