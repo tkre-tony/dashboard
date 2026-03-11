@@ -1145,7 +1145,7 @@ function nrOpenModal(id){
     +'<div style="font-size:20px;font-weight:700;line-height:1.35;color:var(--txt);margin-bottom:12px">'+n.title+'</div>'
     +'<div style="display:flex;gap:12px;align-items:center;margin-bottom:24px;padding-bottom:16px;border-bottom:1px solid var(--bdr)">'
     +'<span style="font-size:12px;font-weight:600;color:var(--mut)">'+n.source+'</span>'
-    +'<span style="font-size:12px;color:var(--mut);font-family:'DM Mono',monospace">'+nrFormatDate(n.date)+'</span>'
+    +'<span style="font-size:12px;color:var(--mut);font-family:"DM Mono",monospace">'+nrFormatDate(n.date)+'</span>'
     +'<span style="padding:2px 8px;border-radius:4px;font-size:10px;font-weight:600;background:var(--srf2);color:var(--mut)">'+n.tag+'</span>'
     +'</div>'
     + bodyHtml;
@@ -1166,7 +1166,7 @@ function renderNewsPreview(){
     return'<div style="padding:8px 0;border-bottom:1px solid #dde8e3;cursor:pointer" onclick="showTab('news',true);setTimeout(function(){nrOpenModal('+n.id+')},200)">'
       +'<div style="display:flex;gap:6px;align-items:center;margin-bottom:3px;flex-wrap:wrap">'
       +'<span class="pill '+typeClass+'" style="font-size:10px">'+nrTypeLabel(n.type||"market")+'</span>'
-      +'<span style="font-size:10px;color:#6b8c7a;font-family:'DM Mono',monospace">'+nrFormatDate(n.date)+'</span>'
+      +'<span style="font-size:10px;color:#6b8c7a;font-family:"DM Mono",monospace">'+nrFormatDate(n.date)+'</span>'
       +'</div>'
       +'<div style="font-size:12px;line-height:1.4;font-weight:500">'+n.title+'</div></div>';
   }).join('')+'<div style="padding-top:9px"><a href="#" onclick="showTab('news',true);return false" style="font-size:11px;color:#21513b;text-decoration:none;font-weight:600">View all '+NEWS.length+' articles →</a></div>';
@@ -1204,7 +1204,7 @@ function renderNewsList(){
       +'<div style="display:flex;gap:8px;align-items:center;margin-bottom:14px;flex-wrap:wrap">'
       +'<span style="padding:3px 10px;border-radius:5px;font-size:11px;font-weight:700;background:rgba(255,255,255,.22);color:#fff">'+tl+'</span>'
       +entBadge
-      +'<span style="font-size:11px;color:rgba(255,255,255,.7);font-family:'DM Mono',monospace">'+nrFormatDate(featured.date)+'</span>'
+      +'<span style="font-size:11px;color:rgba(255,255,255,.7);font-family:"DM Mono",monospace">'+nrFormatDate(featured.date)+'</span>'
       +'<span style="font-size:11px;color:rgba(255,255,255,.6)">'+featured.source+'</span>'
       +'</div>'
       +'<div style="font-size:20px;font-weight:700;line-height:1.35;color:#fff;margin-bottom:10px;max-width:680px">'+featured.title+'</div>'
@@ -1235,7 +1235,7 @@ function renderNewsList(){
       +'<div class="nr-card-footer">'
       +'<div style="display:flex;gap:8px;align-items:center">'
       +'<span style="font-size:11px;font-weight:600;color:var(--mut)">'+n.source+'</span>'
-      +'<span style="font-size:11px;color:var(--mut);font-family:'DM Mono',monospace">'+nrFormatDate(n.date)+'</span>'
+      +'<span style="font-size:11px;color:var(--mut);font-family:"DM Mono",monospace">'+nrFormatDate(n.date)+'</span>'
       +'</div>'
       +'<span style="font-size:11px;font-weight:600;color:'+sentColor+'">'+n.sentiment.charAt(0).toUpperCase()+n.sentiment.slice(1)+'</span>'
       +'</div>'
