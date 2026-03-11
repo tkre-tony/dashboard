@@ -46,10 +46,24 @@ html,body{background:var(--bg);color:var(--txt);font-family:'DM Sans',sans-serif
 .tbar-track{flex:1;height:6px;background:var(--srf2);border-radius:3px;overflow:hidden}
 .tbar-fill{height:100%;border-radius:3px}
 .tbar-val{font-size:11px;color:var(--mut);width:75px;text-align:right;font-family:'DM Mono',monospace}
-.news-item{background:var(--srf);border:1px solid var(--bdr);border-radius:9px;padding:12px 15px;cursor:pointer;transition:border-color .15s;margin-bottom:9px}
-.news-item:hover{border-color:var(--gmd)}
-.news-body{display:none;color:var(--mut);font-size:12px;line-height:1.6;margin-top:8px;padding-top:8px;border-top:1px solid var(--bdr)}
-.news-item.open .news-body{display:block}
+.nr-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(340px,1fr));gap:16px;margin-top:16px}
+.nr-card{background:var(--srf);border:1px solid var(--bdr);border-radius:12px;overflow:hidden;cursor:pointer;transition:box-shadow .15s,transform .15s;display:flex;flex-direction:column}
+.nr-card:hover{box-shadow:0 4px 20px rgba(33,81,59,.12);transform:translateY(-2px)}
+.nr-card-img{height:5px;background:var(--g1)}
+.nr-card-body{padding:15px 16px;flex:1;display:flex;flex-direction:column}
+.nr-card-meta{display:flex;gap:6px;align-items:center;flex-wrap:wrap;margin-bottom:9px}
+.nr-card-title{font-size:14px;font-weight:700;line-height:1.4;margin-bottom:7px;color:var(--txt)}
+.nr-card-teaser{font-size:12px;color:var(--mut);line-height:1.6;flex:1}
+.nr-card-footer{display:flex;justify-content:space-between;align-items:center;margin-top:12px;padding-top:10px;border-top:1px solid var(--bdr)}
+.nr-featured{background:linear-gradient(135deg,var(--g1) 0%,#1a3d2c 100%);border-radius:12px;padding:28px 28px 24px;margin-bottom:0;color:#fff;cursor:pointer;transition:box-shadow .15s}
+.nr-featured:hover{box-shadow:0 6px 24px rgba(33,81,59,.25)}
+.nr-modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:1000;overflow-y:auto;padding:40px 16px}
+.nr-modal-overlay.open{display:flex;align-items:flex-start;justify-content:center}
+.nr-modal{background:var(--srf);border-radius:14px;max-width:680px;width:100%;padding:32px 32px 28px;position:relative;margin:auto}
+.nr-type-ar{background:#e8f5e9;color:#1b5e20;border:1px solid #a5d6a7}
+.nr-type-market{background:#e3f2fd;color:#0d47a1;border:1px solid #90caf9}
+.nr-type-deal{background:#fff8e1;color:#7d5200;border:1px solid #ffe082}
+.nr-type-policy{background:#f3e5f5;color:#4a148c;border:1px solid #ce93d8}
 .news-meta{display:flex;gap:6px;align-items:center;flex-wrap:wrap;margin-bottom:5px}
 .pill{padding:2px 7px;border-radius:4px;font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.04em}
 .dir-tbtn{padding:7px 14px;border:1px solid var(--bdr);border-radius:20px;font-size:12px;font-family:'DM Sans',sans-serif;cursor:pointer;background:var(--srf);color:var(--mut);font-weight:500;transition:all .15s;white-space:nowrap}
@@ -90,7 +104,7 @@ html,body{background:var(--bg);color:var(--txt);font-family:'DM Sans',sans-serif
   <div class="navtab" data-tab="analytics">Analytics</div>
   <div class="navtab" data-tab="directory">Directory</div>
   <div class="navtab" data-tab="transactions">Transactions</div>
-  <div class="navtab" data-tab="news">News Feed</div>
+  <div class="navtab" data-tab="news">Newsroom</div>
   <div class="navtab" data-tab="pipeline">Pipeline</div>
   <div class="navtab" data-tab="reit" style="display:flex;align-items:center;gap:5px">
     <span style="font-size:10px;background:rgba(255,255,255,.2);border-radius:3px;padding:1px 5px;font-weight:700;letter-spacing:.04em">NEW</span>
@@ -322,8 +336,30 @@ html,body{background:var(--bg);color:var(--txt);font-family:'DM Sans',sans-serif
   </div>
 
   <div class="panel" id="tab-news">
-    <div class="fbar" id="news-cats"></div>
-    <div id="news-list"></div>
+
+    <!-- Newsroom header -->
+    <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;margin-bottom:18px">
+      <div>
+        <div style="font-size:18px;font-weight:700;color:var(--g1);letter-spacing:-.02em">📰 Newsroom</div>
+        <div style="font-size:12px;color:var(--mut);margin-top:2px">Market intelligence, deal alerts and annual report summaries — curated by TKRE</div>
+      </div>
+      <div id="news-cats" style="display:flex;gap:6px;flex-wrap:wrap"></div>
+    </div>
+
+    <!-- Featured article -->
+    <div id="news-featured"></div>
+
+    <!-- Article grid -->
+    <div class="nr-grid" id="news-list"></div>
+
+    <!-- Article modal -->
+    <div class="nr-modal-overlay" id="nr-modal" onclick="if(event.target===this)nrCloseModal()">
+      <div class="nr-modal">
+        <button onclick="nrCloseModal()" style="position:absolute;top:16px;right:16px;background:var(--srf2);border:1px solid var(--bdr);border-radius:6px;padding:5px 11px;cursor:pointer;font-size:12px;color:var(--mut);font-family:'DM Sans',sans-serif">✕ Close</button>
+        <div id="nr-modal-content"></div>
+      </div>
+    </div>
+
   </div>
 
   <div class="panel" id="tab-transactions">
@@ -596,31 +632,106 @@ var VAL_ARR=[[382.87,299.74,123.93,327.15,109.36,0,113.2],[1150.79,401.34,211.84
 var CNT_ARR=[[362,448,73,289,38,0,91],[424,509,99,463,59,0,212],[209,349,72,404,65,0,98],[127,269,60,149,97,0,34],[249,411,184,819,175,0,46],[209,362,162,596,192,0,98],[138,299,185,575,173,1,64],[200,433,203,982,192,2,66],[133,361,245,764,173,0,69],[284,414,224,674,191,0,59],[277,376,293,433,196,4,42],[468,418,332,750,294,4,56],[719,636,526,1768,318,0,86],[217,230,227,1411,204,3,69],[214,323,271,1705,204,0,88],[478,652,391,3071,307,1,272],[521,743,298,4174,279,4,392],[1153,1518,289,4341,244,1,407],[742,1305,205,2851,157,3,218],[518,510,106,1907,149,0,99],[242,248,104,1236,103,1,95],[286,242,109,927,89,2,58],[344,219,148,885,121,0,57],[337,256,170,939,96,1,64],[314,223,123,1070,103,0,65],[217,151,144,1090,101,2,70],[351,295,253,1748,140,2,123],[316,264,191,1874,131,0,114],[321,272,131,1483,124,0,129],[334,250,87,1622,96,0,162],[355,301,89,1509,163,0,149],[40,42,8,142,11,0,16]];
 var TYPETOT={"office":57330.6,"retail":35459.5,"shophouse":23504.1,"multiUser":39698.3,"singleUser":42601.2,"bizPark":4842.5,"warehouse":8626.0};
 
+// ── NEWSROOM DATA ─────────────────────────────────────────────────────────────
+// type: "market" | "ar_summary" | "deal" | "policy" | "earnings"
+// entity: optional — links to a specific REIT/Developer in the directory
+// body: array of paragraph strings — full article text validated by Tony
+// summary: short 1-2 line teaser shown on card
 var NEWS=[
-  {id:1,date:"2026-02-26",title:"Lendlease REIT Takes Full Control of PLQ Mall in S$116.4M Deal",source:"Business Times",category:"Commercial",tag:"REIT",summary:"LREIT acquires remaining 30% stake in PLQ Mall for S$116.4M. Full ownership enables refinancing saving ~S$2M p.a. DPU accretion +2.1%. Occupancy 99.4%.",sentiment:"positive"},
-  {id:2,date:"2026-02-26",title:"URA Releases 2 Prime GLS Sites at Holland Plain and River Valley",source:"Business Times",category:"Commercial",tag:"GLS",summary:"Holland Plain (280 units, 99-yr, closes 7 May) and Morrison Lane near Robertson Quay (205 units, reserve list). Analysts expect 4-6 bids at S$1,400-1,500 psf ppr.",sentiment:"positive"},
-  {id:3,date:"2026-02-26",title:"Tan Boon Liat Building Up for Sale at Reduced S$1B Reserve Price",source:"Business Times",category:"Commercial",tag:"En Bloc",summary:"Freehold 315 Outram Road relaunched at S$1.0B (down 13% from S$1.15B in 2025 which drew no bids). Rezoning B1 to residential+commercial. Closes 12 May 2026.",sentiment:"neutral"},
-  {id:4,date:"2026-02-25",title:"Altallo Asset Management Buys 158 Cecil Street for S$175M",source:"Business Times",category:"Commercial",tag:"Investment Sale",summary:"Put-and-call option at S$175M — S$1,541 psf on NLA of 113,540 sqft. 99-yr lease (~55 yrs remaining). Price is 27% below S$240M paid in 2015. Plans refurbishment with office as core use.",sentiment:"positive"},
-  {id:5,date:"2026-02-25",title:"Singapore Remains Bedrock for Family Offices: StanChart",source:"Business Times",category:"Market Insight",tag:"Capital Flows",summary:"Singapore SFOs exceeded 2,000 at end-2024, up 43% YoY. Net new wealth management money hit US$51.5B in 2025. Growing pool of family office capital seeking SG commercial assets.",sentiment:"positive"},
-  {id:6,date:"2026-02-27",title:"UI Boustead Reit Files IPO Prospectus to Raise S$1.2B",source:"Business Times",category:"Industrial",tag:"REIT IPO",summary:"23-property portfolio, GFA 5.9M sqft, agreed value ~S$1.9B. Forecast yield 7.4%. Cornerstone investors include JP Morgan AM and Amundi. Sets cap rate benchmark for SG industrial assets.",sentiment:"positive"},
-  {id:7,date:"2026-02-27",title:"UOL H2 Net Profit +21% to S$276.2M; Office Described as Attractive",source:"Business Times",category:"Commercial",tag:"Earnings",summary:"Revenue S$1.685B (+11%). Special dividend S$0.07 + final S$0.18. Office sector: tight CBD supply. Marina Square redevelopment at final planning stage — hyper-mixed use.",sentiment:"positive"},
-  {id:8,date:"2026-02-27",title:"Soilbuild Construction H2 Profit +84% on Industrial Surge",source:"Business Times",category:"Industrial",tag:"Construction",summary:"H2 net profit S$35.3M (+84%). Revenue S$317.9M (+33.6%). Key projects: PSA Supply Chain Hub at Tuas. Strong industrial construction backlog confirms new supply pipeline.",sentiment:"positive"},
-  {id:9,date:"2026-02-27",title:"GDP Forecast Raised to 3.6%; Manufacturing Output +16.6% in Jan",source:"Business Times",category:"Market Insight",tag:"Macro",summary:"MAS survey: 2026 GDP forecast raised to 3.6%. Factory output Jan 2026 +16.6% YoY on electronics surge. AI demand feeding into semiconductor ecosystem. Industrial outlook remains robust.",sentiment:"positive"},
-  {id:10,date:"2026-02-27",title:"Retail and F&B Rents Make Up Lower Share of Business Costs",source:"Business Times",category:"Policy",tag:"Retail",summary:"PM Wong: F&B rental costs fell from 26% to 17% of total business costs (2019-2024). Government ruled out rent caps. Retail rent reversions remain landlord-positive.",sentiment:"positive"},
-  {id:11,date:"2026-02-28",title:"CDL H2 Net Profit +374% to S$538.5M; Strategic Review Underway",source:"Business Times",category:"Commercial",tag:"Earnings",summary:"Revenue S$1,899.2M (+11.1%). FY2025 residential sales record 1,657 units at S$4.35B. UK platform (~S$800M carrying value) to be divested by end-2026. Strategic review outcome by June 2026.",sentiment:"positive"},
-  {id:12,date:"2026-02-28",title:"Frasers Property Acquires Centrepoint Rear Block for S$391.9M",source:"Business Times",category:"Commercial",tag:"Investment Sale",summary:"6.2% below S$418M guide price. Effective land rate S$2,577 psf ppr after LBC. Consolidation enables future major redevelopment of Centrepoint.",sentiment:"positive"},
-  {id:13,date:"2026-02-28",title:"LBC Raised: Non-Landed Residential +4.1%, Industrial +3.2%",source:"Business Times",category:"Policy",tag:"LBC",summary:"SLA/URA raised LBC rates effective 1 Mar 2026. Biggest non-landed residential hike since Sep 2022. Industrial: all 118 sectors raised 2-9%. Commercial: +0.5%.",sentiment:"neutral"},
-  {id:14,date:"2026-02-28",title:"PropNex FY2025 Earnings Up 72% to S$70.4M on Record S$1.1B Revenue",source:"Business Times",category:"Market Insight",tag:"Earnings",summary:"Record in 25-year history. Project marketing revenue more than doubled to S$434M. Full-year dividend S$0.095/share (record high). 2026 outlook: 13,500 homes reaching MOP.",sentiment:"positive"},
-  {id:15,date:"2026-02-28",title:"City Plaza Secures Mandate for S$970M En Bloc After 2 Failed Attempts",source:"Straits Times",category:"Commercial",tag:"En Bloc",summary:"Secured 83.05% mandate — third attempt after 2018 and 2021. Freehold 18-storey, 450 units. Future concept: hospitality/wellness/commercial.",sentiment:"positive"},
-  {id:16,date:"2026-02-28",title:"OUE Reit Gauging Interest for One Raffles Place at S$2.3-2.4B",source:"Business Times",category:"Commercial",tag:"Investment Sale",summary:"OUBC + UOB gauging market interest for 100% stake. Would be largest SG office deal in years if completed. GFA ~1.3M sqft.",sentiment:"positive"},
-  {id:17,date:"2026-02-28",title:"Online LBC Estimator Launched; Longer State Property Tenures Explored",source:"Business Times",category:"Policy",tag:"LBC",summary:"LBC Estimator on SLA OneMap portal allows developers to compute LBC estimates upfront. Valuation process moved up — could cut project timelines by 6 months.",sentiment:"positive"},
-  {id:18,date:"2026-02-28",title:"450 HNW Investors Granted Singapore PR Under Global Investor Programme",source:"Business Times",category:"Policy",tag:"Capital Flows",summary:"~450 HNW investors granted PR under GIP (2015-2025), injecting ~S$500M. GIP capital supports SFO growth and demand for SG commercial real estate, particularly shophouse and freehold assets.",sentiment:"positive"},
-  {id:19,date:"2026-02-26",title:"MPs Call for 15% Stamp Duty Tier on Properties Above S$5M",source:"Straits Times",category:"Policy",tag:"Property Tax",summary:"Budget 2026 debate: calls for 15% marginal rate on residential properties above S$5M. Fiscal surplus S$15.1B. SG wealth Gini 0.55.",sentiment:"neutral"},
-  {id:20,date:"2026-02-26",title:"Singapore Land H2 Profit Down 11% at S$160.9M",source:"Business Times",category:"Commercial",tag:"Earnings",summary:"FY2025 net profit S$272.3M (-4%). Revenue +7% to S$783.1M. Drag from higher finance costs (+23%) on Sydney acquisition. DPS S$0.045.",sentiment:"negative"},
-  {id:21,date:"2026-02-20",title:"Serenity Park Condo in Yio Chu Kang Put on Market at S$505M",source:"Business Times",category:"Commercial",tag:"En Bloc",summary:"179-unit freehold condo, Tamarind Road. First freehold residential en-bloc of 2026. S$1,453 psf ppr. Owner premium >40%. Closes 26 Mar 2026.",sentiment:"neutral"}
+  {id:1,date:"2026-02-26",title:"Lendlease REIT Takes Full Control of PLQ Mall in S$116.4M Deal",source:"Business Times",category:"Commercial",tag:"REIT",type:"deal",entity:"Lendlease Global Commercial REIT",sentiment:"positive",
+    summary:"LREIT acquires remaining 30% stake in PLQ Mall for S$116.4M — full ownership enables ~S$2M annual savings and +2.1% DPU accretion.",
+    body:["Lendlease Global Commercial REIT has completed the acquisition of the remaining 30% stake in PLQ Mall for S$116.4M, bringing it to full ownership of the Paya Lebar Quarter retail component. The deal was funded through a mix of debt and equity, structured to be immediately DPU-accretive at +2.1%.",
+          "Full ownership enables LREIT to refinance the mall-level debt on consolidated terms, saving an estimated S$2M per annum in financing costs. Occupancy at PLQ Mall stands at 99.4%, anchored by a strong F&B and lifestyle tenant mix that has benefited from the Paya Lebar office cluster.",
+          "The acquisition reinforces LREIT's Singapore-centric strategy following the divestment of its Italian assets. Management has flagged PLQ Mall as a long-term core asset with AEI potential as the Paya Lebar precinct continues to densify."]},
+  {id:2,date:"2026-02-26",title:"URA Releases 2 Prime GLS Sites at Holland Plain and River Valley",source:"Business Times",category:"Commercial",tag:"GLS",type:"policy",entity:"",sentiment:"positive",
+    summary:"Holland Plain (280 units, 99-yr, closes 7 May) and Morrison Lane near Robertson Quay (205 units, reserve list) released.",
+    body:["The Urban Redevelopment Authority released two residential Government Land Sale sites in February 2026. The confirmed list site at Holland Plain spans 15,716 sqm with a 99-year lease and a maximum of 280 residential units; tender closes 7 May 2026. Analysts are forecasting 4–6 bids at S$1,400–1,500 psf per plot ratio.",
+          "The reserve list site at Morrison Lane in the River Valley locality offers 6,669 sqm for approximately 205 units, positioned near the Robertson Quay hospitality and F&B cluster. Reserve list sites are triggered only when a developer bids at or above the minimum price.",
+          "Both releases underscore continued government confidence in residential demand from the Central Region, even as the broader market monitors the impact of the Additional Buyer's Stamp Duty regime on transaction volumes."]},
+  {id:3,date:"2026-02-26",title:"Tan Boon Liat Building Relaunched at Reduced S$1B Reserve Price",source:"Business Times",category:"Commercial",tag:"En Bloc",type:"deal",entity:"",sentiment:"neutral",
+    summary:"Freehold 315 Outram Road relaunched at S$1.0B (down 13% from S$1.15B), rezoning B1 to residential+commercial. Closes 12 May 2026.",
+    body:["The Tan Boon Liat Building at 315 Outram Road has been relaunched for collective sale at a reduced reserve price of S$1.0B, down 13% from the S$1.15B guide price set in 2025 which attracted no bids. The freehold industrial property spans approximately 200,000 sqft of GFA.",
+          "The marketing agent has flagged rezoning potential from B1 industrial to a mix of residential and commercial uses, which would significantly expand development yield. Tender closes 12 May 2026.",
+          "The price reduction reflects a recalibration to current market appetite for large-scale mixed-use conversion plays, where development cost risk and planning uncertainty have dampened institutional interest at higher price levels."]},
+  {id:4,date:"2026-02-25",title:"Altallo Asset Management Buys 158 Cecil Street for S$175M",source:"Business Times",category:"Commercial",tag:"Investment Sale",type:"deal",entity:"",sentiment:"positive",
+    summary:"Put-and-call option at S$175M (S$1,541 psf NLA) — 27% below 2015 peak. Plans refurbishment with office as core use.",
+    body:["Singapore-based Altallo Asset Management has entered into a put-and-call option to acquire 158 Cecil Street for S$175M, equating to S$1,541 psf on a net lettable area of approximately 113,540 sqft. The 99-year leasehold building has approximately 55 years remaining on its lease.",
+          "The acquisition price represents a 27% discount to the S$240M paid by the previous owner in 2015, reflecting both the leasehold erosion and the broader repricing of secondary CBD office assets. Altallo plans a refurbishment programme with office remaining the core use.",
+          "The deal is significant as a price discovery reference for mid-tier CBD office stock: at S$1,541 psf NLA, it sets a realistic clearing level for similar vintage leasehold buildings, particularly those with limited remaining tenure."]},
+  {id:5,date:"2026-02-25",title:"Singapore Remains Top Destination for Family Offices: StanChart",source:"Business Times",category:"Market Insight",tag:"Capital Flows",type:"market",entity:"",sentiment:"positive",
+    summary:"Singapore SFOs exceeded 2,000 at end-2024, up 43% YoY. Net new wealth management inflows US$51.5B in 2025.",
+    body:["Standard Chartered's 2026 wealth management outlook confirms Singapore's position as the leading Asian hub for single family offices. The number of SFOs exceeded 2,000 by end-2024, a 43% increase year-on-year, while net new wealth management money flowing into Singapore hit US$51.5B in 2025.",
+          "The growing SFO population represents a structurally supportive demand base for Singapore commercial real estate, particularly freehold shophouses, strata office units, and core CBD assets that offer stable yields with capital preservation characteristics.",
+          "Standard Chartered highlighted that the MAS Variable Capital Company structure continues to attract asset managers to domicile funds in Singapore, creating an additional flywheel of capital seeking local real estate as part of diversified portfolios."]},
+  {id:6,date:"2026-02-27",title:"UI Boustead REIT Files IPO Prospectus to Raise S$1.2B",source:"Business Times",category:"Industrial",tag:"REIT IPO",type:"market",entity:"",sentiment:"positive",
+    summary:"23-property industrial portfolio, GFA 5.9M sqft, agreed value ~S$1.9B. Forecast yield 7.4%. Cornerstone investors include JP Morgan AM and Amundi.",
+    body:["UI Boustead REIT has filed its preliminary IPO prospectus with the SGX, seeking to raise approximately S$1.2B. The portfolio comprises 23 industrial properties with a total GFA of 5.9 million sqft and an agreed portfolio value of approximately S$1.9B.",
+          "The forecast distribution yield of 7.4% is positioned as competitive relative to the existing Singapore industrial REIT universe, where yields have compressed to 5–6% for best-in-class assets. Cornerstone investors include J.P. Morgan Asset Management and Amundi, providing institutional credibility to the offer.",
+          "For the industrial REIT market, the UI Boustead IPO serves as a cap rate benchmark for institutional-grade multi-tenanted factories and logistics assets in Singapore. Successful pricing would signal continued investor appetite for Singapore industrial exposure despite global rate uncertainty."]},
+  {id:7,date:"2026-02-27",title:"UOL H2 Net Profit +21% to S$276.2M; Office Described as Attractive",source:"Business Times",category:"Commercial",tag:"Earnings",type:"earnings",entity:"UOL Group",sentiment:"positive",
+    summary:"Revenue S$1.685B (+11%). Special dividend S$0.07 + final S$0.18. Marina Square redevelopment at final planning stage — hyper-mixed use.",
+    body:["UOL Group reported H2 FY2025 net profit of S$276.2M, up 21% year-on-year, with full-year revenue of S$1.685B growing 11%. The board declared a special dividend of S$0.07 per share alongside a final dividend of S$0.18, reflecting management confidence in the balance sheet.",
+          "UOL management described the Singapore office sector as 'attractive', citing tight CBD supply and the absence of significant new completions until the late 2020s. The group's Pan Pacific Hotels collection continued to benefit from strong RevPAR performance in Singapore and key Asian markets.",
+          "The Marina Square redevelopment has reached its final planning stage, with UOL describing it as a 'hyper-mixed use' concept integrating retail, office, hospitality, and residential uses. This represents one of the most significant city-fringe mixed-use redevelopments in Singapore's pipeline."]},
+  {id:8,date:"2026-02-27",title:"GDP Forecast Raised to 3.6%; Manufacturing Output +16.6% in January",source:"Business Times",category:"Market Insight",tag:"Macro",type:"market",entity:"",sentiment:"positive",
+    summary:"MAS survey: 2026 GDP forecast raised to 3.6%. January factory output +16.6% YoY on electronics surge driven by AI demand.",
+    body:["The MAS quarterly survey of professional forecasters revised Singapore's 2026 GDP growth estimate upward to 3.6%, reflecting stronger-than-expected momentum in the electronics and precision engineering clusters. January 2026 manufacturing output rose 16.6% year-on-year, driven by a sharp acceleration in semiconductor and data storage equipment production.",
+          "The AI infrastructure build-out continues to feed through the semiconductor supply chain, benefiting Singapore's wafer fabrication and advanced packaging ecosystem. This sustained manufacturing demand supports occupier appetite for high-specification industrial space in the western and north-western corridors.",
+          "For the industrial real estate market, the macro backdrop remains constructive: tight vacancy in purpose-built facilities, rising rents in high-spec segments, and a development pipeline constrained by URA land supply policy. Logistics assets continue to trade at tight yields given the structural demand from e-commerce and cold chain operators."]},
+  {id:9,date:"2026-02-28",title:"CDL H2 Net Profit +374% to S$538.5M; Strategic Review Underway",source:"Business Times",category:"Commercial",tag:"Earnings",type:"earnings",entity:"CDL",sentiment:"positive",
+    summary:"Revenue S$1,899.2M (+11.1%). FY2025 residential sales record 1,657 units at S$4.35B. UK platform to be divested by end-2026. Strategic review outcome by June 2026.",
+    body:["City Developments Limited reported a H2 net profit of S$538.5M, up 374% year-on-year, driven by strong residential project completions and recognition of deferred development profits. Full-year revenue of S$1,899.2M grew 11.1%, with residential sales hitting a record 1,657 units valued at S$4.35B.",
+          "The group's strategic review, announced in 2025 to address the persistent discount to NAV at which CDL trades, is expected to yield outcomes by June 2026. Management has confirmed plans to divest the UK hospitality platform — which carries a carrying value of approximately S$800M — by end-2026, streamlining the portfolio toward Singapore and key Asian markets.",
+          "The result reinforces CDL's position as one of Singapore's most operationally diverse property conglomerates, with material exposure to residential development, commercial investment properties, and hospitality. The strategic review will be closely watched as a potential catalyst for unlocking latent balance sheet value."]},
+  {id:10,date:"2026-02-28",title:"Frasers Property Acquires Centrepoint Rear Block for S$391.9M",source:"Business Times",category:"Commercial",tag:"Investment Sale",type:"deal",entity:"Frasers Property Limited",sentiment:"positive",
+    summary:"6.2% below S$418M guide price. Effective land rate S$2,577 psf ppr after LBC. Enables future major redevelopment of Centrepoint.",
+    body:["Frasers Property has acquired the rear block of Centrepoint mall along Orchard Road for S$391.9M, representing a 6.2% discount to the S$418M guide price. After accounting for the land betterment charge payable to SLA for intensification, the effective land rate works out to approximately S$2,577 psf per plot ratio.",
+          "The acquisition consolidates Frasers Property's ownership of the Centrepoint precinct, removing the key obstacle to a comprehensive redevelopment of one of Orchard Road's most recognisable retail assets. Management has flagged a major redevelopment project that would significantly increase the gross floor area and introduce a mixed-use programme.",
+          "The deal is strategically significant for Frasers Centrepoint Trust, which manages the existing Centrepoint mall. Any redevelopment would unlock substantial value and potentially create a ROFR pipeline asset for FCT, subject to the usual related-party transaction governance requirements."]},
+  {id:11,date:"2026-02-28",title:"Land Betterment Charges Raised: Non-Landed Residential +4.1%, Industrial +3.2%",source:"Business Times",category:"Policy",tag:"LBC",type:"policy",entity:"",sentiment:"neutral",
+    summary:"SLA/URA raised LBC rates effective 1 Mar 2026. Largest non-landed residential hike since Sep 2022. Industrial: all 118 sectors raised 2–9%.",
+    body:["The Singapore Land Authority and Urban Redevelopment Authority have raised Land Betterment Charge rates effective 1 March 2026. Non-landed residential rates rose an average of 4.1%, the largest single increase since September 2022, reflecting sustained residential land values. All 118 industrial sector groups saw increases of between 2% and 9%.",
+          "Commercial rates rose a more modest 0.5%, consistent with the office market's ongoing recovery rather than the sharp appreciation seen in residential. The LBC revision will increase development costs for developers acquiring sites that require intensification or change of use approval.",
+          "For investors in industrial assets, the higher LBC benchmarks signal that the government views industrial land values as having risen materially — supportive of existing asset valuations but adding friction to greenfield development economics."]},
+  {id:12,date:"2026-02-28",title:"OUE REIT Gauging Interest for One Raffles Place at S$2.3–2.4B",source:"Business Times",category:"Commercial",tag:"Investment Sale",type:"deal",entity:"OUE REIT",sentiment:"positive",
+    summary:"OUBC + UOB gauging interest for 100% stake in One Raffles Place. Would be the largest Singapore office deal in years if completed. GFA ~1.3M sqft.",
+    body:["OUE Bayfront Pte Ltd and UOB are jointly gauging market interest for the sale of a 100% stake in One Raffles Place, the Grade A twin-tower office and retail complex at the heart of Singapore's financial district. The indicative price range of S$2.3–2.4B would make it the largest Singapore office investment transaction in several years.",
+          "One Raffles Place comprises approximately 1.3 million sqft of GFA across two towers — the 62-storey One Raffles Place Tower 1 and the 38-storey Tower 2 — along with a retail podium. The asset is anchored by a blue-chip tenant roster including financial services, legal, and technology firms.",
+          "A transaction at S$2.3–2.4B would serve as a critical price discovery event for core Singapore CBD office assets, potentially re-rating the sector and providing a mark-to-market reference for other Grade A portfolios including those held within listed REITs such as CICT, Keppel REIT, and MPACT."]},
+  {id:13,date:"2026-02-20",title:"City Plaza Secures Mandate for S$970M En Bloc After 2 Failed Attempts",source:"Straits Times",category:"Commercial",tag:"En Bloc",type:"deal",entity:"",sentiment:"positive",
+    summary:"Secured 83.05% mandate — third attempt after 2018 and 2021. Freehold 18-storey, 450 units. Future concept: hospitality/wellness/commercial.",
+    body:["City Plaza at Geylang Road has secured an 83.05% mandate for a collective sale at S$970M, marking its third attempt after unsuccessful launches in 2018 and 2021. The freehold 18-storey commercial building with 450 units benefits from a prominent main road frontage and its proximity to Paya Lebar and Aljunied MRT stations.",
+          "Marketing agents are positioning the asset's redevelopment potential around a hospitality, wellness, and commercial concept, leveraging the building's location near the Paya Lebar commercial hub and its freehold status — a rarity in Singapore's commercial property market.",
+          "At S$970M, the deal would represent a significant vote of confidence in the Geylang and Paya Lebar corridor's continued gentrification, driven by the Paya Lebar Airbase relocation scheduled for the 2030s and the broader Urban Transformation of the eastern region."]},
+  {id:14,date:"2026-02-28",title:"PropNex FY2025 Earnings Up 72% to S$70.4M on Record Revenue",source:"Business Times",category:"Market Insight",tag:"Earnings",type:"earnings",entity:"",sentiment:"positive",
+    summary:"Record S$1.1B revenue in PropNex's 25-year history. Project marketing revenue more than doubled to S$434M. 2026 outlook: 13,500 HDB units reaching MOP.",
+    body:["PropNex Realty reported a 72% jump in FY2025 net profit to S$70.4M on record revenue of S$1.1B — the highest in the agency's 25-year history. Project marketing revenue more than doubled to S$434M, driven by strong new launch activity and the resilience of mass market demand despite the ABSD regime.",
+          "The board declared a full-year dividend of S$0.095 per share, the highest on record, reflecting the capital-light nature of the agency model. Management guided that approximately 13,500 HDB units will reach their Minimum Occupation Period in 2026, generating a structural pipeline of upgrader demand for new launches.",
+          "The PropNex result provides a ground-level read on transaction volumes in Singapore residential, confirming that primary market activity remains robust. For commercial property investors, the MOP pipeline is a leading indicator of suburban retail and mixed-use demand as upgraders establish new households in suburban precincts."]},
+  {id:15,date:"2026-02-26",title:"Singapore Land H2 Profit Down 11% at S$160.9M",source:"Business Times",category:"Commercial",tag:"Earnings",type:"earnings",entity:"SingLand",sentiment:"negative",
+    summary:"FY2025 net profit S$272.3M (-4%). Revenue +7% to S$783.1M. Higher finance costs (+23%) from Sydney acquisition drag on earnings.",
+    body:["Singapore Land Group reported H2 net profit of S$160.9M, down 11% year-on-year, with full-year net profit of S$272.3M falling 4% despite a 7% increase in revenue to S$783.1M. The earnings drag was primarily attributable to a 23% increase in finance costs, reflecting higher interest rates on borrowings associated with the Sydney commercial acquisition.",
+          "The group's Singapore office portfolio continues to perform steadily, with occupancy and rents supported by the tight CBD supply environment. The Westin Singapore hotel delivered improving RevPAR metrics in line with the broader market recovery.",
+          "Management has maintained its full-year dividend at S$0.045 per share. The Sydney acquisition remains an earnings headwind until refinancing options are pursued at more favourable rates, representing a key watch item for investors monitoring SingLand's balance sheet management."]},
+  {id:16,date:"2026-02-27",title:"Retail and F&B Rents Make Up Lower Share of Business Costs",source:"Business Times",category:"Policy",tag:"Retail",type:"policy",entity:"",sentiment:"positive",
+    summary:"PM Wong: F&B rental costs fell from 26% to 17% of total business costs (2019–2024). Government ruled out rent caps.",
+    body:["Prime Minister Lawrence Wong disclosed in Parliament that F&B rental costs as a share of total business costs fell from 26% to 17% between 2019 and 2024, attributed to a combination of new retail supply, operational efficiency improvements, and post-COVID lease renegotiations.",
+          "The government ruled out the introduction of retail rent caps, which had been called for by some operators and industry associations. PM Wong emphasised that rent caps would reduce landlord incentives to maintain and upgrade retail assets, potentially worsening the quality of the retail environment over time.",
+          "For REIT investors, the statement is constructive: it signals that rental reversions in the retail sector will continue to be driven by market forces, and that government policy will not artificially suppress the pricing power of retail landlords in a tight vacancy environment."]},
+  {id:17,date:"2026-02-28",title:"450 HNW Investors Granted Singapore PR Under Global Investor Programme",source:"Business Times",category:"Policy",tag:"Capital Flows",type:"policy",entity:"",sentiment:"positive",
+    summary:"~450 HNW investors granted PR under GIP (2015–2025), injecting ~S$500M. Supports SFO growth and demand for freehold commercial assets.",
+    body:["Approximately 450 high-net-worth investors were granted Singapore Permanent Residency under the Global Investor Programme between 2015 and 2025, injecting an estimated S$500M directly into qualifying Singapore businesses and funds. The GIP requires applicants to invest a minimum of S$2.5M in business or fund structures.",
+          "The GIP pipeline feeds into the broader Single Family Office ecosystem in Singapore, as newly resident HNW families establish investment mandates that frequently include local real estate as a wealth preservation component. Freehold shophouses, strata commercial units, and core Grade A assets are the typical target asset classes.",
+          "For the Singapore commercial property market, the GIP-driven capital inflow represents a structural, policy-supported demand driver that is largely uncorrelated with the institutional REIT transaction market, providing additional price support at the top of the market."]},
+  {id:18,date:"2026-02-28",title:"LBC Estimator Launched Online; Longer State Property Tenures Explored",source:"Business Times",category:"Policy",tag:"LBC",type:"policy",entity:"",sentiment:"positive",
+    summary:"LBC Estimator on SLA OneMap portal allows upfront cost estimation. Longer tenure options under study — could cut project timelines by 6 months.",
+    body:["The Singapore Land Authority launched an online Land Betterment Charge estimator on its OneMap portal, enabling developers and property owners to compute indicative LBC obligations upfront before committing to an acquisition or development application. The tool covers commercial, residential, and industrial use categories.",
+          "In parallel, the government indicated that longer state land lease tenure options are being explored, which would reduce the frequency of lease top-up exercises. This could shorten development project timelines by an estimated six months for projects requiring tenure enhancement.",
+          "The LBC estimator reduces a key source of uncertainty in Singapore development economics, making it easier to underwrite conversion and intensification plays. Combined with the tenure reform study, the initiatives reflect the government's ongoing effort to improve the efficiency of Singapore's land administration system."]}
 ];
 
 var PIPELINE=[
+
   {asset:"One Raffles Place",type:"Investment Sale",subtype:"Office + Retail",agent:"UOB",estValue:"S$2.3B-S$2.4B",closes:"TBC",notes:"OUBC (OUE Reit, 81.54%) + UOB (18.46%) gauging interest. Would be largest SG office deal in years."},
   {asset:"Holland Plain GLS Site",type:"GLS Tender",subtype:"Residential",agent:"URA",estValue:"~S$300M",closes:"7 May 2026",notes:"280 units, 15,716 sqm, 99-yr. 4-6 bids at S$1,400-1,500 psf ppr."},
   {asset:"Morrison Lane GLS Site",type:"GLS Tender",subtype:"Residential",agent:"URA",estValue:"~S$150M",closes:"On application",notes:"205 units, 6,669 sqm. Reserve list. Near Robertson Quay."},
@@ -811,6 +922,7 @@ function showTab(tabName, pushHistory){
   if(tabName==="reit") reitSearch(0);
   if(tabName==="directory") dirSearch(0);
   if(tabName==="transactions" && document.getElementById("tx-tbody").innerHTML==="") searchTransactions(0);
+  if(tabName==="news"){ renderNewsCats(); renderNewsList(); }
   if(pushHistory) history.pushState({tab:tabName}, '', '#'+tabName);
 }
 document.querySelectorAll(".navtab").forEach(function(t){
@@ -986,38 +1098,149 @@ function renderTypeBreakdown(){
   }).join('');
 }
 
-// NEWS PREVIEW
+// ── NEWSROOM FUNCTIONS ────────────────────────────────────────────────────────
+var newsCat = "All";
+
+function nrTypeClass(type){
+  if(type==="ar_summary") return "nr-type-ar";
+  if(type==="deal")       return "nr-type-deal";
+  if(type==="policy")     return "nr-type-policy";
+  if(type==="earnings")   return "nr-type-deal";
+  return "nr-type-market";
+}
+function nrTypeLabel(type){
+  if(type==="ar_summary") return "📋 AR Summary";
+  if(type==="deal")       return "🤝 Deal";
+  if(type==="policy")     return "📜 Policy";
+  if(type==="earnings")   return "📊 Earnings";
+  return "📰 Market News";
+}
+function nrSentimentColor(s){
+  if(s==="positive") return "#1b5e20";
+  if(s==="negative") return "#b71c1c";
+  return "#5d4037";
+}
+function nrFormatDate(d){
+  var parts = d.split("-");
+  var months = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
+  return parseInt(parts[2])+" "+months[parseInt(parts[1])-1]+" "+parts[0];
+}
+
+function nrOpenModal(id){
+  var n = NEWS.find(function(x){ return x.id===id; });
+  if(!n) return;
+  var typeClass = nrTypeClass(n.type);
+  var typeLabel = nrTypeLabel(n.type);
+  var sentColor = nrSentimentColor(n.sentiment);
+  var bodyHtml = (n.body && n.body.length)
+    ? n.body.map(function(p){ return '<p style="font-size:14px;line-height:1.75;color:var(--txt);margin:0 0 16px">'+p+'</p>'; }).join('')
+    : '<p style="font-size:14px;line-height:1.75;color:var(--mut)">'+n.summary+'</p>';
+  var entityHtml = n.entity ? '<span style="padding:3px 10px;border-radius:5px;font-size:11px;font-weight:600;background:var(--glt);color:var(--g1);border:1px solid var(--gmd)">🏢 '+n.entity+'</span>' : '';
+  document.getElementById("nr-modal-content").innerHTML =
+    '<div style="margin-bottom:16px;display:flex;gap:8px;flex-wrap:wrap;align-items:center">'
+    +'<span class="pill '+typeClass+'" style="font-size:11px;font-weight:600">'+typeLabel+'</span>'
+    +entityHtml
+    +'<span style="font-size:11px;color:'+sentColor+';font-weight:600">'+n.sentiment.charAt(0).toUpperCase()+n.sentiment.slice(1)+'</span>'
+    +'</div>'
+    +'<div style="font-size:20px;font-weight:700;line-height:1.35;color:var(--txt);margin-bottom:12px">'+n.title+'</div>'
+    +'<div style="display:flex;gap:12px;align-items:center;margin-bottom:24px;padding-bottom:16px;border-bottom:1px solid var(--bdr)">'
+    +'<span style="font-size:12px;font-weight:600;color:var(--mut)">'+n.source+'</span>'
+    +'<span style="font-size:12px;color:var(--mut);font-family:'DM Mono',monospace">'+nrFormatDate(n.date)+'</span>'
+    +'<span style="padding:2px 8px;border-radius:4px;font-size:10px;font-weight:600;background:var(--srf2);color:var(--mut)">'+n.tag+'</span>'
+    +'</div>'
+    + bodyHtml;
+  document.getElementById("nr-modal").classList.add("open");
+  document.body.style.overflow="hidden";
+}
+function nrCloseModal(){
+  document.getElementById("nr-modal").classList.remove("open");
+  document.body.style.overflow="";
+}
+document.addEventListener("keydown",function(e){ if(e.key==="Escape") nrCloseModal(); });
+
+// NEWS PREVIEW (overview panel)
 function renderNewsPreview(){
   var sorted=NEWS.slice().sort(function(a,b){return b.date.localeCompare(a.date);}).slice(0,5);
   document.getElementById("news-preview").innerHTML=sorted.map(function(n){
-    var pc=n.sentiment==="positive"?"p-pos":n.sentiment==="negative"?"p-neg":"p-neu";
-    return'<div style="padding:7px 0;border-bottom:1px solid #dde8e3">'
+    var typeClass=nrTypeClass(n.type||"market");
+    return'<div style="padding:8px 0;border-bottom:1px solid #dde8e3;cursor:pointer" onclick="showTab('news',true);setTimeout(function(){nrOpenModal('+n.id+')},200)">'
       +'<div style="display:flex;gap:6px;align-items:center;margin-bottom:3px;flex-wrap:wrap">'
-      +'<span class="pill '+pc+'">'+n.sentiment+'</span>'
-      +'<span style="font-size:10px;color:#6b8c7a;font-family:\'DM Mono\',monospace">'+n.date+'</span>'
-      +'<span class="pill p-tag">'+n.tag+'</span></div>'
+      +'<span class="pill '+typeClass+'" style="font-size:10px">'+nrTypeLabel(n.type||"market")+'</span>'
+      +'<span style="font-size:10px;color:#6b8c7a;font-family:'DM Mono',monospace">'+nrFormatDate(n.date)+'</span>'
+      +'</div>'
       +'<div style="font-size:12px;line-height:1.4;font-weight:500">'+n.title+'</div></div>';
-  }).join('')+'<div style="padding-top:9px"><a href="#" onclick="document.querySelector(\'[data-tab=news]\').click();return false" style="font-size:11px;color:#21513b;text-decoration:none;font-weight:600">View all '+NEWS.length+' articles →</a></div>';
+  }).join('')+'<div style="padding-top:9px"><a href="#" onclick="showTab('news',true);return false" style="font-size:11px;color:#21513b;text-decoration:none;font-weight:600">View all '+NEWS.length+' articles →</a></div>';
 }
 
-// NEWS FULL
+// NEWSROOM FULL PAGE
 function renderNewsCats(){
-  var cats=["All"].concat(NEWS.map(function(n){return n.category;}).filter(function(v,i,a){return a.indexOf(v)===i;}).sort());
+  var cats=["All","AR Summary","Market News","Deal","Earnings","Policy"];
   var el=document.getElementById("news-cats");
-  el.innerHTML=cats.map(function(c){return'<button class="fchip'+(newsCat===c?" on":"")+'" data-cat="'+c+'">'+c+'</button>';}).join('');
-  el.querySelectorAll(".fchip").forEach(function(b){b.addEventListener("click",function(){newsCat=b.dataset.cat;renderNewsCats();renderNewsList();});});
+  el.innerHTML=cats.map(function(c){
+    var isOn=(newsCat===c);
+    return'<button class="fchip'+(isOn?" on":"")+'" data-ncat="'+c+'" style="'+(isOn?"":"")+'">'+c+'</button>';
+  }).join('');
+  el.querySelectorAll("[data-ncat]").forEach(function(b){
+    b.addEventListener("click",function(){ newsCat=b.dataset.ncat; renderNewsCats(); renderNewsList(); });
+  });
 }
 function renderNewsList(){
-  var list=newsCat==="All"?NEWS:NEWS.filter(function(n){return n.category===newsCat;});
-  document.getElementById("news-list").innerHTML=list.slice().sort(function(a,b){return b.date.localeCompare(a.date);}).map(function(n){
-    var pc=n.sentiment==="positive"?"p-pos":n.sentiment==="negative"?"p-neg":"p-neu";
-    return'<div class="news-item" onclick="this.classList.toggle(\'open\')">'
-      +'<div class="news-meta"><span style="font-size:10px;color:#6b8c7a;font-family:\'DM Mono\',monospace">'+n.date+'</span>'
-      +'<span style="font-size:11px;color:#6b8c7a">'+n.source+'</span>'
-      +'<span class="pill '+pc+'">'+n.sentiment+'</span>'
-      +'<span class="pill p-tag">'+n.tag+'</span></div>'
-      +'<div class="news-title">'+n.title+'</div>'
-      +'<div class="news-body">'+n.summary+'</div></div>';
+  var typeMap={"AR Summary":"ar_summary","Market News":"market","Deal":"deal","Earnings":"earnings","Policy":"policy"};
+  var filterType = typeMap[newsCat]||null;
+  var list = filterType
+    ? NEWS.filter(function(n){ return n.type===filterType; })
+    : NEWS.slice();
+  list = list.slice().sort(function(a,b){ return b.date.localeCompare(a.date); });
+
+  // Featured: first item
+  var featured = list[0];
+  var rest = list.slice(1);
+
+  if(featured){
+    var tc=nrTypeClass(featured.type); var tl=nrTypeLabel(featured.type);
+    var entBadge = featured.entity ? '<span style="padding:2px 9px;border-radius:5px;font-size:11px;font-weight:600;background:rgba(255,255,255,.18);color:#fff;margin-left:4px">🏢 '+featured.entity+'</span>' : '';
+    document.getElementById("news-featured").innerHTML=
+      '<div class="nr-featured" onclick="nrOpenModal('+featured.id+')">'
+      +'<div style="display:flex;gap:8px;align-items:center;margin-bottom:14px;flex-wrap:wrap">'
+      +'<span style="padding:3px 10px;border-radius:5px;font-size:11px;font-weight:700;background:rgba(255,255,255,.22);color:#fff">'+tl+'</span>'
+      +entBadge
+      +'<span style="font-size:11px;color:rgba(255,255,255,.7);font-family:'DM Mono',monospace">'+nrFormatDate(featured.date)+'</span>'
+      +'<span style="font-size:11px;color:rgba(255,255,255,.6)">'+featured.source+'</span>'
+      +'</div>'
+      +'<div style="font-size:20px;font-weight:700;line-height:1.35;color:#fff;margin-bottom:10px;max-width:680px">'+featured.title+'</div>'
+      +'<div style="font-size:13px;color:rgba(255,255,255,.75);line-height:1.6;max-width:640px;margin-bottom:16px">'+featured.summary+'</div>'
+      +'<div style="font-size:12px;font-weight:600;color:rgba(255,255,255,.9)">Read full article →</div>'
+      +'</div>';
+  } else {
+    document.getElementById("news-featured").innerHTML='';
+  }
+
+  if(!rest.length){
+    document.getElementById("news-list").innerHTML='<div style="grid-column:1/-1;padding:40px;text-align:center;color:var(--mut);font-size:13px">No articles in this category yet.</div>';
+    return;
+  }
+  document.getElementById("news-list").innerHTML=rest.map(function(n){
+    var typeClass=nrTypeClass(n.type); var typeLabel=nrTypeLabel(n.type);
+    var sentColor=nrSentimentColor(n.sentiment);
+    var accentColor=n.type==="ar_summary"?"#1b5e20":n.type==="deal"?"#7d5200":n.type==="policy"?"#4a148c":n.type==="earnings"?"#1a5276":"#21513b";
+    var entBadge = n.entity ? '<span style="padding:2px 7px;border-radius:4px;font-size:10px;font-weight:600;background:var(--glt);color:var(--g1);border:1px solid var(--gmd)">'+n.entity+'</span>' : '';
+    return'<div class="nr-card" onclick="nrOpenModal('+n.id+')">'
+      +'<div class="nr-card-img" style="background:'+accentColor+'"></div>'
+      +'<div class="nr-card-body">'
+      +'<div class="nr-card-meta">'
+      +'<span class="pill '+typeClass+'" style="font-size:10px">'+typeLabel+'</span>'
+      +entBadge+'</div>'
+      +'<div class="nr-card-title">'+n.title+'</div>'
+      +'<div class="nr-card-teaser">'+n.summary+'</div>'
+      +'<div class="nr-card-footer">'
+      +'<div style="display:flex;gap:8px;align-items:center">'
+      +'<span style="font-size:11px;font-weight:600;color:var(--mut)">'+n.source+'</span>'
+      +'<span style="font-size:11px;color:var(--mut);font-family:'DM Mono',monospace">'+nrFormatDate(n.date)+'</span>'
+      +'</div>'
+      +'<span style="font-size:11px;font-weight:600;color:'+sentColor+'">'+n.sentiment.charAt(0).toUpperCase()+n.sentiment.slice(1)+'</span>'
+      +'</div>'
+      +'</div>'
+      +'</div>';
   }).join('');
 }
 
