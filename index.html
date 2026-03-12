@@ -81,9 +81,9 @@ html,body{background:var(--bg);color:var(--txt);font-family:'DM Sans',sans-serif
 
 /* ── PROJECTS FOR SALE ── */
 .stack-grid{display:flex;flex-direction:column;gap:4px}
-.stack-floor{display:flex;align-items:flex-start;gap:6px}
-.stack-floor-lbl{font-size:10px;font-weight:700;color:var(--mut);font-family:'DM Mono',monospace;width:86px;flex-shrink:0;text-align:right;padding-top:3px}
-.stack-floor-tag{display:block;font-size:8.5px;color:var(--mut2);font-style:italic;white-space:nowrap;font-weight:400;margin-top:2px;font-family:'DM Sans',sans-serif}
+.stack-floor{display:flex;align-items:center;gap:6px}
+.stack-floor-lbl{font-size:10px;font-weight:700;color:var(--mut);font-family:'DM Mono',monospace;width:34px;flex-shrink:0;text-align:right}
+.stack-floor-tag{font-size:9px;color:var(--mut2);font-style:italic;white-space:nowrap;flex-shrink:0;align-self:center;margin-right:4px}
 .stack-units{display:flex;gap:4px;flex-wrap:wrap}
 .sunit{border-radius:5px;border:1px solid transparent;padding:5px 8px;cursor:pointer;transition:all .12s;min-width:68px;text-align:center;position:relative}
 .sunit:hover{transform:translateY(-1px);box-shadow:0 3px 10px rgba(0,0,0,.15)}
@@ -4267,7 +4267,8 @@ function projRenderStack() {
 
     var flTag = FLOOR_LABELS[fl] ? '<span class="stack-floor-tag">' + FLOOR_LABELS[fl] + '</span>' : "";
     stackHtml += '<div class="stack-floor">' +
-      '<div class="stack-floor-lbl">L' + fl + flTag + '</div>' +
+      '<div class="stack-floor-lbl">L' + fl + '</div>' +
+      flTag +
       '<div class="stack-units">' + unitsHtml + '</div>' +
       '</div>';
 
