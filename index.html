@@ -4162,11 +4162,11 @@ function projRenderStack() {
       var price = u.list_price ? "S$" + Number(u.list_price).toLocaleString() : '<span style="color:var(--mut2)">TBC</span>';
       var psf   = u.psf ? "S$" + Number(u.psf).toFixed(0) : '<span style="color:var(--mut2)">TBC</span>';
       var special = u.special_feature ? '<span style="font-size:10px;color:var(--g1);font-weight:600">' + u.special_feature + '</span>' : '—';
-      tableHtml += '<tr onclick="projSelectUnit('' + u.unit_no + '')" style="cursor:pointer">' +
-        '<td><strong style="font-family:'DM Mono',monospace">#' + u.unit_no + '</strong></td>' +
+      tableHtml += '<tr onclick="projSelectUnit(\'' + u.unit_no + '\')" style="cursor:pointer">' +
+        '<td><strong style="font-family:\'DM Mono\',monospace">#' + u.unit_no + '</strong></td>' +
         '<td>L' + u.floor + '</td>' +
-        '<td style="text-align:right;font-family:'DM Mono',monospace">' + u.area_sqft.toLocaleString() + '</td>' +
-        '<td style="text-align:right;font-family:'DM Mono',monospace">' + (u.net_sqft ? u.net_sqft.toLocaleString() : '—') + '</td>' +
+        '<td style="text-align:right;font-family:\'DM Mono\',monospace">' + u.area_sqft.toLocaleString() + '</td>' +
+        '<td style="text-align:right;font-family:\'DM Mono\',monospace">' + (u.net_sqft ? u.net_sqft.toLocaleString() : '—') + '</td>' +
         '<td>' + (u.size_category || '—') + '</td>' +
         '<td>' + special + '</td>' +
         '<td><span class="unit-status-pill ' + pillClass + '">' + u.status + '</span></td>' +
