@@ -77,6 +77,32 @@ html,body{background:var(--bg);color:var(--txt);font-family:'DM Sans',sans-serif
 .fchip:hover{border-color:var(--g2);color:var(--g1);background:var(--glt)}
 .fchip.on{background:var(--g1);border-color:var(--g1);color:#fff;font-weight:600}
 
+/* ── PROJECTS FOR SALE ── */
+.stack-grid{display:flex;flex-direction:column;gap:4px}
+.stack-floor{display:flex;align-items:center;gap:6px}
+.stack-floor-lbl{font-size:10px;font-weight:700;color:var(--mut);font-family:'DM Mono',monospace;width:34px;flex-shrink:0;text-align:right}
+.stack-floor-tag{font-size:9px;color:var(--mut2);font-style:italic;margin-left:4px;white-space:nowrap}
+.stack-units{display:flex;gap:4px;flex-wrap:wrap}
+.sunit{border-radius:5px;border:1px solid transparent;padding:5px 8px;cursor:pointer;transition:all .12s;min-width:68px;text-align:center;position:relative}
+.sunit:hover{transform:translateY(-1px);box-shadow:0 3px 10px rgba(0,0,0,.15)}
+.sunit-no{font-size:10px;font-weight:700;font-family:'DM Mono',monospace;line-height:1}
+.sunit-sf{font-size:9px;opacity:.75;margin-top:2px;line-height:1}
+.sunit.available{background:#e8f5e9;border-color:#81c784;color:#1a6b3c}
+.sunit.reserved{background:#fff8e1;border-color:#ffc107;color:#7a5000}
+.sunit.sold{background:#fce4ec;border-color:#e57373;color:#7b1c1c}
+.sunit.withheld{background:#f5f5f5;border-color:#bdbdbd;color:#757575}
+.sunit.selected{outline:2px solid var(--g1);outline-offset:1px;transform:translateY(-1px);box-shadow:0 4px 12px rgba(26,79,156,.25)}
+.proj-kpi-row{display:grid;grid-template-columns:repeat(5,1fr);gap:8px;margin-bottom:14px}
+.proj-kpi{background:var(--srf);border:1px solid var(--bdr);border-radius:8px;padding:12px 14px;text-align:center;box-shadow:var(--shadow-sm)}
+.proj-kpi-val{font-size:22px;font-weight:700;font-family:'DM Mono',monospace;letter-spacing:-.02em}
+.proj-kpi-lbl{font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.06em;color:var(--mut);margin-top:4px}
+.unit-detail-panel{background:var(--srf);border:1px solid var(--bdr);border-radius:8px;padding:18px 20px;box-shadow:var(--shadow)}
+.unit-status-pill{display:inline-block;padding:3px 12px;border-radius:20px;font-size:11px;font-weight:700;letter-spacing:.04em;text-transform:uppercase}
+.pill-available{background:#e8f5e9;color:#1a6b3c;border:1px solid #81c784}
+.pill-reserved{background:#fff8e1;color:#7a5000;border:1px solid #ffc107}
+.pill-sold{background:#fce4ec;color:#7b1c1c;border:1px solid #e57373}
+.pill-withheld{background:#f5f5f5;color:#757575;border:1px solid #bdbdbd}
+
 /* ── SEGMENT BUTTONS (range/mode) ── */
 .range-sel{display:flex;gap:0;border:1px solid var(--bdr);border-radius:6px;overflow:hidden;background:var(--srf2)}
 .rbtn{padding:5px 12px;border:none;border-right:1px solid var(--bdr);background:transparent;color:var(--mut);font-size:11px;cursor:pointer;font-family:'DM Sans',sans-serif;transition:all .12s;font-weight:500}
@@ -232,6 +258,10 @@ html,body{background:var(--bg);color:var(--txt);font-family:'DM Sans',sans-serif
   <div class="navtab" data-tab="reit" style="display:flex;align-items:center;gap:6px">
     <span class="navtab-icon">🗂</span>Asset Directory
     <span style="font-size:9px;background:var(--g3);border-radius:3px;padding:1px 5px;font-weight:800;letter-spacing:.05em;color:#fff">NEW</span>
+  </div>
+  <div class="navtab" data-tab="projects" style="display:flex;align-items:center;gap:6px">
+    <span class="navtab-icon">🏗</span>Projects For Sale
+    <span style="font-size:9px;background:var(--amber);border-radius:3px;padding:1px 5px;font-weight:800;letter-spacing:.05em;color:#fff">BETA</span>
   </div>
 </div>
 <div id="tt"></div>
@@ -790,6 +820,112 @@ html,body{background:var(--bg);color:var(--txt);font-family:'DM Sans',sans-serif
         <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:10px;margin-bottom:18px" id="rdet-stats"></div>
         <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px" id="rdet-extra"></div>
         <div style="padding:12px 16px;background:var(--glt);border-radius:8px;font-size:11px;color:var(--mut);border-left:3px solid var(--g2);line-height:1.6" id="rdet-source"></div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- PROJECTS FOR SALE TAB -->
+  <div class="panel" id="tab-projects">
+
+    <!-- Project Banner -->
+    <div style="background:linear-gradient(135deg,var(--hdr) 0%,var(--hdr3) 100%);border-radius:8px;padding:16px 20px;margin-bottom:14px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;border:1px solid rgba(255,255,255,.06)">
+      <div style="display:flex;align-items:center;gap:12px">
+        <div style="width:42px;height:42px;background:rgba(255,255,255,.1);border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:20px;border:1px solid rgba(255,255,255,.15)">🏗</div>
+        <div>
+          <div style="color:#fff;font-size:15px;font-weight:700;letter-spacing:-.01em">One Sophia</div>
+          <div style="color:rgba(255,255,255,.45);font-size:11px;margin-top:2px">1 Sophia Road · District 9 · 99 Yrs from Dec 2023 · VP Dec 2029</div>
+          <div style="color:rgba(255,255,255,.35);font-size:10px;margin-top:2px">Sophia Commercial Pte. Ltd. · ADDP Architects / studioMilou</div>
+        </div>
+      </div>
+      <div style="display:flex;gap:6px;flex-wrap:wrap;align-items:center">
+        <a href="https://www.onesophia.com.sg" target="_blank" style="background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.15);border-radius:5px;padding:5px 12px;font-size:11px;color:rgba(255,255,255,.7);text-decoration:none;font-weight:500">🌐 Website</a>
+        <a href="https://www.onesophia.com.sg/assets/downloads/ebrochure.pdf" target="_blank" style="background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.15);border-radius:5px;padding:5px 12px;font-size:11px;color:rgba(255,255,255,.7);text-decoration:none;font-weight:500">📄 eBrochure</a>
+        <div style="background:rgba(61,166,112,.15);border:1px solid rgba(61,166,112,.3);border-radius:5px;padding:5px 12px;font-size:11px;color:#3da670;font-weight:700">● Strata Office For Sale</div>
+      </div>
+    </div>
+
+    <!-- KPI Strip -->
+    <div class="proj-kpi-row" id="proj-kpis">
+      <div class="proj-kpi"><div class="proj-kpi-val" id="pk-total">—</div><div class="proj-kpi-lbl">Total Units</div></div>
+      <div class="proj-kpi"><div class="proj-kpi-val" style="color:#1a6b3c" id="pk-avail">—</div><div class="proj-kpi-lbl">Available</div></div>
+      <div class="proj-kpi"><div class="proj-kpi-val" style="color:#7a5000" id="pk-res">—</div><div class="proj-kpi-lbl">Reserved</div></div>
+      <div class="proj-kpi"><div class="proj-kpi-val" style="color:#7b1c1c" id="pk-sold">—</div><div class="proj-kpi-lbl">Sold</div></div>
+      <div class="proj-kpi"><div class="proj-kpi-val" style="color:var(--g1)" id="pk-pct">—</div><div class="proj-kpi-lbl">% Taken Up</div></div>
+    </div>
+
+    <!-- 2-col: Stack View + Detail Panel -->
+    <div style="display:flex;gap:14px;align-items:flex-start">
+
+      <!-- LEFT: Stack + Filters -->
+      <div style="flex:1;min-width:0">
+        <div class="card" style="margin-bottom:14px">
+          <div class="card-hdr">
+            <div>
+              <div class="card-title"><span class="card-title-dot"></span>Unit Stack — Floors 3 to 13</div>
+              <div class="card-subtitle">Click any unit to view details · 122 strata office units</div>
+            </div>
+            <!-- Filters -->
+            <div style="display:flex;gap:6px;align-items:center;flex-wrap:wrap">
+              <div style="display:flex;gap:3px" id="proj-status-filter">
+                <button class="fchip on" data-sf="all" onclick="projFilter(this,'status')">All</button>
+                <button class="fchip" data-sf="available" onclick="projFilter(this,'status')" style="border-color:#81c784;color:#1a6b3c">Available</button>
+                <button class="fchip" data-sf="reserved" onclick="projFilter(this,'status')" style="border-color:#ffc107;color:#7a5000">Reserved</button>
+                <button class="fchip" data-sf="sold" onclick="projFilter(this,'status')" style="border-color:#e57373;color:#7b1c1c">Sold</button>
+              </div>
+              <div class="fbar-sep"></div>
+              <select id="proj-size-filter" class="cs-select" onchange="projRenderStack()" style="font-size:11px">
+                <option value="">All Sizes</option>
+                <option value="Small">Small (&lt;1,000 sf)</option>
+                <option value="Medium">Medium (1,000–2,000 sf)</option>
+                <option value="Large">Large (2,000–3,500 sf)</option>
+                <option value="Suite">Suite (&gt;3,500 sf)</option>
+              </select>
+            </div>
+          </div>
+
+          <!-- Legend -->
+          <div style="display:flex;gap:10px;margin-bottom:12px;flex-wrap:wrap">
+            <div style="display:flex;align-items:center;gap:5px;font-size:11px;color:var(--mut)"><div style="width:12px;height:12px;border-radius:3px;background:#e8f5e9;border:1px solid #81c784"></div>Available</div>
+            <div style="display:flex;align-items:center;gap:5px;font-size:11px;color:var(--mut)"><div style="width:12px;height:12px;border-radius:3px;background:#fff8e1;border:1px solid #ffc107"></div>Reserved</div>
+            <div style="display:flex;align-items:center;gap:5px;font-size:11px;color:var(--mut)"><div style="width:12px;height:12px;border-radius:3px;background:#fce4ec;border:1px solid #e57373"></div>Sold</div>
+            <div style="display:flex;align-items:center;gap:5px;font-size:11px;color:var(--mut)"><div style="width:12px;height:12px;border-radius:3px;background:#f5f5f5;border:1px solid #bdbdbd"></div>Withheld</div>
+          </div>
+
+          <div id="proj-stack-loading" style="text-align:center;padding:30px;color:var(--mut);font-size:13px">Loading units from database...</div>
+          <div id="proj-stack" class="stack-grid" style="display:none"></div>
+        </div>
+      </div>
+
+      <!-- RIGHT: Unit Detail Panel -->
+      <div style="width:280px;flex-shrink:0" id="proj-detail-wrap">
+        <div class="unit-detail-panel">
+          <div style="text-align:center;padding:20px 0;color:var(--mut2)">
+            <div style="font-size:28px;margin-bottom:8px">🏢</div>
+            <div style="font-size:12px;font-weight:600">Select a unit</div>
+            <div style="font-size:11px;margin-top:4px">Click any unit in the stack view to see details</div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Unit List Table -->
+    <div class="card">
+      <div class="card-hdr">
+        <div>
+          <div class="card-title"><span class="card-title-dot"></span>Unit List</div>
+          <div class="card-subtitle" id="proj-list-count">All 122 units</div>
+        </div>
+        <input id="proj-search" class="cs-input" placeholder="Search unit no..." style="width:160px;font-size:12px" oninput="projRenderStack()">
+      </div>
+      <div style="overflow-x:auto;border-radius:6px;border:1px solid var(--bdr)">
+        <table class="ptable" id="proj-unit-table">
+          <thead><tr>
+            <th>Unit</th><th>Floor</th><th>Size (sf)</th><th>Net (sf)</th><th>Size Category</th><th>Special</th><th>Status</th><th style="text-align:right">List Price</th><th style="text-align:right">PSF</th>
+          </tr></thead>
+          <tbody id="proj-unit-tbody"></tbody>
+        </table>
       </div>
     </div>
 
@@ -3903,6 +4039,227 @@ function reitClear(){
 // Trigger search on tab click
 document.querySelectorAll(".navtab").forEach(function(t){
   if(t.dataset.tab==="reit") t.addEventListener("click",function(){ reitSearch(0); });
+});
+
+// ══════════════════════════════════════════════════════════
+// PROJECTS FOR SALE — One Sophia
+// ══════════════════════════════════════════════════════════
+
+var PROJ_SUPABASE_URL = "https://xywgocvjuygudzrduvwr.supabase.co";
+var PROJ_SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inh5d2dvY3ZqdXlndWR6cmR1dndyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzI5MTE5OTgsImV4cCI6MjA4ODQ4Nzk5OH0.lGQ0utJV1E00ug-Sf0ZXh9lEYfhGHSONQpPkBblDLTM";
+
+var projUnits = [];
+var projFilters = { status: "all", size: "", search: "" };
+var projSelectedUnit = null;
+var projLoaded = false;
+
+// ── Fetch all units from Supabase ──────────────────────────
+async function projLoadUnits() {
+  if (projLoaded) return;
+  document.getElementById("proj-stack-loading").style.display = "block";
+  document.getElementById("proj-stack").style.display = "none";
+
+  var allUnits = [];
+  var pageSize = 1000;
+  var from = 0;
+  while (true) {
+    var res = await fetch(
+      PROJ_SUPABASE_URL + "/rest/v1/units?project_slug=eq.one-sophia&order=floor.asc,stack.asc&select=*",
+      {
+        headers: {
+          "apikey": PROJ_SUPABASE_KEY,
+          "Authorization": "Bearer " + PROJ_SUPABASE_KEY,
+          "Range": from + "-" + (from + pageSize - 1),
+          "Range-Unit": "items"
+        }
+      }
+    );
+    var data = await res.json();
+    if (!Array.isArray(data) || data.length === 0) break;
+    allUnits = allUnits.concat(data);
+    if (data.length < pageSize) break;
+    from += pageSize;
+  }
+
+  projUnits = allUnits;
+  projLoaded = true;
+  projUpdateKPIs();
+  projRenderStack();
+  document.getElementById("proj-stack-loading").style.display = "none";
+  document.getElementById("proj-stack").style.display = "flex";
+}
+
+// ── KPI strip ─────────────────────────────────────────────
+function projUpdateKPIs() {
+  var total = projUnits.length;
+  var avail = projUnits.filter(function(u){ return u.status === "available"; }).length;
+  var res   = projUnits.filter(function(u){ return u.status === "reserved"; }).length;
+  var sold  = projUnits.filter(function(u){ return u.status === "sold"; }).length;
+  var taken = res + sold;
+  var pct   = total > 0 ? Math.round(taken / total * 100) : 0;
+  document.getElementById("pk-total").textContent = total;
+  document.getElementById("pk-avail").textContent = avail;
+  document.getElementById("pk-res").textContent   = res;
+  document.getElementById("pk-sold").textContent  = sold;
+  document.getElementById("pk-pct").textContent   = pct + "%";
+}
+
+// ── Render stack view ──────────────────────────────────────
+function projRenderStack() {
+  var statusF = projFilters.status;
+  var sizeF   = document.getElementById("proj-size-filter").value;
+  var search  = document.getElementById("proj-search").value.trim().toLowerCase();
+
+  // Get unique floors descending (top floor at top = realistic building view)
+  var floors = [...new Set(projUnits.map(function(u){ return u.floor; }))].sort(function(a,b){ return b-a; });
+
+  var stackEl = document.getElementById("proj-stack");
+  var tbodyEl = document.getElementById("proj-unit-tbody");
+  var stackHtml = "";
+  var tableHtml = "";
+  var visCount = 0;
+
+  var FLOOR_LABELS = { 3:"G+3 · Gardens", 8:"L8 · Sky Amenities", 13:"L13 · Top Floor" };
+
+  floors.forEach(function(fl) {
+    var flUnits = projUnits.filter(function(u){ return u.floor === fl; });
+
+    // Filter for table (all units on this floor matching filters)
+    var filtered = flUnits.filter(function(u) {
+      if (statusF !== "all" && u.status !== statusF) return false;
+      if (sizeF && u.size_category !== sizeF) return false;
+      if (search && u.unit_no.toLowerCase().indexOf(search) === -1) return false;
+      return true;
+    });
+
+    visCount += filtered.length;
+
+    // Stack row — show all units, dim filtered-out ones
+    var unitsHtml = "";
+    flUnits.forEach(function(u) {
+      var dimmed = false;
+      if (statusF !== "all" && u.status !== statusF) dimmed = true;
+      if (sizeF && u.size_category !== sizeF) dimmed = true;
+      if (search && u.unit_no.toLowerCase().indexOf(search) === -1) dimmed = true;
+      var sel = projSelectedUnit && projSelectedUnit.unit_no === u.unit_no ? " selected" : "";
+      var opacity = dimmed ? "opacity:.2;pointer-events:none;" : "";
+      unitsHtml += '<div class="sunit ' + u.status + sel + '" style="' + opacity + '" ' +
+        'onclick="projSelectUnit('' + u.unit_no + '')" title="#' + u.unit_no + ' · ' + u.area_sqft + ' sf · ' + u.size_category + '">' +
+        '<div class="sunit-no">' + u.unit_no + '</div>' +
+        '<div class="sunit-sf">' + u.area_sqft.toLocaleString() + ' sf</div>' +
+        '</div>';
+    });
+
+    var flTag = FLOOR_LABELS[fl] ? '<span class="stack-floor-tag">' + FLOOR_LABELS[fl] + '</span>' : "";
+    stackHtml += '<div class="stack-floor">' +
+      '<div class="stack-floor-lbl">L' + fl + flTag + '</div>' +
+      '<div class="stack-units">' + unitsHtml + '</div>' +
+      '</div>';
+
+    // Table rows
+    filtered.forEach(function(u) {
+      var pillClass = "pill-" + u.status;
+      var price = u.list_price ? "S$" + Number(u.list_price).toLocaleString() : '<span style="color:var(--mut2)">TBC</span>';
+      var psf   = u.psf ? "S$" + Number(u.psf).toFixed(0) : '<span style="color:var(--mut2)">TBC</span>';
+      var special = u.special_feature ? '<span style="font-size:10px;color:var(--g1);font-weight:600">' + u.special_feature + '</span>' : '—';
+      tableHtml += '<tr onclick="projSelectUnit('' + u.unit_no + '')" style="cursor:pointer">' +
+        '<td><strong style="font-family:'DM Mono',monospace">#' + u.unit_no + '</strong></td>' +
+        '<td>L' + u.floor + '</td>' +
+        '<td style="text-align:right;font-family:'DM Mono',monospace">' + u.area_sqft.toLocaleString() + '</td>' +
+        '<td style="text-align:right;font-family:'DM Mono',monospace">' + (u.net_sqft ? u.net_sqft.toLocaleString() : '—') + '</td>' +
+        '<td>' + (u.size_category || '—') + '</td>' +
+        '<td>' + special + '</td>' +
+        '<td><span class="unit-status-pill ' + pillClass + '">' + u.status + '</span></td>' +
+        '<td style="text-align:right">' + price + '</td>' +
+        '<td style="text-align:right">' + psf + '</td>' +
+        '</tr>';
+    });
+  });
+
+  stackEl.innerHTML = stackHtml;
+  tbodyEl.innerHTML = tableHtml || '<tr><td colspan="9" style="text-align:center;color:var(--mut);padding:20px">No units match current filters.</td></tr>';
+  document.getElementById("proj-list-count").textContent = visCount + " unit" + (visCount !== 1 ? "s" : "") + " shown";
+}
+
+// ── Select a unit → show detail panel ─────────────────────
+function projSelectUnit(unitNo) {
+  var u = projUnits.find(function(x){ return x.unit_no === unitNo; });
+  if (!u) return;
+  projSelectedUnit = u;
+  projRenderStack(); // re-render to update selected highlight
+
+  var pillClass = "pill-" + u.status;
+  var price = u.list_price ? "S$" + Number(u.list_price).toLocaleString() : "TBC";
+  var psf   = u.psf ? "S$" + Number(u.psf).toFixed(0) + " psf" : "TBC";
+  var soldInfo = "";
+  if (u.status === "sold" && u.sold_price) {
+    soldInfo = '<div style="margin-top:10px;padding:10px;background:#fce4ec;border-radius:6px;border:1px solid #e57373">' +
+      '<div style="font-size:10px;font-weight:700;color:#7b1c1c;text-transform:uppercase;margin-bottom:6px">Transacted</div>' +
+      '<div style="font-size:13px;font-weight:700;color:#7b1c1c">S$' + Number(u.sold_price).toLocaleString() + '</div>' +
+      (u.sold_psf ? '<div style="font-size:11px;color:#9b2c2c">S$' + Number(u.sold_psf).toFixed(0) + ' psf</div>' : '') +
+      (u.sold_date ? '<div style="font-size:10px;color:#9b2c2c;margin-top:2px">' + u.sold_date + '</div>' : '') +
+      '</div>';
+  }
+
+  var specBadge = u.special_feature ?
+    '<div style="margin-top:6px"><span style="font-size:10px;background:var(--glt);color:var(--g1);border:1px solid var(--gmd);border-radius:4px;padding:2px 8px;font-weight:600">' + u.special_feature + '</span></div>' : '';
+
+  document.getElementById("proj-detail-wrap").innerHTML =
+    '<div class="unit-detail-panel">' +
+      '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;padding-bottom:12px;border-bottom:1px solid var(--srf3)">' +
+        '<div>' +
+          '<div style="font-size:18px;font-weight:700;font-family:'DM Mono',monospace;color:var(--txt)">#' + u.unit_no + '</div>' +
+          '<div style="font-size:11px;color:var(--mut);margin-top:2px">Level ' + u.floor + ' · One Sophia</div>' +
+          specBadge +
+        '</div>' +
+        '<span class="unit-status-pill ' + pillClass + '">' + u.status + '</span>' +
+      '</div>' +
+      '<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:12px">' +
+        '<div style="background:var(--srf2);border-radius:6px;padding:10px;border:1px solid var(--bdr)">' +
+          '<div style="font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--mut);margin-bottom:4px">Gross Area</div>' +
+          '<div style="font-size:15px;font-weight:700;font-family:'DM Mono',monospace">' + u.area_sqft.toLocaleString() + ' sf</div>' +
+          '<div style="font-size:10px;color:var(--mut2)">' + u.area_sqm + ' sqm</div>' +
+        '</div>' +
+        '<div style="background:var(--srf2);border-radius:6px;padding:10px;border:1px solid var(--bdr)">' +
+          '<div style="font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--mut);margin-bottom:4px">Net Area</div>' +
+          '<div style="font-size:15px;font-weight:700;font-family:'DM Mono',monospace">' + (u.net_sqft ? u.net_sqft.toLocaleString() : '—') + ' sf</div>' +
+          '<div style="font-size:10px;color:var(--mut2)">Excl. A/C ledge ' + (u.ac_ledge_sqm || 3) + ' sqm</div>' +
+        '</div>' +
+        '<div style="background:var(--srf2);border-radius:6px;padding:10px;border:1px solid var(--bdr)">' +
+          '<div style="font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--mut);margin-bottom:4px">List Price</div>' +
+          '<div style="font-size:14px;font-weight:700;font-family:'DM Mono',monospace;color:var(--g1)">' + price + '</div>' +
+        '</div>' +
+        '<div style="background:var(--srf2);border-radius:6px;padding:10px;border:1px solid var(--bdr)">' +
+          '<div style="font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--mut);margin-bottom:4px">PSF</div>' +
+          '<div style="font-size:14px;font-weight:700;font-family:'DM Mono',monospace;color:var(--g1)">' + psf + '</div>' +
+        '</div>' +
+      '</div>' +
+      '<div style="font-size:11px;color:var(--mut);padding:8px 10px;background:var(--srf2);border-radius:5px;border:1px solid var(--bdr)">' +
+        '<span style="font-weight:600">Size:</span> ' + (u.size_category || '—') + ' · ' +
+        '<span style="font-weight:600">Tenure:</span> 99 Yrs<br>' +
+        '<span style="font-weight:600">VP:</span> Dec 2029 · <span style="font-weight:600">Legal:</span> Dec 2032' +
+      '</div>' +
+      soldInfo +
+    '</div>';
+}
+
+// ── Filter handler ─────────────────────────────────────────
+function projFilter(btn, type) {
+  if (type === "status") {
+    document.querySelectorAll("#proj-status-filter .fchip").forEach(function(b){ b.classList.remove("on"); });
+    btn.classList.add("on");
+    projFilters.status = btn.dataset.sf;
+  }
+  projRenderStack();
+}
+
+// ── Load when tab is clicked ───────────────────────────────
+document.querySelectorAll(".navtab").forEach(function(t) {
+  t.addEventListener("click", function() {
+    if (t.dataset.tab === "projects" && !projLoaded) {
+      projLoadUnits();
+    }
+  });
 });
 
 </script>
