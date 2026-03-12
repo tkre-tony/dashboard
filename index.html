@@ -82,18 +82,17 @@ html,body{background:var(--bg);color:var(--txt);font-family:'DM Sans',sans-serif
 /* ── PROJECTS FOR SALE ── */
 .stack-grid{display:flex;flex-direction:column;gap:4px}
 .stack-floor{display:flex;align-items:flex-start;gap:6px}
-.stack-floor-lbl{display:flex;flex-direction:column;align-items:flex-end;width:80px;flex-shrink:0;padding-top:4px}
-.stack-floor-lbl-num{font-size:10px;font-weight:700;color:var(--mut);font-family:'DM Mono',monospace;line-height:1}
-.stack-floor-tag{font-size:8px;color:var(--mut2);font-style:italic;white-space:nowrap;font-weight:400;margin-top:2px;font-family:'DM Sans',sans-serif;line-height:1}
+.stack-floor-lbl{font-size:10px;font-weight:700;color:var(--mut);font-family:'DM Mono',monospace;width:86px;flex-shrink:0;text-align:right;padding-top:3px}
+.stack-floor-tag{display:block;font-size:8.5px;color:var(--mut2);font-style:italic;white-space:nowrap;font-weight:400;margin-top:2px;font-family:'DM Sans',sans-serif}
 .stack-units{display:flex;gap:4px;flex-wrap:wrap}
 .sunit{border-radius:5px;border:1px solid transparent;padding:5px 8px;cursor:pointer;transition:all .12s;min-width:68px;text-align:center;position:relative}
 .sunit:hover{transform:translateY(-1px);box-shadow:0 3px 10px rgba(0,0,0,.15)}
 .sunit-no{font-size:10px;font-weight:700;font-family:'DM Mono',monospace;line-height:1}
 .sunit-sf{font-size:9px;opacity:.75;margin-top:2px;line-height:1}
 .sunit.available{background:#e8f5e9;border-color:#81c784;color:#1a6b3c}
-.sunit.reserved{background:#e8eaf6;border-color:#7986cb;color:#283593}
+.sunit.reserved{background:#fff8e1;border-color:#ffc107;color:#7a5000}
 .sunit.sold{background:#fce4ec;border-color:#e57373;color:#7b1c1c}
-.sunit.withheld{background:#f3e5f5;border-color:#ba68c8;color:#6a1b9a}
+.sunit.withheld{background:#f5f5f5;border-color:#bdbdbd;color:#757575}
 .sunit.selected{outline:2px solid var(--g1);outline-offset:1px;transform:translateY(-1px);box-shadow:0 4px 12px rgba(26,79,156,.25)}
 .sunit.sold-nocav{background:#fff0f0;border-color:#f4a0a0;color:#9b2c2c}
 .sunit-cbadge{position:absolute;top:2px;right:3px;font-size:7px;font-weight:800;color:#1a6b3c;font-family:'DM Mono',monospace;line-height:1}
@@ -106,9 +105,9 @@ html,body{background:var(--bg);color:var(--txt);font-family:'DM Sans',sans-serif
 .unit-detail-panel{background:var(--srf);border:1px solid var(--bdr);border-radius:8px;padding:18px 20px;box-shadow:var(--shadow)}
 .unit-status-pill{display:inline-block;padding:3px 12px;border-radius:20px;font-size:11px;font-weight:700;letter-spacing:.04em;text-transform:uppercase}
 .pill-available{background:#e8f5e9;color:#1a6b3c;border:1px solid #81c784}
-.pill-reserved{background:#e8eaf6;color:#283593;border:1px solid #7986cb}
+.pill-reserved{background:#fff8e1;color:#7a5000;border:1px solid #ffc107}
 .pill-sold{background:#fce4ec;color:#7b1c1c;border:1px solid #e57373}
-.pill-withheld{background:#f3e5f5;color:#6a1b9a;border:1px solid #ba68c8}
+.pill-withheld{background:#f5f5f5;color:#757575;border:1px solid #bdbdbd}
 
 /* ── SEGMENT BUTTONS (range/mode) ── */
 .range-sel{display:flex;gap:0;border:1px solid var(--bdr);border-radius:6px;overflow:hidden;background:var(--srf2)}
@@ -856,9 +855,9 @@ html,body{background:var(--bg);color:var(--txt);font-family:'DM Sans',sans-serif
     <div class="proj-kpi-row" id="proj-kpis" style="grid-template-columns:repeat(6,1fr)">
       <div class="proj-kpi"><div class="proj-kpi-val" id="pk-total">—</div><div class="proj-kpi-lbl">Total Units</div></div>
       <div class="proj-kpi"><div class="proj-kpi-val" style="color:#1a6b3c" id="pk-avail">—</div><div class="proj-kpi-lbl">Available</div></div>
-      <div class="proj-kpi"><div class="proj-kpi-val" style="color:#283593" id="pk-res">—</div><div class="proj-kpi-lbl">Reserved</div></div>
+      <div class="proj-kpi"><div class="proj-kpi-val" style="color:#7a5000" id="pk-res">—</div><div class="proj-kpi-lbl">Reserved</div></div>
       <div class="proj-kpi"><div class="proj-kpi-val" style="color:#7b1c1c" id="pk-sold">—</div><div class="proj-kpi-lbl">Sold</div></div>
-      <div class="proj-kpi"><div class="proj-kpi-val" style="color:#6a1b9a" id="pk-withheld">—</div><div class="proj-kpi-lbl">Withheld</div></div>
+      <div class="proj-kpi"><div class="proj-kpi-val" style="color:#757575" id="pk-withheld">—</div><div class="proj-kpi-lbl">Withheld</div></div>
       <div class="proj-kpi"><div class="proj-kpi-val" style="color:var(--g1)" id="pk-pct">—</div><div class="proj-kpi-lbl">% Taken Up</div></div>
     </div>
 
@@ -880,9 +879,9 @@ html,body{background:var(--bg);color:var(--txt);font-family:'DM Sans',sans-serif
               <div style="display:flex;gap:3px" id="proj-status-filter">
                 <button class="fchip on" data-sf="all" onclick="projFilter(this,'status')">All</button>
                 <button class="fchip" data-sf="available" onclick="projFilter(this,'status')" style="border-color:#81c784;color:#1a6b3c">Available</button>
-                <button class="fchip" data-sf="reserved" onclick="projFilter(this,'status')" style="border-color:#7986cb;color:#283593">Reserved</button>
+                <button class="fchip" data-sf="reserved" onclick="projFilter(this,'status')" style="border-color:#ffc107;color:#7a5000">Reserved</button>
                 <button class="fchip" data-sf="sold" onclick="projFilter(this,'status')" style="border-color:#e57373;color:#7b1c1c">Sold</button>
-                <button class="fchip" data-sf="withheld" onclick="projFilter(this,'status')" style="border-color:#ba68c8;color:#6a1b9a">Withheld</button>
+                <button class="fchip" data-sf="withheld" onclick="projFilter(this,'status')" style="border-color:#bdbdbd;color:#757575">Withheld</button>
               </div>
               <div class="fbar-sep"></div>
               <select id="proj-size-filter" class="cs-select" onchange="projRenderStack()" style="font-size:11px">
@@ -898,9 +897,9 @@ html,body{background:var(--bg);color:var(--txt);font-family:'DM Sans',sans-serif
           <!-- Legend -->
           <div style="display:flex;gap:10px;margin-bottom:12px;flex-wrap:wrap">
             <div style="display:flex;align-items:center;gap:5px;font-size:11px;color:var(--mut)"><div style="width:12px;height:12px;border-radius:3px;background:#e8f5e9;border:1px solid #81c784"></div>Available</div>
-            <div style="display:flex;align-items:center;gap:5px;font-size:11px;color:var(--mut)"><div style="width:12px;height:12px;border-radius:3px;background:#e8eaf6;border:1px solid #7986cb"></div>Reserved</div>
+            <div style="display:flex;align-items:center;gap:5px;font-size:11px;color:var(--mut)"><div style="width:12px;height:12px;border-radius:3px;background:#fff8e1;border:1px solid #ffc107"></div>Reserved</div>
             <div style="display:flex;align-items:center;gap:5px;font-size:11px;color:var(--mut)"><div style="width:12px;height:12px;border-radius:3px;background:#fce4ec;border:1px solid #e57373"></div>Sold</div>
-            <div style="display:flex;align-items:center;gap:5px;font-size:11px;color:var(--mut)"><div style="width:12px;height:12px;border-radius:3px;background:#f3e5f5;border:1px solid #ba68c8"></div>Withheld</div>
+            <div style="display:flex;align-items:center;gap:5px;font-size:11px;color:var(--mut)"><div style="width:12px;height:12px;border-radius:3px;background:#f5f5f5;border:1px solid #bdbdbd"></div>Withheld</div>
           </div>
 
           <div id="proj-stack-loading" style="text-align:center;padding:30px;color:var(--mut);font-size:13px">Loading units from database...</div>
@@ -4268,7 +4267,7 @@ function projRenderStack() {
 
     var flTag = FLOOR_LABELS[fl] ? '<span class="stack-floor-tag">' + FLOOR_LABELS[fl] + '</span>' : "";
     stackHtml += '<div class="stack-floor">' +
-      '<div class="stack-floor-lbl"><span class="stack-floor-lbl-num">L' + fl + '</span>' + flTag + '</div>' +
+      '<div class="stack-floor-lbl">L' + fl + flTag + '</div>' +
       '<div class="stack-units">' + unitsHtml + '</div>' +
       '</div>';
 
