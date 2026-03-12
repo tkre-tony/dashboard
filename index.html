@@ -931,6 +931,44 @@ html,body{background:var(--bg);color:var(--txt);font-family:'DM Sans',sans-serif
       </div>
     </div>
 
+    <!-- ── One Sophia · URA Caveats & Sales Analysis ── -->
+    <div class="card" style="margin-top:14px" id="sophia-caveats-card">
+      <div class="card-hdr" style="flex-wrap:wrap;gap:8px">
+        <div>
+          <div class="card-title"><span class="card-title-dot"></span>One Sophia — URA Caveats &amp; Sales Analysis</div>
+          <div class="card-subtitle" id="sophia-caveat-sub">Loading from URA database&hellip;</div>
+        </div>
+      </div>
+
+      <!-- Bar chart + Pie chart (side by side) -->
+      <div style="display:flex;gap:14px;margin-bottom:14px;flex-wrap:wrap;align-items:flex-start">
+
+        <!-- Monthly bar chart -->
+        <div style="flex:1;min-width:300px">
+          <div style="font-size:10px;font-weight:700;color:var(--mut);text-transform:uppercase;letter-spacing:.06em;margin-bottom:8px">Monthly Caveats Lodged &amp; Avg PSF</div>
+          <div id="sophia-bar-wrap" style="background:var(--srf2);border-radius:6px;border:1px solid var(--bdr);padding:14px 10px 8px;min-height:224px;position:relative">
+            <div style="text-align:center;padding:70px 0;color:var(--mut);font-size:12px" id="sophia-bar-msg">Loading&hellip;</div>
+          </div>
+        </div>
+
+        <!-- Donut take-up chart -->
+        <div style="width:256px;flex-shrink:0">
+          <div style="font-size:10px;font-weight:700;color:var(--mut);text-transform:uppercase;letter-spacing:.06em;margin-bottom:8px">Inventory Take-Up</div>
+          <div id="sophia-pie-wrap" style="background:var(--srf2);border-radius:6px;border:1px solid var(--bdr);padding:14px;min-height:224px;display:flex;align-items:center;justify-content:center">
+            <div style="text-align:center;color:var(--mut);font-size:12px">Loading&hellip;</div>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Transaction list -->
+      <div style="font-size:10px;font-weight:700;color:var(--mut);text-transform:uppercase;letter-spacing:.06em;margin-bottom:8px">URA Lodged Caveats</div>
+      <div style="overflow-x:auto;border-radius:6px;border:1px solid var(--bdr)" id="sophia-txn-wrap">
+        <div style="text-align:center;padding:24px;color:var(--mut);font-size:12px">Loading&hellip;</div>
+      </div>
+    </div>
+
+
   </div>
 
 </div>
@@ -4079,17 +4117,15 @@ async function projLoadUnits() {
     var pageSize = 1000;
     var from = 0;
     while (true) {
-      var res = await fetch(
-        PROJ_SUPABASE_URL + "/rest/v1/units?project_slug=eq.one-sophia&order=floor.asc,stack.asc&select=*",
-        {
-          headers: {
-            "apikey": PROJ_SUPABASE_KEY,
-            "Authorization": "Bearer " + PROJ_SUPABASE_KEY,
-            "Range": from + "-" + (from + pageSize - 1),
-            "Range-Unit": "items"
-          }
+      var queryUrl = PROJ_SUPABASE_URL + "/rest/v1/units?project_slug=eq.one-sophia&order=floor.asc,stack.asc&select=*";
+    var res = await fetch(queryUrl, {
+        headers: {
+          "apikey": PROJ_SUPABASE_KEY,
+          "Authorization": "Bearer " + PROJ_SUPABASE_KEY,
+          "Range": from + "-" + (from + pageSize - 1),
+          "Range-Unit": "items"
         }
-      );
+      });
       if (!res.ok) {
         loadEl.textContent = "Error loading units (HTTP " + res.status + "). Click Refresh to retry.";
         loadEl.style.color = "var(--red)";
@@ -4103,9 +4139,28 @@ async function projLoadUnits() {
     }
 
     if (allUnits.length === 0) {
-      loadEl.textContent = "No units found. Check Supabase table or project_slug value.";
-      loadEl.style.color = "var(--amber)";
-      return;
+      // Fallback: try without project_slug filter (catches slug mismatch)
+      loadEl.textContent = "Retrying without slug filter...";
+      try {
+        var fbRes = await fetch(
+          PROJ_SUPABASE_URL + "/rest/v1/units?order=floor.asc,stack.asc&select=*&limit=200",
+          { headers: { "apikey": PROJ_SUPABASE_KEY, "Authorization": "Bearer " + PROJ_SUPABASE_KEY } }
+        );
+        var fbData = fbRes.ok ? await fbRes.json() : [];
+        console.log("[ATLAS units fallback] rows returned:", Array.isArray(fbData) ? fbData.length : 0,
+          fbData.length > 0 ? "slug values found: " + [...new Set(fbData.map(function(u){return u.project_slug;}))].join(", ") : "table appears empty");
+        if (Array.isArray(fbData) && fbData.length > 0) {
+          allUnits = fbData;
+        } else {
+          loadEl.textContent = "No units found even without filter. Check Supabase — open DevTools Console for details.";
+          loadEl.style.color = "var(--amber)";
+          return;
+        }
+      } catch(fe) {
+        loadEl.textContent = "No units found. Check Supabase table. (" + fe.message + ")";
+        loadEl.style.color = "var(--amber)";
+        return;
+      }
     }
 
     projUnits = allUnits;
@@ -4287,11 +4342,269 @@ function projFilter(btn, type) {
 // ── Load when tab is clicked ───────────────────────────────
 document.querySelectorAll(".navtab").forEach(function(t) {
   t.addEventListener("click", function() {
-    if (t.dataset.tab === "projects" && !projLoaded) {
-      projLoadUnits();
+    if (t.dataset.tab === "projects") {
+      if (!projLoaded) projLoadUnits();
+      sophiaLoadCaveats();
     }
   });
 });
+
+
+// ── One Sophia · URA Caveats ──────────────────────────────────────────
+var sophiaCaveats = [];
+var sophiaCaveatsLoaded = false;
+
+async function sophiaLoadCaveats() {
+  if (sophiaCaveatsLoaded) return;
+  var subEl = document.getElementById("sophia-caveat-sub");
+  var barMsg = document.getElementById("sophia-bar-msg");
+  try {
+    // Query transactions: project_name OR address contains "sophia", since 2024
+    var url = SB_URL +
+      "/rest/v1/transactions" +
+      "?or=(project_name.ilike.*sophia*,address.ilike.*sophia*)" +
+      "&sale_date=gte.2024-01-01" +
+      "&select=sale_date,project_name,address,transacted_price,area_sqft,unit_price_psf,type_of_sale,tenure,property_type" +
+      "&order=sale_date.asc&limit=1000";
+
+    var res = await fetch(url, {
+      headers: { "apikey": SB_KEY, "Authorization": "Bearer " + SB_KEY }
+    });
+    if (!res.ok) {
+      if (subEl) subEl.textContent = "Error fetching caveats (HTTP " + res.status + ")";
+      if (barMsg) { barMsg.textContent = "Error " + res.status; barMsg.style.color = "var(--red)"; }
+      return;
+    }
+    var data = await res.json();
+    // Keep strata office / commercial only — exclude residential Sophia developments
+    var filtered = Array.isArray(data) ? data.filter(function(t) {
+      var pt = (t.property_type || "").toLowerCase();
+      // Include: office, strata office, commercial. Exclude: residential, hotel, serviced
+      return pt === "" || pt.indexOf("office") > -1 || pt.indexOf("commercial") > -1 || pt.indexOf("strata") > -1;
+    }) : [];
+    sophiaCaveats = filtered;
+    sophiaCaveatsLoaded = true;
+    sophiaRenderAll();
+  } catch(e) {
+    if (subEl) subEl.textContent = "Failed to load: " + e.message;
+    if (barMsg) { barMsg.textContent = "Network error. " + e.message; barMsg.style.display = "block"; }
+  }
+}
+
+function sophiaRenderAll() {
+  var data = sophiaCaveats;
+  var subEl = document.getElementById("sophia-caveat-sub");
+  if (subEl) {
+    subEl.textContent = data.length > 0
+      ? data.length + " URA caveats lodged \u00b7 " + (function(){
+          var vals = data.filter(function(t){ return t.transacted_price; });
+          var tot = vals.reduce(function(s,t){ return s + t.transacted_price; }, 0);
+          return "Total S$" + (tot/1e6).toFixed(1) + "M";
+        }())
+      : "No caveats found in URA database yet \u2014 typically lodged 1\u20134 weeks after option exercise";
+  }
+  sophiaRenderBarChart(data);
+  sophiaRenderPie();
+  sophiaRenderTxnList(data);
+}
+
+// ── Bar chart ─────────────────────────────────────────────────────────
+function sophiaRenderBarChart(data) {
+  var wrap = document.getElementById("sophia-bar-wrap");
+  var msg  = document.getElementById("sophia-bar-msg");
+  if (!wrap) return;
+
+  if (data.length === 0) {
+    if (msg) { msg.textContent = "No URA caveats lodged yet."; msg.style.display = "block"; }
+    return;
+  }
+  if (msg) msg.style.display = "none";
+
+  // Group by month
+  var monthly = {};
+  data.forEach(function(t) {
+    var mo = t.sale_date ? t.sale_date.slice(0, 7) : null;
+    if (!mo) return;
+    if (!monthly[mo]) monthly[mo] = { count: 0, psfs: [], totalVal: 0 };
+    monthly[mo].count++;
+    if (t.unit_price_psf && t.unit_price_psf > 0) monthly[mo].psfs.push(t.unit_price_psf);
+    if (t.transacted_price) monthly[mo].totalVal += t.transacted_price;
+  });
+
+  var months = Object.keys(monthly).sort();
+  var maxCount = Math.max.apply(null, months.map(function(m){ return monthly[m].count; }).concat([1]));
+
+  var W = wrap.clientWidth || 560;
+  var H = 200;
+  var P = { t: 30, r: 12, b: 32, l: 30 };
+  var cW = W - P.l - P.r;
+  var cH = H - P.t - P.b;
+  var bGW = cW / months.length;
+  var bW = Math.max(10, Math.min(44, bGW * 0.62));
+
+  var MONAMES = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
+
+  var svg = '<svg width="' + W + '" height="' + H + '" viewBox="0 0 ' + W + ' ' + H + '" style="width:100%;overflow:visible">';
+
+  // Background grid
+  for (var k = 1; k <= 4; k++) {
+    var tv = k * maxCount / 4;
+    var ty = P.t + cH - (tv / maxCount) * cH;
+    svg += '<line x1="' + P.l + '" x2="' + (P.l+cW) + '" y1="' + ty.toFixed(1) + '" y2="' + ty.toFixed(1) + '" stroke="#d4e0ee" stroke-width="1" stroke-dasharray="3,3"/>';
+    svg += '<text x="' + (P.l-4) + '" y="' + (ty+3.5).toFixed(1) + '" text-anchor="end" fill="#8aa3c0" font-size="9" font-family="DM Mono,monospace">' + Math.round(tv) + '</text>';
+  }
+  // Zero line
+  svg += '<line x1="' + P.l + '" x2="' + (P.l+cW) + '" y1="' + (P.t+cH) + '" y2="' + (P.t+cH) + '" stroke="#b8cfe8" stroke-width="1.5"/>';
+
+  months.forEach(function(mo, i) {
+    var d = monthly[mo];
+    var avgPsf = d.psfs.length > 0 ? Math.round(d.psfs.reduce(function(s,v){return s+v;},0) / d.psfs.length) : null;
+    var bh = Math.max((d.count / maxCount) * cH, 2);
+    var bx = P.l + i * bGW + (bGW - bW) / 2;
+    var by = P.t + cH - bh;
+
+    // Bar gradient: darker at bottom
+    var barId = "sb" + i;
+    svg += '<defs><linearGradient id="' + barId + '" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#2563bc"/><stop offset="100%" stop-color="#1a4f9c"/></linearGradient></defs>';
+    svg += '<rect x="' + bx.toFixed(1) + '" y="' + by.toFixed(1) + '" width="' + bW.toFixed(1) + '" height="' + bh.toFixed(1) + '" fill="url(#' + barId + ')" rx="3"/>';
+
+    // Count label inside bar (if tall enough)
+    if (bh > 18) {
+      svg += '<text x="' + (bx + bW/2).toFixed(1) + '" y="' + (by + 14).toFixed(1) + '" text-anchor="middle" fill="white" font-size="10" font-weight="700" font-family="DM Mono,monospace">' + d.count + '</text>';
+    } else if (bh > 4) {
+      // Short bar: count above
+      svg += '<text x="' + (bx + bW/2).toFixed(1) + '" y="' + (by - 4).toFixed(1) + '" text-anchor="middle" fill="var(--g1)" font-size="9" font-weight="700" font-family="DM Mono,monospace">' + d.count + '</text>';
+    }
+
+    // PSF label above bar (in blue)
+    if (avgPsf) {
+      svg += '<text x="' + (bx + bW/2).toFixed(1) + '" y="' + (by - (bh > 18 ? 6 : 18)).toFixed(1) + '" text-anchor="middle" fill="#1a4f9c" font-size="8.5" font-weight="600" font-family="DM Mono,monospace">S$' + avgPsf.toLocaleString() + '</text>';
+    }
+
+    // X-axis month label
+    var step = months.length <= 12 ? 1 : months.length <= 18 ? 2 : 3;
+    if (i % step === 0 || i === months.length - 1) {
+      var pts = mo.split("-");
+      var moStr = MONAMES[parseInt(pts[1]) - 1] + " '" + pts[0].slice(2);
+      svg += '<text x="' + (bx + bW/2).toFixed(1) + '" y="' + (P.t + cH + 14).toFixed(1) + '" text-anchor="middle" fill="#8aa3c0" font-size="9" font-family="DM Sans">' + moStr + '</text>';
+    }
+  });
+
+  svg += '</svg>';
+  wrap.innerHTML = svg + (msg ? '<div id="sophia-bar-msg" style="display:none"></div>' : '');
+}
+
+// ── Donut pie ─────────────────────────────────────────────────────────
+function sophiaRenderPie() {
+  var wrap = document.getElementById("sophia-pie-wrap");
+  if (!wrap) return;
+
+  // Use projUnits if loaded, else static fallback from handoff
+  var segs;
+  if (projUnits.length > 0) {
+    var counts = { available:0, sold:0, reserved:0, withheld:0 };
+    projUnits.forEach(function(u){ if (counts[u.status] !== undefined) counts[u.status]++; });
+    segs = [
+      { label:"Available", count:counts.available,  color:"#81c784", txt:"#1a6b3c" },
+      { label:"Sold",      count:counts.sold,        color:"#e57373", txt:"#7b1c1c" },
+      { label:"Reserved",  count:counts.reserved,    color:"#ffc107", txt:"#7a5000" },
+      { label:"Withheld",  count:counts.withheld,    color:"#bdbdbd", txt:"#5a5a5a" }
+    ].filter(function(s){ return s.count > 0; });
+  } else {
+    segs = [
+      { label:"Available", count:77, color:"#81c784", txt:"#1a6b3c" },
+      { label:"Sold",      count:38, color:"#e57373", txt:"#7b1c1c" },
+      { label:"Withheld",  count:7,  color:"#bdbdbd", txt:"#5a5a5a" }
+    ];
+  }
+  var total = segs.reduce(function(s,sg){ return s+sg.count; }, 0);
+  if (total === 0) { wrap.innerHTML = '<div style="text-align:center;padding:40px;color:var(--mut);font-size:12px">No data.</div>'; return; }
+
+  var W = 240, H = 210;
+  var cx = 90, cy = 95, R = 70, ri = 42;
+
+  var svg = '<svg width="' + W + '" height="' + H + '" viewBox="0 0 ' + W + ' ' + H + '" style="width:100%">';
+
+  var angle = -Math.PI / 2;
+  segs.forEach(function(seg) {
+    if (seg.count === 0) return;
+    var sw = (seg.count / total) * 2 * Math.PI;
+    var ea = angle + sw;
+    var x1 = cx + R  * Math.cos(angle),  y1 = cy + R  * Math.sin(angle);
+    var x2 = cx + R  * Math.cos(ea),     y2 = cy + R  * Math.sin(ea);
+    var ix1= cx + ri * Math.cos(ea),     iy1= cy + ri * Math.sin(ea);
+    var ix2= cx + ri * Math.cos(angle),  iy2= cy + ri * Math.sin(angle);
+    var lg = sw > Math.PI ? 1 : 0;
+    var path = "M"+x1.toFixed(2)+","+y1.toFixed(2)+
+               " A"+R+","+R+" 0 "+lg+",1 "+x2.toFixed(2)+","+y2.toFixed(2)+
+               " L"+ix1.toFixed(2)+","+iy1.toFixed(2)+
+               " A"+ri+","+ri+" 0 "+lg+",0 "+ix2.toFixed(2)+","+iy2.toFixed(2)+" Z";
+    svg += '<path d="'+path+'" fill="'+seg.color+'" stroke="white" stroke-width="2"/>';
+    angle = ea;
+  });
+
+  // Center: taken-up %
+  var soldN    = (segs.find(function(s){return s.label==="Sold";})    || {count:0}).count;
+  var reservedN= (segs.find(function(s){return s.label==="Reserved";})||{count:0}).count;
+  var takenUp  = soldN + reservedN;
+  var pct      = Math.round(takenUp / total * 100);
+  svg += '<text x="'+cx+'" y="'+(cy-7)+'" text-anchor="middle" fill="var(--txt)" font-size="20" font-weight="700" font-family="DM Mono,monospace">'+pct+'%</text>';
+  svg += '<text x="'+cx+'" y="'+(cy+11)+'" text-anchor="middle" fill="var(--mut)" font-size="9.5" font-family="DM Sans">taken up</text>';
+  svg += '<text x="'+cx+'" y="'+(cy+25)+'" text-anchor="middle" fill="var(--mut2)" font-size="8.5" font-family="DM Mono,monospace">'+soldN+'+'+reservedN+' / '+total+'</text>';
+
+  // Legend right side
+  var lx = 168, ly = 28;
+  segs.forEach(function(seg) {
+    var pctSeg = Math.round(seg.count/total*100);
+    svg += '<rect x="'+lx+'" y="'+ly+'" width="10" height="10" rx="2" fill="'+seg.color+'"/>';
+    svg += '<text x="'+(lx+14)+'" y="'+(ly+9)+'" fill="var(--txt2)" font-size="10.5" font-family="DM Sans">'+seg.label+'</text>';
+    svg += '<text x="'+(lx+14)+'" y="'+(ly+21)+'" fill="var(--mut)" font-size="9" font-family="DM Mono,monospace">'+seg.count+' units · '+pctSeg+'%</text>';
+    ly += 36;
+  });
+
+  svg += '</svg>';
+  wrap.innerHTML = svg;
+}
+
+// ── Transaction list ──────────────────────────────────────────────────
+function sophiaRenderTxnList(data) {
+  var wrap = document.getElementById("sophia-txn-wrap");
+  if (!wrap) return;
+
+  if (data.length === 0) {
+    wrap.innerHTML = '<div style="text-align:center;padding:28px;color:var(--mut);font-size:12px">No URA caveats found yet. Caveats are typically lodged 1\u20134 weeks after option exercise.</div>';
+    return;
+  }
+
+  var sorted = data.slice().sort(function(a,b){ return (b.sale_date||"").localeCompare(a.sale_date||""); });
+
+  var rows = sorted.map(function(t) {
+    var d = t.sale_date ? t.sale_date.slice(0,10) : "\u2014";
+    var price = t.transacted_price ? "S$"+(t.transacted_price/1e6).toFixed(3)+"M" : "\u2014";
+    var area  = t.area_sqft ? Number(t.area_sqft).toLocaleString()+" sf" : "\u2014";
+    var psf   = t.unit_price_psf ? "S$"+Number(t.unit_price_psf).toFixed(0) : "\u2014";
+    var stype = t.type_of_sale || "\u2014";
+    var addr  = (t.address || t.project_name || "\u2014");
+    var psfCol = t.unit_price_psf ? (t.unit_price_psf >= 3400 ? "#c8364a" : t.unit_price_psf >= 3100 ? "#1a4f9c" : "#145a32") : "var(--mut2)";
+    return "<tr>" +
+      "<td style=\"font-family:'DM Mono',monospace;font-size:11px;white-space:nowrap\">"+d+"</td>" +
+      "<td style=\"max-width:240px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:12px\">"+addr+"</td>" +
+      "<td style=\"font-size:11px\">"+stype+"</td>" +
+      "<td style=\"text-align:right;font-family:'DM Mono',monospace;font-size:11px\">"+price+"</td>" +
+      "<td style=\"text-align:right;font-family:'DM Mono',monospace;font-size:11px\">"+area+"</td>" +
+      "<td style=\"text-align:right;font-family:'DM Mono',monospace;font-size:11px;font-weight:700;color:"+psfCol+"\">"+psf+"</td>" +
+      "</tr>";
+  }).join("");
+
+  wrap.innerHTML =
+    "<table class=\"ptable\">" +
+    "<thead><tr>" +
+    "<th>Sale Date</th><th>Address</th><th>Sale Type</th>" +
+    "<th style=\"text-align:right\">Price</th>" +
+    "<th style=\"text-align:right\">Area (sf)</th>" +
+    "<th style=\"text-align:right\">PSF</th>" +
+    "</tr></thead><tbody>" + rows + "</tbody></table>";
+}
 
 </script>
 </body>
