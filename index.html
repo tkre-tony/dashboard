@@ -4208,7 +4208,7 @@ function projSelectUnit(unitNo) {
     '<div class="unit-detail-panel">' +
       '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;padding-bottom:12px;border-bottom:1px solid var(--srf3)">' +
         '<div>' +
-          '<div style="font-size:18px;font-weight:700;font-family:'DM Mono',monospace;color:var(--txt)">#' + u.unit_no + '</div>' +
+          '<div style="font-size:18px;font-weight:700;font-family:\'DM Mono\',monospace;color:var(--txt)">#' + u.unit_no + '</div>' +
           '<div style="font-size:11px;color:var(--mut);margin-top:2px">Level ' + u.floor + ' · One Sophia</div>' +
           specBadge +
         '</div>' +
@@ -4217,21 +4217,21 @@ function projSelectUnit(unitNo) {
       '<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:12px">' +
         '<div style="background:var(--srf2);border-radius:6px;padding:10px;border:1px solid var(--bdr)">' +
           '<div style="font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--mut);margin-bottom:4px">Gross Area</div>' +
-          '<div style="font-size:15px;font-weight:700;font-family:'DM Mono',monospace">' + u.area_sqft.toLocaleString() + ' sf</div>' +
+          '<div style="font-size:15px;font-weight:700;font-family:\'DM Mono\',monospace">' + u.area_sqft.toLocaleString() + ' sf</div>' +
           '<div style="font-size:10px;color:var(--mut2)">' + u.area_sqm + ' sqm</div>' +
         '</div>' +
         '<div style="background:var(--srf2);border-radius:6px;padding:10px;border:1px solid var(--bdr)">' +
           '<div style="font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--mut);margin-bottom:4px">Net Area</div>' +
-          '<div style="font-size:15px;font-weight:700;font-family:'DM Mono',monospace">' + (u.net_sqft ? u.net_sqft.toLocaleString() : '—') + ' sf</div>' +
+          '<div style="font-size:15px;font-weight:700;font-family:\'DM Mono\',monospace">' + (u.net_sqft ? u.net_sqft.toLocaleString() : '—') + ' sf</div>' +
           '<div style="font-size:10px;color:var(--mut2)">Excl. A/C ledge ' + (u.ac_ledge_sqm || 3) + ' sqm</div>' +
         '</div>' +
         '<div style="background:var(--srf2);border-radius:6px;padding:10px;border:1px solid var(--bdr)">' +
           '<div style="font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--mut);margin-bottom:4px">List Price</div>' +
-          '<div style="font-size:14px;font-weight:700;font-family:'DM Mono',monospace;color:var(--g1)">' + price + '</div>' +
+          '<div style="font-size:14px;font-weight:700;font-family:\'DM Mono\',monospace;color:var(--g1)">' + price + '</div>' +
         '</div>' +
         '<div style="background:var(--srf2);border-radius:6px;padding:10px;border:1px solid var(--bdr)">' +
           '<div style="font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--mut);margin-bottom:4px">PSF</div>' +
-          '<div style="font-size:14px;font-weight:700;font-family:'DM Mono',monospace;color:var(--g1)">' + psf + '</div>' +
+          '<div style="font-size:14px;font-weight:700;font-family:\'DM Mono\',monospace;color:var(--g1)">' + psf + '</div>' +
         '</div>' +
       '</div>' +
       '<div style="font-size:11px;color:var(--mut);padding:8px 10px;background:var(--srf2);border-radius:5px;border:1px solid var(--bdr)">' +
