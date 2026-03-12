@@ -4144,7 +4144,7 @@ function projRenderStack() {
       var sel = projSelectedUnit && projSelectedUnit.unit_no === u.unit_no ? " selected" : "";
       var opacity = dimmed ? "opacity:.2;pointer-events:none;" : "";
       unitsHtml += '<div class="sunit ' + u.status + sel + '" style="' + opacity + '" ' +
-        'onclick="projSelectUnit('' + u.unit_no + '')" title="#' + u.unit_no + ' · ' + u.area_sqft + ' sf · ' + u.size_category + '">' +
+        'onclick="projSelectUnit(\'' + u.unit_no + '\')" title="#' + u.unit_no + ' · ' + u.area_sqft + ' sf · ' + u.size_category + '">' +
         '<div class="sunit-no">' + u.unit_no + '</div>' +
         '<div class="sunit-sf">' + u.area_sqft.toLocaleString() + ' sf</div>' +
         '</div>';
