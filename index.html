@@ -4347,6 +4347,21 @@ function projSelectUnit(unitNo) {
         '<span style="font-weight:600">VP:</span> Dec 2029 · <span style="font-weight:600">Legal:</span> Dec 2032' +
       '</div>' +
       soldInfo +
+      (function() {
+        if (!u.floorplan_type) return '';
+        var imgUrl = "https://xywgocvjuygudzrduvwr.supabase.co/storage/v1/object/public/one-sophia-floorplans" + "/" + u.floorplan_type + ".png";
+        return '<div style="margin-top:12px">' +
+          '<div style="font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--mut);margin-bottom:6px">Floor Plan · ' + (u.floorplan_type || '').toUpperCase() + '</div>' +
+          '<div style="border:1px solid var(--bdr);border-radius:6px;overflow:hidden;background:var(--srf2);text-align:center">' +
+            '<img src="' + imgUrl + '" alt="Floor plan ' + u.floorplan_type + '" ' +
+              'style="width:100%;max-width:240px;display:block;margin:0 auto" ' +
+              'onerror="this.parentNode.innerHTML=\'<div style=\\\"padding:24px;font-size:11px;color:var(--mut2)\\\">Floor plan image not yet uploaded</div>\'"/>' +
+          '</div>' +
+          '<div style="margin-top:5px;text-align:right">' +
+            '<a href="' + imgUrl + '" target="_blank" style="font-size:10px;color:var(--g2);text-decoration:none">View full size ↗</a>' +
+          '</div>' +
+        '</div>';
+      }()) +
     '</div>';
 }
 
