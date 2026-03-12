@@ -238,10 +238,59 @@ html,body{background:var(--bg);color:var(--txt);font-family:'DM Sans',sans-serif
 
   <div class="panel on" id="tab-overview">
 
-    <!-- Smart Search — top -->
+    <!-- Market Context Banner -->
+    <div style="background:linear-gradient(135deg,var(--hdr) 0%,var(--hdr3) 100%);border-radius:8px;padding:14px 20px;margin-bottom:14px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;border:1px solid rgba(255,255,255,.05)">
+      <div style="display:flex;align-items:center;gap:10px">
+        <div style="width:36px;height:36px;background:rgba(255,255,255,.08);border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:18px;border:1px solid rgba(255,255,255,.1)">🇸🇬</div>
+        <div>
+          <div style="color:#fff;font-size:14px;font-weight:700;letter-spacing:-.01em">Singapore C&amp;I Market Intelligence</div>
+          <div style="color:rgba(255,255,255,.45);font-size:11px;margin-top:1px">81,747 transactions · 1995–2026 · URA REALIS · Commercial &amp; Industrial</div>
+        </div>
+      </div>
+      <div style="display:flex;gap:6px;flex-wrap:wrap">
+        <div style="background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.1);border-radius:6px;padding:8px 14px;text-align:center;min-width:80px">
+          <div style="font-size:16px;font-weight:700;color:#fff;font-family:'DM Mono',monospace" id="banner-y26val">—</div>
+          <div style="font-size:9px;color:rgba(255,255,255,.45);text-transform:uppercase;letter-spacing:.06em;margin-top:2px">2026 YTD</div>
+        </div>
+        <div style="background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.1);border-radius:6px;padding:8px 14px;text-align:center;min-width:80px">
+          <div style="font-size:16px;font-weight:700;color:#fff;font-family:'DM Mono',monospace" id="banner-y25val">—</div>
+          <div style="font-size:9px;color:rgba(255,255,255,.45);text-transform:uppercase;letter-spacing:.06em;margin-top:2px">2025 FY</div>
+        </div>
+        <div style="background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.1);border-radius:6px;padding:8px 14px;text-align:center;min-width:80px">
+          <div style="font-size:16px;font-weight:700;color:#3da670;font-family:'DM Mono',monospace" id="banner-yoy">—</div>
+          <div style="font-size:9px;color:rgba(255,255,255,.45);text-transform:uppercase;letter-spacing:.06em;margin-top:2px">YoY Chg</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 4-col KPI strip -->
+    <div class="kpis" style="margin-bottom:14px">
+      <div class="kpi">
+        <div class="kpi-lbl">2026 YTD Value</div>
+        <div class="kpi-val accent" id="k-y26val">—</div>
+        <div class="kpi-sub"><span id="k-y26cnt" style="font-family:'DM Mono',monospace;font-weight:600">—</span> &nbsp;transactions</div>
+      </div>
+      <div class="kpi">
+        <div class="kpi-lbl">2026 YTD Deals</div>
+        <div class="kpi-val" id="k-y26txn">—</div>
+        <div class="kpi-sub">as at Mar 2026</div>
+      </div>
+      <div class="kpi">
+        <div class="kpi-lbl">2025 Full-Year Value</div>
+        <div class="kpi-val" id="k-y25val">—</div>
+        <div class="kpi-sub"><span id="k-y25cnt" style="font-family:'DM Mono',monospace;font-weight:600">—</span> &nbsp;deals full year</div>
+      </div>
+      <div class="kpi">
+        <div class="kpi-lbl">2025 Total Deals</div>
+        <div class="kpi-val" id="k-y25txn">—</div>
+        <div class="kpi-sub">full year all types</div>
+      </div>
+    </div>
+
+    <!-- Smart Search -->
     <div class="card" style="margin-bottom:14px">
       <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap">
-        <div style="font-size:12px;font-weight:700;white-space:nowrap;color:var(--mut);text-transform:uppercase;letter-spacing:.06em;display:flex;align-items:center;gap:6px"><span>🔍</span> Quick Search</div>
+        <div style="font-size:11px;font-weight:700;white-space:nowrap;color:var(--mut);text-transform:uppercase;letter-spacing:.07em">🔍 Quick Search</div>
         <div class="ac-wrap" style="flex:1;min-width:220px">
           <input id="ov-search" placeholder="Project name, street or district number (e.g. 22)..." autocomplete="off"
             class="cs-input" style="font-size:13px"/>
@@ -253,79 +302,57 @@ html,body{background:var(--bg);color:var(--txt);font-family:'DM Sans',sans-serif
       </div>
     </div>
 
-    <!-- Chart + KPIs side by side -->
-    <div class="chart-kpi-grid" style="display:grid;grid-template-columns:1fr 210px;gap:14px;margin-bottom:14px;align-items:start">
-
-      <!-- Chart card (4/5) -->
-      <div class="card" style="margin-bottom:0">
-        <div class="card-hdr">
-          <div>
-            <div class="card-title"><span class="card-title-dot"></span><span id="chart-title">Transaction Volume — Last 18 Months</span></div>
-            <div class="card-subtitle">Commercial & Industrial · URA REALIS · S$ Millions</div>
-          </div>
+    <!-- Chart — full width -->
+    <div class="card" style="margin-bottom:14px">
+      <div class="card-hdr">
+        <div>
+          <div class="card-title"><span class="card-title-dot"></span><span id="chart-title">Transaction Volume — Last 18 Months</span></div>
+          <div class="card-subtitle">Commercial &amp; Industrial · URA REALIS · S$ Millions</div>
+        </div>
+        <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
           <div class="mode-row">
             <button class="mbtn on" id="m-val">S$ Value</button>
             <button class="mbtn" id="m-cnt">Deal Count</button>
             <button class="mbtn" id="m-yoy" title="Toggle Year-on-Year view">YoY</button>
           </div>
         </div>
-        <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:10px;padding-bottom:10px;border-bottom:1px solid var(--srf3)" id="slider-row">
-          <span class="fbar-label">Period</span>
-          <div class="range-sel" id="range-btns">
-            <button class="rbtn on" data-range="L18">18M</button>
-            <button class="rbtn" data-range="L12">12M</button>
-            <button class="rbtn" data-range="5Y">5Y</button>
-            <button class="rbtn" data-range="10Y">10Y</button>
-            <button class="rbtn" data-range="ALL">All</button>
-          </div>
-          <div class="fbar-sep"></div>
-          <input type="range" id="period-slider" min="6" max="32" value="18"
-            style="flex:1;max-width:140px;accent-color:var(--g1);cursor:pointer;height:3px"
-            oninput="onSliderInput(this.value)">
-          <span id="slider-label" style="font-size:11px;color:var(--mut);font-family:'DM Mono',monospace;white-space:nowrap;min-width:58px">18 months</span>
-        </div>
-        <div class="fbar" id="type-chips"></div>
-        <div id="bar-wrap" style="width:100%;min-height:260px"></div>
-        <div style="display:flex;flex-wrap:wrap;gap:8px;margin-top:12px;padding-top:10px;border-top:1px solid var(--srf3)" id="legend"></div>
       </div>
-
-      <!-- KPI stack (1/5) -->
-      <div style="display:flex;flex-direction:column;gap:10px">
-        <div class="kpi">
-          <div class="kpi-lbl">📅 2026 YTD Value</div>
-          <div class="kpi-val accent" id="k-y26val">—</div>
-          <div class="kpi-sub" id="k-y26cnt">—</div>
+      <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:10px;padding-bottom:10px;border-bottom:1px solid var(--srf3)" id="slider-row">
+        <span class="fbar-label">Period</span>
+        <div class="range-sel" id="range-btns">
+          <button class="rbtn on" data-range="L18">18M</button>
+          <button class="rbtn" data-range="L12">12M</button>
+          <button class="rbtn" data-range="5Y">5Y</button>
+          <button class="rbtn" data-range="10Y">10Y</button>
+          <button class="rbtn" data-range="ALL">All</button>
         </div>
-        <div class="kpi">
-          <div class="kpi-lbl">🔢 2026 YTD Deals</div>
-          <div class="kpi-val" id="k-y26txn">—</div>
-          <div class="kpi-sub">transactions so far</div>
-        </div>
-        <div class="kpi">
-          <div class="kpi-lbl">📆 2025 Full-Year Value</div>
-          <div class="kpi-val" id="k-y25val">—</div>
-          <div class="kpi-sub" id="k-y25cnt">—</div>
-        </div>
-        <div class="kpi">
-          <div class="kpi-lbl">📋 2025 Total Deals</div>
-          <div class="kpi-val" id="k-y25txn">—</div>
-          <div class="kpi-sub">full year</div>
-        </div>
+        <div class="fbar-sep"></div>
+        <input type="range" id="period-slider" min="6" max="32" value="18"
+          style="flex:1;max-width:160px;accent-color:var(--g1);cursor:pointer;height:3px"
+          oninput="onSliderInput(this.value)">
+        <span id="slider-label" style="font-size:11px;color:var(--mut);font-family:'DM Mono',monospace;white-space:nowrap;min-width:58px">18 months</span>
+        <div class="fbar-sep"></div>
+        <div class="fbar" id="type-chips" style="margin:0"></div>
       </div>
+      <div id="bar-wrap" style="width:100%;min-height:280px"></div>
+      <div style="display:flex;flex-wrap:wrap;gap:10px;margin-top:12px;padding-top:10px;border-top:1px solid var(--srf3)" id="legend"></div>
     </div>
 
-    <!-- Overview Transaction Results — always visible, below chart+KPI row -->
+    <!-- Overview Transaction Results -->
     <div class="card" id="ov-tx-card" style="margin-bottom:14px">
       <div class="card-hdr">
-        <div class="card-title" id="ov-tx-title">Recent Transactions — Last 12 Months</div>
-        <div style="font-size:11px;color:var(--mut)" id="ov-tx-count">Loading...</div>
+        <div>
+          <div class="card-title"><span class="card-title-dot"></span><span id="ov-tx-title">Recent Transactions — Last 12 Months</span></div>
+          <div class="card-subtitle">Latest deals · Click Search to filter by project or district</div>
+        </div>
+        <div style="font-size:11px;color:var(--mut);font-family:'DM Mono',monospace;font-weight:600" id="ov-tx-count">Loading...</div>
       </div>
       <div id="ov-tx-loading" style="text-align:center;padding:20px;color:var(--mut);font-size:13px">Loading transactions...</div>
-      <div style="overflow-x:auto">
+      <div style="overflow-x:auto;border-radius:6px;border:1px solid var(--bdr)">
         <table class="ptable" id="ov-tx-table" style="display:none">
           <thead><tr>
             <th>Date</th><th>Project</th><th>Address</th><th>Type</th>
-            <th>Price</th><th>Area (sqft)</th><th>PSF</th><th>Tenure</th>
+            <th style="text-align:right">Price</th><th style="text-align:right">Area (sqft)</th><th style="text-align:right">PSF</th><th>Tenure</th>
           </tr></thead>
           <tbody id="ov-tx-tbody"></tbody>
         </table>
@@ -334,9 +361,26 @@ html,body{background:var(--bg);color:var(--txt);font-family:'DM Sans',sans-serif
       <div id="ov-tx-pagination" style="display:flex;gap:8px;align-items:center;margin-top:12px;justify-content:center"></div>
     </div>
 
+    <!-- Bottom grid: Type breakdown + News -->
     <div class="g2">
-      <div class="card"><div class="card-hdr"><div class="card-title">By Property Type — Selected Period</div></div><div id="type-breakdown"></div></div>
-      <div class="card"><div class="card-hdr"><div class="card-title">Latest News</div></div><div id="news-preview"></div></div>
+      <div class="card">
+        <div class="card-hdr">
+          <div class="card-title"><span class="card-title-dot"></span>By Property Type — Selected Period</div>
+          <div style="display:flex;gap:0;border:1px solid var(--bdr);border-radius:5px;overflow:hidden;background:var(--srf2)">
+            <button class="mbtn on" id="bd-val" onclick="setBreakdownMode('val',this)">Value</button>
+            <button class="mbtn" id="bd-cnt" onclick="setBreakdownMode('cnt',this)">Deals</button>
+          </div>
+        </div>
+        <div id="type-breakdown"></div>
+      </div>
+      <div class="card">
+        <div class="card-hdr">
+          <div class="card-title"><span class="card-title-dot"></span>Latest News</div>
+          <a href="#" onclick="document.querySelector('[data-tab=news]').click();return false"
+            style="font-size:11px;color:var(--g1);text-decoration:none;font-weight:600">View all →</a>
+        </div>
+        <div id="news-preview"></div>
+      </div>
     </div>
 
   </div>
@@ -923,8 +967,8 @@ function renderMonthlyChart(data){
   for(var k=0;k<=5;k++){
     var tv2=k*mx/5,ty=P.t+cH-(tv2/mx)*cH;
     var tl=chartMode==="val"?(tv2>=1000?"S$"+(tv2/1000).toFixed(0)+"B":"S$"+Math.round(tv2)+"M"):(tv2>=1000?(tv2/1000).toFixed(1)+"K":Math.round(tv2).toString());
-    svg+='<line x1="'+P.l+'" x2="'+(P.l+cW)+'" y1="'+ty+'" y2="'+ty+'" stroke="#dde8e3" stroke-width="1"/>';
-    svg+='<text x="'+(P.l-5)+'" y="'+(ty+4)+'" text-anchor="end" fill="#6b8c7a" font-size="10" font-family="DM Mono,monospace">'+tl+'</text>';
+    svg+='<line x1="'+P.l+'" x2="'+(P.l+cW)+'" y1="'+ty+'" y2="'+ty+'" stroke="#dce4df" stroke-width="1"/>';
+    svg+='<text x="'+(P.l-5)+'" y="'+(ty+4)+'" text-anchor="end" fill="#6b8578" font-size="10" font-family="DM Mono,monospace">'+tl+'</text>';
   }
   // Bars
   var bGW=cW/labels.length;
@@ -947,7 +991,7 @@ function renderMonthlyChart(data){
     var step=labels.length<=12?1:labels.length<=18?2:3;
     if(gi%step===0||gi===labels.length-1){
       var lx=P.l+gi*bGW+bGW/2;
-      svg+='<text x="'+lx.toFixed(1)+'" y="'+(P.t+cH+16)+'" text-anchor="middle" fill="#6b8c7a" font-size="9.5" font-family="DM Sans">'+fmtMo(mo)+'</text>';
+      svg+='<text x="'+lx.toFixed(1)+'" y="'+(P.t+cH+16)+'" text-anchor="middle" fill="#6b8578" font-size="9.5" font-family="DM Sans">'+fmtMo(mo)+'</text>';
     }
   });
   svg+='</svg>';
@@ -969,19 +1013,29 @@ document.querySelectorAll(".navtab").forEach(function(t){
 // KPIs
 function renderKPIs(){
   var i25=YEARS.indexOf(2025), i26=YEARS.indexOf(2026);
+  var v25=0,c25=0,v26=0,c26=0;
   if(i25>=0){
-    var v25=0,c25=0;
     TYPES.forEach(function(t,ti){if(activeTypes[t]){v25+=VAL_ARR[i25][ti];c25+=CNT_ARR[i25][ti];}});
     document.getElementById("k-y25val").textContent=fmtV(v25);
-    document.getElementById("k-y25cnt").textContent=fmtV(v25);
+    document.getElementById("k-y25cnt").textContent=fmtC(c25);
     document.getElementById("k-y25txn").textContent=fmtC(c25);
   }
   if(i26>=0){
-    var v26=0,c26=0;
     TYPES.forEach(function(t,ti){if(activeTypes[t]){v26+=VAL_ARR[i26][ti];c26+=CNT_ARR[i26][ti];}});
     document.getElementById("k-y26val").textContent=fmtV(v26);
-    document.getElementById("k-y26cnt").textContent=fmtC(c26)+" transactions";
+    document.getElementById("k-y26cnt").textContent=fmtC(c26);
     document.getElementById("k-y26txn").textContent=fmtC(c26);
+  }
+  // Banner
+  var bv26=document.getElementById("banner-y26val"); if(bv26) bv26.textContent=v26>0?fmtV(v26):"—";
+  var bv25=document.getElementById("banner-y25val"); if(bv25) bv25.textContent=v25>0?fmtV(v25):"—";
+  var byoy=document.getElementById("banner-yoy");
+  if(byoy && v25>0 && v26>0){
+    // Annualise YTD: multiply by (12/current month index). March = 3rd month so factor ~4x
+    var annualised=v26*4;
+    var pct=((annualised-v25)/v25*100);
+    byoy.textContent=(pct>=0?"+":"")+pct.toFixed(0)+"%";
+    byoy.style.color=pct>=0?"#3da670":"#c8364a";
   }
 }
 
@@ -1065,8 +1119,8 @@ function renderBarChart(){
   for(var k=0;k<=5;k++){
     var tv2=k*mx/5,ty=P.t+cH-(tv2/mx)*cH;
     var tl=chartMode==="val"?(tv2>=1000?"S$"+(tv2/1000).toFixed(0)+"B":"S$"+Math.round(tv2)+"M"):(tv2>=1000?(tv2/1000).toFixed(1)+"K":Math.round(tv2).toString());
-    svg+='<line x1="'+P.l+'" x2="'+(P.l+cW)+'" y1="'+ty+'" y2="'+ty+'" stroke="#dde8e3" stroke-width="1"/>';
-    svg+='<text x="'+(P.l-5)+'" y="'+(ty+4)+'" text-anchor="end" fill="#6b8c7a" font-size="10" font-family="DM Mono,monospace">'+tl+'</text>';
+    svg+='<line x1="'+P.l+'" x2="'+(P.l+cW)+'" y1="'+ty+'" y2="'+ty+'" stroke="#dce4df" stroke-width="1"/>';
+    svg+='<text x="'+(P.l-5)+'" y="'+(ty+4)+'" text-anchor="end" fill="#6b8578" font-size="10" font-family="DM Mono,monospace">'+tl+'</text>';
   }
   var bGW=cW/idxs.length,bW=Math.max(1.5,bGW*0.82/actT.length);
   idxs.forEach(function(di,gi){
@@ -1080,7 +1134,7 @@ function renderBarChart(){
           +' onmouseenter="sT(event,\''+yr+'\',\''+t+'\',\''+vs+'\')" onmouseleave="hT()"/>';
     });
     var sl=idxs.length<=15||gi%Math.ceil(idxs.length/15)===0||gi===idxs.length-1;
-    if(sl){var lx=P.l+gi*bGW+bGW/2;svg+='<text x="'+lx.toFixed(1)+'" y="'+(P.t+cH+15)+'" text-anchor="middle" fill="#6b8c7a" font-size="10" font-family="DM Sans">'+yr+'</text>';}
+    if(sl){var lx=P.l+gi*bGW+bGW/2;svg+='<text x="'+lx.toFixed(1)+'" y="'+(P.t+cH+15)+'" text-anchor="middle" fill="#6b8578" font-size="10" font-family="DM Sans">'+yr+'</text>';}
   });
   svg+='</svg>';
   wrap.innerHTML=svg;
@@ -1093,36 +1147,52 @@ document.addEventListener("mousemove",function(e){if(document.getElementById("tt
 
 function renderLegend(){
   document.getElementById("legend").innerHTML=TYPES.filter(function(t){return activeTypes[t];}).map(function(t){
-    return'<div style="display:flex;align-items:center;gap:5px;font-size:11px;color:#6b8c7a"><div style="width:8px;height:8px;border-radius:2px;background:'+TCOLOR[t]+'"></div>'+TLABEL[t]+'</div>';
+    return'<div style="display:flex;align-items:center;gap:5px;font-size:11px;color:var(--mut)"><div style="width:9px;height:9px;border-radius:2px;background:'+TCOLOR[t]+'"></div><span style="font-weight:500">'+TLABEL[t]+'</span></div>';
   }).join('');
 }
 
-// TYPE BREAKDOWN
+// TYPE BREAKDOWN — value/count toggle
+var bdMode='val';
+function setBreakdownMode(m,btn){
+  bdMode=m;
+  document.querySelectorAll('#bd-val,#bd-cnt').forEach(function(b){b.classList.remove('on');});
+  btn.classList.add('on');
+  renderTypeBreakdown();
+}
 function renderTypeBreakdown(){
   var idxs=getIdxs();
-  var sums={};
-  TYPES.forEach(function(t,ti){sums[t]=idxs.reduce(function(s,i){return s+(VAL_ARR[i][ti]||0);},0);});
+  var arr=bdMode==='val'?VAL_ARR:CNT_ARR;
+  var sums={},total=0;
+  TYPES.forEach(function(t,ti){sums[t]=idxs.reduce(function(s,i){return s+(arr[i][ti]||0);},0); total+=sums[t];});
   var mx=Math.max.apply(null,TYPES.map(function(t){return sums[t];}));
   document.getElementById("type-breakdown").innerHTML=TYPES.filter(function(t){return activeTypes[t];}).map(function(t){
     var p=mx>0?(sums[t]/mx*100).toFixed(1):0;
-    return'<div class="tbar-row"><div class="tbar-lbl">'+TLABEL[t]+'</div>'
+    var pct=total>0?(sums[t]/total*100).toFixed(0)+'%':'—';
+    var valStr=bdMode==='val'?fmtV(sums[t]):fmtC(sums[t])+' deals';
+    return'<div class="tbar-row">'
+      +'<div class="tbar-lbl" style="display:flex;align-items:center;gap:6px">'
+      +'<div style="width:7px;height:7px;border-radius:2px;background:'+TCOLOR[t]+';flex-shrink:0"></div>'
+      +TLABEL[t]+'</div>'
       +'<div class="tbar-track"><div class="tbar-fill" style="width:'+p+'%;background:'+TCOLOR[t]+'"></div></div>'
-      +'<div class="tbar-val">'+fmtV(sums[t])+'</div></div>';
+      +'<div style="font-size:11px;color:var(--mut2);width:34px;text-align:right;flex-shrink:0;font-weight:600">'+pct+'</div>'
+      +'<div class="tbar-val">'+valStr+'</div></div>';
   }).join('');
 }
 
-// NEWS PREVIEW
+// NEWS PREVIEW — left-border sentiment colour
 function renderNewsPreview(){
-  var sorted=NEWS.slice().sort(function(a,b){return b.date.localeCompare(a.date);}).slice(0,5);
+  var sorted=NEWS.slice().sort(function(a,b){return b.date.localeCompare(a.date);}).slice(0,6);
+  var borderCol={positive:'var(--g2)',negative:'var(--red)',neutral:'var(--bdr2)'};
   document.getElementById("news-preview").innerHTML=sorted.map(function(n){
     var pc=n.sentiment==="positive"?"p-pos":n.sentiment==="negative"?"p-neg":"p-neu";
-    return'<div style="padding:7px 0;border-bottom:1px solid #dde8e3">'
-      +'<div style="display:flex;gap:6px;align-items:center;margin-bottom:3px;flex-wrap:wrap">'
+    var bc=borderCol[n.sentiment]||'var(--bdr2)';
+    return'<div style="padding:9px 10px 9px 13px;border-bottom:1px solid var(--srf3);border-left:3px solid '+bc+';margin-bottom:0;transition:background .12s;cursor:default" onmouseenter="this.style.background=\'var(--glt)\'" onmouseleave="this.style.background=\'\'">'
+      +'<div style="display:flex;gap:6px;align-items:center;margin-bottom:4px;flex-wrap:wrap">'
       +'<span class="pill '+pc+'">'+n.sentiment+'</span>'
-      +'<span style="font-size:10px;color:#6b8c7a;font-family:\'DM Mono\',monospace">'+n.date+'</span>'
+      +'<span style="font-size:10px;color:var(--mut);font-family:\'DM Mono\',monospace">'+n.date+'</span>'
       +'<span class="pill p-tag">'+n.tag+'</span></div>'
-      +'<div style="font-size:12px;line-height:1.4;font-weight:500">'+n.title+'</div></div>';
-  }).join('')+'<div style="padding-top:9px"><a href="#" onclick="document.querySelector(\'[data-tab=news]\').click();return false" style="font-size:11px;color:#21513b;text-decoration:none;font-weight:600">View all '+NEWS.length+' articles →</a></div>';
+      +'<div style="font-size:12px;line-height:1.45;font-weight:600;color:var(--txt)">'+n.title+'</div></div>';
+  }).join('');
 }
 
 // NEWS FULL
@@ -1137,8 +1207,8 @@ function renderNewsList(){
   document.getElementById("news-list").innerHTML=list.slice().sort(function(a,b){return b.date.localeCompare(a.date);}).map(function(n){
     var pc=n.sentiment==="positive"?"p-pos":n.sentiment==="negative"?"p-neg":"p-neu";
     return'<div class="news-item" onclick="this.classList.toggle(\'open\')">'
-      +'<div class="news-meta"><span style="font-size:10px;color:#6b8c7a;font-family:\'DM Mono\',monospace">'+n.date+'</span>'
-      +'<span style="font-size:11px;color:#6b8c7a">'+n.source+'</span>'
+      +'<div class="news-meta"><span style="font-size:10px;color:var(--mut);font-family:\'DM Mono\',monospace">'+n.date+'</span>'
+      +'<span style="font-size:11px;color:var(--mut)">'+n.source+'</span>'
       +'<span class="pill '+pc+'">'+n.sentiment+'</span>'
       +'<span class="pill p-tag">'+n.tag+'</span></div>'
       +'<div class="news-title">'+n.title+'</div>'
@@ -1151,12 +1221,12 @@ function renderPipeline(){
   var cm={"Investment Sale":"#21513b","En Bloc":"#2d7a57","GLS Tender":"#3da670","Receivership":"#dc3545"};
   document.getElementById("ptable").innerHTML='<thead><tr><th>Asset</th><th>Type</th><th>Est. Value</th><th>Closes</th><th>Agent</th></tr></thead><tbody>'
     +PIPELINE.map(function(p){var c=cm[p.type]||"#6b8c7a";
-      return'<tr><td><div style="font-weight:600">'+p.asset+'</div><div style="font-size:11px;color:#6b8c7a">'+p.subtype+'</div>'
-        +(p.notes?'<div style="font-size:11px;color:#6b8c7a;margin-top:3px;line-height:1.5">'+p.notes+'</div>':'')+'</td>'
+      return'<tr><td><div style="font-weight:600">'+p.asset+'</div><div style="font-size:11px;color:var(--mut)">'+p.subtype+'</div>'
+        +(p.notes?'<div style="font-size:11px;color:var(--mut);margin-top:3px;line-height:1.5">'+p.notes+'</div>':'')+'</td>'
         +'<td><span class="pill" style="background:'+c+'18;color:'+c+';border:1px solid '+c+'40">'+p.type+'</span></td>'
         +'<td style="font-family:\'DM Mono\',monospace;font-size:12px;font-weight:500;white-space:nowrap">'+p.estValue+'</td>'
-        +'<td style="font-size:12px;color:#6b8c7a;white-space:nowrap">'+p.closes+'</td>'
-        +'<td style="font-size:12px;color:#6b8c7a">'+p.agent+'</td></tr>';
+        +'<td style="font-size:12px;color:var(--mut);white-space:nowrap">'+p.closes+'</td>'
+        +'<td style="font-size:12px;color:var(--mut)">'+p.agent+'</td></tr>';
     }).join('')+'</tbody>';
 }
 
@@ -1179,12 +1249,12 @@ function renderAnalytics(){
     svg+='<rect x="'+x.toFixed(1)+'" y="'+(P.t+cH-ph).toFixed(1)+'" width="'+bw.toFixed(1)+'" height="'+Math.max(ph,0).toFixed(1)+'" fill="#c2e0d0" rx="2"/>';
     svg+='<rect x="'+(x+bw+2).toFixed(1)+'" y="'+(P.t+cH-ch).toFixed(1)+'" width="'+bw.toFixed(1)+'" height="'+Math.max(ch,0).toFixed(1)+'" fill="'+(d.cv>=d.pv?"#21513b":"#dc3545")+'" rx="2" opacity=".85"/>';
     var sl=yoy.length<=15||i%Math.ceil(yoy.length/15)===0||i===yoy.length-1;
-    if(sl)svg+='<text x="'+(x+bw+1).toFixed(1)+'" y="'+(P.t+cH+15)+'" text-anchor="middle" fill="#6b8c7a" font-size="10" font-family="DM Sans">'+d.yr+'</text>';
+    if(sl)svg+='<text x="'+(x+bw+1).toFixed(1)+'" y="'+(P.t+cH+15)+'" text-anchor="middle" fill="#6b8578" font-size="10" font-family="DM Sans">'+d.yr+'</text>';
   });
   svg+='<rect x="'+P.l+'" y="'+(H-14)+'" width="10" height="8" fill="#c2e0d0" rx="1"/>'
-      +'<text x="'+(P.l+14)+'" y="'+(H-6)+'" fill="#6b8c7a" font-size="10" font-family="DM Sans">Prior Year</text>'
+      +'<text x="'+(P.l+14)+'" y="'+(H-6)+'" fill="#6b8578" font-size="10" font-family="DM Sans">Prior Year</text>'
       +'<rect x="'+(P.l+90)+'" y="'+(H-14)+'" width="10" height="8" fill="#21513b" rx="1"/>'
-      +'<text x="'+(P.l+104)+'" y="'+(H-6)+'" fill="#6b8c7a" font-size="10" font-family="DM Sans">Current Year</text></svg>';
+      +'<text x="'+(P.l+104)+'" y="'+(H-6)+'" fill="#6b8578" font-size="10" font-family="DM Sans">Current Year</text></svg>';
   el.innerHTML=svg;
   var mx2=Math.max.apply(null,Object.keys(TYPETOT).map(function(t){return TYPETOT[t];}));
   document.getElementById("cum-bars").innerHTML=TYPES.map(function(t){
@@ -1774,16 +1844,21 @@ function renderOvTable(rows){
     var date  = r.sale_date ? r.sale_date.substring(0,10) : "-";
     var tenure = r.tenure ? r.tenure.substring(0,25) : "-";
     return "<tr>"
-      +"<td style='white-space:nowrap;font-family:\"DM Mono\",monospace;font-size:11px'>"+date+"</td>"
-      +"<td style='font-weight:600;min-width:130px'>"+( r.project_name||"-")+"</td>"
-      +"<td style='font-size:11px;color:var(--mut);min-width:160px'>"+(r.address||"-")+"</td>"
+      +"<td class='mono' style='white-space:nowrap'>"+date+"</td>"
+      +"<td style='font-weight:600;min-width:130px'>"+(r.project_name||"-")+"</td>"
+      +"<td style='font-size:11px;color:var(--mut);min-width:150px'>"+(r.address||"-")+"</td>"
       +"<td><span class='pill p-tag' style='white-space:nowrap'>"+(r.property_type||"-")+"</span></td>"
-      +"<td style='font-family:\"DM Mono\",monospace;font-size:12px;font-weight:600;white-space:nowrap'>"+price+"</td>"
-      +"<td style='font-family:\"DM Mono\",monospace;font-size:12px;white-space:nowrap'>"+area+"</td>"
-      +"<td style='font-family:\"DM Mono\",monospace;font-size:12px;white-space:nowrap'>"+psf+"</td>"
+      +"<td style='text-align:right' class='mono'><b>"+price+"</b></td>"
+      +"<td style='text-align:right' class='mono'>"+area+"</td>"
+      +"<td style='text-align:right' class='mono'>"+psf+"</td>"
       +"<td style='font-size:11px;color:var(--mut)'>"+tenure+"</td>"
       +"</tr>";
-  }).join("");
+
+
+
+
+
+
   document.getElementById("ov-tx-table").style.display = "table";
 }
 
