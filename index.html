@@ -92,6 +92,9 @@ html,body{background:var(--bg);color:var(--txt);font-family:'DM Sans',sans-serif
 .sunit.sold{background:#fce4ec;border-color:#e57373;color:#7b1c1c}
 .sunit.withheld{background:#f5f5f5;border-color:#bdbdbd;color:#757575}
 .sunit.selected{outline:2px solid var(--g1);outline-offset:1px;transform:translateY(-1px);box-shadow:0 4px 12px rgba(26,79,156,.25)}
+.sunit.sold-nocav{background:#fff0f0;border-color:#f4a0a0;color:#9b2c2c}
+.sunit-cbadge{position:absolute;top:2px;right:3px;font-size:7px;font-weight:800;color:#1a6b3c;font-family:'DM Mono',monospace;line-height:1}
+.sunit{position:relative}
 @keyframes spin{to{transform:rotate(360deg)}}
 .proj-kpi-row{display:grid;grid-template-columns:repeat(5,1fr);gap:8px;margin-bottom:14px}
 .proj-kpi{background:var(--srf);border:1px solid var(--bdr);border-radius:8px;padding:12px 14px;text-align:center;box-shadow:var(--shadow-sm)}
@@ -919,15 +922,20 @@ html,body{background:var(--bg);color:var(--txt);font-family:'DM Sans',sans-serif
           <div class="card-title"><span class="card-title-dot"></span>Unit List</div>
           <div class="card-subtitle" id="proj-list-count">All 122 units</div>
         </div>
-        <input id="proj-search" class="cs-input" placeholder="Search unit no..." style="width:160px;font-size:12px" oninput="projRenderStack()">
+        <div style="display:flex;gap:8px;align-items:center">
+          <input id="proj-search" class="cs-input" placeholder="Search unit no..." style="width:160px;font-size:12px;display:none" oninput="projRenderStack()">
+          <button class="cs-btn-sm" onclick="projToggleUnitList(this)" style="font-size:11px;padding:3px 10px">Show List ▾</button>
+        </div>
       </div>
-      <div style="overflow-x:auto;border-radius:6px;border:1px solid var(--bdr)">
-        <table class="ptable" id="proj-unit-table">
-          <thead><tr>
-            <th>Unit</th><th>Floor</th><th>Size (sf)</th><th>Net (sf)</th><th>Size Category</th><th>Special</th><th>Status</th><th style="text-align:right">List Price</th><th style="text-align:right">PSF</th>
-          </tr></thead>
-          <tbody id="proj-unit-tbody"></tbody>
-        </table>
+      <div id="proj-unit-list-body" style="display:none">
+        <div style="overflow-x:auto;border-radius:6px;border:1px solid var(--bdr)">
+          <table class="ptable" id="proj-unit-table">
+            <thead><tr>
+              <th>Unit</th><th>Floor</th><th>Size (sf)</th><th>Net (sf)</th><th>Size Category</th><th>Special</th><th>Status</th><th style="text-align:right">List Price</th><th style="text-align:right">PSF</th>
+            </tr></thead>
+            <tbody id="proj-unit-tbody"></tbody>
+          </table>
+        </div>
       </div>
     </div>
 
@@ -4092,6 +4100,7 @@ var projUnits = [];
 var projFilters = { status: "all", size: "", search: "" };
 var projSelectedUnit = null;
 var projLoaded = false;
+var projCaveatMap = {}; // unit_no -> true (caveated) | false (not yet caveated) | undefined (not sold)
 
 // ── Fetch all units from Supabase ──────────────────────────
 function projForceReload() {
@@ -4167,6 +4176,7 @@ async function projLoadUnits() {
     projLoaded = true;
     projUpdateKPIs();
     projRenderStack();
+    sophiaComputeCaveatMap(); // compute after units load
     loadEl.style.display = "none";
     stackEl2.style.display = "flex";
   } catch(e) {
@@ -4229,8 +4239,19 @@ function projRenderStack() {
       if (search && u.unit_no.toLowerCase().indexOf(search) === -1) dimmed = true;
       var sel = projSelectedUnit && projSelectedUnit.unit_no === u.unit_no ? " selected" : "";
       var opacity = dimmed ? "opacity:.2;pointer-events:none;" : "";
-      unitsHtml += '<div class="sunit ' + u.status + sel + '" style="' + opacity + '" ' +
+      // Caveat badge logic for sold units
+      var cavBadge = "";
+      var soldClass = "";
+      if (u.status === "sold") {
+        if (projCaveatMap[u.unit_no] === true) {
+          cavBadge = '<div class="sunit-cbadge">c</div>';
+        } else if (projCaveatMap[u.unit_no] === false) {
+          soldClass = " sold-nocav"; // pending caveat — lighter red
+        }
+      }
+      unitsHtml += '<div class="sunit ' + u.status + soldClass + sel + '" style="' + opacity + '" ' +
         'onclick="projSelectUnit(\'' + u.unit_no + '\')" title="#' + u.unit_no + ' · ' + u.area_sqft + ' sf · ' + u.size_category + '">' +
+        cavBadge +
         '<div class="sunit-no">' + u.unit_no + '</div>' +
         '<div class="sunit-sf">' + u.area_sqft.toLocaleString() + ' sf</div>' +
         '</div>';
@@ -4339,6 +4360,50 @@ function projFilter(btn, type) {
   projRenderStack();
 }
 
+// ── Toggle unit list ──────────────────────────────────────
+function projToggleUnitList(btn) {
+  var body = document.getElementById("proj-unit-list-body");
+  var srch = document.getElementById("proj-search");
+  var open = body.style.display !== "none";
+  body.style.display = open ? "none" : "block";
+  srch.style.display  = open ? "none" : "inline-block";
+  btn.textContent = open ? "Show List ▾" : "Hide List ▴";
+}
+
+// ── Caveat matching: sold unit_no -> caveated bool ──────────
+function sophiaComputeCaveatMap() {
+  projCaveatMap = {};
+  if (projUnits.length === 0) return;
+  var soldUnits = projUnits.filter(function(u){ return u.status === "sold"; });
+  if (sophiaCaveats.length === 0) {
+    // No caveats yet — mark all sold as uncaveated
+    soldUnits.forEach(function(u){ projCaveatMap[u.unit_no] = false; });
+    return;
+  }
+  // Build consumed multiset of caveat areas (round to nearest sqft)
+  var cavAreas = sophiaCaveats
+    .filter(function(t){ return t.area_sqft && t.area_sqft > 0; })
+    .map(function(t){ return Math.round(t.area_sqft); });
+
+  soldUnits.forEach(function(u) {
+    var uArea = Math.round(u.area_sqft);
+    // Find closest unmatched caveat within ±15 sqft tolerance
+    var bestIdx = -1, bestDiff = 999;
+    cavAreas.forEach(function(a, idx) {
+      var diff = Math.abs(a - uArea);
+      if (diff < bestDiff) { bestDiff = diff; bestIdx = idx; }
+    });
+    if (bestIdx >= 0 && bestDiff <= 15) {
+      projCaveatMap[u.unit_no] = true;
+      cavAreas.splice(bestIdx, 1); // consume so it won't match twice
+    } else {
+      projCaveatMap[u.unit_no] = false;
+    }
+  });
+  // Re-render stack to show updated badges
+  projRenderStack();
+}
+
 // ── Load when tab is clicked ───────────────────────────────
 document.querySelectorAll(".navtab").forEach(function(t) {
   t.addEventListener("click", function() {
@@ -4385,6 +4450,7 @@ async function sophiaLoadCaveats() {
     sophiaCaveats = filtered;
     sophiaCaveatsLoaded = true;
     sophiaRenderAll();
+    sophiaComputeCaveatMap(); // recompute now caveats are loaded
   } catch(e) {
     if (subEl) subEl.textContent = "Failed to load: " + e.message;
     if (barMsg) { barMsg.textContent = "Network error. " + e.message; barMsg.style.display = "block"; }
@@ -4415,12 +4481,12 @@ function sophiaRenderBarChart(data) {
   if (!wrap) return;
 
   if (data.length === 0) {
-    if (msg) { msg.textContent = "No URA caveats lodged yet."; msg.style.display = "block"; }
+    if (msg) { msg.textContent = "No URA caveats lodged yet. Caveats are typically filed 1-4 weeks after option exercise."; msg.style.display = "block"; }
     return;
   }
   if (msg) msg.style.display = "none";
 
-  // Group by month
+  // Group by month — start from first caveat date naturally
   var monthly = {};
   data.forEach(function(t) {
     var mo = t.sale_date ? t.sale_date.slice(0, 7) : null;
@@ -4434,9 +4500,15 @@ function sophiaRenderBarChart(data) {
   var months = Object.keys(monthly).sort();
   var maxCount = Math.max.apply(null, months.map(function(m){ return monthly[m].count; }).concat([1]));
 
+  // PSF line scale
+  var allPsfs = months.map(function(m){ return monthly[m].psfs.length > 0 ? monthly[m].psfs.reduce(function(s,v){return s+v;},0)/monthly[m].psfs.length : null; }).filter(function(p){ return p !== null; });
+  var hasPsf  = allPsfs.length > 0;
+  var psfMin  = hasPsf ? Math.floor(Math.min.apply(null, allPsfs) / 100) * 100 - 200 : 2600;
+  var psfMax  = hasPsf ? Math.ceil(Math.max.apply(null, allPsfs) / 100) * 100 + 200 : 3800;
+
   var W = wrap.clientWidth || 560;
-  var H = 200;
-  var P = { t: 30, r: 12, b: 32, l: 30 };
+  var H = 220;
+  var P = { t: 18, r: hasPsf ? 58 : 12, b: 34, l: 30 };
   var cW = W - P.l - P.r;
   var cH = H - P.t - P.b;
   var bGW = cW / months.length;
@@ -4446,7 +4518,17 @@ function sophiaRenderBarChart(data) {
 
   var svg = '<svg width="' + W + '" height="' + H + '" viewBox="0 0 ' + W + ' ' + H + '" style="width:100%;overflow:visible">';
 
-  // Background grid
+  // Gradient defs
+  svg += '<defs>';
+  months.forEach(function(mo, i) {
+    svg += '<linearGradient id="sbg' + i + '" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#3b82d4"/><stop offset="100%" stop-color="#1a4f9c"/></linearGradient>';
+  });
+  if (hasPsf) {
+    svg += '<linearGradient id="psf-line-grad" x1="0" y1="0" x2="1" y2="0"><stop offset="0%" stop-color="#c8364a"/><stop offset="100%" stop-color="#e05a20"/></linearGradient>';
+  }
+  svg += '</defs>';
+
+  // Left axis grid lines (count)
   for (var k = 1; k <= 4; k++) {
     var tv = k * maxCount / 4;
     var ty = P.t + cH - (tv / maxCount) * cH;
@@ -4456,32 +4538,35 @@ function sophiaRenderBarChart(data) {
   // Zero line
   svg += '<line x1="' + P.l + '" x2="' + (P.l+cW) + '" y1="' + (P.t+cH) + '" y2="' + (P.t+cH) + '" stroke="#b8cfe8" stroke-width="1.5"/>';
 
+  // Right axis (PSF) labels
+  if (hasPsf) {
+    var psfSteps = 4;
+    for (var ks = 0; ks <= psfSteps; ks++) {
+      var psfV = psfMin + (psfMax - psfMin) * ks / psfSteps;
+      var psfY = P.t + cH - ((psfV - psfMin) / (psfMax - psfMin)) * cH;
+      svg += '<text x="' + (P.l + cW + 4) + '" y="' + (psfY + 3.5).toFixed(1) + '" fill="#c8364a" font-size="8.5" font-family="DM Mono,monospace">S$' + Math.round(psfV/100)*100 + '</text>';
+    }
+    // Right axis label
+    svg += '<text x="' + (P.l + cW + P.r - 4) + '" y="' + (P.t + cH/2) + '" text-anchor="middle" fill="#c8364a" font-size="8" font-family="DM Sans" transform="rotate(90,' + (P.l+cW+P.r-4) + ',' + (P.t+cH/2) + ')">Avg PSF</text>';
+  }
+
+  // Draw bars
   months.forEach(function(mo, i) {
     var d = monthly[mo];
-    var avgPsf = d.psfs.length > 0 ? Math.round(d.psfs.reduce(function(s,v){return s+v;},0) / d.psfs.length) : null;
     var bh = Math.max((d.count / maxCount) * cH, 2);
     var bx = P.l + i * bGW + (bGW - bW) / 2;
     var by = P.t + cH - bh;
 
-    // Bar gradient: darker at bottom
-    var barId = "sb" + i;
-    svg += '<defs><linearGradient id="' + barId + '" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#2563bc"/><stop offset="100%" stop-color="#1a4f9c"/></linearGradient></defs>';
-    svg += '<rect x="' + bx.toFixed(1) + '" y="' + by.toFixed(1) + '" width="' + bW.toFixed(1) + '" height="' + bh.toFixed(1) + '" fill="url(#' + barId + ')" rx="3"/>';
+    svg += '<rect x="' + bx.toFixed(1) + '" y="' + by.toFixed(1) + '" width="' + bW.toFixed(1) + '" height="' + bh.toFixed(1) + '" fill="url(#sbg' + i + ')" rx="3"/>';
 
-    // Count label inside bar (if tall enough)
+    // Count label
     if (bh > 18) {
-      svg += '<text x="' + (bx + bW/2).toFixed(1) + '" y="' + (by + 14).toFixed(1) + '" text-anchor="middle" fill="white" font-size="10" font-weight="700" font-family="DM Mono,monospace">' + d.count + '</text>';
-    } else if (bh > 4) {
-      // Short bar: count above
-      svg += '<text x="' + (bx + bW/2).toFixed(1) + '" y="' + (by - 4).toFixed(1) + '" text-anchor="middle" fill="var(--g1)" font-size="9" font-weight="700" font-family="DM Mono,monospace">' + d.count + '</text>';
+      svg += '<text x="' + (bx + bW/2).toFixed(1) + '" y="' + (by + 13).toFixed(1) + '" text-anchor="middle" fill="white" font-size="10" font-weight="700" font-family="DM Mono,monospace">' + d.count + '</text>';
+    } else if (bh > 3) {
+      svg += '<text x="' + (bx + bW/2).toFixed(1) + '" y="' + (by - 4).toFixed(1) + '" text-anchor="middle" fill="#1a4f9c" font-size="9" font-weight="700" font-family="DM Mono,monospace">' + d.count + '</text>';
     }
 
-    // PSF label above bar (in blue)
-    if (avgPsf) {
-      svg += '<text x="' + (bx + bW/2).toFixed(1) + '" y="' + (by - (bh > 18 ? 6 : 18)).toFixed(1) + '" text-anchor="middle" fill="#1a4f9c" font-size="8.5" font-weight="600" font-family="DM Mono,monospace">S$' + avgPsf.toLocaleString() + '</text>';
-    }
-
-    // X-axis month label
+    // X-axis label
     var step = months.length <= 12 ? 1 : months.length <= 18 ? 2 : 3;
     if (i % step === 0 || i === months.length - 1) {
       var pts = mo.split("-");
@@ -4490,8 +4575,39 @@ function sophiaRenderBarChart(data) {
     }
   });
 
+  // PSF line + dots (drawn after bars so they sit on top)
+  if (hasPsf) {
+    var linePts = [];
+    months.forEach(function(mo, i) {
+      var d = monthly[mo];
+      if (d.psfs.length === 0) return;
+      var avgPsf = d.psfs.reduce(function(s,v){return s+v;},0) / d.psfs.length;
+      var cx2 = P.l + i * bGW + bGW / 2;
+      var cy2 = P.t + cH - ((avgPsf - psfMin) / (psfMax - psfMin)) * cH;
+      linePts.push({ x: cx2, y: cy2, psf: Math.round(avgPsf), mo: mo });
+    });
+
+    if (linePts.length > 1) {
+      var lineD = linePts.map(function(p, idx){ return (idx === 0 ? "M" : "L") + p.x.toFixed(1) + "," + p.y.toFixed(1); }).join(" ");
+      svg += '<path d="' + lineD + '" fill="none" stroke="url(#psf-line-grad)" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/>';
+    }
+
+    // Dots + PSF value labels
+    linePts.forEach(function(p) {
+      svg += '<circle cx="' + p.x.toFixed(1) + '" cy="' + p.y.toFixed(1) + '" r="3.5" fill="#c8364a" stroke="white" stroke-width="1.5"/>';
+      svg += '<text x="' + p.x.toFixed(1) + '" y="' + (p.y - 7).toFixed(1) + '" text-anchor="middle" fill="#c8364a" font-size="8.5" font-weight="700" font-family="DM Mono,monospace">S$' + p.psf.toLocaleString() + '</text>';
+    });
+
+    // Legend
+    svg += '<rect x="' + (P.l + 2) + '" y="' + (P.t - 14) + '" width="8" height="8" rx="1" fill="#1a4f9c"/>';
+    svg += '<text x="' + (P.l + 12) + '" y="' + (P.t - 7) + '" fill="#5a7499" font-size="8.5" font-family="DM Sans">Caveats lodged</text>';
+    svg += '<circle cx="' + (P.l + 80) + '" cy="' + (P.t - 10) + '" r="3" fill="#c8364a"/>';
+    svg += '<line x1="' + (P.l + 76) + '" x2="' + (P.l + 92) + '" y1="' + (P.t - 10) + '" y2="' + (P.t - 10) + '" stroke="#c8364a" stroke-width="1.5"/>';
+    svg += '<text x="' + (P.l + 94) + '" y="' + (P.t - 7) + '" fill="#c8364a" font-size="8.5" font-family="DM Sans">Avg PSF</text>';
+  }
+
   svg += '</svg>';
-  wrap.innerHTML = svg + (msg ? '<div id="sophia-bar-msg" style="display:none"></div>' : '');
+  wrap.innerHTML = svg;
 }
 
 // ── Donut pie ─────────────────────────────────────────────────────────
