@@ -8,15 +8,15 @@
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
 :root{
-  --g1:#21513b;--g2:#2d7a57;--g3:#3da670;--glt:#e8f5ef;--gmd:#c2e0d0;
-  --bg:#edf0ee;--srf:#ffffff;--srf2:#f4f6f5;--srf3:#eef1ef;
-  --bdr:#dce4df;--bdr2:#c8d8d0;
-  --txt:#111c16;--txt2:#2d4a38;--mut:#6b8578;--mut2:#8fa89c;
-  --red:#c8364a;--amber:#c97c1a;--blue:#1a5c9e;
-  --hdr:#0d2219;--hdr2:#122d20;--hdr3:#183829;
-  --shadow:0 1px 4px rgba(13,34,25,.08),0 4px 16px rgba(13,34,25,.06);
-  --shadow-sm:0 1px 3px rgba(13,34,25,.07);
-  --shadow-lg:0 4px 24px rgba(13,34,25,.13);
+  --g1:#1a4f9c;--g2:#2563bc;--g3:#3b82d4;--glt:#eaf1fb;--gmd:#b8d4f0;
+  --bg:#f5f7fa;--srf:#ffffff;--srf2:#f0f4f9;--srf3:#edf2f8;
+  --bdr:#d4e0ee;--bdr2:#b8cfe8;
+  --txt:#111827;--txt2:#1e3a5f;--mut:#5a7499;--mut2:#8aa3c0;
+  --red:#c8364a;--amber:#c97c1a;--blue:#1a4f9c;
+  --hdr:#0d1f3c;--hdr2:#132848;--hdr3:#1a3358;
+  --shadow:0 1px 4px rgba(13,31,60,.08),0 4px 16px rgba(13,31,60,.06);
+  --shadow-sm:0 1px 3px rgba(13,31,60,.07);
+  --shadow-lg:0 4px 24px rgba(13,31,60,.13);
 }
 html,body{background:var(--bg);color:var(--txt);font-family:'DM Sans',sans-serif;font-size:14px;min-height:100vh;-webkit-font-smoothing:antialiased}
 
@@ -257,7 +257,7 @@ html,body{background:var(--bg);color:var(--txt);font-family:'DM Sans',sans-serif
           <div style="font-size:9px;color:rgba(255,255,255,.45);text-transform:uppercase;letter-spacing:.06em;margin-top:2px">2025 FY</div>
         </div>
         <div style="background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.1);border-radius:6px;padding:8px 14px;text-align:center;min-width:80px">
-          <div style="font-size:16px;font-weight:700;color:#3da670;font-family:'DM Mono',monospace" id="banner-yoy">—</div>
+          <div style="font-size:16px;font-weight:700;color:#3b82d4;font-family:'DM Mono',monospace" id="banner-yoy">—</div>
           <div style="font-size:9px;color:rgba(255,255,255,.45);text-transform:uppercase;letter-spacing:.06em;margin-top:2px">YoY Chg</div>
         </div>
       </div>
@@ -791,7 +791,7 @@ html,body{background:var(--bg);color:var(--txt);font-family:'DM Sans',sans-serif
 var YEARS=[1995,1996,1997,1998,1999,2000,2001,2002,2003,2004,2005,2006,2007,2008,2009,2010,2011,2012,2013,2014,2015,2016,2017,2018,2019,2020,2021,2022,2023,2024,2025,2026];
 var TYPES=["office","retail","shophouse","multiUser","singleUser","bizPark","warehouse"];
 var TLABEL={"office":"Office","retail":"Retail","shophouse":"Shophouse","multiUser":"Multi-User Factory","singleUser":"Single-User Factory","bizPark":"Business Park","warehouse":"Warehouse"};
-var TCOLOR={"office":"#21513b","retail":"#2d7a57","shophouse":"#3da670","multiUser":"#52c98a","singleUser":"#7dd9a8","bizPark":"#a8e8c8","warehouse":"#c8e8d8"};
+var TCOLOR={"office":"#1a4f9c","retail":"#2563bc","shophouse":"#3b82d4","multiUser":"#52c98a","singleUser":"#7dd9a8","bizPark":"#a8e8c8","warehouse":"#c8e8d8"};
 var VAL_ARR=[[382.87,299.74,123.93,327.15,109.36,0,113.2],[1150.79,401.34,211.84,638.39,236.72,0,300.73],[395.93,262.44,159.51,327.9,300.99,0,122.55],[293.92,159.49,62.47,114.96,365.0,0,37.83],[405.93,271.84,300.62,550.18,534.75,0,80.42],[380.56,299.26,303.94,409.76,688.16,0,83.56],[468.98,1387.73,305.43,311.88,593.75,6.86,49.65],[251.19,491.53,330.81,413.61,505.58,12.5,44.88],[118.3,750.14,371.8,362.24,701.29,0,52.42],[434.8,317.32,362.73,339.52,1274.23,0,37.18],[1093.75,2556.86,445.06,215.83,928.97,23.4,26.82],[2101.69,2267.18,633.44,379.37,2188.46,98.6,51.61],[6833.69,564.97,1419.74,1277.06,2224.29,0,78.76],[1939.44,232.56,519.51,871.61,2853.99,384.8,48.51],[644.93,313.32,647.49,1050.31,1251.51,0,97.21],[2637.86,1756.03,1205.09,1925.52,2936.86,145.0,265.84],[2296.3,844.71,1143.5,3338.66,2469.84,364.15,475.8],[3702.58,1988.55,1379.69,4231.87,2897.94,183.0,617.7],[2661.6,5206.03,1265.96,3186.75,2129.89,735.44,503.66],[3196.53,1333.21,585.09,2092.01,1787.69,0,148.06],[2704.02,1037.18,657.3,1248.98,1274.05,112.0,234.99],[2098.6,591.65,713.72,986.46,942.44,2200.0,81.83],[1990.3,2690.03,1029.68,854.74,3362.95,0,128.72],[2275.82,672.32,1432.0,1127.58,1122.71,28.0,637.53],[1936.46,2110.65,915.94,1091.5,1723.08,0,301.16],[1588.98,596.9,910.23,1189.17,794.61,300.76,350.42],[5112.94,738.3,1935.14,2247.17,1419.11,247.96,562.1],[2465.86,1775.48,1626.36,2222.37,1188.11,0,368.21],[2231.65,871.75,1118.63,1992.14,1177.03,0,623.3],[2117.61,872.29,699.29,2073.41,919.07,0,746.9],[1132.21,1214.18,634.78,2087.75,1629.77,0,1198.21],[284.52,584.53,53.41,212.48,69.0,0,156.19]];
 var CNT_ARR=[[362,448,73,289,38,0,91],[424,509,99,463,59,0,212],[209,349,72,404,65,0,98],[127,269,60,149,97,0,34],[249,411,184,819,175,0,46],[209,362,162,596,192,0,98],[138,299,185,575,173,1,64],[200,433,203,982,192,2,66],[133,361,245,764,173,0,69],[284,414,224,674,191,0,59],[277,376,293,433,196,4,42],[468,418,332,750,294,4,56],[719,636,526,1768,318,0,86],[217,230,227,1411,204,3,69],[214,323,271,1705,204,0,88],[478,652,391,3071,307,1,272],[521,743,298,4174,279,4,392],[1153,1518,289,4341,244,1,407],[742,1305,205,2851,157,3,218],[518,510,106,1907,149,0,99],[242,248,104,1236,103,1,95],[286,242,109,927,89,2,58],[344,219,148,885,121,0,57],[337,256,170,939,96,1,64],[314,223,123,1070,103,0,65],[217,151,144,1090,101,2,70],[351,295,253,1748,140,2,123],[316,264,191,1874,131,0,114],[321,272,131,1483,124,0,129],[334,250,87,1622,96,0,162],[355,301,89,1509,163,0,149],[40,42,8,142,11,0,16]];
 var TYPETOT={"office":57330.6,"retail":35459.5,"shophouse":23504.1,"multiUser":39698.3,"singleUser":42601.2,"bizPark":4842.5,"warehouse":8626.0};
@@ -1035,7 +1035,7 @@ function renderKPIs(){
     var annualised=v26*4;
     var pct=((annualised-v25)/v25*100);
     byoy.textContent=(pct>=0?"+":"")+pct.toFixed(0)+"%";
-    byoy.style.color=pct>=0?"#3da670":"#c8364a";
+    byoy.style.color=pct>=0?"#3b82d4":"#c8364a";
   }
 }
 
@@ -1218,7 +1218,7 @@ function renderNewsList(){
 
 // PIPELINE
 function renderPipeline(){
-  var cm={"Investment Sale":"#21513b","En Bloc":"#2d7a57","GLS Tender":"#3da670","Receivership":"#dc3545"};
+  var cm={"Investment Sale":"#1a4f9c","En Bloc":"#2563bc","GLS Tender":"#3b82d4","Receivership":"#dc3545"};
   document.getElementById("ptable").innerHTML='<thead><tr><th>Asset</th><th>Type</th><th>Est. Value</th><th>Closes</th><th>Agent</th></tr></thead><tbody>'
     +PIPELINE.map(function(p){var c=cm[p.type]||"#6b8c7a";
       return'<tr><td><div style="font-weight:600">'+p.asset+'</div><div style="font-size:11px;color:var(--mut)">'+p.subtype+'</div>'
@@ -1247,13 +1247,13 @@ function renderAnalytics(){
     var x=P.l+i*bw2+bw2*0.08,bw=bw2*0.38;
     var ph=(d.pv/mx)*cH,ch=(d.cv/mx)*cH;
     svg+='<rect x="'+x.toFixed(1)+'" y="'+(P.t+cH-ph).toFixed(1)+'" width="'+bw.toFixed(1)+'" height="'+Math.max(ph,0).toFixed(1)+'" fill="#c2e0d0" rx="2"/>';
-    svg+='<rect x="'+(x+bw+2).toFixed(1)+'" y="'+(P.t+cH-ch).toFixed(1)+'" width="'+bw.toFixed(1)+'" height="'+Math.max(ch,0).toFixed(1)+'" fill="'+(d.cv>=d.pv?"#21513b":"#dc3545")+'" rx="2" opacity=".85"/>';
+    svg+='<rect x="'+(x+bw+2).toFixed(1)+'" y="'+(P.t+cH-ch).toFixed(1)+'" width="'+bw.toFixed(1)+'" height="'+Math.max(ch,0).toFixed(1)+'" fill="'+(d.cv>=d.pv?"#1a4f9c":"#dc3545")+'" rx="2" opacity=".85"/>';
     var sl=yoy.length<=15||i%Math.ceil(yoy.length/15)===0||i===yoy.length-1;
     if(sl)svg+='<text x="'+(x+bw+1).toFixed(1)+'" y="'+(P.t+cH+15)+'" text-anchor="middle" fill="#6b8578" font-size="10" font-family="DM Sans">'+d.yr+'</text>';
   });
   svg+='<rect x="'+P.l+'" y="'+(H-14)+'" width="10" height="8" fill="#c2e0d0" rx="1"/>'
       +'<text x="'+(P.l+14)+'" y="'+(H-6)+'" fill="#6b8578" font-size="10" font-family="DM Sans">Prior Year</text>'
-      +'<rect x="'+(P.l+90)+'" y="'+(H-14)+'" width="10" height="8" fill="#21513b" rx="1"/>'
+      +'<rect x="'+(P.l+90)+'" y="'+(H-14)+'" width="10" height="8" fill="#1a4f9c" rx="1"/>'
       +'<text x="'+(P.l+104)+'" y="'+(H-6)+'" fill="#6b8578" font-size="10" font-family="DM Sans">Current Year</text></svg>';
   el.innerHTML=svg;
   var mx2=Math.max.apply(null,Object.keys(TYPETOT).map(function(t){return TYPETOT[t];}));
@@ -1290,7 +1290,7 @@ var dirActiveOwnership = '';
 var detTxPage = 0, detTxTotal = 0, detProject = '';
 
 var DIR_TYPE_COLORS = {
-  "Office":"#21513b","Retail":"#2d7a57","Shop House":"#3da670",
+  "Office":"#1a4f9c","Retail":"#2563bc","Shop House":"#3b82d4",
   "Multiple-user Factory":"#52c98a","Single-user Factory":"#7dd9a8",
   "Business Park":"#a8e8c8","Warehouse":"#c8e8d8"
 };
@@ -1388,7 +1388,7 @@ function fmtVal(v){
 
 function renderDirGrid(rows){
   document.getElementById("dir-grid").innerHTML = rows.map(function(r){
-    var tc = DIR_TYPE_COLORS[r.property_type]||"#21513b";
+    var tc = DIR_TYPE_COLORS[r.property_type]||"#1a4f9c";
     var region = (r.planning_region||"").replace(" Region","");
     return '<div style="background:var(--srf);border:1px solid var(--bdr);border-radius:10px;padding:16px;cursor:pointer;transition:all .15s;border-top:3px solid '+tc+'" onmouseenter="this.style.boxShadow=\'0 4px 16px rgba(33,81,59,.12)\'" onmouseleave="this.style.boxShadow=\'none\'" onclick="dirOpenDetail(\''+r.project_name.replace(/\\/g,"\\\\").replace(/'/g,"\\'")+'\',\''+r.property_type+'\')">'
       +'<div style="font-weight:700;font-size:13px;margin-bottom:3px;line-height:1.3">'+r.project_name+'</div>'
@@ -1410,7 +1410,7 @@ function renderDirGrid(rows){
 function renderDirList(rows){
   var tmap = DIR_TYPE_COLORS;
   document.getElementById("dir-list-tbody").innerHTML = rows.map(function(r){
-    var tc = tmap[r.property_type]||"#21513b";
+    var tc = tmap[r.property_type]||"#1a4f9c";
     var region = (r.planning_region||"").replace(" Region","");
     return '<tr style="cursor:pointer" onclick="dirOpenDetail(\''+r.project_name.replace(/\\/g,"\\\\").replace(/'/g,"\\'")+'\',\''+r.property_type+'\')">'
       +'<td><span style="font-weight:600">'+r.project_name+'</span><div style="font-size:10px;color:var(--mut)">'+(r.building_address||"")+'</div></td>'
@@ -3762,7 +3762,7 @@ function reitSearch(page){
 
   var html = '';
   pageData.forEach(function(p, idx){
-    var rc = ENTITY_COLORS[p.entity]||'#21513b';
+    var rc = ENTITY_COLORS[p.entity]||'#1a4f9c';
     var ic = REIT_TYPE_ICONS[p.type]||'🏢';
     var nla = p.nla_sqm ? (p.nla_sqm>=10000?(p.nla_sqm/1000).toFixed(0)+'K sqm':p.nla_sqm.toLocaleString()+' sqm') : '\u2014';
     var occ = p.occ ? p.occ.toFixed(1)+'%' : '\u2014';
@@ -3823,7 +3823,7 @@ function reitSearch(page){
 function reitOpenDetail(idx){
   var p = typeof idx==='number' ? REIT_DATA[idx] : REIT_DATA.find(function(x){ return x.name===idx; });
   if(!p) return;
-  var rc = ENTITY_COLORS[p.entity]||'#21513b';
+  var rc = ENTITY_COLORS[p.entity]||'#1a4f9c';
   document.getElementById('reit-grid').style.display='none';
   document.getElementById('reit-pagination').style.display='none';
   document.getElementById('reit-detail').style.display='block';
