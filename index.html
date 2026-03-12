@@ -81,9 +81,9 @@ html,body{background:var(--bg);color:var(--txt);font-family:'DM Sans',sans-serif
 
 /* ── PROJECTS FOR SALE ── */
 .stack-grid{display:flex;flex-direction:column;gap:4px}
-.stack-floor{display:flex;align-items:center;gap:6px}
-.stack-floor-lbl{font-size:10px;font-weight:700;color:var(--mut);font-family:'DM Mono',monospace;width:34px;flex-shrink:0;text-align:right}
-.stack-floor-tag{font-size:9px;color:var(--mut2);font-style:italic;white-space:nowrap;flex-shrink:0;align-self:center;margin-right:4px}
+.stack-floor{display:flex;align-items:flex-start;gap:6px}
+.stack-floor-lbl{font-size:10px;font-weight:700;color:var(--mut);font-family:'DM Mono',monospace;width:86px;flex-shrink:0;text-align:right;padding-top:3px}
+.stack-floor-tag{display:block;font-size:8.5px;color:var(--mut2);font-style:italic;white-space:nowrap;font-weight:400;margin-top:2px;font-family:'DM Sans',sans-serif}
 .stack-units{display:flex;gap:4px;flex-wrap:wrap}
 .sunit{border-radius:5px;border:1px solid transparent;padding:5px 8px;cursor:pointer;transition:all .12s;min-width:68px;text-align:center;position:relative}
 .sunit:hover{transform:translateY(-1px);box-shadow:0 3px 10px rgba(0,0,0,.15)}
@@ -4267,8 +4267,7 @@ function projRenderStack() {
 
     var flTag = FLOOR_LABELS[fl] ? '<span class="stack-floor-tag">' + FLOOR_LABELS[fl] + '</span>' : "";
     stackHtml += '<div class="stack-floor">' +
-      '<div class="stack-floor-lbl">L' + fl + '</div>' +
-      flTag +
+      '<div class="stack-floor-lbl">L' + fl + flTag + '</div>' +
       '<div class="stack-units">' + unitsHtml + '</div>' +
       '</div>';
 
@@ -4370,26 +4369,30 @@ function projSelectUnit(unitNo) {
         '</div>' +
         '<span class="unit-status-pill ' + pillClass + '">' + u.status + '</span>' +
       '</div>' +
-      '<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:12px">' +
-        '<div style="background:var(--srf2);border-radius:6px;padding:10px;border:1px solid var(--bdr)">' +
-          '<div style="font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--mut);margin-bottom:4px">Gross Area</div>' +
-          '<div style="font-size:15px;font-weight:700;font-family:\'DM Mono\',monospace">' + u.area_sqft.toLocaleString() + ' sf</div>' +
-          '<div style="font-size:10px;color:var(--mut2)">' + u.area_sqm + ' sqm</div>' +
-        '</div>' +
-        '<div style="background:var(--srf2);border-radius:6px;padding:10px;border:1px solid var(--bdr)">' +
-          '<div style="font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--mut);margin-bottom:4px">Net Area</div>' +
-          '<div style="font-size:15px;font-weight:700;font-family:\'DM Mono\',monospace">' + (u.net_sqft ? u.net_sqft.toLocaleString() : '—') + ' sf</div>' +
-          '<div style="font-size:10px;color:var(--mut2)">Excl. A/C ledge ' + (u.ac_ledge_sqm || 3) + ' sqm</div>' +
-        '</div>' +
-        '<div style="background:var(--srf2);border-radius:6px;padding:10px;border:1px solid var(--bdr)">' +
-          '<div style="font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--mut);margin-bottom:4px">List Price</div>' +
-          '<div style="font-size:14px;font-weight:700;font-family:\'DM Mono\',monospace;color:var(--g1)">' + price + '</div>' +
-        '</div>' +
-        '<div style="background:var(--srf2);border-radius:6px;padding:10px;border:1px solid var(--bdr)">' +
-          '<div style="font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--mut);margin-bottom:4px">PSF</div>' +
-          '<div style="font-size:14px;font-weight:700;font-family:\'DM Mono\',monospace;color:var(--g1)">' + psf + '</div>' +
-        '</div>' +
-      '</div>' +
+      (function(){
+        var hasTxn = u.status === "sold" && (u.sold_price || (projCaveatMap[u.unit_no] && typeof projCaveatMap[u.unit_no] === "object"));
+        var boxes = '<div style="background:var(--srf2);border-radius:6px;padding:10px;border:1px solid var(--bdr)">' +
+            '<div style="font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--mut);margin-bottom:4px">Gross Area</div>' +
+            '<div style="font-size:15px;font-weight:700;font-family:\'DM Mono\',monospace">' + u.area_sqft.toLocaleString() + ' sf</div>' +
+            '<div style="font-size:10px;color:var(--mut2)">' + u.area_sqm + ' sqm</div>' +
+          '</div>' +
+          '<div style="background:var(--srf2);border-radius:6px;padding:10px;border:1px solid var(--bdr)">' +
+            '<div style="font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--mut);margin-bottom:4px">Net Area</div>' +
+            '<div style="font-size:15px;font-weight:700;font-family:\'DM Mono\',monospace">' + (u.net_sqft ? u.net_sqft.toLocaleString() : '—') + ' sf</div>' +
+            '<div style="font-size:10px;color:var(--mut2)">Excl. A/C ledge ' + (u.ac_ledge_sqm || 3) + ' sqm</div>' +
+          '</div>';
+        if (!hasTxn) {
+          boxes += '<div style="background:var(--srf2);border-radius:6px;padding:10px;border:1px solid var(--bdr)">' +
+              '<div style="font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--mut);margin-bottom:4px">List Price</div>' +
+              '<div style="font-size:14px;font-weight:700;font-family:\'DM Mono\',monospace;color:var(--g1)">' + price + '</div>' +
+            '</div>' +
+            '<div style="background:var(--srf2);border-radius:6px;padding:10px;border:1px solid var(--bdr)">' +
+              '<div style="font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--mut);margin-bottom:4px">PSF</div>' +
+              '<div style="font-size:14px;font-weight:700;font-family:\'DM Mono\',monospace;color:var(--g1)">' + psf + '</div>' +
+            '</div>';
+        }
+        return '<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:12px">' + boxes + '</div>';
+      }()) +
       '<div style="font-size:11px;color:var(--mut);padding:8px 10px;background:var(--srf2);border-radius:5px;border:1px solid var(--bdr)">' +
         '<span style="font-weight:600">Size:</span> ' + (u.size_category || '—') + ' · ' +
         '<span style="font-weight:600">Tenure:</span> 99 Yrs<br>' +
