@@ -92,6 +92,7 @@ html,body{background:var(--bg);color:var(--txt);font-family:'DM Sans',sans-serif
 .sunit.sold{background:#fce4ec;border-color:#e57373;color:#7b1c1c}
 .sunit.withheld{background:#f5f5f5;border-color:#bdbdbd;color:#757575}
 .sunit.selected{outline:2px solid var(--g1);outline-offset:1px;transform:translateY(-1px);box-shadow:0 4px 12px rgba(26,79,156,.25)}
+@keyframes spin{to{transform:rotate(360deg)}}
 .proj-kpi-row{display:grid;grid-template-columns:repeat(5,1fr);gap:8px;margin-bottom:14px}
 .proj-kpi{background:var(--srf);border:1px solid var(--bdr);border-radius:8px;padding:12px 14px;text-align:center;box-shadow:var(--shadow-sm)}
 .proj-kpi-val{font-size:22px;font-weight:700;font-family:'DM Mono',monospace;letter-spacing:-.02em}
@@ -867,6 +868,7 @@ html,body{background:var(--bg);color:var(--txt);font-family:'DM Sans',sans-serif
             </div>
             <!-- Filters -->
             <div style="display:flex;gap:6px;align-items:center;flex-wrap:wrap">
+              <button class="cs-btn-sm" onclick="projForceReload()" title="Refresh from database" style="font-size:11px;padding:3px 9px;display:flex;align-items:center;gap:4px"><span id="proj-refresh-icon">↺</span> Refresh</button>
               <div style="display:flex;gap:3px" id="proj-status-filter">
                 <button class="fchip on" data-sf="all" onclick="projFilter(this,'status')">All</button>
                 <button class="fchip" data-sf="available" onclick="projFilter(this,'status')" style="border-color:#81c784;color:#1a6b3c">Available</button>
@@ -4054,39 +4056,68 @@ var projSelectedUnit = null;
 var projLoaded = false;
 
 // ── Fetch all units from Supabase ──────────────────────────
+function projForceReload() {
+  projLoaded = false;
+  projUnits = [];
+  projSelectedUnit = null;
+  var icon = document.getElementById("proj-refresh-icon");
+  if (icon) icon.style.animation = "spin .6s linear";
+  projLoadUnits().then(function(){ if (icon) icon.style.animation = ""; });
+}
+
 async function projLoadUnits() {
   if (projLoaded) return;
-  document.getElementById("proj-stack-loading").style.display = "block";
-  document.getElementById("proj-stack").style.display = "none";
+  var loadEl = document.getElementById("proj-stack-loading");
+  var stackEl2 = document.getElementById("proj-stack");
+  loadEl.style.display = "block";
+  loadEl.textContent = "Loading units from database…";
+  loadEl.style.color = "var(--mut)";
+  stackEl2.style.display = "none";
 
-  var allUnits = [];
-  var pageSize = 1000;
-  var from = 0;
-  while (true) {
-    var res = await fetch(
-      PROJ_SUPABASE_URL + "/rest/v1/units?project_slug=eq.one-sophia&order=floor.asc,stack.asc&select=*",
-      {
-        headers: {
-          "apikey": PROJ_SUPABASE_KEY,
-          "Authorization": "Bearer " + PROJ_SUPABASE_KEY,
-          "Range": from + "-" + (from + pageSize - 1),
-          "Range-Unit": "items"
+  try {
+    var allUnits = [];
+    var pageSize = 1000;
+    var from = 0;
+    while (true) {
+      var res = await fetch(
+        PROJ_SUPABASE_URL + "/rest/v1/units?project_slug=eq.one-sophia&order=floor.asc,stack.asc&select=*",
+        {
+          headers: {
+            "apikey": PROJ_SUPABASE_KEY,
+            "Authorization": "Bearer " + PROJ_SUPABASE_KEY,
+            "Range": from + "-" + (from + pageSize - 1),
+            "Range-Unit": "items"
+          }
         }
+      );
+      if (!res.ok) {
+        loadEl.textContent = "Error loading units (HTTP " + res.status + "). Click Refresh to retry.";
+        loadEl.style.color = "var(--red)";
+        return;
       }
-    );
-    var data = await res.json();
-    if (!Array.isArray(data) || data.length === 0) break;
-    allUnits = allUnits.concat(data);
-    if (data.length < pageSize) break;
-    from += pageSize;
-  }
+      var data = await res.json();
+      if (!Array.isArray(data) || data.length === 0) break;
+      allUnits = allUnits.concat(data);
+      if (data.length < pageSize) break;
+      from += pageSize;
+    }
 
-  projUnits = allUnits;
-  projLoaded = true;
-  projUpdateKPIs();
-  projRenderStack();
-  document.getElementById("proj-stack-loading").style.display = "none";
-  document.getElementById("proj-stack").style.display = "flex";
+    if (allUnits.length === 0) {
+      loadEl.textContent = "No units found. Check Supabase table or project_slug value.";
+      loadEl.style.color = "var(--amber)";
+      return;
+    }
+
+    projUnits = allUnits;
+    projLoaded = true;
+    projUpdateKPIs();
+    projRenderStack();
+    loadEl.style.display = "none";
+    stackEl2.style.display = "flex";
+  } catch(e) {
+    loadEl.textContent = "Failed to load: " + e.message + ". Click Refresh to retry.";
+    loadEl.style.color = "var(--red)";
+  }
 }
 
 // ── KPI strip ─────────────────────────────────────────────
@@ -4119,7 +4150,7 @@ function projRenderStack() {
   var tableHtml = "";
   var visCount = 0;
 
-  var FLOOR_LABELS = { 3:"G+3 · Gardens", 8:"L8 · Sky Amenities", 13:"L13 · Top Floor" };
+  var FLOOR_LABELS = { 3:"· Skygardens", 8:"· Sky Amenities", 13:"· Top Floor" };
 
   floors.forEach(function(fl) {
     var flUnits = projUnits.filter(function(u){ return u.floor === fl; });
