@@ -73,6 +73,7 @@ html,body{background:var(--bg);color:var(--txt);font-family:'DM Sans',sans-serif
 
 /* ── FILTER CHIPS ── */
 .fchip{padding:4px 11px;border-radius:5px;border:1px solid var(--bdr);background:var(--srf2);color:var(--mut);font-size:11px;cursor:pointer;font-family:'DM Sans',sans-serif;transition:all .12s;font-weight:500}
+#type-chips .fchip{display:block;width:100%;text-align:left;padding:5px 10px}
 .fchip:hover{border-color:var(--g2);color:var(--g1);background:var(--glt)}
 .fchip.on{background:var(--g1);border-color:var(--g1);color:#fff;font-weight:600}
 
@@ -289,40 +290,62 @@ html,body{background:var(--bg);color:var(--txt);font-family:'DM Sans',sans-serif
       </div>
     </div>
 
-    <!-- Chart — full width -->
-    <div class="card" style="margin-bottom:14px">
-      <div class="card-hdr">
-        <div>
-          <div class="card-title"><span class="card-title-dot"></span><span id="chart-title">Transaction Volume — Last 18 Months</span></div>
-          <div class="card-subtitle">Commercial &amp; Industrial · URA REALIS · S$ Millions</div>
-        </div>
-        <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
-          <div class="mode-row">
-            <button class="mbtn on" id="m-val">S$ Value</button>
-            <button class="mbtn" id="m-cnt">Deal Count</button>
-            <button class="mbtn" id="m-yoy" title="Toggle Year-on-Year view">YoY</button>
+    <!-- Chart — 2-col: filters left, chart right -->
+    <div class="card" style="margin-bottom:14px;padding:0;overflow:hidden">
+      <div style="display:flex;align-items:stretch;min-height:320px">
+
+        <!-- LEFT: Filters panel -->
+        <div style="width:220px;flex-shrink:0;padding:16px 18px;border-right:1px solid var(--bdr);background:var(--srf2);display:flex;flex-direction:column;gap:18px">
+
+          <!-- Title -->
+          <div>
+            <div class="card-title" style="margin-bottom:4px"><span class="card-title-dot"></span><span id="chart-title">Transaction Volume</span></div>
+            <div class="card-subtitle">C&amp;I · URA REALIS · S$ Millions</div>
           </div>
+
+          <!-- Display mode -->
+          <div>
+            <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:var(--mut);margin-bottom:7px">Display</div>
+            <div class="mode-row" style="flex-direction:column;gap:4px;border:none;background:none;padding:0">
+              <button class="mbtn on" id="m-val" style="width:100%;justify-content:center;border-radius:5px;border:1px solid var(--bdr)">S$ Value</button>
+              <button class="mbtn" id="m-cnt" style="width:100%;justify-content:center;border-radius:5px;border:1px solid var(--bdr)">Deal Count</button>
+              <button class="mbtn" id="m-yoy" style="width:100%;justify-content:center;border-radius:5px;border:1px solid var(--bdr)" title="Toggle Year-on-Year view">YoY Comparison</button>
+            </div>
+          </div>
+
+          <!-- Period -->
+          <div id="slider-row">
+            <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:var(--mut);margin-bottom:7px">Period</div>
+            <div class="range-sel" id="range-btns" style="display:flex;flex-direction:column;border-radius:6px;overflow:hidden;width:100%">
+              <button class="rbtn on" data-range="L18" style="border-radius:0;border-bottom:1px solid var(--bdr)">Last 18 Months</button>
+              <button class="rbtn" data-range="L12" style="border-radius:0;border-bottom:1px solid var(--bdr)">Last 12 Months</button>
+              <button class="rbtn" data-range="5Y" style="border-radius:0;border-bottom:1px solid var(--bdr)">5 Years</button>
+              <button class="rbtn" data-range="10Y" style="border-radius:0;border-bottom:1px solid var(--bdr)">10 Years</button>
+              <button class="rbtn" data-range="ALL" style="border-radius:0">All Time</button>
+            </div>
+            <div style="margin-top:10px;display:flex;align-items:center;gap:8px">
+              <input type="range" id="period-slider" min="6" max="32" value="18"
+                style="flex:1;accent-color:var(--g1);cursor:pointer;height:3px"
+                oninput="onSliderInput(this.value)">
+              <span id="slider-label" style="font-size:10px;color:var(--mut);font-family:'DM Mono',monospace;white-space:nowrap">18 mo</span>
+            </div>
+          </div>
+
+          <!-- Property Type -->
+          <div>
+            <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:var(--mut);margin-bottom:7px">Property Type</div>
+            <div class="fbar" id="type-chips" style="margin:0;flex-direction:column;align-items:stretch;gap:4px"></div>
+          </div>
+
         </div>
-      </div>
-      <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:10px;padding-bottom:10px;border-bottom:1px solid var(--srf3)" id="slider-row">
-        <span class="fbar-label">Period</span>
-        <div class="range-sel" id="range-btns">
-          <button class="rbtn on" data-range="L18">18M</button>
-          <button class="rbtn" data-range="L12">12M</button>
-          <button class="rbtn" data-range="5Y">5Y</button>
-          <button class="rbtn" data-range="10Y">10Y</button>
-          <button class="rbtn" data-range="ALL">All</button>
+
+        <!-- RIGHT: Chart + legend -->
+        <div style="flex:1;padding:16px 20px;display:flex;flex-direction:column;min-width:0">
+          <div id="bar-wrap" style="flex:1;width:100%;min-height:260px"></div>
+          <div style="display:flex;flex-wrap:wrap;gap:10px;margin-top:10px;padding-top:10px;border-top:1px solid var(--srf3)" id="legend"></div>
         </div>
-        <div class="fbar-sep"></div>
-        <input type="range" id="period-slider" min="6" max="32" value="18"
-          style="flex:1;max-width:160px;accent-color:var(--g1);cursor:pointer;height:3px"
-          oninput="onSliderInput(this.value)">
-        <span id="slider-label" style="font-size:11px;color:var(--mut);font-family:'DM Mono',monospace;white-space:nowrap;min-width:58px">18 months</span>
-        <div class="fbar-sep"></div>
-        <div class="fbar" id="type-chips" style="margin:0"></div>
+
       </div>
-      <div id="bar-wrap" style="width:100%;min-height:280px"></div>
-      <div style="display:flex;flex-wrap:wrap;gap:10px;margin-top:12px;padding-top:10px;border-top:1px solid var(--srf3)" id="legend"></div>
     </div>
 
     <!-- Overview Transaction Results -->
@@ -1029,7 +1052,7 @@ function renderKPIs(){
 // TYPE CHIPS
 function renderTypeChips(){
   var el=document.getElementById("type-chips");
-  var h='<span class="fbar-label">Type</span>';
+  var h='';
   TYPES.forEach(function(t){
     var on=activeTypes[t];
     var s=on?"background:"+TCOLOR[t]+";border-color:"+TCOLOR[t]+";color:#fff":"";
