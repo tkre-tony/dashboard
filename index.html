@@ -1622,7 +1622,7 @@ function renderBarChart(){
         var cx=P.l+i*bGW+bGW/2;
         var cntVal=tots[i];
         svg+='<circle cx="'+cx.toFixed(1)+'" cy="'+stiAnnY(v).toFixed(1)+'" r="2.5" fill="#f59e0b" opacity="0.9"'
-            +' onmouseenter="sT(event,''+fy[i]+'','STI',''+Math.round(v)+' (Dec close) · '+cntVal+' deals')" onmouseleave="hT()"/>';
+            +' onmouseenter="sT(event,\''+fy[i]+'\',\'STI\',\''+Math.round(v)+' (Dec close) · '+cntVal+' deals\')" onmouseleave="hT()"/>';
       });
     }
   }
