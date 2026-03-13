@@ -415,6 +415,19 @@ html,body{background:var(--bg);color:var(--txt);font-family:'DM Sans',sans-serif
             </div>
           </div>
 
+          <!-- Overlay -->
+          <div>
+            <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:var(--mut);margin-bottom:7px">Overlay</div>
+            <label style="display:flex;align-items:center;gap:7px;font-size:12px;color:var(--txt);cursor:pointer;padding:4px 0">
+              <input type="checkbox" id="ov-avgpsf" checked style="accent-color:var(--g1);cursor:pointer;width:13px;height:13px">
+              Avg PSF
+            </label>
+            <label style="display:flex;align-items:center;gap:7px;font-size:12px;color:var(--txt);cursor:pointer;padding:4px 0">
+              <input type="checkbox" id="ov-sti" style="accent-color:#f59e0b;cursor:pointer;width:13px;height:13px">
+              STI Index
+            </label>
+          </div>
+
         </div>
 
         <!-- RIGHT: Chart + legend + slider -->
@@ -1134,6 +1147,9 @@ var activeRange="L18";
 var chartYoY=false;
 var sliderMonths=18;
 var MONTHLY_CACHE=null; // {labels:[], datasets:{type:[vals]}}
+var showAvgPsf=true;
+var showSTI=false;
+var STI_CACHE=null; // {[mo]: stiValue}
 var newsCat="All";
 var activeTypes={};
 TYPES.forEach(function(t){activeTypes[t]=true;});
@@ -1161,7 +1177,7 @@ async function fetchMonthlyData(months){
     var allRows=[],page=0,pageSize=1000;
     while(true){
       var lo=page*pageSize,hi=lo+pageSize-1;
-      var url=SB_URL+"/rest/v1/transactions?select=sale_date,property_type,transacted_price&sale_date=gte."+from+"&order=sale_date.asc";
+      var url=SB_URL+"/rest/v1/transactions?select=sale_date,property_type,transacted_price,unit_price_psf&sale_date=gte."+from+"&order=sale_date.asc";
       var r=await fetch(url,{headers:{
         "apikey":SB_KEY,"Authorization":"Bearer "+SB_KEY,
         "Range":lo+"-"+hi,"Range-Unit":"items"
@@ -1183,9 +1199,11 @@ async function fetchMonthlyData(months){
       Object.keys(typeMap).forEach(function(k){if(pt.indexOf(k)>=0)t=typeMap[k];});
       if(!t)return;
       if(!agg[mo])agg[mo]={};
-      if(!agg[mo][t])agg[mo][t]={val:0,cnt:0};
+      if(!agg[mo][t])agg[mo][t]={val:0,cnt:0,psfSum:0,psfCnt:0};
       agg[mo][t].val+=(parseFloat(row.transacted_price)/1e6);
       agg[mo][t].cnt+=1;
+      var psf=parseFloat(row.unit_price_psf);
+      if(!isNaN(psf)&&psf>0){agg[mo][t].psfSum+=psf;agg[mo][t].psfCnt+=1;}
     });
     var labels=Object.keys(agg).sort();
     if(!labels.length)return null;
@@ -1193,7 +1211,24 @@ async function fetchMonthlyData(months){
   }catch(e){return null;}
 }
 
-// Format month label e.g. "2024-09" → "Sep 24"
+// STI Index fetch from Supabase macro_indicators table
+async function fetchSTIData(startDate,endDate){
+  try{
+    var url=SB_URL+"/rest/v1/macro_indicators?select=date,value&indicator=eq.STI&date=gte."+startDate+"&date=lte."+endDate+"&order=date.asc";
+    var r=await fetch(url,{headers:{"apikey":SB_KEY,"Authorization":"Bearer "+SB_KEY,"Range":"0-999","Range-Unit":"items"}});
+    var rows=await r.json();
+    if(!Array.isArray(rows)||!rows.length)return null;
+    var byMo={};
+    rows.forEach(function(row){
+      if(!row.date||row.value==null)return;
+      var mo=row.date.substring(0,7);
+      byMo[mo]=parseFloat(row.value); // last write wins = latest value per month
+    });
+    return byMo;
+  }catch(e){return null;}
+}
+
+
 function fmtMo(ym){
   var ms=["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
   var p=ym.split("-");
@@ -1233,7 +1268,16 @@ async function loadAndRenderChart(){
       sliderMonths=months;
     }
     var data=await fetchMonthlyData(months);
-    if(data){MONTHLY_CACHE=data;renderMonthlyChart(data);}
+    if(data){
+      MONTHLY_CACHE=data;
+      if(showSTI){
+        var d2=new Date();d2.setMonth(d2.getMonth()-months);
+        var s0=d2.toISOString().substring(0,10);
+        var e0=new Date().toISOString().substring(0,10);
+        STI_CACHE=await fetchSTIData(s0,e0);
+      }
+      renderMonthlyChart(data);
+    }
     else renderBarChart();
   } else {
     var moLabel=chartYoY?"Year-on-Year Comparison":"Annual Transaction Volume by Property Type";
@@ -1247,7 +1291,9 @@ async function loadAndRenderChart(){
 function renderMonthlyChart(data){
   var wrap=document.getElementById("bar-wrap");
   var W=wrap.clientWidth||800,H=280;
-  var P={t:14,r:16,b:40,l:62};
+  // Right padding: expand if any overlay is active to fit right-axis labels
+  var hasOverlay=(showAvgPsf||showSTI);
+  var P={t:14,r:hasOverlay?58:16,b:40,l:62};
   var cW=W-P.l-P.r,cH=H-P.t-P.b;
   var labels=data.labels;
   var actT=TYPES.filter(function(t){return activeTypes[t];});
@@ -1258,14 +1304,36 @@ function renderMonthlyChart(data){
     },0);
   });
   var mx=Math.max.apply(null,tots.concat([1]));
+
+  // Compute avg PSF per month across active types
+  var psfByMo=labels.map(function(mo){
+    var sum=0,cnt=0;
+    actT.forEach(function(t){
+      var d=data.agg[mo]&&data.agg[mo][t];
+      if(d&&d.psfCnt>0){sum+=d.psfSum;cnt+=d.psfCnt;}
+    });
+    return cnt>0?sum/cnt:null;
+  });
+  var psfVals=psfByMo.filter(function(v){return v!==null;});
+  var psfMax=psfVals.length?Math.max.apply(null,psfVals)*1.12:1;
+  var psfMin=psfVals.length?Math.max(0,Math.min.apply(null,psfVals)*0.88):0;
+
+  // STI values aligned to labels
+  var stiByMo=labels.map(function(mo){return STI_CACHE&&STI_CACHE[mo]!=null?STI_CACHE[mo]:null;});
+  var stiVals=stiByMo.filter(function(v){return v!==null;});
+  var stiMax=stiVals.length?Math.max.apply(null,stiVals)*1.06:1;
+  var stiMin=stiVals.length?Math.max(0,Math.min.apply(null,stiVals)*0.94):0;
+
   var svg='<svg height="'+H+'" viewBox="0 0 '+W+' '+H+'" style="width:100%;overflow:visible">';
-  // Grid lines
+
+  // Grid lines + left axis
   for(var k=0;k<=5;k++){
     var tv2=k*mx/5,ty=P.t+cH-(tv2/mx)*cH;
     var tl=chartMode==="val"?(tv2>=1000?"S$"+(tv2/1000).toFixed(0)+"B":"S$"+Math.round(tv2)+"M"):(tv2>=1000?(tv2/1000).toFixed(1)+"K":Math.round(tv2).toString());
     svg+='<line x1="'+P.l+'" x2="'+(P.l+cW)+'" y1="'+ty+'" y2="'+ty+'" stroke="#dce4df" stroke-width="1"/>';
     svg+='<text x="'+(P.l-5)+'" y="'+(ty+4)+'" text-anchor="end" fill="#6b8578" font-size="10" font-family="DM Mono,monospace">'+tl+'</text>';
   }
+
   // Bars
   var bGW=cW/labels.length;
   var bW=Math.max(2,bGW*0.82/actT.length);
@@ -1283,13 +1351,75 @@ function renderMonthlyChart(data){
           +' fill="'+TCOLOR[t]+'" rx="2" style="cursor:pointer"'
           +' onmouseenter="sT(event,\''+fmtMo(mo)+'\',\''+t+'\',\''+vs+'\')" onmouseleave="hT()"/>';
     });
-    // X labels — show every 2nd or 3rd to avoid crowding
+    // X labels
     var step=labels.length<=12?1:labels.length<=18?2:3;
     if(gi%step===0||gi===labels.length-1){
       var lx=P.l+gi*bGW+bGW/2;
       svg+='<text x="'+lx.toFixed(1)+'" y="'+(P.t+cH+16)+'" text-anchor="middle" fill="#6b8578" font-size="9.5" font-family="DM Sans">'+fmtMo(mo)+'</text>';
     }
   });
+
+  // ---- Avg PSF overlay ----
+  if(showAvgPsf&&psfVals.length){
+    var psfRange=psfMax-psfMin||1;
+    function psfY(v){return P.t+cH-((v-psfMin)/psfRange)*cH;}
+    // polyline
+    var psfPts=[];
+    psfByMo.forEach(function(v,i){
+      if(v===null)return;
+      var cx=P.l+i*bGW+bGW/2;
+      psfPts.push(cx.toFixed(1)+","+psfY(v).toFixed(1));
+    });
+    if(psfPts.length>1){
+      svg+='<polyline points="'+psfPts.join(" ")+'" fill="none" stroke="#3b82d4" stroke-width="1.8" stroke-linejoin="round" stroke-linecap="round" opacity="0.85"/>';
+    }
+    // dots
+    psfByMo.forEach(function(v,i){
+      if(v===null)return;
+      var cx=P.l+i*bGW+bGW/2;
+      svg+='<circle cx="'+cx.toFixed(1)+'" cy="'+psfY(v).toFixed(1)+'" r="2.8" fill="#3b82d4" opacity="0.9"'
+          +' onmouseenter="sT(event,\''+fmtMo(labels[i])+'\',\'avgPSF\',\'Avg S$'+Math.round(v)+' psf\')" onmouseleave="hT()"/>';
+    });
+    // Right axis — PSF (innermost right)
+    var rx1=P.l+cW+8;
+    for(var rk=0;rk<=4;rk++){
+      var rv=psfMin+rk*(psfMax-psfMin)/4;
+      var ry=psfY(rv);
+      svg+='<text x="'+rx1+'" y="'+(ry+4)+'" text-anchor="start" fill="#3b82d4" font-size="9" font-family="DM Mono,monospace" opacity="0.85">'+Math.round(rv)+'</text>';
+    }
+    svg+='<text x="'+(rx1+28)+'" y="'+(P.t+cH/2)+'" text-anchor="middle" fill="#3b82d4" font-size="8.5" font-family="DM Mono,monospace" opacity="0.7" transform="rotate(-90,'+(rx1+28)+','+(P.t+cH/2)+')">PSF</text>';
+  }
+
+  // ---- STI overlay ----
+  if(showSTI&&stiVals.length){
+    var stiRange=stiMax-stiMin||1;
+    function stiY(v){return P.t+cH-((v-stiMin)/stiRange)*cH;}
+    var stiPts=[];
+    stiByMo.forEach(function(v,i){
+      if(v===null)return;
+      var cx=P.l+i*bGW+bGW/2;
+      stiPts.push(cx.toFixed(1)+","+stiY(v).toFixed(1));
+    });
+    if(stiPts.length>1){
+      svg+='<polyline points="'+stiPts.join(" ")+'" fill="none" stroke="#f59e0b" stroke-width="1.8" stroke-dasharray="4,3" stroke-linejoin="round" stroke-linecap="round" opacity="0.85"/>';
+    }
+    // dots
+    stiByMo.forEach(function(v,i){
+      if(v===null)return;
+      var cx=P.l+i*bGW+bGW/2;
+      svg+='<circle cx="'+cx.toFixed(1)+'" cy="'+stiY(v).toFixed(1)+'" r="2.5" fill="#f59e0b" opacity="0.9"'
+          +' onmouseenter="sT(event,\''+fmtMo(labels[i])+'\',\'STI\',\''+Math.round(v)+'\')" onmouseleave="hT()"/>';
+    });
+    // Right axis — STI (outermost right, only if PSF not shown, else shift further)
+    var rx2=showAvgPsf?(P.l+cW+36):(P.l+cW+8);
+    for(var sk=0;sk<=4;sk++){
+      var sv=stiMin+sk*(stiMax-stiMin)/4;
+      var sy=stiY(sv);
+      svg+='<text x="'+rx2+'" y="'+(sy+4)+'" text-anchor="start" fill="#f59e0b" font-size="9" font-family="DM Mono,monospace" opacity="0.85">'+Math.round(sv)+'</text>';
+    }
+    svg+='<text x="'+(rx2+22)+'" y="'+(P.t+cH/2)+'" text-anchor="middle" fill="#f59e0b" font-size="8.5" font-family="DM Mono,monospace" opacity="0.7" transform="rotate(-90,'+(rx2+22)+','+(P.t+cH/2)+')">STI</text>';
+  }
+
   svg+='</svg>';
   wrap.innerHTML=svg;
 }
@@ -1396,6 +1526,15 @@ function initRangeBtns(){
       activeRange="L18";
       document.getElementById("slider-row").style.display="flex";
     }
+    loadAndRenderChart();
+  });
+  // Overlay checkboxes
+  document.getElementById("ov-avgpsf").addEventListener("change",function(){
+    showAvgPsf=this.checked;
+    if(MONTHLY_CACHE)renderMonthlyChart(MONTHLY_CACHE);
+  });
+  document.getElementById("ov-sti").addEventListener("change",function(){
+    showSTI=this.checked;
     loadAndRenderChart();
   });
 }
