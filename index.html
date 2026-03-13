@@ -1378,7 +1378,7 @@ function renderMonthlyChart(data){
       if(v===null)return;
       var cx=P.l+i*bGW+bGW/2;
       svg+='<circle cx="'+cx.toFixed(1)+'" cy="'+psfY(v).toFixed(1)+'" r="2.8" fill="#3b82d4" opacity="0.9"'
-          +' onmouseenter="sT(event,\''+fmtMo(labels[i])+'\',\'avgPSF\',\'Avg S$'+Math.round(v)+' psf\')" onmouseleave="hT()"/>';
+          +' onmouseenter="sT(event,\''+fmtMo(labels[i])+'\',\'avgPSF\',\'Avg S$'+Math.round(v)+' psf · '+tots[i]+' deals\')" onmouseleave="hT()"/>';
     });
     // Right axis — PSF (innermost right)
     var rx1=P.l+cW+8;
@@ -1408,7 +1408,7 @@ function renderMonthlyChart(data){
       if(v===null)return;
       var cx=P.l+i*bGW+bGW/2;
       svg+='<circle cx="'+cx.toFixed(1)+'" cy="'+stiY(v).toFixed(1)+'" r="2.5" fill="#f59e0b" opacity="0.9"'
-          +' onmouseenter="sT(event,\''+fmtMo(labels[i])+'\',\'STI\',\''+Math.round(v)+'\')" onmouseleave="hT()"/>';
+          +' onmouseenter="sT(event,\''+fmtMo(labels[i])+'\',\'STI\',\''+Math.round(v)+' · '+tots[i]+' deals\')" onmouseleave="hT()"/>';
     });
     // Right axis — STI (outermost right, only if PSF not shown, else shift further)
     var rx2=showAvgPsf?(P.l+cW+36):(P.l+cW+8);
@@ -1575,7 +1575,8 @@ function renderBarChart(){
   wrap.innerHTML=svg;
 }
 
-function sT(e,yr,t,vs){var el=document.getElementById("tt");el.innerHTML='<b>'+yr+' — '+TLABEL[t]+'</b>'+vs;el.style.display='block';mT(e);}
+var TLABEL_EXTRA={avgPSF:"Avg PSF",STI:"STI Index"};
+function sT(e,yr,t,vs){var el=document.getElementById("tt");var lbl=TLABEL[t]||TLABEL_EXTRA[t]||t;el.innerHTML='<b>'+yr+' — '+lbl+'</b>'+vs;el.style.display='block';mT(e);}
 function mT(e){var el=document.getElementById("tt");el.style.left=(e.clientX+14)+'px';el.style.top=(e.clientY-10)+'px';}
 function hT(){document.getElementById("tt").style.display='none';}
 document.addEventListener("mousemove",function(e){if(document.getElementById("tt").style.display!=="none")mT(e);});
