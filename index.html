@@ -1284,6 +1284,11 @@ async function loadAndRenderChart(){
     var rangeLabel=activeRange==="5Y"?"5 Years":activeRange==="10Y"?"10 Years":activeRange==="ALL"?"All Years (1995–)":"";
     document.getElementById("chart-title").textContent=moLabel+(rangeLabel?" — "+rangeLabel:"");
     document.getElementById("slider-row").style.display=chartYoY?"none":"flex";
+    if(showSTI&&!chartYoY){
+      var fyArr=getFY();
+      var sStart=fyArr[0]+"-01-01",sEnd=fyArr[fyArr.length-1]+"-12-31";
+      STI_CACHE=await fetchSTIData(sStart,sEnd);
+    }
     renderBarChart();
   }
 }
@@ -1301,6 +1306,12 @@ function renderMonthlyChart(data){
     return actT.reduce(function(s,t){
       var d=data.agg[mo]&&data.agg[mo][t];
       return s+(d?(chartMode==="val"?d.val:d.cnt):0);
+    },0);
+  });
+  var cntTots=labels.map(function(mo){
+    return actT.reduce(function(s,t){
+      var d=data.agg[mo]&&data.agg[mo][t];
+      return s+(d?d.cnt:0);
     },0);
   });
   var mx=Math.max.apply(null,tots.concat([1]));
@@ -1378,7 +1389,7 @@ function renderMonthlyChart(data){
       if(v===null)return;
       var cx=P.l+i*bGW+bGW/2;
       svg+='<circle cx="'+cx.toFixed(1)+'" cy="'+psfY(v).toFixed(1)+'" r="2.8" fill="#3b82d4" opacity="0.9"'
-          +' onmouseenter="sT(event,\''+fmtMo(labels[i])+'\',\'avgPSF\',\'Avg S$'+Math.round(v)+' psf · '+tots[i]+' deals\')" onmouseleave="hT()"/>';
+          +' onmouseenter="sT(event,\''+fmtMo(labels[i])+'\',\'avgPSF\',\'Avg S$'+Math.round(v)+' psf · '+cntTots[i]+' deals\')" onmouseleave="hT()"/>';
     });
     // Right axis — PSF (innermost right)
     var rx1=P.l+cW+8;
@@ -1408,7 +1419,7 @@ function renderMonthlyChart(data){
       if(v===null)return;
       var cx=P.l+i*bGW+bGW/2;
       svg+='<circle cx="'+cx.toFixed(1)+'" cy="'+stiY(v).toFixed(1)+'" r="2.5" fill="#f59e0b" opacity="0.9"'
-          +' onmouseenter="sT(event,\''+fmtMo(labels[i])+'\',\'STI\',\''+Math.round(v)+' · '+tots[i]+' deals\')" onmouseleave="hT()"/>';
+          +' onmouseenter="sT(event,\''+fmtMo(labels[i])+'\',\'STI\',\''+Math.round(v)+' · '+cntTots[i]+' deals\')" onmouseleave="hT()"/>';
     });
     // Right axis — STI (outermost right, only if PSF not shown, else shift further)
     var rx2=showAvgPsf?(P.l+cW+36):(P.l+cW+8);
@@ -1543,7 +1554,7 @@ function initRangeBtns(){
 function renderBarChart(){
   var wrap=document.getElementById("bar-wrap");
   var W=wrap.clientWidth||800,H=280;
-  var P={t:14,r:16,b:36,l:62};
+  var P={t:14,r:(showSTI&&!chartYoY?50:16),b:36,l:62};
   var cW=W-P.l-P.r,cH=H-P.t-P.b;
   var idxs=getIdxs(),fy=getFY();
   var mat=CHART_OVERRIDE ? CHART_OVERRIDE : (chartMode==="val"?VAL_ARR:CNT_ARR);
@@ -1571,7 +1582,57 @@ function renderBarChart(){
     var sl=idxs.length<=15||gi%Math.ceil(idxs.length/15)===0||gi===idxs.length-1;
     if(sl){var lx=P.l+gi*bGW+bGW/2;svg+='<text x="'+lx.toFixed(1)+'" y="'+(P.t+cH+15)+'" text-anchor="middle" fill="#6b8578" font-size="10" font-family="DM Sans">'+yr+'</text>';}
   });
+  // ---- STI overlay (annual) ----
+  if(showSTI&&!chartYoY&&STI_CACHE){
+    // Use Dec closing per year; fall back to latest available month that year
+    var stiYrVals=fy.map(function(yr){
+      if(STI_CACHE[yr+"-12"]!=null)return STI_CACHE[yr+"-12"];
+      // fallback: find latest month with data for this year
+      var best=null;
+      for(var mm=11;mm>=1;mm--){var k=yr+"-"+(mm<10?"0":"")+mm;if(STI_CACHE[k]!=null){best=STI_CACHE[k];break;}}
+      return best;
+    });
+    var stiAnnVals=stiYrVals.filter(function(v){return v!==null;});
+    if(stiAnnVals.length>1){
+      var stiAnnMax=Math.max.apply(null,stiAnnVals)*1.06;
+      var stiAnnMin=Math.max(0,Math.min.apply(null,stiAnnVals)*0.94);
+      var stiAnnRange=stiAnnMax-stiAnnMin||1;
+      function stiAnnY(v){return P.t+cH-((v-stiAnnMin)/stiAnnRange)*cH;}
+      var hasOvR=true;
+      var rx3=P.l+cW+8;
+      // Right axis
+      for(var sk2=0;sk2<=4;sk2++){
+        var sv2=stiAnnMin+sk2*(stiAnnMax-stiAnnMin)/4;
+        svg+='<text x="'+rx3+'" y="'+(stiAnnY(sv2)+4)+'" text-anchor="start" fill="#f59e0b" font-size="9" font-family="DM Mono,monospace" opacity="0.85">'+Math.round(sv2)+'</text>';
+      }
+      svg+='<text x="'+(rx3+22)+'" y="'+(P.t+cH/2)+'" text-anchor="middle" fill="#f59e0b" font-size="8.5" font-family="DM Mono,monospace" opacity="0.7" transform="rotate(-90,'+(rx3+22)+','+(P.t+cH/2)+')">STI</text>';
+      // Line
+      var stiAnnPts=[];
+      stiYrVals.forEach(function(v,i){
+        if(v===null)return;
+        var cx=P.l+i*bGW+bGW/2;
+        stiAnnPts.push(cx.toFixed(1)+","+stiAnnY(v).toFixed(1));
+      });
+      if(stiAnnPts.length>1){
+        svg+='<polyline points="'+stiAnnPts.join(" ")+'" fill="none" stroke="#f59e0b" stroke-width="1.8" stroke-dasharray="4,3" stroke-linejoin="round" stroke-linecap="round" opacity="0.85"/>';
+      }
+      // Dots
+      stiYrVals.forEach(function(v,i){
+        if(v===null)return;
+        var cx=P.l+i*bGW+bGW/2;
+        var cntVal=tots[i];
+        svg+='<circle cx="'+cx.toFixed(1)+'" cy="'+stiAnnY(v).toFixed(1)+'" r="2.5" fill="#f59e0b" opacity="0.9"'
+            +' onmouseenter="sT(event,''+fy[i]+'','STI',''+Math.round(v)+' (Dec close) · '+cntVal+' deals')" onmouseleave="hT()"/>';
+      });
+    }
+  }
   svg+='</svg>';
+  // Expand right padding if STI shown
+  if(showSTI&&!chartYoY&&STI_CACHE){
+    var svgEl=wrap.querySelector?null:null; // just set attr on outer svg via string replace
+    svg=svg.replace('viewBox="0 0 '+W+' '+H+'"','viewBox="0 0 '+W+' '+H+'"');
+    // Already added axis at P.l+cW+8; ensure wrap svg has overflow:visible (it does)
+  }
   wrap.innerHTML=svg;
 }
 
