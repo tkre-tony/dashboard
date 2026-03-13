@@ -82,17 +82,18 @@ html,body{background:var(--bg);color:var(--txt);font-family:'DM Sans',sans-serif
 /* ── PROJECTS FOR SALE ── */
 .stack-grid{display:flex;flex-direction:column;gap:4px}
 .stack-floor{display:flex;align-items:flex-start;gap:6px}
-.stack-floor-lbl{font-size:10px;font-weight:700;color:var(--mut);font-family:'DM Mono',monospace;width:86px;flex-shrink:0;text-align:right;padding-top:3px}
-.stack-floor-tag{display:block;font-size:8.5px;color:var(--mut2);font-style:italic;white-space:nowrap;font-weight:400;margin-top:2px;font-family:'DM Sans',sans-serif}
+.stack-floor-lbl{display:flex;flex-direction:column;align-items:flex-end;width:80px;flex-shrink:0;padding-top:4px}
+.stack-floor-lbl-num{font-size:10px;font-weight:700;color:var(--mut);font-family:'DM Mono',monospace;line-height:1}
+.stack-floor-tag{font-size:8px;color:var(--mut2);font-style:italic;white-space:nowrap;font-weight:400;margin-top:2px;font-family:'DM Sans',sans-serif;line-height:1}
 .stack-units{display:flex;gap:4px;flex-wrap:wrap}
 .sunit{border-radius:5px;border:1px solid transparent;padding:5px 8px;cursor:pointer;transition:all .12s;min-width:68px;text-align:center;position:relative}
 .sunit:hover{transform:translateY(-1px);box-shadow:0 3px 10px rgba(0,0,0,.15)}
 .sunit-no{font-size:10px;font-weight:700;font-family:'DM Mono',monospace;line-height:1}
 .sunit-sf{font-size:9px;opacity:.75;margin-top:2px;line-height:1}
 .sunit.available{background:#e8f5e9;border-color:#81c784;color:#1a6b3c}
-.sunit.reserved{background:#fff8e1;border-color:#ffc107;color:#7a5000}
+.sunit.reserved{background:#e8eaf6;border-color:#7986cb;color:#283593}
 .sunit.sold{background:#fce4ec;border-color:#e57373;color:#7b1c1c}
-.sunit.withheld{background:#f5f5f5;border-color:#bdbdbd;color:#757575}
+.sunit.withheld{background:#f3e5f5;border-color:#ba68c8;color:#6a1b9a}
 .sunit.selected{outline:2px solid var(--g1);outline-offset:1px;transform:translateY(-1px);box-shadow:0 4px 12px rgba(26,79,156,.25)}
 .sunit.sold-nocav{background:#fff0f0;border-color:#f4a0a0;color:#9b2c2c}
 .sunit-cbadge{position:absolute;top:2px;right:3px;font-size:7px;font-weight:800;color:#1a6b3c;font-family:'DM Mono',monospace;line-height:1}
@@ -105,9 +106,9 @@ html,body{background:var(--bg);color:var(--txt);font-family:'DM Sans',sans-serif
 .unit-detail-panel{background:var(--srf);border:1px solid var(--bdr);border-radius:8px;padding:18px 20px;box-shadow:var(--shadow)}
 .unit-status-pill{display:inline-block;padding:3px 12px;border-radius:20px;font-size:11px;font-weight:700;letter-spacing:.04em;text-transform:uppercase}
 .pill-available{background:#e8f5e9;color:#1a6b3c;border:1px solid #81c784}
-.pill-reserved{background:#fff8e1;color:#7a5000;border:1px solid #ffc107}
+.pill-reserved{background:#e8eaf6;color:#283593;border:1px solid #7986cb}
 .pill-sold{background:#fce4ec;color:#7b1c1c;border:1px solid #e57373}
-.pill-withheld{background:#f5f5f5;color:#757575;border:1px solid #bdbdbd}
+.pill-withheld{background:#f3e5f5;color:#6a1b9a;border:1px solid #ba68c8}
 
 /* ── SEGMENT BUTTONS (range/mode) ── */
 .range-sel{display:flex;gap:0;border:1px solid var(--bdr);border-radius:6px;overflow:hidden;background:var(--srf2)}
@@ -128,14 +129,47 @@ html,body{background:var(--bg);color:var(--txt);font-family:'DM Sans',sans-serif
 .tbar-fill{height:100%;border-radius:4px}
 .tbar-val{font-size:11px;color:var(--mut);width:80px;text-align:right;font-family:'DM Mono',monospace;font-weight:500}
 
-/* ── NEWS ITEMS ── */
-.news-item{background:var(--srf);border:1px solid var(--bdr);border-radius:7px;padding:13px 16px;cursor:pointer;transition:all .15s;margin-bottom:8px;border-left:3px solid transparent}
-.news-item:hover{border-color:var(--bdr2);border-left-color:var(--g2);box-shadow:var(--shadow-sm)}
-.news-item.open{border-left-color:var(--g1)}
-.news-body{display:none;color:var(--mut);font-size:12px;line-height:1.65;margin-top:10px;padding-top:10px;border-top:1px solid var(--srf3)}
-.news-item.open .news-body{display:block}
-.news-meta{display:flex;gap:6px;align-items:center;flex-wrap:wrap;margin-bottom:6px}
-.news-title{font-size:13px;font-weight:600;line-height:1.4;color:var(--txt)}
+/* ── NEWSROOM ── */
+.newsroom-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:18px;flex-wrap:wrap;gap:10px}
+.newsroom-title{font-size:18px;font-weight:800;letter-spacing:-.02em;color:var(--txt)}
+.newsroom-search{position:relative;flex:1;max-width:260px}
+.newsroom-search input{width:100%;padding:7px 12px 7px 30px;border:1px solid var(--bdr);border-radius:6px;background:var(--srf);color:var(--txt);font-size:12px;outline:none;transition:border .15s;box-sizing:border-box}
+.newsroom-search input:focus{border-color:var(--g2)}
+.newsroom-search .srch-icon{position:absolute;left:9px;top:50%;transform:translateY(-50%);font-size:13px;color:var(--mut);pointer-events:none}
+.nr-cats{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:18px}
+.nr-chip{padding:4px 11px;border-radius:20px;font-size:11px;font-weight:600;cursor:pointer;border:1px solid var(--bdr);background:transparent;color:var(--mut);transition:all .12s;white-space:nowrap}
+.nr-chip.on{background:var(--g1);border-color:var(--g1);color:#fff}
+.nr-chip:hover:not(.on){border-color:var(--g2);color:var(--g2)}
+.nr-hero{background:var(--srf);border:1px solid var(--bdr);border-radius:10px;padding:22px 24px;margin-bottom:18px;cursor:pointer;transition:all .15s;position:relative;overflow:hidden}
+.nr-hero::before{content:'';position:absolute;left:0;top:0;bottom:0;width:4px;background:var(--g1);border-radius:10px 0 0 10px}
+.nr-hero:hover{box-shadow:var(--shadow-sm);border-color:var(--bdr2)}
+.nr-hero-badge{display:inline-flex;align-items:center;gap:5px;font-size:10px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--g2);margin-bottom:10px}
+.nr-hero-badge::before{content:'★';font-size:9px}
+.nr-hero-title{font-size:16px;font-weight:800;line-height:1.35;color:var(--txt);margin-bottom:10px;letter-spacing:-.01em}
+.nr-hero-meta{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-bottom:4px}
+.nr-hero-body{display:none;font-size:12px;line-height:1.7;color:var(--mut);margin-top:12px;padding-top:12px;border-top:1px solid var(--srf3)}
+.nr-hero.open .nr-hero-body{display:block}
+.nr-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+@media(max-width:900px){.nr-grid{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:580px){.nr-grid{grid-template-columns:1fr}}
+.nr-card{background:var(--srf);border:1px solid var(--bdr);border-radius:8px;padding:14px 16px;cursor:pointer;transition:all .15s;display:flex;flex-direction:column;gap:6px;position:relative;overflow:hidden}
+.nr-card::before{content:'';position:absolute;left:0;top:0;bottom:0;width:3px;border-radius:8px 0 0 8px}
+.nr-card:hover{box-shadow:var(--shadow-sm);border-color:var(--bdr2);transform:translateY(-1px)}
+.nr-card-meta{display:flex;gap:5px;align-items:center;flex-wrap:wrap}
+.nr-card-title{font-size:12px;font-weight:700;line-height:1.4;color:var(--txt)}
+.nr-card-body{display:none;font-size:11.5px;line-height:1.65;color:var(--mut);margin-top:8px;padding-top:8px;border-top:1px solid var(--srf3)}
+.nr-card.open .nr-card-body{display:block}
+.nr-divider{font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--mut);margin:20px 0 12px;padding-bottom:6px;border-bottom:1px solid var(--bdr)}
+.sent-dot{width:7px;height:7px;border-radius:50%;display:inline-block;flex-shrink:0}
+.sent-pos{background:#4caf50}.sent-neg{background:#ef5350}.sent-neu{background:#9e9e9e}
+.nr-src{font-size:10px;color:var(--mut);font-style:italic}
+.nc-commercial::before{background:#5c6bc0}
+.nc-industrial::before{background:#f57c00}
+.nc-policy::before{background:#00897b}
+.nc-market::before{background:#6d4c41}
+.nc-default::before{background:var(--g2)}
+.nr-empty{text-align:center;padding:48px 20px;color:var(--mut);font-size:13px}
+.nr-count{font-size:11px;color:var(--mut);font-weight:500}
 
 /* ── PILLS ── */
 .pill{padding:2px 8px;border-radius:4px;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.05em}
@@ -259,7 +293,7 @@ html,body{background:var(--bg);color:var(--txt);font-family:'DM Sans',sans-serif
   <div class="navtab" data-tab="analytics"><span class="navtab-icon">📈</span>Analytics</div>
   <div class="navtab" data-tab="directory"><span class="navtab-icon">🏢</span>Directory</div>
   <div class="navtab" data-tab="transactions"><span class="navtab-icon">💹</span>Transactions</div>
-  <div class="navtab" data-tab="news"><span class="navtab-icon">📰</span>News Feed</div>
+  <div class="navtab" data-tab="news"><span class="navtab-icon">📰</span>Newsroom</div>
   <div class="navtab" data-tab="pipeline"><span class="navtab-icon">🔭</span>Pipeline</div>
   <div class="navtab" data-tab="reit" style="display:flex;align-items:center;gap:6px">
     <span class="navtab-icon">🗂</span>Asset Directory
@@ -571,8 +605,20 @@ html,body{background:var(--bg);color:var(--txt);font-family:'DM Sans',sans-serif
   </div>
 
   <div class="panel" id="tab-news">
-    <div class="fbar" id="news-cats"></div>
-    <div id="news-list"></div>
+    <div class="newsroom-header">
+      <div>
+        <div class="newsroom-title">Newsroom</div>
+        <div class="nr-count" id="nr-count"></div>
+      </div>
+      <div class="newsroom-search">
+        <span class="srch-icon">🔍</span>
+        <input type="text" id="nr-search" placeholder="Search articles…" oninput="renderNewsroom()">
+      </div>
+    </div>
+    <div class="nr-cats" id="nr-cats"></div>
+    <div id="nr-hero-wrap"></div>
+    <div id="nr-divider-wrap"></div>
+    <div class="nr-grid" id="nr-grid"></div>
   </div>
 
   <div class="panel" id="tab-transactions">
@@ -855,9 +901,9 @@ html,body{background:var(--bg);color:var(--txt);font-family:'DM Sans',sans-serif
     <div class="proj-kpi-row" id="proj-kpis" style="grid-template-columns:repeat(6,1fr)">
       <div class="proj-kpi"><div class="proj-kpi-val" id="pk-total">—</div><div class="proj-kpi-lbl">Total Units</div></div>
       <div class="proj-kpi"><div class="proj-kpi-val" style="color:#1a6b3c" id="pk-avail">—</div><div class="proj-kpi-lbl">Available</div></div>
-      <div class="proj-kpi"><div class="proj-kpi-val" style="color:#7a5000" id="pk-res">—</div><div class="proj-kpi-lbl">Reserved</div></div>
+      <div class="proj-kpi"><div class="proj-kpi-val" style="color:#283593" id="pk-res">—</div><div class="proj-kpi-lbl">Reserved</div></div>
       <div class="proj-kpi"><div class="proj-kpi-val" style="color:#7b1c1c" id="pk-sold">—</div><div class="proj-kpi-lbl">Sold</div></div>
-      <div class="proj-kpi"><div class="proj-kpi-val" style="color:#757575" id="pk-withheld">—</div><div class="proj-kpi-lbl">Withheld</div></div>
+      <div class="proj-kpi"><div class="proj-kpi-val" style="color:#6a1b9a" id="pk-withheld">—</div><div class="proj-kpi-lbl">Withheld</div></div>
       <div class="proj-kpi"><div class="proj-kpi-val" style="color:var(--g1)" id="pk-pct">—</div><div class="proj-kpi-lbl">% Taken Up</div></div>
     </div>
 
@@ -879,9 +925,9 @@ html,body{background:var(--bg);color:var(--txt);font-family:'DM Sans',sans-serif
               <div style="display:flex;gap:3px" id="proj-status-filter">
                 <button class="fchip on" data-sf="all" onclick="projFilter(this,'status')">All</button>
                 <button class="fchip" data-sf="available" onclick="projFilter(this,'status')" style="border-color:#81c784;color:#1a6b3c">Available</button>
-                <button class="fchip" data-sf="reserved" onclick="projFilter(this,'status')" style="border-color:#ffc107;color:#7a5000">Reserved</button>
+                <button class="fchip" data-sf="reserved" onclick="projFilter(this,'status')" style="border-color:#7986cb;color:#283593">Reserved</button>
                 <button class="fchip" data-sf="sold" onclick="projFilter(this,'status')" style="border-color:#e57373;color:#7b1c1c">Sold</button>
-                <button class="fchip" data-sf="withheld" onclick="projFilter(this,'status')" style="border-color:#bdbdbd;color:#757575">Withheld</button>
+                <button class="fchip" data-sf="withheld" onclick="projFilter(this,'status')" style="border-color:#ba68c8;color:#6a1b9a">Withheld</button>
               </div>
               <div class="fbar-sep"></div>
               <select id="proj-size-filter" class="cs-select" onchange="projRenderStack()" style="font-size:11px">
@@ -897,9 +943,9 @@ html,body{background:var(--bg);color:var(--txt);font-family:'DM Sans',sans-serif
           <!-- Legend -->
           <div style="display:flex;gap:10px;margin-bottom:12px;flex-wrap:wrap">
             <div style="display:flex;align-items:center;gap:5px;font-size:11px;color:var(--mut)"><div style="width:12px;height:12px;border-radius:3px;background:#e8f5e9;border:1px solid #81c784"></div>Available</div>
-            <div style="display:flex;align-items:center;gap:5px;font-size:11px;color:var(--mut)"><div style="width:12px;height:12px;border-radius:3px;background:#fff8e1;border:1px solid #ffc107"></div>Reserved</div>
+            <div style="display:flex;align-items:center;gap:5px;font-size:11px;color:var(--mut)"><div style="width:12px;height:12px;border-radius:3px;background:#e8eaf6;border:1px solid #7986cb"></div>Reserved</div>
             <div style="display:flex;align-items:center;gap:5px;font-size:11px;color:var(--mut)"><div style="width:12px;height:12px;border-radius:3px;background:#fce4ec;border:1px solid #e57373"></div>Sold</div>
-            <div style="display:flex;align-items:center;gap:5px;font-size:11px;color:var(--mut)"><div style="width:12px;height:12px;border-radius:3px;background:#f5f5f5;border:1px solid #bdbdbd"></div>Withheld</div>
+            <div style="display:flex;align-items:center;gap:5px;font-size:11px;color:var(--mut)"><div style="width:12px;height:12px;border-radius:3px;background:#f3e5f5;border:1px solid #ba68c8"></div>Withheld</div>
           </div>
 
           <div id="proj-stack-loading" style="text-align:center;padding:30px;color:var(--mut);font-size:13px">Loading units from database...</div>
@@ -1016,7 +1062,8 @@ var NEWS=[
   {id:18,date:"2026-02-28",title:"450 HNW Investors Granted Singapore PR Under Global Investor Programme",source:"Business Times",category:"Policy",tag:"Capital Flows",summary:"~450 HNW investors granted PR under GIP (2015-2025), injecting ~S$500M. GIP capital supports SFO growth and demand for SG commercial real estate, particularly shophouse and freehold assets.",sentiment:"positive"},
   {id:19,date:"2026-02-26",title:"MPs Call for 15% Stamp Duty Tier on Properties Above S$5M",source:"Straits Times",category:"Policy",tag:"Property Tax",summary:"Budget 2026 debate: calls for 15% marginal rate on residential properties above S$5M. Fiscal surplus S$15.1B. SG wealth Gini 0.55.",sentiment:"neutral"},
   {id:20,date:"2026-02-26",title:"Singapore Land H2 Profit Down 11% at S$160.9M",source:"Business Times",category:"Commercial",tag:"Earnings",summary:"FY2025 net profit S$272.3M (-4%). Revenue +7% to S$783.1M. Drag from higher finance costs (+23%) on Sydney acquisition. DPS S$0.045.",sentiment:"negative"},
-  {id:21,date:"2026-02-20",title:"Serenity Park Condo in Yio Chu Kang Put on Market at S$505M",source:"Business Times",category:"Commercial",tag:"En Bloc",summary:"179-unit freehold condo, Tamarind Road. First freehold residential en-bloc of 2026. S$1,453 psf ppr. Owner premium >40%. Closes 26 Mar 2026.",sentiment:"neutral"}
+  {id:21,date:"2026-02-20",title:"Serenity Park Condo in Yio Chu Kang Put on Market at S$505M",source:"Business Times",category:"Commercial",tag:"En Bloc",summary:"179-unit freehold condo, Tamarind Road. First freehold residential en-bloc of 2026. S$1,453 psf ppr. Owner premium >40%. Closes 26 Mar 2026.",sentiment:"neutral"},
+  {id:22,date:"2026-03-02",title:"Ossia's Goh Family Picks Up S$73M Bloc of 18 Strata Units at Orchard Shopping Centre",source:"Business Times",category:"Commercial",tag:"Investment Sale",summary:"The Goh family behind Ossia International acquired 18 freehold strata-titled retail units at Orchard Shopping Centre for S$73M (S$8,171 psf on 8,934 sqft). Portfolio managed by LaSalle comprises 2 ground-floor units (Maybank) and 16 second-floor units (RHB Bank, Xiao Long Kan Hotpot). Price is 19% below the S$90M ask in 2022. Buyer plans facade and frontage enhancements as a long-term asset strategy, with upgrades contingent on collective-sale outcome. Separately, Orchard Shopping Centre's owners — Far East Organization holds >53% strata share — have launched the building's first-ever en bloc attempt, appointing AlpsEdge and Brilliance Capital as joint marketing agents. Nearby activity: Frasers acquired Centrepoint rear block for S$391.9M; CDL bought Delfi Orchard for S$439M. Orchard Road prime retail corridor seeing accelerating investment and en-bloc activity as interest rates ease.",sentiment:"positive"}
 ];
 
 var PIPELINE=[
@@ -1378,7 +1425,7 @@ function renderTypeBreakdown(){
   }).join('');
 }
 
-// NEWS PREVIEW — left-border sentiment colour
+// NEWS PREVIEW (home panel widget — keep compact)
 function renderNewsPreview(){
   var sorted=NEWS.slice().sort(function(a,b){return b.date.localeCompare(a.date);}).slice(0,6);
   var borderCol={positive:'var(--g2)',negative:'var(--red)',neutral:'var(--bdr2)'};
@@ -1394,24 +1441,75 @@ function renderNewsPreview(){
   }).join('');
 }
 
-// NEWS FULL
-function renderNewsCats(){
-  var cats=["All"].concat(NEWS.map(function(n){return n.category;}).filter(function(v,i,a){return a.indexOf(v)===i;}).sort());
-  var el=document.getElementById("news-cats");
-  el.innerHTML=cats.map(function(c){return'<button class="fchip'+(newsCat===c?" on":"")+'" data-cat="'+c+'">'+c+'</button>';}).join('');
-  el.querySelectorAll(".fchip").forEach(function(b){b.addEventListener("click",function(){newsCat=b.dataset.cat;renderNewsCats();renderNewsList();});});
+// NEWSROOM — full tab
+function nrCatClass(cat){
+  var m={'Commercial':'nc-commercial','Industrial':'nc-industrial','Policy':'nc-policy','Market Insight':'nc-market'};
+  return m[cat]||'nc-default';
 }
-function renderNewsList(){
+function nrSentDot(s){
+  return '<span class="sent-dot '+(s==="positive"?"sent-pos":s==="negative"?"sent-neg":"sent-neu")+'"></span>';
+}
+function renderNewsroom(){
+  var q=(document.getElementById("nr-search")||{value:""}).value.toLowerCase().trim();
   var list=newsCat==="All"?NEWS:NEWS.filter(function(n){return n.category===newsCat;});
-  document.getElementById("news-list").innerHTML=list.slice().sort(function(a,b){return b.date.localeCompare(a.date);}).map(function(n){
-    var pc=n.sentiment==="positive"?"p-pos":n.sentiment==="negative"?"p-neg":"p-neu";
-    return'<div class="news-item" onclick="this.classList.toggle(\'open\')">'
-      +'<div class="news-meta"><span style="font-size:10px;color:var(--mut);font-family:\'DM Mono\',monospace">'+n.date+'</span>'
-      +'<span style="font-size:11px;color:var(--mut)">'+n.source+'</span>'
-      +'<span class="pill '+pc+'">'+n.sentiment+'</span>'
-      +'<span class="pill p-tag">'+n.tag+'</span></div>'
-      +'<div class="news-title">'+n.title+'</div>'
-      +'<div class="news-body">'+n.summary+'</div></div>';
+  if(q) list=list.filter(function(n){return (n.title+n.summary+n.tag+n.source).toLowerCase().indexOf(q)>-1;});
+  list=list.slice().sort(function(a,b){return b.date.localeCompare(a.date);});
+
+  // Cats
+  var cats=["All"].concat(NEWS.map(function(n){return n.category;}).filter(function(v,i,a){return a.indexOf(v)===i;}).sort());
+  var catEl=document.getElementById("nr-cats");
+  if(catEl){
+    catEl.innerHTML=cats.map(function(c){return'<button class="nr-chip'+(newsCat===c?" on":"")+'">'+c+'</button>';}).join('');
+    catEl.querySelectorAll(".nr-chip").forEach(function(b,i){b.addEventListener("click",function(){newsCat=cats[i];renderNewsroom();});});
+  }
+
+  // Count
+  var countEl=document.getElementById("nr-count");
+  if(countEl) countEl.textContent=list.length+" article"+(list.length===1?"":"s");
+
+  // Hero (newest)
+  var heroWrap=document.getElementById("nr-hero-wrap");
+  var divWrap=document.getElementById("nr-divider-wrap");
+  var gridEl=document.getElementById("nr-grid");
+  if(!heroWrap||!gridEl) return;
+
+  if(list.length===0){
+    heroWrap.innerHTML='';
+    if(divWrap) divWrap.innerHTML='';
+    gridEl.innerHTML='<div class="nr-empty" style="grid-column:1/-1">No articles found</div>';
+    return;
+  }
+
+  var hero=list[0];
+  var rest=list.slice(1);
+  var cc=nrCatClass(hero.category);
+  heroWrap.innerHTML='<div class="nr-hero '+cc+'" onclick="this.classList.toggle(\'open\')">'
+    +'<div class="nr-hero-badge">Latest · '+hero.category+'</div>'
+    +'<div class="nr-hero-title">'+hero.title+'</div>'
+    +'<div class="nr-hero-meta">'
+    +nrSentDot(hero.sentiment)
+    +'<span style="font-size:10px;color:var(--mut);font-family:\'DM Mono\',monospace">'+hero.date+'</span>'
+    +'<span class="nr-src">'+hero.source+'</span>'
+    +'<span class="pill p-tag">'+hero.tag+'</span>'
+    +'</div>'
+    +'<div style="font-size:11px;color:var(--mut)">Click to read summary ↓</div>'
+    +'<div class="nr-hero-body">'+hero.summary+'</div>'
+    +'</div>';
+
+  if(divWrap) divWrap.innerHTML=rest.length?'<div class="nr-divider">Earlier coverage</div>':'';
+
+  gridEl.innerHTML=rest.map(function(n){
+    var cc2=nrCatClass(n.category);
+    return'<div class="nr-card '+cc2+'" onclick="this.classList.toggle(\'open\')">'
+      +'<div class="nr-card-meta">'
+      +nrSentDot(n.sentiment)
+      +'<span style="font-size:10px;color:var(--mut);font-family:\'DM Mono\',monospace">'+n.date+'</span>'
+      +'<span class="nr-src">'+n.source+'</span>'
+      +'<span class="pill p-tag">'+n.tag+'</span>'
+      +'</div>'
+      +'<div class="nr-card-title">'+n.title+'</div>'
+      +'<div class="nr-card-body">'+n.summary+'</div>'
+      +'</div>';
   }).join('');
 }
 
@@ -2276,8 +2374,7 @@ function initAutocomplete(){
 
 // INIT
 initRangeBtns();
-renderNewsCats();
-renderNewsList();
+renderNewsroom();
 renderPipeline();
 initAutocomplete();
 initOvAutocomplete();
@@ -4267,7 +4364,7 @@ function projRenderStack() {
 
     var flTag = FLOOR_LABELS[fl] ? '<span class="stack-floor-tag">' + FLOOR_LABELS[fl] + '</span>' : "";
     stackHtml += '<div class="stack-floor">' +
-      '<div class="stack-floor-lbl">L' + fl + flTag + '</div>' +
+      '<div class="stack-floor-lbl"><span class="stack-floor-lbl-num">L' + fl + '</span>' + flTag + '</div>' +
       '<div class="stack-units">' + unitsHtml + '</div>' +
       '</div>';
 
