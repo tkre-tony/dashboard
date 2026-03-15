@@ -1711,11 +1711,9 @@ function renderQoQChart(data){
       var pv=vals[i-1];
       clr=v>=pv?"#1a9c4f":"#c8364a";
     }
-    svg+="<rect x='"+bx.toFixed(1)+"' y='"+by.toFixed(1)+"' width='"+bw.toFixed(1)+"' height='"+Math.max(bh,0).toFixed(1)+"' fill='"+clr+"' rx='2' opacity='0.85' style='cursor:pointer'"
-       +" onmouseenter="sT(event,'"+q.key+"','office','"+
-       (chartMode==="val"?"S$"+Math.round(v)+"M":""+v+" deals")+
-       (i>0?" · "+(vals[i]>=vals[i-1]?"+":"")+((vals[i]-vals[i-1])/Math.max(vals[i-1],1)*100).toFixed(1)+"%":" · Base quarter")
-       +"')" onmouseleave='hT()'/>";
+    var ttVal=(chartMode==="val"?"S$"+Math.round(v)+"M":v+" deals");
+    var ttChg=i>0?" · "+(vals[i]>=vals[i-1]?"+":"")+((vals[i]-vals[i-1])/Math.max(vals[i-1],1)*100).toFixed(1)+"%":" · Base quarter";
+    svg+='<rect x="'+bx.toFixed(1)+'" y="'+by.toFixed(1)+'" width="'+bw.toFixed(1)+'" height="'+Math.max(bh,0).toFixed(1)+'" fill="'+clr+'" rx="2" opacity="0.85" style="cursor:pointer" onmouseenter="sT(event,\''+q.key+'\',\'office\',\''+ttVal+ttChg+'\');" onmouseleave="hT()"/>';
     // QoQ % badge above bar
     if(i>0){
       var pct=((v-vals[i-1])/Math.max(vals[i-1],1)*100);
