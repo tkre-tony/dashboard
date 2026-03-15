@@ -437,6 +437,10 @@ html,body{background:var(--bg);color:var(--txt);font-family:'DM Sans',sans-serif
             <span style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:var(--mut);white-space:nowrap">Property Type</span>
             <div class="fbar" id="type-chips" style="margin:0;flex-wrap:wrap;gap:5px;flex:1"></div>
           </div>
+          <div style="display:flex;align-items:center;gap:7px;flex-wrap:wrap;margin-bottom:8px;padding-bottom:8px;border-bottom:1px solid var(--srf3)">
+            <span style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:var(--mut);white-space:nowrap">Tenure</span>
+            <div class="fbar" id="tenure-chips" style="margin:0;flex-wrap:wrap;gap:5px;flex:1"></div>
+          </div>
           <div id="bar-wrap" style="flex:1;width:100%;min-height:260px"></div>
           <div style="display:flex;flex-wrap:wrap;gap:10px;margin-top:10px;padding-top:10px;border-top:1px solid var(--srf3)" id="legend"></div>
           <!-- Slider below chart -->
@@ -1218,6 +1222,10 @@ var STI_CACHE=null; // {[mo]: stiValue}
 var newsCat="All";
 var activeTypes={};
 TYPES.forEach(function(t){activeTypes[t]=(t==="office"||t==="retail"||t==="shophouse");});
+var TENURE_CATS=["freehold","999","99","60","30"];
+var TENURE_LABEL={"freehold":"Freehold","999":"999 Yrs","99":"99 Yrs","60":"60 Yrs","30":"30 Yrs"};
+var TENURE_COLOR={"freehold":"#0f6e56","999":"#185fa5","99":"#3b82d4","60":"#854f0b","30":"#993c1d"};
+var activeTenures={"freehold":true,"999":true,"99":true,"60":true,"30":true};
 
 // UTILS
 function fmtV(v){if(v>=1000)return"S$"+(v/1000).toFixed(1)+"B";if(v>=1)return"S$"+Math.round(v)+"M";return"S$"+(v*1000).toFixed(0)+"K";}
@@ -1242,7 +1250,7 @@ async function fetchMonthlyData(months){
     var allRows=[],page=0,pageSize=1000;
     while(true){
       var lo=page*pageSize,hi=lo+pageSize-1;
-      var url=SB_URL+"/rest/v1/transactions?select=sale_date,property_type,transacted_price,unit_price_psf&sale_date=gte."+from+"&order=sale_date.asc";
+      var url=SB_URL+"/rest/v1/transactions?select=sale_date,property_type,transacted_price,unit_price_psf,tenure&sale_date=gte."+from+"&order=sale_date.asc";
       var r=await fetch(url,{headers:{
         "apikey":SB_KEY,"Authorization":"Bearer "+SB_KEY,
         "Range":lo+"-"+hi,"Range-Unit":"items"
@@ -1263,6 +1271,8 @@ async function fetchMonthlyData(months){
       var t=null;
       Object.keys(typeMap).forEach(function(k){if(pt.indexOf(k)>=0)t=typeMap[k];});
       if(!t)return;
+      var tc=classifyTenure(row.tenure);
+      if(tc&&!activeTenures[tc])return;
       if(!agg[mo])agg[mo]={};
       if(!agg[mo][t])agg[mo][t]={val:0,cnt:0,psfSum:0,psfCnt:0};
       agg[mo][t].val+=(parseFloat(row.transacted_price)/1e6);
@@ -1558,6 +1568,54 @@ function renderKPIs(){
 }
 
 // TYPE CHIPS
+function classifyTenure(t){
+  if(!t) return null;
+  var tl=t.toLowerCase();
+  if(tl.indexOf("freehold")>=0) return "freehold";
+  if(tl.indexOf("999")>=0) return "999";
+  // extract numeric years
+  var m=tl.match(/(\d+)\s*(?:yrs?|years?)/);
+  var yrs=m?parseInt(m[1]):null;
+  // named groupings
+  if(yrs!==null){
+    if(yrs>=863&&yrs<=998) return "999";
+    if(yrs>=81&&yrs<=103||yrs>=199&&yrs<=200) return "99";
+    if(yrs>=30&&yrs<70) return "60";
+    if(yrs<30) return "30";
+  }
+  // fallback string check
+  if(tl.indexOf("99 yrs")>=0||tl.indexOf("99-year")>=0) return "99";
+  return null;
+}
+
+function renderTenureChips(){
+  var el=document.getElementById("tenure-chips");
+  if(!el) return;
+  var h="";
+  TENURE_CATS.forEach(function(k){
+    var on=activeTenures[k];
+    var s=on?"background:"+TENURE_COLOR[k]+";border-color:"+TENURE_COLOR[k]+";color:#fff":"";
+    h+="<button class="fchip"+(on?" on":"")+"" data-tenure=""+k+"" style=""+s+"">"+TENURE_LABEL[k]+"</button>";
+  });
+  el.innerHTML=h;
+  el.querySelectorAll(".fchip").forEach(function(b){
+    b.addEventListener("click",function(){
+      var k=b.dataset.tenure;
+      var n=TENURE_CATS.filter(function(x){return activeTenures[x];}).length;
+      if(activeTenures[k]&&n===1) return;
+      activeTenures[k]=!activeTenures[k];
+      renderTenureChips();
+      loadAndRenderChart();
+      if(!document.getElementById("ov-search").value.trim()){
+        ovFilteredCache=null;
+        document.getElementById("ov-tx-table").style.display="none";
+        document.getElementById("ov-tx-loading").style.display="block";
+        loadDefaultTransactions(0);
+      }
+    });
+  });
+}
+
 function renderTypeChips(){
   var el=document.getElementById("type-chips");
   var h='';
@@ -2715,6 +2773,12 @@ function ovRenderFiltered(rows){
       var pt=(r.property_type||"").toLowerCase();
       if(pt.indexOf(f.type.toLowerCase())<0) return false;
     }
+    // Tenure chip filter
+    var allTenOn=TENURE_CATS.every(function(k){return activeTenures[k];});
+    if(!allTenOn){
+      var rc=classifyTenure(r.tenure);
+      if(!rc||!activeTenures[rc]) return false;
+    }
     var price=r.transacted_price||0;
     if(price < f.priceMin || price > f.priceMax) return false;
     if(f.tos && (r.type_of_sale||"").toLowerCase().indexOf(f.tos.toLowerCase())<0) return false;
@@ -2843,6 +2907,12 @@ async function loadDefaultTransactions(page){
   if(!allActive && activePtypes.length>0){
     typeFilter="&or=("+activePtypes.map(function(p){return"property_type.ilike.*"+encodeURIComponent(p)+"*";}).join(",")+")";
   }
+
+    // Build tenure filter
+  var activeTenList=TENURE_CATS.filter(function(k){return activeTenures[k];});
+  var allTenActive=activeTenList.length===TENURE_CATS.length;
+  var tenureFilter="";
+  // We filter client-side via classifyTenure after fetch (tenure bucketing is complex)
 
   var url = SB_URL + "/rest/v1/transactions?select=id,project_name,address,property_type,transacted_price,area_sqft,unit_price_psf,sale_date,tenure,planning_region,postal_district,type_of_sale&"
     + dateFilter + typeFilter + "&order=sale_date.desc&limit=200&offset=0";
