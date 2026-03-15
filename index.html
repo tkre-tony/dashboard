@@ -432,6 +432,10 @@ html,body{background:var(--bg);color:var(--txt);font-family:'DM Sans',sans-serif
 
         <!-- RIGHT: Chart + legend + slider -->
         <div style="flex:1;padding:16px 20px;display:flex;flex-direction:column;min-width:0">
+          <div style="display:flex;align-items:center;gap:7px;flex-wrap:wrap;margin-bottom:8px;padding-bottom:8px;border-bottom:1px solid var(--srf3)">
+            <span style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:var(--mut);white-space:nowrap">Property Type</span>
+            <div class="fbar" id="type-chips" style="margin:0;flex-wrap:wrap;gap:5px;flex:1"></div>
+          </div>
           <div id="bar-wrap" style="flex:1;width:100%;min-height:260px"></div>
           <div style="display:flex;flex-wrap:wrap;gap:10px;margin-top:10px;padding-top:10px;border-top:1px solid var(--srf3)" id="legend"></div>
           <!-- Slider below chart -->
@@ -447,13 +451,7 @@ html,body{background:var(--bg);color:var(--txt);font-family:'DM Sans',sans-serif
       </div>
     </div>
 
-    <!-- Property Type Filter + Transaction Results -->
-    <div class="card" style="margin-bottom:14px;padding:14px 18px">
-      <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap">
-        <span style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:var(--mut);white-space:nowrap">Property Type</span>
-        <div class="fbar" id="type-chips" style="margin:0;flex-wrap:wrap;gap:6px;flex:1"></div>
-      </div>
-    </div>
+
 
     <!-- Overview Transaction Results -->
     <div class="card" id="ov-tx-card" style="margin-bottom:14px">
