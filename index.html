@@ -509,7 +509,7 @@ html,body{background:var(--bg);color:var(--txt);font-family:'DM Sans',sans-serif
       <button class="dir-tbtn on" data-down="" onclick="dirSetOwnership(this,'')">All</button>
       <button class="dir-tbtn" data-down="strata" onclick="dirSetOwnership(this,'strata')">🏠 Strata</button>
       <button class="dir-tbtn" data-down="corporate" onclick="dirSetOwnership(this,'corporate')">🏢 Corporate</button>
-      <button class="dir-tbtn" data-down="reit" onclick="dirSetOwnership(this,'reit')">📊 REITs</button>
+      <button class="dir-tbtn" data-down="reit" onclick="document.querySelector('.navtab[data-tab=reit]').click()">📊 REITs</button>
     </div>
     <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px" id="dir-type-btns">
       <button class="dir-tbtn on" data-dtype="" onclick="dirSetType(this,'')">All Types</button>
