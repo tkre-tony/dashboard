@@ -400,6 +400,7 @@ html,body{background:var(--bg);color:var(--txt);font-family:'DM Sans',sans-serif
               <button class="mbtn on" id="m-val" style="width:100%;justify-content:center;border-radius:5px;border:1px solid var(--bdr)">S$ Value</button>
               <button class="mbtn" id="m-cnt" style="width:100%;justify-content:center;border-radius:5px;border:1px solid var(--bdr)">Deal Count</button>
               <button class="mbtn" id="m-yoy" style="width:100%;justify-content:center;border-radius:5px;border:1px solid var(--bdr)" title="Toggle Year-on-Year view">YoY Comparison</button>
+              <button class="mbtn" id="m-qoq" style="width:100%;justify-content:center;border-radius:5px;border:1px solid var(--bdr)" title="Toggle Quarter-on-Quarter view">QoQ Comparison</button>
             </div>
           </div>
 
@@ -1208,6 +1209,7 @@ var PIPELINE=[
 var chartMode="val"
 var activeRange="L12";
 var chartYoY=false;
+var chartQoQ=false;
 var sliderMonths=18;
 var MONTHLY_CACHE=null; // {labels:[], datasets:{type:[vals]}}
 var showAvgPsf=true;
@@ -1325,8 +1327,18 @@ function getFY(){return getIdxs().map(function(i){return YEARS[i];});}
 
 // Decide if we show monthly or annual chart
 function isMonthlyMode(){return activeRange==="L18"||activeRange==="L12"||activeRange==="SLIDER";}
+function isQoQMode(){return chartQoQ;}
 
 async function loadAndRenderChart(){
+  if(chartQoQ){
+    var months=(activeRange==="L12")?12:(activeRange==="SLIDER")?sliderMonths:18;
+    months=Math.max(months,6); // at least 2 quarters
+    document.getElementById("chart-title").textContent="Quarter-on-Quarter Comparison — Last "+months+" Months";
+    document.getElementById("slider-row").style.display="flex";
+    var data=await fetchMonthlyData(months);
+    if(data){ MONTHLY_CACHE=data; renderQoQChart(data); }
+    return;
+  }
   if(isMonthlyMode()&&!chartYoY){
     var months=(activeRange==="L12")?12:(activeRange==="SLIDER")?sliderMonths:18;
     document.getElementById("chart-title").textContent="Transaction Volume — Last "+months+" Months";
@@ -1581,6 +1593,9 @@ function initRangeBtns(){
       activeRange=b.dataset.range;
       document.getElementById("range-btns").querySelectorAll(".rbtn").forEach(function(x){x.classList.remove("on");});
       b.classList.add("on");
+      if(activeRange==="5Y"||activeRange==="10Y"||activeRange==="ALL"){
+        chartQoQ=false; document.getElementById("m-qoq").classList.remove("on");
+      }
       // sync slider
       var mo=activeRange==="L18"?18:activeRange==="L12"?12:sliderMonths;
       if(activeRange==="L18"||activeRange==="L12"){
@@ -1600,9 +1615,27 @@ function initRangeBtns(){
     });
   });
   // YoY toggle
+  document.getElementById("m-qoq").addEventListener("click",function(){
+    chartQoQ=!chartQoQ;
+    this.classList.toggle("on",chartQoQ);
+    // QoQ is mutually exclusive with YoY
+    if(chartQoQ){
+      chartYoY=false;
+      document.getElementById("m-yoy").classList.remove("on");
+      // Force monthly range if on annual
+      if(!isMonthlyMode()){
+        document.getElementById("range-btns").querySelectorAll(".rbtn").forEach(function(x){x.classList.remove("on");});
+        document.querySelector(".rbtn[data-range='L12']").classList.add("on");
+        activeRange="L12";
+        document.getElementById("slider-row").style.display="flex";
+      }
+    }
+    loadAndRenderChart();
+  });
   document.getElementById("m-yoy").addEventListener("click",function(){
     chartYoY=!chartYoY;
     this.classList.toggle("on",chartYoY);
+    if(chartYoY){ chartQoQ=false; document.getElementById("m-qoq").classList.remove("on"); }
     // When YoY on, force annual view
     if(chartYoY){
       document.getElementById("range-btns").querySelectorAll(".rbtn").forEach(function(x){x.classList.remove("on");});
@@ -1629,6 +1662,78 @@ function initRangeBtns(){
     showSTI=this.checked;
     loadAndRenderChart();
   });
+}
+
+// QoQ CHART
+function renderQoQChart(data){
+  var wrap=document.getElementById("bar-wrap");
+  var W=wrap.clientWidth||800,H=280;
+  var P={t:24,r:16,b:40,l:62},cW=W-P.l-P.r,cH=H-P.t-P.b;
+  var actT=TYPES.filter(function(t){return activeTypes[t];});
+  // Bucket monthly data into quarters
+  var qtrs={};
+  data.labels.forEach(function(mo,i){
+    var parts=mo.split("-"),yr=parseInt(parts[0]),m=parseInt(parts[1]);
+    var q=Math.ceil(m/3);
+    var key=yr+"Q"+q;
+    if(!qtrs[key]){qtrs[key]={key:key,yr:yr,q:q,val:0,cnt:0};}
+    actT.forEach(function(t){
+      var ti=TYPES.indexOf(t);
+      var agg=data.agg[mo];
+      if(!agg||!agg[t]) return;
+      qtrs[key].val+=(agg[t].val||0);
+      qtrs[key].cnt+=(agg[t].cnt||0);
+    });
+  });
+  var qlist=Object.values(qtrs).sort(function(a,b){
+    return a.yr!==b.yr?a.yr-b.yr:a.q-b.q;
+  });
+  if(qlist.length<2){wrap.innerHTML="<div style='padding:20px;color:var(--mut);font-size:12px'>Not enough data for QoQ comparison.</div>";return;}
+  var vals=qlist.map(function(q){return chartMode==="val"?q.val:q.cnt;});
+  var mx=Math.max.apply(null,vals.concat([1]));
+  var bGW=cW/qlist.length;
+  var svg="<svg height='"+H+"' viewBox='0 0 "+W+" "+H+"' style='width:100%;overflow:visible'>";
+  // Grid lines
+  for(var k=0;k<=4;k++){
+    var tv=k*mx/4,ty=P.t+cH-(tv/mx)*cH;
+    var tl=chartMode==="val"?(tv>=1000?"S$"+(tv/1000).toFixed(0)+"B":"S$"+Math.round(tv)+"M"):(tv>=1000?(tv/1000).toFixed(1)+"K":Math.round(tv).toString());
+    svg+="<line x1='"+P.l+"' x2='"+(P.l+cW)+"' y1='"+ty+"' y2='"+ty+"' stroke='#dce4df' stroke-width='1'/>";
+    svg+="<text x='"+(P.l-5)+"' y='"+(ty+4)+"' text-anchor='end' fill='#6b8578' font-size='10' font-family='DM Mono,monospace'>"+tl+"</text>";
+  }
+  // Bars + QoQ % labels
+  qlist.forEach(function(q,i){
+    var v=vals[i];
+    var bh=(v/mx)*cH,bx=P.l+i*bGW+bGW*0.12,bw=bGW*0.76;
+    var by=P.t+cH-bh;
+    // Colour: green if up vs prior, red if down, blue for first
+    var clr="#1a4f9c";
+    if(i>0){
+      var pv=vals[i-1];
+      clr=v>=pv?"#1a9c4f":"#c8364a";
+    }
+    svg+="<rect x='"+bx.toFixed(1)+"' y='"+by.toFixed(1)+"' width='"+bw.toFixed(1)+"' height='"+Math.max(bh,0).toFixed(1)+"' fill='"+clr+"' rx='2' opacity='0.85' style='cursor:pointer'"
+       +" onmouseenter="sT(event,'"+q.key+"','office','"+
+       (chartMode==="val"?"S$"+Math.round(v)+"M":""+v+" deals")+
+       (i>0?" · "+(vals[i]>=vals[i-1]?"+":"")+((vals[i]-vals[i-1])/Math.max(vals[i-1],1)*100).toFixed(1)+"%":" · Base quarter")
+       +"')" onmouseleave='hT()'/>";
+    // QoQ % badge above bar
+    if(i>0){
+      var pct=((v-vals[i-1])/Math.max(vals[i-1],1)*100);
+      var pctTxt=(pct>=0?"+":"")+pct.toFixed(1)+"%";
+      var badgeY=Math.max(by-6,P.t+10);
+      svg+="<text x='"+(bx+bw/2).toFixed(1)+"' y='"+badgeY.toFixed(1)+"' text-anchor='middle' fill='"+(pct>=0?"#1a9c4f":"#c8364a")+"' font-size='9' font-weight='600' font-family='DM Mono,monospace'>"+pctTxt+"</text>";
+    }
+    // X label
+    svg+="<text x='"+(bx+bw/2).toFixed(1)+"' y='"+(P.t+cH+15)+"' text-anchor='middle' fill='#6b8578' font-size='10' font-family='DM Sans'>"+q.key+"</text>";
+  });
+  svg+="</svg>";
+  wrap.innerHTML=svg;
+  // Update legend
+  document.getElementById("legend").innerHTML="<span style='font-size:11px;color:var(--mut)'>"+
+    "<span style='display:inline-block;width:9px;height:9px;background:#1a4f9c;border-radius:2px;margin-right:4px'></span>Base &nbsp;"+
+    "<span style='display:inline-block;width:9px;height:9px;background:#1a9c4f;border-radius:2px;margin-right:4px'></span>Up &nbsp;"+
+    "<span style='display:inline-block;width:9px;height:9px;background:#c8364a;border-radius:2px;margin-right:4px'></span>Down"+
+    "</span>";
 }
 
 // BAR CHART
