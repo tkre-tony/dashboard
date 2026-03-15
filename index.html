@@ -1665,7 +1665,7 @@ function initRangeBtns(){
       loadAndRenderChart();
       // Sync transactions table with new period
       if(!document.getElementById("ov-search").value.trim()){
-        ovFilteredCache = null;
+        ovFilteredCache = null; ovCurPage = 0;
         document.getElementById("ov-tx-table").style.display="none";
         document.getElementById("ov-tx-loading").style.display="block";
         loadDefaultTransactions(0);
@@ -2569,6 +2569,8 @@ var ovAcIndex = -1;
 var ovSortCol = "sale_date";
 var ovSortDir = "desc";
 var ovFilteredCache = null; // holds all rows for client-side filter/sort
+var ovCurPage = 0;
+var ovPageSize = 25;
 
 function ovDetectType(q){
   // Pure number = district
@@ -2711,6 +2713,7 @@ function updateChartFromSearch(rows, q){
 function ovSortBy(col){
   if(ovSortCol===col){ ovSortDir = ovSortDir==="asc"?"desc":"asc"; }
   else { ovSortCol=col; ovSortDir="desc"; }
+  ovCurPage=0;
   ovUpdateSortIndicators();
   if(ovFilteredCache) ovRenderFiltered(ovFilteredCache);
 }
@@ -2726,6 +2729,7 @@ function ovUpdateSortIndicators(){
 
 function ovApplyFilters(){
   if(!ovFilteredCache) return;
+  ovCurPage=0;
   ovRenderFiltered(ovFilteredCache);
 }
 
@@ -2801,20 +2805,45 @@ function ovRenderFiltered(rows){
     return 0;
   });
 
-  // Update count
+  // Count display
   var countEl = document.getElementById("ov-tx-count");
-  if(countEl) countEl.textContent = filtered.length + " of " + rows.length + " transactions";
+  var totalTx = ovTotal || filtered.length;
+  var totalPages = Math.max(1, Math.ceil(filtered.length / ovPageSize));
+  if(ovCurPage >= totalPages) ovCurPage = 0;
+  var pageStart = ovCurPage * ovPageSize;
+  var pageRows = filtered.slice(pageStart, pageStart + ovPageSize);
+  var countTxt = totalTx.toLocaleString() + " transactions · Page " + (ovCurPage+1) + " of " + totalPages;
+  if(filtered.length < (ovFilteredCache||[]).length) countTxt += " (" + filtered.length + " filtered)";
+  if(countEl) countEl.textContent = countTxt;
 
   if(filtered.length===0){
     document.getElementById("ov-tx-empty").style.display="block";
     document.getElementById("ov-tx-table").style.display="none";
+    document.getElementById("ov-tx-pagination").innerHTML="";
     return;
   }
   document.getElementById("ov-tx-empty").style.display="none";
-  renderOvTable(filtered);
+  renderOvTable(pageRows);
   document.getElementById("ov-tx-table").style.display="table";
-  // hide server-side pagination when client filtering active
-  document.getElementById("ov-tx-pagination").innerHTML="";
+
+  // Pagination
+  var pgEl = document.getElementById("ov-tx-pagination");
+  if(totalPages <= 1){ pgEl.innerHTML=""; return; }
+  var pgHtml = "<button onclick='ovGoPage("+(ovCurPage-1)+",null)' "+(ovCurPage===0?"disabled style='opacity:.4'":"")+" style='padding:4px 10px;border:1px solid var(--bdr);border-radius:5px;background:var(--srf);cursor:pointer;font-size:11px'>← Prev</button>";
+  // Page number buttons — show up to 5 around current
+  var pStart = Math.max(0, ovCurPage-2), pEnd = Math.min(totalPages-1, ovCurPage+2);
+  for(var pi=pStart; pi<=pEnd; pi++){
+    var active = pi===ovCurPage;
+    pgHtml += "<button onclick='ovGoPage("+pi+",null)' style='padding:4px 9px;border:1px solid var(--bdr);border-radius:5px;background:"+(active?"var(--g1)":"var(--srf)")+";color:"+(active?"#fff":"var(--txt)")+";cursor:pointer;font-size:11px'>"+(pi+1)+"</button>";
+  }
+  pgHtml += "<button onclick='ovGoPage("+(ovCurPage+1)+",null)' "+(ovCurPage>=totalPages-1?"disabled style='opacity:.4'":"")+" style='padding:4px 10px;border:1px solid var(--bdr);border-radius:5px;background:var(--srf);cursor:pointer;font-size:11px'>Next →</button>";
+  pgEl.innerHTML = pgHtml;
+}
+
+function ovGoPage(page, rows){
+  if(!ovFilteredCache) return;
+  ovCurPage = Math.max(0, page);
+  ovRenderFiltered(ovFilteredCache);
 }
 
 function ovClearFilters(){
@@ -2911,21 +2940,26 @@ async function loadDefaultTransactions(page){
   var tenureFilter="";
   // We filter client-side via classifyTenure after fetch (tenure bucketing is complex)
 
+  var fetchLimit = 200;
+  if(activeRange==="5Y") fetchLimit=500;
+  if(activeRange==="10Y") fetchLimit=1000;
+  if(activeRange==="ALL") fetchLimit=2000;
+
   var url = SB_URL + "/rest/v1/transactions?select=id,project_name,address,property_type,transacted_price,area_sqft,unit_price_psf,sale_date,tenure,planning_region,postal_district,type_of_sale&"
-    + dateFilter + typeFilter + "&order=sale_date.desc&limit=200&offset=0";
+    + dateFilter + typeFilter + "&order=sale_date.desc&limit="+fetchLimit+"&offset=0";
   var res = await fetch(url, {
     headers:{"apikey":SB_KEY,"Authorization":"Bearer "+SB_KEY,"Prefer":"count=exact"}
   });
   var total = parseInt(res.headers.get("content-range")?.split("/")[1]||"0");
   var data = await res.json();
   ovTotal = total;
-  ovFilteredCache = data || [];
+  ovFilteredCache = data || []; ovCurPage = 0;
   ovSortCol = "sale_date"; ovSortDir = "desc";
   ovUpdateSortIndicators();
   document.getElementById("ov-tx-loading").style.display = "none";
   var typeLabel = allActive ? "all types" : activePtypes.join(", ");
   document.getElementById("ov-tx-title").textContent = "Recent Transactions — " + getActiveRangeLabel();
-  document.getElementById("ov-tx-count").textContent = total.toLocaleString() + " transactions — " + typeLabel;
+  document.getElementById("ov-tx-count").textContent = total.toLocaleString() + " transactions — " + typeLabel + (total > fetchLimit ? " (showing latest "+fetchLimit+")" : "");
   if(data && data.length > 0){
     ovRenderFiltered(data);
   } else {
