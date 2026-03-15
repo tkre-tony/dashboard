@@ -2131,7 +2131,7 @@ document.getElementById("m-cnt").addEventListener("click",function(){chartMode="
 
 function renderAll(){
   if(!document.getElementById("ov-search").value.trim()) CHART_OVERRIDE = null;
-  renderKPIs();renderTypeChips();renderLegend();loadAndRenderChart();renderTypeBreakdown();renderNewsPreview();
+  renderKPIs();renderTypeChips();renderTenureChips();renderLegend();loadAndRenderChart();renderTypeBreakdown();renderNewsPreview();
   // Populate analytics stat strip
   var totVal = VAL_ARR.reduce(function(s,yr){return s+yr.reduce(function(a,v){return a+v;},0);},0);
   var totCnt = CNT_ARR.reduce(function(s,yr){return s+yr.reduce(function(a,v){return a+v;},0);},0);
