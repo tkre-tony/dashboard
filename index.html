@@ -482,8 +482,9 @@ html,body{background:var(--bg);color:var(--txt);font-family:'DM Sans',sans-serif
             <th>Tenure</th>
           </tr>
           <tr id="ov-filter-row" style="background:var(--srf2)">
-            <td colspan="2" style="padding:4px 6px">
-              <input id="ovf-date" placeholder="e.g. 2026-01" style="width:100%;padding:3px 6px;font-size:10px;border:1px solid var(--bdr);border-radius:4px;background:var(--srf);color:var(--txt);font-family:'DM Mono',monospace" oninput="ovApplyFilters()">
+            <td style="padding:4px 6px"></td>
+            <td style="padding:4px 6px">
+              <input id="ovf-dist" placeholder="e.g. 7" style="width:100%;padding:3px 6px;font-size:10px;border:1px solid var(--bdr);border-radius:4px;background:var(--srf);color:var(--txt);font-family:'DM Mono',monospace" oninput="ovApplyFilters()">
             </td>
             <td style="padding:4px 6px">
               <input id="ovf-project" placeholder="Search project..." style="width:100%;padding:3px 6px;font-size:10px;border:1px solid var(--bdr);border-radius:4px;background:var(--srf);color:var(--txt)" oninput="ovApplyFilters()">
@@ -2552,7 +2553,7 @@ function ovApplyFilters(){
 
 function ovGetFilters(){
   return {
-    date:     (document.getElementById("ovf-date")||{}).value||"",
+    dist:     (document.getElementById("ovf-dist")||{}).value||"",
     project:  ((document.getElementById("ovf-project")||{}).value||"").toLowerCase(),
     address:  ((document.getElementById("ovf-address")||{}).value||"").toLowerCase(),
     type:     (document.getElementById("ovf-type")||{}).value||"",
@@ -2579,7 +2580,7 @@ function ovMatchTenureFilter(tenureVal, filt){
 function ovRenderFiltered(rows){
   var f = ovGetFilters();
   var filtered = rows.filter(function(r){
-    if(f.date && !(r.sale_date||"").startsWith(f.date)) return false;
+    if(f.dist && String(r.postal_district||"").indexOf(f.dist)<0) return false;
     if(f.project && (r.project_name||"").toLowerCase().indexOf(f.project)<0) return false;
     if(f.address && (r.address||"").toLowerCase().indexOf(f.address)<0) return false;
     if(f.type){
@@ -2628,7 +2629,7 @@ function ovRenderFiltered(rows){
 }
 
 function ovClearFilters(){
-  ["ovf-date","ovf-project","ovf-address","ovf-price-min","ovf-price-max",
+  ["ovf-dist","ovf-project","ovf-address","ovf-price-min","ovf-price-max",
    "ovf-area-min","ovf-area-max","ovf-psf-min","ovf-psf-max"].forEach(function(id){
     var el=document.getElementById(id); if(el) el.value="";
   });
