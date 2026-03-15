@@ -407,8 +407,8 @@ html,body{background:var(--bg);color:var(--txt);font-family:'DM Sans',sans-serif
           <div>
             <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:var(--mut);margin-bottom:7px">Period</div>
             <div class="range-sel" id="range-btns" style="display:flex;flex-direction:column;border-radius:6px;overflow:hidden;width:100%">
-              <button class="rbtn on" data-range="L18" style="border-radius:0;border-bottom:1px solid var(--bdr)">Last 18 Months</button>
-              <button class="rbtn" data-range="L12" style="border-radius:0;border-bottom:1px solid var(--bdr)">Last 12 Months</button>
+              <button class="rbtn on" data-range="L12" style="border-radius:0;border-bottom:1px solid var(--bdr)">Last 12 Months</button>
+              <button class="rbtn" data-range="L18" style="border-radius:0;border-bottom:1px solid var(--bdr)">Last 18 Months</button>
               <button class="rbtn" data-range="5Y" style="border-radius:0;border-bottom:1px solid var(--bdr)">5 Years</button>
               <button class="rbtn" data-range="10Y" style="border-radius:0;border-bottom:1px solid var(--bdr)">10 Years</button>
               <button class="rbtn" data-range="ALL" style="border-radius:0">All Time</button>
@@ -1143,7 +1143,7 @@ var PIPELINE=[
 
 // STATE
 var chartMode="val"
-var activeRange="L18";
+var activeRange="L12";
 var chartYoY=false;
 var sliderMonths=18;
 var MONTHLY_CACHE=null; // {labels:[], datasets:{type:[vals]}}
@@ -1283,7 +1283,7 @@ async function loadAndRenderChart(){
     var moLabel=chartYoY?"Year-on-Year Comparison":"Annual Transaction Volume by Property Type";
     var rangeLabel=activeRange==="5Y"?"5 Years":activeRange==="10Y"?"10 Years":activeRange==="ALL"?"All Years (1995–)":"";
     document.getElementById("chart-title").textContent=moLabel+(rangeLabel?" — "+rangeLabel:"");
-    document.getElementById("slider-row").style.display=chartYoY?"none":"flex";
+    document.getElementById("slider-row").style.display="none";
     if(showSTI&&!chartYoY){
       var fyArr=getFY();
       var sStart=fyArr[0]+"-01-01",sEnd=fyArr[fyArr.length-1]+"-12-31";
@@ -1520,6 +1520,12 @@ function initRangeBtns(){
       }
       renderAll();
       loadAndRenderChart();
+      // Sync transactions table with new period
+      if(!document.getElementById("ov-search").value.trim()){
+        document.getElementById("ov-tx-table").style.display="none";
+        document.getElementById("ov-tx-loading").style.display="block";
+        loadDefaultTransactions(0);
+      }
     });
   });
   // YoY toggle
@@ -1533,8 +1539,8 @@ function initRangeBtns(){
       activeRange="ALL";
       document.getElementById("slider-row").style.display="none";
     } else {
-      document.querySelector(".rbtn[data-range='L18']").classList.add("on");
-      activeRange="L18";
+      document.querySelector(".rbtn[data-range='L12']").classList.add("on");
+      activeRange="L12";
       document.getElementById("slider-row").style.display="flex";
     }
     loadAndRenderChart();
@@ -2339,6 +2345,16 @@ function getLast12MonthsDate(){
   d.setFullYear(d.getFullYear()-1);
   return d.toISOString().substring(0,10);
 }
+function getDateForActiveRange(){
+  var d = new Date();
+  if(activeRange==="L12"){ d.setMonth(d.getMonth()-12); }
+  else if(activeRange==="L18"){ d.setMonth(d.getMonth()-18); }
+  else if(activeRange==="SLIDER"){ d.setMonth(d.getMonth()-sliderMonths); }
+  else if(activeRange==="5Y"){ d.setFullYear(d.getFullYear()-5); }
+  else if(activeRange==="10Y"){ d.setFullYear(d.getFullYear()-10); }
+  else { return "1995-01-01"; } // ALL
+  return d.toISOString().substring(0,10);
+}
 
 async function ovFetchAgg(q){
   var detected = ovDetectType(q);
@@ -2472,7 +2488,7 @@ function renderOvTable(rows){
 async function loadDefaultTransactions(page){
   page = page||0;
   ovPage = page;
-  var dateFilter = "sale_date=gte." + getLast12MonthsDate();
+  var dateFilter = "sale_date=gte." + getDateForActiveRange();
   var offset = page * 10;
 
   // Build property_type filter from activeTypes
