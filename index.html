@@ -498,8 +498,8 @@ html,body{background:var(--bg);color:var(--txt);font-family:'DM Sans',sans-serif
                 <option>Office</option>
                 <option>Retail</option>
                 <option>Shop House</option>
-                <option>Multiple-User Factory</option>
-                <option>Single-User Factory</option>
+                <option value="Multiple-User Factory">Multi-User</option>
+                <option value="Single-User Factory">Single-User</option>
                 <option>Business Park</option>
                 <option>Warehouse</option>
               </select>
@@ -528,8 +528,10 @@ html,body{background:var(--bg);color:var(--txt);font-family:'DM Sans',sans-serif
               <select id="ovf-tenure" style="width:100%;padding:3px 4px;font-size:10px;border:1px solid var(--bdr);border-radius:4px;background:var(--srf);color:var(--txt)" onchange="ovApplyFilters()">
                 <option value="">All</option>
                 <option value="freehold">Freehold</option>
-                <option value="99">99 yrs</option>
                 <option value="999">999 yrs</option>
+                <option value="99">99 yrs</option>
+                <option value="60">60 yrs (30–69)</option>
+                <option value="30">30 yrs (≤30)</option>
               </select>
             </td>
           </tr>
@@ -2572,8 +2574,13 @@ function ovMatchTenureFilter(tenureVal, filt){
   if(!filt) return true;
   var tl=(tenureVal||"").toLowerCase();
   if(filt==="freehold") return tl.indexOf("freehold")>=0;
-  if(filt==="99") return tl.indexOf("99 yrs")>=0 || tl.indexOf("99-year")>=0;
   if(filt==="999") return tl.indexOf("999")>=0;
+  if(filt==="99") return tl.indexOf("99 yrs")>=0 || tl.indexOf("99-year")>=0;
+  // Extract numeric year from tenure string
+  var m = tl.match(/(\d+)\s*(?:yrs?|years?)/);
+  var yrs = m ? parseInt(m[1]) : null;
+  if(filt==="60") return yrs!==null && yrs>=30 && yrs<70;
+  if(filt==="30") return yrs!==null && yrs<30;
   return true;
 }
 
@@ -2658,6 +2665,15 @@ function formatTenure(t){
   }
   return t.length > 32 ? t.substring(0,32) : t;
 }
+function fmtPropType(t){
+  if(!t) return "-";
+  var tl = t.toLowerCase();
+  if(tl.indexOf("multiple-user")>=0 || tl.indexOf("multi-user")>=0) return "Multi-User";
+  if(tl.indexOf("single-user")>=0) return "Single-User";
+  if(tl.indexOf("business park")>=0) return "Biz Park";
+  if(tl.indexOf("shop house")>=0 || tl.indexOf("shophouse")>=0) return "Shophouse";
+  return t;
+}
 function renderOvTable(rows){
   var tbody = document.getElementById("ov-tx-tbody");
   tbody.innerHTML = rows.map(function(r){
@@ -2672,8 +2688,8 @@ function renderOvTable(rows){
       +"<td class='mono' style='white-space:nowrap;font-size:11px'>"+date+"</td>"
       +"<td class='mono' style='font-size:11px;white-space:nowrap'>"+dist+"</td>"
       +"<td style='font-weight:600;font-size:11px'>"+(r.project_name||"-")+"</td>"
-      +"<td style='font-size:10.5px;color:var(--mut)'>"+(r.address||"-")+"</td>"
-      +"<td><span class='pill p-tag' style='white-space:nowrap;font-size:10px'>"+(r.property_type||"-")+"</span></td>"
+      +"<td style='font-size:10.5px;color:var(--mut);min-width:200px'>"+(r.address||"-")+"</td>"
+      +"<td style='width:80px;max-width:80px'><span class='pill p-tag' style='white-space:nowrap;font-size:10px'>"+fmtPropType(r.property_type||"-")+"</span></td>"
       +"<td class='mono' style='font-size:11px'><b>"+price+"</b></td>"
       +"<td style='font-size:10.5px;color:var(--mut)'>"+tos+"</td>"
       +"<td class='mono' style='font-size:11px'>"+area+"</td>"
