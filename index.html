@@ -1595,7 +1595,7 @@ function renderTenureChips(){
   TENURE_CATS.forEach(function(k){
     var on=activeTenures[k];
     var s=on?"background:"+TENURE_COLOR[k]+";border-color:"+TENURE_COLOR[k]+";color:#fff":"";
-    h+="<button class="fchip"+(on?" on":"")+"" data-tenure=""+k+"" style=""+s+"">"+TENURE_LABEL[k]+"</button>";
+    h+='<button class="fchip'+(on?' on':'')+'" data-tenure="'+k+'" style="'+s+'">'+TENURE_LABEL[k]+'</button>';
   });
   el.innerHTML=h;
   el.querySelectorAll(".fchip").forEach(function(b){
