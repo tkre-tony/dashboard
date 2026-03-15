@@ -496,15 +496,14 @@ html,body{background:var(--bg);color:var(--txt);font-family:'DM Sans',sans-serif
               <input id="ovf-address" placeholder="Search address..." style="width:100%;padding:3px 6px;font-size:10px;border:1px solid var(--bdr);border-radius:4px;background:var(--srf);color:var(--txt)" oninput="ovApplyFilters()">
             </td>
             <td style="padding:4px 6px">
-              <select id="ovf-type" style="width:100%;padding:3px 4px;font-size:10px;border:1px solid var(--bdr);border-radius:4px;background:var(--srf);color:var(--txt)" onchange="ovApplyFilters()">
-                <option value="">All Types</option>
-                <option>Office</option>
-                <option>Retail</option>
-                <option>Shop House</option>
+              <select id="ovf-type" multiple style="width:100%;font-size:10px;border:1px solid var(--bdr);border-radius:4px;background:var(--srf);color:var(--txt);height:52px" onchange="ovApplyFilters()" title="Hold Ctrl/Cmd to select multiple">
+                <option value="Office">Office</option>
+                <option value="Retail">Retail</option>
+                <option value="Shop House">Shophouse</option>
                 <option value="Multiple-User Factory">Multi-User</option>
                 <option value="Single-User Factory">Single-User</option>
-                <option>Business Park</option>
-                <option>Warehouse</option>
+                <option value="Business Park">Biz Park</option>
+                <option value="Warehouse">Warehouse</option>
               </select>
             </td>
             <td colspan="1" style="padding:4px 6px">
@@ -512,11 +511,10 @@ html,body{background:var(--bg);color:var(--txt);font-family:'DM Sans',sans-serif
               <input id="ovf-price-max" placeholder="Max S$" style="width:48%;padding:3px 4px;font-size:10px;border:1px solid var(--bdr);border-radius:4px;background:var(--srf);color:var(--txt);font-family:'DM Mono',monospace" oninput="ovApplyFilters()">
             </td>
             <td style="padding:4px 6px">
-              <select id="ovf-tos" style="width:100%;padding:3px 4px;font-size:10px;border:1px solid var(--bdr);border-radius:4px;background:var(--srf);color:var(--txt)" onchange="ovApplyFilters()">
-                <option value="">All</option>
-                <option>New Sale</option>
-                <option>Resale</option>
-                <option>Sub Sale</option>
+              <select id="ovf-tos" multiple style="width:100%;font-size:10px;border:1px solid var(--bdr);border-radius:4px;background:var(--srf);color:var(--txt);height:42px" onchange="ovApplyFilters()" title="Hold Ctrl/Cmd to select multiple">
+                <option value="New Sale">New Sale</option>
+                <option value="Resale">Resale</option>
+                <option value="Sub Sale">Sub Sale</option>
               </select>
             </td>
             <td style="padding:4px 6px">
@@ -528,8 +526,7 @@ html,body{background:var(--bg);color:var(--txt);font-family:'DM Sans',sans-serif
               <input id="ovf-psf-max" placeholder="Max" style="width:48%;padding:3px 4px;font-size:10px;border:1px solid var(--bdr);border-radius:4px;background:var(--srf);color:var(--txt);font-family:'DM Mono',monospace" oninput="ovApplyFilters()">
             </td>
             <td style="padding:4px 6px">
-              <select id="ovf-tenure" style="width:100%;padding:3px 4px;font-size:10px;border:1px solid var(--bdr);border-radius:4px;background:var(--srf);color:var(--txt)" onchange="ovApplyFilters()">
-                <option value="">All</option>
+              <select id="ovf-tenure" multiple style="width:100%;font-size:10px;border:1px solid var(--bdr);border-radius:4px;background:var(--srf);color:var(--txt);height:52px" onchange="ovApplyFilters()" title="Hold Ctrl/Cmd to select multiple">
                 <option value="freehold">Freehold</option>
                 <option value="999">999 yrs</option>
                 <option value="99">99 yrs</option>
@@ -2738,15 +2735,15 @@ function ovGetFilters(){
     dist:     (document.getElementById("ovf-dist")||{}).value||"",
     project:  ((document.getElementById("ovf-project")||{}).value||"").toLowerCase(),
     address:  ((document.getElementById("ovf-address")||{}).value||"").toLowerCase(),
-    type:     (document.getElementById("ovf-type")||{}).value||"",
+    type:     Array.from((document.getElementById("ovf-type")||{selectedOptions:[]}).selectedOptions).map(function(o){return o.value;}),
     priceMin: parseFloat((document.getElementById("ovf-price-min")||{}).value)||0,
     priceMax: parseFloat((document.getElementById("ovf-price-max")||{}).value)||Infinity,
-    tos:      (document.getElementById("ovf-tos")||{}).value||"",
+    tos:      Array.from((document.getElementById("ovf-tos")||{selectedOptions:[]}).selectedOptions).map(function(o){return o.value.toLowerCase();}),
     areaMin:  parseFloat((document.getElementById("ovf-area-min")||{}).value)||0,
     areaMax:  parseFloat((document.getElementById("ovf-area-max")||{}).value)||Infinity,
     psfMin:   parseFloat((document.getElementById("ovf-psf-min")||{}).value)||0,
     psfMax:   parseFloat((document.getElementById("ovf-psf-max")||{}).value)||Infinity,
-    tenure:   (document.getElementById("ovf-tenure")||{}).value||""
+    tenure:   Array.from((document.getElementById("ovf-tenure")||{selectedOptions:[]}).selectedOptions).map(function(o){return o.value;})
   };
 }
 
@@ -2770,9 +2767,10 @@ function ovRenderFiltered(rows){
     if(f.dist && String(r.postal_district||"").indexOf(f.dist)<0) return false;
     if(f.project && (r.project_name||"").toLowerCase().indexOf(f.project)<0) return false;
     if(f.address && (r.address||"").toLowerCase().indexOf(f.address)<0) return false;
-    if(f.type){
+    if(f.type && f.type.length>0){
       var pt=(r.property_type||"").toLowerCase();
-      if(pt.indexOf(f.type.toLowerCase())<0) return false;
+      var typeMatch=f.type.some(function(t){return pt.indexOf(t.toLowerCase())>=0;});
+      if(!typeMatch) return false;
     }
     // Tenure chip filter
     var allTenOn=TENURE_CATS.every(function(k){return activeTenures[k];});
@@ -2782,12 +2780,17 @@ function ovRenderFiltered(rows){
     }
     var price=r.transacted_price||0;
     if(price < f.priceMin || price > f.priceMax) return false;
-    if(f.tos && (r.type_of_sale||"").toLowerCase().indexOf(f.tos.toLowerCase())<0) return false;
+    if(f.tos && f.tos.length>0){
+      var tosVal=(r.type_of_sale||"").toLowerCase();
+      if(!f.tos.some(function(t){return tosVal.indexOf(t)>=0;})) return false;
+    }
     var area=parseFloat(r.area_sqft)||0;
     if(area < f.areaMin || area > f.areaMax) return false;
     var psf=parseFloat(r.unit_price_psf)||0;
     if(psf < f.psfMin || psf > f.psfMax) return false;
-    if(!ovMatchTenureFilter(r.tenure, f.tenure)) return false;
+    if(f.tenure && f.tenure.length>0){
+      if(!f.tenure.some(function(t){return ovMatchTenureFilter(r.tenure,t);})) return false;
+    }
     return true;
   });
 
@@ -2852,7 +2855,9 @@ function ovClearFilters(){
     var el=document.getElementById(id); if(el) el.value="";
   });
   ["ovf-type","ovf-tos","ovf-tenure"].forEach(function(id){
-    var el=document.getElementById(id); if(el) el.selectedIndex=0;
+    var el=document.getElementById(id);
+    if(!el) return;
+    Array.from(el.options).forEach(function(o){o.selected=false;});
   });
   if(ovFilteredCache) ovRenderFiltered(ovFilteredCache);
 }
