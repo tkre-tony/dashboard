@@ -461,16 +461,78 @@ html,body{background:var(--bg);color:var(--txt);font-family:'DM Sans',sans-serif
         <div>
           <div class="card-title"><span class="card-title-dot"></span><span id="ov-tx-title">Recent Transactions — Last 12 Months</span></div>
           <div class="card-subtitle">Latest deals · Click Search to filter by project or district</div>
+          <button onclick="ovClearFilters()" style="font-size:10px;padding:3px 9px;border:1px solid var(--bdr);border-radius:5px;background:var(--srf2);color:var(--mut);cursor:pointer;font-family:'DM Sans',sans-serif" title="Clear all column filters">✕ Clear Filters</button>
         </div>
         <div style="font-size:11px;color:var(--mut);font-family:'DM Mono',monospace;font-weight:600" id="ov-tx-count">Loading...</div>
       </div>
       <div id="ov-tx-loading" style="text-align:center;padding:20px;color:var(--mut);font-size:13px">Loading transactions...</div>
       <div style="overflow-x:auto;border-radius:6px;border:1px solid var(--bdr)">
         <table class="ptable" id="ov-tx-table" style="display:none">
-          <thead><tr>
-            <th>Date</th><th>District</th><th>Project</th><th>Address</th><th>Type</th>
-            <th>Price</th><th>Type of Sale</th><th>Area (sqft)</th><th>PSF</th><th>Tenure</th>
-          </tr></thead>
+          <thead>
+          <tr id="ov-sort-row">
+            <th onclick="ovSortBy('sale_date')" style="cursor:pointer;user-select:none;white-space:nowrap">Date <span id="ovs-sale_date"></span></th>
+            <th onclick="ovSortBy('postal_district')" style="cursor:pointer;user-select:none;white-space:nowrap">District <span id="ovs-postal_district"></span></th>
+            <th>Project</th>
+            <th>Address</th>
+            <th>Type</th>
+            <th onclick="ovSortBy('transacted_price')" style="cursor:pointer;user-select:none;white-space:nowrap">Price <span id="ovs-transacted_price"></span></th>
+            <th>Type of Sale</th>
+            <th onclick="ovSortBy('area_sqft')" style="cursor:pointer;user-select:none;white-space:nowrap">Area (sqft) <span id="ovs-area_sqft"></span></th>
+            <th onclick="ovSortBy('unit_price_psf')" style="cursor:pointer;user-select:none;white-space:nowrap">PSF <span id="ovs-unit_price_psf"></span></th>
+            <th>Tenure</th>
+          </tr>
+          <tr id="ov-filter-row" style="background:var(--srf2)">
+            <td colspan="2" style="padding:4px 6px">
+              <input id="ovf-date" placeholder="e.g. 2026-01" style="width:100%;padding:3px 6px;font-size:10px;border:1px solid var(--bdr);border-radius:4px;background:var(--srf);color:var(--txt);font-family:'DM Mono',monospace" oninput="ovApplyFilters()">
+            </td>
+            <td style="padding:4px 6px">
+              <input id="ovf-project" placeholder="Search project..." style="width:100%;padding:3px 6px;font-size:10px;border:1px solid var(--bdr);border-radius:4px;background:var(--srf);color:var(--txt)" oninput="ovApplyFilters()">
+            </td>
+            <td style="padding:4px 6px">
+              <input id="ovf-address" placeholder="Search address..." style="width:100%;padding:3px 6px;font-size:10px;border:1px solid var(--bdr);border-radius:4px;background:var(--srf);color:var(--txt)" oninput="ovApplyFilters()">
+            </td>
+            <td style="padding:4px 6px">
+              <select id="ovf-type" style="width:100%;padding:3px 4px;font-size:10px;border:1px solid var(--bdr);border-radius:4px;background:var(--srf);color:var(--txt)" onchange="ovApplyFilters()">
+                <option value="">All Types</option>
+                <option>Office</option>
+                <option>Retail</option>
+                <option>Shop House</option>
+                <option>Multiple-User Factory</option>
+                <option>Single-User Factory</option>
+                <option>Business Park</option>
+                <option>Warehouse</option>
+              </select>
+            </td>
+            <td colspan="1" style="padding:4px 6px">
+              <input id="ovf-price-min" placeholder="Min S$" style="width:48%;padding:3px 4px;font-size:10px;border:1px solid var(--bdr);border-radius:4px;background:var(--srf);color:var(--txt);font-family:'DM Mono',monospace" oninput="ovApplyFilters()">
+              <input id="ovf-price-max" placeholder="Max S$" style="width:48%;padding:3px 4px;font-size:10px;border:1px solid var(--bdr);border-radius:4px;background:var(--srf);color:var(--txt);font-family:'DM Mono',monospace" oninput="ovApplyFilters()">
+            </td>
+            <td style="padding:4px 6px">
+              <select id="ovf-tos" style="width:100%;padding:3px 4px;font-size:10px;border:1px solid var(--bdr);border-radius:4px;background:var(--srf);color:var(--txt)" onchange="ovApplyFilters()">
+                <option value="">All</option>
+                <option>New Sale</option>
+                <option>Resale</option>
+                <option>Sub Sale</option>
+              </select>
+            </td>
+            <td style="padding:4px 6px">
+              <input id="ovf-area-min" placeholder="Min" style="width:48%;padding:3px 4px;font-size:10px;border:1px solid var(--bdr);border-radius:4px;background:var(--srf);color:var(--txt);font-family:'DM Mono',monospace" oninput="ovApplyFilters()">
+              <input id="ovf-area-max" placeholder="Max" style="width:48%;padding:3px 4px;font-size:10px;border:1px solid var(--bdr);border-radius:4px;background:var(--srf);color:var(--txt);font-family:'DM Mono',monospace" oninput="ovApplyFilters()">
+            </td>
+            <td style="padding:4px 6px">
+              <input id="ovf-psf-min" placeholder="Min" style="width:48%;padding:3px 4px;font-size:10px;border:1px solid var(--bdr);border-radius:4px;background:var(--srf);color:var(--txt);font-family:'DM Mono',monospace" oninput="ovApplyFilters()">
+              <input id="ovf-psf-max" placeholder="Max" style="width:48%;padding:3px 4px;font-size:10px;border:1px solid var(--bdr);border-radius:4px;background:var(--srf);color:var(--txt);font-family:'DM Mono',monospace" oninput="ovApplyFilters()">
+            </td>
+            <td style="padding:4px 6px">
+              <select id="ovf-tenure" style="width:100%;padding:3px 4px;font-size:10px;border:1px solid var(--bdr);border-radius:4px;background:var(--srf);color:var(--txt)" onchange="ovApplyFilters()">
+                <option value="">All</option>
+                <option value="freehold">Freehold</option>
+                <option value="99">99 yrs</option>
+                <option value="999">999 yrs</option>
+              </select>
+            </td>
+          </tr>
+          </thead>
           <tbody id="ov-tx-tbody"></tbody>
         </table>
       </div>
@@ -2333,6 +2395,9 @@ var ovTotal = 0;
 var ovQuery = "";
 var ovTimer = null;
 var ovAcIndex = -1;
+var ovSortCol = "sale_date";
+var ovSortDir = "desc";
+var ovFilteredCache = null; // holds all rows for client-side filter/sort
 
 function ovDetectType(q){
   // Pure number = district
@@ -2422,11 +2487,11 @@ async function ovSearch(page){
     document.getElementById("ov-tx-title").textContent = "Transactions — Last 12 Months";
     document.getElementById("ov-tx-count").textContent = ovTotal.toLocaleString() + " transactions found";
 
+    ovFilteredCache = rowResult.data || [];
     if(!rowResult.data || rowResult.data.length === 0){
       document.getElementById("ov-tx-empty").style.display = "block";
     } else {
-      renderOvTable(rowResult.data);
-      renderOvPagination(q);
+      ovRenderFiltered(rowResult.data);
     }
   } catch(e){
     document.getElementById("ov-tx-loading").style.display = "none";
@@ -2462,6 +2527,118 @@ function updateChartFromSearch(rows, q){
   });
   renderBarChart();
 }
+
+// ── OV TABLE SORT / FILTER ENGINE ─────────────────────────────────────
+function ovSortBy(col){
+  if(ovSortCol===col){ ovSortDir = ovSortDir==="asc"?"desc":"asc"; }
+  else { ovSortCol=col; ovSortDir="desc"; }
+  ovUpdateSortIndicators();
+  if(ovFilteredCache) ovRenderFiltered(ovFilteredCache);
+}
+
+function ovUpdateSortIndicators(){
+  var cols=["sale_date","postal_district","transacted_price","area_sqft","unit_price_psf"];
+  cols.forEach(function(c){
+    var el=document.getElementById("ovs-"+c);
+    if(!el) return;
+    el.textContent = c===ovSortCol ? (ovSortDir==="asc"?" ↑":" ↓") : "";
+  });
+}
+
+function ovApplyFilters(){
+  if(!ovFilteredCache) return;
+  ovRenderFiltered(ovFilteredCache);
+}
+
+function ovGetFilters(){
+  return {
+    date:     (document.getElementById("ovf-date")||{}).value||"",
+    project:  ((document.getElementById("ovf-project")||{}).value||"").toLowerCase(),
+    address:  ((document.getElementById("ovf-address")||{}).value||"").toLowerCase(),
+    type:     (document.getElementById("ovf-type")||{}).value||"",
+    priceMin: parseFloat((document.getElementById("ovf-price-min")||{}).value)||0,
+    priceMax: parseFloat((document.getElementById("ovf-price-max")||{}).value)||Infinity,
+    tos:      (document.getElementById("ovf-tos")||{}).value||"",
+    areaMin:  parseFloat((document.getElementById("ovf-area-min")||{}).value)||0,
+    areaMax:  parseFloat((document.getElementById("ovf-area-max")||{}).value)||Infinity,
+    psfMin:   parseFloat((document.getElementById("ovf-psf-min")||{}).value)||0,
+    psfMax:   parseFloat((document.getElementById("ovf-psf-max")||{}).value)||Infinity,
+    tenure:   (document.getElementById("ovf-tenure")||{}).value||""
+  };
+}
+
+function ovMatchTenureFilter(tenureVal, filt){
+  if(!filt) return true;
+  var tl=(tenureVal||"").toLowerCase();
+  if(filt==="freehold") return tl.indexOf("freehold")>=0;
+  if(filt==="99") return tl.indexOf("99 yrs")>=0 || tl.indexOf("99-year")>=0;
+  if(filt==="999") return tl.indexOf("999")>=0;
+  return true;
+}
+
+function ovRenderFiltered(rows){
+  var f = ovGetFilters();
+  var filtered = rows.filter(function(r){
+    if(f.date && !(r.sale_date||"").startsWith(f.date)) return false;
+    if(f.project && (r.project_name||"").toLowerCase().indexOf(f.project)<0) return false;
+    if(f.address && (r.address||"").toLowerCase().indexOf(f.address)<0) return false;
+    if(f.type){
+      var pt=(r.property_type||"").toLowerCase();
+      if(pt.indexOf(f.type.toLowerCase())<0) return false;
+    }
+    var price=r.transacted_price||0;
+    if(price < f.priceMin || price > f.priceMax) return false;
+    if(f.tos && (r.type_of_sale||"").toLowerCase().indexOf(f.tos.toLowerCase())<0) return false;
+    var area=parseFloat(r.area_sqft)||0;
+    if(area < f.areaMin || area > f.areaMax) return false;
+    var psf=parseFloat(r.unit_price_psf)||0;
+    if(psf < f.psfMin || psf > f.psfMax) return false;
+    if(!ovMatchTenureFilter(r.tenure, f.tenure)) return false;
+    return true;
+  });
+
+  // Sort
+  filtered.sort(function(a,b){
+    var av, bv;
+    if(ovSortCol==="sale_date"){ av=a.sale_date||""; bv=b.sale_date||""; }
+    else if(ovSortCol==="postal_district"){ av=parseInt(a.postal_district)||0; bv=parseInt(b.postal_district)||0; }
+    else if(ovSortCol==="transacted_price"){ av=a.transacted_price||0; bv=b.transacted_price||0; }
+    else if(ovSortCol==="area_sqft"){ av=parseFloat(a.area_sqft)||0; bv=parseFloat(b.area_sqft)||0; }
+    else if(ovSortCol==="unit_price_psf"){ av=parseFloat(a.unit_price_psf)||0; bv=parseFloat(b.unit_price_psf)||0; }
+    else { av=a.sale_date||""; bv=b.sale_date||""; }
+    if(av<bv) return ovSortDir==="asc"?-1:1;
+    if(av>bv) return ovSortDir==="asc"?1:-1;
+    return 0;
+  });
+
+  // Update count
+  var countEl = document.getElementById("ov-tx-count");
+  if(countEl) countEl.textContent = filtered.length + " of " + rows.length + " transactions";
+
+  if(filtered.length===0){
+    document.getElementById("ov-tx-empty").style.display="block";
+    document.getElementById("ov-tx-table").style.display="none";
+    return;
+  }
+  document.getElementById("ov-tx-empty").style.display="none";
+  renderOvTable(filtered);
+  document.getElementById("ov-tx-table").style.display="table";
+  // hide server-side pagination when client filtering active
+  document.getElementById("ov-tx-pagination").innerHTML="";
+}
+
+function ovClearFilters(){
+  ["ovf-date","ovf-project","ovf-address","ovf-price-min","ovf-price-max",
+   "ovf-area-min","ovf-area-max","ovf-psf-min","ovf-psf-max"].forEach(function(id){
+    var el=document.getElementById(id); if(el) el.value="";
+  });
+  ["ovf-type","ovf-tos","ovf-tenure"].forEach(function(id){
+    var el=document.getElementById(id); if(el) el.selectedIndex=0;
+  });
+  if(ovFilteredCache) ovRenderFiltered(ovFilteredCache);
+}
+
+// ── END SORT / FILTER ENGINE ───────────────────────────────────────────
 
 function formatTenure(t){
   if(!t) return "-";
@@ -2530,19 +2707,21 @@ async function loadDefaultTransactions(page){
   }
 
   var url = SB_URL + "/rest/v1/transactions?select=id,project_name,address,property_type,transacted_price,area_sqft,unit_price_psf,sale_date,tenure,planning_region,postal_district,type_of_sale&"
-    + dateFilter + typeFilter + "&order=sale_date.desc&limit=10&offset=" + offset;
+    + dateFilter + typeFilter + "&order=sale_date.desc&limit=200&offset=0";
   var res = await fetch(url, {
     headers:{"apikey":SB_KEY,"Authorization":"Bearer "+SB_KEY,"Prefer":"count=exact"}
   });
   var total = parseInt(res.headers.get("content-range")?.split("/")[1]||"0");
   var data = await res.json();
   ovTotal = total;
+  ovFilteredCache = data || [];
+  ovSortCol = "sale_date"; ovSortDir = "desc";
+  ovUpdateSortIndicators();
   document.getElementById("ov-tx-loading").style.display = "none";
   var typeLabel = allActive ? "all types" : activePtypes.join(", ");
   document.getElementById("ov-tx-count").textContent = total.toLocaleString() + " transactions — " + typeLabel;
   if(data && data.length > 0){
-    renderOvTable(data);
-    renderOvPaginationDefault();
+    ovRenderFiltered(data);
   } else {
     document.getElementById("ov-tx-empty").style.display = "block";
     document.getElementById("ov-tx-table").style.display = "none";
