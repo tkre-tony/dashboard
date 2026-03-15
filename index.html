@@ -3122,7 +3122,7 @@ function initOvAutocomplete(){
       items = items.slice(0,10);
       if(!items.length){ dd.style.display="none"; return; }
       dd.innerHTML = items.map(function(item){
-        return '<div class="ac-item" onmousedown="ovSelectAC(\''+item.label.replace(/'/g,"\\'")+'\')"><span style="color:var(--mut);font-size:10px;margin-right:6px;background:var(--srf2);padding:1px 5px;border-radius:3px">'+item.type+'</span>'+highlightMatch(item.label,q)+'</div>';
+        return '<div class="ac-item" onmousedown="ovSelectAC(\''+item.label.replace(/'/g,"\\'")+'\')"><span style="color:var(--mut);font-size:10px;margin-right:6px;background:var(--srf2);padding:1px 5px;border-radius:3px">'+item.type+'</span><span>'+highlightMatch(item.label,q)+'</span></div>';
       }).join('');
       dd.style.display = "block";
     }, 250);
