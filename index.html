@@ -495,27 +495,29 @@ html,body{background:var(--bg);color:var(--txt);font-family:'DM Sans',sans-serif
             <td style="padding:4px 6px">
               <input id="ovf-address" placeholder="Search address..." style="width:100%;padding:3px 6px;font-size:10px;border:1px solid var(--bdr);border-radius:4px;background:var(--srf);color:var(--txt)" oninput="ovApplyFilters()">
             </td>
-            <td style="padding:4px 6px">
-              <select id="ovf-type" multiple style="width:100%;font-size:10px;border:1px solid var(--bdr);border-radius:4px;background:var(--srf);color:var(--txt);height:52px" onchange="ovApplyFilters()" title="Hold Ctrl/Cmd to select multiple">
-                <option value="Office">Office</option>
-                <option value="Retail">Retail</option>
-                <option value="Shop House">Shophouse</option>
-                <option value="Multiple-User Factory">Multi-User</option>
-                <option value="Single-User Factory">Single-User</option>
-                <option value="Business Park">Biz Park</option>
-                <option value="Warehouse">Warehouse</option>
-              </select>
+            <td style="padding:4px 6px;position:relative">
+              <button id="ovf-type-btn" onclick="ovToggleDrop('type')" style="width:100%;padding:3px 6px;font-size:10px;border:1px solid var(--bdr);border-radius:4px;background:var(--srf);color:var(--txt);cursor:pointer;text-align:left;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">All Types ▾</button>
+              <div id="ovf-type-drop" style="display:none;position:absolute;top:100%;left:0;z-index:999;background:var(--srf);border:1px solid var(--bdr);border-radius:4px;min-width:140px;box-shadow:0 4px 12px rgba(0,0,0,.12);padding:4px 0">
+                <label style="display:flex;align-items:center;gap:6px;padding:4px 10px;font-size:11px;cursor:pointer;white-space:nowrap"><input type="checkbox" value="Office" onchange="ovDropChange('type')"> Office</label>
+                <label style="display:flex;align-items:center;gap:6px;padding:4px 10px;font-size:11px;cursor:pointer;white-space:nowrap"><input type="checkbox" value="Retail" onchange="ovDropChange('type')"> Retail</label>
+                <label style="display:flex;align-items:center;gap:6px;padding:4px 10px;font-size:11px;cursor:pointer;white-space:nowrap"><input type="checkbox" value="Shop House" onchange="ovDropChange('type')"> Shophouse</label>
+                <label style="display:flex;align-items:center;gap:6px;padding:4px 10px;font-size:11px;cursor:pointer;white-space:nowrap"><input type="checkbox" value="Multiple-User Factory" onchange="ovDropChange('type')"> Multi-User</label>
+                <label style="display:flex;align-items:center;gap:6px;padding:4px 10px;font-size:11px;cursor:pointer;white-space:nowrap"><input type="checkbox" value="Single-User Factory" onchange="ovDropChange('type')"> Single-User</label>
+                <label style="display:flex;align-items:center;gap:6px;padding:4px 10px;font-size:11px;cursor:pointer;white-space:nowrap"><input type="checkbox" value="Business Park" onchange="ovDropChange('type')"> Biz Park</label>
+                <label style="display:flex;align-items:center;gap:6px;padding:4px 10px;font-size:11px;cursor:pointer;white-space:nowrap"><input type="checkbox" value="Warehouse" onchange="ovDropChange('type')"> Warehouse</label>
+              </div>
             </td>
             <td colspan="1" style="padding:4px 6px">
               <input id="ovf-price-min" placeholder="Min S$" style="width:48%;padding:3px 4px;font-size:10px;border:1px solid var(--bdr);border-radius:4px;background:var(--srf);color:var(--txt);font-family:'DM Mono',monospace" oninput="ovApplyFilters()">
               <input id="ovf-price-max" placeholder="Max S$" style="width:48%;padding:3px 4px;font-size:10px;border:1px solid var(--bdr);border-radius:4px;background:var(--srf);color:var(--txt);font-family:'DM Mono',monospace" oninput="ovApplyFilters()">
             </td>
-            <td style="padding:4px 6px">
-              <select id="ovf-tos" multiple style="width:100%;font-size:10px;border:1px solid var(--bdr);border-radius:4px;background:var(--srf);color:var(--txt);height:42px" onchange="ovApplyFilters()" title="Hold Ctrl/Cmd to select multiple">
-                <option value="New Sale">New Sale</option>
-                <option value="Resale">Resale</option>
-                <option value="Sub Sale">Sub Sale</option>
-              </select>
+            <td style="padding:4px 6px;position:relative">
+              <button id="ovf-tos-btn" onclick="ovToggleDrop('tos')" style="width:100%;padding:3px 6px;font-size:10px;border:1px solid var(--bdr);border-radius:4px;background:var(--srf);color:var(--txt);cursor:pointer;text-align:left;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">All ▾</button>
+              <div id="ovf-tos-drop" style="display:none;position:absolute;top:100%;left:0;z-index:999;background:var(--srf);border:1px solid var(--bdr);border-radius:4px;min-width:120px;box-shadow:0 4px 12px rgba(0,0,0,.12);padding:4px 0">
+                <label style="display:flex;align-items:center;gap:6px;padding:4px 10px;font-size:11px;cursor:pointer;white-space:nowrap"><input type="checkbox" value="New Sale" onchange="ovDropChange('tos')"> New Sale</label>
+                <label style="display:flex;align-items:center;gap:6px;padding:4px 10px;font-size:11px;cursor:pointer;white-space:nowrap"><input type="checkbox" value="Resale" onchange="ovDropChange('tos')"> Resale</label>
+                <label style="display:flex;align-items:center;gap:6px;padding:4px 10px;font-size:11px;cursor:pointer;white-space:nowrap"><input type="checkbox" value="Sub Sale" onchange="ovDropChange('tos')"> Sub Sale</label>
+              </div>
             </td>
             <td style="padding:4px 6px">
               <input id="ovf-area-min" placeholder="Min" style="width:48%;padding:3px 4px;font-size:10px;border:1px solid var(--bdr);border-radius:4px;background:var(--srf);color:var(--txt);font-family:'DM Mono',monospace" oninput="ovApplyFilters()">
@@ -525,14 +527,15 @@ html,body{background:var(--bg);color:var(--txt);font-family:'DM Sans',sans-serif
               <input id="ovf-psf-min" placeholder="Min" style="width:48%;padding:3px 4px;font-size:10px;border:1px solid var(--bdr);border-radius:4px;background:var(--srf);color:var(--txt);font-family:'DM Mono',monospace" oninput="ovApplyFilters()">
               <input id="ovf-psf-max" placeholder="Max" style="width:48%;padding:3px 4px;font-size:10px;border:1px solid var(--bdr);border-radius:4px;background:var(--srf);color:var(--txt);font-family:'DM Mono',monospace" oninput="ovApplyFilters()">
             </td>
-            <td style="padding:4px 6px">
-              <select id="ovf-tenure" multiple style="width:100%;font-size:10px;border:1px solid var(--bdr);border-radius:4px;background:var(--srf);color:var(--txt);height:52px" onchange="ovApplyFilters()" title="Hold Ctrl/Cmd to select multiple">
-                <option value="freehold">Freehold</option>
-                <option value="999">999 yrs</option>
-                <option value="99">99 yrs</option>
-                <option value="60">60 yrs (30–69)</option>
-                <option value="30">30 yrs (≤30)</option>
-              </select>
+            <td style="padding:4px 6px;position:relative">
+              <button id="ovf-tenure-btn" onclick="ovToggleDrop('tenure')" style="width:100%;padding:3px 6px;font-size:10px;border:1px solid var(--bdr);border-radius:4px;background:var(--srf);color:var(--txt);cursor:pointer;text-align:left;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">All ▾</button>
+              <div id="ovf-tenure-drop" style="display:none;position:absolute;top:100%;left:0;z-index:999;background:var(--srf);border:1px solid var(--bdr);border-radius:4px;min-width:140px;box-shadow:0 4px 12px rgba(0,0,0,.12);padding:4px 0">
+                <label style="display:flex;align-items:center;gap:6px;padding:4px 10px;font-size:11px;cursor:pointer;white-space:nowrap"><input type="checkbox" value="freehold" onchange="ovDropChange('tenure')"> Freehold</label>
+                <label style="display:flex;align-items:center;gap:6px;padding:4px 10px;font-size:11px;cursor:pointer;white-space:nowrap"><input type="checkbox" value="999" onchange="ovDropChange('tenure')"> 999 yrs</label>
+                <label style="display:flex;align-items:center;gap:6px;padding:4px 10px;font-size:11px;cursor:pointer;white-space:nowrap"><input type="checkbox" value="99" onchange="ovDropChange('tenure')"> 99 yrs</label>
+                <label style="display:flex;align-items:center;gap:6px;padding:4px 10px;font-size:11px;cursor:pointer;white-space:nowrap"><input type="checkbox" value="60" onchange="ovDropChange('tenure')"> 60 yrs (30–69)</label>
+                <label style="display:flex;align-items:center;gap:6px;padding:4px 10px;font-size:11px;cursor:pointer;white-space:nowrap"><input type="checkbox" value="30" onchange="ovDropChange('tenure')"> 30 yrs (≤30)</label>
+              </div>
             </td>
           </tr>
           </thead>
@@ -2707,6 +2710,45 @@ function updateChartFromSearch(rows, q){
 }
 
 // ── OV TABLE SORT / FILTER ENGINE ─────────────────────────────────────
+function ovGetChecked(dropId){
+  var el=document.getElementById(dropId);
+  if(!el) return [];
+  return Array.from(el.querySelectorAll("input[type=checkbox]:checked")).map(function(cb){return cb.value;});
+}
+
+function ovToggleDrop(name){
+  var drop=document.getElementById("ovf-"+name+"-drop");
+  if(!drop) return;
+  var isOpen=drop.style.display!=="none";
+  // Close all first
+  ["type","tos","tenure"].forEach(function(n){
+    var d=document.getElementById("ovf-"+n+"-drop");
+    if(d) d.style.display="none";
+  });
+  if(!isOpen) drop.style.display="block";
+}
+
+function ovDropChange(name){
+  var vals=ovGetChecked("ovf-"+name+"-drop");
+  var btn=document.getElementById("ovf-"+name+"-btn");
+  if(btn){
+    var labels={"type":"All Types","tos":"All","tenure":"All"};
+    btn.textContent = vals.length===0 ? labels[name]+" ▾" : vals.length+" selected ▾";
+  }
+  ovCurPage=0;
+  ovApplyFilters();
+}
+
+// Close dropdowns when clicking outside
+document.addEventListener("click",function(e){
+  if(!e.target.closest("#ovf-type-drop,#ovf-tos-drop,#ovf-tenure-drop,[id$=-btn]")){
+    ["type","tos","tenure"].forEach(function(n){
+      var d=document.getElementById("ovf-"+n+"-drop");
+      if(d) d.style.display="none";
+    });
+  }
+});
+
 function ovSortBy(col){
   if(ovSortCol===col){ ovSortDir = ovSortDir==="asc"?"desc":"asc"; }
   else { ovSortCol=col; ovSortDir="desc"; }
@@ -2735,15 +2777,15 @@ function ovGetFilters(){
     dist:     (document.getElementById("ovf-dist")||{}).value||"",
     project:  ((document.getElementById("ovf-project")||{}).value||"").toLowerCase(),
     address:  ((document.getElementById("ovf-address")||{}).value||"").toLowerCase(),
-    type:     Array.from((document.getElementById("ovf-type")||{selectedOptions:[]}).selectedOptions).map(function(o){return o.value;}),
+    type:     ovGetChecked("ovf-type-drop"),
     priceMin: parseFloat((document.getElementById("ovf-price-min")||{}).value)||0,
     priceMax: parseFloat((document.getElementById("ovf-price-max")||{}).value)||Infinity,
-    tos:      Array.from((document.getElementById("ovf-tos")||{selectedOptions:[]}).selectedOptions).map(function(o){return o.value.toLowerCase();}),
+    tos:      ovGetChecked("ovf-tos-drop").map(function(v){return v.toLowerCase();}),
     areaMin:  parseFloat((document.getElementById("ovf-area-min")||{}).value)||0,
     areaMax:  parseFloat((document.getElementById("ovf-area-max")||{}).value)||Infinity,
     psfMin:   parseFloat((document.getElementById("ovf-psf-min")||{}).value)||0,
     psfMax:   parseFloat((document.getElementById("ovf-psf-max")||{}).value)||Infinity,
-    tenure:   Array.from((document.getElementById("ovf-tenure")||{selectedOptions:[]}).selectedOptions).map(function(o){return o.value;})
+    tenure:   ovGetChecked("ovf-tenure-drop")
   };
 }
 
@@ -2854,10 +2896,15 @@ function ovClearFilters(){
    "ovf-area-min","ovf-area-max","ovf-psf-min","ovf-psf-max"].forEach(function(id){
     var el=document.getElementById(id); if(el) el.value="";
   });
-  ["ovf-type","ovf-tos","ovf-tenure"].forEach(function(id){
+  ["ovf-type-drop","ovf-tos-drop","ovf-tenure-drop"].forEach(function(id){
     var el=document.getElementById(id);
     if(!el) return;
-    Array.from(el.options).forEach(function(o){o.selected=false;});
+    el.querySelectorAll("input[type=checkbox]").forEach(function(cb){cb.checked=false;});
+  });
+  ["ovf-type-btn","ovf-tos-btn","ovf-tenure-btn"].forEach(function(id){
+    var el=document.getElementById(id);
+    if(!el) return;
+    el.textContent = (id==="ovf-type-btn"?"All Types":"All")+" ▾";
   });
   if(ovFilteredCache) ovRenderFiltered(ovFilteredCache);
 }
