@@ -1305,6 +1305,12 @@ function onSliderInput(v){
   activeRange="SLIDER";
   document.getElementById("range-btns").querySelectorAll(".rbtn").forEach(function(x){x.classList.remove("on");});
   loadAndRenderChart();
+  if(!document.getElementById("ov-search").value.trim()){
+    ovFilteredCache=null;
+    document.getElementById("ov-tx-table").style.display="none";
+    document.getElementById("ov-tx-loading").style.display="block";
+    loadDefaultTransactions(0);
+  }
 }
 
 function getIdxs(){
@@ -1559,6 +1565,7 @@ function renderTypeChips(){
       loadAndRenderChart();
       // Sync transactions table if no active search
       if(!document.getElementById("ov-search").value.trim()){
+        ovFilteredCache=null;
         document.getElementById("ov-tx-table").style.display="none";
         document.getElementById("ov-tx-loading").style.display="block";
         loadDefaultTransactions(0);
@@ -1606,6 +1613,10 @@ function initRangeBtns(){
       document.querySelector(".rbtn[data-range='L12']").classList.add("on");
       activeRange="L12";
       document.getElementById("slider-row").style.display="flex";
+      ovFilteredCache=null;
+      document.getElementById("ov-tx-table").style.display="none";
+      document.getElementById("ov-tx-loading").style.display="block";
+      loadDefaultTransactions(0);
     }
     loadAndRenderChart();
   });
@@ -2412,6 +2423,14 @@ function getLast12MonthsDate(){
   d.setFullYear(d.getFullYear()-1);
   return d.toISOString().substring(0,10);
 }
+function getActiveRangeLabel(){
+  if(activeRange==="L12") return "Last 12 Months";
+  if(activeRange==="L18") return "Last 18 Months";
+  if(activeRange==="SLIDER") return "Last "+sliderMonths+" Months";
+  if(activeRange==="5Y") return "Last 5 Years";
+  if(activeRange==="10Y") return "Last 10 Years";
+  return "All Time";
+}
 function getDateForActiveRange(){
   var d = new Date();
   if(activeRange==="L12"){ d.setMonth(d.getMonth()-12); }
@@ -2735,6 +2754,7 @@ async function loadDefaultTransactions(page){
   ovUpdateSortIndicators();
   document.getElementById("ov-tx-loading").style.display = "none";
   var typeLabel = allActive ? "all types" : activePtypes.join(", ");
+  document.getElementById("ov-tx-title").textContent = "Recent Transactions — " + getActiveRangeLabel();
   document.getElementById("ov-tx-count").textContent = total.toLocaleString() + " transactions — " + typeLabel;
   if(data && data.length > 0){
     ovRenderFiltered(data);
