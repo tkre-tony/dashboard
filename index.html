@@ -433,13 +433,13 @@ html,body{background:var(--bg);color:var(--txt);font-family:'DM Sans',sans-serif
 
         <!-- RIGHT: Chart + legend + slider -->
         <div style="flex:1;padding:16px 20px;display:flex;flex-direction:column;min-width:0">
-          <div style="display:flex;align-items:center;gap:7px;flex-wrap:wrap;margin-bottom:8px;padding-bottom:8px;border-bottom:1px solid var(--srf3)">
-            <span style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:var(--mut);white-space:nowrap">Property Type</span>
-            <div class="fbar" id="type-chips" style="margin:0;flex-wrap:wrap;gap:5px;flex:1"></div>
+          <div style="display:flex;align-items:center;gap:7px;flex-wrap:wrap;margin-bottom:6px;padding-bottom:6px;border-bottom:1px solid var(--srf3)">
+            <span style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:var(--mut);white-space:nowrap;min-width:90px">Property Type</span>
+            <div id="type-chips" style="display:flex;flex-wrap:wrap;gap:5px;flex:1;align-items:center"></div>
           </div>
           <div style="display:flex;align-items:center;gap:7px;flex-wrap:wrap;margin-bottom:8px;padding-bottom:8px;border-bottom:1px solid var(--srf3)">
-            <span style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:var(--mut);white-space:nowrap">Tenure</span>
-            <div class="fbar" id="tenure-chips" style="margin:0;flex-wrap:wrap;gap:5px;flex:1"></div>
+            <span style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:var(--mut);white-space:nowrap;min-width:90px">Tenure</span>
+            <div id="tenure-chips" style="display:flex;flex-wrap:wrap;gap:5px;flex:1;align-items:center"></div>
           </div>
           <div id="bar-wrap" style="flex:1;width:100%;min-height:260px"></div>
           <div style="display:flex;flex-wrap:wrap;gap:10px;margin-top:10px;padding-top:10px;border-top:1px solid var(--srf3)" id="legend"></div>
@@ -2017,15 +2017,12 @@ function renderNewsroom(){
 // PENDING DEALS — render + Supabase caveat matching
 async function matchPendingDeals(){
   // Pull recent caveats from Supabase and try to match pending deals
-  // Matching heuristic: project keyword in address + price within 5% + date within 180 days
   try {
-    var res = await sb.from('caveats')
-      .select('project,transacted_price,area_sqft,contract_date,caveat_lodged_date')
-      .gte('contract_date', '2026-01-01')
-      .order('contract_date', {ascending:false})
-      .limit(200);
-    if(res.error || !res.data) return;
-    var caveats = res.data;
+    var url = SB_URL+"/rest/v1/transactions?select=project_name,transacted_price,area_sqft,sale_date&sale_date=gte.2026-01-01&order=sale_date.desc&limit=200";
+    var res = await fetch(url,{headers:{"apikey":SB_KEY,"Authorization":"Bearer "+SB_KEY}});
+    if(!res.ok) return;
+    var caveats = await res.json();
+    if(!Array.isArray(caveats)) return;
     var updated = false;
     PENDING_DEALS.forEach(function(deal){
       if(deal.status === 'matched') return;
@@ -2034,14 +2031,14 @@ async function matchPendingDeals(){
         if(deal.status === 'matched') return;
         // Address keyword match
         var addrMatch = deal.address.toLowerCase().split(' ').some(function(w){
-          return w.length > 4 && c.project && c.project.toLowerCase().indexOf(w) > -1;
+          return w.length > 4 && c.project_name && c.project_name.toLowerCase().indexOf(w) > -1;
         });
         // Price match within 5%
         var cPrice = parseFloat(c.transacted_price);
         var priceDiff = Math.abs(cPrice - dealPrice) / dealPrice;
         if(addrMatch && priceDiff < 0.05){
           deal.status = 'matched';
-          deal.matched_caveat = c.project + ' — ' + c.contract_date + ' — S$' + (cPrice/1e6).toFixed(2) + 'M';
+          deal.matched_caveat = c.project_name + ' — ' + c.sale_date + ' — S$' + (cPrice/1e6).toFixed(2) + 'M';
           updated = true;
         }
       });
