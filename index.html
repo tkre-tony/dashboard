@@ -486,8 +486,38 @@ html,body{background:var(--bg);color:var(--txt);font-family:'DM Sans',sans-serif
           </tr>
           <tr id="ov-filter-row" style="background:var(--srf2)">
             <td style="padding:4px 6px"></td>
-            <td style="padding:4px 6px">
-              <input id="ovf-dist" placeholder="e.g. 7" style="width:100%;padding:3px 6px;font-size:10px;border:1px solid var(--bdr);border-radius:4px;background:var(--srf);color:var(--txt);font-family:'DM Mono',monospace" oninput="ovApplyFilters()">
+            <td style="padding:4px 6px;position:relative">
+              <button id="ovf-dist-btn" onclick="ovToggleDrop('dist')" style="width:100%;padding:3px 6px;font-size:10px;border:1px solid var(--bdr);border-radius:4px;background:var(--srf);color:var(--txt);cursor:pointer;text-align:left;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">All ▾</button>
+              <div id="ovf-dist-drop" style="display:none;position:absolute;top:100%;left:0;z-index:999;background:var(--srf);border:1px solid var(--bdr);border-radius:4px;min-width:220px;box-shadow:0 4px 12px rgba(0,0,0,.12);padding:4px 0;max-height:220px;overflow-y:auto">
+                <label style="display:flex;align-items:center;gap:6px;padding:3px 10px;font-size:11px;cursor:pointer;white-space:nowrap"><input type="checkbox" value="1" onchange="ovDropChange('dist')"> D1 Boat Quay/Raffles Place</label>
+                <label style="display:flex;align-items:center;gap:6px;padding:3px 10px;font-size:11px;cursor:pointer;white-space:nowrap"><input type="checkbox" value="2" onchange="ovDropChange('dist')"> D2 Chinatown/Tanjong Pagar</label>
+                <label style="display:flex;align-items:center;gap:6px;padding:3px 10px;font-size:11px;cursor:pointer;white-space:nowrap"><input type="checkbox" value="3" onchange="ovDropChange('dist')"> D3 Alexandra/Tiong Bahru</label>
+                <label style="display:flex;align-items:center;gap:6px;padding:3px 10px;font-size:11px;cursor:pointer;white-space:nowrap"><input type="checkbox" value="4" onchange="ovDropChange('dist')"> D4 Harbourfront/Telok Blangah</label>
+                <label style="display:flex;align-items:center;gap:6px;padding:3px 10px;font-size:11px;cursor:pointer;white-space:nowrap"><input type="checkbox" value="5" onchange="ovDropChange('dist')"> D5 Buona Vista/West Coast</label>
+                <label style="display:flex;align-items:center;gap:6px;padding:3px 10px;font-size:11px;cursor:pointer;white-space:nowrap"><input type="checkbox" value="6" onchange="ovDropChange('dist')"> D6 City Hall/Clarke Quay</label>
+                <label style="display:flex;align-items:center;gap:6px;padding:3px 10px;font-size:11px;cursor:pointer;white-space:nowrap"><input type="checkbox" value="7" onchange="ovDropChange('dist')"> D7 Beach Road/Bugis</label>
+                <label style="display:flex;align-items:center;gap:6px;padding:3px 10px;font-size:11px;cursor:pointer;white-space:nowrap"><input type="checkbox" value="8" onchange="ovDropChange('dist')"> D8 Farrer Park/Mustafa</label>
+                <label style="display:flex;align-items:center;gap:6px;padding:3px 10px;font-size:11px;cursor:pointer;white-space:nowrap"><input type="checkbox" value="9" onchange="ovDropChange('dist')"> D9 Orchard/River Valley</label>
+                <label style="display:flex;align-items:center;gap:6px;padding:3px 10px;font-size:11px;cursor:pointer;white-space:nowrap"><input type="checkbox" value="10" onchange="ovDropChange('dist')"> D10 Bukit Timah/Holland</label>
+                <label style="display:flex;align-items:center;gap:6px;padding:3px 10px;font-size:11px;cursor:pointer;white-space:nowrap"><input type="checkbox" value="11" onchange="ovDropChange('dist')"> D11 Newton/Novena</label>
+                <label style="display:flex;align-items:center;gap:6px;padding:3px 10px;font-size:11px;cursor:pointer;white-space:nowrap"><input type="checkbox" value="12" onchange="ovDropChange('dist')"> D12 Balestier/Toa Payoh</label>
+                <label style="display:flex;align-items:center;gap:6px;padding:3px 10px;font-size:11px;cursor:pointer;white-space:nowrap"><input type="checkbox" value="13" onchange="ovDropChange('dist')"> D13 Macpherson/Potong Pasir</label>
+                <label style="display:flex;align-items:center;gap:6px;padding:3px 10px;font-size:11px;cursor:pointer;white-space:nowrap"><input type="checkbox" value="14" onchange="ovDropChange('dist')"> D14 Geylang/Paya Lebar</label>
+                <label style="display:flex;align-items:center;gap:6px;padding:3px 10px;font-size:11px;cursor:pointer;white-space:nowrap"><input type="checkbox" value="15" onchange="ovDropChange('dist')"> D15 East Coast/Marine Parade</label>
+                <label style="display:flex;align-items:center;gap:6px;padding:3px 10px;font-size:11px;cursor:pointer;white-space:nowrap"><input type="checkbox" value="16" onchange="ovDropChange('dist')"> D16 Bedok/Upper East Coast</label>
+                <label style="display:flex;align-items:center;gap:6px;padding:3px 10px;font-size:11px;cursor:pointer;white-space:nowrap"><input type="checkbox" value="17" onchange="ovDropChange('dist')"> D17 Changi/Loyang</label>
+                <label style="display:flex;align-items:center;gap:6px;padding:3px 10px;font-size:11px;cursor:pointer;white-space:nowrap"><input type="checkbox" value="18" onchange="ovDropChange('dist')"> D18 Tampines/Pasir Ris</label>
+                <label style="display:flex;align-items:center;gap:6px;padding:3px 10px;font-size:11px;cursor:pointer;white-space:nowrap"><input type="checkbox" value="19" onchange="ovDropChange('dist')"> D19 Hougang/Punggol/Sengkang</label>
+                <label style="display:flex;align-items:center;gap:6px;padding:3px 10px;font-size:11px;cursor:pointer;white-space:nowrap"><input type="checkbox" value="20" onchange="ovDropChange('dist')"> D20 Ang Mo Kio/Bishan</label>
+                <label style="display:flex;align-items:center;gap:6px;padding:3px 10px;font-size:11px;cursor:pointer;white-space:nowrap"><input type="checkbox" value="21" onchange="ovDropChange('dist')"> D21 Clementi/Upper Bukit Timah</label>
+                <label style="display:flex;align-items:center;gap:6px;padding:3px 10px;font-size:11px;cursor:pointer;white-space:nowrap"><input type="checkbox" value="22" onchange="ovDropChange('dist')"> D22 Boon Lay/Jurong/Tuas</label>
+                <label style="display:flex;align-items:center;gap:6px;padding:3px 10px;font-size:11px;cursor:pointer;white-space:nowrap"><input type="checkbox" value="23" onchange="ovDropChange('dist')"> D23 Bukit Batok/Bukit Panjang</label>
+                <label style="display:flex;align-items:center;gap:6px;padding:3px 10px;font-size:11px;cursor:pointer;white-space:nowrap"><input type="checkbox" value="24" onchange="ovDropChange('dist')"> D24 Lim Chu Kang/Tengah</label>
+                <label style="display:flex;align-items:center;gap:6px;padding:3px 10px;font-size:11px;cursor:pointer;white-space:nowrap"><input type="checkbox" value="25" onchange="ovDropChange('dist')"> D25 Admiralty/Woodlands</label>
+                <label style="display:flex;align-items:center;gap:6px;padding:3px 10px;font-size:11px;cursor:pointer;white-space:nowrap"><input type="checkbox" value="26" onchange="ovDropChange('dist')"> D26 Mandai/Upper Thomson</label>
+                <label style="display:flex;align-items:center;gap:6px;padding:3px 10px;font-size:11px;cursor:pointer;white-space:nowrap"><input type="checkbox" value="27" onchange="ovDropChange('dist')"> D27 Sembawang/Yishun</label>
+                <label style="display:flex;align-items:center;gap:6px;padding:3px 10px;font-size:11px;cursor:pointer;white-space:nowrap"><input type="checkbox" value="28" onchange="ovDropChange('dist')"> D28 Seletar/Yio Chu Kang</label>
+              </div>
             </td>
             <td style="padding:4px 6px">
               <input id="ovf-project" placeholder="Search project..." style="width:100%;padding:3px 6px;font-size:10px;border:1px solid var(--bdr);border-radius:4px;background:var(--srf);color:var(--txt)" oninput="ovApplyFilters()">
@@ -2721,7 +2751,7 @@ function ovToggleDrop(name){
   if(!drop) return;
   var isOpen=drop.style.display!=="none";
   // Close all first
-  ["type","tos","tenure"].forEach(function(n){
+  ["dist","type","tos","tenure"].forEach(function(n){
     var d=document.getElementById("ovf-"+n+"-drop");
     if(d) d.style.display="none";
   });
@@ -2732,7 +2762,7 @@ function ovDropChange(name){
   var vals=ovGetChecked("ovf-"+name+"-drop");
   var btn=document.getElementById("ovf-"+name+"-btn");
   if(btn){
-    var labels={"type":"All Types","tos":"All","tenure":"All"};
+    var labels={"dist":"All","type":"All Types","tos":"All","tenure":"All"};
     btn.textContent = vals.length===0 ? labels[name]+" ▾" : vals.length+" selected ▾";
   }
   ovCurPage=0;
@@ -2741,8 +2771,8 @@ function ovDropChange(name){
 
 // Close dropdowns when clicking outside
 document.addEventListener("click",function(e){
-  if(!e.target.closest("#ovf-type-drop,#ovf-tos-drop,#ovf-tenure-drop,[id$=-btn]")){
-    ["type","tos","tenure"].forEach(function(n){
+  if(!e.target.closest("#ovf-dist-drop,#ovf-type-drop,#ovf-tos-drop,#ovf-tenure-drop,[id$=-btn]")){
+    ["dist","type","tos","tenure"].forEach(function(n){
       var d=document.getElementById("ovf-"+n+"-drop");
       if(d) d.style.display="none";
     });
@@ -2774,7 +2804,7 @@ function ovApplyFilters(){
 
 function ovGetFilters(){
   return {
-    dist:     (document.getElementById("ovf-dist")||{}).value||"",
+    dist:     ovGetChecked("ovf-dist-drop"),
     project:  ((document.getElementById("ovf-project")||{}).value||"").toLowerCase(),
     address:  ((document.getElementById("ovf-address")||{}).value||"").toLowerCase(),
     type:     ovGetChecked("ovf-type-drop"),
@@ -2806,7 +2836,9 @@ function ovMatchTenureFilter(tenureVal, filt){
 function ovRenderFiltered(rows){
   var f = ovGetFilters();
   var filtered = rows.filter(function(r){
-    if(f.dist && String(r.postal_district||"").indexOf(f.dist)<0) return false;
+    if(f.dist && f.dist.length>0){
+      if(!f.dist.some(function(d){return String(r.postal_district||"")===String(d);})) return false;
+    }
     if(f.project && (r.project_name||"").toLowerCase().indexOf(f.project)<0) return false;
     if(f.address && (r.address||"").toLowerCase().indexOf(f.address)<0) return false;
     if(f.type && f.type.length>0){
@@ -2896,12 +2928,12 @@ function ovClearFilters(){
    "ovf-area-min","ovf-area-max","ovf-psf-min","ovf-psf-max"].forEach(function(id){
     var el=document.getElementById(id); if(el) el.value="";
   });
-  ["ovf-type-drop","ovf-tos-drop","ovf-tenure-drop"].forEach(function(id){
+  ["ovf-dist-drop","ovf-type-drop","ovf-tos-drop","ovf-tenure-drop"].forEach(function(id){
     var el=document.getElementById(id);
     if(!el) return;
     el.querySelectorAll("input[type=checkbox]").forEach(function(cb){cb.checked=false;});
   });
-  ["ovf-type-btn","ovf-tos-btn","ovf-tenure-btn"].forEach(function(id){
+  ["ovf-dist-btn","ovf-type-btn","ovf-tos-btn","ovf-tenure-btn"].forEach(function(id){
     var el=document.getElementById(id);
     if(!el) return;
     el.textContent = (id==="ovf-type-btn"?"All Types":"All")+" ▾";
