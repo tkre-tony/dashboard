@@ -468,8 +468,8 @@ html,body{background:var(--bg);color:var(--txt);font-family:'DM Sans',sans-serif
       <div style="overflow-x:auto;border-radius:6px;border:1px solid var(--bdr)">
         <table class="ptable" id="ov-tx-table" style="display:none">
           <thead><tr>
-            <th>Date</th><th>Project</th><th>Address</th><th>Type</th>
-            <th style="text-align:right">Price</th><th style="text-align:right">Area (sqft)</th><th style="text-align:right">PSF</th><th>Tenure</th>
+            <th>Date</th><th>District</th><th>Project</th><th>Address</th><th>Type</th>
+            <th>Price</th><th>Type of Sale</th><th>Area (sqft)</th><th>PSF</th><th>Tenure</th>
           </tr></thead>
           <tbody id="ov-tx-tbody"></tbody>
         </table>
@@ -2374,7 +2374,7 @@ async function ovFetchRows(q, page){
     : "or=(project_name.ilike.*" + encodeURIComponent(detected.val) + "*,address.ilike.*" + encodeURIComponent(detected.val) + "*)";
   var dateFilter = "&sale_date=gte." + getLast12MonthsDate();
   var offset = page * 10;
-  var url = SB_URL + "/rest/v1/transactions?select=id,project_name,address,property_type,transacted_price,area_sqft,unit_price_psf,sale_date,tenure,planning_region&"
+  var url = SB_URL + "/rest/v1/transactions?select=id,project_name,address,property_type,transacted_price,area_sqft,unit_price_psf,sale_date,tenure,planning_region,postal_district,type_of_sale&"
     + filter + dateFilter + "&order=sale_date.desc&limit=10&offset=" + offset;
   var res = await fetch(url, {
     headers:{"apikey":SB_KEY,"Authorization":"Bearer "+SB_KEY,"Prefer":"count=exact"}
@@ -2463,6 +2463,23 @@ function updateChartFromSearch(rows, q){
   renderBarChart();
 }
 
+function formatTenure(t){
+  if(!t) return "-";
+  var tl = t.toLowerCase();
+  var isValid = tl.indexOf("lease")>=0 || tl.indexOf("freehold")>=0 || tl.indexOf("yrs")>=0 ||
+                tl.indexOf("999")>=0 || tl.indexOf("perpetuity")>=0 || tl.indexOf("year")>=0;
+  if(!isValid) return "-";
+  // Split "99 yrs lease commencing dd mmm yyyy" into two lines
+  var idx = tl.indexOf("commencing");
+  if(idx < 0) idx = tl.indexOf(" from ");
+  if(idx < 0) idx = tl.indexOf("w.e.f");
+  if(idx > 0){
+    var line1 = t.substring(0, idx).trim();
+    var line2 = t.substring(idx).trim();
+    return line1+"<br><span style='color:var(--mut2);font-size:10px'>"+line2+"</span>";
+  }
+  return t.length > 32 ? t.substring(0,32) : t;
+}
 function renderOvTable(rows){
   var tbody = document.getElementById("ov-tx-tbody");
   tbody.innerHTML = rows.map(function(r){
@@ -2470,16 +2487,20 @@ function renderOvTable(rows){
     var area  = r.area_sqft ? Number(parseFloat(r.area_sqft).toFixed(0)).toLocaleString() : "-";
     var psf   = r.unit_price_psf ? "S$"+Math.round(r.unit_price_psf) : "-";
     var date  = r.sale_date ? r.sale_date.substring(0,10) : "-";
-    var tenure = r.tenure ? r.tenure.substring(0,25) : "-";
-    return "<tr>"
-      +"<td class='mono' style='white-space:nowrap'>"+date+"</td>"
-      +"<td style='font-weight:600;min-width:130px'>"+(r.project_name||"-")+"</td>"
-      +"<td style='font-size:11px;color:var(--mut);min-width:150px'>"+(r.address||"-")+"</td>"
-      +"<td><span class='pill p-tag' style='white-space:nowrap'>"+(r.property_type||"-")+"</span></td>"
-      +"<td style='text-align:right' class='mono'><b>"+price+"</b></td>"
-      +"<td style='text-align:right' class='mono'>"+area+"</td>"
-      +"<td style='text-align:right' class='mono'>"+psf+"</td>"
-      +"<td style='font-size:11px;color:var(--mut)'>"+tenure+"</td>"
+    var dist  = r.postal_district ? "D"+r.postal_district : "-";
+    var tos   = r.type_of_sale ? r.type_of_sale : "-";
+    var td    = "font-size:11px;";
+    return "<tr style='font-size:11px'>"
+      +"<td class='mono' style='white-space:nowrap;font-size:11px'>"+date+"</td>"
+      +"<td class='mono' style='font-size:11px;white-space:nowrap'>"+dist+"</td>"
+      +"<td style='font-weight:600;font-size:11px'>"+(r.project_name||"-")+"</td>"
+      +"<td style='font-size:10.5px;color:var(--mut)'>"+(r.address||"-")+"</td>"
+      +"<td><span class='pill p-tag' style='white-space:nowrap;font-size:10px'>"+(r.property_type||"-")+"</span></td>"
+      +"<td class='mono' style='font-size:11px'><b>"+price+"</b></td>"
+      +"<td style='font-size:10.5px;color:var(--mut)'>"+tos+"</td>"
+      +"<td class='mono' style='font-size:11px'>"+area+"</td>"
+      +"<td class='mono' style='font-size:11px'>"+psf+"</td>"
+      +"<td style='font-size:10.5px;color:var(--mut)'>"+formatTenure(r.tenure)+"</td>"
       +"</tr>";
   }).join("");
   document.getElementById("ov-tx-table").style.display = "table";
@@ -2508,7 +2529,7 @@ async function loadDefaultTransactions(page){
     typeFilter="&or=("+activePtypes.map(function(p){return"property_type.ilike.*"+encodeURIComponent(p)+"*";}).join(",")+")";
   }
 
-  var url = SB_URL + "/rest/v1/transactions?select=id,project_name,address,property_type,transacted_price,area_sqft,unit_price_psf,sale_date,tenure,planning_region&"
+  var url = SB_URL + "/rest/v1/transactions?select=id,project_name,address,property_type,transacted_price,area_sqft,unit_price_psf,sale_date,tenure,planning_region,postal_district,type_of_sale&"
     + dateFilter + typeFilter + "&order=sale_date.desc&limit=10&offset=" + offset;
   var res = await fetch(url, {
     headers:{"apikey":SB_KEY,"Authorization":"Bearer "+SB_KEY,"Prefer":"count=exact"}
