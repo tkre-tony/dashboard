@@ -752,7 +752,7 @@ html,body{background:var(--bg);color:var(--txt);font-family:'DM Sans',sans-serif
       <div class="card-hdr" style="flex-wrap:wrap;gap:8px">
         <div>
           <div class="card-title"><span class="card-title-dot"></span>Matched Transactions — Profit &amp; Loss Analysis</div>
-          <div class="card-subtitle" id="pnl-subtitle">Match buy vs resale of same unit · Address + area matching</div>
+          <div class="card-subtitle" id="pnl-subtitle">Match buy vs resale of same unit · Project + Address + Area matching</div>
         </div>
         <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
           <select id="pnl-type-filter" class="ov-sel" onchange="pnlApplyFilters()" style="font-size:11px;padding:4px 8px">
@@ -2327,37 +2327,44 @@ async function pnlLoadData(){
   pnlShow('pnl-loading');
   document.getElementById('pnl-load-btn').disabled = true;
 
-  // Fetch ALL transactions with no date filter — we need the full history
-  // because a sell in 2024 may have a buy leg from 1999.
-  // Period filter is applied POST-matching on the sell_date.
+  // Fetch ALL transactions — no date filter, no expensive multi-col sort.
+  // Order by id.asc gives stable pagination. Sale_date sort happens in JS per unit group.
   var allRows = [];
-  var limit = 2000, offset = 0;
-  var maxFetch = 60000; // 30k+ rows in DB
+  var limit = 1000; // Supabase REST hard cap per request
+  var offset = 0;
+  var maxFetch = 80000;
 
   try {
     while(offset < maxFetch){
-      document.getElementById('pnl-progress').textContent = 'Fetching… '+offset.toLocaleString()+' rows loaded';
+      document.getElementById('pnl-progress').textContent = 'Fetching… '+allRows.length.toLocaleString()+' rows loaded';
+      var rangeEnd = offset + limit - 1;
       var url = SB_URL+'/rest/v1/transactions'
         +'?select=id,project_name,address,area_sqft,transacted_price,sale_date,type_of_sale,property_type,unit_price_psf,postal_district,planning_region'
-        +'&order=project_name.asc,address.asc,sale_date.asc'
+        +'&order=id.asc'
         +'&limit='+limit+'&offset='+offset;
-      var res = await fetch(url, {headers:{'apikey':SB_KEY,'Authorization':'Bearer '+SB_KEY}});
+      var res = await fetch(url, {headers:{
+        'apikey':SB_KEY,
+        'Authorization':'Bearer '+SB_KEY,
+        'Range': offset+'-'+rangeEnd,
+        'Range-Unit': 'items',
+        'Prefer': 'count=none'
+      }});
+      if(!res.ok) { throw new Error('HTTP '+res.status); }
       var rows = await res.json();
-      if(!rows || !rows.length) break;
+      if(!Array.isArray(rows) || !rows.length) break;
       allRows = allRows.concat(rows);
-      if(rows.length < limit) break;
+      if(rows.length < limit) break; // last page
       offset += limit;
     }
   } catch(e){
-    document.getElementById('pnl-progress').textContent = 'Error: '+e.message;
+    document.getElementById('pnl-progress').textContent = 'Error fetching: '+e.message;
     document.getElementById('pnl-load-btn').disabled = false;
     return;
   }
 
   document.getElementById('pnl-progress').textContent = 'Matching '+allRows.length.toLocaleString()+' transactions…';
 
-  // ── GROUP BY: project_name + address + area_sqft (rounded to ±5 sqft) ──
-  // This is the canonical unit identity key per your spec.
+  // ── GROUP BY: project_name + address + area_sqft (rounded to nearest 5 sqft) ──
   var byKey = {};
   allRows.forEach(function(r){
     if(!r.project_name || !r.address || !r.area_sqft) return;
@@ -2369,11 +2376,9 @@ async function pnlLoadData(){
   });
 
   // ── PAIR BUILDING ──
-  // For each unit key, sort all transactions by date chronologically.
-  // Walk the chain: every non-New-Sale is a "sell" event.
-  // Its buy price is always the immediately preceding transaction (regardless of type).
-  // This handles N-deep chains: A→B→C→D each pair is computed independently.
-  // New Sales: skip as a sell leg (no prior owner), but USE as a buy leg for the next sell.
+  // Sort each unit's transactions by date, then walk consecutive pairs.
+  // Sell leg = any non-New-Sale. Buy leg = immediately prior transaction (any type).
+  // New Sale as sell leg → skip (no prior owner). New Sale as buy leg → valid entry price.
   PNL_PAIRS = [];
   PNL_ABORT = [];
 
@@ -2383,61 +2388,56 @@ async function pnlLoadData(){
     });
     if(txs.length < 2) return;
 
-    // ── Walk every consecutive pair in the sorted chain ──
+    // Walk every consecutive pair → generates P&L for each leg of the chain
     for(var j = 1; j < txs.length; j++){
       var sell = txs[j];
       var buy  = txs[j-1];
 
-      // Rule #3: if sell leg is a New Sale, bypass — there is no prior owner to compute P&L for
+      // Rule: skip if sell leg is New Sale — there is no prior owner
       if(sell.type_of_sale === 'New Sale') continue;
-
       if(!buy.transacted_price || !sell.transacted_price) continue;
 
-      var buyDate  = new Date(buy.sale_date);
-      var sellDate = new Date(sell.sale_date);
-      var daysHeld = (sellDate - buyDate) / 86400000;
-      if(daysHeld <= 0) continue; // data anomaly: same-day or reversed dates
+      var daysHeld = (new Date(sell.sale_date) - new Date(buy.sale_date)) / 86400000;
+      if(daysHeld <= 0) continue;
 
       var yrsHeld   = daysHeld / 365.25;
       var profit    = sell.transacted_price - buy.transacted_price;
-      // CAGR: (sell/buy)^(1/yrs) − 1
       var annReturn = (Math.pow(sell.transacted_price / buy.transacted_price, 1 / yrsHeld) - 1) * 100;
 
       PNL_PAIRS.push({
-        sell_date:      sell.sale_date,
-        buy_date:       buy.sale_date,
-        project_name:   sell.project_name || buy.project_name,
-        address:        sell.address,
-        property_type:  sell.property_type || buy.property_type,
-        buy_price:      buy.transacted_price,
-        sell_price:     sell.transacted_price,
-        buy_type:       buy.type_of_sale,
-        sell_type:      sell.type_of_sale,
-        profit:         profit,
-        ann_return:     annReturn,
-        yrs_held:       yrsHeld,
-        area_sqft:      sell.area_sqft || buy.area_sqft,
-        psf_sell:       sell.unit_price_psf,
+        sell_date:       sell.sale_date,
+        buy_date:        buy.sale_date,
+        project_name:    sell.project_name || buy.project_name,
+        address:         sell.address,
+        property_type:   sell.property_type || buy.property_type,
+        buy_price:       buy.transacted_price,
+        sell_price:      sell.transacted_price,
+        buy_type:        buy.type_of_sale,
+        sell_type:       sell.type_of_sale,
+        profit:          profit,
+        ann_return:      annReturn,
+        yrs_held:        yrsHeld,
+        area_sqft:       sell.area_sqft || buy.area_sqft,
+        psf_sell:        sell.unit_price_psf,
         postal_district: sell.postal_district || buy.postal_district,
         planning_region: sell.planning_region || buy.planning_region
       });
     }
 
-    // ── Aborted chain: New Sale → Sub Sale → any further sale ──
-    // Detect wherever this 3-event pattern exists in the sorted chain
+    // Aborted chain: New Sale → Sub Sale → any further sale
     for(var i = 0; i < txs.length - 2; i++){
       var t0 = txs[i], t1 = txs[i+1], t2 = txs[i+2];
       if(t0.type_of_sale === 'New Sale' && t1.type_of_sale === 'Sub Sale'){
         PNL_ABORT.push({
-          address:      t0.address,
-          project_name: t0.project_name,
+          address:       t0.address,
+          project_name:  t0.project_name,
           property_type: t0.property_type,
-          area_sqft:    t0.area_sqft,
-          new_date:     t0.sale_date,  new_price:   t0.transacted_price,
-          sub_date:     t1.sale_date,  sub_price:   t1.transacted_price,
-          sub_profit:   t1.transacted_price - t0.transacted_price,
-          final_date:   t2.sale_date,  final_price: t2.transacted_price,
-          final_profit: t2.transacted_price - t0.transacted_price,
+          area_sqft:     t0.area_sqft,
+          new_date:      t0.sale_date,  new_price:   t0.transacted_price,
+          sub_date:      t1.sale_date,  sub_price:   t1.transacted_price,
+          sub_profit:    t1.transacted_price - t0.transacted_price,
+          final_date:    t2.sale_date,  final_price: t2.transacted_price,
+          final_profit:  t2.transacted_price - t0.transacted_price,
           postal_district: t0.postal_district
         });
       }
@@ -2477,10 +2477,11 @@ function pnlApplyFilters(){
 
   var filtered = PNL_PAIRS.filter(function(r){ return typeMatch(r) && dateMatch(r); });
   PNL_FILTERED_PROFIT = filtered.filter(function(r){ return r.profit > 0; })
-    .sort(function(a,b){ return b.ann_return - a.ann_return; });
+    .sort(function(a,b){ return a.sell_date < b.sell_date ? 1 : -1; });
   PNL_FILTERED_LOSS   = filtered.filter(function(r){ return r.profit <= 0; })
-    .sort(function(a,b){ return a.ann_return - b.ann_return; });
-  PNL_FILTERED_ABORT  = PNL_ABORT.filter(function(r){ return typeMatch(r) && abortDateMatch(r); });
+    .sort(function(a,b){ return a.sell_date < b.sell_date ? 1 : -1; });
+  PNL_FILTERED_ABORT  = PNL_ABORT.filter(function(r){ return typeMatch(r) && abortDateMatch(r); })
+    .sort(function(a,b){ return a.final_date < b.final_date ? 1 : -1; });
 
   var allReturns = filtered.map(function(r){ return r.ann_return; }).sort(function(a,b){return a-b;});
   var medReturn  = allReturns.length ? allReturns[Math.floor(allReturns.length/2)] : null;
