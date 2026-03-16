@@ -827,8 +827,13 @@ html,body{background:var(--bg);color:var(--txt);font-family:'DM Sans',sans-serif
               <thead>
               <tr>
                 <th>Date</th><th>Project / Address</th><th>Type</th>
-                <th>Buy → Sell (S$)</th><th>Profit / Loss</th>
-                <th>Ann. Return</th><th>Yrs Held</th><th>Area (sqft)</th><th>PSF Sell</th><th>How Bought</th>
+                <th>Buy → Sell (S$)</th>
+                <th style="cursor:pointer;user-select:none" onclick="pnlSortBy('profit','profit')">Profit / Loss <span id="pnl-sort-profit-profit"></span></th>
+                <th style="cursor:pointer;user-select:none" onclick="pnlSortBy('profit','ann_return')">Ann. Return <span id="pnl-sort-profit-ann_return"></span></th>
+                <th style="cursor:pointer;user-select:none" onclick="pnlSortBy('profit','yrs_held')">Yrs Held <span id="pnl-sort-profit-yrs_held"></span></th>
+                <th style="cursor:pointer;user-select:none" onclick="pnlSortBy('profit','area_sqft')">Area (sqft) <span id="pnl-sort-profit-area_sqft"></span></th>
+                <th style="cursor:pointer;user-select:none" onclick="pnlSortBy('profit','psf_sell')">PSF Sell <span id="pnl-sort-profit-psf_sell"></span></th>
+                <th>Type of Sale</th>
               </tr>
               <tr style="background:var(--srf2)">
                 <td style="padding:4px 6px"></td>
@@ -849,14 +854,11 @@ html,body{background:var(--bg);color:var(--txt);font-family:'DM Sans',sans-serif
                   <input id="pnl-f-price-min" placeholder="Min S$" oninput="pnlApplyFilters()" style="width:47%;padding:3px 4px;font-size:10px;border:1px solid var(--bdr);border-radius:4px;background:var(--srf);color:var(--txt);font-family:'DM Mono',monospace">
                   <input id="pnl-f-price-max" placeholder="Max S$" oninput="pnlApplyFilters()" style="width:47%;padding:3px 4px;font-size:10px;border:1px solid var(--bdr);border-radius:4px;background:var(--srf);color:var(--txt);font-family:'DM Mono',monospace">
                 </td>
-                <td style="padding:4px 6px"></td>
-                <td style="padding:4px 6px"></td>
-                <td style="padding:4px 6px;white-space:nowrap">
-                  <input id="pnl-f-yrs-min" placeholder="Min" oninput="pnlApplyFilters()" style="width:44%;padding:3px 4px;font-size:10px;border:1px solid var(--bdr);border-radius:4px;background:var(--srf);color:var(--txt);font-family:'DM Mono',monospace">
-                  <input id="pnl-f-yrs-max" placeholder="Max" oninput="pnlApplyFilters()" style="width:44%;padding:3px 4px;font-size:10px;border:1px solid var(--bdr);border-radius:4px;background:var(--srf);color:var(--txt);font-family:'DM Mono',monospace">
-                </td>
-                <td style="padding:4px 6px"></td>
-                <td style="padding:4px 6px"></td>
+                <td style="padding:4px 6px;text-align:center;font-size:10px;color:var(--mut)">click ↑↓</td>
+                <td style="padding:4px 6px;text-align:center;font-size:10px;color:var(--mut)">click ↑↓</td>
+                <td style="padding:4px 6px;text-align:center;font-size:10px;color:var(--mut)">click ↑↓</td>
+                <td style="padding:4px 6px;text-align:center;font-size:10px;color:var(--mut)">click ↑↓</td>
+                <td style="padding:4px 6px;text-align:center;font-size:10px;color:var(--mut)">click ↑↓</td>
                 <td style="padding:4px 6px;position:relative">
                   <button id="pnl-f-entry-btn" onclick="pnlToggleColDrop('entry')" style="width:100%;padding:3px 6px;font-size:10px;border:1px solid var(--bdr);border-radius:4px;background:var(--srf);color:var(--txt);cursor:pointer;text-align:left;white-space:nowrap">All ▾</button>
                   <div id="pnl-f-entry-drop" style="display:none;position:absolute;top:100%;right:0;z-index:999;background:var(--srf);border:1px solid var(--bdr);border-radius:4px;min-width:130px;box-shadow:0 4px 12px rgba(0,0,0,.12);padding:4px 0">
@@ -880,8 +882,13 @@ html,body{background:var(--bg);color:var(--txt);font-family:'DM Sans',sans-serif
               <thead>
               <tr>
                 <th>Date</th><th>Project / Address</th><th>Type</th>
-                <th>Buy → Sell (S$)</th><th>Profit / Loss</th>
-                <th>Ann. Return</th><th>Yrs Held</th><th>Area (sqft)</th><th>PSF Sell</th><th>How Bought</th>
+                <th>Buy → Sell (S$)</th>
+                <th style="cursor:pointer;user-select:none" onclick="pnlSortBy('loss','profit')">Profit / Loss <span id="pnl-sort-loss-profit"></span></th>
+                <th style="cursor:pointer;user-select:none" onclick="pnlSortBy('loss','ann_return')">Ann. Return <span id="pnl-sort-loss-ann_return"></span></th>
+                <th style="cursor:pointer;user-select:none" onclick="pnlSortBy('loss','yrs_held')">Yrs Held <span id="pnl-sort-loss-yrs_held"></span></th>
+                <th style="cursor:pointer;user-select:none" onclick="pnlSortBy('loss','area_sqft')">Area (sqft) <span id="pnl-sort-loss-area_sqft"></span></th>
+                <th style="cursor:pointer;user-select:none" onclick="pnlSortBy('loss','psf_sell')">PSF Sell <span id="pnl-sort-loss-psf_sell"></span></th>
+                <th>Type of Sale</th>
               </tr>
               <tr style="background:var(--srf2)">
                 <td style="padding:4px 6px"></td>
@@ -902,14 +909,11 @@ html,body{background:var(--bg);color:var(--txt);font-family:'DM Sans',sans-serif
                   <input id="pnl-f-price-min-loss" placeholder="Min S$" oninput="pnlApplyFilters()" style="width:47%;padding:3px 4px;font-size:10px;border:1px solid var(--bdr);border-radius:4px;background:var(--srf);color:var(--txt);font-family:'DM Mono',monospace">
                   <input id="pnl-f-price-max-loss" placeholder="Max S$" oninput="pnlApplyFilters()" style="width:47%;padding:3px 4px;font-size:10px;border:1px solid var(--bdr);border-radius:4px;background:var(--srf);color:var(--txt);font-family:'DM Mono',monospace">
                 </td>
-                <td style="padding:4px 6px"></td>
-                <td style="padding:4px 6px"></td>
-                <td style="padding:4px 6px;white-space:nowrap">
-                  <input id="pnl-f-yrs-min-loss" placeholder="Min" oninput="pnlApplyFilters()" style="width:44%;padding:3px 4px;font-size:10px;border:1px solid var(--bdr);border-radius:4px;background:var(--srf);color:var(--txt);font-family:'DM Mono',monospace">
-                  <input id="pnl-f-yrs-max-loss" placeholder="Max" oninput="pnlApplyFilters()" style="width:44%;padding:3px 4px;font-size:10px;border:1px solid var(--bdr);border-radius:4px;background:var(--srf);color:var(--txt);font-family:'DM Mono',monospace">
-                </td>
-                <td style="padding:4px 6px"></td>
-                <td style="padding:4px 6px"></td>
+                <td style="padding:4px 6px;text-align:center;font-size:10px;color:var(--mut)">click ↑↓</td>
+                <td style="padding:4px 6px;text-align:center;font-size:10px;color:var(--mut)">click ↑↓</td>
+                <td style="padding:4px 6px;text-align:center;font-size:10px;color:var(--mut)">click ↑↓</td>
+                <td style="padding:4px 6px;text-align:center;font-size:10px;color:var(--mut)">click ↑↓</td>
+                <td style="padding:4px 6px;text-align:center;font-size:10px;color:var(--mut)">click ↑↓</td>
                 <td style="padding:4px 6px;position:relative">
                   <button id="pnl-f-entry-btn-loss" onclick="pnlToggleColDrop('entry-loss')" style="width:100%;padding:3px 6px;font-size:10px;border:1px solid var(--bdr);border-radius:4px;background:var(--srf);color:var(--txt);cursor:pointer;text-align:left;white-space:nowrap">All ▾</button>
                   <div id="pnl-f-entry-drop-loss" style="display:none;position:absolute;top:100%;right:0;z-index:999;background:var(--srf);border:1px solid var(--bdr);border-radius:4px;min-width:130px;box-shadow:0 4px 12px rgba(0,0,0,.12);padding:4px 0">
@@ -2528,6 +2532,31 @@ async function pnlLoadData(){
   pnlApplyFilters();
 }
 
+// Sort state per table section
+var pnlSortState = { profit: { col: 'sell_date', dir: 'desc' }, loss: { col: 'sell_date', dir: 'desc' } };
+
+function pnlSortBy(sec, col){
+  var st = pnlSortState[sec];
+  if(st.col === col){ st.dir = st.dir === 'desc' ? 'asc' : 'desc'; }
+  else { st.col = col; st.dir = 'desc'; }
+  // Clear all sort indicators for this section
+  var fields = ['profit','ann_return','yrs_held','area_sqft','psf_sell'];
+  fields.forEach(function(f){
+    var el = document.getElementById('pnl-sort-'+sec+'-'+f);
+    if(el) el.textContent = '';
+  });
+  var indicator = document.getElementById('pnl-sort-'+sec+'-'+col);
+  if(indicator) indicator.textContent = st.dir === 'desc' ? ' ↓' : ' ↑';
+  // Re-sort the filtered array in place
+  var arr = sec === 'profit' ? PNL_FILTERED_PROFIT : PNL_FILTERED_LOSS;
+  arr.sort(function(a, b){
+    var av = a[col] || 0, bv = b[col] || 0;
+    return st.dir === 'desc' ? bv - av : av - bv;
+  });
+  if(sec === 'profit'){ pnlPageProfit = 0; pnlRenderTable('profit', PNL_FILTERED_PROFIT, 0); }
+  else { pnlPageLoss = 0; pnlRenderTable('loss', PNL_FILTERED_LOSS, 0); }
+}
+
 function pnlToggleColDrop(name){
   var drop = document.getElementById('pnl-f-'+name+'-drop');
   if(!drop) return;
@@ -2601,10 +2630,6 @@ function pnlApplyFilters(){
   var colPriceMax    = parseFloat(pnlGetColVal('pnl-f-price-max')) || Infinity;
   var colPriceMinL   = parseFloat(pnlGetColVal('pnl-f-price-min-loss')) || 0;
   var colPriceMaxL   = parseFloat(pnlGetColVal('pnl-f-price-max-loss')) || Infinity;
-  var colYrsMin      = parseFloat(pnlGetColVal('pnl-f-yrs-min')) || 0;
-  var colYrsMax      = parseFloat(pnlGetColVal('pnl-f-yrs-max')) || Infinity;
-  var colYrsMinL     = parseFloat(pnlGetColVal('pnl-f-yrs-min-loss')) || 0;
-  var colYrsMaxL     = parseFloat(pnlGetColVal('pnl-f-yrs-max-loss')) || Infinity;
 
   function headerTypeMatch(r){ return !headerTypes.length || headerTypes.indexOf(r.property_type) !== -1; }
   function dateMatch(r){ return !fromDate || r.sell_date >= fromDate; }
@@ -2617,10 +2642,9 @@ function pnlApplyFilters(){
   PNL_FILTERED_PROFIT = base.filter(function(r){
     if(r.profit <= 0) return false;
     if(colTypes.length && colTypes.indexOf(r.property_type) === -1) return false;
-    if(colEntry.length && colEntry.indexOf(r.buy_type) === -1) return false;
+    if(colEntry.length && colEntry.indexOf(r.sell_type) === -1) return false;
     if(colProject && (r.project_name||'').toLowerCase().indexOf(colProject) === -1 && (r.address||'').toLowerCase().indexOf(colProject) === -1) return false;
     if(r.sell_price < colPriceMin || r.sell_price > colPriceMax) return false;
-    if(r.yrs_held < colYrsMin || r.yrs_held > colYrsMax) return false;
     return true;
   }).sort(function(a,b){ return a.sell_date < b.sell_date ? 1 : -1; });
 
@@ -2628,10 +2652,9 @@ function pnlApplyFilters(){
   PNL_FILTERED_LOSS = base.filter(function(r){
     if(r.profit > 0) return false;
     if(colTypesLoss.length && colTypesLoss.indexOf(r.property_type) === -1) return false;
-    if(colEntryLoss.length && colEntryLoss.indexOf(r.buy_type) === -1) return false;
+    if(colEntryLoss.length && colEntryLoss.indexOf(r.sell_type) === -1) return false;
     if(colProjectLoss && (r.project_name||'').toLowerCase().indexOf(colProjectLoss) === -1 && (r.address||'').toLowerCase().indexOf(colProjectLoss) === -1) return false;
     if(r.sell_price < colPriceMinL || r.sell_price > colPriceMaxL) return false;
-    if(r.yrs_held < colYrsMinL || r.yrs_held > colYrsMaxL) return false;
     return true;
   }).sort(function(a,b){ return a.sell_date < b.sell_date ? 1 : -1; });
 
@@ -2702,13 +2725,18 @@ function pnlRenderTable(sec, rows, page){
     var rowStyle   = isLoss ? 'background:#fff5f5' : '';
     var fmtFull    = function(v){ return v ? 'S$'+Math.round(v).toLocaleString() : '—'; };
     var fmtPL      = function(v){ return (v>=0?'+':'−')+'S$'+Math.round(Math.abs(v)).toLocaleString(); };
-    var entryBadge = r.buy_type === 'New Sale'
-      ? '<span class="pill" style="background:#e8f0fb;color:#1a4f9c;font-size:9px;white-space:nowrap">New Sale</span>'
-      : '<span class="pill p-neu" style="font-size:9px;white-space:nowrap">'+(r.buy_type||'—')+'</span>';
+    // Type of Sale badge = SELL leg (current transaction), not buy leg
+    var tosBadge = r.sell_type === 'Resale'
+      ? '<span class="pill p-neu" style="font-size:9px;white-space:nowrap">Resale</span>'
+      : r.sell_type === 'Sub Sale'
+      ? '<span class="pill" style="background:#fff3e0;color:#e65100;font-size:9px;white-space:nowrap">Sub Sale</span>'
+      : '<span class="pill p-neu" style="font-size:9px;white-space:nowrap">'+(r.sell_type||'—')+'</span>';
     return '<tr style="'+rowStyle+'">'
       +'<td class="mono" style="white-space:nowrap;vertical-align:top">'
-        +'<div style="font-size:12px">'+r.sell_date+'</div>'
-        +'<div style="font-size:10px;color:var(--mut);margin-top:2px">'+r.buy_date+'</div>'
+        +'<div style="font-size:11px;color:var(--mut2);text-transform:uppercase;letter-spacing:.04em;margin-bottom:1px;font-family:\'DM Sans\',sans-serif">Sold</div>'
+        +'<div style="font-size:12px;font-weight:600">'+r.sell_date+'</div>'
+        +'<div style="font-size:9px;color:var(--mut2);text-transform:uppercase;letter-spacing:.04em;margin-top:4px;font-family:\'DM Sans\',sans-serif">Bought</div>'
+        +'<div style="font-size:11px;color:var(--mut)">'+r.buy_date+'</div>'
       +'</td>'
       +'<td style="vertical-align:top;max-width:180px">'
         +'<div style="font-weight:600;font-size:12px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis" title="'+(r.project_name||'')+'">'+( r.project_name||'—')+'</div>'
@@ -2724,7 +2752,7 @@ function pnlRenderTable(sec, rows, page){
       +'<td class="mono" style="vertical-align:top">'+r.yrs_held.toFixed(1)+'</td>'
       +'<td class="mono" style="vertical-align:top">'+(r.area_sqft ? Math.round(r.area_sqft).toLocaleString() : '—')+'</td>'
       +'<td class="mono" style="vertical-align:top">'+(r.psf_sell ? 'S$'+Math.round(r.psf_sell).toLocaleString() : '—')+'</td>'
-      +'<td style="vertical-align:top">'+entryBadge+'</td>'
+      +'<td style="vertical-align:top">'+tosBadge+'</td>'
       +'</tr>';
   }).join('');
   pnlRenderPager('pnl-pg-'+sec, rows.length, page, sec);
