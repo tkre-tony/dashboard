@@ -755,16 +755,18 @@ html,body{background:var(--bg);color:var(--txt);font-family:'DM Sans',sans-serif
           <div class="card-subtitle" id="pnl-subtitle">Match buy vs resale of same unit · Project + Address + Area matching</div>
         </div>
         <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
-          <select id="pnl-type-filter" class="ov-sel" onchange="pnlApplyFilters()" style="font-size:11px;padding:4px 8px">
-            <option value="">All Types</option>
-            <option value="multiUser">Multi-User Factory</option>
-            <option value="singleUser">Single-User Factory</option>
-            <option value="warehouse">Warehouse</option>
-            <option value="bizPark">Biz Park</option>
-            <option value="office">Office</option>
-            <option value="retail">Retail</option>
-            <option value="shophouse">Shophouse</option>
-          </select>
+          <div style="position:relative">
+            <button id="pnl-type-btn" onclick="pnlToggleTypeDrop()" style="padding:5px 10px;font-size:11px;border:1px solid var(--bdr);border-radius:6px;background:var(--srf);color:var(--txt);cursor:pointer;white-space:nowrap;min-width:110px;text-align:left">All Types ▾</button>
+            <div id="pnl-type-drop" style="display:none;position:absolute;top:calc(100% + 4px);left:0;z-index:999;background:var(--srf);border:1px solid var(--bdr);border-radius:6px;min-width:160px;box-shadow:0 4px 16px rgba(0,0,0,.12);padding:4px 0">
+              <label style="display:flex;align-items:center;gap:7px;padding:5px 12px;font-size:11px;cursor:pointer;white-space:nowrap;color:var(--txt)"><input type="checkbox" value="Office" onchange="pnlTypeChange()"> Office</label>
+              <label style="display:flex;align-items:center;gap:7px;padding:5px 12px;font-size:11px;cursor:pointer;white-space:nowrap;color:var(--txt)"><input type="checkbox" value="Retail" onchange="pnlTypeChange()"> Retail</label>
+              <label style="display:flex;align-items:center;gap:7px;padding:5px 12px;font-size:11px;cursor:pointer;white-space:nowrap;color:var(--txt)"><input type="checkbox" value="Shop House" onchange="pnlTypeChange()"> Shophouse</label>
+              <label style="display:flex;align-items:center;gap:7px;padding:5px 12px;font-size:11px;cursor:pointer;white-space:nowrap;color:var(--txt)"><input type="checkbox" value="Multiple-User Factory" onchange="pnlTypeChange()"> Multi-User Factory</label>
+              <label style="display:flex;align-items:center;gap:7px;padding:5px 12px;font-size:11px;cursor:pointer;white-space:nowrap;color:var(--txt)"><input type="checkbox" value="Single-User Factory" onchange="pnlTypeChange()"> Single-User Factory</label>
+              <label style="display:flex;align-items:center;gap:7px;padding:5px 12px;font-size:11px;cursor:pointer;white-space:nowrap;color:var(--txt)"><input type="checkbox" value="Business Park" onchange="pnlTypeChange()"> Biz Park</label>
+              <label style="display:flex;align-items:center;gap:7px;padding:5px 12px;font-size:11px;cursor:pointer;white-space:nowrap;color:var(--txt)"><input type="checkbox" value="Warehouse" onchange="pnlTypeChange()"> Warehouse</label>
+            </div>
+          </div>
           <select id="pnl-period-filter" class="ov-sel" onchange="pnlLoadData()" style="font-size:11px;padding:4px 8px">
             <option value="5">Last 5 Years</option>
             <option value="10" selected>Last 10 Years</option>
@@ -823,9 +825,9 @@ html,body{background:var(--bg);color:var(--txt);font-family:'DM Sans',sans-serif
           <div style="overflow-x:auto">
             <table class="ptable" id="pnl-tbl-profit">
               <thead><tr>
-                <th>Sell Date</th><th>Project</th><th>Address</th><th>Type</th>
-                <th>Buy Price</th><th>Buy Date</th><th>Sell Price</th><th>Profit (S$)</th>
-                <th>Ann. Return</th><th>Yrs Held</th><th>Area (sqft)</th><th>PSF Sell</th><th>Entry Type</th>
+                <th>Date</th><th>Project / Address</th><th>Type</th>
+                <th>Buy → Sell (S$)</th><th>Profit (S$)</th>
+                <th>Ann. Return</th><th>Yrs Held</th><th>Area (sqft)</th><th>PSF Sell</th><th>Entry</th>
               </tr></thead>
               <tbody id="pnl-tbody-profit"></tbody>
             </table>
@@ -838,9 +840,9 @@ html,body{background:var(--bg);color:var(--txt);font-family:'DM Sans',sans-serif
           <div style="overflow-x:auto">
             <table class="ptable" id="pnl-tbl-loss">
               <thead><tr>
-                <th>Sell Date</th><th>Project</th><th>Address</th><th>Type</th>
-                <th>Buy Price</th><th>Buy Date</th><th>Sell Price</th><th>Loss (S$)</th>
-                <th>Ann. Return</th><th>Yrs Held</th><th>Area (sqft)</th><th>PSF Sell</th><th>Entry Type</th>
+                <th>Date</th><th>Project / Address</th><th>Type</th>
+                <th>Buy → Sell (S$)</th><th>Loss (S$)</th>
+                <th>Ann. Return</th><th>Yrs Held</th><th>Area (sqft)</th><th>PSF Sell</th><th>Entry</th>
               </tr></thead>
               <tbody id="pnl-tbody-loss"></tbody>
             </table>
@@ -2450,9 +2452,39 @@ async function pnlLoadData(){
   pnlApplyFilters();
 }
 
+function pnlToggleTypeDrop(){
+  var drop = document.getElementById('pnl-type-drop');
+  var isOpen = drop.style.display !== 'none';
+  // close on outside click
+  if(!isOpen){
+    drop.style.display = 'block';
+    setTimeout(function(){
+      document.addEventListener('click', function pnlCloseTypeDrop(e){
+        if(!document.getElementById('pnl-type-btn').contains(e.target) && !drop.contains(e.target)){
+          drop.style.display = 'none';
+          document.removeEventListener('click', pnlCloseTypeDrop);
+        }
+      });
+    }, 10);
+  } else {
+    drop.style.display = 'none';
+  }
+}
+
+function pnlTypeChange(){
+  var checked = Array.from(document.querySelectorAll('#pnl-type-drop input[type=checkbox]:checked')).map(function(cb){ return cb.value; });
+  var btn = document.getElementById('pnl-type-btn');
+  btn.textContent = checked.length === 0 ? 'All Types ▾' : checked.length === 1 ? checked[0]+' ▾' : checked.length+' Types ▾';
+  pnlApplyFilters();
+}
+
+function pnlGetCheckedTypes(){
+  return Array.from(document.querySelectorAll('#pnl-type-drop input[type=checkbox]:checked')).map(function(cb){ return cb.value; });
+}
+
 function pnlApplyFilters(){
   if(!pnlLoaded) return;
-  var typeFilter   = document.getElementById('pnl-type-filter').value;
+  var checkedTypes = pnlGetCheckedTypes();
   var periodYrs    = parseInt(document.getElementById('pnl-period-filter').value);
   var fromDate     = '';
   if(periodYrs > 0){
@@ -2462,9 +2494,8 @@ function pnlApplyFilters(){
   }
 
   function typeMatch(r){
-    if(!typeFilter) return true;
-    var mapped = PROP_TYPE_MAP[r.property_type] || r.property_type;
-    return mapped === typeFilter;
+    if(!checkedTypes.length) return true; // none checked = all types
+    return checkedTypes.indexOf(r.property_type) !== -1;
   }
   function dateMatch(r){
     if(!fromDate) return true;
@@ -2491,7 +2522,7 @@ function pnlApplyFilters(){
   document.getElementById('pnl-stat-profit').textContent  = PNL_FILTERED_PROFIT.length.toLocaleString();
   document.getElementById('pnl-stat-loss').textContent    = PNL_FILTERED_LOSS.length.toLocaleString();
   document.getElementById('pnl-stat-abort').textContent   = PNL_FILTERED_ABORT.length.toLocaleString();
-  document.getElementById('pnl-stat-median').textContent  = medReturn !== null ? (medReturn>=0?'+':'')+medReturn.toFixed(1)+'% p.a.' : '—';
+  document.getElementById('pnl-stat-median').textContent  = medReturn !== null ? (medReturn>=0?'+':'')+medReturn.toFixed(1)+'%' : '—';
   document.getElementById('pnl-stat-hold').textContent    = avgHold !== null ? avgHold.toFixed(1)+' yrs' : '—';
 
   document.getElementById('pnl-tab-cnt-profit').textContent = '('+PNL_FILTERED_PROFIT.length+')';
@@ -2525,7 +2556,7 @@ function pnlRenderSection(sec){
 }
 
 function pnlFmtPrice(v){ if(!v) return '—'; return 'S$'+(v/1e6>=1?(v/1e6).toFixed(2)+'M':(v/1000).toFixed(0)+'K'); }
-function pnlFmtReturn(v){ return (v>=0?'<span style="color:#1a6b3c">+'+v.toFixed(1)+'%</span>':'<span style="color:#b71c1c">'+v.toFixed(1)+'%</span>') + ' p.a.'; }
+function pnlFmtReturn(v){ return (v>=0?'<span style="color:#1a6b3c">+'+v.toFixed(1)+'%</span>':'<span style="color:#b71c1c">'+v.toFixed(1)+'%</span>'); }
 
 function pnlGoPage(sec, p){
   if(sec==='profit'){ pnlPageProfit=p; pnlRenderTable('profit', PNL_FILTERED_PROFIT, p); }
@@ -2537,28 +2568,49 @@ function pnlRenderTable(sec, rows, page){
   var tbody = document.getElementById('pnl-tbody-'+sec);
   var start = page * pnlPageSize, end = start + pnlPageSize;
   var slice = rows.slice(start, end);
-  if(!slice.length){ tbody.innerHTML='<tr><td colspan="13" style="text-align:center;color:var(--mut);padding:24px">No data</td></tr>'; return; }
+  if(!slice.length){ tbody.innerHTML='<tr><td colspan="10" style="text-align:center;color:var(--mut);padding:24px">No data</td></tr>'; return; }
   tbody.innerHTML = slice.map(function(r){
     var profitAbs = Math.abs(r.profit);
-    var profitCol = r.profit>=0 ? '#1a6b3c' : '#b71c1c';
-    var profitSign = r.profit>=0 ? '+' : '−';
-    var buyTypeLabel = r.buy_type==='New Sale'
-      ? '<span class="pill" style="background:#e8f0fb;color:#1a4f9c;font-size:9px">New Sale</span>'
-      : '<span class="pill p-neu" style="font-size:9px">'+(r.buy_type||'—')+'</span>';
+    var profitCol  = r.profit >= 0 ? '#1a6b3c' : '#b71c1c';
+    var profitSign = r.profit >= 0 ? '+' : '−';
+    var annCol     = r.ann_return >= 0 ? '#1a6b3c' : '#b71c1c';
+    var annSign    = r.ann_return >= 0 ? '+' : '';
+    // Full price: S$4,300,000
+    var fmtFull = function(v){ return v ? 'S$'+Math.round(v).toLocaleString() : '—'; };
+    var fmtProfit = function(v){ return (v>=0?'+':'−')+'S$'+Math.round(Math.abs(v)).toLocaleString(); };
+    var entryBadge = r.buy_type === 'New Sale'
+      ? '<span class="pill" style="background:#e8f0fb;color:#1a4f9c;font-size:9px;white-space:nowrap">New Sale</span>'
+      : '<span class="pill p-neu" style="font-size:9px;white-space:nowrap">'+(r.buy_type||'—')+'</span>';
     return '<tr>'
-      +'<td class="mono" style="white-space:nowrap">'+r.sell_date+'</td>'
-      +'<td style="font-weight:600;max-width:150px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis" title="'+( r.project_name||'')+'">'+( r.project_name||'—')+'</td>'
-      +'<td style="color:var(--mut);font-size:11px;max-width:130px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis" title="'+(r.address||'')+'">'+( r.address||'—')+'</td>'
-      +'<td><span class="pill p-neu" style="font-size:9px">'+(r.property_type||'—')+'</span></td>'
-      +'<td class="mono" style="white-space:nowrap">'+pnlFmtPrice(r.buy_price)+'</td>'
-      +'<td style="font-size:11px;color:var(--mut2);white-space:nowrap">'+r.buy_date+'</td>'
-      +'<td class="mono" style="white-space:nowrap">'+pnlFmtPrice(r.sell_price)+'</td>'
-      +'<td class="mono" style="color:'+profitCol+';font-weight:700;white-space:nowrap">'+profitSign+'S$'+(profitAbs>=1e6?(profitAbs/1e6).toFixed(2)+'M':(profitAbs/1000).toFixed(0)+'K')+'</td>'
-      +'<td class="mono" style="white-space:nowrap">'+pnlFmtReturn(r.ann_return)+'</td>'
-      +'<td class="mono">'+r.yrs_held.toFixed(1)+'</td>'
-      +'<td class="mono">'+(r.area_sqft?Math.round(r.area_sqft).toLocaleString():'—')+'</td>'
-      +'<td class="mono">'+(r.psf_sell?'S$'+Math.round(r.psf_sell).toLocaleString():'—')+'</td>'
-      +'<td>'+buyTypeLabel+'</td>'
+      // Date col: sell date big, buy date small below
+      +'<td class="mono" style="white-space:nowrap;vertical-align:top">'
+        +'<div style="font-size:12px">'+r.sell_date+'</div>'
+        +'<div style="font-size:10px;color:var(--mut);margin-top:2px">'+r.buy_date+'</div>'
+      +'</td>'
+      // Project / Address stacked
+      +'<td style="vertical-align:top;max-width:180px">'
+        +'<div style="font-weight:600;font-size:12px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis" title="'+(r.project_name||'')+'">'+( r.project_name||'—')+'</div>'
+        +'<div style="font-size:10px;color:var(--mut);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-top:2px" title="'+(r.address||'')+'">'+( r.address||'—')+'</div>'
+      +'</td>'
+      // Type
+      +'<td style="vertical-align:top"><span class="pill p-neu" style="font-size:9px;white-space:nowrap">'+(r.property_type||'—')+'</span></td>'
+      // Buy → Sell stacked
+      +'<td class="mono" style="white-space:nowrap;vertical-align:top">'
+        +'<div style="font-size:11px;color:var(--mut)">'+fmtFull(r.buy_price)+'</div>'
+        +'<div style="font-size:12px;font-weight:600;margin-top:2px">'+fmtFull(r.sell_price)+'</div>'
+      +'</td>'
+      // Profit / Loss
+      +'<td class="mono" style="color:'+profitCol+';font-weight:700;white-space:nowrap;vertical-align:top">'+fmtProfit(r.profit)+'</td>'
+      // Ann Return — no p.a.
+      +'<td class="mono" style="color:'+annCol+';white-space:nowrap;vertical-align:top">'+annSign+r.ann_return.toFixed(1)+'%</td>'
+      // Yrs Held
+      +'<td class="mono" style="vertical-align:top">'+r.yrs_held.toFixed(1)+'</td>'
+      // Area
+      +'<td class="mono" style="vertical-align:top">'+(r.area_sqft ? Math.round(r.area_sqft).toLocaleString() : '—')+'</td>'
+      // PSF Sell — full number
+      +'<td class="mono" style="vertical-align:top">'+(r.psf_sell ? 'S$'+Math.round(r.psf_sell).toLocaleString() : '—')+'</td>'
+      // Entry type
+      +'<td style="vertical-align:top">'+entryBadge+'</td>'
       +'</tr>';
   }).join('');
   pnlRenderPager('pnl-pg-'+sec, rows.length, page, sec);
