@@ -768,8 +768,10 @@ html,body{background:var(--bg);color:var(--txt);font-family:'DM Sans',sans-serif
             </div>
           </div>
           <select id="pnl-period-filter" class="ov-sel" onchange="pnlLoadData()" style="font-size:11px;padding:4px 8px">
+            <option value="0.5" selected>Last 6 Months</option>
+            <option value="1">Last 1 Year</option>
             <option value="5">Last 5 Years</option>
-            <option value="10" selected>Last 10 Years</option>
+            <option value="10">Last 10 Years</option>
             <option value="0">All Time</option>
           </select>
           <button class="chip" id="pnl-load-btn" onclick="pnlLoadData()" style="font-size:11px;padding:5px 12px;background:var(--g1);color:#fff;border:none;border-radius:6px;cursor:pointer">Load Data</button>
@@ -1830,7 +1832,7 @@ document.querySelectorAll(".navtab").forEach(function(t){
     t.classList.add("on");
     var p=document.getElementById("tab-"+t.dataset.tab);
     if(p)p.classList.add("on");
-    if(t.dataset.tab==="analytics")renderAnalytics();
+    if(t.dataset.tab==="analytics"){ renderAnalytics(); if(!pnlLoaded) pnlLoadData(); }
   });
 });
 
@@ -2669,11 +2671,11 @@ function pnlApplyFilters(){
   // Header-level type filter
   var headerTypes  = pnlGetCheckedTypes();
   // Period filter
-  var periodYrs    = parseInt(document.getElementById('pnl-period-filter').value);
+  var periodYrs    = parseFloat(document.getElementById('pnl-period-filter').value);
   var fromDate     = '';
   if(periodYrs > 0){
     var d = new Date();
-    d.setFullYear(d.getFullYear() - periodYrs);
+    d.setTime(d.getTime() - periodYrs * 365.25 * 24 * 60 * 60 * 1000);
     fromDate = d.toISOString().slice(0,10);
   }
   // Column-level filters (profit tab)
@@ -2826,10 +2828,11 @@ function pnlRenderTable(sec, rows, page){
       +'<td class="mono" style="color:'+annCol+';white-space:nowrap;vertical-align:top">'+annSign+r.ann_return.toFixed(1)+'%</td>'
       +'<td class="mono" style="vertical-align:top">'+r.yrs_held.toFixed(1)+'</td>'
       +'<td class="mono" style="vertical-align:top">'+(r.area_sqft ? Math.round(r.area_sqft).toLocaleString() : '—')+'</td>'
-      // PSF: sell PSF on top, buy PSF below
+      // PSF: sell PSF on top, "Bought" label, buy PSF below
       +'<td class="mono" style="white-space:nowrap;vertical-align:top">'
         +'<div style="font-size:12px">'+(r.psf_sell ? 'S$'+Math.round(r.psf_sell).toLocaleString() : '—')+'</div>'
-        +(r.psf_buy ? '<div style="font-size:10px;color:var(--mut);margin-top:2px">S$'+Math.round(r.psf_buy).toLocaleString()+'</div>' : '')
+        +(r.psf_buy ? '<div style="font-size:9px;color:var(--mut2);text-transform:uppercase;letter-spacing:.04em;margin-top:4px;font-family:\'DM Sans\',sans-serif">Bought</div>'
+                     +'<div style="font-size:11px;color:var(--mut)">S$'+Math.round(r.psf_buy).toLocaleString()+'</div>' : '')
       +'</td>'
       +'<td style="vertical-align:top">'+tosBadge+'</td>'
       +'</tr>';
