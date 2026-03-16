@@ -950,14 +950,13 @@ html,body{background:var(--bg);color:var(--txt);font-family:'DM Sans',sans-serif
 
         <!-- Aborted table -->
         <div id="pnl-sec-abort" style="display:none">
-          <div style="overflow-x:auto">
+          <div style="overflow-x:auto;border-radius:6px;border:1px solid var(--bdr)">
             <table class="ptable" id="pnl-tbl-abort">
               <thead><tr>
-                <th>Address</th><th>Project</th><th>Type</th>
-                <th>New Sale Date</th><th>New Sale Price</th>
-                <th>Sub Sale Date</th><th>Sub Sale Price</th><th>Sub Sale Profit</th>
-                <th>Final Sale Date</th><th>Final Sale Price</th><th>Final Profit</th>
-                <th>Area (sqft)</th>
+                <th>Project</th><th>Address</th><th>Type</th>
+                <th>1st New Sale Date</th><th>1st New Sale Price</th><th>1st PSF</th>
+                <th>Re-issued Date</th><th>Re-issued Price</th><th>Re-issued PSF</th>
+                <th>Price Diff</th><th>Area (sqft)</th>
               </tr></thead>
               <tbody id="pnl-tbody-abort"></tbody>
             </table>
@@ -2500,6 +2499,8 @@ async function pnlLoadData(){
       for(var j = 1; j < txs.length; j++){
         var sell = txs[j];
         var buy  = txs[j-1];
+        // Skip if sell leg is New Sale — developer selling, no prior resale owner to compute P&L for
+        // Sub Sales are valid sell legs (sold before CSC — normal early exit)
         if(sell.type_of_sale === 'New Sale') continue;
         if(!buy.transacted_price || !sell.transacted_price) continue;
         var daysHeld = (new Date(sell.sale_date) - new Date(buy.sale_date)) / 86400000;
@@ -2528,20 +2529,28 @@ async function pnlLoadData(){
         });
       }
 
-      for(var i = 0; i < txs.length - 2; i++){
-        var t0 = txs[i], t1 = txs[i+1], t2 = txs[i+2];
-        if(t0.type_of_sale === 'New Sale' && t1.type_of_sale === 'Sub Sale'){
+      // ── Aborted: same unit sold as New Sale MORE THAN ONCE ──
+      // Developer sold unit, original buyer backed out (forfeited deposit),
+      // developer re-sold same unit as New Sale again.
+      var newSales = txs.filter(function(t){ return t.type_of_sale === 'New Sale'; });
+      if(newSales.length >= 2){
+        for(var n = 1; n < newSales.length; n++){
+          var first  = newSales[0];
+          var resold = newSales[n];
+          var priceDiff = resold.transacted_price - first.transacted_price;
           PNL_ABORT.push({
-            address:       t0.address,
-            project_name:  t0.project_name,
-            property_type: t0.property_type,
-            area_sqft:     t0.area_sqft,
-            new_date:      t0.sale_date,  new_price:   t0.transacted_price,
-            sub_date:      t1.sale_date,  sub_price:   t1.transacted_price,
-            sub_profit:    t1.transacted_price - t0.transacted_price,
-            final_date:    t2.sale_date,  final_price: t2.transacted_price,
-            final_profit:  t2.transacted_price - t0.transacted_price,
-            postal_district: t0.postal_district
+            address:        first.address,
+            project_name:   first.project_name,
+            property_type:  first.property_type,
+            area_sqft:      first.area_sqft,
+            postal_district: first.postal_district,
+            first_date:     first.sale_date,
+            first_price:    first.transacted_price,
+            first_psf:      first.unit_price_psf,
+            resold_date:    resold.sale_date,
+            resold_price:   resold.transacted_price,
+            resold_psf:     resold.unit_price_psf,
+            price_diff:     priceDiff
           });
         }
       }
@@ -2664,7 +2673,7 @@ function pnlApplyFilters(){
 
   function headerTypeMatch(r){ return !headerTypes.length || headerTypes.indexOf(r.property_type) !== -1; }
   function dateMatch(r){ return !fromDate || r.sell_date >= fromDate; }
-  function abortDateMatch(r){ return !fromDate || r.final_date >= fromDate; }
+  function abortDateMatch(r){ return !fromDate || r.resold_date >= fromDate; }
 
   // Base filter (header type + period)
   var base = PNL_PAIRS.filter(function(r){ return headerTypeMatch(r) && dateMatch(r); });
@@ -2870,24 +2879,24 @@ function pnlRenderAbort(rows, page){
   var tbody = document.getElementById('pnl-tbody-abort');
   var start = page * pnlPageSize, end = start + pnlPageSize;
   var slice = rows.slice(start, end);
-  if(!slice.length){ tbody.innerHTML='<tr><td colspan="12" style="text-align:center;color:var(--mut);padding:24px">No data</td></tr>'; return; }
+  if(!slice.length){ tbody.innerHTML='<tr><td colspan="11" style="text-align:center;color:var(--mut);padding:24px">No data</td></tr>'; return; }
   tbody.innerHTML = slice.map(function(r){
-    var subCol  = r.sub_profit>=0?'#1a6b3c':'#b71c1c';
-    var finCol  = r.final_profit>=0?'#1a6b3c':'#b71c1c';
-    var s = function(v){ return (v>=0?'+':'')+( Math.abs(v)>=1e6 ? 'S$'+(v/1e6).toFixed(2)+'M' : 'S$'+(Math.abs(v)/1000).toFixed(0)+'K' ); };
+    var diffCol  = r.price_diff >= 0 ? '#1a6b3c' : '#b71c1c';
+    var diffSign = r.price_diff >= 0 ? '+' : '−';
+    var fmtFull  = function(v){ return v ? 'S$'+Math.round(v).toLocaleString() : '—'; };
+    var fmtPsf   = function(v){ return v ? 'S$'+Math.round(v).toLocaleString() : '—'; };
     return '<tr>'
-      +'<td style="font-size:11px;color:var(--mut);max-width:140px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">'+( r.address||'—')+'</td>'
-      +'<td style="font-weight:600;max-width:140px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">'+( r.project_name||'—')+'</td>'
-      +'<td><span class="pill p-neu" style="font-size:9px">'+(r.property_type||'—')+'</span></td>'
-      +'<td class="mono">'+r.new_date+'</td>'
-      +'<td class="mono">'+pnlFmtPrice(r.new_price)+'</td>'
-      +'<td class="mono">'+r.sub_date+'</td>'
-      +'<td class="mono">'+pnlFmtPrice(r.sub_price)+'</td>'
-      +'<td class="mono" style="color:'+subCol+';font-weight:700">'+s(r.sub_profit)+'</td>'
-      +'<td class="mono">'+r.final_date+'</td>'
-      +'<td class="mono">'+pnlFmtPrice(r.final_price)+'</td>'
-      +'<td class="mono" style="color:'+finCol+';font-weight:700">'+s(r.final_profit)+'</td>'
-      +'<td class="mono">'+(r.area_sqft?r.area_sqft.toLocaleString():'—')+'</td>'
+      +'<td style="font-weight:600;font-size:12px;max-width:150px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis" title="'+(r.project_name||'')+'">'+( r.project_name||'—')+'</td>'
+      +'<td style="font-size:11px;color:var(--mut);max-width:150px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis" title="'+(r.address||'')+'">'+( r.address||'—')+'</td>'
+      +'<td><span class="pill p-neu" style="font-size:9px">'+fmtPropType(r.property_type||'—')+'</span></td>'
+      +'<td class="mono" style="white-space:nowrap">'+r.first_date+'</td>'
+      +'<td class="mono">'+fmtFull(r.first_price)+'</td>'
+      +'<td class="mono" style="color:var(--mut)">'+fmtPsf(r.first_psf)+'</td>'
+      +'<td class="mono" style="white-space:nowrap">'+r.resold_date+'</td>'
+      +'<td class="mono">'+fmtFull(r.resold_price)+'</td>'
+      +'<td class="mono" style="color:var(--mut)">'+fmtPsf(r.resold_psf)+'</td>'
+      +'<td class="mono" style="color:'+diffCol+';font-weight:700">'+diffSign+'S$'+Math.round(Math.abs(r.price_diff)).toLocaleString()+'</td>'
+      +'<td class="mono">'+(r.area_sqft ? Math.round(r.area_sqft).toLocaleString() : '—')+'</td>'
       +'</tr>';
   }).join('');
   pnlRenderPager('pnl-pg-abort', rows.length, page, 'abort');
