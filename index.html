@@ -283,6 +283,10 @@ html,body{background:var(--bg);color:var(--txt);font-family:'DM Sans',sans-serif
   .stat-strip{flex-wrap:wrap}
   .stat-strip-item{flex:1 1 45%;border-bottom:1px solid var(--bdr)}
 }
+/* Analytics tab — full viewport, escape wrap padding */
+#tab-analytics.on{display:flex;flex-direction:column;margin:-20px -24px;height:calc(100vh - 52px);overflow:hidden}
+#pnl-split{flex:1;overflow:hidden;min-height:0!important;border-radius:0!important;border:none!important;border-top:1px solid var(--bdr)!important}
+#pnl-map{height:100%!important;min-height:0!important}
 </style>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css"/>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
@@ -715,35 +719,12 @@ html,body{background:var(--bg);color:var(--txt);font-family:'DM Sans',sans-serif
   </div>
 
   <div class="panel" id="tab-analytics">
-    <!-- Stat strip for analytics -->
-    <div class="stat-strip" style="margin-bottom:16px">
-      <div class="stat-strip-item">
-        <div class="stat-strip-lbl">All-Time Volume</div>
-        <div class="stat-strip-val" id="an-totval">—</div>
-        <div class="stat-strip-sub">S$ billions</div>
-      </div>
-      <div class="stat-strip-item">
-        <div class="stat-strip-lbl">All-Time Deals</div>
-        <div class="stat-strip-val" id="an-totcnt">—</div>
-        <div class="stat-strip-sub">transactions (1995–2026)</div>
-      </div>
-      <div class="stat-strip-item">
-        <div class="stat-strip-lbl">Peak Year</div>
-        <div class="stat-strip-val">2007</div>
-        <div class="stat-strip-sub">highest volume on record</div>
-      </div>
-      <div class="stat-strip-item">
-        <div class="stat-strip-lbl">Top Sector</div>
-        <div class="stat-strip-val" id="an-topsec">—</div>
-        <div class="stat-strip-sub">by cumulative value</div>
-      </div>
-    </div>
     <!-- ── Split: Map (left) + PNL Table (right) ── -->
     <div id="pnl-split" style="display:flex;gap:0;margin-top:0;border:1px solid var(--bdr);border-radius:10px;overflow:hidden;min-height:560px">
 
       <!-- Left: OneMap -->
-      <div style="flex:1 1 50%;min-width:0;position:relative;border-right:1px solid var(--bdr)">
-        <div id="pnl-map" style="width:100%;height:100%;min-height:560px"></div>
+      <div style="flex:1 1 50%;min-width:0;position:relative;border-right:1px solid var(--bdr);overflow:hidden">
+        <div id="pnl-map" style="width:100%;height:100%;min-height:400px"></div>
         <div id="pnl-map-legend" style="display:none;position:absolute;bottom:16px;left:16px;z-index:500;background:rgba(255,255,255,.92);border:1px solid var(--bdr);border-radius:7px;padding:8px 12px;font-size:11px;font-family:'DM Sans',sans-serif;box-shadow:0 2px 8px rgba(0,0,0,.12)">
           <div style="display:flex;align-items:center;gap:6px;margin-bottom:4px"><span style="display:inline-block;width:10px;height:10px;border-radius:50%;background:#1a6b3c;border:2px solid #fff;box-shadow:0 1px 3px rgba(0,0,0,.3)"></span> Profitable</div>
           <div style="display:flex;align-items:center;gap:6px"><span style="display:inline-block;width:10px;height:10px;border-radius:50%;background:#b71c1c;border:2px solid #fff;box-shadow:0 1px 3px rgba(0,0,0,.3)"></span> Unprofitable</div>
@@ -753,7 +734,30 @@ html,body{background:var(--bg);color:var(--txt);font-family:'DM Sans',sans-serif
 
       <!-- Right: PNL card -->
       <div style="flex:1 1 50%;min-width:0;overflow:auto;display:flex;flex-direction:column">
-        <div style="padding:14px 16px 10px 16px;border-bottom:1px solid var(--srf3);display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;flex-shrink:0">
+        <!-- Compact stat strip -->
+        <div style="display:flex;gap:0;border-bottom:1px solid var(--bdr);flex-shrink:0;background:var(--srf2)">
+          <div style="flex:1;padding:8px 12px;border-right:1px solid var(--bdr);text-align:center">
+            <div style="font-size:9px;text-transform:uppercase;letter-spacing:.07em;color:var(--mut)">All-Time Volume</div>
+            <div class="mono" id="an-totval" style="font-size:14px;font-weight:700;color:var(--txt)">—</div>
+            <div style="font-size:9px;color:var(--mut2)">S$ billions</div>
+          </div>
+          <div style="flex:1;padding:8px 12px;border-right:1px solid var(--bdr);text-align:center">
+            <div style="font-size:9px;text-transform:uppercase;letter-spacing:.07em;color:var(--mut)">All-Time Deals</div>
+            <div class="mono" id="an-totcnt" style="font-size:14px;font-weight:700;color:var(--txt)">—</div>
+            <div style="font-size:9px;color:var(--mut2)">1995–2026</div>
+          </div>
+          <div style="flex:1;padding:8px 12px;border-right:1px solid var(--bdr);text-align:center">
+            <div style="font-size:9px;text-transform:uppercase;letter-spacing:.07em;color:var(--mut)">Peak Year</div>
+            <div class="mono" style="font-size:14px;font-weight:700;color:var(--txt)">2007</div>
+            <div style="font-size:9px;color:var(--mut2)">highest volume</div>
+          </div>
+          <div style="flex:1;padding:8px 12px;text-align:center">
+            <div style="font-size:9px;text-transform:uppercase;letter-spacing:.07em;color:var(--mut)">Top Sector</div>
+            <div class="mono" id="an-topsec" style="font-size:14px;font-weight:700;color:var(--txt)">—</div>
+            <div style="font-size:9px;color:var(--mut2)">by value</div>
+          </div>
+        </div>
+        <div style="padding:10px 14px 8px 14px;border-bottom:1px solid var(--srf3);display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;flex-shrink:0">
           <div>
             <div class="card-title" style="margin-bottom:2px"><span class="card-title-dot"></span>Matched Transactions — P&amp;L Analysis</div>
             <div class="card-subtitle" id="pnl-subtitle">Project + Address + Area matching</div>
@@ -2949,7 +2953,7 @@ var pnlGeoCache = {};      // address → {lat, lng} or null
 var pnlGeoPending = false;
 
 function pnlInitMap(){
-  if(pnlMap) return;
+  if(pnlMap) { setTimeout(function(){ pnlMap.invalidateSize(); }, 50); return; }
   var el = document.getElementById('pnl-map');
   if(!el) return;
   pnlMap = L.map('pnl-map', {zoomControl:true, attributionControl:true}).setView([1.3521, 103.8198], 12);
@@ -2958,6 +2962,7 @@ function pnlInitMap(){
     maxZoom: 19, minZoom: 11
   }).addTo(pnlMap);
   pnlMapLayer = L.layerGroup().addTo(pnlMap);
+  setTimeout(function(){ pnlMap.invalidateSize(); }, 200);
 }
 
 async function pnlGeocodeAddress(addr){
@@ -2981,9 +2986,7 @@ async function pnlGeocodeAddress(addr){
 async function pnlUpdateMap(rows){
   if(!pnlMap){ pnlInitMap(); }
   if(!pnlMap) return;
-
-  // Invalidate size in case container was hidden on init
-  setTimeout(function(){ pnlMap.invalidateSize(); }, 100);
+  pnlMap.invalidateSize();
 
   pnlMapLayer.clearLayers();
   var statusEl = document.getElementById('pnl-map-status');
