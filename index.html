@@ -2441,30 +2441,35 @@ async function pnlLoadData(){
     }
     document.getElementById('pnl-progress').textContent = 'Phase 1 done: '+sellRows.length.toLocaleString()+' sell candidates. Phase 2: fetching buy legs…';
 
-    // ── PHASE 2: collect unique addresses from sell rows, fetch all txns for those addresses ──
-    // This pulls the buy legs without scanning the whole DB.
+    // ── PHASE 2: collect unique addresses, fetch all txns in parallel batches ──
     var addrSet = {};
     sellRows.forEach(function(r){
       if(r.address) addrSet[r.address.trim()] = true;
     });
     var addrs = Object.keys(addrSet);
 
-    var buyRows = [];
-    var batchSize = 50; // Supabase URL length limit
+    document.getElementById('pnl-progress').textContent =
+      'Phase 2: fetching buy legs for '+addrs.length+' addresses…';
+
+    var batchSize = 50;
+    var batches = [];
     for(var i = 0; i < addrs.length; i += batchSize){
-      var batch = addrs.slice(i, i + batchSize);
-      document.getElementById('pnl-progress').textContent =
-        'Phase 2: fetching buy legs… '+Math.min(i+batchSize, addrs.length)+' / '+addrs.length+' addresses';
-      // Use in filter: address=in.(addr1,addr2,...)
+      batches.push(addrs.slice(i, i + batchSize));
+    }
+
+    // Run all batches in parallel
+    var batchResults = await Promise.all(batches.map(function(batch){
       var inList = batch.map(function(a){ return '"'+a.replace(/"/g,'\\"')+'"'; }).join(',');
       var bUrl = SB_URL+'/rest/v1/transactions?select='+cols
         +'&address=in.('+encodeURIComponent(inList)+')'
         +'&order=id.asc&limit=5000';
-      var bRes = await fetch(bUrl, {headers:SB_HDR});
-      if(!bRes.ok) continue; // skip bad batch silently
-      var bRows = await bRes.json();
-      if(Array.isArray(bRows)) buyRows = buyRows.concat(bRows);
-    }
+      return fetch(bUrl, {headers:SB_HDR})
+        .then(function(r){ return r.ok ? r.json() : []; })
+        .catch(function(){ return []; });
+    }));
+
+    var buyRows = [];
+    batchResults.forEach(function(rows){ if(Array.isArray(rows)) buyRows = buyRows.concat(rows); });
 
     // ── Merge: deduplicate by id ──
     document.getElementById('pnl-progress').textContent = 'Matching…';
@@ -2634,6 +2639,7 @@ function pnlGetCheckedTypes(){
 
 function pnlApplyFilters(){
   if(!pnlLoaded) return;
+  pnlHide('pnl-loading');
   // Header-level type filter
   var headerTypes  = pnlGetCheckedTypes();
   // Period filter
