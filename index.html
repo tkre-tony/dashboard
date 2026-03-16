@@ -2466,123 +2466,145 @@ async function pnlLoadData(){
   pnlShow('pnl-loading');
   document.getElementById('pnl-load-btn').disabled = true;
 
-  // Fetch ALL transactions — no date filter, no expensive multi-col sort.
-  // Order by id.asc gives stable pagination. Sale_date sort happens in JS per unit group.
-  var allRows = [];
-  var limit = 1000; // Supabase REST hard cap per request
-  var offset = 0;
-  var maxFetch = 80000;
+  var periodYrs = parseFloat(document.getElementById('pnl-period-filter').value);
+  var fromDate  = '';
+  if(periodYrs > 0){
+    var d = new Date();
+    d.setTime(d.getTime() - periodYrs * 365.25 * 24 * 60 * 60 * 1000);
+    fromDate = d.toISOString().slice(0,10);
+  }
+
+  var SB_HDR = {'apikey':SB_KEY,'Authorization':'Bearer '+SB_KEY,'Prefer':'count=none'};
+  var cols = 'id,project_name,address,area_sqft,transacted_price,sale_date,type_of_sale,property_type,unit_price_psf,postal_district,planning_region';
 
   try {
-    while(offset < maxFetch){
-      document.getElementById('pnl-progress').textContent = 'Fetching… '+allRows.length.toLocaleString()+' rows loaded';
-      var rangeEnd = offset + limit - 1;
-      var url = SB_URL+'/rest/v1/transactions'
-        +'?select=id,project_name,address,area_sqft,transacted_price,sale_date,type_of_sale,property_type,unit_price_psf,postal_district,planning_region'
-        +'&order=id.asc'
-        +'&limit='+limit+'&offset='+offset;
-      var res = await fetch(url, {headers:{
-        'apikey':SB_KEY,
-        'Authorization':'Bearer '+SB_KEY,
-        'Range': offset+'-'+rangeEnd,
-        'Range-Unit': 'items',
-        'Prefer': 'count=none'
-      }});
-      if(!res.ok) { throw new Error('HTTP '+res.status); }
+    // ── PHASE 1: fetch sell-leg candidates within the period ──
+    // Only non-New-Sale transactions on or after fromDate.
+    document.getElementById('pnl-progress').textContent = 'Phase 1: fetching recent transactions…';
+    var sellRows = [];
+    var dateFilter = fromDate ? '&sale_date=gte.'+fromDate : '';
+    var limit = 1000, offset = 0;
+    while(offset < 50000){
+      var url = SB_URL+'/rest/v1/transactions?select='+cols
+        +'&type_of_sale=neq.New Sale'
+        + dateFilter
+        +'&order=id.asc&limit='+limit+'&offset='+offset;
+      var res = await fetch(url, {headers:SB_HDR});
+      if(!res.ok) throw new Error('HTTP '+res.status);
       var rows = await res.json();
-      if(!Array.isArray(rows) || !rows.length) break;
-      allRows = allRows.concat(rows);
-      if(rows.length < limit) break; // last page
+      if(!Array.isArray(rows)||!rows.length) break;
+      sellRows = sellRows.concat(rows);
+      if(rows.length < limit) break;
       offset += limit;
     }
+    document.getElementById('pnl-progress').textContent = 'Phase 1 done: '+sellRows.length.toLocaleString()+' sell candidates. Phase 2: fetching buy legs…';
+
+    // ── PHASE 2: collect unique addresses from sell rows, fetch all txns for those addresses ──
+    // This pulls the buy legs without scanning the whole DB.
+    var addrSet = {};
+    sellRows.forEach(function(r){
+      if(r.address) addrSet[r.address.trim()] = true;
+    });
+    var addrs = Object.keys(addrSet);
+
+    var buyRows = [];
+    var batchSize = 50; // Supabase URL length limit
+    for(var i = 0; i < addrs.length; i += batchSize){
+      var batch = addrs.slice(i, i + batchSize);
+      document.getElementById('pnl-progress').textContent =
+        'Phase 2: fetching buy legs… '+Math.min(i+batchSize, addrs.length)+' / '+addrs.length+' addresses';
+      // Use in filter: address=in.(addr1,addr2,...)
+      var inList = batch.map(function(a){ return '"'+a.replace(/"/g,'\\"')+'"'; }).join(',');
+      var bUrl = SB_URL+'/rest/v1/transactions?select='+cols
+        +'&address=in.('+encodeURIComponent(inList)+')'
+        +'&order=id.asc&limit=5000';
+      var bRes = await fetch(bUrl, {headers:SB_HDR});
+      if(!bRes.ok) continue; // skip bad batch silently
+      var bRows = await bRes.json();
+      if(Array.isArray(bRows)) buyRows = buyRows.concat(bRows);
+    }
+
+    // ── Merge: deduplicate by id ──
+    document.getElementById('pnl-progress').textContent = 'Matching…';
+    var allById = {};
+    sellRows.concat(buyRows).forEach(function(r){ allById[r.id] = r; });
+    var allRows = Object.values(allById);
+
+    // ── GROUP BY: project_name + address + area_sqft (rounded to nearest 5 sqft) ──
+    var byKey = {};
+    allRows.forEach(function(r){
+      if(!r.project_name || !r.address || !r.area_sqft) return;
+      var key = r.project_name.trim().toUpperCase()
+              + '||' + r.address.trim().toUpperCase()
+              + '||' + Math.round(r.area_sqft / 5) * 5;
+      if(!byKey[key]) byKey[key] = [];
+      byKey[key].push(r);
+    });
+
+    PNL_PAIRS = [];
+    PNL_ABORT = [];
+
+    Object.keys(byKey).forEach(function(key){
+      var txs = byKey[key].sort(function(a,b){
+        return a.sale_date < b.sale_date ? -1 : a.sale_date > b.sale_date ? 1 : 0;
+      });
+      if(txs.length < 2) return;
+
+      for(var j = 1; j < txs.length; j++){
+        var sell = txs[j];
+        var buy  = txs[j-1];
+        if(sell.type_of_sale === 'New Sale') continue;
+        if(!buy.transacted_price || !sell.transacted_price) continue;
+        var daysHeld = (new Date(sell.sale_date) - new Date(buy.sale_date)) / 86400000;
+        if(daysHeld <= 0) continue;
+        var yrsHeld   = daysHeld / 365.25;
+        var profit    = sell.transacted_price - buy.transacted_price;
+        var annReturn = (Math.pow(sell.transacted_price / buy.transacted_price, 1 / yrsHeld) - 1) * 100;
+        PNL_PAIRS.push({
+          sell_date:       sell.sale_date,
+          buy_date:        buy.sale_date,
+          project_name:    sell.project_name || buy.project_name,
+          address:         sell.address,
+          property_type:   sell.property_type || buy.property_type,
+          buy_price:       buy.transacted_price,
+          sell_price:      sell.transacted_price,
+          buy_type:        buy.type_of_sale,
+          sell_type:       sell.type_of_sale,
+          profit:          profit,
+          ann_return:      annReturn,
+          yrs_held:        yrsHeld,
+          area_sqft:       sell.area_sqft || buy.area_sqft,
+          psf_sell:        sell.unit_price_psf,
+          psf_buy:         buy.unit_price_psf,
+          postal_district: sell.postal_district || buy.postal_district,
+          planning_region: sell.planning_region || buy.planning_region
+        });
+      }
+
+      for(var i = 0; i < txs.length - 2; i++){
+        var t0 = txs[i], t1 = txs[i+1], t2 = txs[i+2];
+        if(t0.type_of_sale === 'New Sale' && t1.type_of_sale === 'Sub Sale'){
+          PNL_ABORT.push({
+            address:       t0.address,
+            project_name:  t0.project_name,
+            property_type: t0.property_type,
+            area_sqft:     t0.area_sqft,
+            new_date:      t0.sale_date,  new_price:   t0.transacted_price,
+            sub_date:      t1.sale_date,  sub_price:   t1.transacted_price,
+            sub_profit:    t1.transacted_price - t0.transacted_price,
+            final_date:    t2.sale_date,  final_price: t2.transacted_price,
+            final_profit:  t2.transacted_price - t0.transacted_price,
+            postal_district: t0.postal_district
+          });
+        }
+      }
+    });
+
   } catch(e){
-    document.getElementById('pnl-progress').textContent = 'Error fetching: '+e.message;
+    document.getElementById('pnl-progress').textContent = 'Error: '+e.message;
     document.getElementById('pnl-load-btn').disabled = false;
     return;
   }
-
-  document.getElementById('pnl-progress').textContent = 'Matching '+allRows.length.toLocaleString()+' transactions…';
-
-  // ── GROUP BY: project_name + address + area_sqft (rounded to nearest 5 sqft) ──
-  var byKey = {};
-  allRows.forEach(function(r){
-    if(!r.project_name || !r.address || !r.area_sqft) return;
-    var key = r.project_name.trim().toUpperCase()
-            + '||' + r.address.trim().toUpperCase()
-            + '||' + Math.round(r.area_sqft / 5) * 5;
-    if(!byKey[key]) byKey[key] = [];
-    byKey[key].push(r);
-  });
-
-  // ── PAIR BUILDING ──
-  // Sort each unit's transactions by date, then walk consecutive pairs.
-  // Sell leg = any non-New-Sale. Buy leg = immediately prior transaction (any type).
-  // New Sale as sell leg → skip (no prior owner). New Sale as buy leg → valid entry price.
-  PNL_PAIRS = [];
-  PNL_ABORT = [];
-
-  Object.keys(byKey).forEach(function(key){
-    var txs = byKey[key].sort(function(a,b){
-      return a.sale_date < b.sale_date ? -1 : a.sale_date > b.sale_date ? 1 : 0;
-    });
-    if(txs.length < 2) return;
-
-    // Walk every consecutive pair → generates P&L for each leg of the chain
-    for(var j = 1; j < txs.length; j++){
-      var sell = txs[j];
-      var buy  = txs[j-1];
-
-      // Rule: skip if sell leg is New Sale — there is no prior owner
-      if(sell.type_of_sale === 'New Sale') continue;
-      if(!buy.transacted_price || !sell.transacted_price) continue;
-
-      var daysHeld = (new Date(sell.sale_date) - new Date(buy.sale_date)) / 86400000;
-      if(daysHeld <= 0) continue;
-
-      var yrsHeld   = daysHeld / 365.25;
-      var profit    = sell.transacted_price - buy.transacted_price;
-      var annReturn = (Math.pow(sell.transacted_price / buy.transacted_price, 1 / yrsHeld) - 1) * 100;
-
-      PNL_PAIRS.push({
-        sell_date:       sell.sale_date,
-        buy_date:        buy.sale_date,
-        project_name:    sell.project_name || buy.project_name,
-        address:         sell.address,
-        property_type:   sell.property_type || buy.property_type,
-        buy_price:       buy.transacted_price,
-        sell_price:      sell.transacted_price,
-        buy_type:        buy.type_of_sale,
-        sell_type:       sell.type_of_sale,
-        profit:          profit,
-        ann_return:      annReturn,
-        yrs_held:        yrsHeld,
-        area_sqft:       sell.area_sqft || buy.area_sqft,
-        psf_sell:        sell.unit_price_psf,
-        psf_buy:         buy.unit_price_psf,
-        postal_district: sell.postal_district || buy.postal_district,
-        planning_region: sell.planning_region || buy.planning_region
-      });
-    }
-
-    // Aborted chain: New Sale → Sub Sale → any further sale
-    for(var i = 0; i < txs.length - 2; i++){
-      var t0 = txs[i], t1 = txs[i+1], t2 = txs[i+2];
-      if(t0.type_of_sale === 'New Sale' && t1.type_of_sale === 'Sub Sale'){
-        PNL_ABORT.push({
-          address:       t0.address,
-          project_name:  t0.project_name,
-          property_type: t0.property_type,
-          area_sqft:     t0.area_sqft,
-          new_date:      t0.sale_date,  new_price:   t0.transacted_price,
-          sub_date:      t1.sale_date,  sub_price:   t1.transacted_price,
-          sub_profit:    t1.transacted_price - t0.transacted_price,
-          final_date:    t2.sale_date,  final_price: t2.transacted_price,
-          final_profit:  t2.transacted_price - t0.transacted_price,
-          postal_district: t0.postal_district
-        });
-      }
-    }
-  });
 
   pnlLoaded = true;
   pnlActiveSection = 'all';
