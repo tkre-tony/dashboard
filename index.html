@@ -284,6 +284,8 @@ html,body{background:var(--bg);color:var(--txt);font-family:'DM Sans',sans-serif
   .stat-strip-item{flex:1 1 45%;border-bottom:1px solid var(--bdr)}
 }
 </style>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css"/>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
 </head>
 <body>
 <div class="topbar">
@@ -736,25 +738,27 @@ html,body{background:var(--bg);color:var(--txt);font-family:'DM Sans',sans-serif
         <div class="stat-strip-sub">by cumulative value</div>
       </div>
     </div>
-    <div class="g2">
-      <div class="card" style="margin-bottom:0">
-        <div class="card-hdr"><div class="card-title"><span class="card-title-dot"></span>Year-on-Year Comparison (S$ Value)</div></div>
-        <div id="yoy-wrap" style="width:100%;min-height:240px"></div>
-      </div>
-      <div class="card" style="margin-bottom:0">
-        <div class="card-hdr"><div class="card-title"><span class="card-title-dot"></span>Cumulative Value by Property Type</div><span class="pill p-neu">All Time · S$ Millions</span></div>
-        <div id="cum-bars" style="padding-top:6px"></div>
-      </div>
-    </div>
+    <!-- ── Split: Map (left) + PNL Table (right) ── -->
+    <div id="pnl-split" style="display:flex;gap:0;margin-top:0;border:1px solid var(--bdr);border-radius:10px;overflow:hidden;min-height:560px">
 
-    <!-- ── Profitable / Unprofitable Transactions ── -->
-    <div class="card" style="margin-top:16px">
-      <div class="card-hdr" style="flex-wrap:wrap;gap:8px">
-        <div>
-          <div class="card-title"><span class="card-title-dot"></span>Matched Transactions — Profit &amp; Loss Analysis</div>
-          <div class="card-subtitle" id="pnl-subtitle">Match buy vs resale of same unit · Project + Address + Area matching</div>
+      <!-- Left: OneMap -->
+      <div style="flex:1 1 50%;min-width:0;position:relative;border-right:1px solid var(--bdr)">
+        <div id="pnl-map" style="width:100%;height:100%;min-height:560px"></div>
+        <div id="pnl-map-legend" style="display:none;position:absolute;bottom:16px;left:16px;z-index:500;background:rgba(255,255,255,.92);border:1px solid var(--bdr);border-radius:7px;padding:8px 12px;font-size:11px;font-family:'DM Sans',sans-serif;box-shadow:0 2px 8px rgba(0,0,0,.12)">
+          <div style="display:flex;align-items:center;gap:6px;margin-bottom:4px"><span style="display:inline-block;width:10px;height:10px;border-radius:50%;background:#1a6b3c;border:2px solid #fff;box-shadow:0 1px 3px rgba(0,0,0,.3)"></span> Profitable</div>
+          <div style="display:flex;align-items:center;gap:6px"><span style="display:inline-block;width:10px;height:10px;border-radius:50%;background:#b71c1c;border:2px solid #fff;box-shadow:0 1px 3px rgba(0,0,0,.3)"></span> Unprofitable</div>
         </div>
-        <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
+        <div id="pnl-map-status" style="position:absolute;top:10px;left:50%;transform:translateX(-50%);z-index:500;background:rgba(255,255,255,.92);border:1px solid var(--bdr);border-radius:20px;padding:4px 14px;font-size:11px;font-family:'DM Sans',sans-serif;color:var(--mut);display:none">Geocoding pins…</div>
+      </div>
+
+      <!-- Right: PNL card -->
+      <div style="flex:1 1 50%;min-width:0;overflow:auto;display:flex;flex-direction:column">
+        <div style="padding:14px 16px 10px 16px;border-bottom:1px solid var(--srf3);display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;flex-shrink:0">
+          <div>
+            <div class="card-title" style="margin-bottom:2px"><span class="card-title-dot"></span>Matched Transactions — P&amp;L Analysis</div>
+            <div class="card-subtitle" id="pnl-subtitle">Project + Address + Area matching</div>
+          </div>
+          <div style="display:flex;gap:6px;align-items:center;flex-wrap:wrap">
           <div style="position:relative">
             <button id="pnl-type-btn" onclick="pnlToggleTypeDrop()" style="padding:5px 10px;font-size:11px;border:1px solid var(--bdr);border-radius:6px;background:var(--srf);color:var(--txt);cursor:pointer;white-space:nowrap;min-width:110px;text-align:left">All Types ▾</button>
             <div id="pnl-type-drop" style="display:none;position:absolute;top:calc(100% + 4px);left:0;z-index:999;background:var(--srf);border:1px solid var(--bdr);border-radius:6px;min-width:160px;box-shadow:0 4px 16px rgba(0,0,0,.12);padding:4px 0">
@@ -775,8 +779,10 @@ html,body{background:var(--bg);color:var(--txt);font-family:'DM Sans',sans-serif
             <option value="0">All Time</option>
           </select>
           <button class="chip" id="pnl-load-btn" onclick="pnlLoadData()" style="font-size:11px;padding:5px 12px;background:var(--g1);color:#fff;border:none;border-radius:6px;cursor:pointer">Load Data</button>
-        </div>
-      </div>
+          <button id="pnl-export-btn" onclick="pnlExportCSV()" style="display:none;font-size:11px;padding:5px 12px;background:var(--srf2);color:var(--txt);border:1px solid var(--bdr);border-radius:6px;cursor:pointer">⬇ Export CSV</button>
+          </div><!-- end controls flex -->
+        </div><!-- end header row -->
+        <div style="padding:12px 16px;overflow:auto;flex:1">
 
       <!-- Summary stat strip -->
       <div id="pnl-stats" style="display:none;margin-bottom:16px">
@@ -1003,7 +1009,9 @@ html,body{background:var(--bg);color:var(--txt);font-family:'DM Sans',sans-serif
           <div id="pnl-pg-abort" style="margin-top:10px;display:flex;gap:6px;align-items:center;flex-wrap:wrap"></div>
         </div>
       </div>
-    </div>
+        </div><!-- end inner scroll -->
+    </div><!-- end right panel -->
+    </div><!-- end pnl-split -->
 
   </div>
 
@@ -1832,7 +1840,7 @@ document.querySelectorAll(".navtab").forEach(function(t){
     t.classList.add("on");
     var p=document.getElementById("tab-"+t.dataset.tab);
     if(p)p.classList.add("on");
-    if(t.dataset.tab==="analytics"){ renderAnalytics(); if(!pnlLoaded) pnlLoadData(); }
+    if(t.dataset.tab==="analytics"){ renderAnalytics(); pnlInitMap(); if(!pnlLoaded) pnlLoadData(); }
   });
 });
 
@@ -2609,6 +2617,8 @@ async function pnlLoadData(){
   pnlLoaded = true;
   pnlActiveSection = 'all';
   document.getElementById('pnl-load-btn').disabled = false;
+  var expBtn = document.getElementById('pnl-export-btn');
+  if(expBtn) expBtn.style.display = '';
   pnlHide('pnl-loading');
   pnlApplyFilters();
 }
@@ -2781,6 +2791,8 @@ function pnlApplyFilters(){
   pnlHide('pnl-empty');
   pnlShow('pnl-stats'); pnlShow('pnl-tabs-wrap');
   pnlShowSection(pnlActiveSection);
+  // Update map with currently active filtered set
+  pnlUpdateMap(PNL_FILTERED_ALL);
 }
 
 function pnlShowSection(sec){
@@ -2802,6 +2814,60 @@ function pnlRenderSection(sec){
 
 function pnlFmtPrice(v){ if(!v) return '—'; return 'S$'+(v/1e6>=1?(v/1e6).toFixed(2)+'M':(v/1000).toFixed(0)+'K'); }
 function pnlFmtReturn(v){ return (v>=0?'<span style="color:#1a6b3c">+'+v.toFixed(1)+'%</span>':'<span style="color:#b71c1c">'+v.toFixed(1)+'%</span>'); }
+
+function pnlExportCSV(){
+  if(!PNL_PAIRS || !PNL_PAIRS.length){ alert('No data to export. Please load data first.'); return; }
+  var headers = [
+    'Sell Date','Buy Date','Project','Address','Property Type',
+    'District','Planning Region',
+    'Buy Price (S$)','Sell Price (S$)','Profit/Loss (S$)',
+    'Ann. Return (%)','Yrs Held',
+    'Area (sqft)','PSF Sell','PSF Buy',
+    'Buy Type','Sell Type','Profitable'
+  ];
+  var esc = function(v){
+    if(v === null || v === undefined) return '';
+    var s = String(v);
+    if(s.indexOf(',')!==-1 || s.indexOf('"')!==-1 || s.indexOf('\n')!==-1)
+      return '"'+s.replace(/"/g,'""')+'"';
+    return s;
+  };
+  var rows = [headers.join(',')];
+  PNL_PAIRS.forEach(function(r){
+    rows.push([
+      esc(r.sell_date),
+      esc(r.buy_date),
+      esc(r.project_name),
+      esc(r.address),
+      esc(r.property_type),
+      esc(r.postal_district ? 'D'+r.postal_district : ''),
+      esc(r.planning_region),
+      esc(r.buy_price  ? Math.round(r.buy_price)  : ''),
+      esc(r.sell_price ? Math.round(r.sell_price) : ''),
+      esc(Math.round(r.profit)),
+      esc(r.ann_return.toFixed(2)),
+      esc(r.yrs_held.toFixed(2)),
+      esc(r.area_sqft  ? Math.round(r.area_sqft)  : ''),
+      esc(r.psf_sell   ? Math.round(r.psf_sell)   : ''),
+      esc(r.psf_buy    ? Math.round(r.psf_buy)    : ''),
+      esc(r.buy_type),
+      esc(r.sell_type),
+      esc(r.profit > 0 ? 'Yes' : 'No')
+    ].join(','));
+  });
+  var csv = rows.join('\n');
+  var blob = new Blob([csv], {type:'text/csv;charset=utf-8;'});
+  var url  = URL.createObjectURL(blob);
+  var a    = document.createElement('a');
+  var period = document.getElementById('pnl-period-filter');
+  var periodLabel = period ? period.options[period.selectedIndex].text.replace(/\s+/g,'-') : 'All';
+  a.href     = url;
+  a.download = 'ATLAS-PnL-'+periodLabel+'-'+new Date().toISOString().slice(0,10)+'.csv';
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+}
 
 function pnlGoPage(sec, p){
   if(sec==='all'){ pnlPageAll=p; pnlRenderTable('all', PNL_FILTERED_ALL, p); }
@@ -2905,7 +2971,113 @@ function pnlRenderPager(containerId, total, currentPage, sec){
   el.innerHTML = html;
 }
 
-// ─── DIRECTORY ───────────────────────────────────────────────────────
+// ─── PNL MAP ─────────────────────────────────────────────────────────
+var pnlMap = null;
+var pnlMapLayer = null;
+var pnlGeoCache = {};      // address → {lat, lng} or null
+var pnlGeoPending = false;
+
+function pnlInitMap(){
+  if(pnlMap) return;
+  var el = document.getElementById('pnl-map');
+  if(!el) return;
+  pnlMap = L.map('pnl-map', {zoomControl:true, attributionControl:true}).setView([1.3521, 103.8198], 12);
+  L.tileLayer('https://www.onemap.gov.sg/maps/tiles/Default/{z}/{x}/{y}.png', {
+    attribution: '<img src="https://www.onemap.gov.sg/web-assets/images/logo/om_logo.png" style="height:20px;width:20px;"/> OneMap | Map data &copy; contributors, <a href="https://www.openstreetmap.org/">OpenStreetMap</a>',
+    maxZoom: 19, minZoom: 11
+  }).addTo(pnlMap);
+  pnlMapLayer = L.layerGroup().addTo(pnlMap);
+}
+
+async function pnlGeocodeAddress(addr){
+  if(pnlGeoCache.hasOwnProperty(addr)) return pnlGeoCache[addr];
+  try {
+    var url = 'https://www.onemap.gov.sg/api/common/elastic/search?searchVal='
+      + encodeURIComponent(addr) + '&returnGeom=Y&getAddrDetails=Y&pageNum=1';
+    var res = await fetch(url);
+    var data = await res.json();
+    if(data && data.results && data.results.length){
+      var r = data.results[0];
+      var coords = {lat: parseFloat(r.LATITUDE), lng: parseFloat(r.LONGITUDE)};
+      pnlGeoCache[addr] = coords;
+      return coords;
+    }
+  } catch(e){}
+  pnlGeoCache[addr] = null;
+  return null;
+}
+
+async function pnlUpdateMap(rows){
+  if(!pnlMap){ pnlInitMap(); }
+  if(!pnlMap) return;
+
+  // Invalidate size in case container was hidden on init
+  setTimeout(function(){ pnlMap.invalidateSize(); }, 100);
+
+  pnlMapLayer.clearLayers();
+  var statusEl = document.getElementById('pnl-map-status');
+  var legendEl = document.getElementById('pnl-map-legend');
+  if(!rows || !rows.length){ if(legendEl) legendEl.style.display='none'; return; }
+  if(statusEl) statusEl.style.display='';
+
+  // Batch geocode — only unique addresses not yet in cache
+  var toGeocode = [];
+  rows.forEach(function(r){ if(r.address && !pnlGeoCache.hasOwnProperty(r.address)) toGeocode.push(r.address); });
+  var unique = toGeocode.filter(function(a,i,arr){ return arr.indexOf(a)===i; });
+
+  // Geocode in parallel batches of 5
+  for(var i=0; i<unique.length; i+=5){
+    var batch = unique.slice(i, i+5);
+    await Promise.all(batch.map(function(a){ return pnlGeocodeAddress(a); }));
+    if(statusEl) statusEl.textContent = 'Geocoding… '+(Math.min(i+5,unique.length))+'/'+unique.length;
+  }
+  if(statusEl) statusEl.style.display='none';
+
+  // Plot pins
+  var bounds = [];
+  var profitIcon = function(isProfit){
+    return L.divIcon({
+      className: '',
+      html: '<div style="width:12px;height:12px;border-radius:50%;background:'+(isProfit?'#1a6b3c':'#b71c1c')+';border:2px solid #fff;box-shadow:0 1px 4px rgba(0,0,0,.35)"></div>',
+      iconSize: [12,12], iconAnchor: [6,6]
+    });
+  };
+
+  rows.forEach(function(r){
+    if(!r.address) return;
+    var coords = pnlGeoCache[r.address];
+    if(!coords) return;
+    var isProfit = r.profit >= 0;
+    var marker = L.marker([coords.lat, coords.lng], {icon: profitIcon(isProfit)});
+    var profitStr = (isProfit?'+':'−')+'S$'+Math.round(Math.abs(r.profit)).toLocaleString();
+    var retStr   = (r.ann_return>=0?'+':'')+r.ann_return.toFixed(1)+'%';
+    marker.bindPopup(
+      '<div style="font-family:\'DM Sans\',sans-serif;font-size:12px;min-width:180px">'
+      +'<div style="font-weight:700;margin-bottom:3px">'+(r.project_name||r.address)+'</div>'
+      +'<div style="color:#666;font-size:10px;margin-bottom:7px">'+(r.address||'')+'</div>'
+      +'<div style="display:flex;justify-content:space-between;margin-bottom:3px">'
+        +'<span style="color:#888">Sell Date</span><span style="font-weight:600">'+r.sell_date+'</span></div>'
+      +'<div style="display:flex;justify-content:space-between;margin-bottom:3px">'
+        +'<span style="color:#888">Sell Price</span><span style="font-weight:600">S$'+Math.round(r.sell_price).toLocaleString()+'</span></div>'
+      +'<div style="display:flex;justify-content:space-between;margin-bottom:3px">'
+        +'<span style="color:#888">Profit/Loss</span>'
+        +'<span style="font-weight:700;color:'+(isProfit?'#1a6b3c':'#b71c1c')+'">'+profitStr+'</span></div>'
+      +'<div style="display:flex;justify-content:space-between;margin-bottom:3px">'
+        +'<span style="color:#888">Ann. Return</span>'
+        +'<span style="font-weight:700;color:'+(isProfit?'#1a6b3c':'#b71c1c')+'">'+retStr+'</span></div>'
+      +'<div style="display:flex;justify-content:space-between">'
+        +'<span style="color:#888">Held</span><span>'+r.yrs_held.toFixed(1)+' yrs</span></div>'
+      +'</div>'
+    , {maxWidth:220});
+    pnlMapLayer.addLayer(marker);
+    bounds.push([coords.lat, coords.lng]);
+  });
+
+  if(bounds.length){ pnlMap.fitBounds(bounds, {padding:[24,24], maxZoom:15}); }
+  if(legendEl) legendEl.style.display = bounds.length ? '' : 'none';
+}
+
+
 var dirPage = 0, dirTotal = 0, dirPageSize = 24;
 var dirViewMode = 'grid';
 var dirActiveType = '';
