@@ -283,15 +283,7 @@ html,body{background:var(--bg);color:var(--txt);font-family:'DM Sans',sans-serif
   .stat-strip{flex-wrap:wrap}
   .stat-strip-item{flex:1 1 45%;border-bottom:1px solid var(--bdr)}
 }
-/* Analytics tab — full viewport, Option B: full-screen map + sliding drawer */
-#tab-analytics.on{display:block;margin:-20px -24px;height:calc(100vh - 52px);overflow:hidden;position:relative}
-#pnl-map-wrap{position:absolute;inset:0}
-#pnl-map{position:absolute;inset:0;z-index:0}
-#pnl-drawer.open{transform:translateX(0)!important}
-#pnl-drawer-toggle.open{right:440px}
-#pnl-tabs-wrap{min-height:0;overflow:hidden}
-#pnl-tabs-wrap:not([style*="display:none"]){display:flex;flex-direction:column;flex:1}
-#pnl-sec-all,#pnl-sec-profit,#pnl-sec-loss,#pnl-sec-abort{overflow-y:auto;overflow-x:auto;flex:1;padding:8px 12px}
+/* Analytics tab — Option C: map+cards row, full-width table below */
 </style>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css"/>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
@@ -724,144 +716,103 @@ html,body{background:var(--bg);color:var(--txt);font-family:'DM Sans',sans-serif
   </div>
 
   <div class="panel" id="tab-analytics">
-    <!-- ── Option B: Full-screen map + sliding right drawer ── -->
-    <div id="pnl-map-wrap" style="position:relative;width:100%;height:100%">
 
-      <!-- Full-screen map -->
-      <div id="pnl-map" style="position:absolute;inset:0;z-index:0"></div>
-
-      <!-- Floating top toolbar (glass pill) -->
-      <div id="pnl-toolbar" style="position:absolute;top:12px;left:12px;right:12px;z-index:400;display:flex;align-items:center;gap:8px;flex-wrap:wrap;pointer-events:none">
-
-        <!-- Stat pills -->
-        <div style="display:flex;gap:6px;pointer-events:auto">
-          <div style="background:rgba(255,255,255,.93);backdrop-filter:blur(8px);border:1px solid var(--bdr);border-radius:8px;padding:6px 12px;font-family:'DM Sans',sans-serif;box-shadow:0 2px 8px rgba(0,0,0,.12)">
-            <div style="font-size:9px;text-transform:uppercase;letter-spacing:.07em;color:var(--mut)">All-Time Volume</div>
-            <div class="mono" id="an-totval" style="font-size:13px;font-weight:700;color:var(--txt)">—</div>
-          </div>
-          <div style="background:rgba(255,255,255,.93);backdrop-filter:blur(8px);border:1px solid var(--bdr);border-radius:8px;padding:6px 12px;font-family:'DM Sans',sans-serif;box-shadow:0 2px 8px rgba(0,0,0,.12)">
-            <div style="font-size:9px;text-transform:uppercase;letter-spacing:.07em;color:var(--mut)">All-Time Deals</div>
-            <div class="mono" id="an-totcnt" style="font-size:13px;font-weight:700;color:var(--txt)">—</div>
-          </div>
-          <div style="background:rgba(255,255,255,.93);backdrop-filter:blur(8px);border:1px solid var(--bdr);border-radius:8px;padding:6px 12px;font-family:'DM Sans',sans-serif;box-shadow:0 2px 8px rgba(0,0,0,.12)">
-            <div style="font-size:9px;text-transform:uppercase;letter-spacing:.07em;color:var(--mut)">Top Sector</div>
-            <div class="mono" id="an-topsec" style="font-size:13px;font-weight:700;color:var(--txt)">—</div>
+    <!-- ── Row 1: Controls bar ── -->
+    <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;margin-bottom:12px">
+      <div>
+        <div class="card-title" style="margin-bottom:2px"><span class="card-title-dot"></span>Matched Transactions — Profit &amp; Loss Analysis</div>
+        <div class="card-subtitle" id="pnl-subtitle">Match buy vs resale · Project + Address + Area matching</div>
+      </div>
+      <div style="display:flex;gap:6px;align-items:center;flex-wrap:wrap">
+        <div style="position:relative">
+          <button id="pnl-type-btn" onclick="pnlToggleTypeDrop()" style="padding:5px 11px;font-size:11px;border:1px solid var(--bdr);border-radius:6px;background:var(--srf);color:var(--txt);cursor:pointer;white-space:nowrap;min-width:110px;text-align:left">All Types ▾</button>
+          <div id="pnl-type-drop" style="display:none;position:absolute;top:calc(100% + 4px);left:0;z-index:999;background:var(--srf);border:1px solid var(--bdr);border-radius:6px;min-width:160px;box-shadow:0 4px 16px rgba(0,0,0,.12);padding:4px 0">
+            <label style="display:flex;align-items:center;gap:7px;padding:5px 12px;font-size:11px;cursor:pointer;white-space:nowrap;color:var(--txt)"><input type="checkbox" value="Office" onchange="pnlTypeChange()"> Office</label>
+            <label style="display:flex;align-items:center;gap:7px;padding:5px 12px;font-size:11px;cursor:pointer;white-space:nowrap;color:var(--txt)"><input type="checkbox" value="Retail" onchange="pnlTypeChange()"> Retail</label>
+            <label style="display:flex;align-items:center;gap:7px;padding:5px 12px;font-size:11px;cursor:pointer;white-space:nowrap;color:var(--txt)"><input type="checkbox" value="Shop House" onchange="pnlTypeChange()"> Shophouse</label>
+            <label style="display:flex;align-items:center;gap:7px;padding:5px 12px;font-size:11px;cursor:pointer;white-space:nowrap;color:var(--txt)"><input type="checkbox" value="Multiple-User Factory" onchange="pnlTypeChange()"> Multi-User Factory</label>
+            <label style="display:flex;align-items:center;gap:7px;padding:5px 12px;font-size:11px;cursor:pointer;white-space:nowrap;color:var(--txt)"><input type="checkbox" value="Single-User Factory" onchange="pnlTypeChange()"> Single-User Factory</label>
+            <label style="display:flex;align-items:center;gap:7px;padding:5px 12px;font-size:11px;cursor:pointer;white-space:nowrap;color:var(--txt)"><input type="checkbox" value="Business Park" onchange="pnlTypeChange()"> Biz Park</label>
+            <label style="display:flex;align-items:center;gap:7px;padding:5px 12px;font-size:11px;cursor:pointer;white-space:nowrap;color:var(--txt)"><input type="checkbox" value="Warehouse" onchange="pnlTypeChange()"> Warehouse</label>
           </div>
         </div>
+        <select id="pnl-period-filter" class="ov-sel" onchange="pnlLoadData()" style="font-size:11px;padding:5px 8px">
+          <option value="0.5" selected>Last 6 Months</option>
+          <option value="1">Last 1 Year</option>
+          <option value="5">Last 5 Years</option>
+          <option value="10">Last 10 Years</option>
+          <option value="0">All Time</option>
+        </select>
+        <button id="pnl-load-btn" onclick="pnlLoadData()" style="font-size:11px;padding:5px 14px;background:var(--g1);color:#fff;border:none;border-radius:6px;cursor:pointer;font-weight:600">Load Data</button>
+        <button id="pnl-export-btn" onclick="pnlExportCSV()" style="display:none;font-size:11px;padding:5px 12px;background:var(--srf2);color:var(--txt);border:1px solid var(--bdr);border-radius:6px;cursor:pointer">&#8659; Export CSV</button>
+      </div>
+    </div>
 
-        <!-- Spacer -->
-        <div style="flex:1"></div>
+    <!-- ── Row 2: Map (left 60%) + 5 stat cards stacked (right 40%), same height ── -->
+    <div style="display:flex;gap:12px;margin-bottom:12px;height:360px">
 
-        <!-- Filter controls -->
-        <div style="display:flex;gap:6px;align-items:center;pointer-events:auto">
-          <div style="position:relative">
-            <button id="pnl-type-btn" onclick="pnlToggleTypeDrop()" style="padding:6px 12px;font-size:11px;border:1px solid var(--bdr);border-radius:7px;background:rgba(255,255,255,.93);backdrop-filter:blur(8px);color:var(--txt);cursor:pointer;white-space:nowrap;min-width:110px;text-align:left;font-family:'DM Sans',sans-serif;box-shadow:0 2px 8px rgba(0,0,0,.1)">All Types ▾</button>
-            <div id="pnl-type-drop" style="display:none;position:absolute;top:calc(100% + 4px);left:0;z-index:999;background:var(--srf);border:1px solid var(--bdr);border-radius:6px;min-width:160px;box-shadow:0 4px 16px rgba(0,0,0,.15);padding:4px 0">
-              <label style="display:flex;align-items:center;gap:7px;padding:5px 12px;font-size:11px;cursor:pointer;white-space:nowrap;color:var(--txt)"><input type="checkbox" value="Office" onchange="pnlTypeChange()"> Office</label>
-              <label style="display:flex;align-items:center;gap:7px;padding:5px 12px;font-size:11px;cursor:pointer;white-space:nowrap;color:var(--txt)"><input type="checkbox" value="Retail" onchange="pnlTypeChange()"> Retail</label>
-              <label style="display:flex;align-items:center;gap:7px;padding:5px 12px;font-size:11px;cursor:pointer;white-space:nowrap;color:var(--txt)"><input type="checkbox" value="Shop House" onchange="pnlTypeChange()"> Shophouse</label>
-              <label style="display:flex;align-items:center;gap:7px;padding:5px 12px;font-size:11px;cursor:pointer;white-space:nowrap;color:var(--txt)"><input type="checkbox" value="Multiple-User Factory" onchange="pnlTypeChange()"> Multi-User Factory</label>
-              <label style="display:flex;align-items:center;gap:7px;padding:5px 12px;font-size:11px;cursor:pointer;white-space:nowrap;color:var(--txt)"><input type="checkbox" value="Single-User Factory" onchange="pnlTypeChange()"> Single-User Factory</label>
-              <label style="display:flex;align-items:center;gap:7px;padding:5px 12px;font-size:11px;cursor:pointer;white-space:nowrap;color:var(--txt)"><input type="checkbox" value="Business Park" onchange="pnlTypeChange()"> Biz Park</label>
-              <label style="display:flex;align-items:center;gap:7px;padding:5px 12px;font-size:11px;cursor:pointer;white-space:nowrap;color:var(--txt)"><input type="checkbox" value="Warehouse" onchange="pnlTypeChange()"> Warehouse</label>
-            </div>
-          </div>
-          <select id="pnl-period-filter" onchange="pnlLoadData()" style="font-size:11px;padding:6px 10px;border:1px solid var(--bdr);border-radius:7px;background:rgba(255,255,255,.93);backdrop-filter:blur(8px);color:var(--txt);cursor:pointer;font-family:'DM Sans',sans-serif;box-shadow:0 2px 8px rgba(0,0,0,.1)">
-            <option value="0.5" selected>Last 6 Months</option>
-            <option value="1">Last 1 Year</option>
-            <option value="5">Last 5 Years</option>
-            <option value="10">Last 10 Years</option>
-            <option value="0">All Time</option>
-          </select>
-          <button id="pnl-load-btn" onclick="pnlLoadData()" style="font-size:11px;padding:6px 14px;background:var(--g1);color:#fff;border:none;border-radius:7px;cursor:pointer;font-family:'DM Sans',sans-serif;font-weight:600;box-shadow:0 2px 8px rgba(33,81,59,.3)">Load Data</button>
-          <button id="pnl-export-btn" onclick="pnlExportCSV()" style="display:none;font-size:11px;padding:6px 12px;background:rgba(255,255,255,.93);backdrop-filter:blur(8px);color:var(--txt);border:1px solid var(--bdr);border-radius:7px;cursor:pointer;font-family:'DM Sans',sans-serif;box-shadow:0 2px 8px rgba(0,0,0,.1)">⬇ Export CSV</button>
+      <!-- Map -->
+      <div style="flex:1 1 60%;min-width:0;border-radius:10px;overflow:hidden;border:1px solid var(--bdr);position:relative">
+        <div id="pnl-map" style="width:100%;height:100%"></div>
+        <div id="pnl-map-legend" style="display:none;position:absolute;bottom:14px;left:14px;z-index:500;background:rgba(255,255,255,.93);border:1px solid var(--bdr);border-radius:7px;padding:7px 11px;font-size:11px;font-family:\'DM Sans\',sans-serif;box-shadow:0 2px 8px rgba(0,0,0,.12)">
+          <div style="display:flex;align-items:center;gap:6px;margin-bottom:3px"><span style="display:inline-block;width:10px;height:10px;border-radius:50%;background:#1a6b3c;border:2px solid #fff;box-shadow:0 1px 3px rgba(0,0,0,.3)"></span>Profitable</div>
+          <div style="display:flex;align-items:center;gap:6px"><span style="display:inline-block;width:10px;height:10px;border-radius:50%;background:#b71c1c;border:2px solid #fff;box-shadow:0 1px 3px rgba(0,0,0,.3)"></span>Unprofitable</div>
         </div>
+        <div id="pnl-map-status" style="position:absolute;bottom:14px;left:50%;transform:translateX(-50%);z-index:500;background:rgba(255,255,255,.93);border:1px solid var(--bdr);border-radius:20px;padding:4px 14px;font-size:11px;font-family:\'DM Sans\',sans-serif;color:var(--mut);display:none;white-space:nowrap">Geocoding pins&#8230;</div>
       </div>
 
-      <!-- Loading overlay -->
-      <div id="pnl-loading" style="display:none;position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);z-index:500;background:rgba(255,255,255,.95);border:1px solid var(--bdr);border-radius:10px;padding:20px 28px;text-align:center;font-family:'DM Sans',sans-serif;box-shadow:0 4px 24px rgba(0,0,0,.15)">
-        <div style="margin-bottom:6px;font-size:13px;color:var(--txt)">⏳ Fetching &amp; matching transactions…</div>
-        <div id="pnl-progress" style="font-size:11px;color:var(--mut)"></div>
-      </div>
-
-      <!-- Map status geocoding pill -->
-      <div id="pnl-map-status" style="position:absolute;bottom:60px;left:50%;transform:translateX(-50%);z-index:500;background:rgba(255,255,255,.93);backdrop-filter:blur(8px);border:1px solid var(--bdr);border-radius:20px;padding:5px 16px;font-size:11px;font-family:'DM Sans',sans-serif;color:var(--mut);display:none;box-shadow:0 2px 8px rgba(0,0,0,.12)">Geocoding pins…</div>
-
-      <!-- Map legend -->
-      <div id="pnl-map-legend" style="display:none;position:absolute;bottom:16px;left:16px;z-index:400;background:rgba(255,255,255,.93);backdrop-filter:blur(8px);border:1px solid var(--bdr);border-radius:8px;padding:8px 12px;font-size:11px;font-family:'DM Sans',sans-serif;box-shadow:0 2px 8px rgba(0,0,0,.12)">
-        <div style="display:flex;align-items:center;gap:6px;margin-bottom:4px"><span style="display:inline-block;width:10px;height:10px;border-radius:50%;background:#1a6b3c;border:2px solid #fff;box-shadow:0 1px 3px rgba(0,0,0,.3)"></span>Profitable</div>
-        <div style="display:flex;align-items:center;gap:6px"><span style="display:inline-block;width:10px;height:10px;border-radius:50%;background:#b71c1c;border:2px solid #fff;box-shadow:0 1px 3px rgba(0,0,0,.3)"></span>Unprofitable</div>
-      </div>
-
-      <!-- Drawer toggle button (right edge of map) -->
-      <button id="pnl-drawer-toggle" onclick="pnlToggleDrawer()" style="position:absolute;right:0;top:50%;transform:translateY(-50%);z-index:450;background:var(--g1);color:#fff;border:none;border-radius:8px 0 0 8px;padding:14px 8px;cursor:pointer;font-family:'DM Sans',sans-serif;font-size:11px;font-weight:600;writing-mode:vertical-lr;text-orientation:mixed;letter-spacing:.05em;box-shadow:-2px 0 12px rgba(0,0,0,.15);transition:right .3s ease">
-        ☰ Transactions
-      </button>
-
-      <!-- Right drawer -->
-      <div id="pnl-drawer" style="position:absolute;right:0;top:0;bottom:0;width:440px;background:var(--srf);border-left:1px solid var(--bdr);z-index:401;display:flex;flex-direction:column;transform:translateX(100%);transition:transform .3s cubic-bezier(.4,0,.2,1);box-shadow:-4px 0 24px rgba(0,0,0,.12)">
-
-        <!-- Drawer header -->
-        <div style="padding:12px 16px;border-bottom:1px solid var(--bdr);display:flex;align-items:center;justify-content:space-between;flex-shrink:0;background:var(--srf2)">
-          <div>
-            <div class="card-title" style="margin-bottom:1px"><span class="card-title-dot"></span>P&amp;L Transactions</div>
-            <div class="card-subtitle" id="pnl-subtitle">Project + Address + Area matching</div>
-          </div>
-          <button onclick="pnlToggleDrawer()" style="background:none;border:none;cursor:pointer;color:var(--mut);font-size:18px;padding:4px;line-height:1" title="Close">✕</button>
+      <!-- 5 Stat cards stacked right -->
+      <div style="flex:0 0 200px;display:flex;flex-direction:column;gap:8px">
+        <div style="flex:1;background:var(--srf);border:1px solid var(--bdr);border-radius:8px;padding:10px 14px;display:flex;flex-direction:column;justify-content:center;box-shadow:var(--shadow-sm)">
+          <div style="font-size:10px;text-transform:uppercase;letter-spacing:.07em;color:var(--mut);margin-bottom:3px">Matched Pairs</div>
+          <div class="mono" id="pnl-stat-pairs" style="font-size:22px;font-weight:700;color:var(--txt)">&#8212;</div>
         </div>
-
-        <!-- Summary stat strip inside drawer -->
-        <div id="pnl-stats" style="display:none;flex-shrink:0;border-bottom:1px solid var(--bdr)">
-          <div style="display:flex;gap:0">
-            <div style="flex:1;padding:8px 10px;border-right:1px solid var(--bdr);text-align:center;background:var(--srf2)">
-              <div style="font-size:9px;text-transform:uppercase;letter-spacing:.06em;color:var(--mut)">Pairs</div>
-              <div class="mono" id="pnl-stat-pairs" style="font-size:16px;font-weight:700;color:var(--txt)">—</div>
-            </div>
-            <div style="flex:1;padding:8px 10px;border-right:1px solid var(--bdr);text-align:center;background:#e8f5e9">
-              <div style="font-size:9px;text-transform:uppercase;letter-spacing:.06em;color:#2e7d32">Profitable</div>
-              <div class="mono" id="pnl-stat-profit" style="font-size:16px;font-weight:700;color:#1a6b3c">—</div>
-            </div>
-            <div style="flex:1;padding:8px 10px;border-right:1px solid var(--bdr);text-align:center;background:#fce4ec">
-              <div style="font-size:9px;text-transform:uppercase;letter-spacing:.06em;color:#c62828">Loss</div>
-              <div class="mono" id="pnl-stat-loss" style="font-size:16px;font-weight:700;color:#b71c1c">—</div>
-            </div>
-            <div style="flex:1;padding:8px 10px;border-right:1px solid var(--bdr);text-align:center;background:#fff8e1">
-              <div style="font-size:9px;text-transform:uppercase;letter-spacing:.06em;color:#f57f17">Aborted</div>
-              <div class="mono" id="pnl-stat-abort" style="font-size:16px;font-weight:700;color:#e65100">—</div>
-            </div>
-            <div style="flex:1;padding:8px 10px;text-align:center;background:var(--srf2)">
-              <div style="font-size:9px;text-transform:uppercase;letter-spacing:.06em;color:var(--mut)">Med. Return</div>
-              <div class="mono" id="pnl-stat-median" style="font-size:13px;font-weight:700;color:var(--txt)">—</div>
-            </div>
-          </div>
-          <div style="display:flex;gap:0;border-top:1px solid var(--bdr)">
-            <div style="flex:1;padding:6px 10px;border-right:1px solid var(--bdr);text-align:center;background:var(--srf2)">
-              <div style="font-size:9px;text-transform:uppercase;letter-spacing:.06em;color:var(--mut)">Avg Hold</div>
-              <div class="mono" id="pnl-stat-hold" style="font-size:13px;font-weight:700;color:var(--txt)">—</div>
-            </div>
-          </div>
+        <div style="flex:1;background:#e8f5e9;border:1px solid #a5d6a7;border-radius:8px;padding:10px 14px;display:flex;flex-direction:column;justify-content:center;box-shadow:var(--shadow-sm)">
+          <div style="font-size:10px;text-transform:uppercase;letter-spacing:.07em;color:#2e7d32;margin-bottom:3px">Profitable</div>
+          <div class="mono" id="pnl-stat-profit" style="font-size:22px;font-weight:700;color:#1a6b3c">&#8212;</div>
         </div>
+        <div style="flex:1;background:#fce4ec;border:1px solid #ef9a9a;border-radius:8px;padding:10px 14px;display:flex;flex-direction:column;justify-content:center;box-shadow:var(--shadow-sm)">
+          <div style="font-size:10px;text-transform:uppercase;letter-spacing:.07em;color:#c62828;margin-bottom:3px">Unprofitable</div>
+          <div class="mono" id="pnl-stat-loss" style="font-size:22px;font-weight:700;color:#b71c1c">&#8212;</div>
+        </div>
+        <div style="flex:1;background:#fff8e1;border:1px solid #ffe082;border-radius:8px;padding:10px 14px;display:flex;flex-direction:column;justify-content:center;box-shadow:var(--shadow-sm)">
+          <div style="font-size:10px;text-transform:uppercase;letter-spacing:.07em;color:#f57f17;margin-bottom:3px">Aborted &#8594; Re-sold</div>
+          <div class="mono" id="pnl-stat-abort" style="font-size:22px;font-weight:700;color:#e65100">&#8212;</div>
+        </div>
+        <div style="flex:1;background:var(--srf);border:1px solid var(--bdr);border-radius:8px;padding:10px 14px;display:flex;flex-direction:column;justify-content:center;box-shadow:var(--shadow-sm)">
+          <div style="font-size:10px;text-transform:uppercase;letter-spacing:.07em;color:var(--mut);margin-bottom:3px">Median Ann. Return</div>
+          <div class="mono" id="pnl-stat-median" style="font-size:20px;font-weight:700;color:var(--txt)">&#8212;</div>
+          <div style="font-size:10px;color:var(--mut);margin-top:3px">Avg Hold: <span id="pnl-stat-hold">&#8212;</span></div>
+        </div>
+      </div>
+    </div>
 
-        <!-- Empty state -->
-        <div id="pnl-empty" style="display:none;text-align:center;padding:40px 20px;color:var(--mut);font-size:13px;font-family:'DM Sans',sans-serif">No matched pairs found.</div>
+    <!-- Loading -->
+    <div id="pnl-loading" style="display:none;text-align:center;padding:24px;color:var(--mut);font-size:13px;background:var(--srf);border:1px solid var(--bdr);border-radius:8px;margin-bottom:12px">
+      <div style="margin-bottom:6px">&#9203; Fetching &amp; matching transactions&#8230;</div>
+      <div id="pnl-progress" style="font-size:11px;color:var(--mut2)"></div>
+    </div>
+    <div id="pnl-empty" style="display:none;text-align:center;padding:24px;color:var(--mut);font-size:13px">No matched pairs found.</div>
 
-        <!-- Sub-tabs -->
-        <div id="pnl-tabs-wrap" style="display:none">
-          <div style="display:flex;gap:0;border-bottom:2px solid var(--srf3);flex-shrink:0;padding:0 12px">
-            <button class="pnl-stab on" data-section="all" onclick="pnlShowSection('all')" style="font-size:11px;padding:8px 10px">📋 All <span id="pnl-tab-cnt-all"></span></button>
-            <button class="pnl-stab" data-section="profit" onclick="pnlShowSection('profit')" style="font-size:11px;padding:8px 10px">✅ Profit <span id="pnl-tab-cnt-profit"></span></button>
-            <button class="pnl-stab" data-section="loss" onclick="pnlShowSection('loss')" style="font-size:11px;padding:8px 10px">🔴 Loss <span id="pnl-tab-cnt-loss"></span></button>
-            <button class="pnl-stab" data-section="abort" onclick="pnlShowSection('abort')" style="font-size:11px;padding:8px 10px">⚡ Aborted <span id="pnl-tab-cnt-abort"></span></button>
-          </div>
+    <!-- ── Row 3: Full-width table ── -->
+    <div class="card" style="margin-bottom:0;padding:0;overflow:hidden">
+      <div id="pnl-tabs-wrap" style="display:none">
+        <div style="display:flex;gap:0;border-bottom:2px solid var(--srf3);padding:0 16px">
+          <button class="pnl-stab on" data-section="all" onclick="pnlShowSection('all')">&#128203; All <span id="pnl-tab-cnt-all"></span></button>
+          <button class="pnl-stab" data-section="profit" onclick="pnlShowSection('profit')">&#9989; Profitable <span id="pnl-tab-cnt-profit"></span></button>
+          <button class="pnl-stab" data-section="loss" onclick="pnlShowSection('loss')">&#128308; Unprofitable <span id="pnl-tab-cnt-loss"></span></button>
+          <button class="pnl-stab" data-section="abort" onclick="pnlShowSection('abort')">&#9889; Aborted &amp; Re-sold <span id="pnl-tab-cnt-abort"></span></button>
+        </div>
+        <div style="padding:12px 16px">
 
-        <!-- All transactions table -->
+        <!-- All table -->
         <div id="pnl-sec-all">
           <div style="overflow-x:auto;border-radius:6px;border:1px solid var(--bdr)">
             <table class="ptable" id="pnl-tbl-all">
               <thead>
               <tr>
                 <th>Date</th><th>Project / Address</th><th>Type</th>
-                <th>Buy → Sell (S$)</th><th>Profit / Loss</th>
+                <th>Buy &#8594; Sell (S$)</th><th>Profit / Loss</th>
                 <th style="cursor:pointer;user-select:none" onclick="pnlSortBy('all','ann_return')">Ann. Return <span id="pnl-sort-all-ann_return"></span></th>
                 <th style="cursor:pointer;user-select:none" onclick="pnlSortBy('all','yrs_held')">Yrs Held <span id="pnl-sort-all-yrs_held"></span></th>
                 <th style="cursor:pointer;user-select:none" onclick="pnlSortBy('all','area_sqft')">Area (sqft) <span id="pnl-sort-all-area_sqft"></span></th>
@@ -869,17 +820,17 @@ html,body{background:var(--bg);color:var(--txt);font-family:'DM Sans',sans-serif
               </tr>
               <tr style="background:var(--srf2)">
                 <td style="padding:4px 6px"></td>
-                <td style="padding:4px 6px"><input id="pnl-f-project-all" placeholder="Project / address…" oninput="pnlApplyFilters()" style="width:100%;padding:3px 6px;font-size:10px;border:1px solid var(--bdr);border-radius:4px;background:var(--srf);color:var(--txt)"></td>
+                <td style="padding:4px 6px"><input id="pnl-f-project-all" placeholder="Project / address..." oninput="pnlApplyFilters()" style="width:100%;padding:3px 6px;font-size:10px;border:1px solid var(--bdr);border-radius:4px;background:var(--srf);color:var(--txt)"></td>
                 <td style="padding:4px 6px;position:relative">
-                  <button id="pnl-f-type-btn-all" onclick="pnlToggleColDrop('type-all')" style="width:100%;padding:3px 6px;font-size:10px;border:1px solid var(--bdr);border-radius:4px;background:var(--srf);color:var(--txt);cursor:pointer;text-align:left;white-space:nowrap">All ▾</button>
+                  <button id="pnl-f-type-btn-all" onclick="pnlToggleColDrop('type-all')" style="width:100%;padding:3px 6px;font-size:10px;border:1px solid var(--bdr);border-radius:4px;background:var(--srf);color:var(--txt);cursor:pointer;text-align:left;white-space:nowrap">All &#9660;</button>
                   <div id="pnl-f-type-drop-all" style="display:none;position:absolute;top:100%;left:0;z-index:999;background:var(--srf);border:1px solid var(--bdr);border-radius:4px;min-width:150px;box-shadow:0 4px 12px rgba(0,0,0,.12);padding:4px 0">
-                    <label style="display:flex;align-items:center;gap:6px;padding:4px 10px;font-size:11px;cursor:pointer;white-space:nowrap"><input type="checkbox" value="Office" onchange="pnlColDropChange('type-all')"> Office</label>
-                    <label style="display:flex;align-items:center;gap:6px;padding:4px 10px;font-size:11px;cursor:pointer;white-space:nowrap"><input type="checkbox" value="Retail" onchange="pnlColDropChange('type-all')"> Retail</label>
-                    <label style="display:flex;align-items:center;gap:6px;padding:4px 10px;font-size:11px;cursor:pointer;white-space:nowrap"><input type="checkbox" value="Shop House" onchange="pnlColDropChange('type-all')"> Shophouse</label>
-                    <label style="display:flex;align-items:center;gap:6px;padding:4px 10px;font-size:11px;cursor:pointer;white-space:nowrap"><input type="checkbox" value="Multiple-User Factory" onchange="pnlColDropChange('type-all')"> Multi-User</label>
-                    <label style="display:flex;align-items:center;gap:6px;padding:4px 10px;font-size:11px;cursor:pointer;white-space:nowrap"><input type="checkbox" value="Single-User Factory" onchange="pnlColDropChange('type-all')"> Single-User</label>
-                    <label style="display:flex;align-items:center;gap:6px;padding:4px 10px;font-size:11px;cursor:pointer;white-space:nowrap"><input type="checkbox" value="Business Park" onchange="pnlColDropChange('type-all')"> Biz Park</label>
-                    <label style="display:flex;align-items:center;gap:6px;padding:4px 10px;font-size:11px;cursor:pointer;white-space:nowrap"><input type="checkbox" value="Warehouse" onchange="pnlColDropChange('type-all')"> Warehouse</label>
+                    <label style="display:flex;align-items:center;gap:6px;padding:4px 10px;font-size:11px;cursor:pointer"><input type="checkbox" value="Office" onchange="pnlColDropChange('type-all')"> Office</label>
+                    <label style="display:flex;align-items:center;gap:6px;padding:4px 10px;font-size:11px;cursor:pointer"><input type="checkbox" value="Retail" onchange="pnlColDropChange('type-all')"> Retail</label>
+                    <label style="display:flex;align-items:center;gap:6px;padding:4px 10px;font-size:11px;cursor:pointer"><input type="checkbox" value="Shop House" onchange="pnlColDropChange('type-all')"> Shophouse</label>
+                    <label style="display:flex;align-items:center;gap:6px;padding:4px 10px;font-size:11px;cursor:pointer"><input type="checkbox" value="Multiple-User Factory" onchange="pnlColDropChange('type-all')"> Multi-User</label>
+                    <label style="display:flex;align-items:center;gap:6px;padding:4px 10px;font-size:11px;cursor:pointer"><input type="checkbox" value="Single-User Factory" onchange="pnlColDropChange('type-all')"> Single-User</label>
+                    <label style="display:flex;align-items:center;gap:6px;padding:4px 10px;font-size:11px;cursor:pointer"><input type="checkbox" value="Business Park" onchange="pnlColDropChange('type-all')"> Biz Park</label>
+                    <label style="display:flex;align-items:center;gap:6px;padding:4px 10px;font-size:11px;cursor:pointer"><input type="checkbox" value="Warehouse" onchange="pnlColDropChange('type-all')"> Warehouse</label>
                   </div>
                 </td>
                 <td style="padding:4px 6px;white-space:nowrap">
@@ -887,16 +838,16 @@ html,body{background:var(--bg);color:var(--txt);font-family:'DM Sans',sans-serif
                   <input id="pnl-f-price-max-all" placeholder="Max S$" oninput="pnlApplyFilters()" style="width:47%;padding:3px 4px;font-size:10px;border:1px solid var(--bdr);border-radius:4px;background:var(--srf);color:var(--txt);font-family:'DM Mono',monospace">
                 </td>
                 <td style="padding:4px 6px"></td>
-                <td style="padding:4px 6px;text-align:center;font-size:10px;color:var(--mut)">click ↑↓</td>
-                <td style="padding:4px 6px;text-align:center;font-size:10px;color:var(--mut)">click ↑↓</td>
-                <td style="padding:4px 6px;text-align:center;font-size:10px;color:var(--mut)">click ↑↓</td>
+                <td style="padding:4px 6px;text-align:center;font-size:10px;color:var(--mut)">click &#8597;</td>
+                <td style="padding:4px 6px;text-align:center;font-size:10px;color:var(--mut)">click &#8597;</td>
+                <td style="padding:4px 6px;text-align:center;font-size:10px;color:var(--mut)">click &#8597;</td>
                 <td style="padding:4px 6px"></td>
                 <td style="padding:4px 6px;position:relative">
-                  <button id="pnl-f-entry-btn-all" onclick="pnlToggleColDrop('entry-all')" style="width:100%;padding:3px 6px;font-size:10px;border:1px solid var(--bdr);border-radius:4px;background:var(--srf);color:var(--txt);cursor:pointer;text-align:left;white-space:nowrap">All ▾</button>
+                  <button id="pnl-f-entry-btn-all" onclick="pnlToggleColDrop('entry-all')" style="width:100%;padding:3px 6px;font-size:10px;border:1px solid var(--bdr);border-radius:4px;background:var(--srf);color:var(--txt);cursor:pointer;text-align:left;white-space:nowrap">All &#9660;</button>
                   <div id="pnl-f-entry-drop-all" style="display:none;position:absolute;top:100%;right:0;z-index:999;background:var(--srf);border:1px solid var(--bdr);border-radius:4px;min-width:130px;box-shadow:0 4px 12px rgba(0,0,0,.12);padding:4px 0">
-                    <label style="display:flex;align-items:center;gap:6px;padding:4px 10px;font-size:11px;cursor:pointer;white-space:nowrap"><input type="checkbox" value="New Sale" onchange="pnlColDropChange('entry-all')"> New Sale</label>
-                    <label style="display:flex;align-items:center;gap:6px;padding:4px 10px;font-size:11px;cursor:pointer;white-space:nowrap"><input type="checkbox" value="Resale" onchange="pnlColDropChange('entry-all')"> Resale</label>
-                    <label style="display:flex;align-items:center;gap:6px;padding:4px 10px;font-size:11px;cursor:pointer;white-space:nowrap"><input type="checkbox" value="Sub Sale" onchange="pnlColDropChange('entry-all')"> Sub Sale</label>
+                    <label style="display:flex;align-items:center;gap:6px;padding:4px 10px;font-size:11px;cursor:pointer"><input type="checkbox" value="New Sale" onchange="pnlColDropChange('entry-all')"> New Sale</label>
+                    <label style="display:flex;align-items:center;gap:6px;padding:4px 10px;font-size:11px;cursor:pointer"><input type="checkbox" value="Resale" onchange="pnlColDropChange('entry-all')"> Resale</label>
+                    <label style="display:flex;align-items:center;gap:6px;padding:4px 10px;font-size:11px;cursor:pointer"><input type="checkbox" value="Sub Sale" onchange="pnlColDropChange('entry-all')"> Sub Sale</label>
                   </div>
                 </td>
               </tr>
@@ -908,13 +859,11 @@ html,body{background:var(--bg);color:var(--txt);font-family:'DM Sans',sans-serif
         </div>
 
         <!-- Profitable table -->
-        <div id="pnl-sec-profit">
+        <div id="pnl-sec-profit" style="display:none">
           <div style="overflow-x:auto;border-radius:6px;border:1px solid var(--bdr)">
             <table class="ptable" id="pnl-tbl-profit">
-              <thead>
-              <tr>
-                <th>Date</th><th>Project / Address</th><th>Type</th>
-                <th>Buy → Sell (S$)</th>
+              <thead><tr>
+                <th>Date</th><th>Project / Address</th><th>Type</th><th>Buy &#8594; Sell (S$)</th>
                 <th style="cursor:pointer;user-select:none" onclick="pnlSortBy('profit','profit')">Profit / Loss <span id="pnl-sort-profit-profit"></span></th>
                 <th style="cursor:pointer;user-select:none" onclick="pnlSortBy('profit','ann_return')">Ann. Return <span id="pnl-sort-profit-ann_return"></span></th>
                 <th style="cursor:pointer;user-select:none" onclick="pnlSortBy('profit','yrs_held')">Yrs Held <span id="pnl-sort-profit-yrs_held"></span></th>
@@ -924,38 +873,37 @@ html,body{background:var(--bg);color:var(--txt);font-family:'DM Sans',sans-serif
               </tr>
               <tr style="background:var(--srf2)">
                 <td style="padding:4px 6px"></td>
-                <td style="padding:4px 6px"><input id="pnl-f-project" placeholder="Project / address…" oninput="pnlApplyFilters()" style="width:100%;padding:3px 6px;font-size:10px;border:1px solid var(--bdr);border-radius:4px;background:var(--srf);color:var(--txt)"></td>
+                <td style="padding:4px 6px"><input id="pnl-f-project" placeholder="Project / address..." oninput="pnlApplyFilters()" style="width:100%;padding:3px 6px;font-size:10px;border:1px solid var(--bdr);border-radius:4px;background:var(--srf);color:var(--txt)"></td>
                 <td style="padding:4px 6px;position:relative">
-                  <button id="pnl-f-type-btn" onclick="pnlToggleColDrop('type')" style="width:100%;padding:3px 6px;font-size:10px;border:1px solid var(--bdr);border-radius:4px;background:var(--srf);color:var(--txt);cursor:pointer;text-align:left;white-space:nowrap">All ▾</button>
+                  <button id="pnl-f-type-btn" onclick="pnlToggleColDrop('type')" style="width:100%;padding:3px 6px;font-size:10px;border:1px solid var(--bdr);border-radius:4px;background:var(--srf);color:var(--txt);cursor:pointer;text-align:left">All &#9660;</button>
                   <div id="pnl-f-type-drop" style="display:none;position:absolute;top:100%;left:0;z-index:999;background:var(--srf);border:1px solid var(--bdr);border-radius:4px;min-width:150px;box-shadow:0 4px 12px rgba(0,0,0,.12);padding:4px 0">
-                    <label style="display:flex;align-items:center;gap:6px;padding:4px 10px;font-size:11px;cursor:pointer;white-space:nowrap"><input type="checkbox" value="Office" onchange="pnlColDropChange('type')"> Office</label>
-                    <label style="display:flex;align-items:center;gap:6px;padding:4px 10px;font-size:11px;cursor:pointer;white-space:nowrap"><input type="checkbox" value="Retail" onchange="pnlColDropChange('type')"> Retail</label>
-                    <label style="display:flex;align-items:center;gap:6px;padding:4px 10px;font-size:11px;cursor:pointer;white-space:nowrap"><input type="checkbox" value="Shop House" onchange="pnlColDropChange('type')"> Shophouse</label>
-                    <label style="display:flex;align-items:center;gap:6px;padding:4px 10px;font-size:11px;cursor:pointer;white-space:nowrap"><input type="checkbox" value="Multiple-User Factory" onchange="pnlColDropChange('type')"> Multi-User</label>
-                    <label style="display:flex;align-items:center;gap:6px;padding:4px 10px;font-size:11px;cursor:pointer;white-space:nowrap"><input type="checkbox" value="Single-User Factory" onchange="pnlColDropChange('type')"> Single-User</label>
-                    <label style="display:flex;align-items:center;gap:6px;padding:4px 10px;font-size:11px;cursor:pointer;white-space:nowrap"><input type="checkbox" value="Business Park" onchange="pnlColDropChange('type')"> Biz Park</label>
-                    <label style="display:flex;align-items:center;gap:6px;padding:4px 10px;font-size:11px;cursor:pointer;white-space:nowrap"><input type="checkbox" value="Warehouse" onchange="pnlColDropChange('type')"> Warehouse</label>
+                    <label style="display:flex;align-items:center;gap:6px;padding:4px 10px;font-size:11px;cursor:pointer"><input type="checkbox" value="Office" onchange="pnlColDropChange('type')"> Office</label>
+                    <label style="display:flex;align-items:center;gap:6px;padding:4px 10px;font-size:11px;cursor:pointer"><input type="checkbox" value="Retail" onchange="pnlColDropChange('type')"> Retail</label>
+                    <label style="display:flex;align-items:center;gap:6px;padding:4px 10px;font-size:11px;cursor:pointer"><input type="checkbox" value="Shop House" onchange="pnlColDropChange('type')"> Shophouse</label>
+                    <label style="display:flex;align-items:center;gap:6px;padding:4px 10px;font-size:11px;cursor:pointer"><input type="checkbox" value="Multiple-User Factory" onchange="pnlColDropChange('type')"> Multi-User</label>
+                    <label style="display:flex;align-items:center;gap:6px;padding:4px 10px;font-size:11px;cursor:pointer"><input type="checkbox" value="Single-User Factory" onchange="pnlColDropChange('type')"> Single-User</label>
+                    <label style="display:flex;align-items:center;gap:6px;padding:4px 10px;font-size:11px;cursor:pointer"><input type="checkbox" value="Business Park" onchange="pnlColDropChange('type')"> Biz Park</label>
+                    <label style="display:flex;align-items:center;gap:6px;padding:4px 10px;font-size:11px;cursor:pointer"><input type="checkbox" value="Warehouse" onchange="pnlColDropChange('type')"> Warehouse</label>
                   </div>
                 </td>
                 <td style="padding:4px 6px;white-space:nowrap">
                   <input id="pnl-f-price-min" placeholder="Min S$" oninput="pnlApplyFilters()" style="width:47%;padding:3px 4px;font-size:10px;border:1px solid var(--bdr);border-radius:4px;background:var(--srf);color:var(--txt);font-family:'DM Mono',monospace">
                   <input id="pnl-f-price-max" placeholder="Max S$" oninput="pnlApplyFilters()" style="width:47%;padding:3px 4px;font-size:10px;border:1px solid var(--bdr);border-radius:4px;background:var(--srf);color:var(--txt);font-family:'DM Mono',monospace">
                 </td>
-                <td style="padding:4px 6px;text-align:center;font-size:10px;color:var(--mut)">click ↑↓</td>
-                <td style="padding:4px 6px;text-align:center;font-size:10px;color:var(--mut)">click ↑↓</td>
-                <td style="padding:4px 6px;text-align:center;font-size:10px;color:var(--mut)">click ↑↓</td>
-                <td style="padding:4px 6px;text-align:center;font-size:10px;color:var(--mut)">click ↑↓</td>
-                <td style="padding:4px 6px;text-align:center;font-size:10px;color:var(--mut)">click ↑↓</td>
+                <td style="padding:4px 6px;text-align:center;font-size:10px;color:var(--mut)">click &#8597;</td>
+                <td style="padding:4px 6px;text-align:center;font-size:10px;color:var(--mut)">click &#8597;</td>
+                <td style="padding:4px 6px;text-align:center;font-size:10px;color:var(--mut)">click &#8597;</td>
+                <td style="padding:4px 6px;text-align:center;font-size:10px;color:var(--mut)">click &#8597;</td>
+                <td style="padding:4px 6px;text-align:center;font-size:10px;color:var(--mut)">click &#8597;</td>
                 <td style="padding:4px 6px;position:relative">
-                  <button id="pnl-f-entry-btn" onclick="pnlToggleColDrop('entry')" style="width:100%;padding:3px 6px;font-size:10px;border:1px solid var(--bdr);border-radius:4px;background:var(--srf);color:var(--txt);cursor:pointer;text-align:left;white-space:nowrap">All ▾</button>
+                  <button id="pnl-f-entry-btn" onclick="pnlToggleColDrop('entry')" style="width:100%;padding:3px 6px;font-size:10px;border:1px solid var(--bdr);border-radius:4px;background:var(--srf);color:var(--txt);cursor:pointer;text-align:left">All &#9660;</button>
                   <div id="pnl-f-entry-drop" style="display:none;position:absolute;top:100%;right:0;z-index:999;background:var(--srf);border:1px solid var(--bdr);border-radius:4px;min-width:130px;box-shadow:0 4px 12px rgba(0,0,0,.12);padding:4px 0">
-                    <label style="display:flex;align-items:center;gap:6px;padding:4px 10px;font-size:11px;cursor:pointer;white-space:nowrap"><input type="checkbox" value="New Sale" onchange="pnlColDropChange('entry')"> New Sale</label>
-                    <label style="display:flex;align-items:center;gap:6px;padding:4px 10px;font-size:11px;cursor:pointer;white-space:nowrap"><input type="checkbox" value="Resale" onchange="pnlColDropChange('entry')"> Resale</label>
-                    <label style="display:flex;align-items:center;gap:6px;padding:4px 10px;font-size:11px;cursor:pointer;white-space:nowrap"><input type="checkbox" value="Sub Sale" onchange="pnlColDropChange('entry')"> Sub Sale</label>
+                    <label style="display:flex;align-items:center;gap:6px;padding:4px 10px;font-size:11px;cursor:pointer"><input type="checkbox" value="New Sale" onchange="pnlColDropChange('entry')"> New Sale</label>
+                    <label style="display:flex;align-items:center;gap:6px;padding:4px 10px;font-size:11px;cursor:pointer"><input type="checkbox" value="Resale" onchange="pnlColDropChange('entry')"> Resale</label>
+                    <label style="display:flex;align-items:center;gap:6px;padding:4px 10px;font-size:11px;cursor:pointer"><input type="checkbox" value="Sub Sale" onchange="pnlColDropChange('entry')"> Sub Sale</label>
                   </div>
                 </td>
-              </tr>
-              </thead>
+              </tr></thead>
               <tbody id="pnl-tbody-profit"></tbody>
             </table>
           </div>
@@ -966,10 +914,8 @@ html,body{background:var(--bg);color:var(--txt);font-family:'DM Sans',sans-serif
         <div id="pnl-sec-loss" style="display:none">
           <div style="overflow-x:auto;border-radius:6px;border:1px solid var(--bdr)">
             <table class="ptable" id="pnl-tbl-loss">
-              <thead>
-              <tr>
-                <th>Date</th><th>Project / Address</th><th>Type</th>
-                <th>Buy → Sell (S$)</th>
+              <thead><tr>
+                <th>Date</th><th>Project / Address</th><th>Type</th><th>Buy &#8594; Sell (S$)</th>
                 <th style="cursor:pointer;user-select:none" onclick="pnlSortBy('loss','profit')">Profit / Loss <span id="pnl-sort-loss-profit"></span></th>
                 <th style="cursor:pointer;user-select:none" onclick="pnlSortBy('loss','ann_return')">Ann. Return <span id="pnl-sort-loss-ann_return"></span></th>
                 <th style="cursor:pointer;user-select:none" onclick="pnlSortBy('loss','yrs_held')">Yrs Held <span id="pnl-sort-loss-yrs_held"></span></th>
@@ -979,38 +925,37 @@ html,body{background:var(--bg);color:var(--txt);font-family:'DM Sans',sans-serif
               </tr>
               <tr style="background:var(--srf2)">
                 <td style="padding:4px 6px"></td>
-                <td style="padding:4px 6px"><input id="pnl-f-project-loss" placeholder="Project / address…" oninput="pnlApplyFilters()" style="width:100%;padding:3px 6px;font-size:10px;border:1px solid var(--bdr);border-radius:4px;background:var(--srf);color:var(--txt)"></td>
+                <td style="padding:4px 6px"><input id="pnl-f-project-loss" placeholder="Project / address..." oninput="pnlApplyFilters()" style="width:100%;padding:3px 6px;font-size:10px;border:1px solid var(--bdr);border-radius:4px;background:var(--srf);color:var(--txt)"></td>
                 <td style="padding:4px 6px;position:relative">
-                  <button id="pnl-f-type-btn-loss" onclick="pnlToggleColDrop('type-loss')" style="width:100%;padding:3px 6px;font-size:10px;border:1px solid var(--bdr);border-radius:4px;background:var(--srf);color:var(--txt);cursor:pointer;text-align:left;white-space:nowrap">All ▾</button>
+                  <button id="pnl-f-type-btn-loss" onclick="pnlToggleColDrop('type-loss')" style="width:100%;padding:3px 6px;font-size:10px;border:1px solid var(--bdr);border-radius:4px;background:var(--srf);color:var(--txt);cursor:pointer;text-align:left">All &#9660;</button>
                   <div id="pnl-f-type-drop-loss" style="display:none;position:absolute;top:100%;left:0;z-index:999;background:var(--srf);border:1px solid var(--bdr);border-radius:4px;min-width:150px;box-shadow:0 4px 12px rgba(0,0,0,.12);padding:4px 0">
-                    <label style="display:flex;align-items:center;gap:6px;padding:4px 10px;font-size:11px;cursor:pointer;white-space:nowrap"><input type="checkbox" value="Office" onchange="pnlColDropChange('type-loss')"> Office</label>
-                    <label style="display:flex;align-items:center;gap:6px;padding:4px 10px;font-size:11px;cursor:pointer;white-space:nowrap"><input type="checkbox" value="Retail" onchange="pnlColDropChange('type-loss')"> Retail</label>
-                    <label style="display:flex;align-items:center;gap:6px;padding:4px 10px;font-size:11px;cursor:pointer;white-space:nowrap"><input type="checkbox" value="Shop House" onchange="pnlColDropChange('type-loss')"> Shophouse</label>
-                    <label style="display:flex;align-items:center;gap:6px;padding:4px 10px;font-size:11px;cursor:pointer;white-space:nowrap"><input type="checkbox" value="Multiple-User Factory" onchange="pnlColDropChange('type-loss')"> Multi-User</label>
-                    <label style="display:flex;align-items:center;gap:6px;padding:4px 10px;font-size:11px;cursor:pointer;white-space:nowrap"><input type="checkbox" value="Single-User Factory" onchange="pnlColDropChange('type-loss')"> Single-User</label>
-                    <label style="display:flex;align-items:center;gap:6px;padding:4px 10px;font-size:11px;cursor:pointer;white-space:nowrap"><input type="checkbox" value="Business Park" onchange="pnlColDropChange('type-loss')"> Biz Park</label>
-                    <label style="display:flex;align-items:center;gap:6px;padding:4px 10px;font-size:11px;cursor:pointer;white-space:nowrap"><input type="checkbox" value="Warehouse" onchange="pnlColDropChange('type-loss')"> Warehouse</label>
+                    <label style="display:flex;align-items:center;gap:6px;padding:4px 10px;font-size:11px;cursor:pointer"><input type="checkbox" value="Office" onchange="pnlColDropChange('type-loss')"> Office</label>
+                    <label style="display:flex;align-items:center;gap:6px;padding:4px 10px;font-size:11px;cursor:pointer"><input type="checkbox" value="Retail" onchange="pnlColDropChange('type-loss')"> Retail</label>
+                    <label style="display:flex;align-items:center;gap:6px;padding:4px 10px;font-size:11px;cursor:pointer"><input type="checkbox" value="Shop House" onchange="pnlColDropChange('type-loss')"> Shophouse</label>
+                    <label style="display:flex;align-items:center;gap:6px;padding:4px 10px;font-size:11px;cursor:pointer"><input type="checkbox" value="Multiple-User Factory" onchange="pnlColDropChange('type-loss')"> Multi-User</label>
+                    <label style="display:flex;align-items:center;gap:6px;padding:4px 10px;font-size:11px;cursor:pointer"><input type="checkbox" value="Single-User Factory" onchange="pnlColDropChange('type-loss')"> Single-User</label>
+                    <label style="display:flex;align-items:center;gap:6px;padding:4px 10px;font-size:11px;cursor:pointer"><input type="checkbox" value="Business Park" onchange="pnlColDropChange('type-loss')"> Biz Park</label>
+                    <label style="display:flex;align-items:center;gap:6px;padding:4px 10px;font-size:11px;cursor:pointer"><input type="checkbox" value="Warehouse" onchange="pnlColDropChange('type-loss')"> Warehouse</label>
                   </div>
                 </td>
                 <td style="padding:4px 6px;white-space:nowrap">
                   <input id="pnl-f-price-min-loss" placeholder="Min S$" oninput="pnlApplyFilters()" style="width:47%;padding:3px 4px;font-size:10px;border:1px solid var(--bdr);border-radius:4px;background:var(--srf);color:var(--txt);font-family:'DM Mono',monospace">
                   <input id="pnl-f-price-max-loss" placeholder="Max S$" oninput="pnlApplyFilters()" style="width:47%;padding:3px 4px;font-size:10px;border:1px solid var(--bdr);border-radius:4px;background:var(--srf);color:var(--txt);font-family:'DM Mono',monospace">
                 </td>
-                <td style="padding:4px 6px;text-align:center;font-size:10px;color:var(--mut)">click ↑↓</td>
-                <td style="padding:4px 6px;text-align:center;font-size:10px;color:var(--mut)">click ↑↓</td>
-                <td style="padding:4px 6px;text-align:center;font-size:10px;color:var(--mut)">click ↑↓</td>
-                <td style="padding:4px 6px;text-align:center;font-size:10px;color:var(--mut)">click ↑↓</td>
-                <td style="padding:4px 6px;text-align:center;font-size:10px;color:var(--mut)">click ↑↓</td>
+                <td style="padding:4px 6px;text-align:center;font-size:10px;color:var(--mut)">click &#8597;</td>
+                <td style="padding:4px 6px;text-align:center;font-size:10px;color:var(--mut)">click &#8597;</td>
+                <td style="padding:4px 6px;text-align:center;font-size:10px;color:var(--mut)">click &#8597;</td>
+                <td style="padding:4px 6px;text-align:center;font-size:10px;color:var(--mut)">click &#8597;</td>
+                <td style="padding:4px 6px;text-align:center;font-size:10px;color:var(--mut)">click &#8597;</td>
                 <td style="padding:4px 6px;position:relative">
-                  <button id="pnl-f-entry-btn-loss" onclick="pnlToggleColDrop('entry-loss')" style="width:100%;padding:3px 6px;font-size:10px;border:1px solid var(--bdr);border-radius:4px;background:var(--srf);color:var(--txt);cursor:pointer;text-align:left;white-space:nowrap">All ▾</button>
+                  <button id="pnl-f-entry-btn-loss" onclick="pnlToggleColDrop('entry-loss')" style="width:100%;padding:3px 6px;font-size:10px;border:1px solid var(--bdr);border-radius:4px;background:var(--srf);color:var(--txt);cursor:pointer;text-align:left">All &#9660;</button>
                   <div id="pnl-f-entry-drop-loss" style="display:none;position:absolute;top:100%;right:0;z-index:999;background:var(--srf);border:1px solid var(--bdr);border-radius:4px;min-width:130px;box-shadow:0 4px 12px rgba(0,0,0,.12);padding:4px 0">
-                    <label style="display:flex;align-items:center;gap:6px;padding:4px 10px;font-size:11px;cursor:pointer;white-space:nowrap"><input type="checkbox" value="New Sale" onchange="pnlColDropChange('entry-loss')"> New Sale</label>
-                    <label style="display:flex;align-items:center;gap:6px;padding:4px 10px;font-size:11px;cursor:pointer;white-space:nowrap"><input type="checkbox" value="Resale" onchange="pnlColDropChange('entry-loss')"> Resale</label>
-                    <label style="display:flex;align-items:center;gap:6px;padding:4px 10px;font-size:11px;cursor:pointer;white-space:nowrap"><input type="checkbox" value="Sub Sale" onchange="pnlColDropChange('entry-loss')"> Sub Sale</label>
+                    <label style="display:flex;align-items:center;gap:6px;padding:4px 10px;font-size:11px;cursor:pointer"><input type="checkbox" value="New Sale" onchange="pnlColDropChange('entry-loss')"> New Sale</label>
+                    <label style="display:flex;align-items:center;gap:6px;padding:4px 10px;font-size:11px;cursor:pointer"><input type="checkbox" value="Resale" onchange="pnlColDropChange('entry-loss')"> Resale</label>
+                    <label style="display:flex;align-items:center;gap:6px;padding:4px 10px;font-size:11px;cursor:pointer"><input type="checkbox" value="Sub Sale" onchange="pnlColDropChange('entry-loss')"> Sub Sale</label>
                   </div>
                 </td>
-              </tr>
-              </thead>
+              </tr></thead>
               <tbody id="pnl-tbody-loss"></tbody>
             </table>
           </div>
@@ -1033,13 +978,14 @@ html,body{background:var(--bg);color:var(--txt);font-family:'DM Sans',sans-serif
           </div>
           <div id="pnl-pg-abort" style="margin-top:10px;display:flex;gap:6px;align-items:center;flex-wrap:wrap"></div>
         </div>
-      </div><!-- end pnl-tabs-wrap -->
-    </div><!-- end drawer -->
-    </div><!-- end pnl-map-wrap -->
+
+        </div>
+      </div>
+    </div>
 
   </div>
 
-  <div class="panel" id="tab-news">
+    <div class="panel" id="tab-news">
     <div class="newsroom-header">
       <div>
         <div class="newsroom-title">Newsroom</div>
