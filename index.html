@@ -2393,39 +2393,10 @@ function renderPipeline(){
     }).join('')+'</tbody>';
 }
 
-// ANALYTICS
+// ANALYTICS — yoy-wrap and cum-bars removed (replaced by split map layout)
 function renderAnalytics(){
-  var el=document.getElementById("yoy-wrap"),W=el.clientWidth||800,H=250;
-  var P={t:14,r:16,b:36,l:62},cW=W-P.l-P.r,cH=H-P.t-P.b;
-  var yoy=[];
-  for(var i=1;i<YEARS.length;i++){
-    var pv=VAL_ARR[i-1].reduce(function(s,v){return s+v;},0);
-    var cv=VAL_ARR[i].reduce(function(s,v){return s+v;},0);
-    yoy.push({yr:YEARS[i],pv:pv,cv:cv});
-  }
-  var mx=Math.max.apply(null,yoy.map(function(d){return Math.max(d.pv,d.cv);}));
-  var bw2=cW/yoy.length;
-  var svg='<svg height="'+H+'" viewBox="0 0 '+W+' '+H+'" style="width:100%;overflow:visible">';
-  yoy.forEach(function(d,i){
-    var x=P.l+i*bw2+bw2*0.08,bw=bw2*0.38;
-    var ph=(d.pv/mx)*cH,ch=(d.cv/mx)*cH;
-    svg+='<rect x="'+x.toFixed(1)+'" y="'+(P.t+cH-ph).toFixed(1)+'" width="'+bw.toFixed(1)+'" height="'+Math.max(ph,0).toFixed(1)+'" fill="#c2e0d0" rx="2"/>';
-    svg+='<rect x="'+(x+bw+2).toFixed(1)+'" y="'+(P.t+cH-ch).toFixed(1)+'" width="'+bw.toFixed(1)+'" height="'+Math.max(ch,0).toFixed(1)+'" fill="'+(d.cv>=d.pv?"#1a4f9c":"#dc3545")+'" rx="2" opacity=".85"/>';
-    var sl=yoy.length<=15||i%Math.ceil(yoy.length/15)===0||i===yoy.length-1;
-    if(sl)svg+='<text x="'+(x+bw+1).toFixed(1)+'" y="'+(P.t+cH+15)+'" text-anchor="middle" fill="#6b8578" font-size="10" font-family="DM Sans">'+d.yr+'</text>';
-  });
-  svg+='<rect x="'+P.l+'" y="'+(H-14)+'" width="10" height="8" fill="#c2e0d0" rx="1"/>'
-      +'<text x="'+(P.l+14)+'" y="'+(H-6)+'" fill="#6b8578" font-size="10" font-family="DM Sans">Prior Year</text>'
-      +'<rect x="'+(P.l+90)+'" y="'+(H-14)+'" width="10" height="8" fill="#1a4f9c" rx="1"/>'
-      +'<text x="'+(P.l+104)+'" y="'+(H-6)+'" fill="#6b8578" font-size="10" font-family="DM Sans">Current Year</text></svg>';
-  el.innerHTML=svg;
-  var mx2=Math.max.apply(null,Object.keys(TYPETOT).map(function(t){return TYPETOT[t];}));
-  document.getElementById("cum-bars").innerHTML=TYPES.map(function(t){
-    var p=mx2>0?(TYPETOT[t]/mx2*100).toFixed(1):0;
-    return'<div class="tbar-row"><div class="tbar-lbl">'+TLABEL[t]+'</div>'
-      +'<div class="tbar-track" style="height:9px"><div class="tbar-fill" style="width:'+p+'%;background:'+TCOLOR[t]+';height:9px"></div></div>'
-      +'<div class="tbar-val">'+fmtV(TYPETOT[t])+'</div></div>';
-  }).join('');
+  // Stat strip is populated by renderAll(); nothing else to render here.
+  // Map is initialised separately via pnlInitMap().
 }
 
 // MODE
