@@ -822,13 +822,51 @@ html,body{background:var(--bg);color:var(--txt);font-family:'DM Sans',sans-serif
 
         <!-- Profitable table -->
         <div id="pnl-sec-profit">
-          <div style="overflow-x:auto">
+          <div style="overflow-x:auto;border-radius:6px;border:1px solid var(--bdr)">
             <table class="ptable" id="pnl-tbl-profit">
-              <thead><tr>
+              <thead>
+              <tr>
                 <th>Date</th><th>Project / Address</th><th>Type</th>
-                <th>Buy → Sell (S$)</th><th>Profit (S$)</th>
-                <th>Ann. Return</th><th>Yrs Held</th><th>Area (sqft)</th><th>PSF Sell</th><th>Entry</th>
-              </tr></thead>
+                <th>Buy → Sell (S$)</th><th>Profit / Loss</th>
+                <th>Ann. Return</th><th>Yrs Held</th><th>Area (sqft)</th><th>PSF Sell</th><th>How Bought</th>
+              </tr>
+              <tr style="background:var(--srf2)">
+                <td style="padding:4px 6px"></td>
+                <td style="padding:4px 6px"><input id="pnl-f-project" placeholder="Project / address…" oninput="pnlApplyFilters()" style="width:100%;padding:3px 6px;font-size:10px;border:1px solid var(--bdr);border-radius:4px;background:var(--srf);color:var(--txt)"></td>
+                <td style="padding:4px 6px;position:relative">
+                  <button id="pnl-f-type-btn" onclick="pnlToggleColDrop('type')" style="width:100%;padding:3px 6px;font-size:10px;border:1px solid var(--bdr);border-radius:4px;background:var(--srf);color:var(--txt);cursor:pointer;text-align:left;white-space:nowrap">All ▾</button>
+                  <div id="pnl-f-type-drop" style="display:none;position:absolute;top:100%;left:0;z-index:999;background:var(--srf);border:1px solid var(--bdr);border-radius:4px;min-width:150px;box-shadow:0 4px 12px rgba(0,0,0,.12);padding:4px 0">
+                    <label style="display:flex;align-items:center;gap:6px;padding:4px 10px;font-size:11px;cursor:pointer;white-space:nowrap"><input type="checkbox" value="Office" onchange="pnlColDropChange('type')"> Office</label>
+                    <label style="display:flex;align-items:center;gap:6px;padding:4px 10px;font-size:11px;cursor:pointer;white-space:nowrap"><input type="checkbox" value="Retail" onchange="pnlColDropChange('type')"> Retail</label>
+                    <label style="display:flex;align-items:center;gap:6px;padding:4px 10px;font-size:11px;cursor:pointer;white-space:nowrap"><input type="checkbox" value="Shop House" onchange="pnlColDropChange('type')"> Shophouse</label>
+                    <label style="display:flex;align-items:center;gap:6px;padding:4px 10px;font-size:11px;cursor:pointer;white-space:nowrap"><input type="checkbox" value="Multiple-User Factory" onchange="pnlColDropChange('type')"> Multi-User</label>
+                    <label style="display:flex;align-items:center;gap:6px;padding:4px 10px;font-size:11px;cursor:pointer;white-space:nowrap"><input type="checkbox" value="Single-User Factory" onchange="pnlColDropChange('type')"> Single-User</label>
+                    <label style="display:flex;align-items:center;gap:6px;padding:4px 10px;font-size:11px;cursor:pointer;white-space:nowrap"><input type="checkbox" value="Business Park" onchange="pnlColDropChange('type')"> Biz Park</label>
+                    <label style="display:flex;align-items:center;gap:6px;padding:4px 10px;font-size:11px;cursor:pointer;white-space:nowrap"><input type="checkbox" value="Warehouse" onchange="pnlColDropChange('type')"> Warehouse</label>
+                  </div>
+                </td>
+                <td style="padding:4px 6px;white-space:nowrap">
+                  <input id="pnl-f-price-min" placeholder="Min S$" oninput="pnlApplyFilters()" style="width:47%;padding:3px 4px;font-size:10px;border:1px solid var(--bdr);border-radius:4px;background:var(--srf);color:var(--txt);font-family:'DM Mono',monospace">
+                  <input id="pnl-f-price-max" placeholder="Max S$" oninput="pnlApplyFilters()" style="width:47%;padding:3px 4px;font-size:10px;border:1px solid var(--bdr);border-radius:4px;background:var(--srf);color:var(--txt);font-family:'DM Mono',monospace">
+                </td>
+                <td style="padding:4px 6px"></td>
+                <td style="padding:4px 6px"></td>
+                <td style="padding:4px 6px;white-space:nowrap">
+                  <input id="pnl-f-yrs-min" placeholder="Min" oninput="pnlApplyFilters()" style="width:44%;padding:3px 4px;font-size:10px;border:1px solid var(--bdr);border-radius:4px;background:var(--srf);color:var(--txt);font-family:'DM Mono',monospace">
+                  <input id="pnl-f-yrs-max" placeholder="Max" oninput="pnlApplyFilters()" style="width:44%;padding:3px 4px;font-size:10px;border:1px solid var(--bdr);border-radius:4px;background:var(--srf);color:var(--txt);font-family:'DM Mono',monospace">
+                </td>
+                <td style="padding:4px 6px"></td>
+                <td style="padding:4px 6px"></td>
+                <td style="padding:4px 6px;position:relative">
+                  <button id="pnl-f-entry-btn" onclick="pnlToggleColDrop('entry')" style="width:100%;padding:3px 6px;font-size:10px;border:1px solid var(--bdr);border-radius:4px;background:var(--srf);color:var(--txt);cursor:pointer;text-align:left;white-space:nowrap">All ▾</button>
+                  <div id="pnl-f-entry-drop" style="display:none;position:absolute;top:100%;right:0;z-index:999;background:var(--srf);border:1px solid var(--bdr);border-radius:4px;min-width:130px;box-shadow:0 4px 12px rgba(0,0,0,.12);padding:4px 0">
+                    <label style="display:flex;align-items:center;gap:6px;padding:4px 10px;font-size:11px;cursor:pointer;white-space:nowrap"><input type="checkbox" value="New Sale" onchange="pnlColDropChange('entry')"> New Sale</label>
+                    <label style="display:flex;align-items:center;gap:6px;padding:4px 10px;font-size:11px;cursor:pointer;white-space:nowrap"><input type="checkbox" value="Resale" onchange="pnlColDropChange('entry')"> Resale</label>
+                    <label style="display:flex;align-items:center;gap:6px;padding:4px 10px;font-size:11px;cursor:pointer;white-space:nowrap"><input type="checkbox" value="Sub Sale" onchange="pnlColDropChange('entry')"> Sub Sale</label>
+                  </div>
+                </td>
+              </tr>
+              </thead>
               <tbody id="pnl-tbody-profit"></tbody>
             </table>
           </div>
@@ -837,13 +875,51 @@ html,body{background:var(--bg);color:var(--txt);font-family:'DM Sans',sans-serif
 
         <!-- Unprofitable table -->
         <div id="pnl-sec-loss" style="display:none">
-          <div style="overflow-x:auto">
+          <div style="overflow-x:auto;border-radius:6px;border:1px solid var(--bdr)">
             <table class="ptable" id="pnl-tbl-loss">
-              <thead><tr>
+              <thead>
+              <tr>
                 <th>Date</th><th>Project / Address</th><th>Type</th>
-                <th>Buy → Sell (S$)</th><th>Loss (S$)</th>
-                <th>Ann. Return</th><th>Yrs Held</th><th>Area (sqft)</th><th>PSF Sell</th><th>Entry</th>
-              </tr></thead>
+                <th>Buy → Sell (S$)</th><th>Profit / Loss</th>
+                <th>Ann. Return</th><th>Yrs Held</th><th>Area (sqft)</th><th>PSF Sell</th><th>How Bought</th>
+              </tr>
+              <tr style="background:var(--srf2)">
+                <td style="padding:4px 6px"></td>
+                <td style="padding:4px 6px"><input id="pnl-f-project-loss" placeholder="Project / address…" oninput="pnlApplyFilters()" style="width:100%;padding:3px 6px;font-size:10px;border:1px solid var(--bdr);border-radius:4px;background:var(--srf);color:var(--txt)"></td>
+                <td style="padding:4px 6px;position:relative">
+                  <button id="pnl-f-type-btn-loss" onclick="pnlToggleColDrop('type-loss')" style="width:100%;padding:3px 6px;font-size:10px;border:1px solid var(--bdr);border-radius:4px;background:var(--srf);color:var(--txt);cursor:pointer;text-align:left;white-space:nowrap">All ▾</button>
+                  <div id="pnl-f-type-drop-loss" style="display:none;position:absolute;top:100%;left:0;z-index:999;background:var(--srf);border:1px solid var(--bdr);border-radius:4px;min-width:150px;box-shadow:0 4px 12px rgba(0,0,0,.12);padding:4px 0">
+                    <label style="display:flex;align-items:center;gap:6px;padding:4px 10px;font-size:11px;cursor:pointer;white-space:nowrap"><input type="checkbox" value="Office" onchange="pnlColDropChange('type-loss')"> Office</label>
+                    <label style="display:flex;align-items:center;gap:6px;padding:4px 10px;font-size:11px;cursor:pointer;white-space:nowrap"><input type="checkbox" value="Retail" onchange="pnlColDropChange('type-loss')"> Retail</label>
+                    <label style="display:flex;align-items:center;gap:6px;padding:4px 10px;font-size:11px;cursor:pointer;white-space:nowrap"><input type="checkbox" value="Shop House" onchange="pnlColDropChange('type-loss')"> Shophouse</label>
+                    <label style="display:flex;align-items:center;gap:6px;padding:4px 10px;font-size:11px;cursor:pointer;white-space:nowrap"><input type="checkbox" value="Multiple-User Factory" onchange="pnlColDropChange('type-loss')"> Multi-User</label>
+                    <label style="display:flex;align-items:center;gap:6px;padding:4px 10px;font-size:11px;cursor:pointer;white-space:nowrap"><input type="checkbox" value="Single-User Factory" onchange="pnlColDropChange('type-loss')"> Single-User</label>
+                    <label style="display:flex;align-items:center;gap:6px;padding:4px 10px;font-size:11px;cursor:pointer;white-space:nowrap"><input type="checkbox" value="Business Park" onchange="pnlColDropChange('type-loss')"> Biz Park</label>
+                    <label style="display:flex;align-items:center;gap:6px;padding:4px 10px;font-size:11px;cursor:pointer;white-space:nowrap"><input type="checkbox" value="Warehouse" onchange="pnlColDropChange('type-loss')"> Warehouse</label>
+                  </div>
+                </td>
+                <td style="padding:4px 6px;white-space:nowrap">
+                  <input id="pnl-f-price-min-loss" placeholder="Min S$" oninput="pnlApplyFilters()" style="width:47%;padding:3px 4px;font-size:10px;border:1px solid var(--bdr);border-radius:4px;background:var(--srf);color:var(--txt);font-family:'DM Mono',monospace">
+                  <input id="pnl-f-price-max-loss" placeholder="Max S$" oninput="pnlApplyFilters()" style="width:47%;padding:3px 4px;font-size:10px;border:1px solid var(--bdr);border-radius:4px;background:var(--srf);color:var(--txt);font-family:'DM Mono',monospace">
+                </td>
+                <td style="padding:4px 6px"></td>
+                <td style="padding:4px 6px"></td>
+                <td style="padding:4px 6px;white-space:nowrap">
+                  <input id="pnl-f-yrs-min-loss" placeholder="Min" oninput="pnlApplyFilters()" style="width:44%;padding:3px 4px;font-size:10px;border:1px solid var(--bdr);border-radius:4px;background:var(--srf);color:var(--txt);font-family:'DM Mono',monospace">
+                  <input id="pnl-f-yrs-max-loss" placeholder="Max" oninput="pnlApplyFilters()" style="width:44%;padding:3px 4px;font-size:10px;border:1px solid var(--bdr);border-radius:4px;background:var(--srf);color:var(--txt);font-family:'DM Mono',monospace">
+                </td>
+                <td style="padding:4px 6px"></td>
+                <td style="padding:4px 6px"></td>
+                <td style="padding:4px 6px;position:relative">
+                  <button id="pnl-f-entry-btn-loss" onclick="pnlToggleColDrop('entry-loss')" style="width:100%;padding:3px 6px;font-size:10px;border:1px solid var(--bdr);border-radius:4px;background:var(--srf);color:var(--txt);cursor:pointer;text-align:left;white-space:nowrap">All ▾</button>
+                  <div id="pnl-f-entry-drop-loss" style="display:none;position:absolute;top:100%;right:0;z-index:999;background:var(--srf);border:1px solid var(--bdr);border-radius:4px;min-width:130px;box-shadow:0 4px 12px rgba(0,0,0,.12);padding:4px 0">
+                    <label style="display:flex;align-items:center;gap:6px;padding:4px 10px;font-size:11px;cursor:pointer;white-space:nowrap"><input type="checkbox" value="New Sale" onchange="pnlColDropChange('entry-loss')"> New Sale</label>
+                    <label style="display:flex;align-items:center;gap:6px;padding:4px 10px;font-size:11px;cursor:pointer;white-space:nowrap"><input type="checkbox" value="Resale" onchange="pnlColDropChange('entry-loss')"> Resale</label>
+                    <label style="display:flex;align-items:center;gap:6px;padding:4px 10px;font-size:11px;cursor:pointer;white-space:nowrap"><input type="checkbox" value="Sub Sale" onchange="pnlColDropChange('entry-loss')"> Sub Sale</label>
+                  </div>
+                </td>
+              </tr>
+              </thead>
               <tbody id="pnl-tbody-loss"></tbody>
             </table>
           </div>
@@ -2452,29 +2528,49 @@ async function pnlLoadData(){
   pnlApplyFilters();
 }
 
-function pnlToggleTypeDrop(){
-  var drop = document.getElementById('pnl-type-drop');
+function pnlToggleColDrop(name){
+  var drop = document.getElementById('pnl-f-'+name+'-drop');
+  if(!drop) return;
   var isOpen = drop.style.display !== 'none';
-  // close on outside click
+  // close all col drops first
+  document.querySelectorAll('[id^="pnl-f-"][id$="-drop"]').forEach(function(d){ d.style.display='none'; });
   if(!isOpen){
     drop.style.display = 'block';
     setTimeout(function(){
-      document.addEventListener('click', function pnlCloseTypeDrop(e){
-        if(!document.getElementById('pnl-type-btn').contains(e.target) && !drop.contains(e.target)){
+      document.addEventListener('click', function pnlCloseCol(e){
+        if(!drop.contains(e.target) && e.target.id !== 'pnl-f-'+name+'-btn' && !e.target.closest('[id="pnl-f-'+name+'-btn"]')){
           drop.style.display = 'none';
-          document.removeEventListener('click', pnlCloseTypeDrop);
+          document.removeEventListener('click', pnlCloseCol);
         }
       });
     }, 10);
-  } else {
-    drop.style.display = 'none';
   }
+}
+
+function pnlColDropChange(name){
+  var drop = document.getElementById('pnl-f-'+name+'-drop');
+  var btn  = document.getElementById('pnl-f-'+name+'-btn');
+  if(!drop || !btn) return;
+  var checked = Array.from(drop.querySelectorAll('input[type=checkbox]:checked')).map(function(cb){ return cb.value; });
+  btn.textContent = checked.length === 0 ? 'All ▾' : checked.length === 1 ? fmtPropType(checked[0])+' ▾' : checked.length+' ▾';
+  pnlApplyFilters();
+}
+
+function pnlGetColChecked(name){
+  var drop = document.getElementById('pnl-f-'+name+'-drop');
+  if(!drop) return [];
+  return Array.from(drop.querySelectorAll('input[type=checkbox]:checked')).map(function(cb){ return cb.value; });
+}
+
+function pnlGetColVal(id){
+  var el = document.getElementById(id);
+  return el ? el.value.trim() : '';
 }
 
 function pnlTypeChange(){
   var checked = Array.from(document.querySelectorAll('#pnl-type-drop input[type=checkbox]:checked')).map(function(cb){ return cb.value; });
   var btn = document.getElementById('pnl-type-btn');
-  btn.textContent = checked.length === 0 ? 'All Types ▾' : checked.length === 1 ? checked[0]+' ▾' : checked.length+' Types ▾';
+  btn.textContent = checked.length === 0 ? 'All Types ▾' : checked.length === 1 ? fmtPropType(checked[0])+' ▾' : checked.length+' Types ▾';
   pnlApplyFilters();
 }
 
@@ -2484,7 +2580,9 @@ function pnlGetCheckedTypes(){
 
 function pnlApplyFilters(){
   if(!pnlLoaded) return;
-  var checkedTypes = pnlGetCheckedTypes();
+  // Header-level type filter
+  var headerTypes  = pnlGetCheckedTypes();
+  // Period filter
   var periodYrs    = parseInt(document.getElementById('pnl-period-filter').value);
   var fromDate     = '';
   if(periodYrs > 0){
@@ -2492,35 +2590,62 @@ function pnlApplyFilters(){
     d.setFullYear(d.getFullYear() - periodYrs);
     fromDate = d.toISOString().slice(0,10);
   }
+  // Column-level filters (profit tab)
+  var colTypes       = pnlGetColChecked('type');
+  var colTypesLoss   = pnlGetColChecked('type-loss');
+  var colEntry       = pnlGetColChecked('entry');
+  var colEntryLoss   = pnlGetColChecked('entry-loss');
+  var colProject     = pnlGetColVal('pnl-f-project').toLowerCase();
+  var colProjectLoss = pnlGetColVal('pnl-f-project-loss').toLowerCase();
+  var colPriceMin    = parseFloat(pnlGetColVal('pnl-f-price-min')) || 0;
+  var colPriceMax    = parseFloat(pnlGetColVal('pnl-f-price-max')) || Infinity;
+  var colPriceMinL   = parseFloat(pnlGetColVal('pnl-f-price-min-loss')) || 0;
+  var colPriceMaxL   = parseFloat(pnlGetColVal('pnl-f-price-max-loss')) || Infinity;
+  var colYrsMin      = parseFloat(pnlGetColVal('pnl-f-yrs-min')) || 0;
+  var colYrsMax      = parseFloat(pnlGetColVal('pnl-f-yrs-max')) || Infinity;
+  var colYrsMinL     = parseFloat(pnlGetColVal('pnl-f-yrs-min-loss')) || 0;
+  var colYrsMaxL     = parseFloat(pnlGetColVal('pnl-f-yrs-max-loss')) || Infinity;
 
-  function typeMatch(r){
-    if(!checkedTypes.length) return true; // none checked = all types
-    return checkedTypes.indexOf(r.property_type) !== -1;
-  }
-  function dateMatch(r){
-    if(!fromDate) return true;
-    return r.sell_date >= fromDate;
-  }
-  function abortDateMatch(r){
-    if(!fromDate) return true;
-    return r.final_date >= fromDate;
-  }
+  function headerTypeMatch(r){ return !headerTypes.length || headerTypes.indexOf(r.property_type) !== -1; }
+  function dateMatch(r){ return !fromDate || r.sell_date >= fromDate; }
+  function abortDateMatch(r){ return !fromDate || r.final_date >= fromDate; }
 
-  var filtered = PNL_PAIRS.filter(function(r){ return typeMatch(r) && dateMatch(r); });
-  PNL_FILTERED_PROFIT = filtered.filter(function(r){ return r.profit > 0; })
-    .sort(function(a,b){ return a.sell_date < b.sell_date ? 1 : -1; });
-  PNL_FILTERED_LOSS   = filtered.filter(function(r){ return r.profit <= 0; })
-    .sort(function(a,b){ return a.sell_date < b.sell_date ? 1 : -1; });
-  PNL_FILTERED_ABORT  = PNL_ABORT.filter(function(r){ return typeMatch(r) && abortDateMatch(r); })
+  // Base filter (header type + period)
+  var base = PNL_PAIRS.filter(function(r){ return headerTypeMatch(r) && dateMatch(r); });
+
+  // Profit tab column filters
+  PNL_FILTERED_PROFIT = base.filter(function(r){
+    if(r.profit <= 0) return false;
+    if(colTypes.length && colTypes.indexOf(r.property_type) === -1) return false;
+    if(colEntry.length && colEntry.indexOf(r.buy_type) === -1) return false;
+    if(colProject && (r.project_name||'').toLowerCase().indexOf(colProject) === -1 && (r.address||'').toLowerCase().indexOf(colProject) === -1) return false;
+    if(r.sell_price < colPriceMin || r.sell_price > colPriceMax) return false;
+    if(r.yrs_held < colYrsMin || r.yrs_held > colYrsMax) return false;
+    return true;
+  }).sort(function(a,b){ return a.sell_date < b.sell_date ? 1 : -1; });
+
+  // Loss tab column filters
+  PNL_FILTERED_LOSS = base.filter(function(r){
+    if(r.profit > 0) return false;
+    if(colTypesLoss.length && colTypesLoss.indexOf(r.property_type) === -1) return false;
+    if(colEntryLoss.length && colEntryLoss.indexOf(r.buy_type) === -1) return false;
+    if(colProjectLoss && (r.project_name||'').toLowerCase().indexOf(colProjectLoss) === -1 && (r.address||'').toLowerCase().indexOf(colProjectLoss) === -1) return false;
+    if(r.sell_price < colPriceMinL || r.sell_price > colPriceMaxL) return false;
+    if(r.yrs_held < colYrsMinL || r.yrs_held > colYrsMaxL) return false;
+    return true;
+  }).sort(function(a,b){ return a.sell_date < b.sell_date ? 1 : -1; });
+
+  PNL_FILTERED_ABORT = PNL_ABORT.filter(function(r){ return headerTypeMatch(r) && abortDateMatch(r); })
     .sort(function(a,b){ return a.final_date < b.final_date ? 1 : -1; });
 
-  var allReturns = filtered.map(function(r){ return r.ann_return; }).sort(function(a,b){return a-b;});
+  var allFiltered = base;
+  var allReturns = allFiltered.map(function(r){ return r.ann_return; }).sort(function(a,b){return a-b;});
   var medReturn  = allReturns.length ? allReturns[Math.floor(allReturns.length/2)] : null;
-  var avgHold    = filtered.length ? filtered.reduce(function(s,r){return s+r.yrs_held;},0)/filtered.length : null;
+  var avgHold    = allFiltered.length ? allFiltered.reduce(function(s,r){return s+r.yrs_held;},0)/allFiltered.length : null;
 
-  document.getElementById('pnl-stat-pairs').textContent   = filtered.length.toLocaleString();
-  document.getElementById('pnl-stat-profit').textContent  = PNL_FILTERED_PROFIT.length.toLocaleString();
-  document.getElementById('pnl-stat-loss').textContent    = PNL_FILTERED_LOSS.length.toLocaleString();
+  document.getElementById('pnl-stat-pairs').textContent   = allFiltered.length.toLocaleString();
+  document.getElementById('pnl-stat-profit').textContent  = allFiltered.filter(function(r){return r.profit>0;}).length.toLocaleString();
+  document.getElementById('pnl-stat-loss').textContent    = allFiltered.filter(function(r){return r.profit<=0;}).length.toLocaleString();
   document.getElementById('pnl-stat-abort').textContent   = PNL_FILTERED_ABORT.length.toLocaleString();
   document.getElementById('pnl-stat-median').textContent  = medReturn !== null ? (medReturn>=0?'+':'')+medReturn.toFixed(1)+'%' : '—';
   document.getElementById('pnl-stat-hold').textContent    = avgHold !== null ? avgHold.toFixed(1)+' yrs' : '—';
@@ -2531,7 +2656,7 @@ function pnlApplyFilters(){
 
   pnlPageProfit = 0; pnlPageLoss = 0; pnlPageAbort = 0;
 
-  if(!filtered.length && !PNL_FILTERED_ABORT.length){
+  if(!allFiltered.length && !PNL_FILTERED_ABORT.length){
     pnlHide('pnl-tabs-wrap'); pnlHide('pnl-stats'); pnlShow('pnl-empty'); return;
   }
   pnlHide('pnl-empty');
@@ -2570,46 +2695,35 @@ function pnlRenderTable(sec, rows, page){
   var slice = rows.slice(start, end);
   if(!slice.length){ tbody.innerHTML='<tr><td colspan="10" style="text-align:center;color:var(--mut);padding:24px">No data</td></tr>'; return; }
   tbody.innerHTML = slice.map(function(r){
-    var profitAbs = Math.abs(r.profit);
-    var profitCol  = r.profit >= 0 ? '#1a6b3c' : '#b71c1c';
-    var profitSign = r.profit >= 0 ? '+' : '−';
-    var annCol     = r.ann_return >= 0 ? '#1a6b3c' : '#b71c1c';
+    var isLoss     = r.profit < 0;
+    var profitCol  = isLoss ? '#b71c1c' : '#1a6b3c';
+    var annCol     = r.ann_return < 0 ? '#b71c1c' : '#1a6b3c';
     var annSign    = r.ann_return >= 0 ? '+' : '';
-    // Full price: S$4,300,000
-    var fmtFull = function(v){ return v ? 'S$'+Math.round(v).toLocaleString() : '—'; };
-    var fmtProfit = function(v){ return (v>=0?'+':'−')+'S$'+Math.round(Math.abs(v)).toLocaleString(); };
+    var rowStyle   = isLoss ? 'background:#fff5f5' : '';
+    var fmtFull    = function(v){ return v ? 'S$'+Math.round(v).toLocaleString() : '—'; };
+    var fmtPL      = function(v){ return (v>=0?'+':'−')+'S$'+Math.round(Math.abs(v)).toLocaleString(); };
     var entryBadge = r.buy_type === 'New Sale'
       ? '<span class="pill" style="background:#e8f0fb;color:#1a4f9c;font-size:9px;white-space:nowrap">New Sale</span>'
       : '<span class="pill p-neu" style="font-size:9px;white-space:nowrap">'+(r.buy_type||'—')+'</span>';
-    return '<tr>'
-      // Date col: sell date big, buy date small below
+    return '<tr style="'+rowStyle+'">'
       +'<td class="mono" style="white-space:nowrap;vertical-align:top">'
         +'<div style="font-size:12px">'+r.sell_date+'</div>'
         +'<div style="font-size:10px;color:var(--mut);margin-top:2px">'+r.buy_date+'</div>'
       +'</td>'
-      // Project / Address stacked
       +'<td style="vertical-align:top;max-width:180px">'
         +'<div style="font-weight:600;font-size:12px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis" title="'+(r.project_name||'')+'">'+( r.project_name||'—')+'</div>'
         +'<div style="font-size:10px;color:var(--mut);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-top:2px" title="'+(r.address||'')+'">'+( r.address||'—')+'</div>'
       +'</td>'
-      // Type
-      +'<td style="vertical-align:top"><span class="pill p-neu" style="font-size:9px;white-space:nowrap">'+(r.property_type||'—')+'</span></td>'
-      // Buy → Sell stacked
+      +'<td style="vertical-align:top"><span class="pill p-neu" style="font-size:9px;white-space:nowrap">'+fmtPropType(r.property_type||'—')+'</span></td>'
       +'<td class="mono" style="white-space:nowrap;vertical-align:top">'
         +'<div style="font-size:11px;color:var(--mut)">'+fmtFull(r.buy_price)+'</div>'
         +'<div style="font-size:12px;font-weight:600;margin-top:2px">'+fmtFull(r.sell_price)+'</div>'
       +'</td>'
-      // Profit / Loss
-      +'<td class="mono" style="color:'+profitCol+';font-weight:700;white-space:nowrap;vertical-align:top">'+fmtProfit(r.profit)+'</td>'
-      // Ann Return — no p.a.
+      +'<td class="mono" style="color:'+profitCol+';font-weight:700;white-space:nowrap;vertical-align:top">'+fmtPL(r.profit)+'</td>'
       +'<td class="mono" style="color:'+annCol+';white-space:nowrap;vertical-align:top">'+annSign+r.ann_return.toFixed(1)+'%</td>'
-      // Yrs Held
       +'<td class="mono" style="vertical-align:top">'+r.yrs_held.toFixed(1)+'</td>'
-      // Area
       +'<td class="mono" style="vertical-align:top">'+(r.area_sqft ? Math.round(r.area_sqft).toLocaleString() : '—')+'</td>'
-      // PSF Sell — full number
       +'<td class="mono" style="vertical-align:top">'+(r.psf_sell ? 'S$'+Math.round(r.psf_sell).toLocaleString() : '—')+'</td>'
-      // Entry type
       +'<td style="vertical-align:top">'+entryBadge+'</td>'
       +'</tr>';
   }).join('');
