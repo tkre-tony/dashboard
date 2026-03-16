@@ -824,8 +824,8 @@ html,body{background:var(--bg);color:var(--txt);font-family:'DM Sans',sans-serif
             <table class="ptable" id="pnl-tbl-profit">
               <thead><tr>
                 <th>Sell Date</th><th>Project</th><th>Address</th><th>Type</th>
-                <th>Buy Price</th><th>Sell Price</th><th>Profit (S$)</th>
-                <th>Ann. Return</th><th>Yrs Held</th><th>Area (sqft)</th><th>PSF Sell</th><th>Sale Type</th>
+                <th>Buy Price</th><th>Buy Date</th><th>Sell Price</th><th>Profit (S$)</th>
+                <th>Ann. Return</th><th>Yrs Held</th><th>Area (sqft)</th><th>PSF Sell</th><th>Entry Type</th>
               </tr></thead>
               <tbody id="pnl-tbody-profit"></tbody>
             </table>
@@ -839,8 +839,8 @@ html,body{background:var(--bg);color:var(--txt);font-family:'DM Sans',sans-serif
             <table class="ptable" id="pnl-tbl-loss">
               <thead><tr>
                 <th>Sell Date</th><th>Project</th><th>Address</th><th>Type</th>
-                <th>Buy Price</th><th>Sell Price</th><th>Loss (S$)</th>
-                <th>Ann. Return</th><th>Yrs Held</th><th>Area (sqft)</th><th>PSF Sell</th><th>Sale Type</th>
+                <th>Buy Price</th><th>Buy Date</th><th>Sell Price</th><th>Loss (S$)</th>
+                <th>Ann. Return</th><th>Yrs Held</th><th>Area (sqft)</th><th>PSF Sell</th><th>Entry Type</th>
               </tr></thead>
               <tbody id="pnl-tbody-loss"></tbody>
             </table>
@@ -2327,29 +2327,21 @@ async function pnlLoadData(){
   pnlShow('pnl-loading');
   document.getElementById('pnl-load-btn').disabled = true;
 
-  var periodYrs = parseInt(document.getElementById('pnl-period-filter').value);
-  var fromDate = '';
-  if(periodYrs > 0){
-    var d = new Date();
-    d.setFullYear(d.getFullYear() - periodYrs);
-    fromDate = d.toISOString().slice(0,10);
-  }
-
-  // Fetch all resale + sub-sale transactions (these are the "sell" legs)
-  // We need: address, project_name, area_sqft, transacted_price, sale_date, type_of_sale, property_type, unit_price_psf, postal_district, planning_region
+  // Fetch ALL transactions with no date filter — we need the full history
+  // because a sell in 2024 may have a buy leg from 1999.
+  // Period filter is applied POST-matching on the sell_date.
   var allRows = [];
   var limit = 2000, offset = 0;
-  var maxFetch = 20000; // safety cap
-  var dateFilter = fromDate ? '&sale_date=gte.'+fromDate : '';
+  var maxFetch = 60000; // 30k+ rows in DB
 
   try {
     while(offset < maxFetch){
-      document.getElementById('pnl-progress').textContent = 'Fetched '+offset.toLocaleString()+' rows…';
-      var url = SB_URL+'/rest/v1/transactions?select=id,address,project_name,area_sqft,transacted_price,sale_date,type_of_sale,property_type,unit_price_psf,postal_district,planning_region'
-        + dateFilter
-        + '&order=address.asc,sale_date.asc'
-        + '&limit='+limit+'&offset='+offset;
-      var res = await fetch(url, {headers:{'apikey':SB_KEY,'Authorization':'Bearer '+SB_KEY,'Range-Unit':'items'}});
+      document.getElementById('pnl-progress').textContent = 'Fetching… '+offset.toLocaleString()+' rows loaded';
+      var url = SB_URL+'/rest/v1/transactions'
+        +'?select=id,project_name,address,area_sqft,transacted_price,sale_date,type_of_sale,property_type,unit_price_psf,postal_district,planning_region'
+        +'&order=project_name.asc,address.asc,sale_date.asc'
+        +'&limit='+limit+'&offset='+offset;
+      var res = await fetch(url, {headers:{'apikey':SB_KEY,'Authorization':'Bearer '+SB_KEY}});
       var rows = await res.json();
       if(!rows || !rows.length) break;
       allRows = allRows.concat(rows);
@@ -2364,70 +2356,91 @@ async function pnlLoadData(){
 
   document.getElementById('pnl-progress').textContent = 'Matching '+allRows.length.toLocaleString()+' transactions…';
 
-  // Group by normalised address key (address + rounded area)
+  // ── GROUP BY: project_name + address + area_sqft (rounded to ±5 sqft) ──
+  // This is the canonical unit identity key per your spec.
   var byKey = {};
   allRows.forEach(function(r){
-    if(!r.address || !r.area_sqft) return;
-    var key = (r.address||'').trim().toUpperCase() + '||' + Math.round(r.area_sqft/5)*5;
+    if(!r.project_name || !r.address || !r.area_sqft) return;
+    var key = r.project_name.trim().toUpperCase()
+            + '||' + r.address.trim().toUpperCase()
+            + '||' + Math.round(r.area_sqft / 5) * 5;
     if(!byKey[key]) byKey[key] = [];
     byKey[key].push(r);
   });
 
-  // For each key, sort by date and build pairs + abort chains
+  // ── PAIR BUILDING ──
+  // For each unit key, sort all transactions by date chronologically.
+  // Walk the chain: every non-New-Sale is a "sell" event.
+  // Its buy price is always the immediately preceding transaction (regardless of type).
+  // This handles N-deep chains: A→B→C→D each pair is computed independently.
+  // New Sales: skip as a sell leg (no prior owner), but USE as a buy leg for the next sell.
   PNL_PAIRS = [];
   PNL_ABORT = [];
 
   Object.keys(byKey).forEach(function(key){
-    var txs = byKey[key].sort(function(a,b){ return a.sale_date < b.sale_date ? -1 : 1; });
+    var txs = byKey[key].sort(function(a,b){
+      return a.sale_date < b.sale_date ? -1 : a.sale_date > b.sale_date ? 1 : 0;
+    });
     if(txs.length < 2) return;
 
-    // Detect abort chains: New Sale → Sub Sale → (Resale or Sub Sale again)
-    // An abort chain: unit[0].type_of_sale == 'New Sale', then a Sub Sale follows, then another sale
-    for(var i=0; i<txs.length-2; i++){
-      var t0=txs[i], t1=txs[i+1], t2=txs[i+2];
-      if((t0.type_of_sale==='New Sale') && (t1.type_of_sale==='Sub Sale')){
-        var subProfit = t1.transacted_price - t0.transacted_price;
-        var finalProfit = t2.transacted_price - t0.transacted_price;
-        PNL_ABORT.push({
-          address: t0.address, project_name: t0.project_name, property_type: t0.property_type,
-          area_sqft: t0.area_sqft,
-          new_date: t0.sale_date, new_price: t0.transacted_price,
-          sub_date: t1.sale_date, sub_price: t1.transacted_price, sub_profit: subProfit,
-          final_date: t2.sale_date, final_price: t2.transacted_price, final_profit: finalProfit,
-          postal_district: t0.postal_district
-        });
-      }
-    }
-
-    // Build regular buy→sell pairs (skip sub-sale as a "buy" leg for regular pairs)
-    // Walk through sorted transactions: each Resale or Sub Sale is the sell leg; find nearest prior transaction as buy leg
-    for(var j=1; j<txs.length; j++){
+    // ── Walk every consecutive pair in the sorted chain ──
+    for(var j = 1; j < txs.length; j++){
       var sell = txs[j];
-      if(sell.type_of_sale === 'New Sale') continue; // new sales can't be a resale profit calc
-      var buy = txs[j-1]; // prior transaction for same unit
+      var buy  = txs[j-1];
+
+      // Rule #3: if sell leg is a New Sale, bypass — there is no prior owner to compute P&L for
+      if(sell.type_of_sale === 'New Sale') continue;
+
       if(!buy.transacted_price || !sell.transacted_price) continue;
 
       var buyDate  = new Date(buy.sale_date);
       var sellDate = new Date(sell.sale_date);
       var daysHeld = (sellDate - buyDate) / 86400000;
-      if(daysHeld <= 0) continue; // same day = skip
-      var yrsHeld  = daysHeld / 365.25;
-      var profit   = sell.transacted_price - buy.transacted_price;
-      // Annualised return: (sell/buy)^(1/yrs) - 1
-      var annReturn = yrsHeld > 0 ? (Math.pow(sell.transacted_price/buy.transacted_price, 1/yrsHeld) - 1) * 100 : 0;
+      if(daysHeld <= 0) continue; // data anomaly: same-day or reversed dates
+
+      var yrsHeld   = daysHeld / 365.25;
+      var profit    = sell.transacted_price - buy.transacted_price;
+      // CAGR: (sell/buy)^(1/yrs) − 1
+      var annReturn = (Math.pow(sell.transacted_price / buy.transacted_price, 1 / yrsHeld) - 1) * 100;
 
       PNL_PAIRS.push({
-        sell_date: sell.sale_date, buy_date: buy.sale_date,
-        project_name: sell.project_name || buy.project_name,
-        address: sell.address,
-        property_type: sell.property_type || buy.property_type,
-        buy_price: buy.transacted_price, sell_price: sell.transacted_price,
-        profit: profit, ann_return: annReturn, yrs_held: yrsHeld,
-        area_sqft: sell.area_sqft, psf_sell: sell.unit_price_psf,
-        type_of_sale: sell.type_of_sale,
-        postal_district: sell.postal_district,
-        planning_region: sell.planning_region
+        sell_date:      sell.sale_date,
+        buy_date:       buy.sale_date,
+        project_name:   sell.project_name || buy.project_name,
+        address:        sell.address,
+        property_type:  sell.property_type || buy.property_type,
+        buy_price:      buy.transacted_price,
+        sell_price:     sell.transacted_price,
+        buy_type:       buy.type_of_sale,
+        sell_type:      sell.type_of_sale,
+        profit:         profit,
+        ann_return:     annReturn,
+        yrs_held:       yrsHeld,
+        area_sqft:      sell.area_sqft || buy.area_sqft,
+        psf_sell:       sell.unit_price_psf,
+        postal_district: sell.postal_district || buy.postal_district,
+        planning_region: sell.planning_region || buy.planning_region
       });
+    }
+
+    // ── Aborted chain: New Sale → Sub Sale → any further sale ──
+    // Detect wherever this 3-event pattern exists in the sorted chain
+    for(var i = 0; i < txs.length - 2; i++){
+      var t0 = txs[i], t1 = txs[i+1], t2 = txs[i+2];
+      if(t0.type_of_sale === 'New Sale' && t1.type_of_sale === 'Sub Sale'){
+        PNL_ABORT.push({
+          address:      t0.address,
+          project_name: t0.project_name,
+          property_type: t0.property_type,
+          area_sqft:    t0.area_sqft,
+          new_date:     t0.sale_date,  new_price:   t0.transacted_price,
+          sub_date:     t1.sale_date,  sub_price:   t1.transacted_price,
+          sub_profit:   t1.transacted_price - t0.transacted_price,
+          final_date:   t2.sale_date,  final_price: t2.transacted_price,
+          final_profit: t2.transacted_price - t0.transacted_price,
+          postal_district: t0.postal_district
+        });
+      }
     }
   });
 
@@ -2439,24 +2452,39 @@ async function pnlLoadData(){
 
 function pnlApplyFilters(){
   if(!pnlLoaded) return;
-  var typeFilter = document.getElementById('pnl-type-filter').value;
+  var typeFilter   = document.getElementById('pnl-type-filter').value;
+  var periodYrs    = parseInt(document.getElementById('pnl-period-filter').value);
+  var fromDate     = '';
+  if(periodYrs > 0){
+    var d = new Date();
+    d.setFullYear(d.getFullYear() - periodYrs);
+    fromDate = d.toISOString().slice(0,10);
+  }
 
   function typeMatch(r){
     if(!typeFilter) return true;
     var mapped = PROP_TYPE_MAP[r.property_type] || r.property_type;
     return mapped === typeFilter;
   }
+  function dateMatch(r){
+    if(!fromDate) return true;
+    return r.sell_date >= fromDate;
+  }
+  function abortDateMatch(r){
+    if(!fromDate) return true;
+    return r.final_date >= fromDate;
+  }
 
-  var filtered = PNL_PAIRS.filter(typeMatch);
+  var filtered = PNL_PAIRS.filter(function(r){ return typeMatch(r) && dateMatch(r); });
   PNL_FILTERED_PROFIT = filtered.filter(function(r){ return r.profit > 0; })
     .sort(function(a,b){ return b.ann_return - a.ann_return; });
   PNL_FILTERED_LOSS   = filtered.filter(function(r){ return r.profit <= 0; })
     .sort(function(a,b){ return a.ann_return - b.ann_return; });
-  PNL_FILTERED_ABORT  = PNL_ABORT.filter(typeMatch);
+  PNL_FILTERED_ABORT  = PNL_ABORT.filter(function(r){ return typeMatch(r) && abortDateMatch(r); });
 
   var allReturns = filtered.map(function(r){ return r.ann_return; }).sort(function(a,b){return a-b;});
-  var medReturn = allReturns.length ? allReturns[Math.floor(allReturns.length/2)] : null;
-  var avgHold   = filtered.length ? filtered.reduce(function(s,r){return s+r.yrs_held;},0)/filtered.length : null;
+  var medReturn  = allReturns.length ? allReturns[Math.floor(allReturns.length/2)] : null;
+  var avgHold    = filtered.length ? filtered.reduce(function(s,r){return s+r.yrs_held;},0)/filtered.length : null;
 
   document.getElementById('pnl-stat-pairs').textContent   = filtered.length.toLocaleString();
   document.getElementById('pnl-stat-profit').textContent  = PNL_FILTERED_PROFIT.length.toLocaleString();
@@ -2508,24 +2536,28 @@ function pnlRenderTable(sec, rows, page){
   var tbody = document.getElementById('pnl-tbody-'+sec);
   var start = page * pnlPageSize, end = start + pnlPageSize;
   var slice = rows.slice(start, end);
-  if(!slice.length){ tbody.innerHTML='<tr><td colspan="12" style="text-align:center;color:var(--mut);padding:24px">No data</td></tr>'; return; }
+  if(!slice.length){ tbody.innerHTML='<tr><td colspan="13" style="text-align:center;color:var(--mut);padding:24px">No data</td></tr>'; return; }
   tbody.innerHTML = slice.map(function(r){
     var profitAbs = Math.abs(r.profit);
     var profitCol = r.profit>=0 ? '#1a6b3c' : '#b71c1c';
     var profitSign = r.profit>=0 ? '+' : '−';
+    var buyTypeLabel = r.buy_type==='New Sale'
+      ? '<span class="pill" style="background:#e8f0fb;color:#1a4f9c;font-size:9px">New Sale</span>'
+      : '<span class="pill p-neu" style="font-size:9px">'+(r.buy_type||'—')+'</span>';
     return '<tr>'
-      +'<td class="mono">'+r.sell_date+'</td>'
-      +'<td style="font-weight:600;max-width:160px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">'+( r.project_name||'—')+'</td>'
-      +'<td style="color:var(--mut);font-size:11px;max-width:140px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">'+( r.address||'—')+'</td>'
+      +'<td class="mono" style="white-space:nowrap">'+r.sell_date+'</td>'
+      +'<td style="font-weight:600;max-width:150px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis" title="'+( r.project_name||'')+'">'+( r.project_name||'—')+'</td>'
+      +'<td style="color:var(--mut);font-size:11px;max-width:130px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis" title="'+(r.address||'')+'">'+( r.address||'—')+'</td>'
       +'<td><span class="pill p-neu" style="font-size:9px">'+(r.property_type||'—')+'</span></td>'
-      +'<td class="mono">'+pnlFmtPrice(r.buy_price)+'</td>'
-      +'<td class="mono">'+pnlFmtPrice(r.sell_price)+'</td>'
-      +'<td class="mono" style="color:'+profitCol+';font-weight:700">'+profitSign+'S$'+(profitAbs>=1e6?(profitAbs/1e6).toFixed(2)+'M':(profitAbs/1000).toFixed(0)+'K')+'</td>'
-      +'<td class="mono">'+pnlFmtReturn(r.ann_return)+'</td>'
+      +'<td class="mono" style="white-space:nowrap">'+pnlFmtPrice(r.buy_price)+'</td>'
+      +'<td style="font-size:11px;color:var(--mut2);white-space:nowrap">'+r.buy_date+'</td>'
+      +'<td class="mono" style="white-space:nowrap">'+pnlFmtPrice(r.sell_price)+'</td>'
+      +'<td class="mono" style="color:'+profitCol+';font-weight:700;white-space:nowrap">'+profitSign+'S$'+(profitAbs>=1e6?(profitAbs/1e6).toFixed(2)+'M':(profitAbs/1000).toFixed(0)+'K')+'</td>'
+      +'<td class="mono" style="white-space:nowrap">'+pnlFmtReturn(r.ann_return)+'</td>'
       +'<td class="mono">'+r.yrs_held.toFixed(1)+'</td>'
-      +'<td class="mono">'+(r.area_sqft?r.area_sqft.toLocaleString():'—')+'</td>'
+      +'<td class="mono">'+(r.area_sqft?Math.round(r.area_sqft).toLocaleString():'—')+'</td>'
       +'<td class="mono">'+(r.psf_sell?'S$'+Math.round(r.psf_sell).toLocaleString():'—')+'</td>'
-      +'<td><span class="pill p-neu" style="font-size:9px">'+(r.type_of_sale||'—')+'</span></td>'
+      +'<td>'+buyTypeLabel+'</td>'
       +'</tr>';
   }).join('');
   pnlRenderPager('pnl-pg-'+sec, rows.length, page, sec);
