@@ -209,6 +209,10 @@ html,body{background:var(--bg);color:var(--txt);font-family:'DM Sans',sans-serif
 .pnl-stab{padding:7px 14px;border:none;border-bottom:2px solid transparent;background:transparent;font-size:12px;font-family:'DM Sans',sans-serif;cursor:pointer;color:var(--mut);font-weight:500;transition:all .12s;margin-bottom:-2px}
 .pnl-stab.on{color:var(--g1);border-bottom-color:var(--g1);font-weight:700}
 .pnl-stab:hover:not(.on){color:var(--txt)}
+.proj-sort-chip{padding:4px 10px;border:1px solid var(--bdr);border-radius:20px;background:var(--srf);color:var(--mut);font-size:11px;font-family:'DM Sans',sans-serif;cursor:pointer;font-weight:500;transition:all .12s}
+.proj-sort-chip.on{background:var(--g1);color:#fff;border-color:var(--g1);font-weight:700}
+.proj-sort-chip:hover:not(.on){color:var(--txt);border-color:var(--txt)}
+@media(max-width:700px){#proj-ov-grid{grid-template-columns:1fr!important}}
 .ov-sel{padding:5px 10px;border:1px solid var(--bdr);border-radius:6px;font-size:12px;font-family:'DM Sans',sans-serif;outline:none;color:var(--txt);background:var(--srf);cursor:pointer}
 .pnl-pg-btn{padding:4px 10px;border:1px solid var(--bdr);border-radius:5px;background:var(--srf2);color:var(--mut);font-size:11px;font-family:'DM Mono',monospace;cursor:pointer;transition:all .1s}
 .pnl-pg-btn.on{background:var(--g1);color:#fff;border-color:var(--g1);font-weight:700}
@@ -966,6 +970,84 @@ html,body{background:var(--bg);color:var(--txt);font-family:'DM Sans',sans-serif
 
       </div><!-- end pnl-tabs-wrap -->
     </div><!-- end card -->
+
+    <!-- ── Analytics Tab 2: Projects Overview ── -->
+    <div class="card" id="proj-overview-card" style="display:none">
+      <div class="card-hdr" style="flex-wrap:wrap;gap:8px;align-items:center">
+        <div>
+          <div class="card-title"><span class="card-title-dot"></span>Projects Overview</div>
+          <div class="card-subtitle" id="proj-ov-subtitle">Ranked by P&amp;L performance &middot; computed from matched pairs</div>
+        </div>
+        <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-left:auto">
+          <!-- Sort mode chips -->
+          <div style="display:flex;gap:4px">
+            <button class="proj-sort-chip on" data-sort="abs" onclick="projSetSort('abs')">Absolute S$</button>
+            <button class="proj-sort-chip" data-sort="ann" onclick="projSetSort('ann')">Ann. Return %</button>
+            <button class="proj-sort-chip" data-sort="cnt" onclick="projSetSort('cnt')">No. of Trades</button>
+          </div>
+          <div style="font-size:11px;color:var(--mut);padding:0 4px">Top</div>
+          <select id="proj-top-n" onchange="pnlRenderProjectsTab()" style="font-size:11px;padding:4px 8px;border:1px solid var(--bdr);border-radius:6px;background:var(--srf);color:var(--txt)">
+            <option value="10" selected>10</option>
+            <option value="20">20</option>
+            <option value="50">50</option>
+          </select>
+        </div>
+      </div>
+
+      <div id="proj-ov-empty" style="display:none;text-align:center;padding:32px;color:var(--mut);font-size:13px">Load data in Profit / Loss Overview to populate this view.</div>
+
+      <div id="proj-ov-body" style="display:none">
+        <!-- Summary chips -->
+        <div id="proj-ov-stats" style="display:flex;gap:10px;flex-wrap:wrap;margin-bottom:18px"></div>
+
+        <!-- Side-by-side tables -->
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px" id="proj-ov-grid">
+
+          <!-- Most Profitable -->
+          <div>
+            <div style="font-size:12px;font-weight:700;color:#1a6b3c;margin-bottom:8px;display:flex;align-items:center;gap:6px">
+              <span style="background:#e8f5e9;border:1px solid #a5d6a7;border-radius:12px;padding:2px 10px">🏆 Most Profitable Projects</span>
+            </div>
+            <div style="overflow-x:auto;border-radius:6px;border:1px solid var(--bdr)">
+              <table class="ptable" id="proj-tbl-profit">
+                <thead><tr>
+                  <th style="min-width:140px">Project</th>
+                  <th>Type</th>
+                  <th>District</th>
+                  <th class="mono" style="text-align:right">Trades</th>
+                  <th class="mono" style="text-align:right">Total Profit</th>
+                  <th class="mono" style="text-align:right">Med. Ann. %</th>
+                  <th class="mono" style="text-align:right">Avg Hold</th>
+                </tr></thead>
+                <tbody id="proj-tbody-profit"></tbody>
+              </table>
+            </div>
+          </div>
+
+          <!-- Most Unprofitable -->
+          <div>
+            <div style="font-size:12px;font-weight:700;color:#b71c1c;margin-bottom:8px;display:flex;align-items:center;gap:6px">
+              <span style="background:#fce4ec;border:1px solid #ef9a9a;border-radius:12px;padding:2px 10px">📉 Most Unprofitable Projects</span>
+            </div>
+            <div style="overflow-x:auto;border-radius:6px;border:1px solid var(--bdr)">
+              <table class="ptable" id="proj-tbl-loss">
+                <thead><tr>
+                  <th style="min-width:140px">Project</th>
+                  <th>Type</th>
+                  <th>District</th>
+                  <th class="mono" style="text-align:right">Trades</th>
+                  <th class="mono" style="text-align:right">Total Loss</th>
+                  <th class="mono" style="text-align:right">Med. Ann. %</th>
+                  <th class="mono" style="text-align:right">Avg Hold</th>
+                </tr></thead>
+                <tbody id="proj-tbody-loss"></tbody>
+              </table>
+            </div>
+          </div>
+
+        </div><!-- end grid -->
+      </div><!-- end proj-ov-body -->
+    </div><!-- end Projects Overview card -->
 
   </div>
 
@@ -2740,6 +2822,7 @@ function pnlApplyFilters(){
   pnlHide('pnl-empty');
   pnlShow('pnl-stats'); pnlShow('pnl-tabs-wrap');
   pnlShowSection(pnlActiveSection);
+  pnlRenderProjectsTab();
 }
 
 function pnlShowSection(sec){
@@ -2815,6 +2898,156 @@ function pnlExportCSV(){
   document.body.removeChild(a);
   URL.revokeObjectURL(url);
 }
+
+// ─── PROJECTS OVERVIEW (Analytics Tab 2) ────────────────────────────
+var projSortMode = 'abs'; // 'abs' | 'ann' | 'cnt'
+
+function projSetSort(mode){
+  projSortMode = mode;
+  document.querySelectorAll('.proj-sort-chip').forEach(function(b){
+    b.classList.toggle('on', b.dataset.sort === mode);
+  });
+  pnlRenderProjectsTab();
+}
+
+function pnlRenderProjectsTab(){
+  var card = document.getElementById('proj-overview-card');
+  var body = document.getElementById('proj-ov-body');
+  var empty = document.getElementById('proj-ov-empty');
+  if(!card) return;
+
+  if(!pnlLoaded || !PNL_FILTERED_ALL || !PNL_FILTERED_ALL.length){
+    pnlShow('proj-overview-card');
+    pnlHide('proj-ov-body');
+    pnlShow('proj-ov-empty');
+    return;
+  }
+
+  pnlShow('proj-overview-card');
+  pnlHide('proj-ov-empty');
+  pnlShow('proj-ov-body');
+
+  var topN = parseInt(document.getElementById('proj-top-n').value) || 10;
+
+  // Group PNL_FILTERED_ALL by project_name
+  var map = {};
+  PNL_FILTERED_ALL.forEach(function(p){
+    var key = p.project_name || 'Unknown';
+    if(!map[key]) map[key] = {
+      project_name: key,
+      property_type: p.property_type || '',
+      postal_district: p.postal_district || '',
+      pairs: [], profits: [], losses: [], ann_returns: [], yrs_helds: []
+    };
+    var g = map[key];
+    g.pairs.push(p);
+    if(p.profit > 0) g.profits.push(p.profit);
+    else g.losses.push(p.profit);
+    g.ann_returns.push(p.ann_return);
+    g.yrs_helds.push(p.yrs_held);
+  });
+
+  // Compute aggregates
+  var groups = Object.values(map).map(function(g){
+    var allP = g.profits.reduce(function(s,v){return s+v;},0);
+    var allL = g.losses.reduce(function(s,v){return s+v;},0);
+    var netP = allP + allL;
+    var sorted = g.ann_returns.slice().sort(function(a,b){return a-b;});
+    var mid = Math.floor(sorted.length/2);
+    var medAnn = sorted.length%2===0 ? (sorted[mid-1]+sorted[mid])/2 : sorted[mid];
+    var avgHold = g.yrs_helds.reduce(function(s,v){return s+v;},0) / (g.yrs_helds.length||1);
+    return {
+      project_name: g.project_name,
+      property_type: g.property_type,
+      postal_district: g.postal_district,
+      cnt: g.pairs.length,
+      profit_cnt: g.profits.length,
+      loss_cnt: g.losses.length,
+      total_profit: allP,
+      total_loss: allL,
+      net: netP,
+      med_ann: medAnn,
+      avg_hold: avgHold
+    };
+  });
+
+  // Summary stats
+  var totalProjects = groups.length;
+  var profitableProj = groups.filter(function(g){return g.net>0;}).length;
+  var statsEl = document.getElementById('proj-ov-stats');
+  statsEl.innerHTML = [
+    {label:'Projects Analysed', val:totalProjects, bg:'var(--srf2)', bdr:'var(--bdr)', tc:'var(--txt)', vc:'var(--txt)'},
+    {label:'Net Profitable', val:profitableProj, bg:'#e8f5e9', bdr:'#a5d6a7', tc:'#2e7d32', vc:'#1a6b3c'},
+    {label:'Net Unprofitable', val:totalProjects-profitableProj, bg:'#fce4ec', bdr:'#ef9a9a', tc:'#c62828', vc:'#b71c1c'}
+  ].map(function(s){
+    return '<div style="flex:1;min-width:110px;background:'+s.bg+';border:1px solid '+s.bdr+';border-radius:8px;padding:8px 14px">'
+      +'<div style="font-size:10px;text-transform:uppercase;letter-spacing:.07em;color:'+s.tc+';margin-bottom:2px">'+s.label+'</div>'
+      +'<div class="mono" style="font-size:20px;font-weight:700;color:'+s.vc+'">'+s.val+'</div>'
+      +'</div>';
+  }).join('');
+
+  // Sort profitable projects
+  var profitGroups = groups.filter(function(g){return g.net>=0;});
+  var lossGroups   = groups.filter(function(g){return g.net<0;});
+
+  function sortGroups(arr, descending){
+    return arr.slice().sort(function(a,b){
+      var av, bv;
+      if(projSortMode==='abs'){ av = descending ? b.net - a.net : a.net - b.net; return av; }
+      if(projSortMode==='ann'){ av = a.med_ann; bv = b.med_ann; return descending ? bv-av : av-bv; }
+      if(projSortMode==='cnt'){ av = a.cnt; bv = b.cnt; return descending ? bv-av : av-bv; }
+      return 0;
+    }).slice(0, topN);
+  }
+
+  var topProfit = sortGroups(profitGroups, true);
+  var topLoss   = sortGroups(lossGroups, false); // worst first
+
+  function fmtMoney(v){
+    var abs = Math.abs(v);
+    if(abs>=1000000) return (v<0?'-':'+')+' S$'+(abs/1000000).toFixed(2)+'M';
+    if(abs>=1000)    return (v<0?'-':'+')+' S$'+(abs/1000).toFixed(0)+'K';
+    return (v<0?'-':'+')+' S$'+Math.round(abs).toLocaleString();
+  }
+
+  function fmtAnn(v){
+    return (v>=0?'+':'')+v.toFixed(1)+'%';
+  }
+
+  function renderProjRows(tbody, rows, isProfitable){
+    var el = document.getElementById(tbody);
+    if(!rows.length){ el.innerHTML='<tr><td colspan="7" style="text-align:center;color:var(--mut);padding:20px;font-size:12px">No data</td></tr>'; return; }
+    el.innerHTML = rows.map(function(g, i){
+      var profitVal = isProfitable ? g.total_profit : g.net;
+      var profitColor = isProfitable ? '#1a6b3c' : '#b71c1c';
+      var annColor = g.med_ann >= 0 ? '#1a6b3c' : '#b71c1c';
+      var distLabel = g.postal_district ? 'D'+g.postal_district : '—';
+      var typeShort = (g.property_type||'').replace('Multiple-User Factory','Multi-User').replace('Single-User Factory','Single-User').replace('Business Park','Biz Park').replace('Shop House','Shophouse');
+      return '<tr>'
+        +'<td style="font-size:11px;font-weight:600;color:var(--txt);max-width:150px;white-space:normal;line-height:1.3">'
+          +'<span style="display:inline-block;min-width:18px;font-size:10px;color:var(--mut);margin-right:4px">'+(i+1)+'.</span>'
+          +g.project_name
+        +'</td>'
+        +'<td style="font-size:10px;color:var(--mut);white-space:nowrap">'+typeShort+'</td>'
+        +'<td style="font-size:10px;color:var(--mut);text-align:center">'+distLabel+'</td>'
+        +'<td class="mono" style="text-align:right;font-size:11px">'+g.cnt+'</td>'
+        +'<td class="mono" style="text-align:right;font-size:11px;font-weight:700;color:'+profitColor+'">'+fmtMoney(profitVal)+'</td>'
+        +'<td class="mono" style="text-align:right;font-size:11px;color:'+annColor+'">'+fmtAnn(g.med_ann)+'</td>'
+        +'<td class="mono" style="text-align:right;font-size:11px;color:var(--mut)">'+g.avg_hold.toFixed(1)+'y</td>'
+        +'</tr>';
+    }).join('');
+  }
+
+  renderProjRows('proj-tbody-profit', topProfit, true);
+  renderProjRows('proj-tbody-loss',   topLoss,   false);
+
+  // Update subtitle
+  var periodEl = document.getElementById('pnl-period-filter');
+  var periodLabel = periodEl ? periodEl.options[periodEl.selectedIndex].text : '';
+  var sub = document.getElementById('proj-ov-subtitle');
+  if(sub) sub.textContent = 'Ranked by P&L performance · '+periodLabel+' · '+totalProjects+' projects from '+PNL_FILTERED_ALL.length+' matched pairs';
+}
+// ─────────────────────────────────────────────────────────────────────
 
 function pnlGoPage(sec, p){
   if(sec==='all'){ pnlPageAll=p; pnlRenderTable('all', PNL_FILTERED_ALL, p); }
