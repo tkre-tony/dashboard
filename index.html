@@ -995,9 +995,9 @@ html,body{background:var(--bg);color:var(--txt);font-family:'DM Sans',sans-serif
         <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-left:auto">
           <!-- Sort mode chips -->
           <div style="display:flex;gap:4px">
-            <button class="proj-sort-chip on" data-sort="abs" onclick="projSetSort('abs')">Absolute S$</button>
+            <button class="proj-sort-chip" data-sort="abs" onclick="projSetSort('abs')">Absolute S$</button>
             <button class="proj-sort-chip" data-sort="ann" onclick="projSetSort('ann')">Ann. Return %</button>
-            <button class="proj-sort-chip" data-sort="cnt" onclick="projSetSort('cnt')">Volume</button>
+            <button class="proj-sort-chip on" data-sort="cnt" onclick="projSetSort('cnt')">Volume</button>
           </div>
           <div style="font-size:11px;color:var(--mut);padding:0 4px">Top</div>
           <select id="proj-top-n" onchange="pnlRenderProjectsTab()" style="font-size:11px;padding:4px 8px;border:1px solid var(--bdr);border-radius:6px;background:var(--srf);color:var(--txt)">
@@ -1005,6 +1005,14 @@ html,body{background:var(--bg);color:var(--txt);font-family:'DM Sans',sans-serif
             <option value="20">20</option>
             <option value="50">50</option>
           </select>
+          <!-- Custom period range -->
+          <div style="display:flex;align-items:center;gap:4px;border:1px solid var(--bdr);border-radius:6px;padding:3px 8px;background:var(--srf2);font-size:11px;color:var(--mut)">
+            <span>From</span>
+            <input type="date" id="proj-date-from" onchange="pnlRenderProjectsTab()" style="font-size:11px;border:none;background:transparent;color:var(--txt);padding:0 2px;outline:none;width:110px">
+            <span>to</span>
+            <input type="date" id="proj-date-to" onchange="pnlRenderProjectsTab()" style="font-size:11px;border:none;background:transparent;color:var(--txt);padding:0 2px;outline:none;width:110px">
+            <button onclick="projClearDates()" title="Clear custom range" style="border:none;background:none;cursor:pointer;color:var(--mut);font-size:12px;padding:0 2px;line-height:1">✕</button>
+          </div>
         </div>
       </div>
 
@@ -1019,15 +1027,15 @@ html,body{background:var(--bg);color:var(--txt);font-family:'DM Sans',sans-serif
 
           <!-- Most Profitable -->
           <div style="min-width:0">
-            <div style="margin-bottom:8px">
+            <div style="margin-bottom:8px;display:flex;align-items:center;justify-content:space-between">
               <span style="display:inline-block;background:#e8f5e9;border:1px solid #a5d6a7;border-radius:12px;padding:4px 14px;font-size:12px;font-weight:700;color:#1a6b3c">🏆 Most Profitable Projects</span>
+              <span id="proj-period-label-profit" style="font-size:10px;color:var(--mut);text-align:right"></span>
             </div>
             <div style="overflow-x:auto;border-radius:6px;border:1px solid var(--bdr)">
-              <table class="ptable" id="proj-tbl-profit" style="min-width:480px">
+              <table class="ptable" id="proj-tbl-profit" style="min-width:380px">
                 <thead><tr>
-                  <th style="min-width:130px">Project</th>
+                  <th style="min-width:140px">Project</th>
                   <th>Type</th>
-                  <th>Dist.</th>
                   <th class="mono" style="text-align:right">Vol.</th>
                   <th class="mono" style="text-align:right">Total Profit</th>
                   <th class="mono" style="text-align:right">Med. Ann.</th>
@@ -1040,15 +1048,15 @@ html,body{background:var(--bg);color:var(--txt);font-family:'DM Sans',sans-serif
 
           <!-- Most Unprofitable -->
           <div style="min-width:0">
-            <div style="margin-bottom:8px">
+            <div style="margin-bottom:8px;display:flex;align-items:center;justify-content:space-between">
               <span style="display:inline-block;background:#fce4ec;border:1px solid #ef9a9a;border-radius:12px;padding:4px 14px;font-size:12px;font-weight:700;color:#b71c1c">📉 Most Unprofitable Projects</span>
+              <span id="proj-period-label-loss" style="font-size:10px;color:var(--mut);text-align:right"></span>
             </div>
             <div style="overflow-x:auto;border-radius:6px;border:1px solid var(--bdr)">
-              <table class="ptable" id="proj-tbl-loss" style="min-width:480px">
+              <table class="ptable" id="proj-tbl-loss" style="min-width:380px">
                 <thead><tr>
-                  <th style="min-width:130px">Project</th>
+                  <th style="min-width:140px">Project</th>
                   <th>Type</th>
-                  <th>Dist.</th>
                   <th class="mono" style="text-align:right">Vol.</th>
                   <th class="mono" style="text-align:right">Total Loss</th>
                   <th class="mono" style="text-align:right">Med. Ann.</th>
@@ -2851,6 +2859,18 @@ function pnlApplyFilters(){
   pnlHide('pnl-empty');
   pnlShow('pnl-stats'); pnlShow('pnl-tabs-wrap');
   pnlShowSection(pnlActiveSection);
+  // Pre-populate custom date range from the shared period filter (only if not already customised)
+  var fromEl = document.getElementById('proj-date-from');
+  var toEl   = document.getElementById('proj-date-to');
+  if(fromEl && !fromEl.value && toEl && !toEl.value){
+    var periodYrs = parseFloat(document.getElementById('pnl-period-filter').value);
+    if(periodYrs > 0){
+      var dTo = new Date(); var dFrom = new Date();
+      dFrom.setTime(dFrom.getTime() - periodYrs * 365.25 * 24 * 60 * 60 * 1000);
+      fromEl.value = dFrom.toISOString().slice(0,10);
+      toEl.value   = dTo.toISOString().slice(0,10);
+    }
+  }
   pnlRenderProjectsTab();
 }
 
@@ -2929,13 +2949,21 @@ function pnlExportCSV(){
 }
 
 // ─── PROJECTS OVERVIEW (Analytics Tab 2) ────────────────────────────
-var projSortMode = 'abs'; // 'abs' | 'ann' | 'cnt'
+var projSortMode = 'cnt'; // 'abs' | 'ann' | 'cnt'
 
 function projSetSort(mode){
   projSortMode = mode;
   document.querySelectorAll('.proj-sort-chip').forEach(function(b){
     b.classList.toggle('on', b.dataset.sort === mode);
   });
+  pnlRenderProjectsTab();
+}
+
+function projClearDates(){
+  var f = document.getElementById('proj-date-from');
+  var t = document.getElementById('proj-date-to');
+  if(f) f.value = '';
+  if(t) t.value = '';
   pnlRenderProjectsTab();
 }
 
@@ -2958,12 +2986,41 @@ function pnlRenderProjectsTab(){
 
   var topN = parseInt(document.getElementById('proj-top-n').value) || 10;
 
-  // Group PNL_FILTERED_ALL by project_name (exclude shophouses — individual units, not projects)
+  // Custom date range (overrides the shared period filter if set)
+  var dateFromEl = document.getElementById('proj-date-from');
+  var dateToEl   = document.getElementById('proj-date-to');
+  var customFrom = dateFromEl && dateFromEl.value ? dateFromEl.value : null;
+  var customTo   = dateToEl   && dateToEl.value   ? dateToEl.value   : null;
+
+  // Determine source rows — apply custom date range if set
+  var sourceRows = PNL_FILTERED_ALL;
+  if(customFrom || customTo){
+    sourceRows = PNL_FILTERED_ALL.filter(function(p){
+      var d = p.sell_date || '';
+      if(customFrom && d < customFrom) return false;
+      if(customTo   && d > customTo)   return false;
+      return true;
+    });
+  }
+
+  // Derive actual date range from source rows for period label
+  var allDates = sourceRows.map(function(p){ return p.sell_date||''; }).filter(Boolean).sort();
+  var rangeFrom = allDates.length ? allDates[0] : null;
+  var rangeTo   = allDates.length ? allDates[allDates.length-1] : null;
+  function fmtDateLabel(d){ if(!d) return '—'; var p=d.split('-'); return p[1]+'/'+p[2]+'/'+p[0]; }
+  var periodRangeLabel = rangeFrom ? fmtDateLabel(rangeFrom)+' – '+fmtDateLabel(rangeTo) : '';
+  var lp = document.getElementById('proj-period-label-profit');
+  var ll = document.getElementById('proj-period-label-loss');
+  if(lp) lp.textContent = periodRangeLabel;
+  if(ll) ll.textContent = periodRangeLabel;
+
+  // Group by project_name (exclude shophouses and N.A. — individual units, not projects)
   var map = {};
-  PNL_FILTERED_ALL.forEach(function(p){
+  sourceRows.forEach(function(p){
     var pt = (p.property_type||'').toLowerCase();
     if(pt === 'shop house' || pt === 'shophouse') return; // skip shophouses
     var key = p.project_name || 'Unknown';
+    if(!key || key.trim().toUpperCase() === 'N.A.' || key.trim() === '') return; // skip N.A. / blank
     if(!map[key]) map[key] = {
       project_name: key,
       property_type: p.property_type || '',
@@ -3047,20 +3104,20 @@ function pnlRenderProjectsTab(){
 
   function renderProjRows(tbody, rows, isProfitable){
     var el = document.getElementById(tbody);
-    if(!rows.length){ el.innerHTML='<tr><td colspan="7" style="text-align:center;color:var(--mut);padding:20px;font-size:12px">No data</td></tr>'; return; }
+    if(!rows.length){ el.innerHTML='<tr><td colspan="6" style="text-align:center;color:var(--mut);padding:20px;font-size:12px">No data</td></tr>'; return; }
     el.innerHTML = rows.map(function(g, i){
       var profitVal = isProfitable ? g.total_profit : g.net;
       var profitColor = isProfitable ? '#1a6b3c' : '#b71c1c';
       var annColor = g.med_ann >= 0 ? '#1a6b3c' : '#b71c1c';
-      var distLabel = g.postal_district ? 'D'+g.postal_district : '—';
+      var distLabel = g.postal_district ? 'D'+g.postal_district : '';
       var typeShort = (g.property_type||'').replace('Multiple-User Factory','Multi-User').replace('Multiple-user Factory','Multi-User').replace('Single-User Factory','Single-User').replace('Single-user Factory','Single-User').replace('Business Park','Biz Park').replace('Shop House','Shophouse');
       return '<tr>'
-        +'<td style="font-size:11px;font-weight:600;color:var(--txt);max-width:150px;white-space:normal;line-height:1.3">'
-          +'<span style="display:inline-block;min-width:18px;font-size:10px;color:var(--mut);margin-right:4px">'+(i+1)+'.</span>'
+        +'<td style="font-size:11px;font-weight:600;color:var(--txt);white-space:normal;line-height:1.3">'
+          +'<span style="display:inline-block;min-width:18px;font-size:10px;color:var(--mut);margin-right:3px">'+(i+1)+'.</span>'
           +g.project_name
+          +(distLabel ? '<br><span style="font-size:10px;font-weight:400;color:var(--mut);margin-left:21px">'+distLabel+'</span>' : '')
         +'</td>'
         +'<td style="font-size:10px;color:var(--mut);white-space:nowrap">'+typeShort+'</td>'
-        +'<td style="font-size:10px;color:var(--mut);text-align:center">'+distLabel+'</td>'
         +'<td class="mono" style="text-align:right;font-size:11px">'+g.cnt+'</td>'
         +'<td class="mono" style="text-align:right;font-size:11px;font-weight:700;color:'+profitColor+'">'+fmtMoney(profitVal)+'</td>'
         +'<td class="mono" style="text-align:right;font-size:11px;color:'+annColor+'">'+fmtAnn(g.med_ann)+'</td>'
