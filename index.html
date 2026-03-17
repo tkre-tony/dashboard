@@ -725,6 +725,7 @@ html,body{background:var(--bg);color:var(--txt);font-family:'DM Sans',sans-serif
     <div style="display:flex;gap:0;margin-bottom:16px;border-bottom:2px solid var(--bdr)">
       <button class="anal-stab on" data-atab="pnl" onclick="analShowTab('pnl')">📊 Profit / Loss Overview</button>
       <button class="anal-stab" data-atab="proj" onclick="analShowTab('proj')">🏢 Projects Overview</button>
+      <button class="anal-stab" data-atab="tx" onclick="analShowTab('tx')">🔍 Transactions Overview</button>
     </div>
 
     <!-- ── Panel: Profit/Loss Overview ── -->
@@ -1010,55 +1011,147 @@ html,body{background:var(--bg);color:var(--txt);font-family:'DM Sans',sans-serif
         <!-- Summary chips -->
         <div id="proj-ov-stats" style="display:flex;gap:10px;flex-wrap:wrap;margin-bottom:18px"></div>
 
-        <!-- Side-by-side tables -->
-        <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px" id="proj-ov-grid">
+        <!-- Period label - single consistent display -->
+        <div id="proj-period-bar" style="font-size:11px;color:var(--mut);margin-bottom:12px;display:flex;align-items:center;gap:6px">
+          <span style="background:var(--srf2);border:1px solid var(--bdr);border-radius:6px;padding:3px 10px" id="proj-period-display"></span>
+        </div>
 
-          <!-- Most Profitable -->
-          <div style="min-width:0">
-            <div style="margin-bottom:8px;display:flex;align-items:center;justify-content:space-between">
-              <span style="display:inline-block;background:#e8f5e9;border:1px solid #a5d6a7;border-radius:12px;padding:4px 14px;font-size:12px;font-weight:700;color:#1a6b3c">🏆 Most Profitable Projects</span>
-              <span id="proj-period-label-profit" style="font-size:10px;color:var(--mut);text-align:right"></span>
-            </div>
-            <div style="overflow-x:auto;border-radius:6px;border:1px solid var(--bdr)">
-              <table class="ptable" id="proj-tbl-profit" style="min-width:380px">
-                <thead><tr>
-                  <th style="min-width:140px">Project</th>
-                  <th>Type</th>
-                  <th class="mono" style="text-align:right">Vol.</th>
-                  <th class="mono" style="text-align:right">Total Profit</th>
-                  <th class="mono" style="text-align:right">Med. Ann.</th>
-                  <th class="mono" style="text-align:right">Avg Hold</th>
-                </tr></thead>
-                <tbody id="proj-tbody-profit"></tbody>
-              </table>
-            </div>
+        <!-- Profitable table -->
+        <div style="margin-bottom:20px">
+          <div style="margin-bottom:8px">
+            <span style="display:inline-block;background:#e8f5e9;border:1px solid #a5d6a7;border-radius:12px;padding:4px 14px;font-size:12px;font-weight:700;color:#1a6b3c">🏆 Projects with Most Profitable Transactions</span>
           </div>
-
-          <!-- Most Unprofitable -->
-          <div style="min-width:0">
-            <div style="margin-bottom:8px;display:flex;align-items:center;justify-content:space-between">
-              <span style="display:inline-block;background:#fce4ec;border:1px solid #ef9a9a;border-radius:12px;padding:4px 14px;font-size:12px;font-weight:700;color:#b71c1c">📉 Most Unprofitable Projects</span>
-              <span id="proj-period-label-loss" style="font-size:10px;color:var(--mut);text-align:right"></span>
-            </div>
-            <div style="overflow-x:auto;border-radius:6px;border:1px solid var(--bdr)">
-              <table class="ptable" id="proj-tbl-loss" style="min-width:380px">
-                <thead><tr>
-                  <th style="min-width:140px">Project</th>
-                  <th>Type</th>
-                  <th class="mono" style="text-align:right">Vol.</th>
-                  <th class="mono" style="text-align:right">Total Loss</th>
-                  <th class="mono" style="text-align:right">Med. Ann.</th>
-                  <th class="mono" style="text-align:right">Avg Hold</th>
-                </tr></thead>
-                <tbody id="proj-tbody-loss"></tbody>
-              </table>
-            </div>
+          <div style="overflow-x:auto;border-radius:6px;border:1px solid var(--bdr)">
+            <table class="ptable" id="proj-tbl-profit">
+              <thead><tr>
+                <th style="min-width:160px">Project</th>
+                <th>Type</th>
+                <th class="mono" style="text-align:right">Vol.</th>
+                <th class="mono" style="text-align:right">Highest Profit</th>
+                <th class="mono" style="text-align:right">Lowest Profit</th>
+                <th class="mono" style="text-align:right">Avg Profit</th>
+                <th class="mono" style="text-align:right">Med. Ann.</th>
+                <th class="mono" style="text-align:right">Avg Hold</th>
+              </tr></thead>
+              <tbody id="proj-tbody-profit"></tbody>
+            </table>
           </div>
+        </div>
 
-        </div><!-- end grid -->
+        <!-- Unprofitable table -->
+        <div>
+          <div style="margin-bottom:8px">
+            <span style="display:inline-block;background:#fce4ec;border:1px solid #ef9a9a;border-radius:12px;padding:4px 14px;font-size:12px;font-weight:700;color:#b71c1c">📉 Projects with Most Unprofitable Transactions</span>
+          </div>
+          <div style="overflow-x:auto;border-radius:6px;border:1px solid var(--bdr)">
+            <table class="ptable" id="proj-tbl-loss">
+              <thead><tr>
+                <th style="min-width:160px">Project</th>
+                <th>Type</th>
+                <th class="mono" style="text-align:right">Vol.</th>
+                <th class="mono" style="text-align:right">Highest Loss</th>
+                <th class="mono" style="text-align:right">Lowest Loss</th>
+                <th class="mono" style="text-align:right">Avg Loss</th>
+                <th class="mono" style="text-align:right">Med. Ann.</th>
+                <th class="mono" style="text-align:right">Avg Hold</th>
+              </tr></thead>
+              <tbody id="proj-tbody-loss"></tbody>
+            </table>
+          </div>
+        </div>
+
       </div><!-- end proj-ov-body -->
     </div><!-- end Projects Overview card -->
     </div><!-- end anal-panel-proj -->
+
+    <!-- ── Panel: Transactions Overview ── -->
+    <div id="anal-panel-tx" style="display:none">
+    <div class="card" id="tx-overview-card">
+      <div class="card-hdr" style="flex-wrap:wrap;gap:8px;align-items:center">
+        <div>
+          <div class="card-title"><span class="card-title-dot"></span>Transactions Overview</div>
+          <div class="card-subtitle" id="tx-ov-subtitle">Most profitable &amp; unprofitable individual transactions</div>
+        </div>
+        <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-left:auto">
+          <!-- Sort chips -->
+          <div style="display:flex;gap:4px">
+            <button class="proj-sort-chip on" data-txsort="abs" onclick="txSetSort('abs')">Absolute S$</button>
+            <button class="proj-sort-chip" data-txsort="ann" onclick="txSetSort('ann')">Ann. Return %</button>
+            <button class="proj-sort-chip" data-txsort="cnt" onclick="txSetSort('cnt')">Volume</button>
+          </div>
+          <div style="font-size:11px;color:var(--mut)">Top</div>
+          <select id="tx-top-n" onchange="txRender()" style="font-size:11px;padding:4px 8px;border:1px solid var(--bdr);border-radius:6px;background:var(--srf);color:var(--txt)">
+            <option value="10" selected>10</option>
+            <option value="25">25</option>
+            <option value="50">50</option>
+            <option value="100">100</option>
+          </select>
+          <!-- Period range picker -->
+          <div style="display:flex;align-items:center;gap:4px;border:1px solid var(--bdr);border-radius:6px;padding:3px 8px;background:var(--srf2);font-size:11px;color:var(--mut)">
+            <span>From</span>
+            <input type="date" id="tx-date-from" onchange="txRender()" style="font-size:11px;border:none;background:transparent;color:var(--txt);padding:0 2px;outline:none;width:100px">
+            <span>to</span>
+            <input type="date" id="tx-date-to" onchange="txRender()" style="font-size:11px;border:none;background:transparent;color:var(--txt);padding:0 2px;outline:none;width:100px">
+            <button onclick="txClearDates()" title="Reset to current quarter" style="border:none;background:none;cursor:pointer;color:var(--mut);font-size:12px;padding:0 2px;line-height:1">✕</button>
+          </div>
+        </div>
+      </div>
+
+      <div id="tx-ov-empty" style="display:none;text-align:center;padding:32px;color:var(--mut);font-size:13px">Load data in Profit / Loss Overview to populate this view.</div>
+
+      <div id="tx-ov-body" style="display:none">
+
+        <!-- Profitable transactions -->
+        <div style="margin-bottom:20px">
+          <div style="margin-bottom:8px">
+            <span style="display:inline-block;background:#e8f5e9;border:1px solid #a5d6a7;border-radius:12px;padding:4px 14px;font-size:12px;font-weight:700;color:#1a6b3c">🏆 Most Profitable Transactions</span>
+          </div>
+          <div style="overflow-x:auto;border-radius:6px;border:1px solid var(--bdr)">
+            <table class="ptable" id="tx-tbl-profit">
+              <thead><tr>
+                <th style="min-width:130px">Project</th>
+                <th style="min-width:140px">Address</th>
+                <th>Type</th>
+                <th class="mono" style="text-align:right">Sell Date</th>
+                <th class="mono" style="text-align:right">Buy Price</th>
+                <th class="mono" style="text-align:right">Sell Price</th>
+                <th class="mono" style="text-align:right">Profit</th>
+                <th class="mono" style="text-align:right">Ann. %</th>
+                <th class="mono" style="text-align:right">Hold</th>
+                <th class="mono" style="text-align:right">Area</th>
+              </tr></thead>
+              <tbody id="tx-tbody-profit"></tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- Unprofitable transactions -->
+        <div>
+          <div style="margin-bottom:8px">
+            <span style="display:inline-block;background:#fce4ec;border:1px solid #ef9a9a;border-radius:12px;padding:4px 14px;font-size:12px;font-weight:700;color:#b71c1c">📉 Most Unprofitable Transactions</span>
+          </div>
+          <div style="overflow-x:auto;border-radius:6px;border:1px solid var(--bdr)">
+            <table class="ptable" id="tx-tbl-loss">
+              <thead><tr>
+                <th style="min-width:130px">Project</th>
+                <th style="min-width:140px">Address</th>
+                <th>Type</th>
+                <th class="mono" style="text-align:right">Sell Date</th>
+                <th class="mono" style="text-align:right">Buy Price</th>
+                <th class="mono" style="text-align:right">Sell Price</th>
+                <th class="mono" style="text-align:right">Loss</th>
+                <th class="mono" style="text-align:right">Ann. %</th>
+                <th class="mono" style="text-align:right">Hold</th>
+                <th class="mono" style="text-align:right">Area</th>
+              </tr></thead>
+              <tbody id="tx-tbody-loss"></tbody>
+            </table>
+          </div>
+        </div>
+
+      </div><!-- end tx-ov-body -->
+    </div><!-- end tx-overview-card -->
+    </div><!-- end anal-panel-tx -->
 
   </div>
 
@@ -2447,7 +2540,7 @@ function analShowTab(tab){
   document.querySelectorAll('.anal-stab').forEach(function(b){
     b.classList.toggle('on', b.dataset.atab === tab);
   });
-  var panels = ['pnl','proj'];
+  var panels = ['pnl','proj','tx'];
   panels.forEach(function(p){
     var el = document.getElementById('anal-panel-'+p);
     if(el) el.style.display = p===tab ? '' : 'none';
@@ -2456,6 +2549,11 @@ function analShowTab(tab){
     var f = document.getElementById('proj-date-from');
     if(f && !f.value) projSetCurrentQuarter();
     pnlRenderProjectsTab();
+  }
+  if(tab==='tx'){
+    var f = document.getElementById('tx-date-from');
+    if(f && !f.value) txSetCurrentQuarter();
+    txRender();
   }
 }
 
@@ -2960,6 +3058,106 @@ function projSetCurrentQuarter(){
   if(t) t.value = now.toISOString().slice(0,10);
 }
 
+// ─── TRANSACTIONS OVERVIEW (Analytics Tab 3) ────────────────────────
+var txSortMode = 'abs';
+
+function txSetSort(mode){
+  txSortMode = mode;
+  document.querySelectorAll('[data-txsort]').forEach(function(b){
+    b.classList.toggle('on', b.dataset.txsort === mode);
+  });
+  txRender();
+}
+
+function txSetCurrentQuarter(){
+  var now = new Date();
+  var qStartMonth = Math.floor(now.getMonth() / 3) * 3;
+  var qStart = new Date(now.getFullYear(), qStartMonth, 1);
+  var f = document.getElementById('tx-date-from');
+  var t = document.getElementById('tx-date-to');
+  if(f) f.value = qStart.toISOString().slice(0,10);
+  if(t) t.value = now.toISOString().slice(0,10);
+}
+
+function txClearDates(){
+  txSetCurrentQuarter();
+  txRender();
+}
+
+function txRender(){
+  var empty = document.getElementById('tx-ov-empty');
+  var body  = document.getElementById('tx-ov-body');
+  var sub   = document.getElementById('tx-ov-subtitle');
+  if(!pnlLoaded || !PNL_FILTERED_ALL || !PNL_FILTERED_ALL.length){
+    pnlShow('tx-ov-empty'); pnlHide('tx-ov-body'); return;
+  }
+  pnlHide('tx-ov-empty'); pnlShow('tx-ov-body');
+
+  var topN     = parseInt(document.getElementById('tx-top-n').value) || 10;
+  var dateFrom = document.getElementById('tx-date-from') ? document.getElementById('tx-date-from').value : '';
+  var dateTo   = document.getElementById('tx-date-to')   ? document.getElementById('tx-date-to').value   : '';
+
+  var rows = PNL_FILTERED_ALL.filter(function(p){
+    if(dateFrom && (p.sell_date||'') < dateFrom) return false;
+    if(dateTo   && (p.sell_date||'') > dateTo)   return false;
+    return true;
+  });
+
+  var profitRows = rows.filter(function(p){ return p.profit > 0; });
+  var lossRows   = rows.filter(function(p){ return p.profit <= 0; });
+
+  function sortRows(arr, descending){
+    return arr.slice().sort(function(a,b){
+      if(txSortMode==='abs') return descending ? b.profit - a.profit : a.profit - b.profit;
+      if(txSortMode==='ann') return descending ? b.ann_return - a.ann_return : a.ann_return - b.ann_return;
+      if(txSortMode==='cnt') return descending ? b.area_sqft - a.area_sqft : a.area_sqft - b.area_sqft;
+      return 0;
+    }).slice(0, topN);
+  }
+
+  var topProfit = sortRows(profitRows, true);
+  var topLoss   = sortRows(lossRows, false);
+
+  function fmtP(v){ var a=Math.abs(v); var s=v<0?'- ':'+ '; if(a>=1e6) return s+'S$'+(a/1e6).toFixed(2)+'M'; if(a>=1e3) return s+'S$'+(a/1e3).toFixed(0)+'K'; return s+'S$'+Math.round(a).toLocaleString(); }
+  function fmtPrice(v){ if(!v) return '—'; var a=Math.abs(v); if(a>=1e6) return 'S$'+(a/1e6).toFixed(2)+'M'; if(a>=1e3) return 'S$'+(a/1e3).toFixed(0)+'K'; return 'S$'+Math.round(a).toLocaleString(); }
+  function fmtAnn2(v){ return (v>=0?'+':'')+v.toFixed(1)+'%'; }
+  function fmtDt(d){ if(!d) return '—'; var p=d.split('-'); return p[2]+'/'+p[1]+'/'+p[0]; }
+  function tShort(t){ return (t||'').replace('Multiple-User Factory','Multi-User').replace('Multiple-user Factory','Multi-User').replace('Single-User Factory','Single-User').replace('Single-user Factory','Single-User').replace('Business Park','Biz Park').replace('Shop House','Shophouse'); }
+
+  function renderTxRows(tbodyId, rows, isProfit){
+    var el = document.getElementById(tbodyId);
+    if(!rows.length){ el.innerHTML='<tr><td colspan="10" style="text-align:center;color:var(--mut);padding:20px;font-size:12px">No data</td></tr>'; return; }
+    var pc='#1a6b3c', lc='#b71c1c';
+    el.innerHTML = rows.map(function(r, i){
+      var pColor = isProfit ? pc : lc;
+      var aColor = r.ann_return >= 0 ? pc : lc;
+      return '<tr>'
+        +'<td style="font-size:11px;font-weight:600;color:var(--txt);white-space:normal;line-height:1.3">'
+          +'<span style="font-size:10px;color:var(--mut);margin-right:3px">'+(i+1)+'.</span>'+(r.project_name||'—')
+        +'</td>'
+        +'<td style="font-size:10px;color:var(--mut)">'+(r.address||'—')+'</td>'
+        +'<td style="font-size:10px;color:var(--mut);white-space:nowrap">'+tShort(r.property_type)+'</td>'
+        +'<td class="mono" style="text-align:right;font-size:10px;color:var(--mut)">'+fmtDt(r.sell_date)+'</td>'
+        +'<td class="mono" style="text-align:right;font-size:11px">'+fmtPrice(r.buy_price)+'</td>'
+        +'<td class="mono" style="text-align:right;font-size:11px">'+fmtPrice(r.sell_price)+'</td>'
+        +'<td class="mono" style="text-align:right;font-size:11px;font-weight:700;color:'+pColor+'">'+fmtP(r.profit)+'</td>'
+        +'<td class="mono" style="text-align:right;font-size:11px;color:'+aColor+'">'+fmtAnn2(r.ann_return)+'</td>'
+        +'<td class="mono" style="text-align:right;font-size:11px;color:var(--mut)">'+r.yrs_held.toFixed(1)+'y</td>'
+        +'<td class="mono" style="text-align:right;font-size:11px;color:var(--mut)">'+(r.area_sqft ? Math.round(r.area_sqft).toLocaleString()+' sf' : '—')+'</td>'
+        +'</tr>';
+    }).join('');
+  }
+
+  renderTxRows('tx-tbody-profit', topProfit, true);
+  renderTxRows('tx-tbody-loss',   topLoss,   false);
+
+  if(sub){
+    var dF = dateFrom ? fmtDt(dateFrom) : ''; var dT = dateTo ? fmtDt(dateTo) : '';
+    sub.textContent = (dF && dT ? dF+' – '+dT+' · ' : '')+profitRows.length+' profitable · '+lossRows.length+' unprofitable transactions';
+  }
+}
+// ─────────────────────────────────────────────────────────────────────
+
 function pnlRenderProjectsTab(){
   var card = document.getElementById('proj-overview-card');
   var body = document.getElementById('proj-ov-body');
@@ -2996,12 +3194,17 @@ function pnlRenderProjectsTab(){
     });
   }
 
-  // Derive actual date range from source rows for period label
-  var allDates = sourceRows.map(function(p){ return p.sell_date||''; }).filter(Boolean).sort();
-  var rangeFrom = allDates.length ? allDates[0] : null;
-  var rangeTo   = allDates.length ? allDates[allDates.length-1] : null;
+  // Period label — use input dates directly for consistency
   function fmtDateLabel(d){ if(!d) return '—'; var p=d.split('-'); return p[2]+'/'+p[1]+'/'+p[0]; }
-  var periodRangeLabel = rangeFrom ? fmtDateLabel(rangeFrom)+' – '+fmtDateLabel(rangeTo) : '';
+  var periodRangeLabel = (customFrom || customTo)
+    ? fmtDateLabel(customFrom || rangeFrom) + ' – ' + fmtDateLabel(customTo || rangeTo)
+    : (rangeFrom ? fmtDateLabel(rangeFrom) + ' – ' + fmtDateLabel(rangeTo) : '');
+  // Use the input values for display (what user set, not last caveat date)
+  var dispFrom = document.getElementById('proj-date-from') ? document.getElementById('proj-date-from').value : '';
+  var dispTo   = document.getElementById('proj-date-to')   ? document.getElementById('proj-date-to').value   : '';
+  if(dispFrom || dispTo) periodRangeLabel = fmtDateLabel(dispFrom) + ' – ' + fmtDateLabel(dispTo);
+  var pdEl = document.getElementById('proj-period-display');
+  if(pdEl) pdEl.textContent = '📅 ' + periodRangeLabel;
   var lp = document.getElementById('proj-period-label-profit');
   var ll = document.getElementById('proj-period-label-loss');
   if(lp) lp.textContent = periodRangeLabel;
@@ -3037,6 +3240,13 @@ function pnlRenderProjectsTab(){
     var mid = Math.floor(sorted.length/2);
     var medAnn = sorted.length%2===0 ? (sorted[mid-1]+sorted[mid])/2 : sorted[mid];
     var avgHold = g.yrs_helds.reduce(function(s,v){return s+v;},0) / (g.yrs_helds.length||1);
+    var allPnl = g.pairs.map(function(p){return p.profit;});
+    var highProfit = g.profits.length ? Math.max.apply(null, g.profits) : 0;
+    var lowProfit  = g.profits.length ? Math.min.apply(null, g.profits) : 0;
+    var avgProfit  = g.profits.length ? allP / g.profits.length : 0;
+    var highLoss   = g.losses.length  ? Math.min.apply(null, g.losses)  : 0; // most negative
+    var lowLoss    = g.losses.length  ? Math.max.apply(null, g.losses)  : 0; // least negative
+    var avgLoss    = g.losses.length  ? allL / g.losses.length  : 0;
     return {
       project_name: g.project_name,
       property_type: g.property_type,
@@ -3048,7 +3258,13 @@ function pnlRenderProjectsTab(){
       total_loss: allL,
       net: netP,
       med_ann: medAnn,
-      avg_hold: avgHold
+      avg_hold: avgHold,
+      high_profit: highProfit,
+      low_profit:  lowProfit,
+      avg_profit:  avgProfit,
+      high_loss:   highLoss,
+      low_loss:    lowLoss,
+      avg_loss:    avgLoss
     };
   });
 
@@ -3093,13 +3309,18 @@ function pnlRenderProjectsTab(){
 
   function renderProjRows(tbody, rows, isProfitable){
     var el = document.getElementById(tbody);
-    if(!rows.length){ el.innerHTML='<tr><td colspan="6" style="text-align:center;color:var(--mut);padding:20px;font-size:12px">No data</td></tr>'; return; }
+    if(!rows.length){ el.innerHTML='<tr><td colspan="8" style="text-align:center;color:var(--mut);padding:20px;font-size:12px">No data</td></tr>'; return; }
     el.innerHTML = rows.map(function(g, i){
-      var profitVal = isProfitable ? g.total_profit : g.net;
-      var profitColor = isProfitable ? '#1a6b3c' : '#b71c1c';
-      var annColor = g.med_ann >= 0 ? '#1a6b3c' : '#b71c1c';
+      var pc = '#1a6b3c', lc = '#b71c1c';
+      var annColor = g.med_ann >= 0 ? pc : lc;
       var distLabel = g.postal_district ? 'D'+g.postal_district : '';
       var typeShort = (g.property_type||'').replace('Multiple-User Factory','Multi-User').replace('Multiple-user Factory','Multi-User').replace('Single-User Factory','Single-User').replace('Single-user Factory','Single-User').replace('Business Park','Biz Park').replace('Shop House','Shophouse');
+      var hi, lo, av;
+      if(isProfitable){
+        hi = fmtMoney(g.high_profit); lo = fmtMoney(g.low_profit); av = fmtMoney(g.avg_profit);
+      } else {
+        hi = fmtMoney(g.high_loss); lo = fmtMoney(g.low_loss); av = fmtMoney(g.avg_loss);
+      }
       return '<tr>'
         +'<td style="font-size:11px;font-weight:600;color:var(--txt);white-space:normal;line-height:1.3">'
           +'<span style="display:inline-block;min-width:18px;font-size:10px;color:var(--mut);margin-right:3px">'+(i+1)+'.</span>'
@@ -3107,8 +3328,10 @@ function pnlRenderProjectsTab(){
           +(distLabel ? '<br><span style="font-size:10px;font-weight:400;color:var(--mut);margin-left:21px">'+distLabel+'</span>' : '')
         +'</td>'
         +'<td style="font-size:10px;color:var(--mut);white-space:nowrap">'+typeShort+'</td>'
-        +'<td class="mono" style="text-align:right;font-size:11px">'+g.cnt+'</td>'
-        +'<td class="mono" style="text-align:right;font-size:11px;font-weight:700;color:'+profitColor+'">'+fmtMoney(profitVal)+'</td>'
+        +'<td class="mono" style="text-align:right;font-size:11px">'+(isProfitable ? g.profit_cnt : g.loss_cnt)+'</td>'
+        +'<td class="mono" style="text-align:right;font-size:11px;font-weight:700;color:'+(isProfitable?pc:lc)+'">'+hi+'</td>'
+        +'<td class="mono" style="text-align:right;font-size:11px;color:'+(isProfitable?pc:lc)+'">'+lo+'</td>'
+        +'<td class="mono" style="text-align:right;font-size:11px;color:'+(isProfitable?pc:lc)+'">'+av+'</td>'
         +'<td class="mono" style="text-align:right;font-size:11px;color:'+annColor+'">'+fmtAnn(g.med_ann)+'</td>'
         +'<td class="mono" style="text-align:right;font-size:11px;color:var(--mut)">'+g.avg_hold.toFixed(1)+'y</td>'
         +'</tr>';
