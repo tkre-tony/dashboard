@@ -209,6 +209,9 @@ html,body{background:var(--bg);color:var(--txt);font-family:'DM Sans',sans-serif
 .pnl-stab{padding:7px 14px;border:none;border-bottom:2px solid transparent;background:transparent;font-size:12px;font-family:'DM Sans',sans-serif;cursor:pointer;color:var(--mut);font-weight:500;transition:all .12s;margin-bottom:-2px}
 .pnl-stab.on{color:var(--g1);border-bottom-color:var(--g1);font-weight:700}
 .pnl-stab:hover:not(.on){color:var(--txt)}
+.anal-stab{padding:9px 20px;border:none;border-bottom:3px solid transparent;background:transparent;font-size:13px;font-family:'DM Sans',sans-serif;cursor:pointer;color:var(--mut);font-weight:500;transition:all .15s;margin-bottom:-2px;white-space:nowrap}
+.anal-stab.on{color:var(--g1);border-bottom-color:var(--g1);font-weight:700}
+.anal-stab:hover:not(.on){color:var(--txt);background:var(--srf2)}
 .proj-sort-chip{padding:4px 10px;border:1px solid var(--bdr);border-radius:20px;background:var(--srf);color:var(--mut);font-size:11px;font-family:'DM Sans',sans-serif;cursor:pointer;font-weight:500;transition:all .12s}
 .proj-sort-chip.on{background:var(--g1);color:#fff;border-color:var(--g1);font-weight:700}
 .proj-sort-chip:hover:not(.on){color:var(--txt);border-color:var(--txt)}
@@ -718,6 +721,14 @@ html,body{background:var(--bg);color:var(--txt);font-family:'DM Sans',sans-serif
 
   <div class="panel" id="tab-analytics">
 
+    <!-- ── Analytics Sub-Tab Bar ── -->
+    <div style="display:flex;gap:0;margin-bottom:16px;border-bottom:2px solid var(--bdr)">
+      <button class="anal-stab on" data-atab="pnl" onclick="analShowTab('pnl')">📊 Profit / Loss Overview</button>
+      <button class="anal-stab" data-atab="proj" onclick="analShowTab('proj')">🏢 Projects Overview</button>
+    </div>
+
+    <!-- ── Panel: Profit/Loss Overview ── -->
+    <div id="anal-panel-pnl">
     <!-- ── Profit/Loss Overview ── -->
     <div class="card">
       <div class="card-hdr" style="flex-wrap:wrap;gap:8px">
@@ -970,9 +981,12 @@ html,body{background:var(--bg);color:var(--txt);font-family:'DM Sans',sans-serif
 
       </div><!-- end pnl-tabs-wrap -->
     </div><!-- end card -->
+    </div><!-- end anal-panel-pnl -->
 
+    <!-- ── Panel: Projects Overview ── -->
+    <div id="anal-panel-proj" style="display:none">
     <!-- ── Analytics Tab 2: Projects Overview ── -->
-    <div class="card" id="proj-overview-card" style="display:none">
+    <div class="card" id="proj-overview-card">
       <div class="card-hdr" style="flex-wrap:wrap;gap:8px;align-items:center">
         <div>
           <div class="card-title"><span class="card-title-dot"></span>Projects Overview</div>
@@ -1048,6 +1062,7 @@ html,body{background:var(--bg);color:var(--txt);font-family:'DM Sans',sans-serif
         </div><!-- end grid -->
       </div><!-- end proj-ov-body -->
     </div><!-- end Projects Overview card -->
+    </div><!-- end anal-panel-proj -->
 
   </div>
 
@@ -2430,6 +2445,20 @@ function renderPipeline(){
 }
 
 // ANALYTICS
+var analActiveTab = 'pnl';
+function analShowTab(tab){
+  analActiveTab = tab;
+  document.querySelectorAll('.anal-stab').forEach(function(b){
+    b.classList.toggle('on', b.dataset.atab === tab);
+  });
+  var panels = ['pnl','proj'];
+  panels.forEach(function(p){
+    var el = document.getElementById('anal-panel-'+p);
+    if(el) el.style.display = p===tab ? '' : 'none';
+  });
+  if(tab==='proj') pnlRenderProjectsTab();
+}
+
 function renderAnalytics(){
   // Stat strip values populated by renderAll()
 }
