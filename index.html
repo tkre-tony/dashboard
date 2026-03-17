@@ -993,25 +993,13 @@ html,body{background:var(--bg);color:var(--txt);font-family:'DM Sans',sans-serif
           <div class="card-subtitle" id="proj-ov-subtitle">Ranked by P&amp;L performance &middot; computed from matched pairs</div>
         </div>
         <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-left:auto">
-          <!-- Sort mode chips -->
-          <div style="display:flex;gap:4px">
-            <button class="proj-sort-chip" data-sort="abs" onclick="projSetSort('abs')">Absolute S$</button>
-            <button class="proj-sort-chip" data-sort="ann" onclick="projSetSort('ann')">Ann. Return %</button>
-            <button class="proj-sort-chip on" data-sort="cnt" onclick="projSetSort('cnt')">Volume</button>
-          </div>
-          <div style="font-size:11px;color:var(--mut);padding:0 4px">Top</div>
-          <select id="proj-top-n" onchange="pnlRenderProjectsTab()" style="font-size:11px;padding:4px 8px;border:1px solid var(--bdr);border-radius:6px;background:var(--srf);color:var(--txt)">
-            <option value="10" selected>10</option>
-            <option value="20">20</option>
-            <option value="50">50</option>
-          </select>
-          <!-- Custom period range -->
+          <!-- Period range picker -->
           <div style="display:flex;align-items:center;gap:4px;border:1px solid var(--bdr);border-radius:6px;padding:3px 8px;background:var(--srf2);font-size:11px;color:var(--mut)">
             <span>From</span>
-            <input type="date" id="proj-date-from" onchange="pnlRenderProjectsTab()" style="font-size:11px;border:none;background:transparent;color:var(--txt);padding:0 2px;outline:none;width:110px">
+            <input type="date" id="proj-date-from" onchange="pnlRenderProjectsTab()" style="font-size:11px;border:none;background:transparent;color:var(--txt);padding:0 2px;outline:none;width:100px">
             <span>to</span>
-            <input type="date" id="proj-date-to" onchange="pnlRenderProjectsTab()" style="font-size:11px;border:none;background:transparent;color:var(--txt);padding:0 2px;outline:none;width:110px">
-            <button onclick="projClearDates()" title="Clear custom range" style="border:none;background:none;cursor:pointer;color:var(--mut);font-size:12px;padding:0 2px;line-height:1">✕</button>
+            <input type="date" id="proj-date-to" onchange="pnlRenderProjectsTab()" style="font-size:11px;border:none;background:transparent;color:var(--txt);padding:0 2px;outline:none;width:100px">
+            <button onclick="projClearDates()" title="Reset to current quarter" style="border:none;background:none;cursor:pointer;color:var(--mut);font-size:12px;padding:0 2px;line-height:1">✕</button>
           </div>
         </div>
       </div>
@@ -2464,7 +2452,11 @@ function analShowTab(tab){
     var el = document.getElementById('anal-panel-'+p);
     if(el) el.style.display = p===tab ? '' : 'none';
   });
-  if(tab==='proj') pnlRenderProjectsTab();
+  if(tab==='proj'){
+    var f = document.getElementById('proj-date-from');
+    if(f && !f.value) projSetCurrentQuarter();
+    pnlRenderProjectsTab();
+  }
 }
 
 function renderAnalytics(){
@@ -2859,17 +2851,11 @@ function pnlApplyFilters(){
   pnlHide('pnl-empty');
   pnlShow('pnl-stats'); pnlShow('pnl-tabs-wrap');
   pnlShowSection(pnlActiveSection);
-  // Pre-populate custom date range from the shared period filter (only if not already customised)
+  // Pre-populate date range to current quarter (only if not already set)
   var fromEl = document.getElementById('proj-date-from');
   var toEl   = document.getElementById('proj-date-to');
   if(fromEl && !fromEl.value && toEl && !toEl.value){
-    var periodYrs = parseFloat(document.getElementById('pnl-period-filter').value);
-    if(periodYrs > 0){
-      var dTo = new Date(); var dFrom = new Date();
-      dFrom.setTime(dFrom.getTime() - periodYrs * 365.25 * 24 * 60 * 60 * 1000);
-      fromEl.value = dFrom.toISOString().slice(0,10);
-      toEl.value   = dTo.toISOString().slice(0,10);
-    }
+    projSetCurrentQuarter();
   }
   pnlRenderProjectsTab();
 }
@@ -2960,11 +2946,18 @@ function projSetSort(mode){
 }
 
 function projClearDates(){
+  projSetCurrentQuarter();
+  pnlRenderProjectsTab();
+}
+
+function projSetCurrentQuarter(){
+  var now = new Date();
+  var qStartMonth = Math.floor(now.getMonth() / 3) * 3; // 0, 3, 6, or 9
+  var qStart = new Date(now.getFullYear(), qStartMonth, 1);
   var f = document.getElementById('proj-date-from');
   var t = document.getElementById('proj-date-to');
-  if(f) f.value = '';
-  if(t) t.value = '';
-  pnlRenderProjectsTab();
+  if(f) f.value = qStart.toISOString().slice(0,10);
+  if(t) t.value = now.toISOString().slice(0,10);
 }
 
 function pnlRenderProjectsTab(){
@@ -2984,7 +2977,7 @@ function pnlRenderProjectsTab(){
   pnlHide('proj-ov-empty');
   pnlShow('proj-ov-body');
 
-  var topN = parseInt(document.getElementById('proj-top-n').value) || 10;
+  var topN = 999; // show all projects — sort chips removed, display all
 
   // Custom date range (overrides the shared period filter if set)
   var dateFromEl = document.getElementById('proj-date-from');
@@ -3007,7 +3000,7 @@ function pnlRenderProjectsTab(){
   var allDates = sourceRows.map(function(p){ return p.sell_date||''; }).filter(Boolean).sort();
   var rangeFrom = allDates.length ? allDates[0] : null;
   var rangeTo   = allDates.length ? allDates[allDates.length-1] : null;
-  function fmtDateLabel(d){ if(!d) return '—'; var p=d.split('-'); return p[1]+'/'+p[2]+'/'+p[0]; }
+  function fmtDateLabel(d){ if(!d) return '—'; var p=d.split('-'); return p[2]+'/'+p[1]+'/'+p[0]; }
   var periodRangeLabel = rangeFrom ? fmtDateLabel(rangeFrom)+' – '+fmtDateLabel(rangeTo) : '';
   var lp = document.getElementById('proj-period-label-profit');
   var ll = document.getElementById('proj-period-label-loss');
@@ -3080,16 +3073,12 @@ function pnlRenderProjectsTab(){
 
   function sortGroups(arr, descending){
     return arr.slice().sort(function(a,b){
-      var av, bv;
-      if(projSortMode==='abs'){ av = descending ? b.net - a.net : a.net - b.net; return av; }
-      if(projSortMode==='ann'){ av = a.med_ann; bv = b.med_ann; return descending ? bv-av : av-bv; }
-      if(projSortMode==='cnt'){ av = a.cnt; bv = b.cnt; return descending ? bv-av : av-bv; }
-      return 0;
+      return descending ? b.cnt - a.cnt : a.cnt - b.cnt;
     }).slice(0, topN);
   }
 
   var topProfit = sortGroups(profitGroups, true);
-  var topLoss   = sortGroups(lossGroups, false); // worst first
+  var topLoss   = sortGroups(lossGroups, true); // most trades first on both sides
 
   function fmtMoney(v){
     var abs = Math.abs(v);
