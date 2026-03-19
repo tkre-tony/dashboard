@@ -491,11 +491,11 @@ html,body{background:var(--bg);color:var(--txt);font-family:'DM Sans',sans-serif
           <tr id="ov-sort-row">
             <th onclick="ovSortBy('sale_date')" style="cursor:pointer;user-select:none;white-space:nowrap">Date <span id="ovs-sale_date"></span></th>
             <th onclick="ovSortBy('postal_district')" style="cursor:pointer;user-select:none;white-space:nowrap">District <span id="ovs-postal_district"></span></th>
-            <th>Project</th>
-            <th>Address</th>
+            <th style="min-width:180px">Project</th>
+            <th style="min-width:180px">Address</th>
             <th>Type</th>
-            <th onclick="ovSortBy('transacted_price')" style="cursor:pointer;user-select:none;white-space:nowrap">Price <span id="ovs-transacted_price"></span></th>
             <th>Type of Sale</th>
+            <th onclick="ovSortBy('transacted_price')" style="cursor:pointer;user-select:none;white-space:nowrap">Price <span id="ovs-transacted_price"></span></th>
             <th onclick="ovSortBy('area_sqft')" style="cursor:pointer;user-select:none;white-space:nowrap">Area (sqft) <span id="ovs-area_sqft"></span></th>
             <th onclick="ovSortBy('unit_price_psf')" style="cursor:pointer;user-select:none;white-space:nowrap">PSF <span id="ovs-unit_price_psf"></span></th>
             <th>Tenure</th>
@@ -553,10 +553,6 @@ html,body{background:var(--bg);color:var(--txt);font-family:'DM Sans',sans-serif
                 <label style="display:flex;align-items:center;gap:6px;padding:4px 10px;font-size:11px;cursor:pointer;white-space:nowrap"><input type="checkbox" value="Warehouse" onchange="ovDropChange('type')"> Warehouse</label>
               </div>
             </td>
-            <td colspan="1" style="padding:4px 6px">
-              <input id="ovf-price-min" placeholder="Min S$" style="width:48%;padding:3px 4px;font-size:10px;border:1px solid var(--bdr);border-radius:4px;background:var(--srf);color:var(--txt);font-family:'DM Mono',monospace" oninput="ovApplyFilters()">
-              <input id="ovf-price-max" placeholder="Max S$" style="width:48%;padding:3px 4px;font-size:10px;border:1px solid var(--bdr);border-radius:4px;background:var(--srf);color:var(--txt);font-family:'DM Mono',monospace" oninput="ovApplyFilters()">
-            </td>
             <td style="padding:4px 6px;position:relative">
               <button id="ovf-tos-btn" onclick="ovToggleDrop('tos')" style="width:100%;padding:3px 6px;font-size:10px;border:1px solid var(--bdr);border-radius:4px;background:var(--srf);color:var(--txt);cursor:pointer;text-align:left;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">All ▾</button>
               <div id="ovf-tos-drop" style="display:none;position:absolute;top:100%;left:0;z-index:999;background:var(--srf);border:1px solid var(--bdr);border-radius:4px;min-width:120px;box-shadow:0 4px 12px rgba(0,0,0,.12);padding:4px 0">
@@ -566,12 +562,16 @@ html,body{background:var(--bg);color:var(--txt);font-family:'DM Sans',sans-serif
               </div>
             </td>
             <td style="padding:4px 6px">
-              <input id="ovf-area-min" placeholder="Min" style="width:48%;padding:3px 4px;font-size:10px;border:1px solid var(--bdr);border-radius:4px;background:var(--srf);color:var(--txt);font-family:'DM Mono',monospace" oninput="ovApplyFilters()">
-              <input id="ovf-area-max" placeholder="Max" style="width:48%;padding:3px 4px;font-size:10px;border:1px solid var(--bdr);border-radius:4px;background:var(--srf);color:var(--txt);font-family:'DM Mono',monospace" oninput="ovApplyFilters()">
+              <input id="ovf-price-min" placeholder="Min S$" style="width:100%;padding:3px 4px;font-size:10px;border:1px solid var(--bdr);border-radius:4px;background:var(--srf);color:var(--txt);font-family:'DM Mono',monospace;margin-bottom:2px" oninput="ovApplyFilters()">
+              <input id="ovf-price-max" placeholder="Max S$" style="width:100%;padding:3px 4px;font-size:10px;border:1px solid var(--bdr);border-radius:4px;background:var(--srf);color:var(--txt);font-family:'DM Mono',monospace" oninput="ovApplyFilters()">
             </td>
             <td style="padding:4px 6px">
-              <input id="ovf-psf-min" placeholder="Min" style="width:48%;padding:3px 4px;font-size:10px;border:1px solid var(--bdr);border-radius:4px;background:var(--srf);color:var(--txt);font-family:'DM Mono',monospace" oninput="ovApplyFilters()">
-              <input id="ovf-psf-max" placeholder="Max" style="width:48%;padding:3px 4px;font-size:10px;border:1px solid var(--bdr);border-radius:4px;background:var(--srf);color:var(--txt);font-family:'DM Mono',monospace" oninput="ovApplyFilters()">
+              <input id="ovf-area-min" placeholder="Min" style="width:100%;padding:3px 4px;font-size:10px;border:1px solid var(--bdr);border-radius:4px;background:var(--srf);color:var(--txt);font-family:'DM Mono',monospace;margin-bottom:2px" oninput="ovApplyFilters()">
+              <input id="ovf-area-max" placeholder="Max" style="width:100%;padding:3px 4px;font-size:10px;border:1px solid var(--bdr);border-radius:4px;background:var(--srf);color:var(--txt);font-family:'DM Mono',monospace" oninput="ovApplyFilters()">
+            </td>
+            <td style="padding:4px 6px">
+              <input id="ovf-psf-min" placeholder="Min" style="width:100%;padding:3px 4px;font-size:10px;border:1px solid var(--bdr);border-radius:4px;background:var(--srf);color:var(--txt);font-family:'DM Mono',monospace;margin-bottom:2px" oninput="ovApplyFilters()">
+              <input id="ovf-psf-max" placeholder="Max" style="width:100%;padding:3px 4px;font-size:10px;border:1px solid var(--bdr);border-radius:4px;background:var(--srf);color:var(--txt);font-family:'DM Mono',monospace" oninput="ovApplyFilters()">
             </td>
             <td style="padding:4px 6px;position:relative">
               <button id="ovf-tenure-btn" onclick="ovToggleDrop('tenure')" style="width:100%;padding:3px 6px;font-size:10px;border:1px solid var(--bdr);border-radius:4px;background:var(--srf);color:var(--txt);cursor:pointer;text-align:left;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">All ▾</button>
@@ -4200,8 +4200,8 @@ function renderOvTable(rows){
       +"<td style='font-weight:600;font-size:11px;vertical-align:top'>"+(r.project_name||"-")+"</td>"
       +"<td style='font-size:10.5px;color:var(--mut);min-width:200px;vertical-align:top'>"+(r.address||"-")+"</td>"
       +"<td style='width:80px;max-width:80px;vertical-align:top'><span class='pill p-tag' style='white-space:nowrap;font-size:10px'>"+fmtPropType(r.property_type||"-")+"</span></td>"
+      +"<td style='font-size:10.5px;color:var(--mut);vertical-align:top;white-space:nowrap'>"+tos+"</td>"
       +"<td class='mono' style='vertical-align:top'>"+priceCell+"</td>"
-      +"<td style='font-size:10.5px;color:var(--mut);vertical-align:top'>"+tos+"</td>"
       +"<td class='mono' style='font-size:11px;vertical-align:top'>"+area+"</td>"
       +"<td class='mono' style='white-space:nowrap;vertical-align:top'>"+psfCell+"</td>"
       +"<td style='font-size:10.5px;color:var(--mut);vertical-align:top'>"+formatTenure(r.tenure)+"</td>"
