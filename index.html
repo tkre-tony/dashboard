@@ -4286,25 +4286,30 @@ async function ovEnrichBuyData(rows){
   });
 
   var BATCH = 50;
-  var priorMap = {}; // address -> {sale_date, transacted_price, unit_price_psf}
-
+  var priorMap = {}; // address -> [{sale_date, transacted_price, unit_price_psf}]
+  var hdr = {'apikey':SB_KEY,'Authorization':'Bearer '+SB_KEY,'Prefer':'count=none'};
+  var batches = [];
   for(var i=0; i<addresses.length; i+=BATCH){
-    var batch = addresses.slice(i, i+BATCH);
-    var orClause = batch.map(function(a){ return "address.eq."+encodeURIComponent(a); }).join(",");
-    var url = SB_URL + "/rest/v1/transactions?select=address,sale_date,transacted_price,unit_price_psf,type_of_sale"
-      + "&or=("+orClause+")&order=sale_date.asc&limit=2000";
-    try {
-      var res = await fetch(url, {headers:{"apikey":SB_KEY,"Authorization":"Bearer "+SB_KEY}});
-      var batchData = await res.json();
-      if(!Array.isArray(batchData)) continue;
-      // Group by address — for each address find the transaction immediately prior to the sell row
-      batchData.forEach(function(tx){
-        var addr = tx.address;
-        if(!priorMap[addr]) priorMap[addr] = [];
-        priorMap[addr].push(tx);
-      });
-    } catch(e){ /* silently skip on error */ }
+    batches.push(addresses.slice(i, i+BATCH));
   }
+
+  var batchResults = await Promise.all(batches.map(function(batch){
+    var inList = batch.map(function(a){ return '"'+a.replace(/"/g,'\\"')+'"'; }).join(',');
+    var url = SB_URL + '/rest/v1/transactions?select=address,sale_date,transacted_price,unit_price_psf,type_of_sale'
+      + '&address=in.('+encodeURIComponent(inList)+')&order=sale_date.asc&limit=5000';
+    return fetch(url, {headers:hdr})
+      .then(function(r){ return r.ok ? r.json() : []; })
+      .catch(function(){ return []; });
+  }));
+
+  batchResults.forEach(function(rows){
+    if(!Array.isArray(rows)) return;
+    rows.forEach(function(tx){
+      var addr = tx.address;
+      if(!priorMap[addr]) priorMap[addr] = [];
+      priorMap[addr].push(tx);
+    });
+  });
 
   // Enrich each resale row with the prior sale for its address
   var anyEnriched = false;
