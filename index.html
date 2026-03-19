@@ -1776,6 +1776,12 @@ function onSliderInput(v){
     document.getElementById("range-btns").querySelectorAll(".rbtn").forEach(function(x){x.classList.remove("on");});
     sliderMonths = getWindowMonths(); // keep same window size
   }
+  // For annual chart modes, just re-render in place (no fetch needed — data already loaded)
+  if(!isMonthlyMode() || chartYoY){
+    renderBarChart();
+    updateSliderLabel(v);
+    return;
+  }
   loadAndRenderChart();
   if(!document.getElementById("ov-search").value.trim()){
     ovFilteredCache=null;
@@ -2339,11 +2345,20 @@ function renderBarChart(){
   var W=wrap.clientWidth||800,H=280;
   var P={t:14,r:(showSTI&&!chartYoY?50:16),b:36,l:62};
   var cW=W-P.l-P.r,cH=H-P.t-P.b;
-  var idxs=getIdxs(),fy=getFY();
+  // Always render ALL years so slider spotlight works
+  var allIdxs=YEARS.map(function(_,i){return i;});
+  var fy=YEARS;
   var mat=CHART_OVERRIDE ? CHART_OVERRIDE : (chartMode==="val"?VAL_ARR:CNT_ARR);
   var actT=TYPES.filter(function(t){return activeTypes[t];});
-  var tots=idxs.map(function(i){return actT.reduce(function(s,t){return s+(mat[i][TYPES.indexOf(t)]||0);},0);});
+  var tots=allIdxs.map(function(i){return actT.reduce(function(s,t){return s+(mat[i][TYPES.indexOf(t)]||0);},0);});
   var mx=Math.max.apply(null,tots.concat([1]));
+
+  // Compute which years are inside the slider window
+  var winStart = sliderPosToYM(sliderStartMonth);
+  var winEnd   = sliderPosToYM(Math.min(371, sliderStartMonth + getWindowMonths() - 1));
+  var winStartYr = parseInt(winStart.split("-")[0]);
+  var winEndYr   = parseInt(winEnd.split("-")[0]);
+
   var svg='<svg height="'+H+'" viewBox="0 0 '+W+' '+H+'" style="width:100%;overflow:visible">';
   for(var k=0;k<=5;k++){
     var tv2=k*mx/5,ty=P.t+cH-(tv2/mx)*cH;
@@ -2351,19 +2366,22 @@ function renderBarChart(){
     svg+='<line x1="'+P.l+'" x2="'+(P.l+cW)+'" y1="'+ty+'" y2="'+ty+'" stroke="#dce4df" stroke-width="1"/>';
     svg+='<text x="'+(P.l-5)+'" y="'+(ty+4)+'" text-anchor="end" fill="#6b8578" font-size="10" font-family="DM Mono,monospace">'+tl+'</text>';
   }
-  var bGW=cW/idxs.length,bW=Math.max(1.5,bGW*0.82/actT.length);
-  idxs.forEach(function(di,gi){
+  var bGW=cW/allIdxs.length,bW=Math.max(1.5,bGW*0.82/actT.length);
+  allIdxs.forEach(function(di,gi){
     var yr=fy[gi],gx=P.l+gi*bGW+bGW*0.09;
+    var inWindow = (yr >= winStartYr && yr <= winEndYr);
+    var barOpacity = inWindow ? "1" : "0.18";
+    var labelFill  = inWindow ? "#6b8578" : "#c8d4ce";
     actT.forEach(function(t,ai){
       var ti2=TYPES.indexOf(t),val=mat[di][ti2]||0;
       var bh=(val/mx)*cH,bx=gx+ai*(bGW*0.82/actT.length),by=P.t+cH-bh;
       var vs=chartMode==="val"?fmtV(val):fmtC(val)+" deals";
       svg+='<rect x="'+bx.toFixed(1)+'" y="'+by.toFixed(1)+'" width="'+bW.toFixed(1)+'" height="'+Math.max(bh,0).toFixed(1)+'"'
-          +' fill="'+TCOLOR[t]+'" rx="2" style="cursor:pointer"'
+          +' fill="'+TCOLOR[t]+'" rx="2" opacity="'+barOpacity+'" style="cursor:pointer"'
           +' onmouseenter="sT(event,\''+yr+'\',\''+t+'\',\''+vs+'\')" onmouseleave="hT()"/>';
     });
-    var sl=idxs.length<=15||gi%Math.ceil(idxs.length/15)===0||gi===idxs.length-1;
-    if(sl){var lx=P.l+gi*bGW+bGW/2;svg+='<text x="'+lx.toFixed(1)+'" y="'+(P.t+cH+15)+'" text-anchor="middle" fill="#6b8578" font-size="10" font-family="DM Sans">'+yr+'</text>';}
+    var sl=allIdxs.length<=15||gi%Math.ceil(allIdxs.length/15)===0||gi===allIdxs.length-1;
+    if(sl){var lx=P.l+gi*bGW+bGW/2;svg+='<text x="'+lx.toFixed(1)+'" y="'+(P.t+cH+15)+'" text-anchor="middle" fill="'+labelFill+'" font-size="10" font-family="DM Sans">'+yr+'</text>';}
   });
   // ---- STI overlay (annual) ----
   if(showSTI&&!chartYoY&&STI_CACHE){
@@ -2404,7 +2422,8 @@ function renderBarChart(){
         if(v===null)return;
         var cx=P.l+i*bGW+bGW/2;
         var cntVal=tots[i];
-        svg+='<circle cx="'+cx.toFixed(1)+'" cy="'+stiAnnY(v).toFixed(1)+'" r="2.5" fill="#f59e0b" opacity="0.9"'
+        var dotInWin = (fy[i] >= winStartYr && fy[i] <= winEndYr);
+        svg+='<circle cx="'+cx.toFixed(1)+'" cy="'+stiAnnY(v).toFixed(1)+'" r="2.5" fill="#f59e0b" opacity="'+(dotInWin?"0.9":"0.2")+'"'
             +' onmouseenter="sT(event,\''+fy[i]+'\',\'STI\',\''+Math.round(v)+' (Dec close) · '+cntVal+' deals\')" onmouseleave="hT()"/>';
       });
     }
