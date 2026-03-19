@@ -485,21 +485,21 @@ html,body{background:var(--bg);color:var(--txt);font-family:'DM Sans',sans-serif
         <div style="font-size:11px;color:var(--mut);font-family:'DM Mono',monospace;font-weight:600" id="ov-tx-count">Loading...</div>
       </div>
       <div id="ov-tx-loading" style="text-align:center;padding:20px;color:var(--mut);font-size:13px">Loading transactions...</div>
-      <div style="overflow-x:auto;border-radius:6px;border:1px solid var(--bdr)">
-        <table class="ptable" id="ov-tx-table" style="display:none">
+      <div style="border-radius:6px;border:1px solid var(--bdr);overflow:hidden">
+        <table class="ptable" id="ov-tx-table" style="display:none;width:100%;table-layout:fixed">
           <thead>
           <tr id="ov-sort-row">
-            <th onclick="ovSortBy('sale_date')" style="cursor:pointer;user-select:none;white-space:nowrap">Date <span id="ovs-sale_date"></span></th>
-            <th onclick="ovSortBy('postal_district')" style="cursor:pointer;user-select:none;white-space:nowrap">District <span id="ovs-postal_district"></span></th>
-            <th style="min-width:180px">Project</th>
-            <th style="min-width:180px">Address</th>
-            <th>Type</th>
-            <th>Type of Sale</th>
-            <th>Type of Area</th>
-            <th onclick="ovSortBy('transacted_price')" style="cursor:pointer;user-select:none;white-space:nowrap">Price <span id="ovs-transacted_price"></span></th>
-            <th onclick="ovSortBy('area_sqft')" style="cursor:pointer;user-select:none;white-space:nowrap">Area (sqft) <span id="ovs-area_sqft"></span></th>
-            <th onclick="ovSortBy('unit_price_psf')" style="cursor:pointer;user-select:none;white-space:nowrap">PSF <span id="ovs-unit_price_psf"></span></th>
-            <th>Tenure</th>
+            <th onclick="ovSortBy('sale_date')" style="cursor:pointer;user-select:none;white-space:nowrap;width:86px">Date <span id="ovs-sale_date"></span></th>
+            <th onclick="ovSortBy('postal_district')" style="cursor:pointer;user-select:none;white-space:nowrap;width:58px">Dist. <span id="ovs-postal_district"></span></th>
+            <th style="width:130px">Project</th>
+            <th style="width:130px">Address</th>
+            <th style="width:72px">Type</th>
+            <th style="width:72px">Sale Type</th>
+            <th style="width:58px">Area Type</th>
+            <th onclick="ovSortBy('transacted_price')" style="cursor:pointer;user-select:none;width:90px">Price <span id="ovs-transacted_price"></span></th>
+            <th onclick="ovSortBy('area_sqft')" style="cursor:pointer;user-select:none;width:60px">Area <span id="ovs-area_sqft"></span></th>
+            <th onclick="ovSortBy('unit_price_psf')" style="cursor:pointer;user-select:none;width:72px">PSF <span id="ovs-unit_price_psf"></span></th>
+            <th style="width:90px">Tenure</th>
           </tr>
           <tr id="ov-filter-row" style="background:var(--srf2)">
             <td style="padding:4px 6px"></td>
@@ -4208,17 +4208,17 @@ function renderOvTable(rows){
     var psfCell = "<div style='font-size:11px'>"+psf+"</div>"
       + (r.buy_psf ? boughtLabel+"<div style='"+mutStyle+"'>S$"+Math.round(r.buy_psf).toLocaleString()+"</div>" : "");
     return "<tr style='font-size:11px'>"
-      +"<td class='mono' style='white-space:nowrap;vertical-align:top'>"+dateCell+"</td>"
-      +"<td class='mono' style='font-size:11px;white-space:nowrap;vertical-align:top'>"+dist+"</td>"
-      +"<td style='font-weight:600;font-size:11px;vertical-align:top'>"+(r.project_name||"-")+"</td>"
-      +"<td style='font-size:10.5px;color:var(--mut);min-width:200px;vertical-align:top'>"+(r.address||"-")+"</td>"
-      +"<td style='width:80px;max-width:80px;vertical-align:top'><span class='pill p-tag' style='white-space:nowrap;font-size:10px'>"+fmtPropType(r.property_type||"-")+"</span></td>"
-      +"<td style='font-size:10.5px;color:var(--mut);vertical-align:top;white-space:nowrap'>"+tos+(r.buy_tos ? boughtLabel+"<div style='"+mutStyle+"'>"+r.buy_tos+"</div>" : "")+"</td>"
-      +"<td style='font-size:10.5px;color:var(--mut);vertical-align:top;white-space:nowrap'>"+(r.type_of_area||"-")+"</td>"
-      +"<td class='mono' style='vertical-align:top'>"+priceCell+"</td>"
-      +"<td class='mono' style='font-size:11px;vertical-align:top'>"+area+"</td>"
-      +"<td class='mono' style='white-space:nowrap;vertical-align:top'>"+psfCell+"</td>"
-      +"<td style='font-size:10.5px;color:var(--mut);vertical-align:top'>"+formatTenure(r.tenure)+"</td>"
+      +"<td class='mono' style='white-space:nowrap;vertical-align:top;font-size:10.5px'>"+dateCell+"</td>"
+      +"<td class='mono' style='font-size:10.5px;white-space:nowrap;vertical-align:top'>"+dist+"</td>"
+      +"<td style='font-weight:600;font-size:10.5px;vertical-align:top;word-break:break-word'>"+(r.project_name||"-")+"</td>"
+      +"<td style='font-size:10px;color:var(--mut);vertical-align:top;word-break:break-word'>"+(r.address||"-")+"</td>"
+      +"<td style='vertical-align:top;text-align:center'><span class='pill p-tag' style='white-space:nowrap;font-size:9.5px;padding:2px 5px'>"+fmtPropType(r.property_type||"-")+"</span></td>"
+      +"<td style='font-size:10px;color:var(--mut);vertical-align:top'>"+tos+(r.buy_tos ? boughtLabel+"<div style='"+mutStyle+"'>"+r.buy_tos+"</div>" : "")+"</td>"
+      +"<td style='font-size:10px;color:var(--mut);vertical-align:top'>"+(r.type_of_area||"-")+"</td>"
+      +"<td class='mono' style='vertical-align:top;font-size:10.5px'>"+priceCell+"</td>"
+      +"<td class='mono' style='font-size:10.5px;vertical-align:top'>"+area+"</td>"
+      +"<td class='mono' style='vertical-align:top;font-size:10.5px'>"+psfCell+"</td>"
+      +"<td style='font-size:9.5px;color:var(--mut);vertical-align:top;word-break:break-word'>"+formatTenure(r.tenure)+"</td>"
       +"</tr>";
   }).join("");
   document.getElementById("ov-tx-table").style.display = "table";
