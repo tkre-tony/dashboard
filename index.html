@@ -4191,9 +4191,9 @@ function renderOvTable(rows){
     var dateCell = "<div style='font-size:11px;font-weight:600'>"+date+"</div>"
       + (r.buy_date ? boughtLabel+"<div style='"+mutStyle+"'>"+r.buy_date.substring(0,10)+"</div>" : "");
     var priceCell = "<div style='font-size:11px;font-weight:700'>"+price+"</div>"
-      + (r.buy_price ? "<div style='"+mutStyle+"'>S$"+Number(Math.round(r.buy_price)).toLocaleString()+"</div>" : "");
+      + (r.buy_price ? boughtLabel+"<div style='"+mutStyle+"'>S$"+Number(Math.round(r.buy_price)).toLocaleString()+"</div>" : "");
     var psfCell = "<div style='font-size:11px'>"+psf+"</div>"
-      + (r.buy_psf ? "<div style='"+mutStyle+"'>S$"+Math.round(r.buy_psf).toLocaleString()+"</div>" : "");
+      + (r.buy_psf ? boughtLabel+"<div style='"+mutStyle+"'>S$"+Math.round(r.buy_psf).toLocaleString()+"</div>" : "");
     return "<tr style='font-size:11px'>"
       +"<td class='mono' style='white-space:nowrap;vertical-align:top'>"+dateCell+"</td>"
       +"<td class='mono' style='font-size:11px;white-space:nowrap;vertical-align:top'>"+dist+"</td>"
