@@ -3689,7 +3689,7 @@ async function sbFetch(params){
 }
 
 function buildQuery(page){
-  var parts = ["select=id,project_name,address,property_type,transacted_price,area_sqft,unit_price_psf,sale_date,tenure,planning_region,db_type"];
+  var parts = ["select=id,project_name,address,property_type,transacted_price,area_sqft,unit_price_psf,sale_date,tenure,planning_region,type_of_area"];
   var proj = document.getElementById("tx-project").value.trim();
   var type = document.getElementById("tx-type").value;
   var year = document.getElementById("tx-year").value;
@@ -3865,7 +3865,7 @@ async function ovFetchRows(q, page){
     : "or=(project_name.ilike.*" + encodeURIComponent(detected.val) + "*,address.ilike.*" + encodeURIComponent(detected.val) + "*)";
   var dateFilter = "&sale_date=gte." + getLast12MonthsDate();
   var offset = page * 10;
-  var url = SB_URL + "/rest/v1/transactions?select=id,project_name,address,property_type,transacted_price,area_sqft,unit_price_psf,sale_date,tenure,planning_region,postal_district,type_of_sale,db_type&"
+  var url = SB_URL + "/rest/v1/transactions?select=id,project_name,address,property_type,transacted_price,area_sqft,unit_price_psf,sale_date,tenure,planning_region,postal_district,type_of_sale,type_of_area&"
     + filter + dateFilter + "&order=sale_date.desc&limit=10&offset=" + offset;
   var res = await fetch(url, {
     headers:{"apikey":SB_KEY,"Authorization":"Bearer "+SB_KEY,"Prefer":"count=exact"}
@@ -4075,7 +4075,7 @@ function ovRenderFiltered(rows){
       if(!f.tos.some(function(t){return tosVal.indexOf(t)>=0;})) return false;
     }
     if(f.dbtype && f.dbtype.length>0){
-      var dbt=(r.db_type||"").toLowerCase();
+      var dbt=(r.type_of_area||"").toLowerCase();
       if(!f.dbtype.some(function(t){return dbt.indexOf(t)>=0;})) return false;
     }
     var area=parseFloat(r.area_sqft)||0;
@@ -4214,7 +4214,7 @@ function renderOvTable(rows){
       +"<td style='font-size:10.5px;color:var(--mut);min-width:200px;vertical-align:top'>"+(r.address||"-")+"</td>"
       +"<td style='width:80px;max-width:80px;vertical-align:top'><span class='pill p-tag' style='white-space:nowrap;font-size:10px'>"+fmtPropType(r.property_type||"-")+"</span></td>"
       +"<td style='font-size:10.5px;color:var(--mut);vertical-align:top;white-space:nowrap'>"+tos+(r.buy_tos ? boughtLabel+"<div style='"+mutStyle+"'>"+r.buy_tos+"</div>" : "")+"</td>"
-      +"<td style='font-size:10.5px;color:var(--mut);vertical-align:top;white-space:nowrap'>"+(r.db_type||"-")+"</td>"
+      +"<td style='font-size:10.5px;color:var(--mut);vertical-align:top;white-space:nowrap'>"+(r.type_of_area||"-")+"</td>"
       +"<td class='mono' style='vertical-align:top'>"+priceCell+"</td>"
       +"<td class='mono' style='font-size:11px;vertical-align:top'>"+area+"</td>"
       +"<td class='mono' style='white-space:nowrap;vertical-align:top'>"+psfCell+"</td>"
@@ -4258,7 +4258,7 @@ async function loadDefaultTransactions(page){
   if(activeRange==="10Y") fetchLimit=1000;
   if(activeRange==="ALL") fetchLimit=2000;
 
-  var url = SB_URL + "/rest/v1/transactions?select=id,project_name,address,property_type,transacted_price,area_sqft,unit_price_psf,sale_date,tenure,planning_region,postal_district,type_of_sale,db_type&"
+  var url = SB_URL + "/rest/v1/transactions?select=id,project_name,address,property_type,transacted_price,area_sqft,unit_price_psf,sale_date,tenure,planning_region,postal_district,type_of_sale,type_of_area&"
     + dateFilter + typeFilter + "&order=sale_date.desc&limit="+fetchLimit+"&offset=0";
   var res = await fetch(url, {
     headers:{"apikey":SB_KEY,"Authorization":"Bearer "+SB_KEY,"Prefer":"count=exact"}
