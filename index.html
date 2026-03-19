@@ -122,6 +122,17 @@ html,body{background:var(--bg);color:var(--txt);font-family:'DM Sans',sans-serif
 .mbtn:hover{background:var(--glt);color:var(--g1)}
 .mbtn.on{background:var(--g1);color:#fff;font-weight:600}
 
+/* ── DUAL RANGE SLIDER THUMBS ── */
+#slider-left::-webkit-slider-thumb,#slider-right::-webkit-slider-thumb{
+  -webkit-appearance:none;appearance:none;width:16px;height:16px;
+  border-radius:50%;background:var(--g1);border:2px solid #fff;
+  box-shadow:0 1px 4px rgba(0,0,0,.25);cursor:pointer;pointer-events:all;
+}
+#slider-left::-moz-range-thumb,#slider-right::-moz-range-thumb{
+  width:16px;height:16px;border-radius:50%;background:var(--g1);
+  border:2px solid #fff;box-shadow:0 1px 4px rgba(0,0,0,.25);cursor:pointer;pointer-events:all;
+}
+
 /* ── PROGRESS BARS ── */
 .tbar-row{display:flex;align-items:center;gap:10px;margin-bottom:10px}
 .tbar-lbl{font-size:12px;width:152px;flex-shrink:0;font-weight:500;color:var(--txt2)}
@@ -462,18 +473,27 @@ html,body{background:var(--bg);color:var(--txt);font-family:'DM Sans',sans-serif
           </div>
           <div id="bar-wrap" style="flex:1;width:100%;min-height:260px"></div>
           <div style="display:flex;flex-wrap:wrap;gap:10px;margin-top:10px;padding-top:10px;border-top:1px solid var(--srf3)" id="legend"></div>
-          <!-- Slider — always visible, spans full history 1995–2026 -->
+          <!-- Dual-handle range slider — always visible, spans full history 1995–2026 -->
           <div id="slider-row" style="margin-top:10px;padding-top:10px;border-top:1px solid var(--srf3)">
-            <div style="display:flex;align-items:center;gap:10px">
-              <span style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:var(--mut);white-space:nowrap">Custom Range</span>
-              <input type="range" id="period-slider" min="0" max="371" value="353"
-                style="flex:1;accent-color:var(--g1);cursor:pointer;height:3px"
-                oninput="onSliderInput(this.value)">
-              <span id="slider-label" style="font-size:10px;color:var(--mut);font-family:'DM Mono',monospace;white-space:nowrap;min-width:60px;text-align:right">Jan 1995</span>
+            <div style="display:flex;align-items:center;gap:8px;margin-bottom:6px">
+              <span style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:var(--mut);white-space:nowrap">Range</span>
+              <span id="slider-start-lbl" style="font-size:10px;color:var(--g1);font-family:'DM Mono',monospace;font-weight:600;white-space:nowrap">Mar 2025</span>
+              <span style="font-size:10px;color:var(--mut)">–</span>
+              <span id="slider-end-lbl" style="font-size:10px;color:var(--g1);font-family:'DM Mono',monospace;font-weight:600;white-space:nowrap">Mar 2026</span>
             </div>
-            <div style="display:flex;justify-content:space-between;margin-top:3px;padding:0 2px">
+            <div style="position:relative;height:24px;display:flex;align-items:center">
+              <div style="position:absolute;left:0;right:0;height:4px;background:var(--srf2);border-radius:2px"></div>
+              <div id="slider-track-fill" style="position:absolute;height:4px;background:var(--g1);border-radius:2px;left:0%;right:0%"></div>
+              <input type="range" id="slider-left" min="0" max="371" value="360"
+                style="position:absolute;width:100%;height:4px;appearance:none;-webkit-appearance:none;background:transparent;pointer-events:none;z-index:3;margin:0"
+                oninput="onDualSlider('left',this.value)">
+              <input type="range" id="slider-right" min="0" max="371" value="371"
+                style="position:absolute;width:100%;height:4px;appearance:none;-webkit-appearance:none;background:transparent;pointer-events:none;z-index:4;margin:0"
+                oninput="onDualSlider('right',this.value)">
+            </div>
+            <div style="display:flex;justify-content:space-between;margin-top:4px">
               <span style="font-size:9px;color:var(--mut2)">Jan 1995</span>
-              <span style="font-size:9px;color:var(--mut2)" id="slider-end-label">Mar 2026</span>
+              <span style="font-size:9px;color:var(--mut2)">Mar 2026</span>
             </div>
           </div>
         </div>
@@ -1618,9 +1638,10 @@ var chartMode="val"
 var activeRange="L12";
 var chartYoY=false;
 var chartQoQ=false;
-var chartMoM=false;
-var sliderMonths=18;  // window size in months (for monthly modes)
-var sliderStartMonth=353; // offset from Jan 1995 (353 = ~Feb 2026 minus 18mo = Jan 1995 + 353mo ≈ Feb 2024... default: 12mo ago)
+var chartMoM=true;   // MoM on by default
+var sliderMonths=12;  // window size in months
+var sliderStartMonth=360; // left handle (0=Jan1995, 371=Mar2026). Default: L12 = pos 360
+var sliderEndMonth=371;   // right handle
 var MONTHLY_CACHE=null; // {labels:[], datasets:{type:[vals]}}
 var showAvgPsf=true;
 var showSTI=false;
@@ -1723,10 +1744,9 @@ function fmtMo(ym){
 
 // Convert slider position (0=Jan1995, 371=Mar2026) to YYYY-MM string
 function sliderPosToYM(pos){
-  var base = new Date(1995, 0, 1); // Jan 1995
+  var base = new Date(1995, 0, 1);
   base.setMonth(base.getMonth() + parseInt(pos));
-  var yr = base.getFullYear();
-  var mo = base.getMonth() + 1;
+  var yr = base.getFullYear(), mo = base.getMonth() + 1;
   return yr + "-" + (mo < 10 ? "0" + mo : mo);
 }
 function fmtYM(ym){
@@ -1735,127 +1755,125 @@ function fmtYM(ym){
   return ms[parseInt(p[1])-1]+" "+p[0];
 }
 
-// Get window size in months based on activeRange
-function getWindowMonths(){
-  if(activeRange==="L12") return 12;
-  if(activeRange==="L18") return 18;
-  if(activeRange==="5Y")  return 60;
-  if(activeRange==="10Y") return 120;
-  if(activeRange==="ALL") return 372;
-  return sliderMonths; // SLIDER = custom
+// Sync the coloured fill track and labels to current left/right positions
+function syncDualSliderUI(){
+  var pct1 = (sliderStartMonth / 371) * 100;
+  var pct2 = (sliderEndMonth   / 371) * 100;
+  var fill = document.getElementById("slider-track-fill");
+  if(fill){ fill.style.left = pct1.toFixed(2)+"%"; fill.style.right = (100-pct2).toFixed(2)+"%"; }
+  var s = document.getElementById("slider-start-lbl");
+  var e = document.getElementById("slider-end-lbl");
+  if(s) s.textContent = fmtYM(sliderPosToYM(sliderStartMonth));
+  if(e) e.textContent = fmtYM(sliderPosToYM(sliderEndMonth));
 }
 
-// Set slider position and label for a given period button
-function syncSliderToRange(range){
-  // Position slider so the window END = Mar 2026 (pos 371)
-  var maxPos = 371;
-  var win = getWindowMonths();
-  var startPos = Math.max(0, maxPos - win + 1);
-  sliderStartMonth = startPos;
-  var el = document.getElementById("period-slider");
-  if(el) el.value = startPos;
-  updateSliderLabel(startPos);
-}
-
-function updateSliderLabel(pos){
-  var startYM = sliderPosToYM(pos);
-  var endYM   = sliderPosToYM(Math.min(371, parseInt(pos) + getWindowMonths() - 1));
-  var lbl = document.getElementById("slider-label");
-  var endLbl = document.getElementById("slider-end-label");
-  if(lbl)    lbl.textContent    = fmtYM(startYM);
-  if(endLbl) endLbl.textContent = fmtYM(endYM);
-}
-
-// Slider handler — user drags to move start position
-function onSliderInput(v){
-  sliderStartMonth = parseInt(v);
-  updateSliderLabel(v);
-  // If user drags while on a preset range, switch to SLIDER mode
-  if(activeRange !== "SLIDER"){
-    activeRange = "SLIDER";
-    document.getElementById("range-btns").querySelectorAll(".rbtn").forEach(function(x){x.classList.remove("on");});
-    sliderMonths = getWindowMonths(); // keep same window size
+// Dual-handle slider handler
+function onDualSlider(side, v){
+  v = parseInt(v);
+  if(side === "left"){
+    // Don't let left pass right (keep at least 1 month gap)
+    if(v >= sliderEndMonth) v = sliderEndMonth - 1;
+    sliderStartMonth = v;
+    document.getElementById("slider-left").value = v;
+  } else {
+    if(v <= sliderStartMonth) v = sliderStartMonth + 1;
+    sliderEndMonth = v;
+    document.getElementById("slider-right").value = v;
   }
-  // For annual chart modes, just re-render in place (no fetch needed — data already loaded)
+  syncDualSliderUI();
+  // Clear preset range selection when user manually drags
+  activeRange = "SLIDER";
+  document.getElementById("range-btns").querySelectorAll(".rbtn").forEach(function(x){x.classList.remove("on");});
+  // For annual modes re-render instantly (no fetch); for monthly, debounce load
   if(!isMonthlyMode() || chartYoY){
     renderBarChart();
-    updateSliderLabel(v);
     return;
   }
-  loadAndRenderChart();
-  if(!document.getElementById("ov-search").value.trim()){
-    ovFilteredCache=null;
-    document.getElementById("ov-tx-table").style.display="none";
-    document.getElementById("ov-tx-loading").style.display="block";
-    loadDefaultTransactions(0);
-  }
+  clearTimeout(window._sliderTimer);
+  window._sliderTimer = setTimeout(function(){
+    loadAndRenderChart();
+    if(!document.getElementById("ov-search").value.trim()){
+      ovFilteredCache=null;
+      document.getElementById("ov-tx-table").style.display="none";
+      document.getElementById("ov-tx-loading").style.display="block";
+      loadDefaultTransactions(0);
+    }
+  }, 400);
+}
+
+// Sync slider handles to a preset period (right handle = Mar2026, left = right - window)
+function syncSliderToRange(range){
+  var wins = {L12:12, L18:18, "5Y":60, "10Y":120, ALL:372};
+  var win = wins[range] || sliderMonths;
+  sliderEndMonth   = 371;
+  sliderStartMonth = Math.max(0, 371 - win + 1);
+  sliderMonths = win;
+  var lEl = document.getElementById("slider-left");
+  var rEl = document.getElementById("slider-right");
+  if(lEl) lEl.value = sliderStartMonth;
+  if(rEl) rEl.value = sliderEndMonth;
+  syncDualSliderUI();
+}
+
+// Legacy compat — kept for any remaining callers
+function updateSliderLabel(){ syncDualSliderUI(); }
+function onSliderInput(v){ onDualSlider("left", v); }
+
+function getWindowMonths(){
+  return Math.max(1, sliderEndMonth - sliderStartMonth + 1);
 }
 
 function getIdxs(){
-  var cur=2026,r0,r1;
-  if(activeRange==="5Y"){r0=cur-4;r1=cur;}
-  else if(activeRange==="10Y"){r0=cur-9;r1=cur;}
-  else{r0=YEARS[0];r1=YEARS[YEARS.length-1];}
-  return YEARS.reduce(function(a,y,i){if(y>=r0&&y<=r1)a.push(i);return a;},[]);
+  // Return year indices within the slider window
+  var startYr = parseInt(sliderPosToYM(sliderStartMonth).split("-")[0]);
+  var endYr   = parseInt(sliderPosToYM(sliderEndMonth).split("-")[0]);
+  return YEARS.reduce(function(a,y,i){ if(y>=startYr&&y<=endYr) a.push(i); return a; },[]);
 }
-function getFY(){return getIdxs().map(function(i){return YEARS[i];});}
+function getFY(){ return getIdxs().map(function(i){return YEARS[i];}); }
 
-// Monthly mode = any range that makes sense as months (all of them now)
-function isMonthlyMode(){return activeRange==="L18"||activeRange==="L12"||activeRange==="SLIDER";}
-function isQoQMode(){return chartQoQ;}
+function isMonthlyMode(){ return activeRange==="L18"||activeRange==="L12"||activeRange==="SLIDER"||chartMoM||chartQoQ; }
+function isQoQMode(){ return chartQoQ; }
 
-// Get start date string for fetching based on slider position + window
-function getSliderStartDate(){
-  var ym = sliderPosToYM(sliderStartMonth);
-  return ym + "-01";
-}
+function getSliderStartDate(){ return sliderPosToYM(sliderStartMonth)+"-01"; }
 function getSliderEndDate(){
-  var endPos = Math.min(371, sliderStartMonth + getWindowMonths() - 1);
-  var ym = sliderPosToYM(endPos);
-  // last day of that month
+  var ym = sliderPosToYM(sliderEndMonth);
   var p = ym.split("-");
   var d = new Date(parseInt(p[0]), parseInt(p[1]), 0);
   return d.getFullYear()+"-"+(d.getMonth()+1<10?"0":"")+(d.getMonth()+1)+"-"+d.getDate();
 }
 
 async function loadAndRenderChart(){
-  // Always keep slider visible and synced
-  document.getElementById("slider-row").style.display="block";
-  updateSliderLabel(sliderStartMonth);
-
+  syncDualSliderUI();
   var winMonths = getWindowMonths();
 
   if(chartMoM){
-    document.getElementById("chart-title").textContent="Month-on-Month Comparison";
+    document.getElementById("chart-title").textContent="Month-on-Month Comparison — "+fmtYM(sliderPosToYM(sliderStartMonth))+" to "+fmtYM(sliderPosToYM(sliderEndMonth));
     var data=await fetchMonthlyData(winMonths, getSliderStartDate());
     if(data){ MONTHLY_CACHE=data; renderMoMChart(data); }
     return;
   }
   if(chartQoQ){
-    document.getElementById("chart-title").textContent="Quarter-on-Quarter Comparison";
+    document.getElementById("chart-title").textContent="Quarter-on-Quarter Comparison — "+fmtYM(sliderPosToYM(sliderStartMonth))+" to "+fmtYM(sliderPosToYM(sliderEndMonth));
     var data=await fetchMonthlyData(winMonths, getSliderStartDate());
     if(data){ MONTHLY_CACHE=data; renderQoQChart(data); }
     return;
   }
   if(isMonthlyMode()&&!chartYoY){
-    document.getElementById("chart-title").textContent="Transaction Volume — Last "+winMonths+" Months";
+    document.getElementById("chart-title").textContent="Transaction Volume — "+fmtYM(sliderPosToYM(sliderStartMonth))+" to "+fmtYM(sliderPosToYM(sliderEndMonth));
     var data=await fetchMonthlyData(winMonths, getSliderStartDate());
     if(data){
       MONTHLY_CACHE=data;
-      if(showSTI){
-        STI_CACHE=await fetchSTIData(getSliderStartDate(), getSliderEndDate());
-      }
+      if(showSTI){ STI_CACHE=await fetchSTIData(getSliderStartDate(), getSliderEndDate()); }
       renderMonthlyChart(data);
-    }
-    else renderBarChart();
+    } else renderBarChart();
   } else {
     var moLabel=chartYoY?"Year-on-Year Comparison":"Annual Transaction Volume by Property Type";
-    var rangeLabel=activeRange==="5Y"?"5 Years":activeRange==="10Y"?"10 Years":activeRange==="ALL"?"All Years (1995–)":"";
-    document.getElementById("chart-title").textContent=moLabel+(rangeLabel?" — "+rangeLabel:"");
+    var startYr=parseInt(sliderPosToYM(sliderStartMonth).split("-")[0]);
+    var endYr=parseInt(sliderPosToYM(sliderEndMonth).split("-")[0]);
+    var rangeLabel=startYr===endYr?String(startYr):(startYr+" – "+endYr);
+    document.getElementById("chart-title").textContent=moLabel+" — "+rangeLabel;
     if(showSTI&&!chartYoY){
-      var fyArr=getFY();
-      var sStart=fyArr[0]+"-01-01",sEnd=fyArr[fyArr.length-1]+"-12-31";
-      STI_CACHE=await fetchSTIData(sStart,sEnd);
+      STI_CACHE=await fetchSTIData(startYr+"-01-01", endYr+"-12-31");
     }
     renderBarChart();
   }
@@ -2128,81 +2146,75 @@ function initRangeBtns(){
       activeRange=b.dataset.range;
       document.getElementById("range-btns").querySelectorAll(".rbtn").forEach(function(x){x.classList.remove("on");});
       b.classList.add("on");
+      // Annual modes: turn off monthly comparison modes
       if(activeRange==="5Y"||activeRange==="10Y"||activeRange==="ALL"){
-        chartQoQ=false; document.getElementById("m-qoq").classList.remove("on");
-        chartMoM=false; document.getElementById("m-mom").classList.remove("on");
+        if(chartMoM||chartQoQ){
+          chartMoM=false; chartQoQ=false;
+          document.getElementById("m-mom").classList.remove("on");
+          document.getElementById("m-qoq").classList.remove("on");
+        }
       }
-      // Sync slider: position handle so window ends at today (Mar 2026 = pos 371)
-      // Window size determined by period; handle = start of window
-      var win = getWindowMonths();
-      var startPos = Math.max(0, 371 - win + 1);
-      sliderStartMonth = startPos;
-      sliderMonths = win;
-      var sliderEl = document.getElementById("period-slider");
-      if(sliderEl) sliderEl.value = startPos;
-      updateSliderLabel(startPos);
+      syncSliderToRange(activeRange);
       renderAll();
       loadAndRenderChart();
-      // Sync transactions table with new period
       if(!document.getElementById("ov-search").value.trim()){
-        ovFilteredCache = null; ovCurPage = 0;
+        ovFilteredCache=null; ovCurPage=0;
         document.getElementById("ov-tx-table").style.display="none";
         document.getElementById("ov-tx-loading").style.display="block";
         loadDefaultTransactions(0);
       }
     });
   });
-  // YoY toggle
-  document.getElementById("m-qoq").addEventListener("click",function(){
-    chartQoQ=!chartQoQ;
-    this.classList.toggle("on",chartQoQ);
-    // QoQ is mutually exclusive with YoY
-    if(chartQoQ){
-      chartYoY=false;
-      document.getElementById("m-yoy").classList.remove("on");
-      // Force monthly range if on annual
-      if(!isMonthlyMode()){
-        document.getElementById("range-btns").querySelectorAll(".rbtn").forEach(function(x){x.classList.remove("on");});
-        document.querySelector(".rbtn[data-range='L12']").classList.add("on");
-        activeRange="L12";
-        document.getElementById("slider-row").style.display="block";
-      }
-    }
-    loadAndRenderChart();
-  });
-  document.getElementById("m-yoy").addEventListener("click",function(){
-    chartYoY=!chartYoY;
-    this.classList.toggle("on",chartYoY);
-    if(chartYoY){ chartQoQ=false; document.getElementById("m-qoq").classList.remove("on"); chartMoM=false; document.getElementById("m-mom").classList.remove("on"); }
-    // When YoY on, force annual view
-    if(chartYoY){
-      document.getElementById("range-btns").querySelectorAll(".rbtn").forEach(function(x){x.classList.remove("on");});
-      document.querySelector(".rbtn[data-range='ALL']").classList.add("on");
-      activeRange="ALL";
-    } else {
-      document.querySelector(".rbtn[data-range='L12']").classList.add("on");
-      activeRange="L12";
-      syncSliderToRange("L12");
-      ovFilteredCache=null;
-      document.getElementById("ov-tx-table").style.display="none";
-      document.getElementById("ov-tx-loading").style.display="block";
-      loadDefaultTransactions(0);
-    }
-    loadAndRenderChart();
-  });
-  // MoM toggle
+  // MoM — mutually exclusive with QoQ and YoY
   document.getElementById("m-mom").addEventListener("click",function(){
     chartMoM=!chartMoM;
     this.classList.toggle("on",chartMoM);
     if(chartMoM){
-      chartYoY=false; document.getElementById("m-yoy").classList.remove("on");
-      chartQoQ=false; document.getElementById("m-qoq").classList.remove("on");
-      if(!isMonthlyMode()){
+      chartQoQ=false; chartYoY=false;
+      document.getElementById("m-qoq").classList.remove("on");
+      document.getElementById("m-yoy").classList.remove("on");
+      if(activeRange==="5Y"||activeRange==="10Y"||activeRange==="ALL"){
         document.getElementById("range-btns").querySelectorAll(".rbtn").forEach(function(x){x.classList.remove("on");});
         document.querySelector(".rbtn[data-range='L12']").classList.add("on");
-        activeRange="L12";
-        syncSliderToRange("L12");
+        activeRange="L12"; syncSliderToRange("L12");
       }
+    }
+    loadAndRenderChart();
+  });
+  // QoQ — mutually exclusive
+  document.getElementById("m-qoq").addEventListener("click",function(){
+    chartQoQ=!chartQoQ;
+    this.classList.toggle("on",chartQoQ);
+    if(chartQoQ){
+      chartMoM=false; chartYoY=false;
+      document.getElementById("m-mom").classList.remove("on");
+      document.getElementById("m-yoy").classList.remove("on");
+      if(activeRange==="5Y"||activeRange==="10Y"||activeRange==="ALL"){
+        document.getElementById("range-btns").querySelectorAll(".rbtn").forEach(function(x){x.classList.remove("on");});
+        document.querySelector(".rbtn[data-range='L12']").classList.add("on");
+        activeRange="L12"; syncSliderToRange("L12");
+      }
+    }
+    loadAndRenderChart();
+  });
+  // YoY — mutually exclusive, forces annual view
+  document.getElementById("m-yoy").addEventListener("click",function(){
+    chartYoY=!chartYoY;
+    this.classList.toggle("on",chartYoY);
+    if(chartYoY){
+      chartMoM=false; chartQoQ=false;
+      document.getElementById("m-mom").classList.remove("on");
+      document.getElementById("m-qoq").classList.remove("on");
+      document.getElementById("range-btns").querySelectorAll(".rbtn").forEach(function(x){x.classList.remove("on");});
+      document.querySelector(".rbtn[data-range='ALL']").classList.add("on");
+      activeRange="ALL"; syncSliderToRange("ALL");
+    } else {
+      document.querySelector(".rbtn[data-range='L12']").classList.add("on");
+      activeRange="L12"; syncSliderToRange("L12");
+      ovFilteredCache=null;
+      document.getElementById("ov-tx-table").style.display="none";
+      document.getElementById("ov-tx-loading").style.display="block";
+      loadDefaultTransactions(0);
     }
     loadAndRenderChart();
   });
@@ -2287,101 +2299,118 @@ function renderQoQChart(data){
     "</span>";
 }
 
-// MoM CHART
+// MoM CHART — stacked bars by property type, round y-axis
 function renderMoMChart(data){
   var wrap=document.getElementById("bar-wrap");
   var W=wrap.clientWidth||800,H=280;
   var P={t:24,r:16,b:40,l:62},cW=W-P.l-P.r,cH=H-P.t-P.b;
   var actT=TYPES.filter(function(t){return activeTypes[t];});
-  // Use monthly data directly
   var mlist=data.labels;
-  if(mlist.length<2){wrap.innerHTML="<div style='padding:20px;color:var(--mut);font-size:12px'>Not enough data for MoM comparison.</div>";return;}
-  var vals=mlist.map(function(mo){
+  if(mlist.length<2){wrap.innerHTML="<div style='padding:20px;color:var(--mut);font-size:12px'>Not enough data.</div>";return;}
+
+  // Compute stacked totals per month for scale
+  var stackTots=mlist.map(function(mo){
     var agg=data.agg[mo]; if(!agg) return 0;
     return actT.reduce(function(s,t){return s+(chartMode==="val"?(agg[t]?agg[t].val:0):(agg[t]?agg[t].cnt:0));},0);
   });
-  var mx=Math.max.apply(null,vals.concat([1]));
-  var bGW=cW/mlist.length;
+  var rawMax=Math.max.apply(null,stackTots.concat([1]));
+  function niceMax(v){var mag=Math.pow(10,Math.floor(Math.log10(v)));var steps=[1,2,2.5,5,10];for(var si=0;si<steps.length;si++){var c=Math.ceil(v/(mag*steps[si]))*(mag*steps[si]);if(c/v<=1.5)return c;}return Math.ceil(v/mag)*mag;}
+  var mx=niceMax(rawMax);
+
+  var bGW=cW/mlist.length, bw=Math.max(2, bGW*0.80);
   var svg="<svg height='"+H+"' viewBox='0 0 "+W+" "+H+"' style='width:100%;overflow:visible'>";
-  for(var k=0;k<=4;k++){
-    var tv=k*mx/4,ty=P.t+cH-(tv/mx)*cH;
+
+  // Grid + y-axis labels
+  for(var k=0;k<=5;k++){
+    var tv=k*mx/5,ty=P.t+cH-(tv/mx)*cH;
     var tl=chartMode==="val"?(tv>=1000?"S$"+(tv/1000).toFixed(0)+"B":"S$"+Math.round(tv)+"M"):(tv>=1000?(tv/1000).toFixed(1)+"K":Math.round(tv).toString());
     svg+="<line x1='"+P.l+"' x2='"+(P.l+cW)+"' y1='"+ty+"' y2='"+ty+"' stroke='#dce4df' stroke-width='1'/>";
     svg+="<text x='"+(P.l-5)+"' y='"+(ty+4)+"' text-anchor='end' fill='#6b8578' font-size='10' font-family='DM Mono,monospace'>"+tl+"</text>";
   }
+
+  // Stacked bars
   mlist.forEach(function(mo,i){
-    var v=vals[i];
-    var bh=(v/mx)*cH,bx=P.l+i*bGW+bGW*0.08,bw=bGW*0.84;
-    var by=P.t+cH-bh;
-    var clr="#1a4f9c";
-    if(i>0){ clr=v>=vals[i-1]?"#1a9c4f":"#c8364a"; }
-    var ttVal=(chartMode==="val"?"S$"+Math.round(v)+"M":v+" deals");
-    var ttChg=i>0?" · "+(v>=vals[i-1]?"+":"")+((v-vals[i-1])/Math.max(vals[i-1],1)*100).toFixed(1)+"%":" · Base month";
-    svg+='<rect x="'+bx.toFixed(1)+'" y="'+by.toFixed(1)+'" width="'+bw.toFixed(1)+'" height="'+Math.max(bh,0).toFixed(1)+'" fill="'+clr+'" rx="2" opacity="0.85" style="cursor:pointer" onmouseenter="sT(event,\''+mo+'\',\'office\',\''+ttVal+ttChg+'\');" onmouseleave="hT()"/>';
+    var agg=data.agg[mo]||{};
+    var bx=P.l+i*bGW+(bGW-bw)/2;
+    var stackY=P.t+cH; // start from bottom
+    actT.forEach(function(t){
+      var v=chartMode==="val"?(agg[t]?agg[t].val:0):(agg[t]?agg[t].cnt:0);
+      if(!v) return;
+      var bh=(v/mx)*cH;
+      stackY-=bh;
+      var vs=chartMode==="val"?"S$"+Math.round(v)+"M":v+" deals";
+      svg+='<rect x="'+bx.toFixed(1)+'" y="'+stackY.toFixed(1)+'" width="'+bw.toFixed(1)+'" height="'+Math.max(bh,0).toFixed(1)+'"'
+          +' fill="'+TCOLOR[t]+'" style="cursor:pointer"'
+          +' onmouseenter="sT(event,\''+mo+'\',\''+t+'\',\''+vs+'\')" onmouseleave="hT()"/>';
+    });
+    // MoM % change on total
     if(i>0){
-      var pct=((v-vals[i-1])/Math.max(vals[i-1],1)*100);
-      var pctTxt=(pct>=0?"+":"")+pct.toFixed(1)+"%";
-      var badgeY=Math.max(by-6,P.t+10);
-      svg+="<text x='"+(bx+bw/2).toFixed(1)+"' y='"+badgeY.toFixed(1)+"' text-anchor='middle' fill='"+(pct>=0?"#1a9c4f":"#c8364a")+"' font-size='9' font-weight='600' font-family='DM Mono,monospace'>"+pctTxt+"</text>";
+      var prev=stackTots[i-1], curr=stackTots[i];
+      if(prev>0){
+        var pct=((curr-prev)/prev*100);
+        var pctTxt=(pct>=0?"+":"")+pct.toFixed(1)+"%";
+        var badgeY=Math.max(P.t+cH-(curr/mx)*cH-6, P.t+10);
+        svg+="<text x='"+(bx+bw/2).toFixed(1)+"' y='"+badgeY.toFixed(1)+"' text-anchor='middle' fill='"+(pct>=0?"#1a9c4f":"#c8364a")+"' font-size='9' font-weight='600' font-family='DM Mono,monospace'>"+pctTxt+"</text>";
+      }
     }
-    // Only label every nth month to avoid clutter
-    var step = mlist.length > 36 ? 6 : mlist.length > 18 ? 3 : 1;
-    if(i % step === 0){
+    // X labels — skip for dense charts
+    var step=mlist.length>36?6:mlist.length>18?3:1;
+    if(i%step===0){
       svg+="<text x='"+(bx+bw/2).toFixed(1)+"' y='"+(P.t+cH+15)+"' text-anchor='middle' fill='#6b8578' font-size='9' font-family='DM Sans'>"+fmtMo(mo)+"</text>";
     }
   });
   svg+="</svg>";
   wrap.innerHTML=svg;
-  document.getElementById("legend").innerHTML="<span style='font-size:11px;color:var(--mut)'>"+
-    "<span style='display:inline-block;width:9px;height:9px;background:#1a4f9c;border-radius:2px;margin-right:4px'></span>Base &nbsp;"+
-    "<span style='display:inline-block;width:9px;height:9px;background:#1a9c4f;border-radius:2px;margin-right:4px'></span>Up &nbsp;"+
-    "<span style='display:inline-block;width:9px;height:9px;background:#c8364a;border-radius:2px;margin-right:4px'></span>Down"+
-    "</span>";
+  renderLegend();
 }
 
-// BAR CHART
+// BAR CHART — shows only years within slider window, round y-axis
 function renderBarChart(){
   var wrap=document.getElementById("bar-wrap");
   var W=wrap.clientWidth||800,H=280;
   var P={t:14,r:(showSTI&&!chartYoY?50:16),b:36,l:62};
   var cW=W-P.l-P.r,cH=H-P.t-P.b;
-  // Always render ALL years so slider spotlight works
-  var allIdxs=YEARS.map(function(_,i){return i;});
-  var fy=YEARS;
+  // Only years within slider window
+  var idxs=getIdxs(), fy=getFY();
+  if(!idxs.length){ wrap.innerHTML="<div style='padding:20px;color:var(--mut);font-size:12px'>No data in selected range.</div>"; return; }
   var mat=CHART_OVERRIDE ? CHART_OVERRIDE : (chartMode==="val"?VAL_ARR:CNT_ARR);
   var actT=TYPES.filter(function(t){return activeTypes[t];});
-  var tots=allIdxs.map(function(i){return actT.reduce(function(s,t){return s+(mat[i][TYPES.indexOf(t)]||0);},0);});
-  var mx=Math.max.apply(null,tots.concat([1]));
+  var tots=idxs.map(function(i){return actT.reduce(function(s,t){return s+(mat[i][TYPES.indexOf(t)]||0);},0);});
+  var rawMax=Math.max.apply(null,tots.concat([1]));
 
-  // Compute which years are inside the slider window
-  var winStart = sliderPosToYM(sliderStartMonth);
-  var winEnd   = sliderPosToYM(Math.min(371, sliderStartMonth + getWindowMonths() - 1));
-  var winStartYr = parseInt(winStart.split("-")[0]);
-  var winEndYr   = parseInt(winEnd.split("-")[0]);
+  // Round y-axis to nice increments
+  function niceMax(v){
+    var mag=Math.pow(10,Math.floor(Math.log10(v)));
+    var steps=[1,2,2.5,5,10];
+    for(var si=0;si<steps.length;si++){
+      var cand=Math.ceil(v/(mag*steps[si]))*(mag*steps[si]);
+      if(cand/v<=1.5) return cand;
+    }
+    return Math.ceil(v/mag)*mag;
+  }
+  var mx=niceMax(rawMax);
 
   var svg='<svg height="'+H+'" viewBox="0 0 '+W+' '+H+'" style="width:100%;overflow:visible">';
-  for(var k=0;k<=5;k++){
-    var tv2=k*mx/5,ty=P.t+cH-(tv2/mx)*cH;
+  var gridLines=5;
+  for(var k=0;k<=gridLines;k++){
+    var tv2=k*mx/gridLines, ty=P.t+cH-(tv2/mx)*cH;
     var tl=chartMode==="val"?(tv2>=1000?"S$"+(tv2/1000).toFixed(0)+"B":"S$"+Math.round(tv2)+"M"):(tv2>=1000?(tv2/1000).toFixed(1)+"K":Math.round(tv2).toString());
     svg+='<line x1="'+P.l+'" x2="'+(P.l+cW)+'" y1="'+ty+'" y2="'+ty+'" stroke="#dce4df" stroke-width="1"/>';
     svg+='<text x="'+(P.l-5)+'" y="'+(ty+4)+'" text-anchor="end" fill="#6b8578" font-size="10" font-family="DM Mono,monospace">'+tl+'</text>';
   }
-  var bGW=cW/allIdxs.length,bW=Math.max(1.5,bGW*0.82/actT.length);
-  allIdxs.forEach(function(di,gi){
-    var yr=fy[gi],gx=P.l+gi*bGW+bGW*0.09;
-    var inWindow = (yr >= winStartYr && yr <= winEndYr);
-    var barOpacity = inWindow ? "1" : "0.18";
-    var labelFill  = inWindow ? "#6b8578" : "#c8d4ce";
+  var bGW=cW/idxs.length, bW=Math.max(1.5,bGW*0.82/actT.length);
+  idxs.forEach(function(di,gi){
+    var yr=fy[gi], gx=P.l+gi*bGW+bGW*0.09;
     actT.forEach(function(t,ai){
-      var ti2=TYPES.indexOf(t),val=mat[di][ti2]||0;
-      var bh=(val/mx)*cH,bx=gx+ai*(bGW*0.82/actT.length),by=P.t+cH-bh;
+      var ti2=TYPES.indexOf(t), val=mat[di][ti2]||0;
+      var bh=(val/mx)*cH, bx=gx+ai*(bGW*0.82/actT.length), by=P.t+cH-bh;
       var vs=chartMode==="val"?fmtV(val):fmtC(val)+" deals";
       svg+='<rect x="'+bx.toFixed(1)+'" y="'+by.toFixed(1)+'" width="'+bW.toFixed(1)+'" height="'+Math.max(bh,0).toFixed(1)+'"'
-          +' fill="'+TCOLOR[t]+'" rx="2" opacity="'+barOpacity+'" style="cursor:pointer"'
+          +' fill="'+TCOLOR[t]+'" rx="2" opacity="1" style="cursor:pointer"'
           +' onmouseenter="sT(event,\''+yr+'\',\''+t+'\',\''+vs+'\')" onmouseleave="hT()"/>';
     });
-    var sl=allIdxs.length<=15||gi%Math.ceil(allIdxs.length/15)===0||gi===allIdxs.length-1;
-    if(sl){var lx=P.l+gi*bGW+bGW/2;svg+='<text x="'+lx.toFixed(1)+'" y="'+(P.t+cH+15)+'" text-anchor="middle" fill="'+labelFill+'" font-size="10" font-family="DM Sans">'+yr+'</text>';}
+    var sl=idxs.length<=15||gi%Math.ceil(idxs.length/15)===0||gi===idxs.length-1;
+    if(sl){var lx=P.l+gi*bGW+bGW/2;svg+='<text x="'+lx.toFixed(1)+'" y="'+(P.t+cH+15)+'" text-anchor="middle" fill="#6b8578" font-size="10" font-family="DM Sans">'+yr+'</text>';}
   });
   // ---- STI overlay (annual) ----
   if(showSTI&&!chartYoY&&STI_CACHE){
@@ -2422,8 +2451,8 @@ function renderBarChart(){
         if(v===null)return;
         var cx=P.l+i*bGW+bGW/2;
         var cntVal=tots[i];
-        var dotInWin = (fy[i] >= winStartYr && fy[i] <= winEndYr);
-        svg+='<circle cx="'+cx.toFixed(1)+'" cy="'+stiAnnY(v).toFixed(1)+'" r="2.5" fill="#f59e0b" opacity="'+(dotInWin?"0.9":"0.2")+'"'
+        var dotInWin = true; // all years shown are within window
+        svg+='<circle cx="'+cx.toFixed(1)+'" cy="'+stiAnnY(v).toFixed(1)+'" r="2.5" fill="#f59e0b" opacity="0.9"'
             +' onmouseenter="sT(event,\''+fy[i]+'\',\'STI\',\''+Math.round(v)+' (Dec close) · '+cntVal+' deals\')" onmouseleave="hT()"/>';
       });
     }
@@ -3993,9 +4022,7 @@ function getLast12MonthsDate(){
   return getSliderStartDate();
 }
 function getActiveRangeLabel(){
-  var startYM = sliderPosToYM(sliderStartMonth);
-  var endYM   = sliderPosToYM(Math.min(371, sliderStartMonth + getWindowMonths() - 1));
-  return fmtYM(startYM) + " – " + fmtYM(endYM);
+  return fmtYM(sliderPosToYM(sliderStartMonth)) + " – " + fmtYM(sliderPosToYM(sliderEndMonth));
 }
 function getDateForActiveRange(){
   // Use slider start position for all modes
@@ -4688,16 +4715,15 @@ function initAutocomplete(){
   });
 }
 
-// INIT
-// Set default slider: L12 window ending at Mar 2026 (pos 371), start = 371-12+1 = 360
+// INIT — default: MoM, Last 12 Months, slider right=371 left=360
 sliderStartMonth = 360;
-sliderMonths = 12;
-(function(){
-  var el = document.getElementById("period-slider");
-  if(el){ el.value = 360; }
-  updateSliderLabel(360);
-})();
+sliderEndMonth   = 371;
+sliderMonths     = 12;
 initRangeBtns();
+// Mark defaults as active
+document.querySelector(".rbtn[data-range='L12']").classList.add("on");
+document.getElementById("m-mom").classList.add("on");
+syncDualSliderUI();
 renderNewsroom();
 renderPendingDeals();
 matchPendingDeals();
@@ -4705,10 +4731,9 @@ renderPipeline();
 initAutocomplete();
 initOvAutocomplete();
 loadDefaultTransactions(0);
-// Defer chart render until after browser paint so clientWidth is available
 requestAnimationFrame(function(){
   renderAll();
-  loadAndRenderChart(); // default: 18-month monthly view
+  loadAndRenderChart();
   window.addEventListener("resize", function(){ if(isMonthlyMode()&&MONTHLY_CACHE)renderMonthlyChart(MONTHLY_CACHE);else renderBarChart(); renderAnalytics && renderAnalytics(); });
 });
 
