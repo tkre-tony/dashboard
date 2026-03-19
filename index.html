@@ -415,8 +415,11 @@ html,body{background:var(--bg);color:var(--txt);font-family:'DM Sans',sans-serif
             <div class="mode-row" style="flex-direction:column;gap:4px;border:none;background:none;padding:0">
               <button class="mbtn on" id="m-val" style="width:100%;justify-content:center;border-radius:5px;border:1px solid var(--bdr)">S$ Value</button>
               <button class="mbtn" id="m-cnt" style="width:100%;justify-content:center;border-radius:5px;border:1px solid var(--bdr)">Deal Count</button>
-              <button class="mbtn" id="m-yoy" style="width:100%;justify-content:center;border-radius:5px;border:1px solid var(--bdr)" title="Toggle Year-on-Year view">YoY Comparison</button>
-              <button class="mbtn" id="m-qoq" style="width:100%;justify-content:center;border-radius:5px;border:1px solid var(--bdr)" title="Toggle Quarter-on-Quarter view">QoQ Comparison</button>
+              <div style="display:flex;gap:4px">
+                <button class="mbtn" id="m-yoy" style="flex:1;justify-content:center;border-radius:5px;border:1px solid var(--bdr);font-size:10.5px;padding:5px 2px" title="Year-on-Year">YoY</button>
+                <button class="mbtn" id="m-qoq" style="flex:1;justify-content:center;border-radius:5px;border:1px solid var(--bdr);font-size:10.5px;padding:5px 2px" title="Quarter-on-Quarter">QoQ</button>
+                <button class="mbtn" id="m-mom" style="flex:1;justify-content:center;border-radius:5px;border:1px solid var(--bdr);font-size:10.5px;padding:5px 2px" title="Month-on-Month">MoM</button>
+              </div>
             </div>
           </div>
 
@@ -459,13 +462,19 @@ html,body{background:var(--bg);color:var(--txt);font-family:'DM Sans',sans-serif
           </div>
           <div id="bar-wrap" style="flex:1;width:100%;min-height:260px"></div>
           <div style="display:flex;flex-wrap:wrap;gap:10px;margin-top:10px;padding-top:10px;border-top:1px solid var(--srf3)" id="legend"></div>
-          <!-- Slider below chart -->
-          <div id="slider-row" style="display:flex;align-items:center;gap:10px;margin-top:10px;padding-top:10px;border-top:1px solid var(--srf3)">
-            <span style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:var(--mut);white-space:nowrap">Custom Range</span>
-            <input type="range" id="period-slider" min="6" max="32" value="18"
-              style="flex:1;accent-color:var(--g1);cursor:pointer;height:3px"
-              oninput="onSliderInput(this.value)">
-            <span id="slider-label" style="font-size:10px;color:var(--mut);font-family:'DM Mono',monospace;white-space:nowrap;min-width:36px">18 mo</span>
+          <!-- Slider — always visible, spans full history 1995–2026 -->
+          <div id="slider-row" style="margin-top:10px;padding-top:10px;border-top:1px solid var(--srf3)">
+            <div style="display:flex;align-items:center;gap:10px">
+              <span style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:var(--mut);white-space:nowrap">Custom Range</span>
+              <input type="range" id="period-slider" min="0" max="371" value="353"
+                style="flex:1;accent-color:var(--g1);cursor:pointer;height:3px"
+                oninput="onSliderInput(this.value)">
+              <span id="slider-label" style="font-size:10px;color:var(--mut);font-family:'DM Mono',monospace;white-space:nowrap;min-width:60px;text-align:right">Jan 1995</span>
+            </div>
+            <div style="display:flex;justify-content:space-between;margin-top:3px;padding:0 2px">
+              <span style="font-size:9px;color:var(--mut2)">Jan 1995</span>
+              <span style="font-size:9px;color:var(--mut2)" id="slider-end-label">Mar 2026</span>
+            </div>
           </div>
         </div>
 
@@ -1609,7 +1618,9 @@ var chartMode="val"
 var activeRange="L12";
 var chartYoY=false;
 var chartQoQ=false;
-var sliderMonths=18;
+var chartMoM=false;
+var sliderMonths=18;  // window size in months (for monthly modes)
+var sliderStartMonth=353; // offset from Jan 1995 (353 = ~Feb 2026 minus 18mo = Jan 1995 + 353mo ≈ Feb 2024... default: 12mo ago)
 var MONTHLY_CACHE=null; // {labels:[], datasets:{type:[vals]}}
 var showAvgPsf=true;
 var showSTI=false;
@@ -1627,10 +1638,15 @@ function fmtV(v){if(v>=1000)return"S$"+(v/1000).toFixed(1)+"B";if(v>=1)return"S$
 function fmtC(v){return v.toLocaleString();}
 
 // Monthly data fetch from Supabase
-async function fetchMonthlyData(months){
-  var d=new Date();
-  d.setMonth(d.getMonth()-months);
-  var from=d.toISOString().substring(0,10);
+async function fetchMonthlyData(months, startDate){
+  var from;
+  if(startDate){
+    from = startDate;
+  } else {
+    var d=new Date();
+    d.setMonth(d.getMonth()-months);
+    from=d.toISOString().substring(0,10);
+  }
   var typeMap={
     "multiple-user factory":"multiUser","multi-user factory":"multiUser",
     "single-user factory":"singleUser",
@@ -1705,12 +1721,61 @@ function fmtMo(ym){
   return ms[parseInt(p[1])-1]+" "+p[0].substring(2);
 }
 
-// Slider handler
+// Convert slider position (0=Jan1995, 371=Mar2026) to YYYY-MM string
+function sliderPosToYM(pos){
+  var base = new Date(1995, 0, 1); // Jan 1995
+  base.setMonth(base.getMonth() + parseInt(pos));
+  var yr = base.getFullYear();
+  var mo = base.getMonth() + 1;
+  return yr + "-" + (mo < 10 ? "0" + mo : mo);
+}
+function fmtYM(ym){
+  var ms=["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
+  var p=ym.split("-");
+  return ms[parseInt(p[1])-1]+" "+p[0];
+}
+
+// Get window size in months based on activeRange
+function getWindowMonths(){
+  if(activeRange==="L12") return 12;
+  if(activeRange==="L18") return 18;
+  if(activeRange==="5Y")  return 60;
+  if(activeRange==="10Y") return 120;
+  if(activeRange==="ALL") return 372;
+  return sliderMonths; // SLIDER = custom
+}
+
+// Set slider position and label for a given period button
+function syncSliderToRange(range){
+  // Position slider so the window END = Mar 2026 (pos 371)
+  var maxPos = 371;
+  var win = getWindowMonths();
+  var startPos = Math.max(0, maxPos - win + 1);
+  sliderStartMonth = startPos;
+  var el = document.getElementById("period-slider");
+  if(el) el.value = startPos;
+  updateSliderLabel(startPos);
+}
+
+function updateSliderLabel(pos){
+  var startYM = sliderPosToYM(pos);
+  var endYM   = sliderPosToYM(Math.min(371, parseInt(pos) + getWindowMonths() - 1));
+  var lbl = document.getElementById("slider-label");
+  var endLbl = document.getElementById("slider-end-label");
+  if(lbl)    lbl.textContent    = fmtYM(startYM);
+  if(endLbl) endLbl.textContent = fmtYM(endYM);
+}
+
+// Slider handler — user drags to move start position
 function onSliderInput(v){
-  sliderMonths=parseInt(v);
-  document.getElementById("slider-label").textContent=v+" months";
-  activeRange="SLIDER";
-  document.getElementById("range-btns").querySelectorAll(".rbtn").forEach(function(x){x.classList.remove("on");});
+  sliderStartMonth = parseInt(v);
+  updateSliderLabel(v);
+  // If user drags while on a preset range, switch to SLIDER mode
+  if(activeRange !== "SLIDER"){
+    activeRange = "SLIDER";
+    document.getElementById("range-btns").querySelectorAll(".rbtn").forEach(function(x){x.classList.remove("on");});
+    sliderMonths = getWindowMonths(); // keep same window size
+  }
   loadAndRenderChart();
   if(!document.getElementById("ov-search").value.trim()){
     ovFilteredCache=null;
@@ -1722,45 +1787,57 @@ function onSliderInput(v){
 
 function getIdxs(){
   var cur=2026,r0,r1;
-  if(activeRange==="L18"||activeRange==="L12"||activeRange==="SLIDER"){r0=2024;r1=2026;}
-  else if(activeRange==="5Y"){r0=cur-4;r1=cur;}
+  if(activeRange==="5Y"){r0=cur-4;r1=cur;}
   else if(activeRange==="10Y"){r0=cur-9;r1=cur;}
   else{r0=YEARS[0];r1=YEARS[YEARS.length-1];}
   return YEARS.reduce(function(a,y,i){if(y>=r0&&y<=r1)a.push(i);return a;},[]);
 }
 function getFY(){return getIdxs().map(function(i){return YEARS[i];});}
 
-// Decide if we show monthly or annual chart
+// Monthly mode = any range that makes sense as months (all of them now)
 function isMonthlyMode(){return activeRange==="L18"||activeRange==="L12"||activeRange==="SLIDER";}
 function isQoQMode(){return chartQoQ;}
 
+// Get start date string for fetching based on slider position + window
+function getSliderStartDate(){
+  var ym = sliderPosToYM(sliderStartMonth);
+  return ym + "-01";
+}
+function getSliderEndDate(){
+  var endPos = Math.min(371, sliderStartMonth + getWindowMonths() - 1);
+  var ym = sliderPosToYM(endPos);
+  // last day of that month
+  var p = ym.split("-");
+  var d = new Date(parseInt(p[0]), parseInt(p[1]), 0);
+  return d.getFullYear()+"-"+(d.getMonth()+1<10?"0":"")+(d.getMonth()+1)+"-"+d.getDate();
+}
+
 async function loadAndRenderChart(){
+  // Always keep slider visible and synced
+  document.getElementById("slider-row").style.display="block";
+  updateSliderLabel(sliderStartMonth);
+
+  var winMonths = getWindowMonths();
+
+  if(chartMoM){
+    document.getElementById("chart-title").textContent="Month-on-Month Comparison";
+    var data=await fetchMonthlyData(winMonths, getSliderStartDate());
+    if(data){ MONTHLY_CACHE=data; renderMoMChart(data); }
+    return;
+  }
   if(chartQoQ){
-    var months=(activeRange==="L12")?12:(activeRange==="SLIDER")?sliderMonths:18;
-    months=Math.max(months,6); // at least 2 quarters
-    document.getElementById("chart-title").textContent="Quarter-on-Quarter Comparison — Last "+months+" Months";
-    document.getElementById("slider-row").style.display="flex";
-    var data=await fetchMonthlyData(months);
+    document.getElementById("chart-title").textContent="Quarter-on-Quarter Comparison";
+    var data=await fetchMonthlyData(winMonths, getSliderStartDate());
     if(data){ MONTHLY_CACHE=data; renderQoQChart(data); }
     return;
   }
   if(isMonthlyMode()&&!chartYoY){
-    var months=(activeRange==="L12")?12:(activeRange==="SLIDER")?sliderMonths:18;
-    document.getElementById("chart-title").textContent="Transaction Volume — Last "+months+" Months";
-    document.getElementById("slider-row").style.display="flex";
-    if(months!==sliderMonths){
-      document.getElementById("period-slider").value=months;
-      document.getElementById("slider-label").textContent=months+" months";
-      sliderMonths=months;
-    }
-    var data=await fetchMonthlyData(months);
+    document.getElementById("chart-title").textContent="Transaction Volume — Last "+winMonths+" Months";
+    var data=await fetchMonthlyData(winMonths, getSliderStartDate());
     if(data){
       MONTHLY_CACHE=data;
       if(showSTI){
-        var d2=new Date();d2.setMonth(d2.getMonth()-months);
-        var s0=d2.toISOString().substring(0,10);
-        var e0=new Date().toISOString().substring(0,10);
-        STI_CACHE=await fetchSTIData(s0,e0);
+        STI_CACHE=await fetchSTIData(getSliderStartDate(), getSliderEndDate());
       }
       renderMonthlyChart(data);
     }
@@ -1769,7 +1846,6 @@ async function loadAndRenderChart(){
     var moLabel=chartYoY?"Year-on-Year Comparison":"Annual Transaction Volume by Property Type";
     var rangeLabel=activeRange==="5Y"?"5 Years":activeRange==="10Y"?"10 Years":activeRange==="ALL"?"All Years (1995–)":"";
     document.getElementById("chart-title").textContent=moLabel+(rangeLabel?" — "+rangeLabel:"");
-    document.getElementById("slider-row").style.display="none";
     if(showSTI&&!chartYoY){
       var fyArr=getFY();
       var sStart=fyArr[0]+"-01-01",sEnd=fyArr[fyArr.length-1]+"-12-31";
@@ -2048,14 +2124,17 @@ function initRangeBtns(){
       b.classList.add("on");
       if(activeRange==="5Y"||activeRange==="10Y"||activeRange==="ALL"){
         chartQoQ=false; document.getElementById("m-qoq").classList.remove("on");
+        chartMoM=false; document.getElementById("m-mom").classList.remove("on");
       }
-      // sync slider
-      var mo=activeRange==="L18"?18:activeRange==="L12"?12:sliderMonths;
-      if(activeRange==="L18"||activeRange==="L12"){
-        document.getElementById("period-slider").value=mo;
-        document.getElementById("slider-label").textContent=mo+" months";
-        sliderMonths=mo;
-      }
+      // Sync slider: position handle so window ends at today (Mar 2026 = pos 371)
+      // Window size determined by period; handle = start of window
+      var win = getWindowMonths();
+      var startPos = Math.max(0, 371 - win + 1);
+      sliderStartMonth = startPos;
+      sliderMonths = win;
+      var sliderEl = document.getElementById("period-slider");
+      if(sliderEl) sliderEl.value = startPos;
+      updateSliderLabel(startPos);
       renderAll();
       loadAndRenderChart();
       // Sync transactions table with new period
@@ -2080,7 +2159,7 @@ function initRangeBtns(){
         document.getElementById("range-btns").querySelectorAll(".rbtn").forEach(function(x){x.classList.remove("on");});
         document.querySelector(".rbtn[data-range='L12']").classList.add("on");
         activeRange="L12";
-        document.getElementById("slider-row").style.display="flex";
+        document.getElementById("slider-row").style.display="block";
       }
     }
     loadAndRenderChart();
@@ -2088,21 +2167,36 @@ function initRangeBtns(){
   document.getElementById("m-yoy").addEventListener("click",function(){
     chartYoY=!chartYoY;
     this.classList.toggle("on",chartYoY);
-    if(chartYoY){ chartQoQ=false; document.getElementById("m-qoq").classList.remove("on"); }
+    if(chartYoY){ chartQoQ=false; document.getElementById("m-qoq").classList.remove("on"); chartMoM=false; document.getElementById("m-mom").classList.remove("on"); }
     // When YoY on, force annual view
     if(chartYoY){
       document.getElementById("range-btns").querySelectorAll(".rbtn").forEach(function(x){x.classList.remove("on");});
       document.querySelector(".rbtn[data-range='ALL']").classList.add("on");
       activeRange="ALL";
-      document.getElementById("slider-row").style.display="none";
     } else {
       document.querySelector(".rbtn[data-range='L12']").classList.add("on");
       activeRange="L12";
-      document.getElementById("slider-row").style.display="flex";
+      syncSliderToRange("L12");
       ovFilteredCache=null;
       document.getElementById("ov-tx-table").style.display="none";
       document.getElementById("ov-tx-loading").style.display="block";
       loadDefaultTransactions(0);
+    }
+    loadAndRenderChart();
+  });
+  // MoM toggle
+  document.getElementById("m-mom").addEventListener("click",function(){
+    chartMoM=!chartMoM;
+    this.classList.toggle("on",chartMoM);
+    if(chartMoM){
+      chartYoY=false; document.getElementById("m-yoy").classList.remove("on");
+      chartQoQ=false; document.getElementById("m-qoq").classList.remove("on");
+      if(!isMonthlyMode()){
+        document.getElementById("range-btns").querySelectorAll(".rbtn").forEach(function(x){x.classList.remove("on");});
+        document.querySelector(".rbtn[data-range='L12']").classList.add("on");
+        activeRange="L12";
+        syncSliderToRange("L12");
+      }
     }
     loadAndRenderChart();
   });
@@ -2180,6 +2274,58 @@ function renderQoQChart(data){
   svg+="</svg>";
   wrap.innerHTML=svg;
   // Update legend
+  document.getElementById("legend").innerHTML="<span style='font-size:11px;color:var(--mut)'>"+
+    "<span style='display:inline-block;width:9px;height:9px;background:#1a4f9c;border-radius:2px;margin-right:4px'></span>Base &nbsp;"+
+    "<span style='display:inline-block;width:9px;height:9px;background:#1a9c4f;border-radius:2px;margin-right:4px'></span>Up &nbsp;"+
+    "<span style='display:inline-block;width:9px;height:9px;background:#c8364a;border-radius:2px;margin-right:4px'></span>Down"+
+    "</span>";
+}
+
+// MoM CHART
+function renderMoMChart(data){
+  var wrap=document.getElementById("bar-wrap");
+  var W=wrap.clientWidth||800,H=280;
+  var P={t:24,r:16,b:40,l:62},cW=W-P.l-P.r,cH=H-P.t-P.b;
+  var actT=TYPES.filter(function(t){return activeTypes[t];});
+  // Use monthly data directly
+  var mlist=data.labels;
+  if(mlist.length<2){wrap.innerHTML="<div style='padding:20px;color:var(--mut);font-size:12px'>Not enough data for MoM comparison.</div>";return;}
+  var vals=mlist.map(function(mo){
+    var agg=data.agg[mo]; if(!agg) return 0;
+    return actT.reduce(function(s,t){return s+(chartMode==="val"?(agg[t]?agg[t].val:0):(agg[t]?agg[t].cnt:0));},0);
+  });
+  var mx=Math.max.apply(null,vals.concat([1]));
+  var bGW=cW/mlist.length;
+  var svg="<svg height='"+H+"' viewBox='0 0 "+W+" "+H+"' style='width:100%;overflow:visible'>";
+  for(var k=0;k<=4;k++){
+    var tv=k*mx/4,ty=P.t+cH-(tv/mx)*cH;
+    var tl=chartMode==="val"?(tv>=1000?"S$"+(tv/1000).toFixed(0)+"B":"S$"+Math.round(tv)+"M"):(tv>=1000?(tv/1000).toFixed(1)+"K":Math.round(tv).toString());
+    svg+="<line x1='"+P.l+"' x2='"+(P.l+cW)+"' y1='"+ty+"' y2='"+ty+"' stroke='#dce4df' stroke-width='1'/>";
+    svg+="<text x='"+(P.l-5)+"' y='"+(ty+4)+"' text-anchor='end' fill='#6b8578' font-size='10' font-family='DM Mono,monospace'>"+tl+"</text>";
+  }
+  mlist.forEach(function(mo,i){
+    var v=vals[i];
+    var bh=(v/mx)*cH,bx=P.l+i*bGW+bGW*0.08,bw=bGW*0.84;
+    var by=P.t+cH-bh;
+    var clr="#1a4f9c";
+    if(i>0){ clr=v>=vals[i-1]?"#1a9c4f":"#c8364a"; }
+    var ttVal=(chartMode==="val"?"S$"+Math.round(v)+"M":v+" deals");
+    var ttChg=i>0?" · "+(v>=vals[i-1]?"+":"")+((v-vals[i-1])/Math.max(vals[i-1],1)*100).toFixed(1)+"%":" · Base month";
+    svg+='<rect x="'+bx.toFixed(1)+'" y="'+by.toFixed(1)+'" width="'+bw.toFixed(1)+'" height="'+Math.max(bh,0).toFixed(1)+'" fill="'+clr+'" rx="2" opacity="0.85" style="cursor:pointer" onmouseenter="sT(event,\''+mo+'\',\'office\',\''+ttVal+ttChg+'\');" onmouseleave="hT()"/>';
+    if(i>0){
+      var pct=((v-vals[i-1])/Math.max(vals[i-1],1)*100);
+      var pctTxt=(pct>=0?"+":"")+pct.toFixed(1)+"%";
+      var badgeY=Math.max(by-6,P.t+10);
+      svg+="<text x='"+(bx+bw/2).toFixed(1)+"' y='"+badgeY.toFixed(1)+"' text-anchor='middle' fill='"+(pct>=0?"#1a9c4f":"#c8364a")+"' font-size='9' font-weight='600' font-family='DM Mono,monospace'>"+pctTxt+"</text>";
+    }
+    // Only label every nth month to avoid clutter
+    var step = mlist.length > 36 ? 6 : mlist.length > 18 ? 3 : 1;
+    if(i % step === 0){
+      svg+="<text x='"+(bx+bw/2).toFixed(1)+"' y='"+(P.t+cH+15)+"' text-anchor='middle' fill='#6b8578' font-size='9' font-family='DM Sans'>"+fmtMo(mo)+"</text>";
+    }
+  });
+  svg+="</svg>";
+  wrap.innerHTML=svg;
   document.getElementById("legend").innerHTML="<span style='font-size:11px;color:var(--mut)'>"+
     "<span style='display:inline-block;width:9px;height:9px;background:#1a4f9c;border-radius:2px;margin-right:4px'></span>Base &nbsp;"+
     "<span style='display:inline-block;width:9px;height:9px;background:#1a9c4f;border-radius:2px;margin-right:4px'></span>Up &nbsp;"+
@@ -3824,27 +3970,17 @@ function ovDetectType(q){
 }
 
 function getLast12MonthsDate(){
-  var d = new Date();
-  d.setFullYear(d.getFullYear()-1);
-  return d.toISOString().substring(0,10);
+  // Use current slider start for search too
+  return getSliderStartDate();
 }
 function getActiveRangeLabel(){
-  if(activeRange==="L12") return "Last 12 Months";
-  if(activeRange==="L18") return "Last 18 Months";
-  if(activeRange==="SLIDER") return "Last "+sliderMonths+" Months";
-  if(activeRange==="5Y") return "Last 5 Years";
-  if(activeRange==="10Y") return "Last 10 Years";
-  return "All Time";
+  var startYM = sliderPosToYM(sliderStartMonth);
+  var endYM   = sliderPosToYM(Math.min(371, sliderStartMonth + getWindowMonths() - 1));
+  return fmtYM(startYM) + " – " + fmtYM(endYM);
 }
 function getDateForActiveRange(){
-  var d = new Date();
-  if(activeRange==="L12"){ d.setMonth(d.getMonth()-12); }
-  else if(activeRange==="L18"){ d.setMonth(d.getMonth()-18); }
-  else if(activeRange==="SLIDER"){ d.setMonth(d.getMonth()-sliderMonths); }
-  else if(activeRange==="5Y"){ d.setFullYear(d.getFullYear()-5); }
-  else if(activeRange==="10Y"){ d.setFullYear(d.getFullYear()-10); }
-  else { return "1995-01-01"; } // ALL
-  return d.toISOString().substring(0,10);
+  // Use slider start position for all modes
+  return getSliderStartDate();
 }
 
 async function ovFetchAgg(q){
@@ -4534,6 +4670,14 @@ function initAutocomplete(){
 }
 
 // INIT
+// Set default slider: L12 window ending at Mar 2026 (pos 371), start = 371-12+1 = 360
+sliderStartMonth = 360;
+sliderMonths = 12;
+(function(){
+  var el = document.getElementById("period-slider");
+  if(el){ el.value = 360; }
+  updateSliderLabel(360);
+})();
 initRangeBtns();
 renderNewsroom();
 renderPendingDeals();
