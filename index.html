@@ -4185,18 +4185,26 @@ function renderOvTable(rows){
     var date  = r.sale_date ? r.sale_date.substring(0,10) : "-";
     var dist  = r.postal_district ? "D"+r.postal_district : "-";
     var tos   = r.type_of_sale ? r.type_of_sale : "-";
-    var td    = "font-size:11px;";
+    // Build sub-rows for bought date/price/psf (enriched by batch lookup)
+    var mutStyle = "font-size:10px;color:var(--mut);margin-top:3px";
+    var boughtLabel = "<div style='font-size:9px;color:var(--mut2);text-transform:uppercase;letter-spacing:.04em;margin-top:4px;font-family:\"DM Sans\",sans-serif'>Bought</div>";
+    var dateCell = "<div style='font-size:11px;font-weight:600'>"+date+"</div>"
+      + (r.buy_date ? boughtLabel+"<div style='"+mutStyle+"'>"+r.buy_date.substring(0,10)+"</div>" : "");
+    var priceCell = "<div style='font-size:11px;font-weight:700'>"+price+"</div>"
+      + (r.buy_price ? "<div style='"+mutStyle+"'>S$"+Number(Math.round(r.buy_price)).toLocaleString()+"</div>" : "");
+    var psfCell = "<div style='font-size:11px'>"+psf+"</div>"
+      + (r.buy_psf ? "<div style='"+mutStyle+"'>S$"+Math.round(r.buy_psf).toLocaleString()+"</div>" : "");
     return "<tr style='font-size:11px'>"
-      +"<td class='mono' style='white-space:nowrap;font-size:11px'>"+date+"</td>"
-      +"<td class='mono' style='font-size:11px;white-space:nowrap'>"+dist+"</td>"
-      +"<td style='font-weight:600;font-size:11px'>"+(r.project_name||"-")+"</td>"
-      +"<td style='font-size:10.5px;color:var(--mut);min-width:200px'>"+(r.address||"-")+"</td>"
-      +"<td style='width:80px;max-width:80px'><span class='pill p-tag' style='white-space:nowrap;font-size:10px'>"+fmtPropType(r.property_type||"-")+"</span></td>"
-      +"<td class='mono' style='font-size:11px'><b>"+price+"</b></td>"
-      +"<td style='font-size:10.5px;color:var(--mut)'>"+tos+"</td>"
-      +"<td class='mono' style='font-size:11px'>"+area+"</td>"
-      +"<td class='mono' style='font-size:11px'>"+psf+"</td>"
-      +"<td style='font-size:10.5px;color:var(--mut)'>"+formatTenure(r.tenure)+"</td>"
+      +"<td class='mono' style='white-space:nowrap;vertical-align:top'>"+dateCell+"</td>"
+      +"<td class='mono' style='font-size:11px;white-space:nowrap;vertical-align:top'>"+dist+"</td>"
+      +"<td style='font-weight:600;font-size:11px;vertical-align:top'>"+(r.project_name||"-")+"</td>"
+      +"<td style='font-size:10.5px;color:var(--mut);min-width:200px;vertical-align:top'>"+(r.address||"-")+"</td>"
+      +"<td style='width:80px;max-width:80px;vertical-align:top'><span class='pill p-tag' style='white-space:nowrap;font-size:10px'>"+fmtPropType(r.property_type||"-")+"</span></td>"
+      +"<td class='mono' style='vertical-align:top'>"+priceCell+"</td>"
+      +"<td style='font-size:10.5px;color:var(--mut);vertical-align:top'>"+tos+"</td>"
+      +"<td class='mono' style='font-size:11px;vertical-align:top'>"+area+"</td>"
+      +"<td class='mono' style='white-space:nowrap;vertical-align:top'>"+psfCell+"</td>"
+      +"<td style='font-size:10.5px;color:var(--mut);vertical-align:top'>"+formatTenure(r.tenure)+"</td>"
       +"</tr>";
   }).join("");
   document.getElementById("ov-tx-table").style.display = "table";
@@ -4253,11 +4261,82 @@ async function loadDefaultTransactions(page){
   document.getElementById("ov-tx-count").textContent = total.toLocaleString() + " transactions — " + typeLabel + (total > fetchLimit ? " (showing latest "+fetchLimit+")" : "");
   if(data && data.length > 0){
     ovRenderFiltered(data);
+    // Async enrich resale/sub-sale rows with prior buy data (batch by address)
+    ovEnrichBuyData(data);
   } else {
     document.getElementById("ov-tx-empty").style.display = "block";
     document.getElementById("ov-tx-table").style.display = "none";
   }
 }
+
+
+async function ovEnrichBuyData(rows){
+  // Only process rows that are Resale or Sub Sale
+  var resaleRows = rows.filter(function(r){
+    var t = (r.type_of_sale||"").toLowerCase();
+    return t === "resale" || t === "sub sale";
+  });
+  if(!resaleRows.length) return;
+
+  // Deduplicate addresses and batch in groups of 50
+  var addresses = [];
+  var seen = {};
+  resaleRows.forEach(function(r){
+    if(r.address && !seen[r.address]){ seen[r.address]=true; addresses.push(r.address); }
+  });
+
+  var BATCH = 50;
+  var priorMap = {}; // address -> {sale_date, transacted_price, unit_price_psf}
+
+  for(var i=0; i<addresses.length; i+=BATCH){
+    var batch = addresses.slice(i, i+BATCH);
+    var orClause = batch.map(function(a){ return "address.eq."+encodeURIComponent(a); }).join(",");
+    var url = SB_URL + "/rest/v1/transactions?select=address,sale_date,transacted_price,unit_price_psf,type_of_sale"
+      + "&or=("+orClause+")&order=sale_date.asc&limit=2000";
+    try {
+      var res = await fetch(url, {headers:{"apikey":SB_KEY,"Authorization":"Bearer "+SB_KEY}});
+      var batchData = await res.json();
+      if(!Array.isArray(batchData)) continue;
+      // Group by address — for each address find the transaction immediately prior to the sell row
+      batchData.forEach(function(tx){
+        var addr = tx.address;
+        if(!priorMap[addr]) priorMap[addr] = [];
+        priorMap[addr].push(tx);
+      });
+    } catch(e){ /* silently skip on error */ }
+  }
+
+  // Enrich each resale row with the prior sale for its address
+  var anyEnriched = false;
+  resaleRows.forEach(function(r){
+    if(!r.address || !priorMap[r.address]) return;
+    var txs = priorMap[r.address];
+    // Find the most recent transaction BEFORE this sell date
+    var sellDate = r.sale_date || "";
+    var prior = null;
+    txs.forEach(function(tx){
+      if(tx.sale_date < sellDate && tx.type_of_sale !== "New Sale"){
+        if(!prior || tx.sale_date > prior.sale_date) prior = tx;
+      }
+      // Also accept New Sale as the buy leg
+      if(tx.sale_date < sellDate){
+        if(!prior || tx.sale_date > prior.sale_date) prior = tx;
+      }
+    });
+    if(prior){
+      r.buy_date  = prior.sale_date;
+      r.buy_price = prior.transacted_price;
+      r.buy_psf   = prior.unit_price_psf;
+      anyEnriched = true;
+    }
+  });
+
+  if(anyEnriched){
+    // Re-render to show enriched data
+    ovRenderFiltered(rows);
+  }
+}
+
 
 function renderOvPaginationDefault(){
   var totalPages = Math.ceil(ovTotal/10);
