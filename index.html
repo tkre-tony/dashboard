@@ -484,10 +484,10 @@ html,body{background:var(--bg);color:var(--txt);font-family:'DM Sans',sans-serif
             <div style="position:relative;height:24px;display:flex;align-items:center">
               <div style="position:absolute;left:0;right:0;height:4px;background:var(--srf2);border-radius:2px"></div>
               <div id="slider-track-fill" style="position:absolute;height:4px;background:var(--g1);border-radius:2px;left:0%;right:0%"></div>
-              <input type="range" id="slider-left" min="0" max="371" value="360"
+              <input type="range" id="slider-left" min="0" max="374" value="362"
                 style="position:absolute;width:100%;height:4px;appearance:none;-webkit-appearance:none;background:transparent;pointer-events:none;z-index:3;margin:0"
                 oninput="onDualSlider('left',this.value)">
-              <input type="range" id="slider-right" min="0" max="371" value="371"
+              <input type="range" id="slider-right" min="0" max="374" value="374"
                 style="position:absolute;width:100%;height:4px;appearance:none;-webkit-appearance:none;background:transparent;pointer-events:none;z-index:4;margin:0"
                 oninput="onDualSlider('right',this.value)">
             </div>
@@ -1758,8 +1758,8 @@ function fmtYM(ym){
 
 // Sync the coloured fill track and labels to current left/right positions
 function syncDualSliderUI(){
-  var pct1 = (sliderStartMonth / 371) * 100;
-  var pct2 = (sliderEndMonth   / 371) * 100;
+  var pct1 = (sliderStartMonth / 374) * 100;
+  var pct2 = (sliderEndMonth   / 374) * 100;
   var fill = document.getElementById("slider-track-fill");
   if(fill){ fill.style.left = pct1.toFixed(2)+"%"; fill.style.right = (100-pct2).toFixed(2)+"%"; }
   var s = document.getElementById("slider-start-lbl");
@@ -1806,8 +1806,8 @@ function onDualSlider(side, v){
 function syncSliderToRange(range){
   var wins = {L12:12, L18:18, "5Y":60, "10Y":120, ALL:372};
   var win = wins[range] || sliderMonths;
-  sliderEndMonth   = 371;
-  sliderStartMonth = Math.max(0, 371 - win + 1);
+  sliderEndMonth   = 374;
+  sliderStartMonth = Math.max(0, 374 - win);
   sliderMonths = win;
   var lEl = document.getElementById("slider-left");
   var rEl = document.getElementById("slider-right");
@@ -4731,8 +4731,8 @@ function initAutocomplete(){
 }
 
 // INIT — default: MoM, Last 12 Months, slider right=371 left=360
-sliderStartMonth = 360;
-sliderEndMonth   = 371;
+sliderStartMonth = 362;
+sliderEndMonth   = 374;
 sliderMonths     = 12;
 initRangeBtns();
 // Mark defaults as active
