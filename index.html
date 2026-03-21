@@ -471,6 +471,16 @@ html,body{background:var(--bg);color:var(--txt);font-family:'DM Sans',sans-serif
             <span style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:var(--mut);white-space:nowrap;min-width:90px">Tenure</span>
             <div id="tenure-chips" style="display:flex;flex-wrap:wrap;gap:5px;flex:1;align-items:center"></div>
           </div>
+          <div style="display:flex;align-items:center;justify-content:flex-end;margin-bottom:6px">
+            <div style="display:flex;background:var(--srf2);border:1px solid var(--bdr);border-radius:6px;overflow:hidden">
+              <button id="btn-stacked" onclick="setStackView(true)" title="Stacked bars" style="display:flex;align-items:center;gap:5px;padding:4px 10px;border:none;border-right:1px solid var(--bdr);background:var(--g1);color:#fff;font-size:10px;font-weight:600;cursor:pointer;font-family:'DM Sans',sans-serif;letter-spacing:.02em">
+                <svg width="13" height="11" viewBox="0 0 13 11" fill="none"><rect x="1" y="5" width="11" height="3" rx="1" fill="currentColor" opacity=".55"/><rect x="1" y="1" width="11" height="3" rx="1" fill="currentColor"/></svg>Stacked
+              </button>
+              <button id="btn-sideby" onclick="setStackView(false)" title="Side-by-side bars" style="display:flex;align-items:center;gap:5px;padding:4px 10px;border:none;background:transparent;color:var(--mut);font-size:10px;font-weight:600;cursor:pointer;font-family:'DM Sans',sans-serif;letter-spacing:.02em">
+                <svg width="13" height="11" viewBox="0 0 13 11" fill="none"><rect x="1" y="1" width="3" height="9" rx="1" fill="currentColor"/><rect x="5" y="3" width="3" height="7" rx="1" fill="currentColor" opacity=".7"/><rect x="9" y="5" width="3" height="5" rx="1" fill="currentColor" opacity=".45"/></svg>Side by Side
+              </button>
+            </div>
+          </div>
           <div id="bar-wrap" style="flex:1;width:100%;min-height:260px"></div>
           <div style="display:flex;flex-wrap:wrap;gap:10px;margin-top:10px;padding-top:10px;border-top:1px solid var(--srf3)" id="legend"></div>
           <!-- Dual-handle range slider — always visible, spans full history 1995–2026 -->
@@ -1638,6 +1648,7 @@ var chartMode="val"
 var activeRange="L12";
 var chartYoY=false;
 var chartQoQ=false;
+var stackedView=true; // true=stacked, false=side-by-side
 var chartMoM=true;   // MoM on by default
 var sliderMonths=12;  // window size in months
 var sliderStartMonth=360; // left handle (0=Jan1995, 371=Mar2026). Default: L12 = pos 360
@@ -2242,76 +2253,88 @@ function initRangeBtns(){
   });
 }
 
-// QoQ CHART
+// QoQ CHART — stacked property types (or side-by-side) with QoQ % badge on total
 function renderQoQChart(data){
   var wrap=document.getElementById("bar-wrap");
   var W=wrap.clientWidth||800,H=280;
   var P={t:24,r:16,b:40,l:62},cW=W-P.l-P.r,cH=H-P.t-P.b;
   var actT=TYPES.filter(function(t){return activeTypes[t];});
-  // Bucket monthly data into quarters
+  // Bucket monthly data into quarters, per property type
   var qtrs={};
-  data.labels.forEach(function(mo,i){
+  data.labels.forEach(function(mo){
     var parts=mo.split("-"),yr=parseInt(parts[0]),m=parseInt(parts[1]);
-    var q=Math.ceil(m/3);
-    var key=yr+"Q"+q;
-    if(!qtrs[key]){qtrs[key]={key:key,yr:yr,q:q,val:0,cnt:0};}
+    var q=Math.ceil(m/3), key=yr+"Q"+q;
+    if(!qtrs[key]){qtrs[key]={key:key,yr:yr,q:q,byType:{},total:0};}
+    var agg=data.agg[mo]||{};
     actT.forEach(function(t){
-      var ti=TYPES.indexOf(t);
-      var agg=data.agg[mo];
-      if(!agg||!agg[t]) return;
-      qtrs[key].val+=(agg[t].val||0);
-      qtrs[key].cnt+=(agg[t].cnt||0);
+      if(!qtrs[key].byType[t]) qtrs[key].byType[t]=0;
+      var v=chartMode==="val"?(agg[t]?agg[t].val:0):(agg[t]?agg[t].cnt:0);
+      qtrs[key].byType[t]+=v;
+      qtrs[key].total+=v;
     });
   });
-  var qlist=Object.values(qtrs).sort(function(a,b){
-    return a.yr!==b.yr?a.yr-b.yr:a.q-b.q;
-  });
+  var qlist=Object.values(qtrs).sort(function(a,b){return a.yr!==b.yr?a.yr-b.yr:a.q-b.q;});
   if(qlist.length<2){wrap.innerHTML="<div style='padding:20px;color:var(--mut);font-size:12px'>Not enough data for QoQ comparison.</div>";return;}
-  var vals=qlist.map(function(q){return chartMode==="val"?q.val:q.cnt;});
-  var rawMx=Math.max.apply(null,vals.concat([1]));
+  var tots=qlist.map(function(q){return q.total;});
+  var rawMx=Math.max.apply(null,tots.concat([1]));
   function nmx(v){var mag=Math.pow(10,Math.floor(Math.log10(v)));var steps=[1,2,2.5,5,10];for(var si=0;si<steps.length;si++){var c=Math.ceil(v/(mag*steps[si]))*(mag*steps[si]);if(c/v<=1.5)return c;}return Math.ceil(v/mag)*mag;}
   var mx=nmx(rawMx);
   var bGW=cW/qlist.length;
   var svg="<svg height='"+H+"' viewBox='0 0 "+W+" "+H+"' style='width:100%;overflow:visible'>";
-  // Grid lines with round increments
+  // Grid lines
   for(var k=0;k<=5;k++){
     var tv=k*mx/5,ty=P.t+cH-(tv/mx)*cH;
     var tl=chartMode==="val"?(tv>=1000?"S$"+(tv/1000).toFixed(0)+"B":"S$"+Math.round(tv)+"M"):(tv>=1000?(tv/1000).toFixed(1)+"K":Math.round(tv).toString());
     svg+="<line x1='"+P.l+"' x2='"+(P.l+cW)+"' y1='"+ty+"' y2='"+ty+"' stroke='#dce4df' stroke-width='1'/>";
     svg+="<text x='"+(P.l-5)+"' y='"+(ty+4)+"' text-anchor='end' fill='#6b8578' font-size='10' font-family='DM Mono,monospace'>"+tl+"</text>";
   }
-  // Bars + QoQ % labels
-  // Only show x-label every Nth bar to avoid overlap
-  var xStep = qlist.length > 20 ? Math.ceil(qlist.length/10) : qlist.length > 8 ? 2 : 1;
+  var xStep=qlist.length>20?Math.ceil(qlist.length/10):qlist.length>8?2:1;
   qlist.forEach(function(q,i){
-    var v=vals[i];
-    var bh=(v/mx)*cH,bx=P.l+i*bGW+bGW*0.12,bw=bGW*0.76;
-    var by=P.t+cH-bh;
-    var clr="#1a4f9c";
-    if(i>0){ var pv=vals[i-1]; clr=v>=pv?"#1a9c4f":"#c8364a"; }
-    var ttVal=(chartMode==="val"?"S$"+Math.round(v)+"M":v+" deals");
-    var ttChg=i>0?" · "+(vals[i]>=vals[i-1]?"+":"")+((vals[i]-vals[i-1])/Math.max(vals[i-1],1)*100).toFixed(1)+"%":" · Base quarter";
-    svg+='<rect x="'+bx.toFixed(1)+'" y="'+by.toFixed(1)+'" width="'+bw.toFixed(1)+'" height="'+Math.max(bh,0).toFixed(1)+'" fill="'+clr+'" rx="2" opacity="0.85" style="cursor:pointer" onmouseenter="sT(event,\''+q.key+'\',\'office\',\''+ttVal+ttChg+'\');" onmouseleave="hT()"/>';
-    // QoQ % badge — only when bar is wide enough
-    if(i>0 && bGW > 20){
-      var pct=((v-vals[i-1])/Math.max(vals[i-1],1)*100);
-      var pctTxt=(pct>=0?"+":"")+pct.toFixed(1)+"%";
-      var badgeY=Math.max(by-6,P.t+10);
-      svg+="<text x='"+(bx+bw/2).toFixed(1)+"' y='"+badgeY.toFixed(1)+"' text-anchor='middle' fill='"+(pct>=0?"#1a9c4f":"#c8364a")+"' font-size='9' font-weight='600' font-family='DM Mono,monospace'>"+pctTxt+"</text>";
-    }
-    // X label — skip for density
-    if(i % xStep === 0){
-      svg+="<text x='"+(bx+bw/2).toFixed(1)+"' y='"+(P.t+cH+15)+"' text-anchor='middle' fill='#6b8578' font-size='9' font-family='DM Sans'>"+q.key+"</text>";
+    var total=tots[i];
+    if(stackedView){
+      // Stacked bars by property type
+      var bx=P.l+i*bGW+bGW*0.12, bw=bGW*0.76;
+      var stackY=P.t+cH;
+      actT.forEach(function(t){
+        var v=q.byType[t]||0; if(!v) return;
+        var bh=(v/mx)*cH; stackY-=bh;
+        var vs=chartMode==="val"?"S$"+Math.round(v)+"M":v+" deals";
+        svg+='<rect x="'+bx.toFixed(1)+'" y="'+stackY.toFixed(1)+'" width="'+bw.toFixed(1)+'" height="'+Math.max(bh,0).toFixed(1)+'"'
+            +' fill="'+TCOLOR[t]+'" rx="2" style="cursor:pointer"'
+            +' onmouseenter="sT(event,\''+q.key+'\',\''+t+'\',\''+vs+'\')" onmouseleave="hT()"/>';
+      });
+      // QoQ % badge on total bar
+      if(i>0 && bGW>20){
+        var pv=tots[i-1], pct=((total-pv)/Math.max(pv,1)*100);
+        var pctTxt=(pct>=0?"+":"")+pct.toFixed(1)+"%";
+        var badgeY=Math.max(P.t+cH-(total/mx)*cH-6, P.t+10);
+        svg+="<text x='"+(bx+bw/2).toFixed(1)+"' y='"+badgeY.toFixed(1)+"' text-anchor='middle' fill='"+(pct>=0?"#1a9c4f":"#c8364a")+"' font-size='9' font-weight='600' font-family='DM Mono,monospace'>"+pctTxt+"</text>";
+      }
+      if(i%xStep===0) svg+="<text x='"+(bx+bw/2).toFixed(1)+"' y='"+(P.t+cH+15)+"' text-anchor='middle' fill='#6b8578' font-size='9' font-family='DM Sans'>"+q.key+"</text>";
+    } else {
+      // Side-by-side bars per type
+      var grpW=bGW*0.82, bwS=grpW/actT.length, gx=P.l+i*bGW+bGW*0.09;
+      actT.forEach(function(t,ai){
+        var v=q.byType[t]||0;
+        var bh=(v/mx)*cH, bx2=gx+ai*bwS, by=P.t+cH-bh;
+        var vs=chartMode==="val"?"S$"+Math.round(v)+"M":v+" deals";
+        svg+='<rect x="'+bx2.toFixed(1)+'" y="'+by.toFixed(1)+'" width="'+(Math.max(bwS-1,1)).toFixed(1)+'" height="'+Math.max(bh,0).toFixed(1)+'"'
+            +' fill="'+TCOLOR[t]+'" rx="2" style="cursor:pointer"'
+            +' onmouseenter="sT(event,\''+q.key+'\',\''+t+'\',\''+vs+'\')" onmouseleave="hT()"/>';
+      });
+      // QoQ % badge on total
+      if(i>0 && bGW>24){
+        var pv2=tots[i-1], pct2=((total-pv2)/Math.max(pv2,1)*100);
+        var pctTxt2=(pct2>=0?"+":"")+pct2.toFixed(1)+"%";
+        var badgeY2=Math.max(P.t+cH-(total/mx)*cH-6, P.t+10);
+        svg+="<text x='"+(gx+grpW/2).toFixed(1)+"' y='"+badgeY2.toFixed(1)+"' text-anchor='middle' fill='"+(pct2>=0?"#1a9c4f":"#c8364a")+"' font-size='9' font-weight='600' font-family='DM Mono,monospace'>"+pctTxt2+"</text>";
+      }
+      if(i%xStep===0) svg+="<text x='"+(gx+grpW/2).toFixed(1)+"' y='"+(P.t+cH+15)+"' text-anchor='middle' fill='#6b8578' font-size='9' font-family='DM Sans'>"+q.key+"</text>";
     }
   });
   svg+="</svg>";
   wrap.innerHTML=svg;
-  // Update legend
-  document.getElementById("legend").innerHTML="<span style='font-size:11px;color:var(--mut)'>"+
-    "<span style='display:inline-block;width:9px;height:9px;background:#1a4f9c;border-radius:2px;margin-right:4px'></span>Base &nbsp;"+
-    "<span style='display:inline-block;width:9px;height:9px;background:#1a9c4f;border-radius:2px;margin-right:4px'></span>Up &nbsp;"+
-    "<span style='display:inline-block;width:9px;height:9px;background:#c8364a;border-radius:2px;margin-right:4px'></span>Down"+
-    "</span>";
+  renderLegend();
 }
 
 // MoM CHART — stacked bars by property type, round y-axis
@@ -2343,21 +2366,35 @@ function renderMoMChart(data){
     svg+="<text x='"+(P.l-5)+"' y='"+(ty+4)+"' text-anchor='end' fill='#6b8578' font-size='10' font-family='DM Mono,monospace'>"+tl+"</text>";
   }
 
-  // Stacked bars
+  // Stacked or side-by-side bars
   mlist.forEach(function(mo,i){
     var agg=data.agg[mo]||{};
     var bx=P.l+i*bGW+(bGW-bw)/2;
-    var stackY=P.t+cH; // start from bottom
-    actT.forEach(function(t){
-      var v=chartMode==="val"?(agg[t]?agg[t].val:0):(agg[t]?agg[t].cnt:0);
-      if(!v) return;
-      var bh=(v/mx)*cH;
-      stackY-=bh;
-      var vs=chartMode==="val"?"S$"+Math.round(v)+"M":v+" deals";
-      svg+='<rect x="'+bx.toFixed(1)+'" y="'+stackY.toFixed(1)+'" width="'+bw.toFixed(1)+'" height="'+Math.max(bh,0).toFixed(1)+'"'
-          +' fill="'+TCOLOR[t]+'" style="cursor:pointer"'
-          +' onmouseenter="sT(event,\''+mo+'\',\''+t+'\',\''+vs+'\')" onmouseleave="hT()"/>';
-    });
+    if(stackedView){
+      // Stacked
+      var stackY=P.t+cH;
+      actT.forEach(function(t){
+        var v=chartMode==="val"?(agg[t]?agg[t].val:0):(agg[t]?agg[t].cnt:0);
+        if(!v) return;
+        var bh=(v/mx)*cH;
+        stackY-=bh;
+        var vs=chartMode==="val"?"S$"+Math.round(v)+"M":v+" deals";
+        svg+='<rect x="'+bx.toFixed(1)+'" y="'+stackY.toFixed(1)+'" width="'+bw.toFixed(1)+'" height="'+Math.max(bh,0).toFixed(1)+'"'
+            +' fill="'+TCOLOR[t]+'" style="cursor:pointer"'
+            +' onmouseenter="sT(event,\''+mo+'\',\''+t+'\',\''+vs+'\')" onmouseleave="hT()"/>';
+      });
+    } else {
+      // Side-by-side
+      var sbW=Math.max(1, bw/actT.length);
+      actT.forEach(function(t,ai){
+        var v=chartMode==="val"?(agg[t]?agg[t].val:0):(agg[t]?agg[t].cnt:0);
+        var bh=(v/mx)*cH, bx2=bx+ai*sbW, by=P.t+cH-bh;
+        var vs=chartMode==="val"?"S$"+Math.round(v)+"M":v+" deals";
+        svg+='<rect x="'+bx2.toFixed(1)+'" y="'+by.toFixed(1)+'" width="'+(Math.max(sbW-1,1)).toFixed(1)+'" height="'+Math.max(bh,0).toFixed(1)+'"'
+            +' fill="'+TCOLOR[t]+'" style="cursor:pointer"'
+            +' onmouseenter="sT(event,\''+mo+'\',\''+t+'\',\''+vs+'\')" onmouseleave="hT()"/>';
+      });
+    }
     // MoM % change on total
     if(i>0){
       var prev=stackTots[i-1], curr=stackTots[i];
@@ -2413,17 +2450,33 @@ function renderBarChart(){
     svg+='<line x1="'+P.l+'" x2="'+(P.l+cW)+'" y1="'+ty+'" y2="'+ty+'" stroke="#dce4df" stroke-width="1"/>';
     svg+='<text x="'+(P.l-5)+'" y="'+(ty+4)+'" text-anchor="end" fill="#6b8578" font-size="10" font-family="DM Mono,monospace">'+tl+'</text>';
   }
-  var bGW=cW/idxs.length, bW=Math.max(1.5,bGW*0.82/actT.length);
+  var bGW=cW/idxs.length;
   idxs.forEach(function(di,gi){
-    var yr=fy[gi], gx=P.l+gi*bGW+bGW*0.09;
-    actT.forEach(function(t,ai){
-      var ti2=TYPES.indexOf(t), val=mat[di][ti2]||0;
-      var bh=(val/mx)*cH, bx=gx+ai*(bGW*0.82/actT.length), by=P.t+cH-bh;
-      var vs=chartMode==="val"?fmtV(val):fmtC(val)+" deals";
-      svg+='<rect x="'+bx.toFixed(1)+'" y="'+by.toFixed(1)+'" width="'+bW.toFixed(1)+'" height="'+Math.max(bh,0).toFixed(1)+'"'
-          +' fill="'+TCOLOR[t]+'" rx="2" opacity="1" style="cursor:pointer"'
-          +' onmouseenter="sT(event,\''+yr+'\',\''+t+'\',\''+vs+'\')" onmouseleave="hT()"/>';
-    });
+    var yr=fy[gi], gx=P.l+gi*bGW+bGW*0.09, grpW=bGW*0.82;
+    if(stackedView){
+      // Stacked bars by property type
+      var bwSt=grpW, bxSt=gx, stackY=P.t+cH;
+      actT.forEach(function(t){
+        var ti2=TYPES.indexOf(t), val=mat[di][ti2]||0;
+        if(!val) return;
+        var bh=(val/mx)*cH; stackY-=bh;
+        var vs=chartMode==="val"?fmtV(val):fmtC(val)+" deals";
+        svg+='<rect x="'+bxSt.toFixed(1)+'" y="'+stackY.toFixed(1)+'" width="'+bwSt.toFixed(1)+'" height="'+Math.max(bh,0).toFixed(1)+'"'
+            +' fill="'+TCOLOR[t]+'" rx="2" opacity="1" style="cursor:pointer"'
+            +' onmouseenter="sT(event,\''+yr+'\',\''+t+'\',\''+vs+'\')" onmouseleave="hT()"/>';
+      });
+    } else {
+      // Side-by-side
+      var bW=Math.max(1.5,grpW/actT.length);
+      actT.forEach(function(t,ai){
+        var ti2=TYPES.indexOf(t), val=mat[di][ti2]||0;
+        var bh=(val/mx)*cH, bx2=gx+ai*bW, by=P.t+cH-bh;
+        var vs=chartMode==="val"?fmtV(val):fmtC(val)+" deals";
+        svg+='<rect x="'+bx2.toFixed(1)+'" y="'+by.toFixed(1)+'" width="'+(Math.max(bW-1,1.5)).toFixed(1)+'" height="'+Math.max(bh,0).toFixed(1)+'"'
+            +' fill="'+TCOLOR[t]+'" rx="2" opacity="1" style="cursor:pointer"'
+            +' onmouseenter="sT(event,\''+yr+'\',\''+t+'\',\''+vs+'\')" onmouseleave="hT()"/>';
+      });
+    }
     var sl=idxs.length<=15||gi%Math.ceil(idxs.length/15)===0||gi===idxs.length-1;
     if(sl){var lx=P.l+gi*bGW+bGW/2;svg+='<text x="'+lx.toFixed(1)+'" y="'+(P.t+cH+15)+'" text-anchor="middle" fill="#6b8578" font-size="10" font-family="DM Sans">'+yr+'</text>';}
   });
@@ -2480,6 +2533,15 @@ function renderBarChart(){
     // Already added axis at P.l+cW+8; ensure wrap svg has overflow:visible (it does)
   }
   wrap.innerHTML=svg;
+  renderLegend();
+}
+
+function setStackView(v){
+  stackedView=v;
+  var bs=document.getElementById("btn-stacked"), bsb=document.getElementById("btn-sideby");
+  if(bs){ bs.style.background=v?"var(--g1)":"transparent"; bs.style.color=v?"#fff":"var(--mut)"; }
+  if(bsb){ bsb.style.background=v?"transparent":"var(--g1)"; bsb.style.color=v?"var(--mut)":"#fff"; }
+  loadAndRenderChart();
 }
 
 var TLABEL_EXTRA={avgPSF:"Avg PSF",STI:"STI Index"};
