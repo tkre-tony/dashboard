@@ -2714,13 +2714,16 @@ function switchNrTab(tab) {
   if (tab === 'sgx' && !sgxLoaded) sgxLoad(false);
 }
 
+// Use allorigins.win as a CORS proxy to reach SGX API
 async function sgxFetchOne(entity, ticker) {
-  var url = 'https://api.sgx.com/announcements/v1.0/?category=company-announcements&sub-cat=all&company=' + ticker + '&pagestart=0&pagesize=20';
+  var sgxUrl = 'https://api.sgx.com/announcements/v1.0/?category=company-announcements&sub-cat=all&company=' + ticker + '&pagestart=0&pagesize=15';
+  var proxyUrl = 'https://api.allorigins.win/get?url=' + encodeURIComponent(sgxUrl);
   try {
-    var res = await fetch(url);
+    var res = await fetch(proxyUrl);
     if (!res.ok) return [];
-    var raw = await res.text();
-    // SGX API may return {}&&{...} prefix — strip it
+    var wrapper = await res.json();
+    var raw = wrapper.contents || '';
+    if (!raw) return [];
     var clean = raw.replace(/^\{\}&&/, '');
     var json = JSON.parse(clean);
     var items = json.items || json.data || [];
@@ -2732,7 +2735,6 @@ async function sgxFetchOne(entity, ticker) {
         type:    it.sub_category || it.subCategory || it.category || '—',
         date:    it.broadcast_date_time || it.broadcastDateTime || it.date || '',
         url:     it.file_download_link || it.fileDownloadLink || it.link || '',
-        sgxLink: 'https://www.sgx.com/securities/company-announcements?company=' + ticker,
       };
     });
   } catch(e) {
@@ -2746,35 +2748,40 @@ async function sgxLoad(forceRefresh) {
   var statusEl = document.getElementById('sgx-status');
   var areaEl = document.getElementById('sgx-table-area');
   if (btn) btn.disabled = true;
-  areaEl.innerHTML = '<div class="sgx-loading">⏳ Fetching announcements for ' + Object.keys(SGX_ENTITY_MAP).length + ' entities…</div>';
+  areaEl.innerHTML = '<div class="sgx-loading">⏳ Fetching SGX announcements…</div>';
   if (statusEl) statusEl.textContent = '';
 
   var entities = Object.keys(SGX_ENTITY_MAP);
   var all = [];
   var done = 0;
-  // Fetch in parallel batches of 6 to avoid overwhelming the API
-  var batchSize = 6;
+  var errors = 0;
+  // Fetch in sequential batches of 4 — allorigins has rate limits
+  var batchSize = 4;
   for (var i = 0; i < entities.length; i += batchSize) {
     var batch = entities.slice(i, i + batchSize);
     var promises = batch.map(function(e) {
       return sgxFetchOne(e, SGX_ENTITY_MAP[e].ticker);
     });
     var results = await Promise.all(promises);
-    results.forEach(function(rows) { all = all.concat(rows); });
+    results.forEach(function(rows, idx) {
+      if (rows.length === 0) errors++;
+      all = all.concat(rows);
+    });
     done += batch.length;
-    if (statusEl) statusEl.textContent = 'Loaded ' + done + ' / ' + entities.length + ' entities…';
+    if (statusEl) statusEl.textContent = 'Loading ' + done + ' / ' + entities.length + '…';
+    // Small delay between batches to be polite to the proxy
+    if (i + batchSize < entities.length) await new Promise(function(r){setTimeout(r,300);});
   }
 
   sgxAllData = all;
   sgxLoaded = true;
   if (btn) btn.disabled = false;
 
-  // Populate filter dropdowns
   sgxBuildFilters();
   sgxFilterRender();
 
-  var total = all.length;
-  if (statusEl) statusEl.textContent = total + ' announcements · ' + new Date().toLocaleTimeString('en-SG', {hour:'2-digit', minute:'2-digit'});
+  var note = errors > 0 ? ' (' + errors + ' entities failed)' : '';
+  if (statusEl) statusEl.textContent = all.length + ' announcements' + note + ' · ' + new Date().toLocaleTimeString('en-SG', {hour:'2-digit', minute:'2-digit'});
 }
 
 function sgxBuildFilters() {
