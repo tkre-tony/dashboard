@@ -183,34 +183,6 @@ html,body{background:var(--bg);color:var(--txt);font-family:'DM Sans',sans-serif
 .nr-source-credit{margin-top:10px;padding-top:8px;border-top:1px solid var(--srf3);font-size:10.5px;color:var(--mut);font-style:italic;letter-spacing:.01em}
 .nr-read-more{display:inline-block;margin-top:10px;font-size:11px;font-weight:700;color:var(--g2);text-decoration:none;letter-spacing:.02em}
 .nr-read-more:hover{text-decoration:underline}
-/* ── SGX FILINGS ── */
-.nr-tabs{display:flex;gap:0;margin-bottom:18px;border-bottom:2px solid var(--bdr)}
-.nr-tab-btn{padding:8px 18px;font-size:12px;font-weight:700;letter-spacing:.02em;cursor:pointer;border:none;background:transparent;color:var(--mut);border-bottom:2px solid transparent;margin-bottom:-2px;transition:all .15s}
-.nr-tab-btn.active{color:var(--g2);border-bottom-color:var(--g2)}
-.nr-tab-btn:hover:not(.active){color:var(--txt)}
-.sgx-toolbar{display:flex;align-items:center;gap:10px;margin-bottom:14px;flex-wrap:wrap}
-.sgx-toolbar-left{display:flex;gap:8px;align-items:center;flex:1;flex-wrap:wrap}
-.sgx-search{padding:6px 11px;border:1px solid var(--bdr);border-radius:6px;background:var(--srf);color:var(--txt);font-size:12px;outline:none;width:220px}
-.sgx-search:focus{border-color:var(--g2)}
-.sgx-filter-sel{padding:6px 10px;border:1px solid var(--bdr);border-radius:6px;background:var(--srf);color:var(--txt);font-size:11px;outline:none;cursor:pointer}
-.sgx-refresh-btn{padding:6px 13px;border-radius:6px;border:1px solid var(--g2);background:transparent;color:var(--g2);font-size:11px;font-weight:700;cursor:pointer;transition:all .15s;white-space:nowrap}
-.sgx-refresh-btn:hover{background:var(--g2);color:#fff}
-.sgx-refresh-btn:disabled{opacity:.5;cursor:default}
-.sgx-status{font-size:11px;color:var(--mut);margin-left:auto}
-.sgx-table-wrap{overflow-x:auto}
-.sgx-table{width:100%;border-collapse:collapse;font-size:11.5px}
-.sgx-table th{padding:8px 12px;text-align:left;font-size:10px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--mut);border-bottom:2px solid var(--bdr);white-space:nowrap;background:var(--srf)}
-.sgx-table td{padding:9px 12px;border-bottom:1px solid var(--bdr);vertical-align:top;color:var(--txt)}
-.sgx-table tr:hover td{background:var(--srf2)}
-.sgx-entity-pill{display:inline-flex;align-items:center;gap:5px;font-size:10px;font-weight:700;padding:2px 8px;border-radius:20px;color:#fff;white-space:nowrap}
-.sgx-type-badge{display:inline-block;padding:1px 7px;border-radius:4px;font-size:10px;font-weight:600;background:var(--srf2);color:var(--mut);border:1px solid var(--bdr)}
-.sgx-ann-link{color:var(--g2);text-decoration:none;font-weight:600;line-height:1.4}
-.sgx-ann-link:hover{text-decoration:underline}
-.sgx-date-cell{font-family:'DM Mono',monospace;font-size:10px;color:var(--mut);white-space:nowrap}
-.sgx-loading{text-align:center;padding:48px 20px;color:var(--mut);font-size:13px}
-.sgx-error{text-align:center;padding:32px 20px;color:#e74c3c;font-size:12px}
-.sgx-empty{text-align:center;padding:48px 20px;color:var(--mut);font-size:13px}
-.sgx-ticker-chip{font-family:'DM Mono',monospace;font-size:10px;color:var(--mut);background:var(--srf2);border:1px solid var(--bdr);padding:1px 6px;border-radius:4px}
 /* ── PENDING DEALS ── */
 .pd-section{margin-top:32px;padding-top:20px;border-top:2px solid var(--bdr)}
 .pd-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;flex-wrap:wrap;gap:8px}
@@ -1172,48 +1144,21 @@ html,body{background:var(--bg);color:var(--txt);font-family:'DM Sans',sans-serif
   </div>
 
     <div class="panel" id="tab-news">
-    <!-- Newsroom sub-tab bar -->
-    <div class="nr-tabs">
-      <button class="nr-tab-btn active" id="nrt-editorial" onclick="switchNrTab('editorial')">📰 Editorial</button>
-      <button class="nr-tab-btn" id="nrt-sgx" onclick="switchNrTab('sgx')">📋 SGX Filings</button>
-    </div>
-
-    <!-- Editorial panel -->
-    <div id="nr-editorial-panel">
-      <div class="newsroom-header">
-        <div>
-          <div class="newsroom-title">Newsroom</div>
-          <div class="nr-count" id="nr-count"></div>
-        </div>
-        <div class="newsroom-search">
-          <span class="srch-icon">🔍</span>
-          <input type="text" id="nr-search" placeholder="Search articles…" oninput="renderNewsroom()">
-        </div>
+    <div class="newsroom-header">
+      <div>
+        <div class="newsroom-title">Newsroom</div>
+        <div class="nr-count" id="nr-count"></div>
       </div>
-      <div class="nr-cats" id="nr-cats"></div>
-      <div id="nr-hero-wrap"></div>
-      <div id="nr-divider-wrap"></div>
-      <div class="nr-grid" id="nr-grid"></div>
-      <div id="nr-pending-wrap"></div>
-    </div>
-
-    <!-- SGX Filings panel -->
-    <div id="nr-sgx-panel" style="display:none">
-      <div class="sgx-toolbar">
-        <div class="sgx-toolbar-left">
-          <input class="sgx-search" id="sgx-search" placeholder="🔍  Search announcements…" oninput="sgxFilterRender()">
-          <select class="sgx-filter-sel" id="sgx-filter-entity" onchange="sgxFilterRender()">
-            <option value="">All Entities</option>
-          </select>
-          <select class="sgx-filter-sel" id="sgx-filter-type" onchange="sgxFilterRender()">
-            <option value="">All Types</option>
-          </select>
-        </div>
-        <button class="sgx-refresh-btn" id="sgx-refresh-btn" onclick="sgxLoad(true)">⟳ Refresh</button>
-        <span class="sgx-status" id="sgx-status"></span>
+      <div class="newsroom-search">
+        <span class="srch-icon">🔍</span>
+        <input type="text" id="nr-search" placeholder="Search articles…" oninput="renderNewsroom()">
       </div>
-      <div id="sgx-table-area"><div class="sgx-loading">Click Refresh to load SGX announcements for tracked entities…</div></div>
     </div>
+    <div class="nr-cats" id="nr-cats"></div>
+    <div id="nr-hero-wrap"></div>
+    <div id="nr-divider-wrap"></div>
+    <div class="nr-grid" id="nr-grid"></div>
+    <div id="nr-pending-wrap"></div>
   </div>
 
   <div class="panel" id="tab-transactions">
@@ -1978,7 +1923,7 @@ function renderMonthlyChart(data){
     },0);
   });
   var rawMxM=Math.max.apply(null,tots.concat([1]));
-  function nmxM(v){var mag=Math.pow(10,Math.floor(Math.log10(v)));var steps=[1,2,2.5,5,10];for(var si=0;si<steps.length;si++){var c=Math.ceil(v/(mag*steps[si]))*(mag*steps[si]);if(c/v<=1.5)return c;}return Math.ceil(v/mag)*mag;}
+  function nmxM(v){var mag=Math.pow(10,Math.floor(Math.log10(v)));var steps=[1,1.5,2,2.5,5,10];for(var si=0;si<steps.length;si++){var c=Math.ceil(v/(mag*steps[si]))*(mag*steps[si]);if(c/v<=1.5)return c;}return Math.ceil(v/mag)*mag;}
   var mx=nmxM(rawMxM);
 
   // Compute avg PSF per month across active types
@@ -2332,7 +2277,7 @@ function renderQoQChart(data){
   if(qlist.length<2){wrap.innerHTML="<div style='padding:20px;color:var(--mut);font-size:12px'>Not enough data for QoQ comparison.</div>";return;}
   var tots=qlist.map(function(q){return q.total;});
   var rawMx=Math.max.apply(null,tots.concat([1]));
-  function nmx(v){var mag=Math.pow(10,Math.floor(Math.log10(v)));var steps=[1,2,2.5,5,10];for(var si=0;si<steps.length;si++){var c=Math.ceil(v/(mag*steps[si]))*(mag*steps[si]);if(c/v<=1.5)return c;}return Math.ceil(v/mag)*mag;}
+  function nmx(v){var mag=Math.pow(10,Math.floor(Math.log10(v)));var steps=[1,1.5,2,2.5,5,10];for(var si=0;si<steps.length;si++){var c=Math.ceil(v/(mag*steps[si]))*(mag*steps[si]);if(c/v<=1.5)return c;}return Math.ceil(v/mag)*mag;}
   var mx=nmx(rawMx);
   var bGW=cW/qlist.length;
   var svg="<svg height='"+H+"' viewBox='0 0 "+W+" "+H+"' style='width:100%;overflow:visible'>";
@@ -2407,7 +2352,7 @@ function renderMoMChart(data){
     return actT.reduce(function(s,t){return s+(chartMode==="val"?(agg[t]?agg[t].val:0):(agg[t]?agg[t].cnt:0));},0);
   });
   var rawMax=Math.max.apply(null,stackTots.concat([1]));
-  function niceMax(v){var mag=Math.pow(10,Math.floor(Math.log10(v)));var steps=[1,2,2.5,5,10];for(var si=0;si<steps.length;si++){var c=Math.ceil(v/(mag*steps[si]))*(mag*steps[si]);if(c/v<=1.5)return c;}return Math.ceil(v/mag)*mag;}
+  function niceMax(v){var mag=Math.pow(10,Math.floor(Math.log10(v)));var steps=[1,1.5,2,2.5,5,10];for(var si=0;si<steps.length;si++){var c=Math.ceil(v/(mag*steps[si]))*(mag*steps[si]);if(c/v<=1.5)return c;}return Math.ceil(v/mag)*mag;}
   var mx=niceMax(rawMax);
 
   var bGW=cW/mlist.length, bw=Math.max(2, bGW*0.80);
@@ -2488,7 +2433,7 @@ function renderBarChart(){
   // Round y-axis to nice increments
   function niceMax(v){
     var mag=Math.pow(10,Math.floor(Math.log10(v)));
-    var steps=[1,2,2.5,5,10];
+    var steps=[1,1.5,2,2.5,5,10];
     for(var si=0;si<steps.length;si++){
       var cand=Math.ceil(v/(mag*steps[si]))*(mag*steps[si]);
       if(cand/v<=1.5) return cand;
@@ -2653,227 +2598,6 @@ function renderNewsPreview(){
       +'<span class="pill p-tag">'+n.tag+'</span></div>'
       +'<div style="font-size:12px;line-height:1.45;font-weight:600;color:var(--txt)">'+n.title+'</div></div>';
   }).join('');
-}
-
-// ── SGX FILINGS ────────────────────────────────────────────────────────
-var SGX_ENTITY_MAP = {
-  // REITs
-  "AIMS APAC REIT":                          {ticker:"O5RU", color:"#1a5276"},
-  "Alpha Integrated REIT (former Sabana)":   {ticker:"M1GU", color:"#6e2f8a"},
-  "CapitaLand Ascendas REIT (CLAR)":         {ticker:"A17U", color:"#1e8449"},
-  "CapitaLand Integrated Commercial Trust":  {ticker:"C38U", color:"#1a6b3c"},
-  "CDL Hospitality Trusts":                  {ticker:"J85", color:"#b7770d"},
-  "Keppel DC REIT":                          {ticker:"AJBU", color:"#c0392b"},
-  "Keppel REIT":                             {ticker:"K71U", color:"#2874a6"},
-  "OUE REIT":                                {ticker:"TS0U", color:"#7d6608"},
-  "Lendlease Global Commercial REIT":        {ticker:"JYEU", color:"#884ea0"},
-  "Frasers Logistics & Commercial Trust":    {ticker:"BUOU", color:"#1a7a4a"},
-  "Frasers Centrepoint Trust":               {ticker:"J69U", color:"#d35400"},
-  "Mapletree Logistics Trust":               {ticker:"M44U", color:"#2e6da4"},
-  "Mapletree Industrial Trust":              {ticker:"ME8U", color:"#16697a"},
-  "MPACT":                                   {ticker:"N2IU", color:"#145a32"},
-  "ESR-REIT":                                {ticker:"J91U", color:"#6e2f7f"},
-  "CapitaLand Ascott Trust (CLAS)":          {ticker:"HMN", color:"#b7770d"},
-  "Starhill Global REIT":                    {ticker:"P40U", color:"#7b3f00"},
-  "Parkway Life REIT":                       {ticker:"C2PU", color:"#0d6e5a"},
-  "Far East Hospitality Trust":              {ticker:"Q5T", color:"#c0392b"},
-  "Acrophyte Hospitality Trust":             {ticker:"BTOU", color:"#b7950b"},
-  "Digital Core REIT":                       {ticker:"DCRU", color:"#0d3b66"},
-  "Manulife US REIT":                        {ticker:"BTOU", color:"#1f618d"},
-  "EC World REIT":                           {ticker:"BWCU", color:"#7f8c8d"},
-  "Elite UK REIT":                           {ticker:"MXNU", color:"#1a5276"},
-  "Suntec REIT":                             {ticker:"T82U", color:"#1a5276"},
-  // Developers
-  "SingLand":                                {ticker:"U06", color:"#21513b"},
-  "UOL Group":                               {ticker:"U14", color:"#8e3a00"},
-  "CDL":                                     {ticker:"C09", color:"#9b1c1c"},
-  "Wing Tai Holdings":                       {ticker:"W05", color:"#2c3e50"},
-  "Ho Bee Land":                             {ticker:"H13", color:"#1a6b3a"},
-  "Far East Orchard":                        {ticker:"O10", color:"#922b21"},
-  "Bukit Sembawang Estates":                 {ticker:"B61", color:"#1a6b3a"},
-  "Oxley Holdings":                          {ticker:"5UX", color:"#922b21"},
-  "Wee Hur Holdings":                        {ticker:"E3B", color:"#1a5276"},
-  "Hiap Hoe Limited":                        {ticker:"H17", color:"#7d6608"},
-  "Heeton Holdings Limited":                 {ticker:"5IG", color:"#0d5c8a"},
-  "Sing Holdings Limited":                   {ticker:"S41", color:"#1b4f72"},
-  "Hong Fok Corporation":                    {ticker:"H30", color:"#7d6608"},
-  "GuocoLand":                               {ticker:"F17", color:"#6c3483"},
-  "CapitaLand Investment Limited":           {ticker:"9CI", color:"#154360"},
-};
-
-var sgxAllData = [];      // raw fetched rows
-var sgxLoaded  = false;
-var sgxNrTab   = 'editorial';  // current sub-tab
-
-function switchNrTab(tab) {
-  sgxNrTab = tab;
-  document.getElementById('nrt-editorial').classList.toggle('active', tab === 'editorial');
-  document.getElementById('nrt-sgx').classList.toggle('active', tab === 'sgx');
-  document.getElementById('nr-editorial-panel').style.display = tab === 'editorial' ? '' : 'none';
-  document.getElementById('nr-sgx-panel').style.display       = tab === 'sgx'       ? '' : 'none';
-  if (tab === 'sgx' && !sgxLoaded) sgxLoad(false);
-}
-
-// Use allorigins.win as a CORS proxy to reach SGX API
-async function sgxFetchOne(entity, ticker) {
-  var sgxUrl = 'https://api.sgx.com/announcements/v1.0/?category=company-announcements&sub-cat=all&company=' + ticker + '&pagestart=0&pagesize=15';
-  var proxyUrl = 'https://api.allorigins.win/get?url=' + encodeURIComponent(sgxUrl);
-  try {
-    var res = await fetch(proxyUrl);
-    if (!res.ok) return [];
-    var wrapper = await res.json();
-    var raw = wrapper.contents || '';
-    if (!raw) return [];
-    var clean = raw.replace(/^\{\}&&/, '');
-    var json = JSON.parse(clean);
-    var items = json.items || json.data || [];
-    return items.map(function(it) {
-      return {
-        entity:  entity,
-        ticker:  ticker,
-        title:   it.headline || it.title || it.description || '—',
-        type:    it.sub_category || it.subCategory || it.category || '—',
-        date:    it.broadcast_date_time || it.broadcastDateTime || it.date || '',
-        url:     it.file_download_link || it.fileDownloadLink || it.link || '',
-      };
-    });
-  } catch(e) {
-    return [];
-  }
-}
-
-async function sgxLoad(forceRefresh) {
-  if (sgxLoaded && !forceRefresh) return;
-  var btn = document.getElementById('sgx-refresh-btn');
-  var statusEl = document.getElementById('sgx-status');
-  var areaEl = document.getElementById('sgx-table-area');
-  if (btn) btn.disabled = true;
-  areaEl.innerHTML = '<div class="sgx-loading">⏳ Fetching SGX announcements…</div>';
-  if (statusEl) statusEl.textContent = '';
-
-  var entities = Object.keys(SGX_ENTITY_MAP);
-  var all = [];
-  var done = 0;
-  var errors = 0;
-  // Fetch in sequential batches of 4 — allorigins has rate limits
-  var batchSize = 4;
-  for (var i = 0; i < entities.length; i += batchSize) {
-    var batch = entities.slice(i, i + batchSize);
-    var promises = batch.map(function(e) {
-      return sgxFetchOne(e, SGX_ENTITY_MAP[e].ticker);
-    });
-    var results = await Promise.all(promises);
-    results.forEach(function(rows, idx) {
-      if (rows.length === 0) errors++;
-      all = all.concat(rows);
-    });
-    done += batch.length;
-    if (statusEl) statusEl.textContent = 'Loading ' + done + ' / ' + entities.length + '…';
-    // Small delay between batches to be polite to the proxy
-    if (i + batchSize < entities.length) await new Promise(function(r){setTimeout(r,300);});
-  }
-
-  sgxAllData = all;
-  sgxLoaded = true;
-  if (btn) btn.disabled = false;
-
-  sgxBuildFilters();
-  sgxFilterRender();
-
-  var note = errors > 0 ? ' (' + errors + ' entities failed)' : '';
-  if (statusEl) statusEl.textContent = all.length + ' announcements' + note + ' · ' + new Date().toLocaleTimeString('en-SG', {hour:'2-digit', minute:'2-digit'});
-}
-
-function sgxBuildFilters() {
-  var entitySel = document.getElementById('sgx-filter-entity');
-  var typeSel   = document.getElementById('sgx-filter-type');
-  if (!entitySel || !typeSel) return;
-
-  var entities = Object.keys(SGX_ENTITY_MAP).sort();
-  var typesSet = {};
-  sgxAllData.forEach(function(r) { if (r.type && r.type !== '—') typesSet[r.type] = 1; });
-  var types = Object.keys(typesSet).sort();
-
-  entitySel.innerHTML = '<option value="">All Entities</option>';
-  entities.forEach(function(e) {
-    var opt = document.createElement('option');
-    opt.value = e;
-    opt.textContent = e;
-    entitySel.appendChild(opt);
-  });
-
-  typeSel.innerHTML = '<option value="">All Types</option>';
-  types.forEach(function(t) {
-    var opt = document.createElement('option');
-    opt.value = t;
-    opt.textContent = t;
-    typeSel.appendChild(opt);
-  });
-}
-
-function sgxFilterRender() {
-  var q          = (document.getElementById('sgx-search') || {value:''}).value.toLowerCase().trim();
-  var filterEnt  = (document.getElementById('sgx-filter-entity') || {value:''}).value;
-  var filterType = (document.getElementById('sgx-filter-type') || {value:''}).value;
-  var areaEl     = document.getElementById('sgx-table-area');
-  if (!areaEl) return;
-
-  if (!sgxLoaded || sgxAllData.length === 0) return;
-
-  var rows = sgxAllData.filter(function(r) {
-    if (filterEnt  && r.entity !== filterEnt) return false;
-    if (filterType && r.type   !== filterType) return false;
-    if (q && (r.title + r.entity + r.type + r.ticker).toLowerCase().indexOf(q) === -1) return false;
-    return true;
-  });
-
-  // Sort by date descending
-  rows = rows.slice().sort(function(a, b) {
-    return (b.date || '').localeCompare(a.date || '');
-  });
-
-  if (rows.length === 0) {
-    areaEl.innerHTML = '<div class="sgx-empty">No announcements found.</div>';
-    return;
-  }
-
-  var html = '<div class="sgx-table-wrap"><table class="sgx-table"><thead><tr>'
-    + '<th>Date</th><th>Entity</th><th>Type</th><th>Announcement</th>'
-    + '</tr></thead><tbody>';
-
-  rows.forEach(function(r) {
-    var color = (SGX_ENTITY_MAP[r.entity] || {}).color || '#666';
-    var dateStr = '';
-    if (r.date) {
-      try {
-        var d = new Date(r.date);
-        dateStr = d.getFullYear() + '-'
-          + String(d.getMonth()+1).padStart(2,'0') + '-'
-          + String(d.getDate()).padStart(2,'0');
-      } catch(e) { dateStr = r.date.substring(0,10); }
-    }
-    var titleHtml = r.url
-      ? '<a class="sgx-ann-link" href="' + r.url + '" target="_blank" rel="noopener">' + sgxEsc(r.title) + ' ↗</a>'
-      : sgxEsc(r.title);
-    var entityLabel = r.entity.length > 32 ? r.entity.substring(0,30) + '…' : r.entity;
-
-    html += '<tr>'
-      + '<td class="sgx-date-cell">' + dateStr + '</td>'
-      + '<td><div style="display:flex;flex-direction:column;gap:3px">'
-      +   '<span class="sgx-entity-pill" style="background:' + color + '">' + sgxEsc(entityLabel) + '</span>'
-      +   '<span class="sgx-ticker-chip">' + r.ticker + '</span>'
-      + '</div></td>'
-      + '<td><span class="sgx-type-badge">' + sgxEsc(r.type) + '</span></td>'
-      + '<td>' + titleHtml + '</td>'
-      + '</tr>';
-  });
-
-  html += '</tbody></table></div>';
-  areaEl.innerHTML = html;
-}
-
-function sgxEsc(s) {
-  return String(s || '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
 }
 
 // NEWSROOM — full tab
