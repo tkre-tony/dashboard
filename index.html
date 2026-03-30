@@ -315,7 +315,8 @@ html,body{background:var(--bg);color:var(--txt);font-family:'DM Sans',sans-serif
   <div class="topbar-center">
     <div class="topbar-stat">
       <div class="topbar-stat-lbl">Database</div>
-      <div class="topbar-stat-val">81,747 txns</div>
+      <div class="topbar-stat-val">81,929 txns</div>
+      <div style="font-size:9px;color:rgba(255,255,255,.4);margin-top:1px;font-family:'DM Mono',monospace">incl. 399 inv. sales</div>
     </div>
     <div class="topbar-stat">
       <div class="topbar-stat-lbl">Coverage</div>
@@ -362,7 +363,7 @@ html,body{background:var(--bg);color:var(--txt);font-family:'DM Sans',sans-serif
         <div style="width:36px;height:36px;background:rgba(255,255,255,.08);border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:18px;border:1px solid rgba(255,255,255,.1)">🇸🇬</div>
         <div>
           <div style="color:#fff;font-size:14px;font-weight:700;letter-spacing:-.01em">Singapore C&amp;I Market Intelligence</div>
-          <div style="color:rgba(255,255,255,.45);font-size:11px;margin-top:1px">81,747 transactions · 1995–2026 · URA REALIS · Commercial &amp; Industrial</div>
+          <div style="color:rgba(255,255,255,.45);font-size:11px;margin-top:1px">81,929 transactions · 1995–2026 · URA REALIS · Commercial &amp; Industrial · <span style="color:rgba(255,255,255,.3)">incl. 399 inv. sales</span></div>
         </div>
       </div>
       <div style="display:flex;gap:5px;flex-wrap:wrap">
@@ -471,7 +472,15 @@ html,body{background:var(--bg);color:var(--txt);font-family:'DM Sans',sans-serif
             <span style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:var(--mut);white-space:nowrap;min-width:90px">Tenure</span>
             <div id="tenure-chips" style="display:flex;flex-wrap:wrap;gap:5px;flex:1;align-items:center"></div>
           </div>
-          <div style="display:flex;align-items:center;justify-content:flex-end;margin-bottom:6px">
+          <div style="display:flex;align-items:center;justify-content:flex-end;gap:6px;margin-bottom:6px">
+            <div style="display:flex;background:var(--srf2);border:1px solid var(--bdr);border-radius:6px;overflow:hidden">
+              <button id="btn-inv-excl" onclick="setInvSalesView(true)" title="Exclude investment sales" style="display:flex;align-items:center;gap:5px;padding:4px 10px;border:none;border-right:1px solid var(--bdr);background:var(--g1);color:#fff;font-size:10px;font-weight:600;cursor:pointer;font-family:'DM Sans',sans-serif;letter-spacing:.02em">
+                Ex. Inv. Sales
+              </button>
+              <button id="btn-inv-incl" onclick="setInvSalesView(false)" title="Include investment sales" style="display:flex;align-items:center;gap:5px;padding:4px 10px;border:none;background:transparent;color:var(--mut);font-size:10px;font-weight:600;cursor:pointer;font-family:'DM Sans',sans-serif;letter-spacing:.02em">
+                All Txns
+              </button>
+            </div>
             <div style="display:flex;background:var(--srf2);border:1px solid var(--bdr);border-radius:6px;overflow:hidden">
               <button id="btn-stacked" onclick="setStackView(true)" title="Stacked bars" style="display:flex;align-items:center;gap:5px;padding:4px 10px;border:none;border-right:1px solid var(--bdr);background:var(--g1);color:#fff;font-size:10px;font-weight:600;cursor:pointer;font-family:'DM Sans',sans-serif;letter-spacing:.02em">
                 <svg width="13" height="11" viewBox="0 0 13 11" fill="none"><rect x="1" y="5" width="11" height="3" rx="1" fill="currentColor" opacity=".55"/><rect x="1" y="1" width="11" height="3" rx="1" fill="currentColor"/></svg>Stacked
@@ -1187,7 +1196,7 @@ html,body{background:var(--bg);color:var(--txt);font-family:'DM Sans',sans-serif
     </div>
     <div class="card">
       <div class="card-hdr">
-        <div><div class="card-title"><span class="card-title-dot"></span>Transaction Search</div><div class="card-subtitle">81,747 transactions · Commercial & Industrial · 1995–2026</div></div>
+        <div><div class="card-title"><span class="card-title-dot"></span>Transaction Search</div><div class="card-subtitle">81,929 transactions · Commercial & Industrial · 1995–2026</div></div>
         <div style="font-size:11px;color:var(--mut);font-family:'DM Mono',monospace;font-weight:600" id="tx-count">—</div>
       </div>
       <!-- Search filters -->
@@ -1649,6 +1658,7 @@ var activeRange="L12";
 var chartYoY=false;
 var chartQoQ=false;
 var stackedView=true; // true=stacked, false=side-by-side
+var excludeInvSales=true; // true=exclude investment sales from chart
 var chartMoM=true;   // MoM on by default
 var sliderMonths=12;  // window size in months
 var sliderStartMonth=360; // left handle (0=Jan1995, 371=Mar2026). Default: L12 = pos 360
@@ -1694,7 +1704,8 @@ async function fetchMonthlyData(months, startDate, endDate){
     var allRows=[],page=0,pageSize=1000;
     while(true){
       var lo=page*pageSize,hi=lo+pageSize-1;
-      var url=SB_URL+"/rest/v1/transactions?select=sale_date,property_type,transacted_price,unit_price_psf,tenure&sale_date=gte."+from+"&sale_date=lte."+until+"&order=sale_date.asc";
+      var invFilter=excludeInvSales?"&or=(investment_sales.is.null,investment_sales.neq.y)":"";
+      var url=SB_URL+"/rest/v1/transactions?select=sale_date,property_type,transacted_price,unit_price_psf,tenure&sale_date=gte."+from+"&sale_date=lte."+until+invFilter+"&order=sale_date.asc";
       var r=await fetch(url,{headers:{
         "apikey":SB_KEY,"Authorization":"Bearer "+SB_KEY,
         "Range":lo+"-"+hi,"Range-Unit":"items"
@@ -2541,6 +2552,15 @@ function setStackView(v){
   var bs=document.getElementById("btn-stacked"), bsb=document.getElementById("btn-sideby");
   if(bs){ bs.style.background=v?"var(--g1)":"transparent"; bs.style.color=v?"#fff":"var(--mut)"; }
   if(bsb){ bsb.style.background=v?"transparent":"var(--g1)"; bsb.style.color=v?"var(--mut)":"#fff"; }
+  loadAndRenderChart();
+}
+
+function setInvSalesView(excl){
+  excludeInvSales=excl;
+  var be=document.getElementById("btn-inv-excl"), bi=document.getElementById("btn-inv-incl");
+  if(be){ be.style.background=excl?"var(--g1)":"transparent"; be.style.color=excl?"#fff":"var(--mut)"; }
+  if(bi){ bi.style.background=excl?"transparent":"var(--g1)"; bi.style.color=excl?"var(--mut)":"#fff"; }
+  MONTHLY_CACHE=null; // force refetch since filter changed
   loadAndRenderChart();
 }
 
