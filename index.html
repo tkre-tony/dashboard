@@ -1815,11 +1815,14 @@ function onDualSlider(side, v){
   clearTimeout(window._sliderTimer);
   window._sliderTimer = setTimeout(function(){
     loadAndRenderChart();
-    if(!document.getElementById("ov-search").value.trim()){
+    var _sq2 = document.getElementById("ov-search").value.trim();
+    if(!_sq2){
       ovFilteredCache=null;
       document.getElementById("ov-tx-table").style.display="none";
       document.getElementById("ov-tx-loading").style.display="block";
       loadDefaultTransactions(0);
+    } else {
+      ovSearch(0);
     }
   }, 400);
 }
@@ -2136,12 +2139,13 @@ function renderTenureChips(){
       activeTenures[k]=!activeTenures[k];
       renderTenureChips();
       loadAndRenderChart();
-      if(!document.getElementById("ov-search").value.trim()){
+      var _sq3 = document.getElementById("ov-search").value.trim();
+      if(!_sq3){
         ovFilteredCache=null;
         document.getElementById("ov-tx-table").style.display="none";
         document.getElementById("ov-tx-loading").style.display="block";
         loadDefaultTransactions(0);
-      }
+      } else { ovSearch(0); }
     });
   });
 }
@@ -2164,12 +2168,13 @@ function renderTypeChips(){
       renderAll();
       loadAndRenderChart();
       // Sync transactions table if no active search
-      if(!document.getElementById("ov-search").value.trim()){
+      var _sq4 = document.getElementById("ov-search").value.trim();
+      if(!_sq4){
         ovFilteredCache=null;
         document.getElementById("ov-tx-table").style.display="none";
         document.getElementById("ov-tx-loading").style.display="block";
         loadDefaultTransactions(0);
-      }
+      } else { ovSearch(0); }
     });
   });
 }
@@ -2192,11 +2197,14 @@ function initRangeBtns(){
       syncSliderToRange(activeRange);
       renderAll();
       loadAndRenderChart();
-      if(!document.getElementById("ov-search").value.trim()){
+      var _sq = document.getElementById("ov-search").value.trim();
+      if(!_sq){
         ovFilteredCache=null; ovCurPage=0;
         document.getElementById("ov-tx-table").style.display="none";
         document.getElementById("ov-tx-loading").style.display="block";
         loadDefaultTransactions(0);
+      } else {
+        ovSearch(0);
       }
     });
   });
