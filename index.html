@@ -1015,45 +1015,53 @@ html,body{background:var(--bg);color:var(--txt);font-family:'DM Sans',sans-serif
 
         <!-- Profitable table -->
         <div style="margin-bottom:20px">
-          <div style="margin-bottom:8px">
-            <span style="display:inline-block;background:#e8f5e9;border:1px solid #a5d6a7;border-radius:12px;padding:4px 14px;font-size:12px;font-weight:700;color:#1a6b3c">🏆 Projects with Most Profitable Transactions</span>
+          <div style="margin-bottom:8px;display:flex;align-items:center;gap:8px">
+            <span id="proj-hdr-profit" onclick="projToggleSection('profit')" style="display:inline-block;background:#e8f5e9;border:1px solid #a5d6a7;border-radius:12px;padding:4px 14px;font-size:12px;font-weight:700;color:#1a6b3c;cursor:pointer;user-select:none">🏆 Profitable Transactions</span>
+            <button id="proj-toggle-profit" onclick="projToggleSection('profit')" style="background:none;border:none;color:var(--mut);font-size:14px;cursor:pointer;padding:0 4px">▾</button>
           </div>
-          <div style="overflow-x:auto;border-radius:6px;border:1px solid var(--bdr)">
-            <table class="ptable" id="proj-tbl-profit">
-              <thead><tr>
-                <th style="min-width:160px">Project</th>
-                <th>Type</th>
-                <th class="mono" style="text-align:right">Vol.</th>
-                <th class="mono" style="text-align:right">Highest Profit</th>
-                <th class="mono" style="text-align:right">Lowest Profit</th>
-                <th class="mono" style="text-align:right">Avg Profit</th>
-                <th class="mono" style="text-align:right">Med. Ann.</th>
-                <th class="mono" style="text-align:right">Avg Hold</th>
-              </tr></thead>
-              <tbody id="proj-tbody-profit"></tbody>
-            </table>
+          <div id="proj-tbl-wrap-profit">
+            <div style="overflow-x:auto;border-radius:6px;border:1px solid var(--bdr)">
+              <table class="ptable" id="proj-tbl-profit">
+                <thead><tr>
+                  <th style="min-width:160px">Project</th>
+                  <th>Type</th>
+                  <th class="mono" style="text-align:right">Vol.</th>
+                  <th class="mono" style="text-align:right">Highest Profit</th>
+                  <th class="mono" style="text-align:right">Lowest Profit</th>
+                  <th class="mono" style="text-align:right">Avg Profit</th>
+                  <th class="mono" style="text-align:right">Med. Ann.</th>
+                  <th class="mono" style="text-align:right">Avg Hold</th>
+                </tr></thead>
+                <tbody id="proj-tbody-profit"></tbody>
+              </table>
+            </div>
+            <div id="proj-pagin-profit"></div>
           </div>
         </div>
 
-        <!-- Unprofitable table -->
+        <!-- Non-Profitable table -->
         <div>
-          <div style="margin-bottom:8px">
-            <span style="display:inline-block;background:#fce4ec;border:1px solid #ef9a9a;border-radius:12px;padding:4px 14px;font-size:12px;font-weight:700;color:#b71c1c">📉 Projects with Most Unprofitable Transactions</span>
+          <div style="margin-bottom:8px;display:flex;align-items:center;gap:8px">
+            <span id="proj-hdr-loss" onclick="projToggleSection('loss')" style="display:inline-block;background:#fce4ec;border:1px solid #ef9a9a;border-radius:12px;padding:4px 14px;font-size:12px;font-weight:700;color:#b71c1c;cursor:pointer;user-select:none">📉 Non-Profitable Transactions</span>
+            <button id="proj-toggle-loss" onclick="projToggleSection('loss')" style="background:none;border:none;color:var(--mut);font-size:14px;cursor:pointer;padding:0 4px">▾</button>
           </div>
-          <div style="overflow-x:auto;border-radius:6px;border:1px solid var(--bdr)">
-            <table class="ptable" id="proj-tbl-loss">
-              <thead><tr>
-                <th style="min-width:160px">Project</th>
-                <th>Type</th>
-                <th class="mono" style="text-align:right">Vol.</th>
-                <th class="mono" style="text-align:right">Highest Loss</th>
-                <th class="mono" style="text-align:right">Lowest Loss</th>
-                <th class="mono" style="text-align:right">Avg Loss</th>
-                <th class="mono" style="text-align:right">Med. Ann.</th>
-                <th class="mono" style="text-align:right">Avg Hold</th>
-              </tr></thead>
-              <tbody id="proj-tbody-loss"></tbody>
-            </table>
+          <div id="proj-tbl-wrap-loss">
+            <div style="overflow-x:auto;border-radius:6px;border:1px solid var(--bdr)">
+              <table class="ptable" id="proj-tbl-loss">
+                <thead><tr>
+                  <th style="min-width:160px">Project</th>
+                  <th>Type</th>
+                  <th class="mono" style="text-align:right">Vol.</th>
+                  <th class="mono" style="text-align:right">Highest Loss</th>
+                  <th class="mono" style="text-align:right">Lowest Loss</th>
+                  <th class="mono" style="text-align:right">Avg Loss</th>
+                  <th class="mono" style="text-align:right">Med. Ann.</th>
+                  <th class="mono" style="text-align:right">Avg Hold</th>
+                </tr></thead>
+                <tbody id="proj-tbody-loss"></tbody>
+              </table>
+            </div>
+            <div id="proj-pagin-loss"></div>
           </div>
         </div>
 
@@ -3505,8 +3513,8 @@ function pnlRenderProjectsTab(){
   var statsEl = document.getElementById('proj-ov-stats');
   statsEl.innerHTML = [
     {label:'Projects Analysed', val:totalProjects, bg:'var(--srf2)', bdr:'var(--bdr)', tc:'var(--txt)', vc:'var(--txt)'},
-    {label:'Net Profitable', val:profitableProj, bg:'#e8f5e9', bdr:'#a5d6a7', tc:'#2e7d32', vc:'#1a6b3c'},
-    {label:'Net Unprofitable', val:totalProjects-profitableProj, bg:'#fce4ec', bdr:'#ef9a9a', tc:'#c62828', vc:'#b71c1c'}
+    {label:'Profitable Transactions', val:profitableProj, bg:'#e8f5e9', bdr:'#a5d6a7', tc:'#2e7d32', vc:'#1a6b3c'},
+    {label:'Non-Profitable Transactions', val:totalProjects-profitableProj, bg:'#fce4ec', bdr:'#ef9a9a', tc:'#c62828', vc:'#b71c1c'}
   ].map(function(s){
     return '<div style="flex:1;min-width:110px;background:'+s.bg+';border:1px solid '+s.bdr+';border-radius:8px;padding:8px 14px">'
       +'<div style="font-size:10px;text-transform:uppercase;letter-spacing:.07em;color:'+s.tc+';margin-bottom:2px">'+s.label+'</div>'
@@ -3538,11 +3546,24 @@ function pnlRenderProjectsTab(){
     return (v>=0?'+':'')+v.toFixed(1)+'%';
   }
 
-  function renderProjRows(tbody, rows, isProfitable){
-    var el = document.getElementById(tbody);
-    if(!rows.length){ el.innerHTML='<tr><td colspan="8" style="text-align:center;color:var(--mut);padding:20px;font-size:12px">No data</td></tr>'; return; }
-    el.innerHTML = rows.map(function(g, i){
-      var pc = '#1a6b3c', lc = '#b71c1c';
+  var PROJ_PAGE_SIZE = 20;
+  if(typeof window._projPageProfit === 'undefined') window._projPageProfit = 0;
+  if(typeof window._projPageLoss   === 'undefined') window._projPageLoss   = 0;
+  // Reset pages when data changes
+  window._projPageProfit = 0;
+  window._projPageLoss   = 0;
+  window._projTopProfit  = topProfit;
+  window._projTopLoss    = topLoss;
+
+  function renderProjRows(tbodyId, paginId, rows, isProfitable, page){
+    var el = document.getElementById(tbodyId);
+    var pag = document.getElementById(paginId);
+    if(!el) return;
+    var start = page * PROJ_PAGE_SIZE;
+    var pageRows = rows.slice(start, start + PROJ_PAGE_SIZE);
+    if(!rows.length){ el.innerHTML='<tr><td colspan="8" style="text-align:center;color:var(--mut);padding:20px;font-size:12px">No data</td></tr>'; if(pag) pag.innerHTML=''; return; }
+    var pc = '#1a6b3c', lc = '#b71c1c';
+    el.innerHTML = pageRows.map(function(g, i){
       var annColor = g.med_ann >= 0 ? pc : lc;
       var distLabel = g.postal_district ? 'D'+g.postal_district : '';
       var typeShort = (g.property_type||'').replace('Multiple-User Factory','Multi-User').replace('Multiple-user Factory','Multi-User').replace('Single-User Factory','Single-User').replace('Single-user Factory','Single-User').replace('Business Park','Biz Park').replace('Shop House','Shophouse');
@@ -3554,7 +3575,7 @@ function pnlRenderProjectsTab(){
       }
       return '<tr>'
         +'<td style="font-size:11px;font-weight:600;color:var(--txt);white-space:normal;line-height:1.3">'
-          +'<span style="display:inline-block;min-width:18px;font-size:10px;color:var(--mut);margin-right:3px">'+(i+1)+'.</span>'
+          +'<span style="display:inline-block;min-width:18px;font-size:10px;color:var(--mut);margin-right:3px">'+(start+i+1)+'.</span>'
           +g.project_name
           +(distLabel ? '<br><span style="font-size:10px;font-weight:400;color:var(--mut);margin-left:21px">'+distLabel+'</span>' : '')
         +'</td>'
@@ -3567,10 +3588,32 @@ function pnlRenderProjectsTab(){
         +'<td class="mono" style="text-align:right;font-size:11px;color:var(--mut)">'+g.avg_hold.toFixed(1)+'y</td>'
         +'</tr>';
     }).join('');
+    // Pagination
+    if(pag){
+      var totalPages = Math.ceil(rows.length / PROJ_PAGE_SIZE);
+      if(totalPages <= 1){ pag.innerHTML=''; return; }
+      var key = isProfitable ? 'Profit' : 'Loss';
+      var html = '<div style="display:flex;align-items:center;gap:6px;margin-top:10px;font-size:12px;color:var(--mut)">';
+      html += '<span>Page '+(page+1)+' of '+totalPages+'</span>';
+      html += '<button onclick="projGoPage(\''+key+'\','+(page-1)+')" '+(page===0?'disabled':'')+' style="padding:3px 10px;border:1px solid var(--bdr);border-radius:5px;background:var(--srf);color:var(--txt);cursor:pointer;font-size:11px">‹ Prev</button>';
+      for(var pi=0;pi<totalPages;pi++){
+        var active = pi===page;
+        html += '<button onclick="projGoPage(\''+key+'\','+pi+')" style="padding:3px 8px;border:1px solid '+(active?'var(--g1)':'var(--bdr)')+';border-radius:5px;background:'+(active?'var(--g1)':'var(--srf)')+';color:'+(active?'#fff':'var(--txt)')+';cursor:pointer;font-size:11px">'+(pi+1)+'</button>';
+      }
+      html += '<button onclick="projGoPage(\''+key+'\','+(page+1)+')" '+(page>=totalPages-1?'disabled':'')+' style="padding:3px 10px;border:1px solid var(--bdr);border-radius:5px;background:var(--srf);color:var(--txt);cursor:pointer;font-size:11px">Next ›</button>';
+      html += '</div>';
+      pag.innerHTML = html;
+    }
   }
 
-  renderProjRows('proj-tbody-profit', topProfit, true);
-  renderProjRows('proj-tbody-loss',   topLoss,   false);
+  renderProjRows('proj-tbody-profit', 'proj-pagin-profit', topProfit, true,  window._projPageProfit);
+  renderProjRows('proj-tbody-loss',   'proj-pagin-loss',   topLoss,   false, window._projPageLoss);
+
+  // Update section header labels
+  var hProfit = document.getElementById('proj-hdr-profit');
+  var hLoss   = document.getElementById('proj-hdr-loss');
+  if(hProfit) hProfit.textContent = '🏆 Profitable Transactions (' + topProfit.length + ')';
+  if(hLoss)   hLoss.textContent   = '📉 Non-Profitable Transactions (' + topLoss.length + ')';
 
   // Update subtitle
   var periodEl = document.getElementById('pnl-period-filter');
@@ -3579,6 +3622,27 @@ function pnlRenderProjectsTab(){
   if(sub) sub.textContent = 'Ranked by P&L performance · '+periodLabel+' · '+totalProjects+' projects from '+PNL_FILTERED_ALL.length+' matched pairs';
 }
 // ─────────────────────────────────────────────────────────────────────
+
+function projGoPage(key, page){
+  if(key==='Profit'){
+    window._projPageProfit = page;
+    // re-render just the profit table
+    pnlRenderProjectsTab();
+  } else {
+    window._projPageLoss = page;
+    pnlRenderProjectsTab();
+  }
+}
+
+function projToggleSection(key){
+  var bodyId = key==='profit' ? 'proj-tbl-wrap-profit' : 'proj-tbl-wrap-loss';
+  var el = document.getElementById(bodyId);
+  if(!el) return;
+  var hidden = el.style.display === 'none';
+  el.style.display = hidden ? '' : 'none';
+  var btn = document.getElementById('proj-toggle-'+key);
+  if(btn) btn.textContent = hidden ? '▾' : '▸';
+}
 
 function pnlGoPage(sec, p){
   if(sec==='profit'){ pnlPageProfit=p; pnlRenderTable('profit', PNL_FILTERED_PROFIT, p); }
