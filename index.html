@@ -4579,7 +4579,10 @@ function renderOvTable(rows){
       + (r.buy_price ? boughtLabel+"<div style='"+mutStyle+"'>S$"+Number(Math.round(r.buy_price)).toLocaleString()+"</div>" : "");
     var psfCell = "<div style='font-size:11px'>"+psf+"</div>"
       + (r.buy_psf ? boughtLabel+"<div style='"+mutStyle+"'>S$"+Math.round(r.buy_psf).toLocaleString()+"</div>" : "");
-    return "<tr style='font-size:11px'>"
+    // Row highlight: red left border if sell price < buy price (unprofitable)
+    var isLoss = r.buy_price && r.transacted_price && parseFloat(r.transacted_price) < parseFloat(r.buy_price);
+    var rowStyle = "font-size:11px;" + (isLoss ? "border-left:3px solid #ef9a9a;background:rgba(239,154,154,0.06);" : "border-left:3px solid transparent;");
+    return "<tr style='"+rowStyle+"'>"
       +"<td class='mono' style='white-space:nowrap;vertical-align:top;font-size:10.5px'>"+dateCell+"</td>"
       +"<td class='mono' style='font-size:10.5px;white-space:nowrap;vertical-align:top'>"+dist+"</td>"
       +"<td style='font-weight:600;font-size:10.5px;vertical-align:top;word-break:break-word'>"+(r.project_name||"-")+"</td>"
