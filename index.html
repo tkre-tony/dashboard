@@ -4113,6 +4113,8 @@ function ovDetectType(q){
   if(/^\d{1,2}$/.test(q.trim())) return {type:'district', val: parseInt(q.trim())};
   return {type:'text', val: q.trim()};
 }
+// Encode for use inside PostgREST or=() ilike values — encode special chars but keep spaces as-is
+function encSQ(s){ return encodeURIComponent(s).replace(/%20/g,' '); }
 
 function getLast12MonthsDate(){
   // Use current slider start for search too
@@ -4130,7 +4132,7 @@ async function ovFetchAgg(q){
   var detected = ovDetectType(q);
   var filter = detected.type === 'district'
     ? "postal_district=eq." + detected.val
-    : "or=(project_name.ilike.*" + encodeURIComponent(detected.val) + "*,address.ilike.*" + encodeURIComponent(detected.val) + "*)";
+    : "or=(project_name.ilike.*" + encSQ(detected.val) + "*,address.ilike.*" + encSQ(detected.val) + "*)";
   // Fetch up to 50000 rows for chart aggregation
   var url = SB_URL + "/rest/v1/transactions?select=sale_date,property_type,transacted_price&" + filter + "&limit=50000";
   var res = await fetch(url, {headers:{"apikey":SB_KEY,"Authorization":"Bearer "+SB_KEY}});
@@ -4141,7 +4143,7 @@ async function ovFetchRows(q, page){
   var detected = ovDetectType(q);
   var filter = detected.type === 'district'
     ? "postal_district=eq." + detected.val
-    : "or=(project_name.ilike.*" + encodeURIComponent(detected.val) + "*,address.ilike.*" + encodeURIComponent(detected.val) + "*)";
+    : "or=(project_name.ilike.*" + encSQ(detected.val) + "*,address.ilike.*" + encSQ(detected.val) + "*)";
   var dateFilter = "&sale_date=gte." + getLast12MonthsDate();
   var offset = page * 10;
   var url = SB_URL + "/rest/v1/transactions?select=id,project_name,address,property_type,transacted_price,area_sqft,unit_price_psf,sale_date,tenure,planning_region,postal_district,type_of_sale,type_of_area&"
@@ -4680,7 +4682,7 @@ function initOvAutocomplete(){
     if(q.length < 2){ dd.style.display="none"; return; }
     ovTimer = setTimeout(async function(){
       var url = SB_URL + "/rest/v1/transactions?select=project_name,address&or=(project_name.ilike.*"
-        + encodeURIComponent(q) + "*,address.ilike.*" + encodeURIComponent(q) + "*)&limit=200";
+        + encSQ(q) + "*,address.ilike.*" + encSQ(q) + "*)&limit=200";
       var res = await fetch(url, {headers:{"apikey":SB_KEY,"Authorization":"Bearer "+SB_KEY}});
       var data = await res.json();
       // Deduplicate projects + streets
