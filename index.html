@@ -3283,11 +3283,10 @@ function projClearDates(){
 
 function projSetCurrentQuarter(){
   var now = new Date();
-  var qStartMonth = Math.floor(now.getMonth() / 3) * 3; // 0, 3, 6, or 9
-  var qStart = new Date(now.getFullYear(), qStartMonth, 1);
+  var sixMonthsAgo = new Date(now.getFullYear(), now.getMonth() - 6, 1);
   var f = document.getElementById('proj-date-from');
   var t = document.getElementById('proj-date-to');
-  if(f) f.value = qStart.toISOString().slice(0,10);
+  if(f) f.value = sixMonthsAgo.toISOString().slice(0,10);
   if(t) t.value = now.toISOString().slice(0,10);
 }
 
@@ -3304,11 +3303,10 @@ function txSetSort(mode){
 
 function txSetCurrentQuarter(){
   var now = new Date();
-  var qStartMonth = Math.floor(now.getMonth() / 3) * 3;
-  var qStart = new Date(now.getFullYear(), qStartMonth, 1);
+  var sixMonthsAgo = new Date(now.getFullYear(), now.getMonth() - 6, 1);
   var f = document.getElementById('tx-date-from');
   var t = document.getElementById('tx-date-to');
-  if(f) f.value = qStart.toISOString().slice(0,10);
+  if(f) f.value = sixMonthsAgo.toISOString().slice(0,10);
   if(t) t.value = now.toISOString().slice(0,10);
 }
 
