@@ -3460,12 +3460,12 @@ function pnlRenderProjectsTab(){
       project_name: key,
       property_type: p.property_type || '',
       postal_district: p.postal_district || '',
-      pairs: [], profits: [], losses: [], ann_returns: [], yrs_helds: []
+      pairs: [], profits: [], losses: [], ann_returns: [], profit_ann_returns: [], loss_ann_returns: [], yrs_helds: []
     };
     var g = map[key];
     g.pairs.push(p);
-    if(p.profit > 0) g.profits.push(p.profit);
-    else g.losses.push(p.profit);
+    if(p.profit > 0){ g.profits.push(p.profit); g.profit_ann_returns.push(p.ann_return); }
+    else { g.losses.push(p.profit); g.loss_ann_returns.push(p.ann_return); }
     g.ann_returns.push(p.ann_return);
     g.yrs_helds.push(p.yrs_held);
   });
@@ -3475,9 +3475,16 @@ function pnlRenderProjectsTab(){
     var allP = g.profits.reduce(function(s,v){return s+v;},0);
     var allL = g.losses.reduce(function(s,v){return s+v;},0);
     var netP = allP + allL;
-    var sorted = g.ann_returns.slice().sort(function(a,b){return a-b;});
-    var mid = Math.floor(sorted.length/2);
-    var medAnn = sorted.length%2===0 ? (sorted[mid-1]+sorted[mid])/2 : sorted[mid];
+    // med_ann: use profit ann_returns for profitable groups, loss ann_returns for loss groups
+    function median(arr){
+      if(!arr.length) return 0;
+      var s = arr.slice().sort(function(a,b){return a-b;});
+      var m = Math.floor(s.length/2);
+      return s.length%2===0 ? (s[m-1]+s[m])/2 : s[m];
+    }
+    var medAnnProfit = median(g.profit_ann_returns);
+    var medAnnLoss   = median(g.loss_ann_returns);
+    var medAnnAll    = median(g.ann_returns);
     var avgHold = g.yrs_helds.reduce(function(s,v){return s+v;},0) / (g.yrs_helds.length||1);
     var allPnl = g.pairs.map(function(p){return p.profit;});
     var highProfit = g.profits.length ? Math.max.apply(null, g.profits) : 0;
@@ -3496,7 +3503,9 @@ function pnlRenderProjectsTab(){
       total_profit: allP,
       total_loss: allL,
       net: netP,
-      med_ann: medAnn,
+      med_ann: medAnnAll,
+      med_ann_profit: medAnnProfit,
+      med_ann_loss: medAnnLoss,
       avg_hold: avgHold,
       high_profit: highProfit,
       low_profit:  lowProfit,
@@ -3564,7 +3573,8 @@ function pnlRenderProjectsTab(){
     if(!rows.length){ el.innerHTML='<tr><td colspan="8" style="text-align:center;color:var(--mut);padding:20px;font-size:12px">No data</td></tr>'; if(pag) pag.innerHTML=''; return; }
     var pc = '#1a6b3c', lc = '#b71c1c';
     el.innerHTML = pageRows.map(function(g, i){
-      var annColor = g.med_ann >= 0 ? pc : lc;
+      var annColor = (isProfitable ? g.med_ann_profit : g.med_ann_loss) >= 0 ? pc : lc;
+      var medAnnVal = isProfitable ? g.med_ann_profit : g.med_ann_loss;
       var distLabel = g.postal_district ? 'D'+g.postal_district : '';
       var typeShort = (g.property_type||'').replace('Multiple-User Factory','Multi-User').replace('Multiple-user Factory','Multi-User').replace('Single-User Factory','Single-User').replace('Single-user Factory','Single-User').replace('Business Park','Biz Park').replace('Shop House','Shophouse');
       var hi, lo, av;
@@ -3584,7 +3594,7 @@ function pnlRenderProjectsTab(){
         +'<td class="mono" style="text-align:right;font-size:11px;font-weight:700;color:'+(isProfitable?pc:lc)+'">'+hi+'</td>'
         +'<td class="mono" style="text-align:right;font-size:11px;color:'+(isProfitable?pc:lc)+'">'+lo+'</td>'
         +'<td class="mono" style="text-align:right;font-size:11px;color:'+(isProfitable?pc:lc)+'">'+av+'</td>'
-        +'<td class="mono" style="text-align:right;font-size:11px;color:'+annColor+'">'+fmtAnn(g.med_ann)+'</td>'
+        +'<td class="mono" style="text-align:right;font-size:11px;color:'+annColor+'">'+fmtAnn(medAnnVal)+'</td>'
         +'<td class="mono" style="text-align:right;font-size:11px;color:var(--mut)">'+g.avg_hold.toFixed(1)+'y</td>'
         +'</tr>';
     }).join('');
