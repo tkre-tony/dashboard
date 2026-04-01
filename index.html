@@ -4144,7 +4144,7 @@ async function ovFetchRows(q, page){
   var filter = detected.type === 'district'
     ? "postal_district=eq." + detected.val
     : "or=(project_name.ilike.*" + encSQ(detected.val) + "*,address.ilike.*" + encSQ(detected.val) + "*)";
-  var dateFilter = "&sale_date=gte." + getLast12MonthsDate();
+  var dateFilter = "&sale_date=gte." + getSliderStartDate() + "&sale_date=lte." + getSliderEndDate();
   var offset = page * 10;
   var url = SB_URL + "/rest/v1/transactions?select=id,project_name,address,property_type,transacted_price,area_sqft,unit_price_psf,sale_date,tenure,planning_region,postal_district,type_of_sale,type_of_area&"
     + filter + dateFilter + "&order=sale_date.desc&limit=10&offset=" + offset;
@@ -4191,7 +4191,7 @@ async function ovSearch(page){
     // Show transaction rows
     ovTotal = rowResult.total;
     document.getElementById("ov-tx-loading").style.display = "none";
-    document.getElementById("ov-tx-title").textContent = "Transactions — Last 12 Months";
+    document.getElementById("ov-tx-title").textContent = "Transactions — " + getActiveRangeLabel();
     document.getElementById("ov-tx-count").textContent = ovTotal.toLocaleString() + " transactions found";
 
     ovFilteredCache = rowResult.data || [];
@@ -4519,7 +4519,7 @@ function renderOvTable(rows){
 async function loadDefaultTransactions(page){
   page = page||0;
   ovPage = page;
-  var dateFilter = "sale_date=gte." + getDateForActiveRange();
+  var dateFilter = "sale_date=gte." + getSliderStartDate() + "&sale_date=lte." + getSliderEndDate();
   var offset = page * 10;
 
   // Build property_type filter from activeTypes
