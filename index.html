@@ -7633,6 +7633,7 @@ function sophiaRenderTxnList(data) {
 (function(){
   var CHAT_SB_URL = "https://xywgocvjuygudzrduvwr.supabase.co";
   var CHAT_SB_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inh5d2dvY3ZqdXlndWR6cmR1dndyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzI5MTE5OTgsImV4cCI6MjA4ODQ4Nzk5OH0.lGQ0utJV1E00ug-Sf0ZXh9lEYfhGHSONQpPkBblDLTM";
+  var ATLAS_AI_KEY = "YOUR_ANTHROPIC_API_KEY_HERE"; // ← replace with your Anthropic API key
   var chatHistory = [];
   var chatAccepted = false;
   var chatOpen = false;
@@ -7850,6 +7851,7 @@ function sophiaRenderTxnList(data) {
         method:'POST',
         headers:{
           'Content-Type':'application/json',
+          'x-api-key': ATLAS_AI_KEY,
           'anthropic-version':'2023-06-01',
           'anthropic-dangerous-direct-browser-access':'true'
         },
