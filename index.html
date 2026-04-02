@@ -7842,7 +7842,8 @@ function sophiaRenderTxnList(data) {
   // ── Main agent runner ──────────────────────────────────────────────
   async function runAgent(q){
     try {
-      var dataCtx = await gatherContext(q);
+      var dataCtx = '';
+      try { dataCtx = await gatherContext(q); } catch(gErr){ console.warn('gatherContext error:', gErr); }
 
       var systemPrompt = "You are ATLAS AI, a Singapore commercial & industrial property market intelligence assistant embedded in PropertyAtlas.sg.\n\nYou have access to URA REALIS caveated transaction data (1995\u20132026) covering 81,929+ transactions across office, retail, shop house, warehouse, business park, and factory types.\n\nYour role:\n- Answer questions about transaction prices, PSF, volumes, trends, and market dynamics\n- Be concise, data-driven, and professional\n- Format numbers clearly (e.g. S$2.5M, S$1,200 PSF)\n- If data shows clear trends, highlight them\n- Always note data comes from URA caveated transactions\n- Do NOT give investment advice or price predictions\n- Keep responses under 200 words unless a detailed breakdown is requested\n\nLive data context retrieved for this query:\n" + dataCtx;
 
