@@ -7730,6 +7730,7 @@ function sophiaRenderTxnList(data) {
     var wantsProj  = /project|building|development|estate|hub|centre|center|tower|mall|park/.test(ql);
     var wantsType  = /office|retail|shop\s?house|industrial|warehouse|factory|business park|multi.user|single.user/.test(ql);
     var wantsTop   = /top|most|highest|biggest|largest|expensive|cheapest|lowest/.test(ql);
+    var wantsRecent = /recent|latest|last.?month|this.?month|new/.test(ql);
 
     // Determine property type filter
     var typeFilter = '';
@@ -7743,6 +7744,11 @@ function sophiaRenderTxnList(data) {
     else if(/industrial|factory/.test(ql)) typeFilter = "&db_type=eq.Industrial";
     else if(/commercial/.test(ql))  typeFilter = "&db_type=eq.Commercial";
 
+    // District filter
+    var distFilter = '';
+    var distMatch = ql.match(/district\s*(\d{1,2})|d(\d{1,2})\b/);
+    if(distMatch){ var dn = distMatch[1]||distMatch[2]; distFilter = "&postal_district=eq."+dn; ctx += '\n**Filtering for District '+dn+'**\n'; }
+
     // Year filter
     var dateFilter = '';
     if(/2026/.test(ql)) dateFilter = "&sale_date=gte.2026-01-01";
@@ -7751,10 +7757,12 @@ function sophiaRenderTxnList(data) {
     else if(/last.?year|past.?year/.test(ql)) dateFilter = "&sale_date=gte."+(y1)+"-01-01";
     else if(/this.?year/.test(ql)) dateFilter = "&sale_date=gte."+y+"-01-01";
     else if(/last.?2.?year|past.?2.?year/.test(ql)) dateFilter = "&sale_date=gte."+(y-2)+"-01-01";
+    else if(wantsRecent) dateFilter = "&sale_date=gte."+y+"-01-01";
+    var combinedFilter = typeFilter + distFilter;
 
     // 1. Year-by-year volume & value (always useful for trends)
     if(wantsTrend || dateFilter){
-      var yrRows = await sbFetch('transactions?select=sale_date,transacted_price,property_type'+typeFilter+(dateFilter||'&sale_date=gte.2020-01-01')+'&order=sale_date.asc&limit=5000');
+      var yrRows = await sbFetch('transactions?select=sale_date,transacted_price,property_type'+combinedFilter+(dateFilter||'&sale_date=gte.2020-01-01')+'&order=sale_date.asc&limit=5000');
       if(yrRows.length){
         // Aggregate by year
         var byYear = {};
@@ -7773,7 +7781,7 @@ function sophiaRenderTxnList(data) {
 
     // 2. PSF stats
     if(wantsPsf){
-      var psfRows = await sbFetch('transactions?select=unit_price_psf,property_type,sale_date'+typeFilter+(dateFilter||'&sale_date=gte.2023-01-01')+'&unit_price_psf=gt.0&order=sale_date.desc&limit=2000');
+      var psfRows = await sbFetch('transactions?select=unit_price_psf,property_type,sale_date'+combinedFilter+(dateFilter||'&sale_date=gte.2023-01-01')+'&unit_price_psf=gt.0&order=sale_date.desc&limit=2000');
       if(psfRows.length){
         var vals = psfRows.map(function(r){return parseFloat(r.unit_price_psf);}).filter(Boolean).sort(function(a,b){return a-b;});
         var med = vals[Math.floor(vals.length/2)];
@@ -7784,7 +7792,7 @@ function sophiaRenderTxnList(data) {
 
     // 3. Top projects by volume
     if(wantsTop || wantsProj){
-      var topRows = await sbFetch('transactions?select=project_name,transacted_price,property_type'+typeFilter+(dateFilter||'&sale_date=gte.2023-01-01')+'&order=sale_date.desc&limit=3000');
+      var topRows = await sbFetch('transactions?select=project_name,transacted_price,property_type'+combinedFilter+(dateFilter||'&sale_date=gte.2023-01-01')+'&order=sale_date.desc&limit=3000');
       if(topRows.length){
         var projMap = {};
         topRows.forEach(function(r){
@@ -7802,7 +7810,7 @@ function sophiaRenderTxnList(data) {
     }
 
     // 4. Type breakdown — always include
-    var breakRows = await sbFetch('transactions?select=property_type,transacted_price'+(dateFilter||'&sale_date=gte.2024-01-01')+'&order=sale_date.desc&limit=5000');
+    var breakRows = await sbFetch('transactions?select=property_type,transacted_price'+distFilter+(dateFilter||'&sale_date=gte.2024-01-01')+'&order=sale_date.desc&limit=5000');
     if(breakRows.length){
       var typeMap2 = {};
       breakRows.forEach(function(r){
@@ -7818,7 +7826,7 @@ function sophiaRenderTxnList(data) {
     }
 
     // 5. Recent notable deals
-    var recentRows = await sbFetch('transactions?select=project_name,address,property_type,transacted_price,unit_price_psf,sale_date,area_sqft'+typeFilter+(dateFilter||'&sale_date=gte.2026-01-01')+'&order=transacted_price.desc&limit=5');
+    var recentRows = await sbFetch('transactions?select=project_name,address,property_type,transacted_price,unit_price_psf,sale_date,area_sqft'+combinedFilter+(dateFilter||'&sale_date=gte.2026-01-01')+'&order=transacted_price.desc&limit=10');
     if(recentRows.length){
       ctx += '\n\n**Recent Notable Deals**\n';
       recentRows.forEach(function(r,i){
@@ -7840,7 +7848,11 @@ function sophiaRenderTxnList(data) {
 
       var resp = await fetch('https://api.anthropic.com/v1/messages', {
         method:'POST',
-        headers:{'Content-Type':'application/json'},
+        headers:{
+          'Content-Type':'application/json',
+          'anthropic-version':'2023-06-01',
+          'anthropic-dangerous-direct-browser-access':'true'
+        },
         body: JSON.stringify({
           model:'claude-sonnet-4-20250514',
           max_tokens:1000,
