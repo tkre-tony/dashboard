@@ -3361,7 +3361,18 @@ function txRender(){
   function fmtPrice(v){ if(!v) return '—'; var a=Math.abs(v); if(a>=1e6) return 'S$'+(a/1e6).toFixed(2)+'M'; if(a>=1e3) return 'S$'+(a/1e3).toFixed(0)+'K'; return 'S$'+Math.round(a).toLocaleString(); }
   function fmtAnn2(v){ return (v>=0?'+':'')+v.toFixed(1)+'%'; }
   function fmtDt(d){ if(!d) return '—'; var p=d.split('-'); return p[2]+'/'+p[1]+'/'+p[0]; }
-  function tShort(t){ return (t||'').replace('Multiple-User Factory','Multi-User Factory').replace('Multiple-user Factory','Multi-User Factory').replace('Single-User Factory','Single-User Factory').replace('Single-user Factory','Single-User Factory').replace('Business Park','Business Park').replace('Shop House','Shop House'); }
+  function tShort(t){
+    if(!t) return '—';
+    var tl = t.toLowerCase().trim();
+    if(tl==='office') return 'Office';
+    if(tl==='retail') return 'Retail';
+    if(tl==='warehouse') return 'Warehouse';
+    if(tl==='shop house'||tl==='shophouse') return 'Shop House';
+    if(tl==='business park') return 'Business Park';
+    if(tl.indexOf('single-user')>=0||tl.indexOf('single user')>=0) return 'Single-User Factory';
+    if(tl.indexOf('multiple-user')>=0||tl.indexOf('multi-user')>=0||tl.indexOf('multiple user')>=0) return 'Multi-User Factory';
+    return t;
+  }
 
   function renderTxRows(tbodyId, rows, isProfit){
     var el = document.getElementById(tbodyId);
@@ -3576,7 +3587,8 @@ function pnlRenderProjectsTab(){
       var annColor = (isProfitable ? g.med_ann_profit : g.med_ann_loss) >= 0 ? pc : lc;
       var medAnnVal = isProfitable ? g.med_ann_profit : g.med_ann_loss;
       var distLabel = g.postal_district ? 'D'+g.postal_district : '';
-      var typeShort = (g.property_type||'').replace('Multiple-User Factory','Multi-User Factory').replace('Multiple-user Factory','Multi-User Factory').replace('Single-User Factory','Single-User Factory').replace('Single-user Factory','Single-User Factory').replace('Business Park','Business Park').replace('Shop House','Shop House');
+      var tl2 = (g.property_type||'').toLowerCase().trim();
+      var typeShort = tl2==='office'?'Office':tl2==='retail'?'Retail':tl2==='warehouse'?'Warehouse':(tl2==='shop house'||tl2==='shophouse')?'Shop House':tl2==='business park'?'Business Park':(tl2.indexOf('single-user')>=0||tl2.indexOf('single user')>=0)?'Single-User Factory':(tl2.indexOf('multiple-user')>=0||tl2.indexOf('multi-user')>=0||tl2.indexOf('multiple user')>=0)?'Multi-User Factory':(g.property_type||'—');
       var hi, lo, av;
       if(isProfitable){
         hi = fmtMoney(g.high_profit); lo = fmtMoney(g.low_profit); av = fmtMoney(g.avg_profit);
