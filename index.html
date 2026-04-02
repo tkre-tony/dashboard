@@ -4187,6 +4187,7 @@ var ovSortDir = "desc";
 var ovFilteredCache = null; // holds all rows for client-side filter/sort
 var ovCurPage = 0;
 var ovPageSize = 25;
+var ovExactProject = false; // true when query came from autocomplete project selection
 
 function ovDetectType(q){
   // Pure number = district
@@ -4210,9 +4211,14 @@ function getDateForActiveRange(){
 
 async function ovFetchAgg(q){
   var detected = ovDetectType(q);
-  var filter = detected.type === 'district'
-    ? "postal_district=eq." + detected.val
-    : "or=(project_name.ilike.*" + encSQ(detected.val) + "*,address.ilike.*" + encSQ(detected.val) + "*)";
+  var filter;
+  if(detected.type === 'district'){
+    filter = "postal_district=eq." + detected.val;
+  } else if(ovExactProject){
+    filter = "project_name=eq." + encSQ(detected.val);
+  } else {
+    filter = "or=(project_name.ilike.*" + encSQ(detected.val) + "*,address.ilike.*" + encSQ(detected.val) + "*)";
+  }
   // Fetch up to 50000 rows for chart aggregation
   var url = SB_URL + "/rest/v1/transactions?select=sale_date,property_type,transacted_price&" + filter + "&limit=50000";
   var res = await fetch(url, {headers:{"apikey":SB_KEY,"Authorization":"Bearer "+SB_KEY}});
@@ -4221,13 +4227,18 @@ async function ovFetchAgg(q){
 
 async function ovFetchRows(q, page){
   var detected = ovDetectType(q);
-  var filter = detected.type === 'district'
-    ? "postal_district=eq." + detected.val
-    : "or=(project_name.ilike.*" + encSQ(detected.val) + "*,address.ilike.*" + encSQ(detected.val) + "*)";
+  var filter;
+  if(detected.type === 'district'){
+    filter = "postal_district=eq." + detected.val;
+  } else if(ovExactProject){
+    filter = "project_name=eq." + encSQ(detected.val);
+  } else {
+    filter = "or=(project_name.ilike.*" + encSQ(detected.val) + "*,address.ilike.*" + encSQ(detected.val) + "*)";
+  }
   var dateFilter = "&sale_date=gte." + getSliderStartDate() + "&sale_date=lte." + getSliderEndDate();
-  var offset = page * 10;
+  // Fetch all rows for the period — client-side pagination via ovRenderFiltered
   var url = SB_URL + "/rest/v1/transactions?select=id,project_name,address,property_type,transacted_price,area_sqft,unit_price_psf,sale_date,tenure,planning_region,postal_district,type_of_sale,type_of_area&"
-    + filter + dateFilter + "&order=sale_date.desc&limit=10&offset=" + offset;
+    + filter + dateFilter + "&order=sale_date.desc&limit=2000";
   var res = await fetch(url, {
     headers:{"apikey":SB_KEY,"Authorization":"Bearer "+SB_KEY,"Prefer":"count=exact"}
   });
@@ -4268,20 +4279,22 @@ async function ovSearch(page){
     // Update chart with filtered data
     updateChartFromSearch(aggData, q);
 
-    // Show transaction rows
+    // Store ALL fetched rows in cache — ovRenderFiltered handles client-side pagination
     ovTotal = rowResult.total;
+    ovFilteredCache = rowResult.data || [];
+    ovCurPage = 0;
+
     document.getElementById("ov-tx-loading").style.display = "none";
     document.getElementById("ov-tx-title").textContent = "Transactions — " + getActiveRangeLabel();
     document.getElementById("ov-tx-count").textContent = ovTotal.toLocaleString() + " transactions found";
 
-    ovFilteredCache = rowResult.data || [];
-    if(!rowResult.data || rowResult.data.length === 0){
+    if(!ovFilteredCache.length){
       document.getElementById("ov-tx-empty").style.display = "block";
     } else {
-      ovRenderFiltered(rowResult.data);
+      ovRenderFiltered(ovFilteredCache);
+      ovEnrichBuyData(ovFilteredCache);
     }
-  } catch(e){
-    document.getElementById("ov-tx-loading").style.display = "none";
+  } catch(e){\n    document.getElementById("ov-tx-loading").style.display = "none";
     console.error(e);
   }
 }
@@ -4579,11 +4592,7 @@ function renderOvTable(rows){
       + (r.buy_price ? boughtLabel+"<div style='"+mutStyle+"'>S$"+Number(Math.round(r.buy_price)).toLocaleString()+"</div>" : "");
     var psfCell = "<div style='font-size:11px'>"+psf+"</div>"
       + (r.buy_psf ? boughtLabel+"<div style='"+mutStyle+"'>S$"+Math.round(r.buy_psf).toLocaleString()+"</div>" : "");
-    // Row highlight: red sell price if sell price < buy price (unprofitable)
-    var isLoss = r.buy_price && r.transacted_price && parseFloat(r.transacted_price) < parseFloat(r.buy_price);
-    var priceColor = isLoss ? "color:#c62828;" : "";
-    var rowStyle = "font-size:11px;";
-    return "<tr style='"+rowStyle+"'>"
+    return "<tr style='font-size:11px'>"
       +"<td class='mono' style='white-space:nowrap;vertical-align:top;font-size:10.5px'>"+dateCell+"</td>"
       +"<td class='mono' style='font-size:10.5px;white-space:nowrap;vertical-align:top'>"+dist+"</td>"
       +"<td style='font-weight:600;font-size:10.5px;vertical-align:top;word-break:break-word'>"+(r.project_name||"-")+"</td>"
@@ -4591,7 +4600,7 @@ function renderOvTable(rows){
       +"<td style='vertical-align:top;text-align:center'><span class='pill p-tag' style='white-space:nowrap;font-size:9.5px;padding:2px 5px'>"+fmtPropType(r.property_type||"-")+"</span></td>"
       +"<td style='font-size:10px;color:var(--mut);vertical-align:top'>"+tos+(r.buy_tos ? boughtLabel+"<div style='"+mutStyle+"'>"+r.buy_tos+"</div>" : "")+"</td>"
       +"<td style='font-size:10px;color:var(--mut);vertical-align:top'>"+(r.type_of_area||"-")+"</td>"
-      +"<td class='mono' style='vertical-align:top;font-size:10.5px;"+priceColor+"'>"+priceCell+"</td>"
+      +"<td class='mono' style='vertical-align:top;font-size:10.5px'>"+priceCell+"</td>"
       +"<td class='mono' style='font-size:10.5px;vertical-align:top'>"+area+"</td>"
       +"<td class='mono' style='vertical-align:top;font-size:10.5px'>"+psfCell+"</td>"
       +"<td style='font-size:9.5px;color:var(--mut);vertical-align:top;word-break:break-word'>"+formatTenure(r.tenure)+"</td>"
@@ -4808,14 +4817,15 @@ function initOvAutocomplete(){
       items = items.slice(0,10);
       if(!items.length){ dd.style.display="none"; return; }
       dd.innerHTML = items.map(function(item){
-        return '<div class="ac-item" onmousedown="ovSelectAC(\''+item.label.replace(/'/g,"\\'")+'\')"><span style="color:var(--mut);font-size:10px;margin-right:6px;background:var(--srf2);padding:1px 5px;border-radius:3px">'+item.type+'</span><span>'+highlightMatch(item.label,q)+'</span></div>';
+        var isProj = item.type === "Project";
+        return '<div class="ac-item" onmousedown="ovSelectAC(\''+item.label.replace(/'/g,"\\'")+'\','+isProj+')"><span style="color:var(--mut);font-size:10px;margin-right:6px;background:var(--srf2);padding:1px 5px;border-radius:3px">'+item.type+'</span><span>'+highlightMatch(item.label,q)+'</span></div>';
       }).join('');
       dd.style.display = "block";
     }, 250);
   });
 
   inp.addEventListener("keydown", function(e){
-    if(e.key==="Enter"){ dd.style.display="none"; ovSearch(0); }
+    if(e.key==="Enter"){ dd.style.display="none"; ovExactProject=false; ovSearch(0); }
     if(e.key==="Escape"){ dd.style.display="none"; }
   });
 
@@ -4824,9 +4834,10 @@ function initOvAutocomplete(){
   });
 }
 
-function ovSelectAC(val){
+function ovSelectAC(val, isProject){
   document.getElementById("ov-search").value = val;
   document.getElementById("ov-ac-dropdown").style.display = "none";
+  ovExactProject = !!isProject;
   ovSearch(0);
 }
 var acTimer = null;
