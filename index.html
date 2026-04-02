@@ -4294,7 +4294,8 @@ async function ovSearch(page){
       ovRenderFiltered(ovFilteredCache);
       ovEnrichBuyData(ovFilteredCache);
     }
-  } catch(e){\n    document.getElementById("ov-tx-loading").style.display = "none";
+  } catch(e){
+    document.getElementById("ov-tx-loading").style.display = "none";
     console.error(e);
   }
 }
