@@ -7633,7 +7633,8 @@ function sophiaRenderTxnList(data) {
 (function(){
   var CHAT_SB_URL = "https://xywgocvjuygudzrduvwr.supabase.co";
   var CHAT_SB_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inh5d2dvY3ZqdXlndWR6cmR1dndyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzI5MTE5OTgsImV4cCI6MjA4ODQ4Nzk5OH0.lGQ0utJV1E00ug-Sf0ZXh9lEYfhGHSONQpPkBblDLTM";
-  var ATLAS_AI_KEY = "YOUR_ANTHROPIC_API_KEY_HERE"; // ← replace with your Anthropic API key
+  var ATLAS_WORKER_URL = "https://atlas-ai-proxy.tonykoe.workers.dev";
+  var ATLAS_USER_TOKEN = ""; // set to admin token or subscriber token to unlock higher limits
   var chatHistory = [];
   var chatAccepted = false;
   var chatOpen = false;
@@ -7843,31 +7844,44 @@ function sophiaRenderTxnList(data) {
     try {
       var dataCtx = await gatherContext(q);
 
-      var systemPrompt = "You are ATLAS AI, a Singapore commercial & industrial property market intelligence assistant embedded in PropertyAtlas.sg.\n\nYou have access to URA REALIS caveated transaction data (1995–2026) covering 81,929+ transactions across office, retail, shop house, warehouse, business park, and factory types.\n\nYour role:\n- Answer questions about transaction prices, PSF, volumes, trends, and market dynamics\n- Be concise, data-driven, and professional\n- Format numbers clearly (e.g. S$2.5M, S$1,200 PSF)\n- If data shows clear trends, highlight them\n- Always note data comes from URA caveated transactions\n- Do NOT give investment advice or price predictions\n- Keep responses under 200 words unless a detailed breakdown is requested\n\nLive data context retrieved for this query:\n" + dataCtx;
+      var systemPrompt = "You are ATLAS AI, a Singapore commercial & industrial property market intelligence assistant embedded in PropertyAtlas.sg.\n\nYou have access to URA REALIS caveated transaction data (1995\u20132026) covering 81,929+ transactions across office, retail, shop house, warehouse, business park, and factory types.\n\nYour role:\n- Answer questions about transaction prices, PSF, volumes, trends, and market dynamics\n- Be concise, data-driven, and professional\n- Format numbers clearly (e.g. S$2.5M, S$1,200 PSF)\n- If data shows clear trends, highlight them\n- Always note data comes from URA caveated transactions\n- Do NOT give investment advice or price predictions\n- Keep responses under 200 words unless a detailed breakdown is requested\n\nLive data context retrieved for this query:\n" + dataCtx;
 
       chatHistory.push({role:'user', content: q});
 
-      var resp = await fetch('https://api.anthropic.com/v1/messages', {
+      var headers = {'Content-Type':'application/json'};
+      if(ATLAS_USER_TOKEN) headers['X-User-Token'] = ATLAS_USER_TOKEN;
+
+      var resp = await fetch(ATLAS_WORKER_URL, {
         method:'POST',
-        headers:{
-          'Content-Type':'application/json',
-          'x-api-key': ATLAS_AI_KEY,
-          'anthropic-version':'2023-06-01',
-          'anthropic-dangerous-direct-browser-access':'true'
-        },
+        headers: headers,
         body: JSON.stringify({
-          model:'claude-sonnet-4-20250514',
-          max_tokens:1000,
-          system: systemPrompt,
-          messages: chatHistory
+          messages: chatHistory,
+          systemPrompt: systemPrompt,
+          dataContext: dataCtx
         })
       });
 
       var data = await resp.json();
-      var reply = (data.content && data.content[0] && data.content[0].text) || 'Sorry, I couldn\'t process that. Please try again.';
+
+      // Handle rate limit
+      if(resp.status === 429 || data.error === 'rate_limit'){
+        setTyping(false);
+        appendMsg('assistant', '\u26a0\ufe0f ' + data.message);
+        chatBusy = false;
+        document.getElementById('atlas-chat-send').disabled = false;
+        return;
+      }
+
+      var reply = data.reply || 'Sorry, I could not process that. Please try again.';
+
+      // Show usage remaining in footer
+      if(data.usage){
+        var remaining = data.usage.limit - data.usage.used;
+        var usageEl = document.getElementById('atlas-chat-footer');
+        if(usageEl) usageEl.textContent = 'Powered by PropertyAtlas.sg \u00b7 ' + remaining + ' questions remaining today';
+      }
 
       chatHistory.push({role:'assistant', content: reply});
-      // Keep history manageable
       if(chatHistory.length > 12) chatHistory = chatHistory.slice(-12);
 
       setTyping(false);
@@ -7881,7 +7895,6 @@ function sophiaRenderTxnList(data) {
     document.getElementById('atlas-chat-send').disabled = false;
     document.getElementById('atlas-chat-input').focus();
   }
-
   // Auto-resize textarea
   document.addEventListener('DOMContentLoaded', function(){
     var inp = document.getElementById('atlas-chat-input');
