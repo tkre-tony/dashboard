@@ -6737,17 +6737,34 @@ function reitSearch(page){
       ? (p.addr+(p.area?' \u00b7 '+p.area:''))
       : (p.area ? p.area+', '+p.country : p.country);
     var entBadge = '<span style="font-size:9px;font-weight:700;background:rgba(255,255,255,.22);color:#fff;border-radius:3px;padding:1px 5px;letter-spacing:.04em">'+(isDev?'DEV':'REIT')+'</span>';
-    var statusBadge = (isDev && p.status) ? '<span style="padding:2px 7px;border-radius:4px;font-size:9px;font-weight:600;background:#fff3cd;color:#7d5200;border:1px solid #f0c040">'+p.status.split(' — ').pop()+'</span>' : '';
+    // Status detection for callout banners
+    var isDivested = p.status && p.status.indexOf('DIVESTED') >= 0;
+    var isPending  = (p.status && p.status.indexOf('DISPOSAL') >= 0) || (p.notes && p.notes.indexOf('PENDING DISPOSAL') >= 0);
+    var isNewAcq   = p.notes && (p.notes.indexOf('NEW ACQUISITION') >= 0 || p.notes.indexOf('Acquired 2025') >= 0);
+    var statusBadge = (isDev && p.status && !isDivested && !isPending) ? '<span style="padding:2px 7px;border-radius:4px;font-size:9px;font-weight:600;background:#fff3cd;color:#7d5200;border:1px solid #f0c040">'+p.status.split(' — ').pop()+'</span>' : '';
     var countryFlag = p.country!=='Singapore' ? ' \uD83C\uDF10 '+p.country : '';
-    // YoY delta badges (shown when prev_* fields exist — FY2025 UOL assets)
+    // YoY delta badges
     var yoyVal = yoyBadge(p.val, p.prev_val, false);
     var yoyOcc = yoyBadge(p.occ, p.prev_occ, true);
     var yoyNlaDelta = (p.prev_nla_sqm && p.nla_sqm && p.nla_sqm !== p.prev_nla_sqm)
       ? '<span style="font-size:8px;font-weight:700;color:#7c3aed;margin-left:2px">AEI</span>' : '';
-    // New-acquisition tag
-    var newTag = (!p.prev_val && !p.prev_occ && p.ar_year==='FY2025' && p.notes && p.notes.indexOf('NEW ACQUISITION')>=0)
+    // Header NEW badge
+    var newTag = isNewAcq
       ? '<span style="font-size:8px;font-weight:700;background:#16a34a20;color:#16a34a;border:1px solid #16a34a40;border-radius:3px;padding:1px 5px;margin-left:4px">NEW</span>' : '';
-    html += '<div data-reitkey="'+assetKey+'" style="background:var(--srf);border:1px solid var(--bdr);border-radius:11px;padding:0;cursor:pointer;transition:box-shadow .15s,transform .15s;overflow:hidden;display:flex;flex-direction:column">'
+    // Full-width callout banner at top of card
+    var calloutBanner = '';
+    if(isDivested){
+      var priceMatch = (p.status||''). match(/S\$[\d,.]+[MBK]?/);
+      var priceStr = priceMatch ? ' · '+priceMatch[0] : '';
+      calloutBanner = '<div style="background:#7f1d1d;color:#fca5a5;font-size:10px;font-weight:700;text-align:center;padding:5px 10px;letter-spacing:.06em;text-transform:uppercase">⚓ Divested'+priceStr+'</div>';
+    } else if(isPending){
+      calloutBanner = '<div style="background:#78350f;color:#fcd34d;font-size:10px;font-weight:700;text-align:center;padding:5px 10px;letter-spacing:.06em;text-transform:uppercase">⏳ Pending Disposal</div>';
+    } else if(isNewAcq){
+      calloutBanner = '<div style="background:#14532d;color:#86efac;font-size:10px;font-weight:700;text-align:center;padding:5px 10px;letter-spacing:.06em;text-transform:uppercase">✴ Newly Acquired FY2025</div>';
+    }
+    var borderCol = isDivested ? '#7f1d1d' : isPending ? '#78350f' : isNewAcq ? '#14532d' : 'var(--bdr)';
+    html += '<div data-reitkey="'+assetKey+'" style="background:var(--srf);border:1px solid '+borderCol+';border-radius:11px;padding:0;cursor:pointer;transition:box-shadow .15s,transform .15s;overflow:hidden;display:flex;flex-direction:column">'
+      +calloutBanner
       +'<div style="background:'+rc+';padding:10px 14px 9px;display:flex;justify-content:space-between;align-items:flex-start">'
       +'<div style="flex:1;min-width:0"><div style="font-size:10px;font-weight:700;color:rgba(255,255,255,.9);text-transform:uppercase;letter-spacing:.05em;line-height:1.3;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">'+p.entity+'</div>'
       +'<div style="margin-top:3px">'+entBadge+newTag+'</div></div>'
