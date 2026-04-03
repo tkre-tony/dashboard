@@ -2652,6 +2652,43 @@ function nrCatClass(cat){
 function nrSentDot(s){
   return '<span class="sent-dot '+(s==="positive"?"sent-pos":s==="negative"?"sent-neg":"sent-neu")+'"></span>';
 }
+// Converts plain-text summary (with \n\n sections and bullet-style lines) into readable HTML
+function formatNewsSummary(text){
+  if(!text) return '';
+  // Split into paragraphs on double newline
+  var paras = text.split(/\n\n+/);
+  var html = '';
+  paras.forEach(function(para){
+    para = para.trim();
+    if(!para) return;
+    // All-caps section header (e.g. "KEY TRANSACTIONS", "HOSPITALITY — PIPELINE", "SINGAPORE OFFICE: STABLE...")
+    if(/^[A-Z][A-Z0-9\s\:\-\/&—,]+$/.test(para) && para.length < 100){
+      html += '<div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:var(--g2);margin:14px 0 6px;border-bottom:1px solid var(--bdr);padding-bottom:4px">'+para+'</div>';
+      return;
+    }
+    // Lines within a paragraph — split on sentence boundaries or explicit \n
+    var lines = para.split(/\n/);
+    if(lines.length > 1){
+      // Multi-line block → bullet list
+      html += '<ul style="margin:0 0 8px;padding-left:16px;list-style:none">';
+      lines.forEach(function(line){
+        line = line.trim();
+        if(!line) return;
+        // Bold the lead keyword up to first colon (e.g. "KINEX Divestment (Oct 2025):")
+        line = line.replace(/^([^:]{3,50}:)(\s)/, '<strong>$1</strong>$2');
+        html += '<li style="font-size:12px;line-height:1.65;color:var(--txt);margin-bottom:5px;padding-left:2px">'+
+          '<span style="color:var(--g2);margin-right:6px;font-size:10px">▸</span>'+line+'</li>';
+      });
+      html += '</ul>';
+    } else {
+      // Single paragraph — check if it has a bold-able lead
+      var line = para.replace(/^([^:]{3,60}:)(\s)/, '<strong>$1</strong>$2');
+      html += '<p style="font-size:12px;line-height:1.65;color:var(--txt);margin:0 0 8px">'+line+'</p>';
+    }
+  });
+  return html;
+}
+
 function renderNewsroom(){
   var q=(document.getElementById("nr-search")||{value:""}).value.toLowerCase().trim();
   var list=newsCat==="All"?NEWS:NEWS.filter(function(n){return n.category===newsCat;});
@@ -2699,7 +2736,7 @@ function renderNewsroom(){
     +'<span class="pill p-tag">'+hero.tag+'</span>'
     +'</div>'
     +'<div style="font-size:11px;color:var(--mut)">Click to expand ↓</div>'
-    +'<div class="nr-hero-body">'+hero.summary+heroImg+heroSrc+heroLink+'</div>'
+    +'<div class="nr-hero-body">'+formatNewsSummary(hero.summary)+heroImg+heroSrc+heroLink+'</div>'
     +'</div>';
 
   if(divWrap) divWrap.innerHTML=rest.length?'<div class="nr-divider">Earlier coverage</div>':'';
@@ -2718,7 +2755,7 @@ function renderNewsroom(){
         var ci=nd.image?'<img src="'+nd.image+'" style="width:100%;border-radius:5px;margin:10px 0 4px;display:block;cursor:zoom-in" onclick="event.stopPropagation();this.style.width=this.style.width===\'60%\'?\'100%\':\'60%\'" >':'';
         var cs=nd.sourceLabel?'<div class="nr-source-credit">Source: '+nd.sourceLabel+'</div>':'';
         var cl=nd.articleUrl?'<a href="'+nd.articleUrl+'" target="_blank" rel="noopener" onclick="event.stopPropagation()" class="nr-read-more">Read full article ↗</a>':'';
-        return '<div class="nr-card-body">'+nd.summary+ci+cs+cl+'</div>';
+        return '<div class="nr-card-body">'+formatNewsSummary(nd.summary)+ci+cs+cl+'</div>';
       })(n)
       +'</div>';
   }).join('');
