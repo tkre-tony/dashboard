@@ -1309,6 +1309,14 @@ html,body{background:var(--bg);color:var(--txt);font-family:'DM Sans',sans-serif
           <button id="ent-reit" onclick="reitSetEntity('REIT')" style="padding:5px 14px;border:none;border-radius:7px;font-size:12px;font-weight:600;font-family:'DM Sans',sans-serif;cursor:pointer;background:transparent;color:var(--mut);transition:all .15s">REITs</button>
           <button id="ent-dev" onclick="reitSetEntity('DEV')" style="padding:5px 14px;border:none;border-radius:7px;font-size:12px;font-weight:600;font-family:'DM Sans',sans-serif;cursor:pointer;background:transparent;color:var(--mut);transition:all .15s">Developers</button>
         </div>
+        <!-- AR freshness legend -->
+        <div style="display:flex;gap:10px;align-items:center;margin-left:auto;background:var(--srf2);border:1px solid var(--bdr);border-radius:8px;padding:5px 12px">
+          <span style="font-size:9px;color:var(--mut);font-weight:600;text-transform:uppercase;letter-spacing:.04em">AR Data</span>
+          <span style="font-size:10px;color:var(--mut)"><span style="color:#4ade80">●</span> FY2025</span>
+          <span style="font-size:10px;color:var(--mut)"><span style="color:#f59e0b">●</span> FY2024</span>
+          <span style="font-size:10px;color:var(--mut)"><span style="color:#6b7280">●</span> Older</span>
+        </div>
+        </div>
         <div style="height:28px;width:1px;background:var(--bdr)"></div>
         <input id="reit-search" placeholder="🔍  Search building, address, area..." autocomplete="off"
           class="cs-input" style="flex:1;min-width:180px"
@@ -1358,45 +1366,45 @@ html,body{background:var(--bg);color:var(--txt);font-family:'DM Sans',sans-serif
       <div id="chip-reit-row" style="display:flex;gap:6px;flex-wrap:wrap;align-items:center;margin-bottom:9px">
         <span class="fbar-label">REIT</span>
         <button class="dir-tbtn on" data-reitf="" onclick="reitSetFilter(this,'reit','')">All</button>
-        <button class="dir-tbtn" data-reitf="AIMS APAC REIT" onclick="reitSetFilter(this,'reit','AIMS APAC REIT')">AIMS APAC</button>
-        <button class="dir-tbtn" data-reitf="Alpha Integrated REIT (former Sabana)" onclick="reitSetFilter(this,'reit','Alpha Integrated REIT (former Sabana)')">Alpha/Sabana</button>
-        <button class="dir-tbtn" data-reitf="CapitaLand Ascendas REIT (CLAR)" onclick="reitSetFilter(this,'reit','CapitaLand Ascendas REIT (CLAR)')">CLAR</button>
-        <button class="dir-tbtn" data-reitf="CapitaLand Integrated Commercial Trust" onclick="reitSetFilter(this,'reit','CapitaLand Integrated Commercial Trust')">CICT</button>
-        <button class="dir-tbtn" data-reitf="CDL Hospitality Trusts" onclick="reitSetFilter(this,'reit','CDL Hospitality Trusts')">CDL Hosp</button>
-        <button class="dir-tbtn" data-reitf="Frasers Centrepoint Trust" onclick="reitSetFilter(this,'reit','Frasers Centrepoint Trust')">Frasers CT</button>
-        <button class="dir-tbtn" data-reitf="Frasers Logistics & Commercial Trust" onclick="reitSetFilter(this,'reit','Frasers Logistics & Commercial Trust')">Frasers LCT</button>
-        <button class="dir-tbtn" data-reitf="Keppel DC REIT" onclick="reitSetFilter(this,'reit','Keppel DC REIT')">Keppel DC</button>
-        <button class="dir-tbtn" data-reitf="Digital Core REIT" onclick="reitSetFilter(this,'reit','Digital Core REIT')">Digital Core</button>
-        <button class="dir-tbtn" data-reitf="Keppel REIT" onclick="reitSetFilter(this,'reit','Keppel REIT')">Keppel REIT</button>
-        <button class="dir-tbtn" data-reitf="Lendlease Global Commercial REIT" onclick="reitSetFilter(this,'reit','Lendlease Global Commercial REIT')">Lendlease</button>
-        <button class="dir-tbtn" data-reitf="Mapletree Industrial Trust" onclick="reitSetFilter(this,'reit','Mapletree Industrial Trust')">MINT</button>
-        <button class="dir-tbtn" data-reitf="Mapletree Logistics Trust" onclick="reitSetFilter(this,'reit','Mapletree Logistics Trust')">MLT</button>
-        <button class="dir-tbtn" data-reitf="OUE REIT" onclick="reitSetFilter(this,'reit','OUE REIT')">OUE REIT</button>
+        <button class="dir-tbtn" data-reitf="AIMS APAC REIT" onclick="reitSetFilter(this,'reit','AIMS APAC REIT')">AIMS APAC <span style="color:#4ade80;font-size:8px">●</span></button>
+        <button class="dir-tbtn" data-reitf="Alpha Integrated REIT (former Sabana)" onclick="reitSetFilter(this,'reit','Alpha Integrated REIT (former Sabana)')">Alpha/Sabana <span style="color:#f59e0b;font-size:8px">●</span></button>
+        <button class="dir-tbtn" data-reitf="CapitaLand Ascott Trust (CLAS)" onclick="reitSetFilter(this,'reit','CapitaLand Ascott Trust (CLAS)')">CLAS <span style="color:#f59e0b;font-size:8px">●</span></button>
+        <button class="dir-tbtn" data-reitf="CapitaLand Ascendas REIT (CLAR)" onclick="reitSetFilter(this,'reit','CapitaLand Ascendas REIT (CLAR)')">CLAR <span style="color:#f59e0b;font-size:8px">●</span></button>
+        <button class="dir-tbtn" data-reitf="CDL Hospitality Trusts" onclick="reitSetFilter(this,'reit','CDL Hospitality Trusts')">CDL Hosp <span style="color:#f59e0b;font-size:8px">●</span></button>
+        <button class="dir-tbtn" data-reitf="CapitaLand Integrated Commercial Trust" onclick="reitSetFilter(this,'reit','CapitaLand Integrated Commercial Trust')">CICT <span style="color:#f59e0b;font-size:8px">●</span></button>
+        <button class="dir-tbtn" data-reitf="Digital Core REIT" onclick="reitSetFilter(this,'reit','Digital Core REIT')">Digital Core <span style="color:#f59e0b;font-size:8px">●</span></button>
+        <button class="dir-tbtn" data-reitf="ESR-REIT" onclick="reitSetFilter(this,'reit','ESR-REIT')">ESR-REIT <span style="color:#f59e0b;font-size:8px">●</span></button>
+        <button class="dir-tbtn" data-reitf="Frasers Centrepoint Trust" onclick="reitSetFilter(this,'reit','Frasers Centrepoint Trust')">Frasers CT <span style="color:#4ade80;font-size:8px">●</span></button>
+        <button class="dir-tbtn" data-reitf="Frasers Logistics & Commercial Trust" onclick="reitSetFilter(this,'reit','Frasers Logistics & Commercial Trust')">Frasers LCT <span style="color:#4ade80;font-size:8px">●</span></button>
+        <button class="dir-tbtn" data-reitf="GuocoLand" onclick="reitSetFilter(this,'reit','GuocoLand')">GuocoLand <span style="color:#f59e0b;font-size:8px">●</span></button>
+        <button class="dir-tbtn" data-reitf="Keppel DC REIT" onclick="reitSetFilter(this,'reit','Keppel DC REIT')">Keppel DC <span style="color:#f59e0b;font-size:8px">●</span></button>
+        <button class="dir-tbtn" data-reitf="Keppel REIT" onclick="reitSetFilter(this,'reit','Keppel REIT')">Keppel REIT <span style="color:#f59e0b;font-size:8px">●</span></button>
+        <button class="dir-tbtn" data-reitf="Lendlease Global Commercial REIT" onclick="reitSetFilter(this,'reit','Lendlease Global Commercial REIT')">Lendlease <span style="color:#4ade80;font-size:8px">●</span></button>
+        <button class="dir-tbtn" data-reitf="Mapletree Industrial Trust" onclick="reitSetFilter(this,'reit','Mapletree Industrial Trust')">MINT <span style="color:#4ade80;font-size:8px">●</span></button>
+        <button class="dir-tbtn" data-reitf="Mapletree Logistics Trust" onclick="reitSetFilter(this,'reit','Mapletree Logistics Trust')">MLT <span style="color:#4ade80;font-size:8px">●</span></button>
+        <button class="dir-tbtn" data-reitf="MPACT" onclick="reitSetFilter(this,'reit','MPACT')">MPACT <span style="color:#4ade80;font-size:8px">●</span></button>
+        <button class="dir-tbtn" data-reitf="OUE REIT" onclick="reitSetFilter(this,'reit','OUE REIT')">OUE REIT <span style="color:#f59e0b;font-size:8px">●</span></button>
         <button class="dir-tbtn" data-reitf="Paragon REIT (Delisted)" onclick="reitSetFilter(this,'reit','Paragon REIT (Delisted)')">Paragon ⚫</button>
-        <button class="dir-tbtn" data-reitf="Starhill Global REIT" onclick="reitSetFilter(this,'reit','Starhill Global REIT')">Starhill Global</button>
-        <button class="dir-tbtn" data-reitf="Wing Tai Holdings" onclick="reitSetFilter(this,'reit','Wing Tai Holdings')">Wing Tai</button>
-        <button class="dir-tbtn" data-reitf="GuocoLand" onclick="reitSetFilter(this,'reit','GuocoLand')">GuocoLand</button>
-        <button class="dir-tbtn" data-reitf="Suntec REIT" onclick="reitSetFilter(this,'reit','Suntec REIT')">Suntec REIT</button>
-        <button class="dir-tbtn" data-reitf="MPACT" onclick="reitSetFilter(this,'reit','MPACT')">MPACT</button>
-        <button class="dir-tbtn" data-reitf="ESR-REIT" onclick="reitSetFilter(this,'reit','ESR-REIT')">ESR-REIT</button>
-        <button class="dir-tbtn" data-reitf="CapitaLand Ascott Trust (CLAS)" onclick="reitSetFilter(this,'reit','CapitaLand Ascott Trust (CLAS)')">CLAS</button>
+        <button class="dir-tbtn" data-reitf="Starhill Global REIT" onclick="reitSetFilter(this,'reit','Starhill Global REIT')">Starhill Global <span style="color:#4ade80;font-size:8px">●</span></button>
+        <button class="dir-tbtn" data-reitf="Suntec REIT" onclick="reitSetFilter(this,'reit','Suntec REIT')">Suntec REIT <span style="color:#f59e0b;font-size:8px">●</span></button>
+        <button class="dir-tbtn" data-reitf="Wing Tai Holdings" onclick="reitSetFilter(this,'reit','Wing Tai Holdings')">Wing Tai <span style="color:#4ade80;font-size:8px">●</span></button>
       </div>
       <div id="chip-dev-row" style="display:flex;gap:6px;flex-wrap:wrap;align-items:center;margin-bottom:9px">
         <span class="fbar-label">Developer</span>
         <button class="dir-tbtn on" data-devf="" onclick="reitSetFilter(this,'dev','')">All</button>
-        <button class="dir-tbtn" data-devf="CDL" onclick="reitSetFilter(this,'dev','CDL')">CDL</button>
-        <button class="dir-tbtn" data-devf="SingLand" onclick="reitSetFilter(this,'dev','SingLand')">SingLand</button>
-        <button class="dir-tbtn" data-devf="UOL Group" onclick="reitSetFilter(this,'dev','UOL Group')">UOL Group</button>
-        <button class="dir-tbtn" data-devf="Ho Bee Land" onclick="reitSetFilter(this,'dev','Ho Bee Land')">Ho Bee Land</button>
-        <button class="dir-tbtn" data-devf="Hong Fok Corporation" onclick="reitSetFilter(this,'dev','Hong Fok Corporation')">Hong Fok</button>
-        <button class="dir-tbtn" data-devf="Parkway Life REIT" onclick="reitSetFilter(this,'dev','Parkway Life REIT')">PLife REIT</button>
-        <button class="dir-tbtn" data-devf="Far East Hospitality Trust" onclick="reitSetFilter(this,'dev','Far East Hospitality Trust')">FE H-Trust</button>
-        <button class="dir-tbtn" data-devf="Far East Orchard" onclick="reitSetFilter(this,'dev','Far East Orchard')">FE Orchard</button>
-        <button class="dir-tbtn" data-devf="Acrophyte Hospitality Trust" onclick="reitSetFilter(this,'dev','Acrophyte Hospitality Trust')">Acrophyte HT</button>
-        <button class="dir-tbtn" data-devf="Bukit Sembawang Estates" onclick="reitSetFilter(this,'dev','Bukit Sembawang Estates')">Bukit Sembawang</button>
-        <button class="dir-tbtn" data-devf="Oxley Holdings" onclick="reitSetFilter(this,'dev','Oxley Holdings')">Oxley Holdings</button>
-        <button class="dir-tbtn" data-devf="Wee Hur Holdings" onclick="reitSetFilter(this,'dev','Wee Hur Holdings')">Wee Hur Holdings</button>
-        <button class="dir-tbtn" data-devf="SLB Development (Delisted)" onclick="reitSetFilter(this,'dev','SLB Development (Delisted)')">SLB Development</button>
+        <button class="dir-tbtn" data-devf="Acrophyte Hospitality Trust" onclick="reitSetFilter(this,'dev','Acrophyte Hospitality Trust')">Acrophyte HT <span style="color:#4ade80;font-size:8px">●</span></button>
+        <button class="dir-tbtn" data-devf="Bukit Sembawang Estates" onclick="reitSetFilter(this,'dev','Bukit Sembawang Estates')">Bukit Sembawang <span style="color:#4ade80;font-size:8px">●</span></button>
+        <button class="dir-tbtn" data-devf="CDL" onclick="reitSetFilter(this,'dev','CDL')">CDL <span style="color:#f59e0b;font-size:8px">●</span></button>
+        <button class="dir-tbtn" data-devf="Far East Hospitality Trust" onclick="reitSetFilter(this,'dev','Far East Hospitality Trust')">FE H-Trust <span style="color:#f59e0b;font-size:8px">●</span></button>
+        <button class="dir-tbtn" data-devf="Far East Orchard" onclick="reitSetFilter(this,'dev','Far East Orchard')">FE Orchard <span style="color:#f59e0b;font-size:8px">●</span></button>
+        <button class="dir-tbtn" data-devf="Ho Bee Land" onclick="reitSetFilter(this,'dev','Ho Bee Land')">Ho Bee Land <span style="color:#f59e0b;font-size:8px">●</span></button>
+        <button class="dir-tbtn" data-devf="Hong Fok Corporation" onclick="reitSetFilter(this,'dev','Hong Fok Corporation')">Hong Fok <span style="color:#f59e0b;font-size:8px">●</span></button>
+        <button class="dir-tbtn" data-devf="Oxley Holdings" onclick="reitSetFilter(this,'dev','Oxley Holdings')">Oxley Holdings <span style="color:#4ade80;font-size:8px">●</span></button>
+        <button class="dir-tbtn" data-devf="Parkway Life REIT" onclick="reitSetFilter(this,'dev','Parkway Life REIT')">PLife REIT <span style="color:#f59e0b;font-size:8px">●</span></button>
+        <button class="dir-tbtn" data-devf="SingLand" onclick="reitSetFilter(this,'dev','SingLand')">SingLand <span style="color:#f59e0b;font-size:8px">●</span></button>
+        <button class="dir-tbtn" data-devf="SLB Development (Delisted)" onclick="reitSetFilter(this,'dev','SLB Development (Delisted)')">SLB Dev ⚫</button>
+        <button class="dir-tbtn" data-devf="UOL Group" onclick="reitSetFilter(this,'dev','UOL Group')">UOL Group <span style="color:#4ade80;font-size:8px">●</span></button>
+        <button class="dir-tbtn" data-devf="Wee Hur Holdings" onclick="reitSetFilter(this,'dev','Wee Hur Holdings')">Wee Hur <span style="color:#f59e0b;font-size:8px">●</span></button>
       </div>
 
       <!-- Row 3: Asset type chips -->
@@ -6686,7 +6694,7 @@ function reitSearch(page){
     var nla = p.nla_sqm ? (p.nla_sqm>=10000?(p.nla_sqm/1000).toFixed(0)+'K sqm':p.nla_sqm.toLocaleString()+' sqm') : '\u2014';
     var occ = p.occ ? p.occ.toFixed(1)+'%' : '\u2014';
     var val = p.val ? 'S$'+p.val.toLocaleString()+'M' : '\u2014';
-    var globalIdx = reitPage * reitPageSize + idx;
+    var assetKey = p.name.replace(/'/g,"\\'");
     var isDev = p.entity_type==='DEV';
     var locLine = p.country==='Singapore'
       ? (p.addr+(p.area?' \u00b7 '+p.area:''))
@@ -6702,7 +6710,7 @@ function reitSearch(page){
     // New-acquisition tag
     var newTag = (!p.prev_val && !p.prev_occ && p.ar_year==='FY2025' && p.notes && p.notes.indexOf('NEW ACQUISITION')>=0)
       ? '<span style="font-size:8px;font-weight:700;background:#16a34a20;color:#16a34a;border:1px solid #16a34a40;border-radius:3px;padding:1px 5px;margin-left:4px">NEW</span>' : '';
-    html += '<div data-reitidx="'+globalIdx+'" style="background:var(--srf);border:1px solid var(--bdr);border-radius:11px;padding:0;cursor:pointer;transition:box-shadow .15s,transform .15s;overflow:hidden;display:flex;flex-direction:column">'
+    html += '<div data-reitkey="'+assetKey+'" style="background:var(--srf);border:1px solid var(--bdr);border-radius:11px;padding:0;cursor:pointer;transition:box-shadow .15s,transform .15s;overflow:hidden;display:flex;flex-direction:column">'
       +'<div style="background:'+rc+';padding:10px 14px 9px;display:flex;justify-content:space-between;align-items:flex-start">'
       +'<div style="flex:1;min-width:0"><div style="font-size:10px;font-weight:700;color:rgba(255,255,255,.9);text-transform:uppercase;letter-spacing:.05em;line-height:1.3;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">'+p.entity+'</div>'
       +'<div style="margin-top:3px">'+entBadge+newTag+'</div></div>'
@@ -6720,16 +6728,18 @@ function reitSearch(page){
       +'<div style="background:var(--srf2);border-radius:7px;padding:7px 5px;text-align:center"><div style="font-size:12px;font-weight:700;color:var(--txt)">'+occ+yoyOcc+'</div><div style="font-size:8px;color:var(--mut);text-transform:uppercase;letter-spacing:.04em;margin-top:1px">Occupancy</div></div>'
       +'<div style="background:var(--srf2);border-radius:7px;padding:7px 5px;text-align:center"><div style="font-size:11px;font-weight:700;color:var(--txt)">'+nla+yoyNlaDelta+'</div><div style="font-size:8px;color:var(--mut);text-transform:uppercase;letter-spacing:.04em;margin-top:1px">NLA</div></div>'
       +'</div>'
-      +'<div style="margin-top:7px;font-size:9px;color:var(--mut);text-align:right;font-style:italic">Figures from '+p.ar_year+' Annual Report</div>'
+      +'<div style="margin-top:7px;font-size:9px;color:var(--mut);text-align:right;font-style:italic">'
+      +(p.ar_year==='FY2025'?'<span style="color:#4ade80;font-size:9px">●</span> ':p.ar_year==='FY2024'?'<span style="color:#f59e0b;font-size:9px">●</span> ':'<span style="color:#6b7280;font-size:9px">●</span> ')
+      +'Figures from '+p.ar_year+' Annual Report</div>'
       +'</div>'
       +'</div>';
   });
 
   var grid = document.getElementById('reit-grid');
   grid.innerHTML = html;
-  grid.querySelectorAll('[data-reitidx]').forEach(function(card){
-    var idx = parseInt(card.dataset.reitidx);
-    card.addEventListener('click', function(){ reitOpenDetail(idx); });
+  grid.querySelectorAll('[data-reitkey]').forEach(function(card){
+    var key = card.dataset.reitkey;
+    card.addEventListener('click', function(){ reitOpenDetail(key); });
     card.addEventListener('mouseenter', function(){ this.style.boxShadow='0 4px 18px rgba(33,81,59,.13)'; this.style.transform='translateY(-1px)'; });
     card.addEventListener('mouseleave', function(){ this.style.boxShadow='none'; this.style.transform='none'; });
   });
