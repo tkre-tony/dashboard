@@ -1293,6 +1293,9 @@ html,body{background:var(--bg);color:var(--txt);font-family:'DM Sans',sans-serif
       </div>
     </div>
 
+    <!-- AR Tracker notification banner (hidden by default, shown when new ARs detected) -->
+    <div id="ar-tracker-banner" style="display:none;align-items:center;gap:10px;background:linear-gradient(135deg,#1e3a5f,#1a2d4a);border:1px solid #2563bc;border-radius:10px;padding:12px 16px;margin-bottom:14px;color:#bfdbfe"></div>
+
     <div class="card" style="margin-bottom:14px">
 
       <!-- Row 1: Geo toggle + Entity toggle -->
@@ -6589,6 +6592,55 @@ var REIT_TYPE_ICONS = {
 
 var reitActiveEntity = '';
 var reitActiveDev = '';
+
+// ── AR Tracker — new AR notifications ────────────────────────────────────────
+var AR_TRACKER_DATA = [];  // loaded from Supabase ar_tracker table
+var arTrackerLoaded = false;
+
+async function loadARTracker(){
+  if(arTrackerLoaded) return;
+  try {
+    var res = await fetch(SB_URL+'/rest/v1/ar_tracker?select=entity_name,last_ar_year,last_ar_date,new_ar_flag,last_checked_at&order=entity_name.asc', {
+      headers:{'apikey':SB_KEY,'Authorization':'Bearer '+SB_KEY}
+    });
+    if(!res.ok) return;
+    AR_TRACKER_DATA = await res.json();
+    arTrackerLoaded = true;
+    renderARTrackerBanner();
+  } catch(e){ console.warn('AR Tracker load failed:', e); }
+}
+
+function getARStatus(entityName){
+  var row = AR_TRACKER_DATA.find(function(r){ return r.entity_name === entityName; });
+  if(!row) return null;
+  return row;
+}
+
+function renderARTrackerBanner(){
+  // Show a banner if any new ARs were flagged since last visit
+  var newARs = AR_TRACKER_DATA.filter(function(r){ return r.new_ar_flag; });
+  var bannerEl = document.getElementById('ar-tracker-banner');
+  if(!bannerEl) return;
+  if(newARs.length === 0){
+    bannerEl.style.display = 'none';
+    return;
+  }
+  var names = newARs.map(function(r){ return r.entity_name+' ('+r.last_ar_year+')'; }).join(' · ');
+  bannerEl.style.display = 'flex';
+  bannerEl.innerHTML =
+    '<span style="font-size:13px;margin-right:8px">📋</span>'
+    +'<span style="flex:1;font-size:11px"><strong>New Annual Reports available:</strong> '+names+'</span>'
+    +'<button onclick="dismissARBanner()" style="background:rgba(255,255,255,.15);border:none;color:#fff;padding:3px 10px;border-radius:5px;font-size:11px;cursor:pointer;flex-shrink:0">Dismiss</button>';
+}
+
+async function dismissARBanner(){
+  // Mark all new_ar_flag = false via service call through Worker
+  // (anon key can't write — just hide locally for now, Worker will reset on next check)
+  var bannerEl = document.getElementById('ar-tracker-banner');
+  if(bannerEl) bannerEl.style.display = 'none';
+  AR_TRACKER_DATA.forEach(function(r){ r.new_ar_flag = false; });
+}
+// ─────────────────────────────────────────────────────────────────────────────
 var reitActiveAsset = '';
 var reitActiveGeo = 'SG';
 var reitActiveEntType = 'ALL';
@@ -6783,8 +6835,13 @@ function reitSearch(page){
       +'<div style="background:var(--srf2);border-radius:7px;padding:7px 5px;text-align:center"><div style="font-size:11px;font-weight:700;color:var(--txt)">'+nla+yoyNlaDelta+'</div><div style="font-size:8px;color:var(--mut);text-transform:uppercase;letter-spacing:.04em;margin-top:1px">NLA</div></div>'
       +'</div>'
       +'<div style="margin-top:7px;font-size:9px;color:var(--mut);text-align:right;font-style:italic">'
-      +(p.ar_year==='FY2025'?'<span style="color:#4ade80;font-size:9px">●</span> ':p.ar_year==='FY2024'?'<span style="color:#f59e0b;font-size:9px">●</span> ':'<span style="color:#6b7280;font-size:9px">●</span> ')
-      +'Figures from '+p.ar_year+' Annual Report</div>'
+      +(function(){
+          var dot = p.ar_year==='FY2025'?'<span style="color:#4ade80;font-size:9px">●</span> ':p.ar_year==='FY2024'?'<span style="color:#f59e0b;font-size:9px">●</span> ':'<span style="color:#6b7280;font-size:9px">●</span> ';
+          var arRow = getARStatus(p.entity);
+          var newBadge = (arRow && arRow.new_ar_flag) ? ' <span style="background:#2563bc;color:#fff;font-size:8px;font-weight:700;padding:1px 5px;border-radius:3px;vertical-align:middle">NEW AR</span>' : '';
+          return dot+'Figures from '+p.ar_year+' Annual Report'+newBadge;
+        }())
+      +'</div>'
       +'</div>'
       +'</div>';
   });
@@ -6889,7 +6946,16 @@ function reitOpenDetail(idx){
     +'<div style="font-size:10px;font-weight:600;color:#7d5200;margin-bottom:4px">\u26a0\ufe0f Data Disclaimer</div>'
     +'<div style="font-size:10px;color:#7d5200">Figures sourced from '+p.source+'. Values as reported in the '+p.ar_year+' Annual Report and may not reflect current market conditions.</div></div>';
 
-  document.getElementById('rdet-source').textContent='\uD83D\uDCCB '+p.source+' \u00b7 Figures from '+p.ar_year+' AR';
+  document.getElementById('rdet-source').innerHTML = (function(){
+    var base = '\uD83D\uDCCB '+p.source+' \u00b7 Figures from '+p.ar_year+' AR';
+    var arRow = getARStatus(p.entity);
+    if(!arRow) return base;
+    var checkedStr = arRow.last_checked_at ? ' \u00b7 SGX checked '+arRow.last_checked_at.substring(0,10) : '';
+    var newBadge = arRow.new_ar_flag
+      ? ' <span style="background:#2563bc;color:#fff;font-size:9px;font-weight:700;padding:2px 7px;border-radius:4px;vertical-align:middle;margin-left:4px">NEW AR — '+arRow.last_ar_year+'</span>'
+      : '';
+    return base + checkedStr + newBadge;
+  }());
 }
 
 function reitCloseDetail(){
@@ -6915,7 +6981,7 @@ function reitClear(){
 
 // Trigger search on tab click
 document.querySelectorAll(".navtab").forEach(function(t){
-  if(t.dataset.tab==="reit") t.addEventListener("click",function(){ reitSearch(0); });
+  if(t.dataset.tab==="reit") t.addEventListener("click",function(){ reitSearch(0); loadARTracker(); });
 });
 
 // ══════════════════════════════════════════════════════════
@@ -7981,7 +8047,7 @@ function sophiaRenderTxnList(data) {
     }
 
     // 5. Recent notable deals
-    var recentRows = await sbFetch('transactions?select=project_name,address,property_type,transacted_price,unit_price_psf,sale_date,area_sqft'+combinedFilter+(dateFilter||'&sale_date=gte.2026-01-01')+'&order=transacted_price.desc&limit=10');
+    var recentRows = await sbFetch('transactions?select=project_name,address,property_type,transacted_price,unit_price_psf,sale_date,area_sqft'+combinedFilter+(dateFilter||'&sale_date=gte.2026-01-01')+'&order=sale_date.desc&limit=10');
     if(recentRows.length){
       ctx += '\n\n**Recent Notable Deals**\n';
       recentRows.forEach(function(r,i){
@@ -7998,7 +8064,7 @@ function sophiaRenderTxnList(data) {
       var dataCtx = '';
       try { dataCtx = await gatherContext(q); } catch(gErr){ console.warn('gatherContext error:', gErr); }
 
-      var systemPrompt = "You are ATLAS AI, a Singapore commercial & industrial property market intelligence assistant embedded in PropertyAtlas.sg.\n\nYou have access to URA REALIS caveated transaction data (1995\u20132026) covering 81,929+ transactions across office, retail, shop house, warehouse, business park, and factory types.\n\nYour role:\n- Answer questions about transaction prices, PSF, volumes, trends, and market dynamics\n- Be concise, data-driven, and professional\n- Format numbers clearly (e.g. S$2.5M, S$1,200 PSF)\n- If data shows clear trends, highlight them\n- Always note data comes from URA caveated transactions\n- Do NOT give investment advice or price predictions\n- Keep responses under 200 words unless a detailed breakdown is requested\n\nLive data context retrieved for this query:\n" + dataCtx;
+      var systemPrompt = "You are ATLAS AI, a Singapore commercial & industrial property market intelligence assistant embedded in PropertyAtlas.sg.\n\nYou have access to URA REALIS caveated transaction data (1995\u20132026) covering 81,929+ transactions across office, retail, shop house, warehouse, business park, and factory types.\n\nYour role:\n- Answer questions about transaction prices, PSF, volumes, trends, and market dynamics\n- Be concise, data-driven, and professional\n- Format numbers clearly (e.g. S$2.5M, S$1,200 PSF)\n- If data shows clear trends, highlight them\n- Always note data comes from URA caveated transactions\n- Do NOT give investment advice or price predictions\n- Keep responses under 200 words unless a detailed breakdown is requested\n- IMPORTANT: When listing transactions or deals, ALWAYS sort by date (most recent first). Never sort alphabetically by address or project name.\n- When presenting a table of transactions, columns should be: Date | Project/Address | Type | Price | PSF\n\nLive data context retrieved for this query:\n" + dataCtx;
 
       chatHistory.push({role:'user', content: q});
 
@@ -8030,9 +8096,9 @@ function sophiaRenderTxnList(data) {
 
       // Show usage remaining in footer
       if(data.usage){
-        var remaining = data.usage.limit - data.usage.used;
+        var remaining = (data.usage && data.usage.limit && data.usage.used != null) ? (data.usage.limit - data.usage.used) : null;
         var usageEl = document.getElementById('atlas-chat-footer');
-        if(usageEl) usageEl.textContent = 'Powered by PropertyAtlas.sg \u00b7 ' + remaining + ' questions remaining today';
+        if(usageEl) usageEl.textContent = 'Powered by PropertyAtlas.sg' + (remaining != null ? ' \u00b7 ' + remaining + ' questions remaining today' : '');
       }
 
       chatHistory.push({role:'assistant', content: reply});
