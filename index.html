@@ -1800,7 +1800,7 @@ html,body{background:var(--bg);color:var(--txt);font-family:'DM Sans',sans-serif
       <option value="Suntec REIT">Suntec REIT</option>
       <option value="City Developments Limited">CDL</option>
       <option value="UOL Group">UOL Group</option>
-      <option value="OUE REIT">OUE REIT</option>
+      <option value="OUE REIT">OUE REIT (FY2024)</option>
     </select>
     <select class="talent-sort-sel" id="talent-sort" onchange="talentRender()">
       <option value="name">Sort: Name</option>
@@ -2675,42 +2675,118 @@ var TALENT_DATA = [
   // ⚠️ Remuneration: estimated ranges — re-extract from AR CG section for exact figures
   // ════════════════════════════════════════════
   {
-    id:'oue-ceo-25', name:'Han Khim Siew', role:'CEO', role_type:'CEO',
-    entity:'OUE REIT', entity_short:'OUE REIT', ar_year:'FY2025',
-    appointed:'2013', tenure_yrs:12,
-    rem_exact:null, rem_fixed:null, rem_bonus:null, rem_other:null,
-    rem_note:'Exact quantum not extracted this session. CEO remuneration must be disclosed by name per MAS Notice SFA04-N14 — retrieve from OUE REIT AR 2025 Corporate Governance section. Band estimate based on comparable SG office/hospitality REIT CEOs at S$5.8B AUM.',
-    rem_band:'S$600K–S$900K (est.)', rem_pct_fixed:null, rem_pct_bonus:null, rem_pct_other:null,
-    edu:'Not extracted this session',
-    bio:'CEO of OUE REIT Management since the REIT\'s formation in 2013 — 12-year tenure. Led the strategic pivot: divested Lippo Plaza Shanghai (RMB1,917M / S$357.4M, Dec 2024) to sharpen focus on Singapore CBD. FY2025 Singapore office at near-full occupancy (OUE Bayfront 99.0%, OUE Downtown 93.4%, One Raffles Place 95.3%). Manages S$5.8B AUM across office, retail and hospitality.',
+    id:'oue-ceo-24', name:'Han Khim Siew', role:'CEO & Executive Director', role_type:'CEO',
+    entity:'OUE REIT', entity_short:'OUE REIT', ar_year:'FY2024',
+    appointed:'7 Feb 2022', tenure_yrs:3,
+    rem_exact:1089585, rem_fixed:686439, rem_bonus:403146, rem_other:0,
+    rem_note:'FY2024 total S$1,089,585: 63% fixed salary (incl. fixed allowances and statutory contributions), 37% variable performance-related bonus. No LTI/LTIP — OUE REIT Manager explicitly states it does not have any long-term or short-term incentive schemes for executive directors or KMP. No director fee (CEO and Executive Director). KMP (CFO and senior management) remuneration not disclosed — Board elected non-disclosure citing commercial sensitivity and talent retention. FY2025 figure pending AR2025 upload.',
+    rem_band:null, rem_pct_fixed:63, rem_pct_bonus:37, rem_pct_other:0,
+    edu:'BSc Economics (Accounting & Finance), London School of Economics and Political Science',
+    bio:'CEO and Executive Director of OUE REIT Management since 7 February 2022. Led the decisive portfolio pivot: divested Lippo Plaza Shanghai (RMB1,917M / S$357.4M, Dec 2024), sharpening focus to Singapore CBD office and hospitality. FY2024 Singapore office near-full (OUE Bayfront 99.4%, One Raffles Place 97.2%); Hilton Singapore Orchard RevPAR S$281. Previously Managing Director and Co-Head Asia Pacific at BNP Paribas Real Estate (Apr 2019–Jan 2022). Career spans real estate investments, M&A, asset management and hospitality across Asia Pacific.',
     prev_roles:[
-      {org:'OUE REIT Management Ltd',pos:'CEO from REIT formation 2013'},
+      {org:'BNP Paribas Real Estate',pos:'MD & Co-Head Asia Pacific (Apr 2019–Jan 2022)'},
+      {org:'OUE REIT Management Ltd',pos:'CEO & Executive Director from Feb 2022'},
     ],
-    tags:['REIT CEO','12-Year Tenure','Office-Hospitality','China Exit']
+    rem_history:[
+      {year:'FY2024', total:1089585, pct_fixed:63, pct_bonus:37, pct_ltp:0, pct_other:0},
+    ],
+    cross_board_roles:[],
+    linkedin_url:null,
+    tags:['REIT CEO','LSE Alumnus','China Exit FY2024','BNP Paribas RE Alumni']
   },
   {
-    id:'oue-cfo-25', name:'OUE REIT CFO', role:'CFO', role_type:'CFO',
-    entity:'OUE REIT', entity_short:'OUE REIT', ar_year:'FY2025',
+    id:'oue-cfo-24', name:'Lionel Chua', role:'CFO', role_type:'CFO',
+    entity:'OUE REIT', entity_short:'OUE REIT', ar_year:'FY2024',
     appointed:null, tenure_yrs:null,
     rem_exact:null, rem_fixed:null, rem_bonus:null, rem_other:null,
-    rem_note:'CFO name and remuneration not extracted this session. Retrieve from OUE REIT AR 2025 management and CG sections.',
-    rem_band:'S$350K–S$600K (est.)', rem_pct_fixed:null, rem_pct_bonus:null, rem_pct_other:null,
-    edu:'Not extracted this session',
-    bio:'Pending extraction from OUE REIT AR 2025. Manages treasury and capital structure for S$5.8B portfolio including utilisation of Lippo Plaza Shanghai disposal proceeds for debt repayment in FY2025.',
-    prev_roles:[],
-    tags:['REIT CFO','Office-Hospitality','Singapore-Focus','To Be Updated']
+    rem_note:'KMP remuneration not disclosed — Board elected non-disclosure citing commercial sensitivity, competitive REIT management sector, and talent retention risks. OUE REIT does not disclose KMP bands or aggregate. No LTI scheme exists, so pay is fixed + annual variable bonus only.',
+    rem_band:null, rem_pct_fixed:null, rem_pct_bonus:null, rem_pct_other:null,
+    edu:'BAccountancy (Merit), NTU; Chartered Accountant (Singapore), ISCA',
+    bio:'CFO of OUE REIT Management. Responsible for financial reporting and controls, treasury, tax, investment evaluation, fund raising and compliance. 26+ years of experience across Singapore-listed companies. Previously CFO of OUE Hospitality REIT Management (OUEHRM). Has extensive finance and treasury experience at the Keppel Group and CapitaLand Group covering financial reporting, financing, cash management and tax.',
+    prev_roles:[
+      {org:'OUE Hospitality REIT Management Pte. Ltd.',pos:'CFO'},
+      {org:'Keppel Group',pos:'Finance and treasury roles'},
+      {org:'CapitaLand Group',pos:'Finance and treasury roles'},
+    ],
+    rem_history:[
+      {year:'FY2024', total:null, band:'Not disclosed — commercial sensitivity'},
+    ],
+    cross_board_roles:[],
+    linkedin_url:null,
+    tags:['REIT CFO','OUE Hospitality REIT Alumni','Keppel & CapitaLand Alumni','26-Year Career']
   },
   {
-    id:'oue-chair-25', name:'OUE REIT Chairman', role:'Chairman & Independent Director', role_type:'Board',
-    entity:'OUE REIT', entity_short:'OUE REIT', ar_year:'FY2025',
-    appointed:null, tenure_yrs:null,
-    rem_exact:null, rem_fixed:null, rem_bonus:null, rem_other:null,
-    rem_note:'Chairman name and fee not extracted this session. Retrieve from OUE REIT AR 2025 board of directors and remuneration disclosures.',
-    rem_band:'S$120K–S$200K (est.)', rem_pct_fixed:100, rem_pct_bonus:0, rem_pct_other:0,
-    edu:'Not extracted this session',
-    bio:'Pending extraction from OUE REIT AR 2025.',
-    prev_roles:[],
-    tags:['Chairman','Independent Director','OUE REIT','To Be Updated']
+    id:'oue-chair-24', name:'Lee Yi Shyan', role:'Chairman & Non-Independent Non-Executive Director', role_type:'Board',
+    entity:'OUE REIT', entity_short:'OUE REIT', ar_year:'FY2024',
+    appointed:'17 Sep 2019', tenure_yrs:5.3,
+    rem_exact:100000, rem_fixed:100000, rem_bonus:0, rem_other:0,
+    rem_note:'FY2024 total S$100,000: S$50,000 Chairman fee + S$50,000 Board member fee. 100% cash. Non-Independent NED representing OUE Limited (sponsor). Also Executive Advisor to Chairman of OUE Limited and Advisor to Keppel Corporation.',
+    rem_band:null, rem_pct_fixed:100, rem_pct_bonus:0, rem_pct_other:0,
+    edu:'BE (Chemical), NUS; Program for Management Development, Harvard Business School; Tsinghua University Management Program',
+    bio:'Chairman and Non-Independent NED of OUE REIT Management since September 2019. Also Executive Advisor to the Chairman of OUE Limited (the REIT\'s sponsor) and Advisor to Keppel Corporation. Former Senior Minister of State and Minister of State across several Singapore Government Ministries (2006–2015) and Member of Parliament for East Coast GRC (2006–2020). Also Chairman of Business China and ICE Futures Singapore.',
+    prev_roles:[
+      {org:'Singapore Government',pos:'Senior Minister of State & Minister of State — multiple ministries (2006–2015)'},
+      {org:'Singapore Parliament',pos:'MP, East Coast GRC (2006–2020)'},
+      {org:'OUE Limited',pos:'Executive Advisor to Chairman (current)'},
+    ],
+    rem_history:[
+      {year:'FY2024', total:100000, pct_fixed:100},
+    ],
+    cross_board_roles:[
+      {entity:'OUE Healthcare Limited', role:'Director', listed:true},
+      {entity:'OUE Limited', role:'Executive Advisor to Chairman', listed:true},
+      {entity:'Keppel Corporation Limited', role:'Advisor', listed:true},
+    ],
+    linkedin_url:null,
+    tags:['Chairman','Non-Independent NED','Former MP & Minister','OUE Sponsor Rep']
+  },
+  {
+    id:'oue-lead-id-24', name:'Liu Chee Ming', role:'Lead Independent Director', role_type:'Board',
+    entity:'OUE REIT', entity_short:'OUE REIT', ar_year:'FY2024',
+    appointed:'17 Sep 2019', tenure_yrs:5.3,
+    rem_exact:108750, rem_fixed:108750, rem_bonus:0, rem_other:0,
+    rem_note:'FY2024 total S$108,750 — highest board fee: S$50K Board member + S$40K Lead ID + S$18.75K ARC member. 100% cash.',
+    rem_band:null, rem_pct_fixed:100, rem_pct_bonus:0, rem_pct_other:0,
+    edu:'BBA, former University of Singapore',
+    bio:'Lead Independent Director and ARC member of OUE REIT Management since September 2019. Managing Director of Platinum Holdings Company Limited. Chairman of Singapore International School (Hong Kong). Former Deputy Chairman of the Takeovers and Mergers Panel under HKSC (April 2008 – March 2020). Also Director of GDS Holdings (HKEX/Nasdaq-listed) and MGM China Holdings (HKEX-listed). Former partner at KPMG LLP Singapore (Sep 1994 – Sep 2015).',
+    prev_roles:[
+      {org:'KPMG LLP Singapore',pos:'Partner (1994–2015)'},
+      {org:'Platinum Holdings Company Limited',pos:'Managing Director'},
+    ],
+    rem_history:[
+      {year:'FY2024', total:108750, pct_fixed:100},
+    ],
+    cross_board_roles:[
+      {entity:'GDS Holdings Limited', role:'Director', listed:true},
+      {entity:'MGM China Holdings Limited', role:'Director', listed:true},
+    ],
+    linkedin_url:null,
+    tags:['Lead Independent Director','KPMG Alumni','HK Listings Director','Takeovers Panel']
+  },
+  {
+    id:'oue-dir-brian-24', name:'Brian Riady', role:'Non-Independent Non-Executive Director', role_type:'Board',
+    entity:'OUE REIT', entity_short:'OUE REIT', ar_year:'FY2024',
+    appointed:'1 Sep 2020', tenure_yrs:4.3,
+    rem_exact:62500, rem_fixed:62500, rem_bonus:0, rem_other:0,
+    rem_note:'FY2024 total S$62,500 — lowest board fee: S$50K Board member + S$12.5K NRC member. 100% cash. NED representing OUE Limited / Lippo Group. Deputy CEO of OUE Limited.',
+    rem_band:null, rem_pct_fixed:100, rem_pct_bonus:0, rem_pct_other:0,
+    edu:'BS Political Communication & BA Economics, University of Texas at Austin; Executive Education, Harvard Business School',
+    bio:'Non-Independent NED of OUE REIT Management since September 2020, representing the Lippo/Riady family and OUE Limited. Currently Deputy CEO of OUE Limited. Director of OUE Limited (SGX-listed), Hongkong Chinese Limited, Lippo China Resources Limited, and Lippo Limited (all HK-listed). Previously CEO of Hospitality Division at OUE Limited (2018–2019), EVP at Lippo China Resources (HK) and CEO of PT Cinemaxx Global Pasifik. Grandson of Mochtar Riady, founder of Lippo Group.',
+    prev_roles:[
+      {org:'OUE Limited',pos:'CEO Hospitality Division (Oct 2018–Dec 2019); now Deputy CEO'},
+      {org:'Lippo China Resources Limited (HK)',pos:'Executive Vice President (2018–2019)'},
+      {org:'PT Cinemaxx Global Pasifik',pos:'CEO (2013–2017)'},
+    ],
+    rem_history:[
+      {year:'FY2024', total:62500, pct_fixed:100},
+    ],
+    cross_board_roles:[
+      {entity:'OUE Limited', role:'Deputy CEO & Director', listed:true},
+      {entity:'Hongkong Chinese Limited', role:'Director', listed:true},
+      {entity:'Lippo China Resources Limited', role:'Director', listed:true},
+    ],
+    linkedin_url:null,
+    tags:['Non-Independent NED','Lippo/Riady Family','OUE Sponsor Rep','Hospitality Background']
   }
 ];
 
