@@ -2073,44 +2073,145 @@ var TALENT_DATA = [
   // ⚠️ Remuneration: estimated ranges — re-extract from AR CG section for exact figures
   // ════════════════════════════════════════════
   {
-    id:'kreit-ceo-25', name:'Quah Ley Hoon', role:'CEO', role_type:'CEO',
+    id:'kreit-ceo-25', name:'Chua Hsien Yang', role:'CEO', role_type:'CEO',
     entity:'Keppel REIT', entity_short:'Keppel REIT', ar_year:'FY2025',
-    appointed:'2009', tenure_yrs:16,
-    rem_exact:null, rem_fixed:null, rem_bonus:null, rem_other:null,
-    rem_note:'Exact quantum not extracted this session. CEO remuneration must be disclosed by name per MAS Notice SFA04-N14 — retrieve exact figure from Keppel REIT AR 2025 Corporate Governance section. Band estimate based on comparable Singapore office REIT CEOs.',
-    rem_band:'S$500K–S$800K (est.)', rem_pct_fixed:null, rem_pct_bonus:null, rem_pct_other:null,
-    edu:'Not extracted this session',
-    bio:'CEO of Keppel REIT Management since 2009, overseeing 16 years of portfolio expansion from a pure Singapore office play to a multi-market platform spanning Singapore, Australia, Japan and South Korea. Led the landmark MBFC Tower 3 acquisition (S$1,453M, Dec 2025) and entry into Australian retail via Top Ryde City Shopping Centre (A$393.8M, Dec 2025). Portfolio AUM reached S$11.7B as at FY2025.',
+    appointed:'1 Jan 2025', tenure_yrs:1,
+    rem_exact:1985340, rem_fixed:615455, rem_bonus:555895, rem_other:813990,
+    rem_note:'FY2025 total S$1,985,340: 31% fixed salary, 28% variable/performance bonus (S$50K deferred for long-term co-investment in Keppel private funds), 19% PUP (3-yr performance units, 0–150% of award at vesting; fair value S$0.59/unit at Apr 2025 grant), 22% RUP (deferred units at VWAP S$0.92 at Mar 2026 grant). First full year as CEO — appointed 1 Jan 2025, succeeding Koh Wee Lih who stepped down 31 Dec 2024. New CEO appointment drives nominal +122.5% YoY increase (not comparable — different persons). Also appointed REITAS President from 1 Jan 2025.',
+    rem_band:null, rem_pct_fixed:31, rem_pct_bonus:28, rem_pct_other:41,
+    edu:'MBA, University of Western Australia; BE (Civil), University of Canterbury',
+    bio:'CEO of Keppel REIT Management since 1 January 2025. Extensive experience in real estate fund management and hospitality across M&A, investments, business development and asset management globally. Previously MD & Head (M&A) at Keppel Ltd. (Feb 2021–Dec 2024). Before that, CEO of Keppel DC REIT Management from listing in 2014 to Feb 2021 — building it into one of Asia\'s largest data centre REITs. Earlier was SVP at Keppel REIT Management heading the investment team, then Director of Business Development & Asset Management at Ascott Residence Trust Management (2006–2008), and AVP at Pan Pacific Hotels Group (Hotel Plaza Limited). President of REITAS (Real Estate Investment Trusts Association of Singapore) from Jan 2025.',
     prev_roles:[
-      {org:'Keppel Land',pos:'Various real estate and fund management roles'},
+      {org:'Keppel Ltd.',pos:'MD & Head, Mergers & Acquisitions (Feb 2021–Dec 2024)'},
+      {org:'Keppel DC REIT Management',pos:'CEO (2014–Feb 2021) — from REIT listing'},
+      {org:'Keppel REIT Management',pos:'SVP, Head of Investment'},
+      {org:'Ascott Residence Trust Management',pos:'Director, Business Development & Asset Management (2006–2008)'},
+      {org:'Pan Pacific Hotels Group (Hotel Plaza Limited)',pos:'AVP, Asset Management'},
     ],
-    tags:['REIT CEO','Long Tenure','SG-AU-JP-KR Portfolio','Keppel Group']
+    rem_history:[
+      {year:'FY2025', total:1985340, pct_fixed:31, pct_bonus:28, pct_ltp:41, pct_other:0},
+    ],
+    cross_board_roles:[
+      {entity:'REITAS (Real Estate Investment Trusts Association of Singapore)', role:'President', listed:false},
+    ],
+    linkedin_url:null,
+    tags:['REIT CEO','Keppel DC REIT Alumni','REITAS President','New Appointment 2025']
+  },
+  {
+    id:'kreit-ceo-24', name:'Koh Wee Lih', role:'CEO (Stepped down 31 Dec 2024)', role_type:'CEO',
+    entity:'Keppel REIT', entity_short:'Keppel REIT', ar_year:'FY2024',
+    appointed:null, tenure_yrs:null,
+    rem_exact:892100, rem_fixed:490655, rem_bonus:169499, rem_other:231946,
+    rem_note:'FY2024 total S$892,100: 55% fixed salary, 19% variable bonus, 20% PUP (3-yr performance units, fair value S$0.61/unit at Apr 2024 grant), 6% RUP (VWAP S$0.89 at Feb 2025 grant). Stepped down as CEO effective 31 December 2024 — succeeded by Chua Hsien Yang from 1 January 2025. Departure year total notably lower than incoming CEO FY2025 total (different roles, different tenure of service).',
+    rem_band:null, rem_pct_fixed:55, rem_pct_bonus:19, rem_pct_other:26,
+    edu:'Not disclosed in AR',
+    bio:'Former CEO of Keppel REIT Management. Stepped down on 31 December 2024 after leading the REIT through its multi-market expansion into Australia, Japan and South Korea. Succeeded by Chua Hsien Yang from 1 January 2025.',
+    prev_roles:[
+      {org:'Keppel REIT Management',pos:'CEO (until 31 Dec 2024)'},
+    ],
+    rem_history:[
+      {year:'FY2024', total:892100, pct_fixed:55, pct_bonus:19, pct_ltp:26, pct_other:0},
+    ],
+    cross_board_roles:[],
+    linkedin_url:null,
+    tags:['Former REIT CEO','Departed Dec 2024','Keppel REIT','FY2024 Reference']
   },
   {
     id:'kreit-chair-25', name:'Tan Swee Yiow', role:'Chairman & Non-Executive Director', role_type:'Board',
     entity:'Keppel REIT', entity_short:'Keppel REIT', ar_year:'FY2025',
-    appointed:'2020', tenure_yrs:5,
-    rem_exact:null, rem_fixed:null, rem_bonus:null, rem_other:null,
-    rem_note:'Board fee not extracted this session. Retrieve from Keppel REIT AR 2025 remuneration table. Estimated based on SG REIT Chairman norms.',
-    rem_band:'S$150K–S$220K (est.)', rem_pct_fixed:100, rem_pct_bonus:0, rem_pct_other:0,
-    edu:'Not extracted this session',
-    bio:'Chairman of Keppel REIT Management. Former CEO of Keppel Land Limited. Deep expertise in Singapore and regional real estate development, investment and asset management across multiple property cycles.',
+    appointed:'20 Mar 2017', tenure_yrs:8.8,
+    rem_exact:150000, rem_fixed:150000, rem_bonus:0, rem_other:0,
+    rem_note:'FY2025 total S$150,000 (all-in Chairman fee, paid 70% cash / 30% Keppel REIT units). Same as FY2024: S$150,000. Also Senior Managing Director of Real Estate at Keppel Ltd. — fee paid to Keppel Ltd.',
+    rem_band:null, rem_pct_fixed:100, rem_pct_bonus:0, rem_pct_other:0,
+    edu:'BSc (First Class Honours) Estate Management, NUS; MBA in Accountancy, NTU',
+    bio:'Chairman and Non-Executive Director of Keppel REIT Management since March 2017 — 8+ year tenure. Also Senior Managing Director of Real Estate at Keppel Ltd. and President of the Real Estate Developers\' Association of Singapore (REDAS). Director of Bukit Sembawang Estates Limited (SGX-listed), E M Services, City Energy, and various Keppel REIT associated companies. Previously various roles at Keppel Land and Keppel Management Ltd.',
     prev_roles:[
-      {org:'Keppel Land Limited',pos:'CEO'},
+      {org:'Keppel Ltd.',pos:'Senior Managing Director, Real Estate (current)'},
+      {org:'Keppel Management Ltd.',pos:'Various leadership roles'},
     ],
-    tags:['Chairman','Non-Executive','Keppel Group','SG Real Estate']
+    rem_history:[
+      {year:'FY2025', total:150000, pct_fixed:100},
+      {year:'FY2024', total:150000, pct_fixed:100},
+    ],
+    cross_board_roles:[
+      {entity:'Bukit Sembawang Estates Limited', role:'Director', listed:true},
+      {entity:'Keppel Ltd.', role:'Senior Managing Director, Real Estate', listed:true},
+      {entity:'E M Services Private Limited', role:'Director', listed:false},
+      {entity:'City Energy Pte. Ltd.', role:'Director', listed:false},
+    ],
+    linkedin_url:null,
+    tags:['Chairman','Keppel Group','REDAS President','8-Year Tenure']
   },
   {
-    id:'kreit-cfo-25', name:'Keppel REIT CFO', role:'CFO', role_type:'CFO',
+    id:'kreit-cfo-25', name:'Sebastian Song', role:'CFO', role_type:'CFO',
     entity:'Keppel REIT', entity_short:'Keppel REIT', ar_year:'FY2025',
-    appointed:null, tenure_yrs:null,
+    appointed:'30 Oct 2023', tenure_yrs:2.2,
     rem_exact:null, rem_fixed:null, rem_bonus:null, rem_other:null,
-    rem_note:'CFO name and remuneration not extracted this session. Retrieve from Keppel REIT AR 2025 management team and CG sections.',
-    rem_band:'S$350K–S$600K (est.)', rem_pct_fixed:null, rem_pct_bonus:null, rem_pct_other:null,
-    edu:'Not extracted this session',
-    bio:'Pending extraction from Keppel REIT AR 2025. Oversees financial reporting and treasury for a S$11.7B AUM multi-market REIT across Singapore, Australia, Japan and South Korea.',
-    prev_roles:[],
-    tags:['REIT CFO','Multi-Market','Keppel Group','To Be Updated']
+    rem_note:'CFO is part of KMP group (excl CEO). FY2025 KMP aggregate (excl CEO): S$1,440,080 for <5 KMP (49% fixed, 33% bonus, 7% PUP, 11% RUP). Individual bands not disclosed — all KMP in S$250K–S$500K band in FY2024. Manager has <5 KMP other than CEO as at 31 Dec 2025. Joined the Manager in 2015 from Ernst & Young.',
+    rem_band:'S$250K–S$500K (FY2024 band; FY2025 part of S$1.44M KMP pool)',
+    rem_pct_fixed:null, rem_pct_bonus:null, rem_pct_other:null,
+    edu:'BAccountancy, NTU; Chartered Accountant (Singapore); Member, ISCA',
+    bio:'CFO of Keppel REIT Management since 30 October 2023. 20+ years of experience in financial reporting, consolidation, taxation, compliance and audit. Joined the Manager in 2015. Prior to Keppel REIT, was Senior Audit Manager at Ernst & Young LLP, involved in audits of SGX-listed corporations and multinationals across real estate, construction, shipping and IPOs.',
+    prev_roles:[
+      {org:'Ernst & Young LLP',pos:'Senior Audit Manager — real estate, construction, shipping, IPOs'},
+    ],
+    rem_history:[
+      {year:'FY2025', total:null, band:'Part of S$1.44M KMP pool (<5 KMP excl CEO)'},
+      {year:'FY2024', total:null, band:'S$250K–S$500K band'},
+    ],
+    cross_board_roles:[],
+    linkedin_url:null,
+    tags:['REIT CFO','EY Alumni','2-Year Tenure','Keppel Group']
+  },
+  {
+    id:'kreit-lead-id-25', name:'Ian Roderick Mackie', role:'Lead Independent Director', role_type:'Board',
+    entity:'Keppel REIT', entity_short:'Keppel REIT', ar_year:'FY2025',
+    appointed:'5 Dec 2019', tenure_yrs:6.1,
+    rem_exact:103000, rem_fixed:103000, rem_bonus:0, rem_other:0,
+    rem_note:'FY2025 total S$103,000 (includes Lead Independent Director additional fee). Paid 70% cash / 30% Keppel REIT units. Same as FY2024: S$103,000. Chairs the Nominating and Remuneration Committee.',
+    rem_band:null, rem_pct_fixed:100, rem_pct_bonus:0, rem_pct_other:0,
+    edu:'BA Economics and Law, University of Canberra; Associate, Society of Land Economists, Australia',
+    bio:'Lead Independent Director and NRC Chairman of Keppel REIT Management since December 2019. Former International Director and Head of Private Equity and Strategic Partnerships at LaSalle Investment Management Asia. Currently Global Governing Trustee of Urban Land Institute and Director of Elanor Investors Limited and Elanor Funds Management Limited (ASX-listed).',
+    prev_roles:[
+      {org:'LaSalle Investment Management Asia',pos:'International Director, Head of Private Equity & Strategic Partnerships'},
+      {org:'Urban Land Institute Asia Pacific',pos:'Chairman and Board Member'},
+    ],
+    rem_history:[
+      {year:'FY2025', total:103000, pct_fixed:100},
+      {year:'FY2024', total:103000, pct_fixed:100},
+    ],
+    cross_board_roles:[
+      {entity:'Elanor Investors Limited', role:'Director', listed:true},
+      {entity:'Elanor Funds Management Limited', role:'Director', listed:true},
+    ],
+    linkedin_url:null,
+    tags:['Lead Independent Director','NRC Chair','LaSalle Alumni','Australian RE Expert']
+  },
+  {
+    id:'kreit-dir-christina-25', name:'Christina Tan', role:'Non-Executive Director', role_type:'Board',
+    entity:'Keppel REIT', entity_short:'Keppel REIT', ar_year:'FY2025',
+    appointed:'15 Sep 2016', tenure_yrs:9.3,
+    rem_exact:75000, rem_fixed:75000, rem_bonus:0, rem_other:0,
+    rem_note:'FY2025 total S$75,000 — paid 100% in cash to Keppel Ltd. (not to Christina Tan personally). Same as FY2024: S$75,000. NED representing Keppel Ltd. / Keppel Capital Holdings. Also CEO Fund Management & CIO of Keppel Ltd.',
+    rem_band:null, rem_pct_fixed:100, rem_pct_bonus:0, rem_pct_other:0,
+    edu:'BAccountancy (Honours), NUS; CFA Charterholder',
+    bio:'Non-Executive Director of Keppel REIT Management since September 2016. Appointed NRC member. Also CEO Fund Management and Chief Investment Officer at Keppel Ltd. Director of Keppel Capital Holdings, Keppel Fund Management Limited, and manager boards for Keppel DC REIT and Keppel Infrastructure Trust. Fee paid directly to Keppel Ltd.',
+    prev_roles:[
+      {org:'Keppel Ltd.',pos:'CEO Fund Management & CIO (current)'},
+      {org:'Keppel Fund Management / Keppel Capital',pos:'Various fund management leadership roles'},
+    ],
+    rem_history:[
+      {year:'FY2025', total:75000, pct_fixed:100},
+      {year:'FY2024', total:75000, pct_fixed:100},
+    ],
+    cross_board_roles:[
+      {entity:'Keppel DC REIT Management Pte. Ltd.', role:'Director', listed:false},
+      {entity:'Keppel Infrastructure Fund Management Pte. Ltd.', role:'Director', listed:false},
+      {entity:'Keppel Capital Holdings Pte. Ltd.', role:'Director', listed:false},
+      {entity:'Keppel Ltd.', role:'CEO Fund Management & CIO', listed:true},
+    ],
+    linkedin_url:null,
+    tags:['Non-Executive Director','Keppel Group','CIO Keppel Ltd','CFA Charterholder']
   },
 
   // ════════════════════════════════════════════
