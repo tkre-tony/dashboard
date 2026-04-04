@@ -2114,46 +2114,150 @@ var TALENT_DATA = [
 
   // ════════════════════════════════════════════
   // SUNTEC REIT — FY2025
-  // Manager: AEW Capital Management (formerly ESR Trust Management)
-  // ⚠️ Remuneration: estimated ranges — re-extract from AR CG section for exact figures
+  // Manager: AEW Capital Management (from Q1 2026; formerly ESR Trust Management)
+  // Source: Suntec REIT AR 2025 — exact figures
   // ════════════════════════════════════════════
   {
-    id:'suntec-ceo-25', name:'Chong Kee Hiong', role:'CEO', role_type:'CEO',
+    id:'suntec-ceo-25', name:'Chong Kee Hiong', role:'CEO & Executive Director', role_type:'CEO',
     entity:'Suntec REIT', entity_short:'Suntec REIT', ar_year:'FY2025',
-    appointed:'2014', tenure_yrs:11,
-    rem_exact:null, rem_fixed:null, rem_bonus:null, rem_other:null,
-    rem_note:'Exact quantum not extracted this session. CEO remuneration must be disclosed by name per MAS Notice SFA04-N14 — retrieve from Suntec REIT AR 2025 Corporate Governance section. Band estimate based on comparable SG diversified REIT CEOs managing S$10B+ AUM across 3 markets.',
-    rem_band:'S$600K–S$900K (est.)', rem_pct_fixed:null, rem_pct_bonus:null, rem_pct_other:null,
-    edu:'Not extracted this session',
-    bio:'CEO of Suntec REIT Management since 2014 — longest-serving CEO across the entities in this database. Navigated three manager ownership changes (ARA → ESR → AEW Capital Management) while maintaining operational discipline. FY2025 portfolio: S$11.8B AUM across Singapore, UK and Australia. Portfolio occupancy SG near-full (99.8% Suntec City Office), UK mixed (Minster 85.4%), Australia diverging.',
+    appointed:'1 Jan 2019', tenure_yrs:7,
+    rem_exact:2177124, rem_fixed:1047197, rem_bonus:171993, rem_other:957934,
+    rem_note:'FY2025 total S$2,177,124: 48.1% fixed salary (incl. CPF), 7.9% performance bonus (incl. CPF), 11.9% Suntec PUP long-term incentive (3-yr performance units), 32.1% ESR retention award (payable on successful manager sale closing or Jun 2026 — excludes discretionary ESR closing bonus). Significant YoY increase from S$1,375,849 in FY2024 driven by retention award. KMP (COO, CFO, others) remuneration not disclosed — Board cited talent competition sensitivity.',
+    rem_band:null, rem_pct_fixed:48.1, rem_pct_bonus:7.9, rem_pct_other:44.0,
+    edu:'BAccountancy, National University of Singapore; Harvard Business School Advanced Management Program (2008); Member, Institute of Singapore Chartered Accountants',
+    bio:'CEO & Executive Director of Suntec REIT Management since 1 January 2019. 35 years of financial and management experience. Prior to Suntec REIT, was CEO of OUE Hospitality REIT Management (2013–2018), CEO of The Ascott Limited (2012–2013), CEO of Ascott Residence Trust Management (2005–2012) and CFO of Raffles Holdings Limited. Also served as elected Member of Parliament for Bishan–Toa Payoh GRC (2015–2025).',
     prev_roles:[
-      {org:'ARA Asset Management',pos:'Real estate fund management roles'},
+      {org:'OUE Hospitality REIT Management Pte Ltd',pos:'CEO (2013–2018)'},
+      {org:'The Ascott Limited',pos:'CEO (2012–2013)'},
+      {org:'Ascott Residence Trust Management Ltd',pos:'CEO (2005–2012)'},
+      {org:'Raffles Holdings Limited',pos:'CFO'},
+      {org:'KPMG Peat Marwick',pos:'Audit (career start, 1990)'},
     ],
-    tags:['REIT CEO','11-Year Tenure','SG-UK-AU','AEW Capital']
+    tags:['REIT CEO','35-Year Career','MP 2015-2025','Ascott Alumni']
   },
   {
-    id:'suntec-cfo-25', name:'Suntec REIT CFO', role:'CFO', role_type:'CFO',
+    id:'suntec-cfo-25', name:'Ng Ee San', role:'CFO', role_type:'CFO',
     entity:'Suntec REIT', entity_short:'Suntec REIT', ar_year:'FY2025',
     appointed:null, tenure_yrs:null,
     rem_exact:null, rem_fixed:null, rem_bonus:null, rem_other:null,
-    rem_note:'CFO name and remuneration not extracted this session. Retrieve from Suntec REIT AR 2025.',
-    rem_band:'S$350K–S$550K (est.)', rem_pct_fixed:null, rem_pct_bonus:null, rem_pct_other:null,
-    edu:'Not extracted this session',
-    bio:'Pending extraction from Suntec REIT AR 2025. Manages multi-currency treasury (SGD, GBP, AUD) and capital structure for S$11.8B AUM REIT across three markets.',
-    prev_roles:[],
-    tags:['REIT CFO','Multi-Market','SG-UK-AU','To Be Updated']
+    rem_note:'KMP remuneration not disclosed by Manager — Board cited talent competition sensitivity and potential staff disruption risk (consistent with FY2024 and FY2025 AR). CFO is part of top-5 KMP group whose aggregate pay is also not disclosed.',
+    rem_band:null, rem_pct_fixed:null, rem_pct_bonus:null, rem_pct_other:null,
+    edu:'BAccountancy, Nanyang Technological University; Member, Institute of Singapore Chartered Accountants',
+    bio:'CFO of Suntec REIT Management. Heads the Finance team and assists the CEO on finance, treasury and capital management functions. 25+ years in accounting and finance. Previously Finance Manager at Ascott Residence Trust Management, and Accountant at Wing Tai Holdings Limited and The Hour Glass Limited. Also held roles at PSA Corporation Limited and Deloitte & Touche LLP.',
+    prev_roles:[
+      {org:'Ascott Residence Trust Management Limited',pos:'Finance Manager'},
+      {org:'Wing Tai Holdings Limited',pos:'Accountant'},
+      {org:'The Hour Glass Limited',pos:'Accountant'},
+      {org:'PSA Corporation Limited',pos:'Finance role'},
+      {org:'Deloitte & Touche LLP',pos:'Accountant'},
+    ],
+    tags:['REIT CFO','Ascott Alumni','25-Year Career','Treasury']
   },
   {
-    id:'suntec-chair-25', name:'Suntec REIT Chairman', role:'Chairman & Independent Director', role_type:'Board',
+    id:'suntec-coo-25', name:'Dawn Lai', role:'Chief Operating Officer', role_type:'Mgmt',
     entity:'Suntec REIT', entity_short:'Suntec REIT', ar_year:'FY2025',
     appointed:null, tenure_yrs:null,
     rem_exact:null, rem_fixed:null, rem_bonus:null, rem_other:null,
-    rem_note:'Chairman name and fee not extracted this session. Retrieve from Suntec REIT AR 2025.',
-    rem_band:'S$150K–S$220K (est.)', rem_pct_fixed:100, rem_pct_bonus:0, rem_pct_other:0,
-    edu:'Not extracted this session',
-    bio:'Pending extraction from Suntec REIT AR 2025.',
+    rem_note:'KMP remuneration not disclosed — same board policy as CFO.',
+    rem_band:null, rem_pct_fixed:null, rem_pct_bonus:null, rem_pct_other:null,
+    edu:'BSc Estate Management (Hons), National University of Singapore',
+    bio:'COO of Suntec REIT Management. Assists CEO on all operational matters including portfolio management, investment, investor relations and strategic planning. 30+ years in the real estate sector. Previously with CapitaLand Ltd for 19 years, responsible for marketing and leasing of commercial properties with total asset value exceeding S$10B.',
+    prev_roles:[
+      {org:'CapitaLand Ltd',pos:'Commercial properties marketing & leasing (19 years)'},
+    ],
+    tags:['REIT COO','CapitaLand Alumni','30-Year Career','Portfolio Mgmt']
+  },
+  {
+    id:'suntec-chair-25', name:'Lock Wai Han', role:'Interim Chairman & Non-Executive Director', role_type:'Board',
+    entity:'Suntec REIT', entity_short:'Suntec REIT', ar_year:'FY2025',
+    appointed:'1 Aug 2018', tenure_yrs:7,
+    rem_exact:100000, rem_fixed:100000, rem_bonus:0, rem_other:0,
+    rem_note:'FY2025 total S$100,000 (100% fixed Directors\' fee). Appointed Interim Chairman on 17 March 2026 (post-balance sheet) following David Matheson\'s retirement. Redesignated from Independent to Non-Executive Director on 19 Sep 2025 due to connection with Tang Organization (new manager owner). Fee was S$92,000 in FY2024.',
+    rem_band:null, rem_pct_fixed:100, rem_pct_bonus:0, rem_pct_other:0,
+    edu:'BA & MA Engineering, University of Cambridge; MSc Management, Stanford University',
+    bio:'Interim Chairman of Suntec REIT Management (from 17 Mar 2026). Currently Executive Director at Aesen Offshore Limited and consultant to Haiyi Holdings. Previously CEO of OKH Global Ltd, Group CEO of Rowsley Ltd, and China CEO of CapitaMalls Asia (Beijing). Earlier served 20+ years in Singapore public sector: Commissioner of Immigration & Checkpoints Authority, Director of Criminal Investigations Department, Deputy Secretary at Ministry of Information Communications & the Arts.',
+    prev_roles:[
+      {org:'CapitaMalls Asia',pos:'China CEO (Beijing)'},
+      {org:'Rowsley Ltd',pos:'Executive Director & Group CEO'},
+      {org:'OKH Global Ltd',pos:'Executive Director & CEO'},
+      {org:'Singapore Public Sector',pos:'20+ years — ICA Commissioner, CID Director, MDA Deputy Secretary'},
+    ],
+    tags:['Interim Chairman','Non-Executive','Cambridge-Stanford','Tang Org-linked']
+  },
+  {
+    id:'suntec-dir-yap-25', name:'Yap Chee Meng', role:'Lead Independent Director', role_type:'Board',
+    entity:'Suntec REIT', entity_short:'Suntec REIT', ar_year:'FY2025',
+    appointed:'22 Apr 2019', tenure_yrs:6,
+    rem_exact:130000, rem_fixed:130000, rem_bonus:0, rem_other:0,
+    rem_note:'FY2025 total S$130,000 — highest among current directors. Comprises Main Board S$60K + ARC Chair S$43K + NRC Member S$15K + other S$12K. Up from S$109,639 in FY2024. Chairs the Audit and Risk Committee.',
+    rem_band:null, rem_pct_fixed:100, rem_pct_bonus:0, rem_pct_other:0,
+    edu:'UK Chartered Accountant (1981); Fellow, Institute of Singapore Chartered Accountants; Fellow, Institute of Chartered Accountants in England & Wales',
+    bio:'Lead Independent Director and Audit & Risk Committee Chair at Suntec REIT. 37-year career in financial services. Former COO of KPMG International for Asia Pacific and member of its Global Executive Team. Former Senior Partner KPMG Singapore, Regional Head of Financial Services Asia Pacific, and Country Head of Real Estates & Specialised REITs Singapore. Past board roles include Keppel Land, SATS, SMRT, National Research Foundation.',
+    prev_roles:[
+      {org:'KPMG International',pos:'COO Asia Pacific; Global Executive Team member'},
+      {org:'KPMG Singapore',pos:'Senior Partner; Regional Head Financial Services APAC; Country Head Real Estates & REITs'},
+    ],
+    tags:['Lead Independent Director','ARC Chair','KPMG Alumni','37-Year Finance Career']
+  },
+  {
+    id:'suntec-dir-chan-25', name:'Chan Pee Teck, Peter', role:'Independent Non-Executive Director (Retired Dec 2025)', role_type:'Board',
+    entity:'Suntec REIT', entity_short:'Suntec REIT', ar_year:'FY2025',
+    appointed:null, tenure_yrs:null,
+    rem_exact:122000, rem_fixed:122000, rem_bonus:0, rem_other:0,
+    rem_note:'FY2025 total S$122,000 (100% fixed). Retired as Independent NED on 31 December 2025. Also stepped down as NRC Chairman on 31 December 2025. Was S$95,000 in FY2024.',
+    rem_band:null, rem_pct_fixed:100, rem_pct_bonus:0, rem_pct_other:0,
+    edu:'Not disclosed',
+    bio:'Retired as Independent Non-Executive Director on 31 December 2025 after serving as NRC Chairman. Board role coincided with the ESR manager ownership period.',
     prev_roles:[],
-    tags:['Chairman','Independent Director','Mixed-Use REIT','To Be Updated']
+    tags:['Retired Director','Former NRC Chair','Suntec REIT']
+  },
+  {
+    id:'suntec-dir-jabbar-25', name:'Abdul Jabbar Bin Karam Din', role:'Independent Non-Executive Director', role_type:'Board',
+    entity:'Suntec REIT', entity_short:'Suntec REIT', ar_year:'FY2025',
+    appointed:'24 Oct 2025', tenure_yrs:0.2,
+    rem_exact:11480, rem_fixed:11480, rem_bonus:0, rem_other:0,
+    rem_note:'FY2025 total S$11,480 — pro-rated from 24 October 2025 appointment. Appointed NRC Chairman on 31 December 2025. Full-year fee would be ~S$100,000 (Board member S$60K + NRC Chair S$25K + ARC Member S$25K).',
+    rem_band:null, rem_pct_fixed:100, rem_pct_bonus:0, rem_pct_other:0,
+    edu:'LLB (Honours), National University of Singapore; Senior Accredited Director, Singapore Institute of Directors',
+    bio:'Independent Non-Executive Director and NRC Chairman at Suntec REIT (from Oct 2025). Currently Deputy Managing Partner of Rajah & Tann Singapore LLP — 30+ years in corporate governance, M&A, JVs, banking and finance. Previously Lead Independent Director of Chip Eng Seng Corporation (now Tang Organization) — the new manager owner of Suntec REIT. Also Lead Independent Director at Global Resource Construction and Global Investments Limited.',
+    prev_roles:[
+      {org:'Rajah & Tann Singapore LLP',pos:'Deputy Managing Partner'},
+      {org:'Chip Eng Seng / Tang Organization',pos:'Lead Independent Director (SGX-listed period)'},
+    ],
+    tags:['Independent Director','NRC Chair','Rajah & Tann','Tang Org-linked']
+  },
+
+  // ════════════════════════════════════════════
+  // SUNTEC REIT — FY2024 (for YoY comparison)
+  // Source: Suntec REIT AR 2024 — exact figures
+  // ════════════════════════════════════════════
+  {
+    id:'suntec-ceo-24', name:'Chong Kee Hiong', role:'CEO & Executive Director (FY2024)', role_type:'CEO',
+    entity:'Suntec REIT', entity_short:'Suntec REIT', ar_year:'FY2024',
+    appointed:'1 Jan 2019', tenure_yrs:6,
+    rem_exact:1375849, rem_fixed:1045645, rem_bonus:96309, rem_other:233895,
+    rem_note:'FY2024 total S$1,375,849: 76% fixed salary (incl. CPF), 7% performance bonus (incl. CPF), 17% Suntec PUP long-term incentive. No retention award component in FY2024 (ESR retention award introduced in FY2025). YoY increase to S$2,177,124 in FY2025 driven by S$698,857 ESR retention award.',
+    rem_band:null, rem_pct_fixed:76, rem_pct_bonus:7, rem_pct_other:17,
+    edu:'BAccountancy, NUS; Harvard Business School AMP (2008); Member, ISCA',
+    bio:'Same individual as FY2025 entry — see suntec-ceo-25. FY2024 profile captures prior-year remuneration for YoY comparison. Total compensation rose 58.2% from FY2024 to FY2025, almost entirely due to the S$698,857 ESR retention award tied to the manager ownership change.',
+    prev_roles:[
+      {org:'OUE Hospitality REIT Management',pos:'CEO (2013–2018)'},
+      {org:'The Ascott Limited',pos:'CEO (2012–2013)'},
+      {org:'Ascott Residence Trust Management',pos:'CEO (2005–2012)'},
+    ],
+    tags:['REIT CEO','FY2024 Reference','Pre-Retention Award','Suntec REIT']
+  },
+  {
+    id:'suntec-chair-24', name:'Chew Gek Khim', role:'Chairman (Retired Sep 2025)', role_type:'Board',
+    entity:'Suntec REIT', entity_short:'Suntec REIT', ar_year:'FY2024',
+    appointed:null, tenure_yrs:null,
+    rem_exact:132000, rem_fixed:132000, rem_bonus:0, rem_other:0,
+    rem_note:'FY2024 total S$132,000 (100% fixed). Highest board fee in FY2024. Retired as Chairman and Non-Executive Director on 30 September 2025. FY2025 pro-rated fee was S$100,767.',
+    rem_band:null, rem_pct_fixed:100, rem_pct_bonus:0, rem_pct_other:0,
+    edu:'Not disclosed',
+    bio:'Chairman of Suntec REIT Management until September 2025 (retired). The Tecity Group-affiliated Chairman who presided over the ESR management era. Full-year FY2024 fee of S$132,000 was the highest on the board.',
+    prev_roles:[],
+    tags:['Former Chairman','Tecity Group','FY2024 Reference','Suntec REIT']
   },
 
   // ════════════════════════════════════════════
