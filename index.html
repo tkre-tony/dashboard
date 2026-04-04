@@ -1769,7 +1769,7 @@ html,body{background:var(--bg);color:var(--txt);font-family:'DM Sans',sans-serif
       <div class="talent-hero-sub">C-Suite · Board · Key Management · Remuneration — sourced from SGX-listed REIT &amp; Developer Annual Reports</div>
       <div style="margin-top:8px;display:flex;gap:8px;flex-wrap:wrap">
         <span style="font-size:9px;background:rgba(167,139,250,.15);border:1px solid rgba(167,139,250,.3);color:#c4b5fd;padding:2px 8px;border-radius:10px;letter-spacing:.04em">PILOT · 6 Entities · AI-REIT · Keppel REIT · Suntec · CDL · UOL · OUE REIT</span>
-        <span style="font-size:9px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);color:rgba(255,255,255,.4);padding:2px 8px;border-radius:10px;letter-spacing:.04em">Rem data exact for AI-REIT · estimates for others</span>
+        <span style="font-size:9px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);color:rgba(255,255,255,.4);padding:2px 8px;border-radius:10px;letter-spacing:.04em">LinkedIn via Supabase · Cross-board roles · YoY pay history</span>
       </div>
     </div>
     <div class="talent-hero-stats">
@@ -2316,59 +2316,224 @@ var TALENT_DATA = [
   // ⚠️ Remuneration: estimated ranges — re-extract from AR for exact figures
   // ════════════════════════════════════════════
   {
-    id:'uol-ceo-25', name:'Liam Wee Sin', role:'Group CEO', role_type:'CEO',
+    id:'uol-ceo-25', name:'Liam Wee Sin', role:'Group Chief Executive & Executive Director', role_type:'CEO',
     entity:'UOL Group', entity_short:'UOL', ar_year:'FY2025',
-    appointed:'2008', tenure_yrs:17,
-    rem_exact:null, rem_fixed:null, rem_bonus:null, rem_other:null,
-    rem_note:'Developer CEO remuneration per Companies Act — disclosed in named bands in UOL AR 2025. 17-year tenure. Estimated S$1.5M–S$3M for a developer of UOL\'s scale (S$10B+ investment portfolio).',
-    rem_band:'S$1.5M–S$3M (est.)', rem_pct_fixed:null, rem_pct_bonus:null, rem_pct_other:null,
-    edu:'Not extracted this session',
-    bio:'Group CEO of UOL Group since 2008 — 17 years at the helm. Led an active FY2025: divested KINEX (S$375M), acquired 388 George Street Sydney (S$391.6M, 60% JV) and Varley Park Brighton (S$83.5M PBSA, 100%). PARKTOWN Residence 94% sold; Skye at Holland 99% sold on launch day. Overseeing the Pan Pacific Hotels Group with 30+ hotels across 16 countries.',
+    appointed:'25 Apr 2019', tenure_yrs:6.7,
+    rem_exact:4480000, rem_fixed:896000, rem_bonus:2598400, rem_other:985600,
+    rem_note:'FY2025 total S$4,480,000: 20% fixed salary, 58% bonuses (Balanced Scorecard Bonus Plan — substantially linked to company performance), 10% Long-Term Performance Plan (3-yr deferred cash, vests at end of performance period tied to share price), 12% benefits-in-kind and others. No directors\' fee as Executive Director. YoY increase of +55.2% from S$2,887,000 in FY2024, driven by higher performance bonus (58% vs 62% of larger total). Does not receive director\'s fee.',
+    rem_band:null, rem_pct_fixed:20, rem_pct_bonus:58, rem_pct_other:22,
+    edu:'Bachelor of Architecture, University of Singapore; REDAS Luminary Service Award (2021)',
+    bio:'Group Chief Executive and sole Executive Director of UOL Group since 2019, with over 30 years at the Group. In FY2025: divested KINEX retail mall (S$375M), acquired 388 George Street Sydney (S$391.6M, 60% JV) and Varley Park Brighton PBSA (S$83.5M, 100%); PARKTOWN Residence 94% sold, Skye at Holland 99% sold on launch day. Also on board of Singapore Land Group (SingLand), UOL\'s SGX-listed subsidiary. Co-chaired Future Economy Council Urban Systems Cluster (2021–2023), first vice-president of REDAS, former URA committee member.',
     prev_roles:[
-      {org:'UOL Group',pos:'Senior roles from 2000s → Group CEO 2008'},
+      {org:'UOL Group Limited',pos:'30+ years, various senior roles → Group Chief Executive 2019'},
     ],
-    tags:['Developer CEO','17-Year Tenure','Pan Pacific Hotels','Capital Recycling']
+    rem_history:[
+      {year:'FY2025', total:4480000, pct_fixed:20, pct_bonus:58, pct_ltp:10, pct_other:12},
+      {year:'FY2024', total:2887000, pct_fixed:31, pct_bonus:62, pct_ltp:null, pct_other:7},
+    ],
+    cross_board_roles:[
+      {entity:'Singapore Land Group Limited', role:'Director', listed:true},
+    ],
+    linkedin_url:null,
+    tags:['Developer GCE','30-Year UOL Career','Architecture Graduate','REDAS Luminary']
   },
   {
-    id:'uol-exec-dir-25', name:'Gwee Lian Kheng', role:'Executive Director & President', role_type:'Board',
+    id:'uol-chair-25', name:'Wee Ee Lim', role:'Chairman, Non-Executive & Non-Independent Director', role_type:'Board',
     entity:'UOL Group', entity_short:'UOL', ar_year:'FY2025',
-    appointed:'1995', tenure_yrs:30,
-    rem_exact:null, rem_fixed:null, rem_bonus:null, rem_other:null,
-    rem_note:'Executive Director role includes executive duties — UOL AR 2025 remuneration section. 30-year tenure. Estimated S$2M–S$4M for Executive Director/President seniority.',
-    rem_band:'S$2M–S$4M (est.)', rem_pct_fixed:null, rem_pct_bonus:null, rem_pct_other:null,
-    edu:'Not extracted this session',
-    bio:'Executive Director and President of UOL Group. One of Singapore\'s most experienced real estate executives with 30 years at UOL. Oversees group strategy alongside the CEO, with particular focus on Pan Pacific Hotels Group operations and Singapore Land Group.',
+    appointed:'9 May 2006', tenure_yrs:19.7,
+    rem_exact:210000, rem_fixed:210000, rem_bonus:0, rem_other:0,
+    rem_note:'FY2025 total S$210,000 (100% directors\' fees). Appointed Chairman 27 Feb 2024 (was Deputy Chairman since 12 Aug 2015). Fee was S$180,000 in FY2024 as Deputy Chairman/Chairman. Subject to shareholder approval. Excludes subsidiary board fees.',
+    rem_band:null, rem_pct_fixed:100, rem_pct_bonus:0, rem_pct_other:0,
+    edu:'BA Economics, Clark University, USA',
+    bio:'Chairman of UOL Group since 27 February 2024, having served as Deputy Chairman since 2015. Aged 64. Also President & CEO of Haw Par Corporation Limited (SGX-listed) since 2003 — a diversified company in healthcare (Tiger Balm), leisure, property and investment. Director of United Overseas Bank (UOB). 30+ years in the Haw Par Group. Member of the Wee family, which controls UOL through United Industrial Corporation (UIC).',
     prev_roles:[
-      {org:'UOL Group',pos:'Executive leadership from 1995'},
+      {org:'Haw Par Corporation Limited',pos:'President & CEO (2003–present)'},
+      {org:'UOL Group',pos:'Deputy Chairman (2015–2024) → Chairman (2024–present)'},
     ],
-    tags:['Executive Director','30-Year Tenure','UOL','PPHG']
+    rem_history:[
+      {year:'FY2025', total:210000, pct_fixed:100},
+      {year:'FY2024', total:180000, pct_fixed:100},
+    ],
+    cross_board_roles:[
+      {entity:'Haw Par Corporation Limited', role:'President & CEO', listed:true},
+      {entity:'United Overseas Bank Limited', role:'Director', listed:true},
+      {entity:'Singapore Land Group Limited', role:'Chairman', listed:true},
+    ],
+    linkedin_url:null,
+    tags:['Chairman','Wee Family','Haw Par CEO','UOB Director']
   },
   {
-    id:'uol-chair-25', name:'Wee Ee Chao', role:'Non-Executive Chairman', role_type:'Board',
+    id:'uol-dir-weeeechao-25', name:'Wee Ee-chao', role:'Non-Executive & Non-Independent Director', role_type:'Board',
     entity:'UOL Group', entity_short:'UOL', ar_year:'FY2025',
-    appointed:'2007', tenure_yrs:18,
-    rem_exact:null, rem_fixed:null, rem_bonus:null, rem_other:null,
-    rem_note:'Non-executive Chairman fee in UOL AR 2025. Estimated S$180K–S$280K fixed fee.',
-    rem_band:'S$180K–S$280K (est.)', rem_pct_fixed:100, rem_pct_bonus:0, rem_pct_other:0,
-    edu:'Not extracted this session',
-    bio:'Non-Executive Chairman of UOL Group and representative of the Wee family (United Overseas Bank). Major shareholder United Industrial Corporation (UIC) is effectively controlled by the Wee family. Provides strategic oversight and long-term capital allocation direction.',
+    appointed:'9 May 2006', tenure_yrs:19.7,
+    rem_exact:75000, rem_fixed:75000, rem_bonus:0, rem_other:0,
+    rem_note:'FY2025 total S$75,000 (100% directors\' fees). Was S$60,000 in FY2024. No committee assignments in FY2025. Sibling of Wee Ee Lim and Wee Wei Ling (PPHG Executive Director, remuneration S$600K–S$700K band). Subject to shareholder approval.',
+    rem_band:null, rem_pct_fixed:100, rem_pct_bonus:0, rem_pct_other:0,
+    edu:'BBA, American University Washington D.C., USA',
+    bio:'Non-Executive Non-Independent Director of UOL Group since 2006 — 19+ year tenure. Aged 71. Former Chairman of the Singapore Tourism Board (2002–2004) and former first vice-president of REDAS. Chairman of UOB-Kay Hian Holdings Limited (SGX-listed) and Haw Par Corporation Limited (SGX-listed). Member of the Wee family. Director of Kheng Leong Company and Wee Foundation.',
     prev_roles:[
-      {org:'United Industrial Corporation',pos:'Board leadership'},
-      {org:'United Overseas Bank (UOB)',pos:'Wee family representative'},
+      {org:'Singapore Tourism Board',pos:'Chairman (2002–2004)'},
+      {org:'REDAS',pos:'First Vice-President (2005–2006)'},
     ],
-    tags:['Chairman','Wee Family','UOB-Linked','UIC Shareholder']
+    rem_history:[
+      {year:'FY2025', total:75000, pct_fixed:100},
+      {year:'FY2024', total:60000, pct_fixed:100},
+    ],
+    cross_board_roles:[
+      {entity:'UOB-Kay Hian Holdings Limited', role:'Chairman & Managing Director', listed:true},
+      {entity:'Haw Par Corporation Limited', role:'Chairman', listed:true},
+    ],
+    linkedin_url:null,
+    tags:['Wee Family','UOB-Kay Hian Chair','Haw Par Chair','STB Former Chairman']
   },
   {
-    id:'uol-cfo-25', name:'UOL Group CFO', role:'CFO', role_type:'CFO',
+    id:'uol-dir-poon-25', name:'Poon Hon Thang Samuel', role:'Lead Independent Non-Executive Director', role_type:'Board',
     entity:'UOL Group', entity_short:'UOL', ar_year:'FY2025',
-    appointed:null, tenure_yrs:null,
+    appointed:'12 May 2016', tenure_yrs:9.6,
+    rem_exact:105000, rem_fixed:105000, rem_bonus:0, rem_other:0,
+    rem_note:'FY2025 total S$105,000 (100% fixed). Was S$90,000 in FY2024. Chairs the Nominating Committee (S$30K chairman fee). Subject to shareholder approval.',
+    rem_band:null, rem_pct_fixed:100, rem_pct_bonus:0, rem_pct_other:0,
+    edu:'BCom (Honours), Nanyang University of Singapore',
+    bio:'Lead Independent Director and Nominating Committee Chairman at UOL Group. Aged 76. 30+ years in financial industry: former Senior EVP at United Overseas Bank (1988–2006) responsible for consumer banking, corporate banking and international banking. Joined UOB in 1979 at Citibank N.A. Singapore. Current director of Ping An Fund Management Company Limited. Past roles at Enviro-Hub Holdings and Soilbuild Construction Group.',
+    prev_roles:[
+      {org:'United Overseas Bank Limited',pos:'Senior EVP — consumer, corporate, international banking (1988–2006)'},
+      {org:'Citibank N.A. Singapore',pos:'Credit, marketing, structured finance (1979–1988)'},
+    ],
+    rem_history:[
+      {year:'FY2025', total:105000, pct_fixed:100},
+      {year:'FY2024', total:90000, pct_fixed:100},
+    ],
+    cross_board_roles:[
+      {entity:'Ping An Fund Management Company Limited', role:'Director', listed:false},
+    ],
+    linkedin_url:null,
+    tags:['Lead Independent Director','NC Chair','UOB Alumni','Banking Background']
+  },
+  {
+    id:'uol-dir-sim-25', name:'Sim Hwee Cher', role:'Non-Executive Independent Director', role_type:'Board',
+    entity:'UOL Group', entity_short:'UOL', ar_year:'FY2025',
+    appointed:'25 Apr 2019', tenure_yrs:6.7,
+    rem_exact:170000, rem_fixed:170000, rem_bonus:0, rem_other:0,
+    rem_note:'FY2025 total S$170,000 — second highest board fee. Comprises Main Board S$75K + ARMSC Chair S$80K + RC Member S$15K. Was S$135,000 in FY2024. Subject to shareholder approval.',
+    rem_band:null, rem_pct_fixed:100, rem_pct_bonus:0, rem_pct_other:0,
+    edu:'BAccountancy (Honours), NUS; Fellow CPA Australia; Fellow ACCA UK; INSEAD International Directors Programme; Pingat Bakti Masyarakat (PBM) and Bintang Bakti Masyarakat (BBM)',
+    bio:'Independent Director and ARMSC Chairman at UOL Group. Aged 68. Over 30 years of audit experience. Former vice chairman (operations), assurance leader and leadership team member at PricewaterhouseCoopers LLP Singapore. Former executive committee member of PwC China, Taiwan, Singapore and Hong Kong. Specialised in real estate, construction and insurance industry audits. Retired from PwC in July 2018. Past role at Mandai Park Holdings.',
+    prev_roles:[
+      {org:'PricewaterhouseCoopers LLP Singapore',pos:'Vice Chairman (Operations); Assurance Leader; Leadership Team (retired 2018)'},
+    ],
+    rem_history:[
+      {year:'FY2025', total:170000, pct_fixed:100},
+      {year:'FY2024', total:135000, pct_fixed:100},
+    ],
+    cross_board_roles:[
+      {entity:'Mandai Park Holdings Pte Ltd', role:'Director & ExCo Member', listed:false},
+      {entity:'Asia Capital Reinsurance Group Pte. Ltd.', role:'Chairman', listed:false},
+    ],
+    linkedin_url:null,
+    tags:['Independent Director','ARMSC Chair','PwC Alumni','Audit Expert']
+  },
+  {
+    id:'uol-dir-lau-25', name:'Lau Cheng Soon', role:'Non-Executive Independent Director', role_type:'Board',
+    entity:'UOL Group', entity_short:'UOL', ar_year:'FY2025',
+    appointed:'23 Apr 2021', tenure_yrs:4.7,
+    rem_exact:170000, rem_fixed:170000, rem_bonus:0, rem_other:0,
+    rem_note:'FY2025 total S$170,000. Comprises Main Board S$75K + RC Chair S$30K + EXCO Member S$20K + ARMSC Member S$45K. Was S$155,000 in FY2024. Subject to shareholder approval.',
+    rem_band:null, rem_pct_fixed:100, rem_pct_bonus:0, rem_pct_other:0,
+    edu:'BSc Chemical Engineering (Honours), Oregon State University; MBA, University of Chicago Booth School of Business',
+    bio:'Independent Director and Remuneration Committee Chairman at UOL Group. Aged 70. 30+ years in Asia Pacific real estate investment. Former Managing Director and Head of Asia Pacific at Invesco Real Estate (until March 2021). Deep experience in planning, developing, managing and marketing real estate investment and development projects across major APAC markets. Currently on advisory boards for Pro-invest Australia Hospitality Funds I, II and III. Director at Straits Real Estate and Straits Investment Management (The Straits Trading Company group).',
+    prev_roles:[
+      {org:'Invesco Real Estate, Asia Pacific',pos:'MD & Head of Asia Pacific (until March 2021)'},
+    ],
+    rem_history:[
+      {year:'FY2025', total:170000, pct_fixed:100},
+      {year:'FY2024', total:155000, pct_fixed:100},
+    ],
+    cross_board_roles:[
+      {entity:'The Straits Trading Company Limited', role:'Director', listed:true},
+      {entity:'Pro-invest Asia Pacific Distressed Hospitality Fund III', role:'Advisory Board Chairman', listed:false},
+    ],
+    linkedin_url:null,
+    tags:['Independent Director','RC Chair','Invesco RE Alumni','APAC Real Estate']
+  },
+  {
+    id:'uol-cfo-25', name:'Ng Tiang Poh Eric', role:'CFO', role_type:'CFO',
+    entity:'UOL Group', entity_short:'UOL', ar_year:'FY2025',
+    appointed:'1 Jun 2024', tenure_yrs:1.6,
     rem_exact:null, rem_fixed:null, rem_bonus:null, rem_other:null,
-    rem_note:'CFO name and remuneration not extracted this session. Retrieve from UOL AR 2025 management team and KMP remuneration disclosure.',
-    rem_band:'S$800K–S$1.5M (est.)', rem_pct_fixed:null, rem_pct_bonus:null, rem_pct_other:null,
-    edu:'Not extracted this session',
-    bio:'Pending extraction from UOL AR 2025. Manages financial strategy for S$10B+ investment portfolio and Pan Pacific Hotels Group treasury across SGD, AUD, GBP and other currencies.',
+    rem_note:'CFO is part of top-5 KMP group (excl GCE). UOL elected not to disclose individual KMP remuneration — only aggregate disclosed (FY2025: S$5,304,000 for top-5 KMP excl GCE; mix is approx 48% salary, 32% bonus, 14% LTP, 1% defined contribution, 5% other per AR). Individual band not disclosed. Joined June 2024.',
+    rem_band:null, rem_pct_fixed:null, rem_pct_bonus:null, rem_pct_other:null,
+    edu:'MBA, University of Manchester; BAccountancy (Honours), NTU; Fellow, Institute of Singapore Chartered Accountants',
+    bio:'CFO of UOL Group since 1 June 2024. 25+ years in large multinational companies covering group reporting, corporate finance, investment management, financial control, tax and treasury. Previously 7 years at Keppel Limited (last role: CFO of Keppel Infrastructure Trust, its listed infrastructure fund) and 10 years at Singapore Power Group. Career started at KPMG Singapore as auditor.',
+    prev_roles:[
+      {org:'Keppel Limited',pos:'CFO, Keppel Infrastructure Trust (listed fund); 7 years total at Keppel'},
+      {org:'Singapore Power Group',pos:'Senior finance roles (10 years)'},
+      {org:'KPMG Singapore',pos:'Auditor (career start)'},
+    ],
+    rem_history:[
+      {year:'FY2025', total:null, band:'Part of S$5.3M top-5 KMP pool'},
+      {year:'FY2024', total:null, band:'Part of S$3.7M top-5 KMP pool (joined Jun 2024)'},
+    ],
+    cross_board_roles:[],
+    linkedin_url:null,
+    tags:['Developer CFO','Keppel Alumni','Singapore Power Alumni','ISCA Fellow']
+  },
+  {
+    id:'uol-coo-25', name:'Neo Soon Hup', role:'Chief Operating Officer', role_type:'Mgmt',
+    entity:'UOL Group', entity_short:'UOL', ar_year:'FY2025',
+    appointed:'1 Sep 2022', tenure_yrs:3.3,
+    rem_exact:null, rem_fixed:null, rem_bonus:null, rem_other:null,
+    rem_note:'COO is part of top-5 KMP group — individual remuneration not disclosed. Aggregate top-5 KMP (excl GCE): S$5,304,000 for FY2025 (S$3,716,000 in FY2024). KMP mix (combined): 48% salary, 32% bonus, 14% LTP, 1% defined contribution, 5% other.',
+    rem_band:null, rem_pct_fixed:null, rem_pct_bonus:null, rem_pct_other:null,
+    edu:'Fellow, Institute of Singapore Chartered Accountants; Fellow, Chartered Secretaries Institute of Singapore',
+    bio:'COO of UOL Group since 1 September 2022. Oversees hospitality portfolio asset management, IT, corporate engineering & development, and commercial portfolio centre management. Was COO of PPHG from March 2020. With the UOL Group since 2003. Previously spent 10+ years at PricewaterhouseCoopers.',
+    prev_roles:[
+      {org:'Pan Pacific Hotels Group (PPHG)',pos:'COO (March 2020 – Sep 2022)'},
+      {org:'PricewaterhouseCoopers',pos:'10+ years'},
+    ],
+    rem_history:[
+      {year:'FY2025', total:null, band:'Part of S$5.3M top-5 KMP pool'},
+    ],
+    cross_board_roles:[],
+    linkedin_url:null,
+    tags:['Developer COO','PPHG Ops','PwC Alumni','22-Year UOL Career']
+  },
+  {
+    id:'uol-cio-25', name:'Shirley Ng', role:'Chief Investment & Asset Officer', role_type:'CIO',
+    entity:'UOL Group', entity_short:'UOL', ar_year:'FY2025',
+    appointed:'1 Jan 2023', tenure_yrs:3,
+    rem_exact:null, rem_fixed:null, rem_bonus:null, rem_other:null,
+    rem_note:'CIO is part of top-5 KMP group — individual remuneration not disclosed.',
+    rem_band:null, rem_pct_fixed:null, rem_pct_bonus:null, rem_pct_other:null,
+    edu:'BAccountancy (Honours), NTU; MSc Financial Engineering, NUS; CFA Charterholder',
+    bio:'Chief Investment and Asset Officer of UOL Group since January 2023. Responsible for sourcing and executing investments and asset management of the commercial portfolio. Previously Deputy CEO and Head of Investment at Keppel REIT — responsible for acquisitions and divestments across multiple Asia Pacific countries. Before Keppel REIT, held various investment, portfolio management, fund raising and asset management roles at Alpha Investment Partners (private RE fund manager).',
+    prev_roles:[
+      {org:'Keppel REIT Management',pos:'Deputy CEO & Head of Investment'},
+      {org:'Alpha Investment Partners Limited',pos:'Acquisitions, portfolio management, fund raising, asset management'},
+    ],
+    rem_history:[
+      {year:'FY2025', total:null, band:'Part of S$5.3M top-5 KMP pool'},
+    ],
+    cross_board_roles:[],
+    linkedin_url:null,
+    tags:['Developer CIO','CFA Charterholder','Keppel REIT Alumni','Alpha Investments Alumni']
+  },
+  // ── UOL FY2024 reference (GCE YoY) ──
+  {
+    id:'uol-ceo-24', name:'Liam Wee Sin', role:'Group Chief Executive (FY2024)', role_type:'CEO',
+    entity:'UOL Group', entity_short:'UOL', ar_year:'FY2024',
+    appointed:'25 Apr 2019', tenure_yrs:5.7,
+    rem_exact:2887000, rem_fixed:894970, rem_bonus:1789940, rem_other:202090,
+    rem_note:'FY2024 total S$2,887,000: 31% fixed salary, 62% bonuses, 7% benefits-in-kind and others. No Long-Term Performance Plan component disclosed separately in FY2024 (LTPP introduced as distinct line item from FY2025). YoY: S$2,887,000 FY2024 → S$4,480,000 FY2025 (+55.2%), driven by higher bonus payout and introduction of LTPP component.',
+    rem_band:null, rem_pct_fixed:31, rem_pct_bonus:62, rem_pct_other:7,
+    edu:'Bachelor of Architecture, University of Singapore',
+    bio:'Same individual as FY2025 — see uol-ceo-25. FY2024 entry captures prior-year remuneration for YoY comparison. In FY2024, UOL divested Havelock II site, completed Pan Pacific Orchard reopening, and launched PARKTOWN Residence and Skye at Holland.',
     prev_roles:[],
-    tags:['Developer CFO','Multi-Market','PPHG Finance','To Be Updated']
+    rem_history:[
+      {year:'FY2024', total:2887000, pct_fixed:31, pct_bonus:62, pct_ltp:null, pct_other:7},
+    ],
+    cross_board_roles:[],
+    linkedin_url:null,
+    tags:['Developer GCE','FY2024 Reference','UOL Group']
   },
 
   // ════════════════════════════════════════════
@@ -2581,6 +2746,60 @@ function talentOpenDrawer(id){
       }).join('')+'</div>';
   }
 
+  // YoY remuneration history
+  var remHistHtml = '';
+  if(p.rem_history && p.rem_history.length > 1){
+    remHistHtml = '<div class="td-section">📈 Remuneration History</div>'+
+      '<div style="overflow-x:auto;margin-bottom:4px">'+
+      '<table style="width:100%;border-collapse:collapse;font-size:11px">'+
+      '<tr style="background:var(--srf2)">'+
+        '<th style="text-align:left;padding:5px 8px;color:var(--mut);font-weight:500;border-bottom:1px solid var(--bdr)">Year</th>'+
+        '<th style="text-align:right;padding:5px 8px;color:var(--mut);font-weight:500;border-bottom:1px solid var(--bdr)">Total</th>'+
+        '<th style="text-align:right;padding:5px 8px;color:var(--mut);font-weight:500;border-bottom:1px solid var(--bdr)">Fixed%</th>'+
+        '<th style="text-align:right;padding:5px 8px;color:var(--mut);font-weight:500;border-bottom:1px solid var(--bdr)">Bonus%</th>'+
+        '<th style="text-align:right;padding:5px 8px;color:var(--mut);font-weight:500;border-bottom:1px solid var(--bdr)">LTP%</th>'+
+      '</tr>'+
+      p.rem_history.map(function(h,i){
+        var bg = i===0 ? '' : 'background:var(--srf3)';
+        var totalStr = h.total ? ('S$'+(h.total/1000).toFixed(0)+'K') : (h.band||'—');
+        var yoyHtml = '';
+        if(i>0 && p.rem_history[i-1].total && h.total){
+          var pct = ((p.rem_history[i-1].total - h.total)/h.total*100);
+          yoyHtml = ' <span style="color:'+(pct>0?'#16a34a':'#c8364a');
+          yoyHtml += ';font-size:9px">'+(pct>0?'▲':'▼')+Math.abs(pct).toFixed(0)+'%</span>';
+        }
+        return '<tr style="'+bg+'">'+
+          '<td style="padding:4px 8px;font-weight:'+(i===0?'600':'400')+'">'+h.year+'</td>'+
+          '<td style="padding:4px 8px;text-align:right;font-family:\'DM Mono\',monospace">'+totalStr+yoyHtml+'</td>'+
+          '<td style="padding:4px 8px;text-align:right;color:var(--mut)">'+((h.pct_fixed!=null)?h.pct_fixed+'%':'—')+'</td>'+
+          '<td style="padding:4px 8px;text-align:right;color:var(--mut)">'+((h.pct_bonus!=null)?h.pct_bonus+'%':'—')+'</td>'+
+          '<td style="padding:4px 8px;text-align:right;color:var(--mut)">'+((h.pct_ltp!=null)?h.pct_ltp+'%':'—')+'</td>'+
+        '</tr>';
+      }).join('')+
+      '</table></div>';
+  }
+
+  // Cross-board roles
+  var crossBoardHtml = '';
+  if(p.cross_board_roles && p.cross_board_roles.length){
+    crossBoardHtml = '<div class="td-section">🏛 Other Board Positions</div>'+
+      '<div style="display:flex;flex-direction:column;gap:5px">'+
+      p.cross_board_roles.map(function(r){
+        return '<div style="display:flex;justify-content:space-between;align-items:center;padding:5px 8px;background:var(--srf2);border-radius:4px;border:1px solid var(--bdr)">'+
+          '<div>'+
+            '<div style="font-size:11px;font-weight:600;color:var(--txt2)">'+r.entity+'</div>'+
+            '<div style="font-size:10px;color:var(--mut)">'+r.role+'</div>'+
+          '</div>'+
+          (r.listed?'<span style="font-size:9px;background:#eff6ff;color:#1d4ed8;border:1px solid #bfdbfe;border-radius:3px;padding:1px 5px;font-weight:600">SGX</span>':'<span style="font-size:9px;background:var(--srf3);color:var(--mut);border:1px solid var(--bdr);border-radius:3px;padding:1px 5px">Private</span>')+
+        '</div>';
+      }).join('')+'</div>';
+  }
+
+  // LinkedIn badge
+  var linkedInHtml = p.linkedin_url
+    ? '<a href="'+p.linkedin_url+'" style="display:inline-flex;align-items:center;gap:5px;padding:4px 10px;background:#0077b5;color:#fff;border-radius:5px;font-size:11px;font-weight:600;text-decoration:none;margin-left:8px" target="_blank">in LinkedIn</a>'
+    : '<span style="display:inline-flex;align-items:center;gap:4px;padding:3px 8px;background:var(--srf2);color:var(--mut);border:1px solid var(--bdr);border-radius:5px;font-size:10px" title="Upload LinkedIn URL via Supabase talent_profiles table">in Not linked</span>';
+
   var tagsHtml = (p.tags||[]).map(function(t){
     return '<span class="talent-tag rem-low" style="font-size:10px;padding:3px 8px">'+t+'</span>';
   }).join('');
@@ -2588,12 +2807,12 @@ function talentOpenDrawer(id){
   document.getElementById('talent-drawer-body').innerHTML =
     '<div style="display:flex;align-items:center;gap:12px;margin-bottom:4px">'+
       '<div class="talent-avatar" style="background:'+avatar+';width:48px;height:48px;font-size:18px;border-radius:50%;display:flex;align-items:center;justify-content:center;color:#fff;font-weight:700">'+talentInitials(p.name)+'</div>'+
-      '<div><div class="td-name">'+p.name+'</div><div class="td-role">'+p.role+'</div></div>'+
+      '<div style="flex:1"><div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap"><span class="td-name">'+p.name+'</span>'+linkedInHtml+'</div><div class="td-role">'+p.role+'</div></div>'+
     '</div>'+
     '<div class="td-entity-row">'+
       '<span style="width:8px;height:8px;border-radius:50%;background:'+avatar+';display:inline-block;flex-shrink:0"></span>'+
       '<div><div style="font-size:12px;font-weight:600;color:var(--txt)">'+p.entity+'</div>'+
-      '<div style="font-size:10px;color:var(--mut)">Annual Report '+p.ar_year+' · Appointed '+p.appointed+'</div></div>'+
+      '<div style="font-size:10px;color:var(--mut)">Annual Report '+p.ar_year+' · Appointed '+(p.appointed||'—')+'</div></div>'+
     '</div>'+
     '<div class="td-section">📊 Profile</div>'+
     '<div class="td-row"><span class="td-row-lbl">Tenure (approx.)</span><span class="td-row-val">'+ten.label+'</span></div>'+
@@ -2603,7 +2822,9 @@ function talentOpenDrawer(id){
     '<div class="td-section">🧠 Background</div>'+
     '<div class="td-bio">'+p.bio+'</div>'+
     remSection+
+    remHistHtml+
     prevRolesHtml+
+    crossBoardHtml+
     (tagsHtml?'<div class="td-section">🏷 Tags</div><div class="talent-tags" style="flex-wrap:wrap;gap:5px">'+tagsHtml+'</div>':'')+
     '';
 
@@ -2631,14 +2852,49 @@ function talentInitSummary(){
     .map(function(p){return p.rem_exact;});
 
   var sumCards = [
-    {val:'S$2.18M', lbl:'Highest confirmed CEO pay', sub:'Chong Kee Hiong · Suntec REIT FY2025'},
-    {val:'S$677K', lbl:'Highest REIT mgr CEO pay', sub:'Donald Han · Sabana REIT FY2024'},
-    {val:'14 / 38', lbl:'Profiles with exact data', sub:'AR-sourced · others estimated'},
-    {val:'58%', lbl:'CEO pay jump FY24→FY25', sub:'Suntec REIT · retention award'},
+    {val:'S$4.48M', lbl:'Highest confirmed pay', sub:'Liam Wee Sin · UOL Group GCE FY2025'},
+    {val:'S$2.18M', lbl:'Highest REIT CEO pay', sub:'Chong Kee Hiong · Suntec REIT FY2025'},
+    {val:'S$677K', lbl:'Highest internalised REIT', sub:'Donald Han · Sabana REIT FY2024'},
+    {val:'+55%', lbl:'Largest YoY pay jump', sub:'UOL GCE · S$2.9M → S$4.5M'},
   ];
   document.getElementById('talent-sum-row').innerHTML = sumCards.map(function(c){
     return '<div class="talent-sum-card"><div class="talent-sum-val">'+c.val+'</div><div class="talent-sum-lbl">'+c.lbl+'</div><div class="talent-sum-sub">'+c.sub+'</div></div>';
   }).join('');
+}
+
+// ═══════════════════════════════════════════════════
+// TALENT SUPABASE ENRICHMENT
+// Table: talent_profiles
+// Columns: id TEXT PK, linkedin_url TEXT, photo_url TEXT, notes TEXT
+// Update via Supabase dashboard — no HTML edits needed for LinkedIn additions
+//
+// CREATE TABLE talent_profiles (
+//   id TEXT PRIMARY KEY,
+//   linkedin_url TEXT,
+//   photo_url TEXT,
+//   notes TEXT,
+//   updated_at TIMESTAMPTZ DEFAULT NOW()
+// );
+// ═══════════════════════════════════════════════════
+var TALENT_ENRICHMENT = {};
+
+async function talentLoadEnrichment(){
+  try {
+    var url = SB_URL+'/rest/v1/talent_profiles?select=id,linkedin_url,photo_url,notes';
+    var r = await fetch(url, {headers:{'apikey':SB_KEY,'Authorization':'Bearer '+SB_KEY}});
+    if(!r.ok) return;
+    var rows = await r.json();
+    if(!Array.isArray(rows)) return;
+    rows.forEach(function(row){ if(row.id) TALENT_ENRICHMENT[row.id] = row; });
+    TALENT_DATA.forEach(function(p){
+      var e = TALENT_ENRICHMENT[p.id];
+      if(e){
+        if(e.linkedin_url) p.linkedin_url = e.linkedin_url;
+        if(e.photo_url) p.photo_url = e.photo_url;
+        if(e.notes) p.supabase_notes = e.notes;
+      }
+    });
+  } catch(err){ /* silent — enrichment optional */ }
 }
 
 // Init on tab activation (lazy)
@@ -2648,7 +2904,7 @@ document.querySelectorAll('.navtab').forEach(function(t){
     if(t.dataset.tab==='talent' && !talentInited){
       talentInited = true;
       talentInitSummary();
-      talentRender();
+      talentLoadEnrichment().then(function(){ talentRender(); }).catch(function(){ talentRender(); });
     }
   });
 });
