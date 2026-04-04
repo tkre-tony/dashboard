@@ -1399,8 +1399,8 @@ html,body{background:var(--bg);color:var(--txt);font-family:'DM Sans',sans-serif
         <button class="dir-tbtn" data-reitf="Digital Core REIT" onclick="reitSetFilter(this,'reit','Digital Core REIT')">Digital Core <span style="color:#f59e0b;font-size:8px">●</span></button>
         <button class="dir-tbtn" data-reitf="ESR-REIT" onclick="reitSetFilter(this,'reit','ESR-REIT')">ESR-REIT <span style="color:#f59e0b;font-size:8px">●</span></button>
         <button class="dir-tbtn" data-reitf="Far East Hospitality Trust" onclick="reitSetFilter(this,'reit','Far East Hospitality Trust')">FE H-Trust <span style="color:#f59e0b;font-size:8px">●</span></button>
-        <button class="dir-tbtn" data-reitf="Frasers Centrepoint Trust" onclick="reitSetFilter(this,'reit','Frasers Centrepoint Trust')">Frasers CT <span style="color:#4ade80;font-size:8px">●</span></button>
-        <button class="dir-tbtn" data-reitf="Frasers Logistics & Commercial Trust" onclick="reitSetFilter(this,'reit','Frasers Logistics & Commercial Trust')">Frasers LCT <span style="color:#4ade80;font-size:8px">●</span></button>
+        <button class="dir-tbtn" data-reitf="Frasers Centrepoint Trust" onclick="reitSetFilter(this,'reit','Frasers Centrepoint Trust')">FCT <span style="color:#4ade80;font-size:8px">●</span></button>
+        <button class="dir-tbtn" data-reitf="Frasers Logistics & Commercial Trust" onclick="reitSetFilter(this,'reit','Frasers Logistics & Commercial Trust')">FLCT <span style="color:#4ade80;font-size:8px">●</span></button>
         <button class="dir-tbtn" data-reitf="Keppel DC REIT" onclick="reitSetFilter(this,'reit','Keppel DC REIT')">Keppel DC <span style="color:#f59e0b;font-size:8px">●</span></button>
         <button class="dir-tbtn" data-reitf="Keppel REIT" onclick="reitSetFilter(this,'reit','Keppel REIT')">Keppel REIT <span style="color:#f59e0b;font-size:8px">●</span></button>
         <button class="dir-tbtn" data-reitf="Lendlease Global Commercial REIT" onclick="reitSetFilter(this,'reit','Lendlease Global Commercial REIT')">Lendlease <span style="color:#4ade80;font-size:8px">●</span></button>
@@ -6881,7 +6881,7 @@ function reitRenderTable(data){
     // Entity
     rowHtml+='<td data-rtd="entity" class="'+(reitCols.entity?'':'rtbl-hidden')+'" style="min-width:130px;white-space:normal">'+entityHtml+'</td>';
     // Asset class
-    rowHtml+='<td data-rtd="type" class="'+(reitCols.type?'':'rtbl-hidden')+'" style="white-space:nowrap;font-size:11px">'+(p.type||'—')+'</td>';
+    rowHtml+='<td data-rtd="type" class="'+(reitCols.type?'':'rtbl-hidden')+'" style="white-space:normal;font-size:11px;min-width:80px">'+(p.type||'—')+'</td>';
     // #4 Country — single flag
     rowHtml+='<td data-rtd="country" class="'+(reitCols.country?'':'rtbl-hidden')+'" style="white-space:nowrap;font-size:11px">'+countryCell+'</td>';
     // Area
