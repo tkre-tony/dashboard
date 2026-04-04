@@ -1812,7 +1812,8 @@ html,body{background:var(--bg);color:var(--txt);font-family:'DM Sans',sans-serif
     <span id="talent-count" style="font-size:11px;color:var(--mut);margin-left:4px"></span>
   </div>
   <div style="font-size:10px;color:var(--mut2);margin-bottom:12px;padding:6px 10px;background:var(--srf2);border-radius:5px;border:1px solid var(--bdr)">
-    ⚠️ <strong style="color:var(--txt2)">Data note:</strong> AI-REIT profiles contain exact figures from FY2025 AR. All other entities use estimated remuneration ranges based on industry benchmarks and role comparables. Verify against each entity's published AR corporate governance section before relying on figures. Profiles marked "To Be Updated" require re-extraction from the AR's management team and CG sections.
+    <span style="font-size:9px;background:#f0fdf4;color:#166534;border:1px solid #bbf7d0;border-radius:3px;padding:1px 5px;font-weight:600">AR</span> = Exact figures sourced from published Annual Report &nbsp;·&nbsp;
+    <span style="font-size:9px;background:#fffbeb;color:#92400e;border:1px solid #fde68a;border-radius:3px;padding:1px 5px;font-weight:600">EST</span> = Industry estimate — verify against entity's AR Corporate Governance section before relying on figures.
   </div>
 
   <!-- Cards grid -->
@@ -2509,15 +2510,22 @@ function talentRender(){
     var remCls = talentRemTagClass(p);
     var ten = talentTenureTag(p.tenure_yrs);
     var avatar = talentAvatarColor(p.role_type);
-    var remBarPct = p.rem_exact ? Math.min(100, Math.round(p.rem_exact/8000)) : (p.rem_band?40:0);
+    // Scale bar: S$2.5M = 100%, so S$2.18M Suntec CEO fills ~87%
+    var remBarPct = p.rem_exact ? Math.min(100, Math.round(p.rem_exact/25000)) : (p.rem_band?35:0);
     var fixedPct = p.rem_pct_fixed||0;
     var bonusPct = p.rem_pct_bonus||0;
+    // Data quality badge
+    var dqBadge = p.rem_exact
+      ? '<span style="font-size:9px;background:#f0fdf4;color:#166534;border:1px solid #bbf7d0;border-radius:3px;padding:1px 5px;font-weight:600;margin-left:4px">AR</span>'
+      : (p.rem_band && p.rem_band.indexOf('est')>=0
+        ? '<span style="font-size:9px;background:#fffbeb;color:#92400e;border:1px solid #fde68a;border-radius:3px;padding:1px 5px;font-weight:600;margin-left:4px">EST</span>'
+        : '<span style="font-size:9px;background:#f5f3ff;color:#5b21b6;border:1px solid #ddd6fe;border-radius:3px;padding:1px 5px;font-weight:600;margin-left:4px">AR</span>');
 
     return '<div class="talent-card role-'+p.role_type.toLowerCase()+'" onclick="talentOpenDrawer(\''+p.id+'\')">'+
       '<div class="talent-card-top">'+
         '<div class="talent-avatar" style="background:'+avatar+'">'+talentInitials(p.name)+'</div>'+
         '<div style="flex:1;min-width:0">'+
-          '<div class="talent-name">'+p.name+'</div>'+
+          '<div class="talent-name" style="display:flex;align-items:center;gap:0">'+p.name+dqBadge+'</div>'+
           '<div class="talent-title">'+p.role+'</div>'+
           '<div class="talent-entity-chip">'+
             '<span style="width:6px;height:6px;border-radius:50%;background:'+avatar+';display:inline-block"></span>'+
@@ -2623,10 +2631,10 @@ function talentInitSummary(){
     .map(function(p){return p.rem_exact;});
 
   var sumCards = [
-    {val:'S$677K', lbl:'Highest disclosed CEO pay', sub:'Donald Han · Sabana FY2024'},
-    {val:'6', lbl:'Entities indexed', sub:'3 REITs · 2 Developers · 1 Former'},
-    {val:'32', lbl:'Profiles in database', sub:'C-Suite + Board'},
-    {val:'57 yrs', lbl:'Longest tenure', sub:'Kwek Leng Beng · CDL Chairman'},
+    {val:'S$2.18M', lbl:'Highest confirmed CEO pay', sub:'Chong Kee Hiong · Suntec REIT FY2025'},
+    {val:'S$677K', lbl:'Highest REIT mgr CEO pay', sub:'Donald Han · Sabana REIT FY2024'},
+    {val:'14 / 38', lbl:'Profiles with exact data', sub:'AR-sourced · others estimated'},
+    {val:'58%', lbl:'CEO pay jump FY24→FY25', sub:'Suntec REIT · retention award'},
   ];
   document.getElementById('talent-sum-row').innerHTML = sumCards.map(function(c){
     return '<div class="talent-sum-card"><div class="talent-sum-val">'+c.val+'</div><div class="talent-sum-lbl">'+c.lbl+'</div><div class="talent-sum-sub">'+c.sub+'</div></div>';
