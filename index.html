@@ -367,6 +367,10 @@ html,body{background:var(--bg);color:var(--txt);font-family:'DM Sans',sans-serif
     <span class="navtab-icon">🏗</span>Projects For Sale
     <span style="font-size:9px;background:var(--amber);border-radius:3px;padding:1px 5px;font-weight:800;letter-spacing:.05em;color:#fff">BETA</span>
   </div>
+  <div class="navtab" data-tab="talent" style="display:flex;align-items:center;gap:6px">
+    <span class="navtab-icon">👤</span>RE Human Capital
+    <span style="font-size:9px;background:#7c3aed;border-radius:3px;padding:1px 5px;font-weight:800;letter-spacing:.05em;color:#fff">PILOT</span>
+  </div>
 </div>
 <div id="tt"></div>
 <div class="wrap">
@@ -1664,6 +1668,620 @@ html,body{background:var(--bg);color:var(--txt);font-family:'DM Sans',sans-serif
   </div>
 
 </div>
+
+<!-- ═══════════════════════════════════════════════════════════════
+     RE HUMAN CAPITAL TAB — inline styles injected here
+     ═══════════════════════════════════════════════════════════════ -->
+<style>
+/* ── TALENT TAB ── */
+#tab-talent{padding-bottom:40px}
+.talent-hero{background:linear-gradient(135deg,var(--hdr) 0%,#1a2e4a 45%,#1e1a3a 100%);border-radius:8px;padding:20px 24px;margin-bottom:16px;border:1px solid rgba(255,255,255,.06);display:flex;align-items:flex-start;justify-content:space-between;flex-wrap:wrap;gap:12px}
+.talent-hero-title{color:#fff;font-size:16px;font-weight:700;letter-spacing:-.02em;margin-bottom:4px}
+.talent-hero-sub{color:rgba(255,255,255,.45);font-size:11px;letter-spacing:.02em}
+.talent-hero-stats{display:flex;gap:24px;flex-shrink:0}
+.talent-hs{text-align:right}
+.talent-hs-val{font-family:'DM Mono',monospace;font-size:18px;font-weight:700;color:#a78bfa;line-height:1}
+.talent-hs-lbl{font-size:9px;color:rgba(255,255,255,.35);letter-spacing:.06em;text-transform:uppercase;margin-top:3px}
+
+/* ── FILTER BAR ── */
+.talent-filters{display:flex;align-items:center;gap:8px;margin-bottom:14px;flex-wrap:wrap}
+.talent-search{flex:1;min-width:200px;max-width:320px;background:var(--srf);border:1px solid var(--bdr);border-radius:6px;padding:7px 12px 7px 32px;font-size:12px;color:var(--txt);outline:none;font-family:'DM Sans',sans-serif;position:relative}
+.talent-search-wrap{position:relative;flex:1;min-width:200px;max-width:320px}
+.talent-search-wrap::before{content:'🔍';position:absolute;left:10px;top:50%;transform:translateY(-50%);font-size:11px;pointer-events:none}
+.talent-filter-btn{padding:6px 12px;border:1px solid var(--bdr);background:var(--srf);border-radius:6px;font-size:11px;font-weight:500;color:var(--mut);cursor:pointer;transition:all .15s;font-family:'DM Sans',sans-serif;white-space:nowrap}
+.talent-filter-btn:hover,.talent-filter-btn.on{background:var(--g1);color:#fff;border-color:var(--g1)}
+.talent-filter-btn.role-ceo.on{background:#7c3aed;border-color:#7c3aed}
+.talent-filter-btn.role-cfo.on{background:#0891b2;border-color:#0891b2}
+.talent-filter-btn.role-cio.on{background:#16a34a;border-color:#16a34a}
+.talent-filter-btn.role-board.on{background:#d97706;border-color:#d97706}
+.talent-sort-sel{padding:6px 10px;border:1px solid var(--bdr);background:var(--srf);border-radius:6px;font-size:11px;color:var(--mut);cursor:pointer;font-family:'DM Sans',sans-serif;outline:none}
+
+/* ── PERSON CARDS GRID ── */
+.talent-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(340px,1fr));gap:12px}
+.talent-card{background:var(--srf);border:1px solid var(--bdr);border-radius:8px;padding:16px 18px;cursor:pointer;transition:box-shadow .15s,border-color .15s;position:relative;overflow:hidden}
+.talent-card:hover{box-shadow:var(--shadow-lg);border-color:var(--bdr2)}
+.talent-card::before{content:'';position:absolute;left:0;top:0;bottom:0;width:3px;border-radius:8px 0 0 8px}
+.talent-card.role-ceo::before{background:#7c3aed}
+.talent-card.role-cfo::before{background:#0891b2}
+.talent-card.role-cio::before{background:#16a34a}
+.talent-card.role-board::before{background:#d97706}
+.talent-card.role-mgmt::before{background:var(--g2)}
+.talent-card-top{display:flex;align-items:flex-start;gap:12px;margin-bottom:10px}
+.talent-avatar{width:40px;height:40px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:16px;font-weight:700;flex-shrink:0;color:#fff;letter-spacing:-.01em}
+.talent-name{font-size:13px;font-weight:700;color:var(--txt);letter-spacing:-.01em;line-height:1.3}
+.talent-title{font-size:11px;color:var(--mut);margin-top:2px;line-height:1.4}
+.talent-entity-chip{display:inline-flex;align-items:center;gap:4px;background:var(--srf2);border:1px solid var(--bdr);border-radius:4px;padding:2px 7px;font-size:10px;font-weight:500;color:var(--txt2);margin-top:5px}
+.talent-metrics{display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px;margin-top:10px;padding-top:10px;border-top:1px solid var(--srf3)}
+.talent-metric{text-align:center}
+.talent-metric-val{font-family:'DM Mono',monospace;font-size:12px;font-weight:600;color:var(--txt);line-height:1}
+.talent-metric-lbl{font-size:9px;color:var(--mut2);text-transform:uppercase;letter-spacing:.05em;margin-top:2px}
+.talent-tags{display:flex;flex-wrap:wrap;gap:4px;margin-top:8px}
+.talent-tag{padding:2px 7px;border-radius:10px;font-size:9px;font-weight:600;letter-spacing:.04em;text-transform:uppercase}
+.talent-tag.rem-high{background:#f0fdf4;color:#166534;border:1px solid #bbf7d0}
+.talent-tag.rem-mid{background:#fffbeb;color:#92400e;border:1px solid #fde68a}
+.talent-tag.rem-low{background:#f8fafc;color:var(--mut);border:1px solid var(--bdr)}
+.talent-tag.rem-band{background:#f5f3ff;color:#5b21b6;border:1px solid #ddd6fe}
+.talent-tag.tenure-new{background:#eff6ff;color:#1d4ed8;border:1px solid #bfdbfe}
+.talent-tag.tenure-mid{background:#f0fdf4;color:#166534;border:1px solid #bbf7d0}
+.talent-tag.tenure-long{background:#faf5ff;color:#6b21a8;border:1px solid #e9d5ff}
+.talent-rem-bar{height:3px;border-radius:2px;background:var(--srf3);margin-top:8px;overflow:hidden}
+.talent-rem-fill{height:100%;border-radius:2px;transition:width .3s}
+
+/* ── DETAIL DRAWER ── */
+.talent-drawer-overlay{display:none;position:fixed;inset:0;background:rgba(13,31,60,.45);z-index:300;backdrop-filter:blur(2px)}
+.talent-drawer-overlay.open{display:flex;align-items:flex-start;justify-content:flex-end}
+.talent-drawer{width:480px;max-width:95vw;height:100vh;background:var(--srf);box-shadow:-8px 0 40px rgba(13,31,60,.18);overflow-y:auto;padding:24px;animation:drawerIn .2s ease-out}
+@keyframes drawerIn{from{transform:translateX(60px);opacity:0}to{transform:translateX(0);opacity:1}}
+.talent-drawer-close{position:sticky;top:0;display:flex;justify-content:flex-end;margin-bottom:16px;background:var(--srf);z-index:1;padding:4px 0}
+.talent-drawer-close button{background:none;border:1px solid var(--bdr);border-radius:6px;padding:5px 10px;font-size:11px;cursor:pointer;color:var(--mut);font-family:'DM Sans',sans-serif}
+.td-name{font-size:18px;font-weight:700;color:var(--txt);letter-spacing:-.02em;margin-bottom:4px}
+.td-role{font-size:13px;color:var(--mut);margin-bottom:12px}
+.td-entity-row{display:flex;align-items:center;gap:8px;padding:10px 12px;background:var(--srf2);border-radius:6px;margin-bottom:16px;border:1px solid var(--bdr)}
+.td-section{font-size:10px;font-weight:700;color:var(--mut2);text-transform:uppercase;letter-spacing:.08em;margin:16px 0 8px}
+.td-row{display:flex;justify-content:space-between;align-items:baseline;padding:6px 0;border-bottom:1px solid var(--srf3)}
+.td-row-lbl{font-size:11px;color:var(--mut)}
+.td-row-val{font-size:12px;font-weight:600;color:var(--txt);font-family:'DM Mono',monospace}
+.td-row-val.green{color:#16a34a}
+.td-row-val.amber{color:#d97706}
+.td-bio{font-size:11px;color:var(--mut);line-height:1.7;padding:10px 12px;background:var(--srf2);border-radius:6px;border:1px solid var(--bdr)}
+.td-prev-roles{display:flex;flex-direction:column;gap:6px}
+.td-role-item{padding:8px 10px;background:var(--srf2);border-radius:5px;border-left:2px solid var(--g2);border:1px solid var(--bdr);border-left-width:2px}
+.td-role-org{font-size:11px;font-weight:600;color:var(--txt2)}
+.td-role-pos{font-size:10px;color:var(--mut);margin-top:1px}
+
+/* ── SUMMARY ROW ── */
+.talent-summary-row{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:16px}
+.talent-sum-card{background:var(--srf);border:1px solid var(--bdr);border-radius:7px;padding:12px 14px;text-align:center}
+.talent-sum-val{font-family:'DM Mono',monospace;font-size:20px;font-weight:700;color:var(--txt);line-height:1}
+.talent-sum-lbl{font-size:9px;color:var(--mut2);text-transform:uppercase;letter-spacing:.06em;margin-top:3px}
+.talent-sum-sub{font-size:10px;color:var(--mut);margin-top:2px}
+</style>
+
+<!-- ═══════════════════════════════════════════════════════════ -->
+<!-- RE HUMAN CAPITAL PANEL                                      -->
+<!-- ═══════════════════════════════════════════════════════════ -->
+<div class="panel wrap" id="tab-talent">
+
+  <!-- Hero -->
+  <div class="talent-hero">
+    <div>
+      <div class="talent-hero-title">👤 RE Human Capital Intelligence</div>
+      <div class="talent-hero-sub">C-Suite · Board · Key Management · Remuneration — sourced from SGX-listed REIT &amp; Developer Annual Reports</div>
+      <div style="margin-top:8px;display:flex;gap:8px;flex-wrap:wrap">
+        <span style="font-size:9px;background:rgba(167,139,250,.15);border:1px solid rgba(167,139,250,.3);color:#c4b5fd;padding:2px 8px;border-radius:10px;letter-spacing:.04em">PILOT · AI-REIT FY2025 vs FY2024</span>
+        <span style="font-size:9px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);color:rgba(255,255,255,.4);padding:2px 8px;border-radius:10px;letter-spacing:.04em">More entities coming soon</span>
+      </div>
+    </div>
+    <div class="talent-hero-stats">
+      <div class="talent-hs"><div class="talent-hs-val" id="thc-total">—</div><div class="talent-hs-lbl">Profiles</div></div>
+      <div class="talent-hs"><div class="talent-hs-val" id="thc-entities" style="color:#34d399">—</div><div class="talent-hs-lbl">Entities</div></div>
+      <div class="talent-hs"><div class="talent-hs-val" id="thc-ceos" style="color:#f9a8d4">—</div><div class="talent-hs-lbl">CEOs</div></div>
+    </div>
+  </div>
+
+  <!-- Summary stat row -->
+  <div class="talent-summary-row" id="talent-sum-row"></div>
+
+  <!-- Filters -->
+  <div class="talent-filters">
+    <div class="talent-search-wrap">
+      <input class="talent-search" id="talent-search" placeholder="Search name, entity, role…" oninput="talentRender()">
+    </div>
+    <button class="talent-filter-btn on" data-tfilter="all" onclick="talentSetFilter(this,'role','all')">All Roles</button>
+    <button class="talent-filter-btn role-ceo" data-tfilter="CEO" onclick="talentSetFilter(this,'role','CEO')">CEO</button>
+    <button class="talent-filter-btn role-cfo" data-tfilter="CFO" onclick="talentSetFilter(this,'role','CFO')">CFO</button>
+    <button class="talent-filter-btn role-cio" data-tfilter="CIO" onclick="talentSetFilter(this,'role','CIO')">CIO / Head RE</button>
+    <button class="talent-filter-btn role-board" data-tfilter="Board" onclick="talentSetFilter(this,'role','Board')">Board</button>
+    <select class="talent-sort-sel" id="talent-sort" onchange="talentRender()">
+      <option value="name">Sort: Name</option>
+      <option value="rem_desc">Sort: Rem ↓</option>
+      <option value="rem_asc">Sort: Rem ↑</option>
+      <option value="tenure_desc">Sort: Tenure ↓</option>
+      <option value="entity">Sort: Entity</option>
+    </select>
+    <span id="talent-count" style="font-size:11px;color:var(--mut);margin-left:4px"></span>
+  </div>
+
+  <!-- Cards grid -->
+  <div class="talent-grid" id="talent-grid"></div>
+</div>
+
+<!-- Detail drawer -->
+<div class="talent-drawer-overlay" id="talent-overlay" onclick="talentCloseDrawer(event)">
+  <div class="talent-drawer" id="talent-drawer">
+    <div class="talent-drawer-close"><button onclick="talentCloseDrawer({target:document.getElementById('talent-overlay')})">✕ Close</button></div>
+    <div id="talent-drawer-body"></div>
+  </div>
+</div>
+
+<script>
+// ═══════════════════════════════════════════════════
+// RE HUMAN CAPITAL DATA
+// Source: Annual Reports (SGX-listed)
+// ═══════════════════════════════════════════════════
+var TALENT_DATA = [
+
+  // ── ALPHA INTEGRATED REIT — FY2025 (Internal Manager, from Oct 2025) ──
+  {
+    id:'ai-ceo-25', name:'Karen Lee Kiah Ling', role:'CEO', role_type:'CEO',
+    entity:'Alpha Integrated REIT', entity_short:'AI-REIT', ar_year:'FY2025',
+    appointed:'Sep 2025', tenure_yrs:0.3,
+    rem_exact:99848, rem_fixed:98913, rem_bonus:0, rem_other:935,
+    rem_note:'Pro-rated Oct–Dec 2025 only. No variable bonus in Year 1 of internalisation.',
+    rem_band:null, rem_pct_fixed:99.1, rem_pct_bonus:0, rem_pct_other:0.9,
+    edu:'BSocSci (Econ, Hons) + MSc Real Estate, NUS; Accredited Director, Singapore Institute of Directors',
+    bio:'20+ years REIT leadership covering strategic M&A, capital markets, fund raising, regulatory compliance, industrial real estate development, asset and investment management, leasing and property management. First CEO of AI-REIT under internalised structure.',
+    prev_roles:[
+      {org:'ESR-REIT',pos:'Deputy CEO'},
+      {org:'ARA LOGOS Logistics Trust',pos:'CEO'},
+    ],
+    tags:['REIT CEO','Industrial','Internalised Manager']
+  },
+  {
+    id:'ai-cfo-25', name:'Goo Li Ling', role:'CFO', role_type:'CFO',
+    entity:'Alpha Integrated REIT', entity_short:'AI-REIT', ar_year:'FY2025',
+    appointed:'2025', tenure_yrs:0.3,
+    rem_exact:null, rem_fixed:null, rem_bonus:null, rem_other:null,
+    rem_note:'FY2025 remuneration in S$0–S$250,000 band. 100% fixed, 0% variable. Exact quantum not disclosed (team size sensitivity).',
+    rem_band:'S$0–S$250K', rem_pct_fixed:100, rem_pct_bonus:0, rem_pct_other:0,
+    edu:'BAccy (Hons), NTU; Chartered Accountant (Singapore); Diploma in Marketing, Chartered Institute of Marketing (UK)',
+    bio:'20+ years in strategic financial leadership and fund management. Responsible for finance function, financial strategy, capital structuring, treasury management, and risk mitigation for the REIT.',
+    prev_roles:[
+      {org:'Keppel Fund Management Limited',pos:'MD Finance — fund controller for real estate private equity funds'},
+    ],
+    tags:['REIT CFO','Fund Finance','Keppel Alumni']
+  },
+  {
+    id:'ai-cio-25', name:'Wayne Tan', role:'CIO / Head of Real Estate', role_type:'CIO',
+    entity:'Alpha Integrated REIT', entity_short:'AI-REIT', ar_year:'FY2025',
+    appointed:'2025', tenure_yrs:0.3,
+    rem_exact:null, rem_fixed:null, rem_bonus:null, rem_other:null,
+    rem_note:'FY2025 remuneration in S$0–S$250,000 band. 100% fixed, 0% variable.',
+    rem_band:'S$0–S$250K', rem_pct_fixed:100, rem_pct_bonus:0, rem_pct_other:0,
+    edu:'BE (Bioengineering, Hons), NTU; Singapore Scholarship (Singapore Cooperation Programme, MFA)',
+    bio:'12+ years in real estate fund and asset management across Singapore and Southeast Asia. Drives overall real estate strategy encompassing investment, asset and property management, leasing and portfolio optimisation.',
+    prev_roles:[
+      {org:'ESR Fund Managers (formerly LOGOS SE Asia)',pos:'Fund Manager'},
+      {org:'LOGOS SE Asia',pos:'Head of Asset Management, Southeast Asia'},
+      {org:'ARA LOGOS / LOGOS Property Management',pos:'Key Executive Officer'},
+      {org:'Ascendas Funds Management (now CapitaLand Ascendas REIT Mgmt)',pos:'Asset Manager — Changi Business Park & Singapore Science Park'},
+    ],
+    tags:['REIT CIO','Industrial','LOGOS Alumni','ESR Alumni']
+  },
+  {
+    id:'ai-comply-25', name:'Tracy Wong', role:'Head of Compliance', role_type:'Mgmt',
+    entity:'Alpha Integrated REIT', entity_short:'AI-REIT', ar_year:'FY2025',
+    appointed:'22 Sep 2025', tenure_yrs:0.3,
+    rem_exact:null, rem_fixed:null, rem_bonus:null, rem_other:null,
+    rem_note:'Remuneration not separately disclosed.',
+    rem_band:null, rem_pct_fixed:null, rem_pct_bonus:null, rem_pct_other:null,
+    edu:'BCom (Banking & Finance), Curtin University; Diploma in Compliance (Fund Management), ICA; Advanced Diploma in Financial Services (Risk Management), ANZIIF',
+    bio:'20+ years of compliance, risk management and governance experience across Singapore regulated financial institutions. Leads compliance framework, enterprise risk management and regulatory engagement for AI-REIT.',
+    prev_roles:[
+      {org:'Keppel Ltd',pos:'Director, Risk & Compliance, Fund Management & Investment Division (Jul 2011–Apr 2025)'},
+    ],
+    tags:['Compliance','Risk Management','Keppel Alumni']
+  },
+
+  // ── ALPHA INTEGRATED REIT — Board (appointed Oct 2025, pro-rated fees) ──
+  {
+    id:'ai-brd-doshi', name:'Bhavik Umesh Doshi', role:'Chairman & Independent Director', role_type:'Board',
+    entity:'Alpha Integrated REIT', entity_short:'AI-REIT', ar_year:'FY2025',
+    appointed:'22 Aug 2025', tenure_yrs:0.3,
+    rem_exact:14102, rem_fixed:14102, rem_bonus:0, rem_other:0,
+    rem_note:'Pro-rated from 23 Oct 2025. Full-year fees payable in FY2026. Fixed fee only — no variable component.',
+    rem_band:null, rem_pct_fixed:100, rem_pct_bonus:0, rem_pct_other:0,
+    edu:'BS Finance & Actuarial Science, Stern School of Business, New York University',
+    bio:'Experienced corporate finance and investment professional. Investment Director at One Hill Capital (Singapore). Chairs the Remuneration Committee.',
+    prev_roles:[
+      {org:'Ares Management (Los Angeles)',pos:'Investor — high yield & distressed debt (US$350B+ AUM platform)'},
+      {org:'Barclays Capital',pos:'Investment Banking — M&A and leveraged finance'},
+      {org:'Lehman Brothers (New York)',pos:'Investment Banking'},
+    ],
+    tags:['Chairman','RC Chair','Quarz-backed Board','Finance Background']
+  },
+  {
+    id:'ai-brd-moermann', name:'Jan Frederic Moermann', role:'Non-Executive Non-Independent Director', role_type:'Board',
+    entity:'Alpha Integrated REIT', entity_short:'AI-REIT', ar_year:'FY2025',
+    appointed:'17 Oct 2025', tenure_yrs:0.2,
+    rem_exact:12750, rem_fixed:12750, rem_bonus:0, rem_other:0,
+    rem_note:'Pro-rated from 23 Oct 2025.',
+    rem_band:null, rem_pct_fixed:100, rem_pct_bonus:0, rem_pct_other:0,
+    edu:'MSc Banking & Finance, University of St Gallen (Switzerland)',
+    bio:'CEO & Chairman of Quarz Capital Asia, the activist fund that drove the AI-REIT internalisation. 15+ years in real estate investment, asset management and corporate governance.',
+    prev_roles:[
+      {org:'Bellevue Group',pos:'Investment Banking Division — M&A and ECM (Swiss/European markets)'},
+      {org:'LGT',pos:'Financial services'},
+      {org:'Credit Suisse',pos:'Financial services'},
+      {org:'UBS',pos:'Financial services'},
+    ],
+    tags:['Quarz Capital','Activist Investor','Non-Independent','RC Member']
+  },
+  {
+    id:'ai-brd-chi', name:'Havard Chi Cher Pan', role:'Non-Executive Non-Independent Director', role_type:'Board',
+    entity:'Alpha Integrated REIT', entity_short:'AI-REIT', ar_year:'FY2025',
+    appointed:'22 Aug 2025', tenure_yrs:0.3,
+    rem_exact:10432, rem_fixed:10432, rem_bonus:0, rem_other:0,
+    rem_note:'Pro-rated from 23 Oct 2025.',
+    rem_band:null, rem_pct_fixed:100, rem_pct_bonus:0, rem_pct_other:0,
+    edu:'MSc Banking & Finance, University of St Gallen; BSc Economics, NUS; CFA Charterholder',
+    bio:'Head of Investments at Quarz Capital Asia. 15+ years in asset management and real estate. CFA charterholder.',
+    prev_roles:[
+      {org:'Bellevue Group (Zurich)',pos:'Portfolio Manager'},
+    ],
+    tags:['Quarz Capital','CFA','Non-Independent','RE Investments']
+  },
+  {
+    id:'ai-brd-duttwiler', name:'Konrad Duttwiler', role:'Non-Executive Non-Independent Director', role_type:'Board',
+    entity:'Alpha Integrated REIT', entity_short:'AI-REIT', ar_year:'FY2025',
+    appointed:'17 Oct 2025', tenure_yrs:0.2,
+    rem_exact:11591, rem_fixed:11591, rem_bonus:0, rem_other:0,
+    rem_note:'Pro-rated from 23 Oct 2025.',
+    rem_band:null, rem_pct_fixed:100, rem_pct_bonus:0, rem_pct_other:0,
+    edu:'Diploma, FHNW School of Business; Swiss Federal Diploma in Public Accounting (Chartered Accountant)',
+    bio:'Group CFO and board member of Volare Group AG (Switzerland) — diversified industrial holding with 20+ years tenure. Swiss federal chartered accountant.',
+    prev_roles:[
+      {org:'PricewaterhouseCoopers',pos:'Audit practice'},
+    ],
+    tags:['Volare Group','CFO Background','Non-Independent','Swiss CA']
+  },
+  {
+    id:'ai-brd-lim', name:'Lim Hock Chuan', role:'Non-Executive Independent Director', role_type:'Board',
+    entity:'Alpha Integrated REIT', entity_short:'AI-REIT', ar_year:'FY2025',
+    appointed:'17 Oct 2025', tenure_yrs:0.2,
+    rem_exact:14006, rem_fixed:14006, rem_bonus:0, rem_other:0,
+    rem_note:'Pro-rated from 23 Oct 2025.',
+    rem_band:null, rem_pct_fixed:100, rem_pct_bonus:0, rem_pct_other:0,
+    edu:'Engineering background',
+    bio:'20+ years consulting, engineering and project management in electrical, mechanical and control systems for industrial facilities globally (Brazil, Malaysia, China, Singapore, Bangladesh, Indonesia).',
+    prev_roles:[
+      {org:'De Zaan Far East (now Olam Cocoa)',pos:'Technical / Operations'},
+      {org:'Mckeeson Consultants',pos:'EPS project management'},
+      {org:'Emerson Process Management',pos:'Control systems'},
+      {org:'Honeywell',pos:'Industrial automation'},
+    ],
+    tags:['Independent Director','Industrial Engineering','ARC Member']
+  },
+  {
+    id:'ai-brd-saha', name:'Saha Anshuman Manabendranath', role:'Non-Executive Independent Director', role_type:'Board',
+    entity:'Alpha Integrated REIT', entity_short:'AI-REIT', ar_year:'FY2025',
+    appointed:'17 Oct 2025', tenure_yrs:0.2,
+    rem_exact:12750, rem_fixed:12750, rem_bonus:0, rem_other:0,
+    rem_note:'Pro-rated from 23 Oct 2025.',
+    rem_band:null, rem_pct_fixed:100, rem_pct_bonus:0, rem_pct_other:0,
+    edu:'BE (Chemical), Maharaja Sayajirao University, Baroda, India',
+    bio:'20+ years across IT, industrial automation and education sectors. Currently in compliance at North London Collegiate School Singapore.',
+    prev_roles:[
+      {org:'ATS Global',pos:'Inside sales, manufacturing automation & digital transformation — APAC'},
+      {org:'Kelly Services / Optimum Solutions',pos:'Technology staffing for Citigroup, Deutsche Bank, Standard Chartered, DBS'},
+    ],
+    tags:['Independent Director','Compliance Background','ARC Member']
+  },
+
+  // ── SABANA REIT — FY2024 (Former External Manager — for comparison) ──
+  {
+    id:'sab-ceo-24', name:'Donald Han Yong Lee', role:'CEO (Former)', role_type:'CEO',
+    entity:'Sabana REIT (now AI-REIT)', entity_short:'Sabana REIT', ar_year:'FY2024',
+    appointed:'Nov 2019', tenure_yrs:5,
+    rem_exact:677386, rem_fixed:425288, rem_bonus:235221, rem_other:16877,
+    rem_note:'Full-year FY2024. Includes employer CPF. Highest paid in Sabana history. Departed upon internalisation Oct 2025.',
+    rem_band:null, rem_pct_fixed:62.8, rem_pct_bonus:34.7, rem_pct_other:2.5,
+    edu:'Property industry professional with 25+ years experience',
+    bio:'Appointed CEO in November 2019. Led Sabana REIT through contested activist period, multiple requisitioned EGMs, and the internalisation process. Previously built up Cushman & Wakefield Singapore.',
+    prev_roles:[
+      {org:'Cushman & Wakefield Singapore',pos:'Managing Director — built and led the Singapore office'},
+      {org:'Various RE industry roles',pos:'25+ years property market experience'},
+    ],
+    tags:['Former CEO','Sabana Era','Full-Year Pay','C&W Alumni']
+  },
+  {
+    id:'sab-cfo-24', name:'Lim Wei Huang', role:'CFO (Former)', role_type:'CFO',
+    entity:'Sabana REIT (now AI-REIT)', entity_short:'Sabana REIT', ar_year:'FY2024',
+    appointed:null, tenure_yrs:null,
+    rem_exact:null, rem_fixed:null, rem_bonus:null, rem_other:null,
+    rem_note:'FY2024 remuneration in S$250,000–S$500,000 band. 61.1% fixed, 35.9% bonus, 3.0% other.',
+    rem_band:'S$250K–S$500K', rem_pct_fixed:61.1, rem_pct_bonus:35.9, rem_pct_other:3.0,
+    edu:'Not disclosed',
+    bio:'CFO of Sabana REIT under external manager structure. Departed upon internalisation Oct 2025.',
+    prev_roles:[],
+    tags:['Former CFO','Sabana Era']
+  },
+  {
+    id:'sab-hre-24', name:'Jessica Yap Pui Ling', role:'Head of Real Estate (Former)', role_type:'CIO',
+    entity:'Sabana REIT (now AI-REIT)', entity_short:'Sabana REIT', ar_year:'FY2024',
+    appointed:null, tenure_yrs:null,
+    rem_exact:null, rem_fixed:null, rem_bonus:null, rem_other:null,
+    rem_note:'FY2024 remuneration in S$250,000–S$500,000 band. 64.2% fixed, 32.5% bonus, 3.3% other.',
+    rem_band:'S$250K–S$500K', rem_pct_fixed:64.2, rem_pct_bonus:32.5, rem_pct_other:3.3,
+    edu:'Not disclosed',
+    bio:'Head of Real Estate at Sabana REIT. Led AEI project management including 1 Tuas Avenue 4. Departed upon internalisation Oct 2025.',
+    prev_roles:[],
+    tags:['Former Head RE','Sabana Era','AEI Management']
+  },
+  {
+    id:'sab-chr-24', name:'Tan Cheong Hin', role:'Board Chairman (Former)', role_type:'Board',
+    entity:'Sabana REIT (now AI-REIT)', entity_short:'Sabana REIT', ar_year:'FY2024',
+    appointed:'1 Nov 2019', tenure_yrs:5,
+    rem_exact:180000, rem_fixed:180000, rem_bonus:0, rem_other:0,
+    rem_note:'FY2024 full year. Includes S$30,000 one-off for significantly higher time commitments due to EGM requisition process (36 board meetings in FY2024 vs typical 4). Fees unchanged since FY2021.',
+    rem_band:null, rem_pct_fixed:100, rem_pct_bonus:0, rem_pct_other:0,
+    edu:'Not disclosed',
+    bio:'Board Chairman of Sabana REIT from November 2019. Chaired the Nominating and Remuneration Committee. Navigated three requisitioned EGMs in 2024 during the internalisation process.',
+    prev_roles:[],
+    tags:['Former Chairman','Sabana Era','NRC Chair']
+  },
+  {
+    id:'sab-dir1-24', name:'Wong Heng Tew', role:'Independent Director (Former)', role_type:'Board',
+    entity:'Sabana REIT (now AI-REIT)', entity_short:'Sabana REIT', ar_year:'FY2024',
+    appointed:null, tenure_yrs:null,
+    rem_exact:155000, rem_fixed:155000, rem_bonus:0, rem_other:0,
+    rem_note:'FY2024 full year. Includes S$30,000 one-off. Fees unchanged since FY2021.',
+    rem_band:null, rem_pct_fixed:100, rem_pct_bonus:0, rem_pct_other:0,
+    edu:'Not disclosed', bio:'Independent Director of Sabana REIT. Departed upon internalisation Oct 2025.',
+    prev_roles:[],
+    tags:['Former Director','Sabana Era']
+  },
+  {
+    id:'sab-dir2-24', name:'Mrs Elaine Lim', role:'Independent Director (Former)', role_type:'Board',
+    entity:'Sabana REIT (now AI-REIT)', entity_short:'Sabana REIT', ar_year:'FY2024',
+    appointed:null, tenure_yrs:null,
+    rem_exact:135000, rem_fixed:135000, rem_bonus:0, rem_other:0,
+    rem_note:'FY2024 full year. Includes S$30,000 one-off. Fees unchanged since FY2021.',
+    rem_band:null, rem_pct_fixed:100, rem_pct_bonus:0, rem_pct_other:0,
+    edu:'Not disclosed', bio:'Independent Director of Sabana REIT. Active on corporate governance and NRC. Departed upon internalisation Oct 2025.',
+    prev_roles:[],
+    tags:['Former Director','Sabana Era','NRC Member']
+  }
+];
+
+// ═══════════════════════════════════════════════════
+// TALENT TAB — STATE & RENDER
+// ═══════════════════════════════════════════════════
+var talentRoleFilter = 'all';
+var talentOpenId = null;
+
+var ROLE_COLORS = {
+  CEO:'#7c3aed', CFO:'#0891b2', CIO:'#16a34a', Board:'#d97706', Mgmt:'#2563bc'
+};
+
+function talentAvatarColor(rt){
+  return ROLE_COLORS[rt] || '#2563bc';
+}
+
+function talentInitials(name){
+  var parts = name.split(' ').filter(function(p){return p.length>1;});
+  if(parts.length>=2) return parts[0][0]+parts[parts.length-1][0];
+  return name[0];
+}
+
+function talentSetFilter(btn, type, val){
+  talentRoleFilter = val;
+  document.querySelectorAll('[data-tfilter]').forEach(function(b){
+    b.classList.toggle('on', b.dataset.tfilter===val);
+  });
+  talentRender();
+}
+
+function talentRemLabel(p){
+  if(p.rem_exact){ return 'S$'+Math.round(p.rem_exact/1000)+'K'; }
+  if(p.rem_band){ return p.rem_band; }
+  return '—';
+}
+
+function talentRemTagClass(p){
+  if(!p.rem_exact && !p.rem_band) return 'rem-low';
+  var v = p.rem_exact || 0;
+  if(p.rem_band) return 'rem-band';
+  if(v>=500000) return 'rem-high';
+  if(v>=200000) return 'rem-mid';
+  return 'rem-low';
+}
+
+function talentTenureTag(yrs){
+  if(yrs===null||yrs===undefined) return {cls:'rem-low',label:'—'};
+  if(yrs<1) return {cls:'tenure-new',label:'<1 yr'};
+  if(yrs<4) return {cls:'tenure-mid',label:Math.round(yrs)+' yrs'};
+  return {cls:'tenure-long',label:Math.round(yrs)+'+ yrs'};
+}
+
+function talentFilter(){
+  var q = (document.getElementById('talent-search').value||'').toLowerCase();
+  return TALENT_DATA.filter(function(p){
+    var roleOk = talentRoleFilter==='all' || p.role_type===talentRoleFilter;
+    var qOk = !q || p.name.toLowerCase().indexOf(q)>=0
+      || p.entity.toLowerCase().indexOf(q)>=0
+      || p.role.toLowerCase().indexOf(q)>=0
+      || (p.tags||[]).join(' ').toLowerCase().indexOf(q)>=0;
+    return roleOk && qOk;
+  });
+}
+
+function talentSort(arr){
+  var s = document.getElementById('talent-sort').value;
+  return arr.slice().sort(function(a,b){
+    if(s==='name') return a.name.localeCompare(b.name);
+    if(s==='rem_desc'){
+      var av=a.rem_exact||0, bv=b.rem_exact||0;
+      return bv-av;
+    }
+    if(s==='rem_asc'){
+      var av2=a.rem_exact||0, bv2=b.rem_exact||0;
+      return av2-bv2;
+    }
+    if(s==='tenure_desc'){
+      var at=a.tenure_yrs||0, bt=b.tenure_yrs||0;
+      return bt-at;
+    }
+    if(s==='entity') return a.entity.localeCompare(b.entity);
+    return 0;
+  });
+}
+
+function talentRender(){
+  var filtered = talentSort(talentFilter());
+  document.getElementById('talent-count').textContent = filtered.length+' profile'+(filtered.length!==1?'s':'');
+  var grid = document.getElementById('talent-grid');
+  grid.innerHTML = filtered.map(function(p){
+    var remLbl = talentRemLabel(p);
+    var remCls = talentRemTagClass(p);
+    var ten = talentTenureTag(p.tenure_yrs);
+    var avatar = talentAvatarColor(p.role_type);
+    var remBarPct = p.rem_exact ? Math.min(100, Math.round(p.rem_exact/8000)) : (p.rem_band?40:0);
+    var fixedPct = p.rem_pct_fixed||0;
+    var bonusPct = p.rem_pct_bonus||0;
+
+    return '<div class="talent-card role-'+p.role_type.toLowerCase()+'" onclick="talentOpenDrawer(\''+p.id+'\')">'+
+      '<div class="talent-card-top">'+
+        '<div class="talent-avatar" style="background:'+avatar+'">'+talentInitials(p.name)+'</div>'+
+        '<div style="flex:1;min-width:0">'+
+          '<div class="talent-name">'+p.name+'</div>'+
+          '<div class="talent-title">'+p.role+'</div>'+
+          '<div class="talent-entity-chip">'+
+            '<span style="width:6px;height:6px;border-radius:50%;background:'+avatar+';display:inline-block"></span>'+
+            p.entity_short+' · '+p.ar_year+
+          '</div>'+
+        '</div>'+
+      '</div>'+
+      '<div class="talent-metrics">'+
+        '<div class="talent-metric"><div class="talent-metric-val">'+remLbl+'</div><div class="talent-metric-lbl">Remuneration</div></div>'+
+        '<div class="talent-metric"><div class="talent-metric-val">'+(fixedPct?Math.round(fixedPct)+'%':'—')+'</div><div class="talent-metric-lbl">Fixed</div></div>'+
+        '<div class="talent-metric"><div class="talent-metric-val">'+(bonusPct?Math.round(bonusPct)+'%':'—')+'</div><div class="talent-metric-lbl">Variable</div></div>'+
+      '</div>'+
+      (remBarPct?'<div class="talent-rem-bar"><div class="talent-rem-fill" style="width:'+remBarPct+'%;background:'+avatar+'"></div></div>':'')+
+      '<div class="talent-tags">'+
+        '<span class="talent-tag '+remCls+'">'+remLbl+'</span>'+
+        '<span class="talent-tag '+ten.cls+'">'+ten.label+'</span>'+
+        (p.tags||[]).slice(0,2).map(function(t){return '<span class="talent-tag rem-low">'+t+'</span>';}).join('')+
+      '</div>'+
+    '</div>';
+  }).join('');
+}
+
+function talentOpenDrawer(id){
+  var p = TALENT_DATA.find(function(x){return x.id===id;});
+  if(!p) return;
+  talentOpenId = id;
+  var avatar = talentAvatarColor(p.role_type);
+  var ten = talentTenureTag(p.tenure_yrs);
+
+  var remSection = '';
+  if(p.rem_exact){
+    remSection =
+      '<div class="td-section">💰 Remuneration ('+p.ar_year+')</div>'+
+      '<div class="td-row"><span class="td-row-lbl">Total Gross</span><span class="td-row-val green">S$'+p.rem_exact.toLocaleString()+'</span></div>'+
+      (p.rem_fixed?'<div class="td-row"><span class="td-row-lbl">Fixed Pay (incl. CPF)</span><span class="td-row-val">S$'+p.rem_fixed.toLocaleString()+' ('+Math.round(p.rem_pct_fixed)+'%)</span></div>':'') +
+      (p.rem_bonus!==null&&p.rem_bonus!==undefined?'<div class="td-row"><span class="td-row-lbl">Variable / Bonus</span><span class="td-row-val '+(p.rem_bonus>0?'amber':'')+'">S$'+p.rem_bonus.toLocaleString()+' ('+Math.round(p.rem_pct_bonus)+'%)</span></div>':'')+
+      (p.rem_other?'<div class="td-row"><span class="td-row-lbl">Other Benefits</span><span class="td-row-val">S$'+p.rem_other.toLocaleString()+' ('+Math.round(p.rem_pct_other)+'%)</span></div>':'')+
+      '<div style="margin-top:8px;font-size:10px;color:var(--mut);line-height:1.6;padding:8px 10px;background:var(--srf2);border-radius:5px;border:1px solid var(--bdr)">'+p.rem_note+'</div>';
+  } else if(p.rem_band){
+    remSection =
+      '<div class="td-section">💰 Remuneration ('+p.ar_year+')</div>'+
+      '<div class="td-row"><span class="td-row-lbl">Band</span><span class="td-row-val" style="color:#7c3aed">'+p.rem_band+'</span></div>'+
+      (p.rem_pct_fixed!==null?'<div class="td-row"><span class="td-row-lbl">Mix: Fixed</span><span class="td-row-val">'+p.rem_pct_fixed+'%</span></div>':'')+
+      (p.rem_pct_bonus!==null?'<div class="td-row"><span class="td-row-lbl">Mix: Variable</span><span class="td-row-val '+(p.rem_pct_bonus>0?'amber':'')+'">'+p.rem_pct_bonus+'%</span></div>':'')+
+      '<div style="margin-top:8px;font-size:10px;color:var(--mut);line-height:1.6;padding:8px 10px;background:var(--srf2);border-radius:5px;border:1px solid var(--bdr)">'+p.rem_note+'</div>';
+  }
+
+  var prevRolesHtml = '';
+  if(p.prev_roles&&p.prev_roles.length){
+    prevRolesHtml = '<div class="td-section">📋 Career History</div><div class="td-prev-roles">'+
+      p.prev_roles.map(function(r){
+        return '<div class="td-role-item"><div class="td-role-org">'+r.org+'</div><div class="td-role-pos">'+r.pos+'</div></div>';
+      }).join('')+'</div>';
+  }
+
+  var tagsHtml = (p.tags||[]).map(function(t){
+    return '<span class="talent-tag rem-low" style="font-size:10px;padding:3px 8px">'+t+'</span>';
+  }).join('');
+
+  document.getElementById('talent-drawer-body').innerHTML =
+    '<div style="display:flex;align-items:center;gap:12px;margin-bottom:4px">'+
+      '<div class="talent-avatar" style="background:'+avatar+';width:48px;height:48px;font-size:18px;border-radius:50%;display:flex;align-items:center;justify-content:center;color:#fff;font-weight:700">'+talentInitials(p.name)+'</div>'+
+      '<div><div class="td-name">'+p.name+'</div><div class="td-role">'+p.role+'</div></div>'+
+    '</div>'+
+    '<div class="td-entity-row">'+
+      '<span style="width:8px;height:8px;border-radius:50%;background:'+avatar+';display:inline-block;flex-shrink:0"></span>'+
+      '<div><div style="font-size:12px;font-weight:600;color:var(--txt)">'+p.entity+'</div>'+
+      '<div style="font-size:10px;color:var(--mut)">Annual Report '+p.ar_year+' · Appointed '+p.appointed+'</div></div>'+
+    '</div>'+
+    '<div class="td-section">📊 Profile</div>'+
+    '<div class="td-row"><span class="td-row-lbl">Tenure (approx.)</span><span class="td-row-val">'+ten.label+'</span></div>'+
+    '<div class="td-row"><span class="td-row-lbl">Role Type</span><span class="td-row-val">'+p.role_type+'</span></div>'+
+    '<div class="td-section">🎓 Education</div>'+
+    '<div class="td-bio" style="margin-bottom:4px">'+p.edu+'</div>'+
+    '<div class="td-section">🧠 Background</div>'+
+    '<div class="td-bio">'+p.bio+'</div>'+
+    remSection+
+    prevRolesHtml+
+    (tagsHtml?'<div class="td-section">🏷 Tags</div><div class="talent-tags" style="flex-wrap:wrap;gap:5px">'+tagsHtml+'</div>':'')+
+    '';
+
+  document.getElementById('talent-overlay').classList.add('open');
+}
+
+function talentCloseDrawer(e){
+  if(e.target===document.getElementById('talent-overlay')||e.target.tagName==='BUTTON'){
+    document.getElementById('talent-overlay').classList.remove('open');
+  }
+}
+
+function talentInitSummary(){
+  var total = TALENT_DATA.length;
+  var entities = [...new Set(TALENT_DATA.map(function(p){return p.entity;}))].length;
+  var ceos = TALENT_DATA.filter(function(p){return p.role_type==='CEO';}).length;
+  document.getElementById('thc-total').textContent = total;
+  document.getElementById('thc-entities').textContent = entities;
+  document.getElementById('thc-ceos').textContent = ceos;
+
+  // Summary cards
+  var ceoRem = TALENT_DATA.filter(function(p){return p.rem_exact&&p.role_type==='CEO';})
+    .map(function(p){return p.rem_exact;});
+  var boardRem = TALENT_DATA.filter(function(p){return p.rem_exact&&p.role_type==='Board';})
+    .map(function(p){return p.rem_exact;});
+
+  var sumCards = [
+    {val:'S$677K', lbl:'Highest CEO Pay', sub:'Donald Han FY2024'},
+    {val:'S$100K', lbl:'CEO Pay (FY2025)', sub:'Karen Lee (pro-rated Q4)'},
+    {val:'S$180K', lbl:'Top Board Fee', sub:'Tan Cheong Hin FY2024'},
+    {val:'S$14K', lbl:'Board Fee (FY2025)', sub:'Doshi (pro-rated Q4)'},
+  ];
+  document.getElementById('talent-sum-row').innerHTML = sumCards.map(function(c){
+    return '<div class="talent-sum-card"><div class="talent-sum-val">'+c.val+'</div><div class="talent-sum-lbl">'+c.lbl+'</div><div class="talent-sum-sub">'+c.sub+'</div></div>';
+  }).join('');
+}
+
+// Init on tab activation (lazy)
+var talentInited = false;
+document.querySelectorAll('.navtab').forEach(function(t){
+  t.addEventListener('click',function(){
+    if(t.dataset.tab==='talent' && !talentInited){
+      talentInited = true;
+      talentInitSummary();
+      talentRender();
+    }
+  });
+});
+</script>
 
 <script>
 var YEARS=[1995,1996,1997,1998,1999,2000,2001,2002,2003,2004,2005,2006,2007,2008,2009,2010,2011,2012,2013,2014,2015,2016,2017,2018,2019,2020,2021,2022,2023,2024,2025,2026];
