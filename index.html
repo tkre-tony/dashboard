@@ -226,6 +226,7 @@ html,body{background:var(--bg);color:var(--txt);font-family:'DM Sans',sans-serif
 #reit-tbl tbody tr:last-child{border-bottom:none}
 #reit-tbl tbody tr:hover{background:var(--glt)}
 #reit-tbl td{padding:7px 11px;vertical-align:middle;max-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+#reit-tbl td[data-rtd="tenure"]{white-space:normal}
 #reit-tbl td.td-name{font-weight:600;color:var(--txt);max-width:220px}
 #reit-tbl td.td-mono{font-family:'DM Mono',monospace;font-size:11px;text-align:right}
 #reit-tbl td.td-badge span{padding:2px 6px;border-radius:3px;font-size:9px;font-weight:700}
@@ -1450,22 +1451,41 @@ html,body{background:var(--bg);color:var(--txt);font-family:'DM Sans',sans-serif
 
     <!-- Table view wrapper -->
     <div id="reit-tbl-wrap" style="display:none;margin-bottom:14px">
+      <!-- Entity + Asset Class quick filters -->
+      <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-bottom:8px">
+        <select id="reit-tbl-entity" onchange="reitSearch(0)" class="cs-select" style="min-width:180px">
+          <option value="">All Entities</option>
+        </select>
+        <select id="reit-tbl-asset" onchange="reitSearch(0)" class="cs-select">
+          <option value="">All Asset Classes</option>
+          <option value="Business Park">Business Park</option>
+          <option value="Data Centre">Data Centre</option>
+          <option value="Hotel">Hotel</option>
+          <option value="Industrial">Industrial</option>
+          <option value="Logistics">Logistics</option>
+          <option value="Office">Office</option>
+          <option value="Residential">Residential</option>
+          <option value="Retail">Retail</option>
+          <option value="Serviced Suites">Serviced Suites</option>
+        </select>
+        <span id="reit-tbl-count" style="font-size:11px;color:var(--mut);font-family:'DM Mono',monospace"></span>
+      </div>
       <!-- Column toggles -->
       <div style="display:flex;gap:5px;flex-wrap:wrap;align-items:center;margin-bottom:8px;padding:7px 10px;background:var(--srf2);border:1px solid var(--bdr);border-radius:8px">
         <span style="font-size:9px;font-weight:700;color:var(--mut);text-transform:uppercase;letter-spacing:.06em;margin-right:4px;white-space:nowrap">Columns</span>
         <button class="rcol-tog on" data-rcol="entity"  onclick="reitColToggle(this)">Entity</button>
         <button class="rcol-tog on" data-rcol="type"    onclick="reitColToggle(this)">Asset Class</button>
         <button class="rcol-tog on" data-rcol="country" onclick="reitColToggle(this)">Country</button>
-        <button class="rcol-tog on" data-rcol="area"    onclick="reitColToggle(this)">Area</button>
+        <button class="rcol-tog"    data-rcol="area"    onclick="reitColToggle(this)">Area</button>
         <button class="rcol-tog on" data-rcol="tenure"  onclick="reitColToggle(this)">Tenure</button>
         <button class="rcol-tog on" data-rcol="nla"     onclick="reitColToggle(this)">NLA (sqm)</button>
         <button class="rcol-tog on" data-rcol="occ"     onclick="reitColToggle(this)">Occupancy</button>
         <button class="rcol-tog on" data-rcol="val"     onclick="reitColToggle(this)">Valuation</button>
         <button class="rcol-tog on" data-rcol="yoy"     onclick="reitColToggle(this)">YoY</button>
         <button class="rcol-tog on" data-rcol="ar"      onclick="reitColToggle(this)">AR Year</button>
-        <button class="rcol-tog on" data-rcol="status"  onclick="reitColToggle(this)">Status</button>
+        <button class="rcol-tog"    data-rcol="status"  onclick="reitColToggle(this)">Status</button>
       </div>
-      <div style="overflow-x:auto;border:1px solid var(--bdr);border-radius:10px;max-height:68vh;overflow-y:auto">
+      <div style="overflow-x:auto;border:1px solid var(--bdr);border-radius:10px">
         <table id="reit-tbl">
           <thead id="reit-tbl-hd"></thead>
           <tbody id="reit-tbl-bd"></tbody>
@@ -6711,8 +6731,23 @@ var reitPage = 0;
 var reitPageSize = 18;
 var reitSearchTimer = null;
 var reitViewMode = 'grid';
-var reitTblSort = {col:'name',dir:'asc'};
-var reitCols = {entity:true,type:true,country:true,area:true,tenure:true,nla:true,occ:true,val:true,yoy:true,ar:true,status:true};
+var reitTblSort = {col:'type',dir:'asc'};
+var reitCols = {entity:true,type:true,country:true,area:false,tenure:true,nla:true,occ:true,val:true,yoy:true,ar:true,status:false};
+
+// AR links for entities with FY2025 updates
+var ENTITY_AR_LINKS = {
+  'Suntec REIT': 'https://links.sgx.com/FileOpen/Suntec%20REIT%20Annual%20Report%202025.ashx?App=Announcement&FileID=881464',
+  'CDL': 'https://ir.cdl.com.sg/static-files/40cc0b62-b580-4607-a670-4003c75acda8',
+  'UOL Group': 'https://links.sgx.com/FileOpen/UOL%20Group%20Limited%20-%20Annual%20Report%202025.ashx?App=Announcement&FileID=881833'
+};
+
+// Newsroom post lookup by entity
+function getEntityNewsPost(entity) {
+  var map = {'CDL':24,'UOL Group':23,'Suntec REIT':25};
+  var id = map[entity];
+  if (!id) return null;
+  return typeof NEWS !== 'undefined' ? (NEWS.find(function(n){ return n.id === id; }) || null) : null;
+}
 
 function reitSetView(mode){
   reitViewMode = mode;
@@ -6720,7 +6755,7 @@ function reitSetView(mode){
   var tBtn = document.getElementById('reit-vbtn-tbl');
   if(gBtn){ gBtn.style.background=mode==='grid'?'var(--g1)':'var(--srf2)'; gBtn.style.color=mode==='grid'?'#fff':'var(--mut)'; }
   if(tBtn){ tBtn.style.background=mode==='table'?'var(--g1)':'var(--srf2)'; tBtn.style.color=mode==='table'?'#fff':'var(--mut)'; }
-  reitPageSize = mode==='table' ? 100 : 18;
+  reitPageSize = mode==='table' ? 30 : 18;
   reitSearch(0);
 }
 
@@ -6759,13 +6794,13 @@ function reitRenderTable(data){
     {key:'status', label:'Status'},
   ];
 
-  // Sort
+  // Sort: default type asc, then entity asc as secondary
   var s = reitTblSort;
   data = data.slice().sort(function(a,b){
-    var av, bv;
+    var av, bv, av2, bv2;
     if(s.col==='name'){ av=a.name||''; bv=b.name||''; }
     else if(s.col==='entity'){ av=a.entity||''; bv=b.entity||''; }
-    else if(s.col==='type'){ av=a.type||''; bv=b.type||''; }
+    else if(s.col==='type'){ av=a.type||''; bv=b.type||''; av2=a.entity||''; bv2=b.entity||''; }
     else if(s.col==='country'){ av=a.country||''; bv=b.country||''; }
     else if(s.col==='area'){ av=a.area||''; bv=b.area||''; }
     else if(s.col==='tenure'){ av=a.tenure||''; bv=b.tenure||''; }
@@ -6774,9 +6809,13 @@ function reitRenderTable(data){
     else if(s.col==='val'){ av=a.val||0; bv=b.val||0; }
     else if(s.col==='ar'){ av=a.ar_year||''; bv=b.ar_year||''; }
     else if(s.col==='status'){ av=a.status||''; bv=b.status||''; }
-    else { av=a.name||''; bv=b.name||''; }
-    if(typeof av==='number') return s.dir==='asc'?av-bv:bv-av;
-    return s.dir==='asc'?av.localeCompare(bv):bv.localeCompare(av);
+    else { av=a.type||''; bv=b.type||''; av2=a.entity||''; bv2=b.entity||''; }
+    var cmp;
+    if(typeof av==='number') cmp = s.dir==='asc'?av-bv:bv-av;
+    else cmp = s.dir==='asc'?av.localeCompare(bv):bv.localeCompare(av);
+    // secondary sort by entity asc when primary ties
+    if(cmp===0 && av2!=null) cmp = av2.localeCompare(bv2||'');
+    return cmp;
   });
 
   // Build header
@@ -6784,11 +6823,11 @@ function reitRenderTable(data){
     var isAct = reitTblSort.col===col;
     var arrow = isAct ? (reitTblSort.dir==='asc'?' ↑':' ↓') : '';
     return '<th data-rth="'+col+'" onclick="reitTblSortBy(\''+col+'\')" class="'+(isAct?'rth-act':'')+
-           (reitCols[col]===false?' rtbl-hidden':'')+'">'+label+arrow+'</th>';
+           (reitCols[col]===false?' rtbl-hidden':'')+'" style="white-space:nowrap">'+label+arrow+'</th>';
   }
 
   var hdHtml = '<tr><th onclick="reitTblSortBy(\'name\')" class="'+(reitTblSort.col==='name'?'rth-act':'')+
-    '" style="padding:8px 11px;min-width:180px">Asset Name'+(reitTblSort.col==='name'?(reitTblSort.dir==='asc'?' ↑':' ↓'):'')+
+    '" style="padding:8px 11px;min-width:160px;white-space:nowrap">Asset Name'+(reitTblSort.col==='name'?(reitTblSort.dir==='asc'?' ↑':' ↓'):'')+
     '</th>';
   COLS.forEach(function(c){ hdHtml += thSort(c.key, c.label); });
   hdHtml += '</tr>';
@@ -6828,23 +6867,37 @@ function reitRenderTable(data){
     // AR year dot
     var arDot = p.ar_year==='FY2025'?'<span style="color:#4ade80;font-size:8px">● </span>':p.ar_year==='FY2024'?'<span style="color:#f59e0b;font-size:8px">● </span>':'<span style="color:#6b7280;font-size:8px">● </span>';
 
+    // Tenure — split into two lines at first space after 12 chars
+    var tenureDisplay = p.tenure || '—';
+    if(tenureDisplay.length > 14){
+      var splitAt = tenureDisplay.indexOf(' ', 12);
+      if(splitAt > 0) tenureDisplay = tenureDisplay.substring(0,splitAt)+'<br><span style="color:var(--mut2)">'+tenureDisplay.substring(splitAt+1)+'</span>';
+    }
+
+    // Country — single flag only
+    var countryCell = p.country==='Singapore' ? '🇸🇬 SG' : (p.country||'—');
+
+    // Entity — two lines: name + type label
+    var entityType = p.entity_type==='DEV' ? 'DEV' : 'REIT';
+    var entityShort = p.entity.length > 22 ? p.entity.substring(0,22)+'…' : p.entity;
+
     var assetKey = p.name.replace(/'/g,"\\'");
 
     rowHtml += '<tr onclick="reitOpenDetail(\''+assetKey+'\')" style="'+rowBg+'">';
     // Name col (always visible)
-    rowHtml += '<td class="td-name" style="max-width:220px"><span style="display:flex;align-items:center;gap:6px">'
+    rowHtml += '<td class="td-name" style="max-width:200px"><span style="display:flex;align-items:center;gap:6px">'
       +'<span style="width:3px;height:24px;border-radius:2px;background:'+rc+';flex-shrink:0;display:inline-block"></span>'
       +'<span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap" title="'+p.name+'">'+p.name+'</span></span></td>';
-    // Entity
-    rowHtml += '<td data-rtd="entity" class="'+(reitCols.entity?'':'rtbl-hidden')+'" style="max-width:160px"><span style="font-size:11px;color:'+rc+';font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;display:block" title="'+p.entity+'">'+p.entity+'</span><span style="font-size:9px;color:var(--mut)">'+(p.entity_type==='DEV'?'DEV':'REIT')+'</span></td>';
+    // Entity — two lines
+    rowHtml += '<td data-rtd="entity" class="'+(reitCols.entity?'':'rtbl-hidden')+'" style="max-width:150px"><div style="font-size:11px;color:'+rc+';font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap" title="'+p.entity+'">'+entityShort+'</div><div style="font-size:9px;color:var(--mut);margin-top:1px">'+entityType+'</div></td>';
     // Asset class
     rowHtml += '<td data-rtd="type" class="'+(reitCols.type?'':'rtbl-hidden')+'">'+( p.type||'—')+'</td>';
-    // Country
-    rowHtml += '<td data-rtd="country" class="'+(reitCols.country?'':'rtbl-hidden')+'"><span style="font-size:11px">'+(p.country==='Singapore'?'🇸🇬 SG':p.country||'—')+'</span></td>';
-    // Area
-    rowHtml += '<td data-rtd="area" class="'+(reitCols.area?'':'rtbl-hidden')+'" style="max-width:120px"><span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap;display:block;font-size:11px;color:var(--mut)" title="'+(p.area||'')+'">'+( p.area||'—')+'</span></td>';
-    // Tenure
-    rowHtml += '<td data-rtd="tenure" class="'+(reitCols.tenure?'':'rtbl-hidden')+'" style="max-width:130px"><span style="font-size:10px;color:var(--mut);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;display:block" title="'+(p.tenure||'')+'">'+( p.tenure||'—')+'</span></td>';
+    // Country — no double flag
+    rowHtml += '<td data-rtd="country" class="'+(reitCols.country?'':'rtbl-hidden')+'"><span style="font-size:11px">'+countryCell+'</span></td>';
+    // Area — hidden by default
+    rowHtml += '<td data-rtd="area" class="'+(reitCols.area?'':'rtbl-hidden')+'" style="max-width:110px"><span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap;display:block;font-size:11px;color:var(--mut)" title="'+(p.area||'')+'">'+( p.area||'—')+'</span></td>';
+    // Tenure — two lines
+    rowHtml += '<td data-rtd="tenure" class="'+(reitCols.tenure?'':'rtbl-hidden')+'" style="max-width:120px"><span style="font-size:10px;color:var(--mut);display:block;line-height:1.5">'+tenureDisplay+'</span></td>';
     // NLA
     rowHtml += '<td data-rtd="nla" class="td-mono '+(reitCols.nla?'':'rtbl-hidden')+'">'+( p.nla_sqm ? p.nla_sqm.toLocaleString() : '—')+'</td>';
     // Occ
@@ -6855,7 +6908,7 @@ function reitRenderTable(data){
     rowHtml += '<td data-rtd="yoy" class="'+(reitCols.yoy?'':'rtbl-hidden')+'" style="white-space:nowrap;font-size:10px">'+( yoyCell||'—')+'</td>';
     // AR
     rowHtml += '<td data-rtd="ar" class="'+(reitCols.ar?'':'rtbl-hidden')+'">'+arDot+(p.ar_year||'—')+'</td>';
-    // Status
+    // Status — hidden by default
     rowHtml += '<td data-rtd="status" class="'+(reitCols.status?'':'rtbl-hidden')+'">'+statusCell+'</td>';
     rowHtml += '</tr>';
   });
@@ -6931,6 +6984,8 @@ function reitSearch(page){
   var region = (document.getElementById('reit-region')||{}).value||'';
   var country = (document.getElementById('reit-country')||{}).value||'';
   var sort = document.getElementById('reit-sort').value;
+  var tblEntity = (document.getElementById('reit-tbl-entity')||{}).value||'';
+  var tblAsset  = (document.getElementById('reit-tbl-asset')||{}).value||'';
 
   document.getElementById('reit-detail').style.display='none';
   document.getElementById('reit-loading').style.display='block';
@@ -6950,6 +7005,8 @@ function reitSearch(page){
       if(a==='industrial' && t!=='industrial' && t!=='warehouse') return false;
       if(a!=='industrial' && t!==a) return false;
     }
+    if(tblEntity && p.entity !== tblEntity) return false;
+    if(tblAsset && p.type !== tblAsset) return false;
     if(region && p.region !== region) return false;
     if(country && p.country !== country) return false;
     if(q){
@@ -6959,12 +7016,31 @@ function reitSearch(page){
     return true;
   });
 
+  // Populate entity dropdown (do once when in table mode)
+  if(reitViewMode==='table'){
+    var entSel = document.getElementById('reit-tbl-entity');
+    if(entSel && entSel.options.length <= 1){
+      var entities = REIT_DATA.map(function(p){ return p.entity; })
+        .filter(function(v,i,a){ return a.indexOf(v)===i; }).sort();
+      entities.forEach(function(e){
+        var opt = document.createElement('option');
+        opt.value = e; opt.textContent = e;
+        entSel.appendChild(opt);
+      });
+    }
+    var cntEl = document.getElementById('reit-tbl-count');
+    if(cntEl) cntEl.textContent = filtered.length + ' properties';
+  }
+
   filtered.sort(function(a,b){
     if(sort==='val.desc') return (b.val||0)-(a.val||0);
     if(sort==='val.asc') return (a.val||0)-(b.val||0);
     if(sort==='occ.desc') return (b.occ||0)-(a.occ||0);
     if(sort==='entity.asc') return (a.entity||'').localeCompare(b.entity||'');
-    return (a.name||'').localeCompare(b.name||'');
+    // Default: type asc, then entity asc
+    var tc = (a.type||'').localeCompare(b.type||'');
+    if(tc!==0) return tc;
+    return (a.entity||'').localeCompare(b.entity||'');
   });
 
   document.getElementById('reit-kpi-props').textContent = filtered.length;
@@ -7119,6 +7195,9 @@ function reitOpenDetail(idx){
   document.getElementById('rdet-reit-pill').textContent=p.entity;
   document.getElementById('rdet-reit-pill').style.background=rc;
 
+  // Push browser history state so back button works
+  history.pushState({reitDetail: p.name}, '', window.location.href.split('#')[0]+'#asset-detail');
+
   var regionLabel = p.country==='Singapore' ? 'Region' : 'Country';
   var regionVal = p.country==='Singapore' ? (p.region||'\u2014') : p.country;
   var areaLabel = p.country==='Singapore' ? 'Planning Area' : 'City / Area';
@@ -7172,6 +7251,21 @@ function reitOpenDetail(idx){
   // Notes / analyst commentary
   var notesHtml = p.notes ? '<div style="background:#f0f7ff;border:1px solid #bfdbfe;border-radius:8px;padding:14px"><div style="font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.06em;color:#1d4ed8;margin-bottom:6px">📝 Notes</div><div style="font-size:11px;color:#1e3a5f;line-height:1.6">'+p.notes+'</div></div>' : '';
 
+  // Newsroom summary for this entity
+  var newsPost = getEntityNewsPost(p.entity);
+  var newsHtml = '';
+  if(newsPost){
+    var arLink = ENTITY_AR_LINKS[p.entity];
+    var arLinkHtml = arLink
+      ? '<div style="margin-top:10px"><a href="'+arLink+'" target="_blank" rel="noopener" style="font-size:11px;color:#2563bc;font-weight:600;text-decoration:none;display:inline-flex;align-items:center;gap:4px">📄 Click here for full annual report <span style="font-size:10px">↗</span></a></div>'
+      : '';
+    newsHtml = '<div style="background:#f0f7ff;border:1px solid #bfdbfe;border-radius:8px;padding:14px">'
+      +'<div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:#1d4ed8;margin-bottom:8px">📰 Latest Annual Report Summary — '+newsPost.date+'</div>'
+      +'<div style="font-size:11px;color:#1e3a5f;line-height:1.65">'+formatNewsSummary(newsPost.summary)+'</div>'
+      +arLinkHtml
+      +'</div>';
+  }
+
   document.getElementById('rdet-extra').innerHTML=
     '<div style="background:var(--srf2);border-radius:8px;padding:14px">'
     +'<div style="font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.06em;color:var(--mut);margin-bottom:8px">Address</div>'
@@ -7182,6 +7276,7 @@ function reitOpenDetail(idx){
     +statusHtml
     +yoyHtml
     +notesHtml
+    +newsHtml
     +'<div style="background:#fffbf0;border:1px solid #f0e0a0;border-radius:8px;padding:12px">'
     +'<div style="font-size:10px;font-weight:600;color:#7d5200;margin-bottom:4px">\u26a0\ufe0f Data Disclaimer</div>'
     +'<div style="font-size:10px;color:#7d5200">Figures sourced from '+p.source+'. Values as reported in the '+p.ar_year+' Annual Report and may not reflect current market conditions.</div></div>';
@@ -7207,7 +7302,17 @@ function reitCloseDetail(){
     document.getElementById('reit-grid').style.display='grid';
   }
   document.getElementById('reit-pagination').style.display='flex';
+  // Clean up hash without triggering popstate
+  history.replaceState(null,'',window.location.href.replace('#asset-detail',''));
 }
+
+// Browser back button closes detail panel
+window.addEventListener('popstate', function(e){
+  var det = document.getElementById('reit-detail');
+  if(det && det.style.display!=='none'){
+    reitCloseDetail();
+  }
+});
 
 function reitClear(){
   document.getElementById('reit-search').value='';
