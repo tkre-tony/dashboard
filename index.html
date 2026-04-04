@@ -1800,7 +1800,7 @@ html,body{background:var(--bg);color:var(--txt);font-family:'DM Sans',sans-serif
       <option value="Suntec REIT">Suntec REIT</option>
       <option value="City Developments Limited">CDL</option>
       <option value="UOL Group">UOL Group</option>
-      <option value="OUE REIT">OUE REIT (FY2024)</option>
+      <option value="OUE REIT">OUE REIT</option>
     </select>
     <select class="talent-sort-sel" id="talent-sort" onchange="talentRender()">
       <option value="name">Sort: Name</option>
@@ -2675,12 +2675,12 @@ var TALENT_DATA = [
   // ⚠️ Remuneration: estimated ranges — re-extract from AR CG section for exact figures
   // ════════════════════════════════════════════
   {
-    id:'oue-ceo-24', name:'Han Khim Siew', role:'CEO & Executive Director', role_type:'CEO',
-    entity:'OUE REIT', entity_short:'OUE REIT', ar_year:'FY2024',
-    appointed:'7 Feb 2022', tenure_yrs:3,
-    rem_exact:1089585, rem_fixed:686439, rem_bonus:403146, rem_other:0,
-    rem_note:'FY2024 total S$1,089,585: 63% fixed salary (incl. fixed allowances and statutory contributions), 37% variable performance-related bonus. No LTI/LTIP — OUE REIT Manager explicitly states it does not have any long-term or short-term incentive schemes for executive directors or KMP. No director fee (CEO and Executive Director). KMP (CFO and senior management) remuneration not disclosed — Board elected non-disclosure citing commercial sensitivity and talent retention. FY2025 figure pending AR2025 upload.',
-    rem_band:null, rem_pct_fixed:63, rem_pct_bonus:37, rem_pct_other:0,
+    id:'oue-ceo-25', name:'Han Khim Siew', role:'CEO & Executive Director', role_type:'CEO',
+    entity:'OUE REIT', entity_short:'OUE REIT', ar_year:'FY2025',
+    appointed:'7 Feb 2022', tenure_yrs:4,
+    rem_exact:1105632, rem_fixed:652323, rem_bonus:453309, rem_other:0,
+    rem_note:'FY2025 total S$1,105,632: 59% fixed salary (incl. fixed allowances and statutory contributions), 41% variable performance-related bonus. YoY +1.5% from S$1,089,585 in FY2024 — most restrained pay growth in this database. No LTI/LTIP scheme — OUE REIT Manager explicitly has no long-term or short-term incentive schemes for executive directors or KMP (unlike Keppel REIT, Suntec, UOL). No director fee received. KMP remuneration not disclosed — Board elected non-disclosure citing commercial sensitivity.',
+    rem_band:null, rem_pct_fixed:59, rem_pct_bonus:41, rem_pct_other:0,
     edu:'BSc Economics (Accounting & Finance), London School of Economics and Political Science',
     bio:'CEO and Executive Director of OUE REIT Management since 7 February 2022. Led the decisive portfolio pivot: divested Lippo Plaza Shanghai (RMB1,917M / S$357.4M, Dec 2024), sharpening focus to Singapore CBD office and hospitality. FY2024 Singapore office near-full (OUE Bayfront 99.4%, One Raffles Place 97.2%); Hilton Singapore Orchard RevPAR S$281. Previously Managing Director and Co-Head Asia Pacific at BNP Paribas Real Estate (Apr 2019–Jan 2022). Career spans real estate investments, M&A, asset management and hospitality across Asia Pacific.',
     prev_roles:[
@@ -2688,6 +2688,7 @@ var TALENT_DATA = [
       {org:'OUE REIT Management Ltd',pos:'CEO & Executive Director from Feb 2022'},
     ],
     rem_history:[
+      {year:'FY2025', total:1105632, pct_fixed:59, pct_bonus:41, pct_ltp:0, pct_other:0},
       {year:'FY2024', total:1089585, pct_fixed:63, pct_bonus:37, pct_ltp:0, pct_other:0},
     ],
     cross_board_roles:[],
@@ -2695,8 +2696,8 @@ var TALENT_DATA = [
     tags:['REIT CEO','LSE Alumnus','China Exit FY2024','BNP Paribas RE Alumni']
   },
   {
-    id:'oue-cfo-24', name:'Lionel Chua', role:'CFO', role_type:'CFO',
-    entity:'OUE REIT', entity_short:'OUE REIT', ar_year:'FY2024',
+    id:'oue-cfo-25', name:'Lionel Chua', role:'CFO', role_type:'CFO',
+    entity:'OUE REIT', entity_short:'OUE REIT', ar_year:'FY2025',
     appointed:null, tenure_yrs:null,
     rem_exact:null, rem_fixed:null, rem_bonus:null, rem_other:null,
     rem_note:'KMP remuneration not disclosed — Board elected non-disclosure citing commercial sensitivity, competitive REIT management sector, and talent retention risks. OUE REIT does not disclose KMP bands or aggregate. No LTI scheme exists, so pay is fixed + annual variable bonus only.',
@@ -2716,9 +2717,9 @@ var TALENT_DATA = [
     tags:['REIT CFO','OUE Hospitality REIT Alumni','Keppel & CapitaLand Alumni','26-Year Career']
   },
   {
-    id:'oue-chair-24', name:'Lee Yi Shyan', role:'Chairman & Non-Independent Non-Executive Director', role_type:'Board',
-    entity:'OUE REIT', entity_short:'OUE REIT', ar_year:'FY2024',
-    appointed:'17 Sep 2019', tenure_yrs:5.3,
+    id:'oue-chair-25', name:'Lee Yi Shyan', role:'Chairman & Non-Independent Non-Executive Director', role_type:'Board',
+    entity:'OUE REIT', entity_short:'OUE REIT', ar_year:'FY2025',
+    appointed:'17 Sep 2019', tenure_yrs:6.3,
     rem_exact:100000, rem_fixed:100000, rem_bonus:0, rem_other:0,
     rem_note:'FY2024 total S$100,000: S$50,000 Chairman fee + S$50,000 Board member fee. 100% cash. Non-Independent NED representing OUE Limited (sponsor). Also Executive Advisor to Chairman of OUE Limited and Advisor to Keppel Corporation.',
     rem_band:null, rem_pct_fixed:100, rem_pct_bonus:0, rem_pct_other:0,
@@ -2730,6 +2731,7 @@ var TALENT_DATA = [
       {org:'OUE Limited',pos:'Executive Advisor to Chairman (current)'},
     ],
     rem_history:[
+      {year:'FY2025', total:100000, pct_fixed:100},
       {year:'FY2024', total:100000, pct_fixed:100},
     ],
     cross_board_roles:[
@@ -2741,9 +2743,9 @@ var TALENT_DATA = [
     tags:['Chairman','Non-Independent NED','Former MP & Minister','OUE Sponsor Rep']
   },
   {
-    id:'oue-lead-id-24', name:'Liu Chee Ming', role:'Lead Independent Director', role_type:'Board',
-    entity:'OUE REIT', entity_short:'OUE REIT', ar_year:'FY2024',
-    appointed:'17 Sep 2019', tenure_yrs:5.3,
+    id:'oue-lead-id-25', name:'Liu Chee Ming', role:'Lead Independent Director', role_type:'Board',
+    entity:'OUE REIT', entity_short:'OUE REIT', ar_year:'FY2025',
+    appointed:'17 Sep 2019', tenure_yrs:6.3,
     rem_exact:108750, rem_fixed:108750, rem_bonus:0, rem_other:0,
     rem_note:'FY2024 total S$108,750 — highest board fee: S$50K Board member + S$40K Lead ID + S$18.75K ARC member. 100% cash.',
     rem_band:null, rem_pct_fixed:100, rem_pct_bonus:0, rem_pct_other:0,
@@ -2754,6 +2756,7 @@ var TALENT_DATA = [
       {org:'Platinum Holdings Company Limited',pos:'Managing Director'},
     ],
     rem_history:[
+      {year:'FY2025', total:108750, pct_fixed:100},
       {year:'FY2024', total:108750, pct_fixed:100},
     ],
     cross_board_roles:[
@@ -2764,9 +2767,9 @@ var TALENT_DATA = [
     tags:['Lead Independent Director','KPMG Alumni','HK Listings Director','Takeovers Panel']
   },
   {
-    id:'oue-dir-brian-24', name:'Brian Riady', role:'Non-Independent Non-Executive Director', role_type:'Board',
-    entity:'OUE REIT', entity_short:'OUE REIT', ar_year:'FY2024',
-    appointed:'1 Sep 2020', tenure_yrs:4.3,
+    id:'oue-dir-brian-25', name:'Brian Riady', role:'Non-Independent Non-Executive Director', role_type:'Board',
+    entity:'OUE REIT', entity_short:'OUE REIT', ar_year:'FY2025',
+    appointed:'1 Sep 2020', tenure_yrs:5.3,
     rem_exact:62500, rem_fixed:62500, rem_bonus:0, rem_other:0,
     rem_note:'FY2024 total S$62,500 — lowest board fee: S$50K Board member + S$12.5K NRC member. 100% cash. NED representing OUE Limited / Lippo Group. Deputy CEO of OUE Limited.',
     rem_band:null, rem_pct_fixed:100, rem_pct_bonus:0, rem_pct_other:0,
@@ -2778,6 +2781,7 @@ var TALENT_DATA = [
       {org:'PT Cinemaxx Global Pasifik',pos:'CEO (2013–2017)'},
     ],
     rem_history:[
+      {year:'FY2025', total:62500, pct_fixed:100},
       {year:'FY2024', total:62500, pct_fixed:100},
     ],
     cross_board_roles:[
