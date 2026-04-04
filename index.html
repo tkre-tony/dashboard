@@ -2134,7 +2134,16 @@ var TALENT_DATA = [
       {org:'Raffles Holdings Limited',pos:'CFO'},
       {org:'KPMG Peat Marwick',pos:'Audit (career start, 1990)'},
     ],
-    tags:['REIT CEO','35-Year Career','MP 2015-2025','Ascott Alumni']
+    tags:['REIT CEO','35-Year Career','MP 2015-2025','Ascott Alumni'],
+    rem_history:[
+      {year:'FY2025', total:2177124, pct_fixed:48.1, pct_bonus:7.9, pct_ltp:11.9, pct_other:32.1},
+      {year:'FY2024', total:1375849, pct_fixed:76, pct_bonus:7, pct_ltp:17, pct_other:0},
+    ],
+    cross_board_roles:[
+      {entity:'One Raffles Quay Pte. Ltd.', role:'Director', listed:false},
+      {entity:'BFC Development LLP', role:"Partners' Representative", listed:false},
+    ],
+    linkedin_url:null
   },
   {
     id:'suntec-cfo-25', name:'Ng Ee San', role:'CFO', role_type:'CFO',
@@ -2228,38 +2237,6 @@ var TALENT_DATA = [
     tags:['Independent Director','NRC Chair','Rajah & Tann','Tang Org-linked']
   },
 
-  // ════════════════════════════════════════════
-  // SUNTEC REIT — FY2024 (for YoY comparison)
-  // Source: Suntec REIT AR 2024 — exact figures
-  // ════════════════════════════════════════════
-  {
-    id:'suntec-ceo-24', name:'Chong Kee Hiong', role:'CEO & Executive Director (FY2024)', role_type:'CEO',
-    entity:'Suntec REIT', entity_short:'Suntec REIT', ar_year:'FY2024',
-    appointed:'1 Jan 2019', tenure_yrs:6,
-    rem_exact:1375849, rem_fixed:1045645, rem_bonus:96309, rem_other:233895,
-    rem_note:'FY2024 total S$1,375,849: 76% fixed salary (incl. CPF), 7% performance bonus (incl. CPF), 17% Suntec PUP long-term incentive. No retention award component in FY2024 (ESR retention award introduced in FY2025). YoY increase to S$2,177,124 in FY2025 driven by S$698,857 ESR retention award.',
-    rem_band:null, rem_pct_fixed:76, rem_pct_bonus:7, rem_pct_other:17,
-    edu:'BAccountancy, NUS; Harvard Business School AMP (2008); Member, ISCA',
-    bio:'Same individual as FY2025 entry — see suntec-ceo-25. FY2024 profile captures prior-year remuneration for YoY comparison. Total compensation rose 58.2% from FY2024 to FY2025, almost entirely due to the S$698,857 ESR retention award tied to the manager ownership change.',
-    prev_roles:[
-      {org:'OUE Hospitality REIT Management',pos:'CEO (2013–2018)'},
-      {org:'The Ascott Limited',pos:'CEO (2012–2013)'},
-      {org:'Ascott Residence Trust Management',pos:'CEO (2005–2012)'},
-    ],
-    tags:['REIT CEO','FY2024 Reference','Pre-Retention Award','Suntec REIT']
-  },
-  {
-    id:'suntec-chair-24', name:'Chew Gek Khim', role:'Chairman (Retired Sep 2025)', role_type:'Board',
-    entity:'Suntec REIT', entity_short:'Suntec REIT', ar_year:'FY2024',
-    appointed:null, tenure_yrs:null,
-    rem_exact:132000, rem_fixed:132000, rem_bonus:0, rem_other:0,
-    rem_note:'FY2024 total S$132,000 (100% fixed). Highest board fee in FY2024. Retired as Chairman and Non-Executive Director on 30 September 2025. FY2025 pro-rated fee was S$100,767.',
-    rem_band:null, rem_pct_fixed:100, rem_pct_bonus:0, rem_pct_other:0,
-    edu:'Not disclosed',
-    bio:'Chairman of Suntec REIT Management until September 2025 (retired). The Tecity Group-affiliated Chairman who presided over the ESR management era. Full-year FY2024 fee of S$132,000 was the highest on the board.',
-    prev_roles:[],
-    tags:['Former Chairman','Tecity Group','FY2024 Reference','Suntec REIT']
-  },
 
   // ════════════════════════════════════════════
   // CITY DEVELOPMENTS LIMITED (CDL) — FY2025
@@ -2517,24 +2494,6 @@ var TALENT_DATA = [
     linkedin_url:null,
     tags:['Developer CIO','CFA Charterholder','Keppel REIT Alumni','Alpha Investments Alumni']
   },
-  // ── UOL FY2024 reference (GCE YoY) ──
-  {
-    id:'uol-ceo-24', name:'Liam Wee Sin', role:'Group Chief Executive (FY2024)', role_type:'CEO',
-    entity:'UOL Group', entity_short:'UOL', ar_year:'FY2024',
-    appointed:'25 Apr 2019', tenure_yrs:5.7,
-    rem_exact:2887000, rem_fixed:894970, rem_bonus:1789940, rem_other:202090,
-    rem_note:'FY2024 total S$2,887,000: 31% fixed salary, 62% bonuses, 7% benefits-in-kind and others. No Long-Term Performance Plan component disclosed separately in FY2024 (LTPP introduced as distinct line item from FY2025). YoY: S$2,887,000 FY2024 → S$4,480,000 FY2025 (+55.2%), driven by higher bonus payout and introduction of LTPP component.',
-    rem_band:null, rem_pct_fixed:31, rem_pct_bonus:62, rem_pct_other:7,
-    edu:'Bachelor of Architecture, University of Singapore',
-    bio:'Same individual as FY2025 — see uol-ceo-25. FY2024 entry captures prior-year remuneration for YoY comparison. In FY2024, UOL divested Havelock II site, completed Pan Pacific Orchard reopening, and launched PARKTOWN Residence and Skye at Holland.',
-    prev_roles:[],
-    rem_history:[
-      {year:'FY2024', total:2887000, pct_fixed:31, pct_bonus:62, pct_ltp:null, pct_other:7},
-    ],
-    cross_board_roles:[],
-    linkedin_url:null,
-    tags:['Developer GCE','FY2024 Reference','UOL Group']
-  },
 
   // ════════════════════════════════════════════
   // OUE REIT — FY2025
@@ -2675,10 +2634,10 @@ function talentRender(){
     var remCls = talentRemTagClass(p);
     var ten = talentTenureTag(p.tenure_yrs);
     var avatar = talentAvatarColor(p.role_type);
-    // Scale bar: S$2.5M = 100%, so S$2.18M Suntec CEO fills ~87%
     var remBarPct = p.rem_exact ? Math.min(100, Math.round(p.rem_exact/25000)) : (p.rem_band?35:0);
     var fixedPct = p.rem_pct_fixed||0;
     var bonusPct = p.rem_pct_bonus||0;
+
     // Data quality badge
     var dqBadge = p.rem_exact
       ? '<span style="font-size:9px;background:#f0fdf4;color:#166534;border:1px solid #bbf7d0;border-radius:3px;padding:1px 5px;font-weight:600;margin-left:4px">AR</span>'
@@ -2686,20 +2645,45 @@ function talentRender(){
         ? '<span style="font-size:9px;background:#fffbeb;color:#92400e;border:1px solid #fde68a;border-radius:3px;padding:1px 5px;font-weight:600;margin-left:4px">EST</span>'
         : '<span style="font-size:9px;background:#f5f3ff;color:#5b21b6;border:1px solid #ddd6fe;border-radius:3px;padding:1px 5px;font-weight:600;margin-left:4px">AR</span>');
 
+    // YoY delta badge — shown only if rem_history has 2+ entries with totals
+    var yoyHtml = '';
+    var hist = p.rem_history;
+    if(hist && hist.length >= 2 && hist[0].total && hist[1].total){
+      var curr = hist[0].total, prev = hist[1].total;
+      var pct = Math.round((curr - prev) / prev * 100);
+      var up = pct >= 0;
+      yoyHtml = '<span style="font-size:10px;font-weight:700;color:'+(up?'#16a34a':'#c8364a')+';background:'+(up?'#f0fdf4':'#fef2f2')+';border:1px solid '+(up?'#bbf7d0':'#fecaca')+';border-radius:3px;padding:1px 6px;margin-left:5px">'+(up?'▲':'▼')+Math.abs(pct)+'% YoY</span>';
+    }
+
+    // Year range chip — show "FY2024–FY2025" if history spans multiple years
+    var yearRange = p.ar_year;
+    if(hist && hist.length >= 2){
+      var years = hist.map(function(h){return h.year;}).filter(Boolean);
+      if(years.length >= 2) yearRange = years[years.length-1]+' – '+years[0];
+    }
+
+    // History count hint
+    var histHint = (hist && hist.length > 1)
+      ? '<span style="font-size:9px;color:var(--mut2);margin-left:4px">'+hist.length+' yrs data</span>'
+      : '';
+
     return '<div class="talent-card role-'+p.role_type.toLowerCase()+'" onclick="talentOpenDrawer(\''+p.id+'\')">'+
       '<div class="talent-card-top">'+
         '<div class="talent-avatar" style="background:'+avatar+'">'+talentInitials(p.name)+'</div>'+
         '<div style="flex:1;min-width:0">'+
-          '<div class="talent-name" style="display:flex;align-items:center;gap:0">'+p.name+dqBadge+'</div>'+
+          '<div class="talent-name" style="display:flex;align-items:center;flex-wrap:wrap;gap:0;row-gap:2px">'+p.name+dqBadge+yoyHtml+'</div>'+
           '<div class="talent-title">'+p.role+'</div>'+
-          '<div class="talent-entity-chip">'+
-            '<span style="width:6px;height:6px;border-radius:50%;background:'+avatar+';display:inline-block"></span>'+
-            p.entity_short+' · '+p.ar_year+
+          '<div style="display:flex;align-items:center;gap:6px;margin-top:4px;flex-wrap:wrap">'+
+            '<div class="talent-entity-chip">'+
+              '<span style="width:6px;height:6px;border-radius:50%;background:'+avatar+';display:inline-block"></span>'+
+              p.entity_short+' · '+yearRange+
+            '</div>'+
+            histHint+
           '</div>'+
         '</div>'+
       '</div>'+
       '<div class="talent-metrics">'+
-        '<div class="talent-metric"><div class="talent-metric-val">'+remLbl+'</div><div class="talent-metric-lbl">Remuneration</div></div>'+
+        '<div class="talent-metric"><div class="talent-metric-val">'+remLbl+'</div><div class="talent-metric-lbl">'+p.ar_year+'</div></div>'+
         '<div class="talent-metric"><div class="talent-metric-val">'+(fixedPct?Math.round(fixedPct)+'%':'—')+'</div><div class="talent-metric-lbl">Fixed</div></div>'+
         '<div class="talent-metric"><div class="talent-metric-val">'+(bonusPct?Math.round(bonusPct)+'%':'—')+'</div><div class="talent-metric-lbl">Variable</div></div>'+
       '</div>'+
