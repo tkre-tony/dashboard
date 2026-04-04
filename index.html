@@ -1768,8 +1768,8 @@ html,body{background:var(--bg);color:var(--txt);font-family:'DM Sans',sans-serif
       <div class="talent-hero-title">👤 RE Human Capital Intelligence</div>
       <div class="talent-hero-sub">C-Suite · Board · Key Management · Remuneration — sourced from SGX-listed REIT &amp; Developer Annual Reports</div>
       <div style="margin-top:8px;display:flex;gap:8px;flex-wrap:wrap">
-        <span style="font-size:9px;background:rgba(167,139,250,.15);border:1px solid rgba(167,139,250,.3);color:#c4b5fd;padding:2px 8px;border-radius:10px;letter-spacing:.04em">PILOT · AI-REIT FY2025 vs FY2024</span>
-        <span style="font-size:9px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);color:rgba(255,255,255,.4);padding:2px 8px;border-radius:10px;letter-spacing:.04em">More entities coming soon</span>
+        <span style="font-size:9px;background:rgba(167,139,250,.15);border:1px solid rgba(167,139,250,.3);color:#c4b5fd;padding:2px 8px;border-radius:10px;letter-spacing:.04em">PILOT · 6 Entities · AI-REIT · Keppel REIT · Suntec · CDL · UOL · OUE REIT</span>
+        <span style="font-size:9px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);color:rgba(255,255,255,.4);padding:2px 8px;border-radius:10px;letter-spacing:.04em">Rem data exact for AI-REIT · estimates for others</span>
       </div>
     </div>
     <div class="talent-hero-stats">
@@ -1792,6 +1792,16 @@ html,body{background:var(--bg);color:var(--txt);font-family:'DM Sans',sans-serif
     <button class="talent-filter-btn role-cfo" data-tfilter="CFO" onclick="talentSetFilter(this,'role','CFO')">CFO</button>
     <button class="talent-filter-btn role-cio" data-tfilter="CIO" onclick="talentSetFilter(this,'role','CIO')">CIO / Head RE</button>
     <button class="talent-filter-btn role-board" data-tfilter="Board" onclick="talentSetFilter(this,'role','Board')">Board</button>
+    <select class="talent-sort-sel" id="talent-entity-filter" onchange="talentRender()" style="max-width:160px">
+      <option value="">All Entities</option>
+      <option value="Alpha Integrated REIT">AI-REIT (FY2025)</option>
+      <option value="Sabana REIT (now AI-REIT)">Sabana / Former</option>
+      <option value="Keppel REIT">Keppel REIT</option>
+      <option value="Suntec REIT">Suntec REIT</option>
+      <option value="City Developments Limited">CDL</option>
+      <option value="UOL Group">UOL Group</option>
+      <option value="OUE REIT">OUE REIT</option>
+    </select>
     <select class="talent-sort-sel" id="talent-sort" onchange="talentRender()">
       <option value="name">Sort: Name</option>
       <option value="rem_desc">Sort: Rem ↓</option>
@@ -1800,6 +1810,9 @@ html,body{background:var(--bg);color:var(--txt);font-family:'DM Sans',sans-serif
       <option value="entity">Sort: Entity</option>
     </select>
     <span id="talent-count" style="font-size:11px;color:var(--mut);margin-left:4px"></span>
+  </div>
+  <div style="font-size:10px;color:var(--mut2);margin-bottom:12px;padding:6px 10px;background:var(--srf2);border-radius:5px;border:1px solid var(--bdr)">
+    ⚠️ <strong style="color:var(--txt2)">Data note:</strong> AI-REIT profiles contain exact figures from FY2025 AR. All other entities use estimated remuneration ranges based on industry benchmarks and role comparables. Verify against each entity's published AR corporate governance section before relying on figures. Profiles marked "To Be Updated" require re-extraction from the AR's management team and CG sections.
   </div>
 
   <!-- Cards grid -->
@@ -2051,6 +2064,250 @@ var TALENT_DATA = [
     edu:'Not disclosed', bio:'Independent Director of Sabana REIT. Active on corporate governance and NRC. Departed upon internalisation Oct 2025.',
     prev_roles:[],
     tags:['Former Director','Sabana Era','NRC Member']
+  },
+
+  // ════════════════════════════════════════════
+  // KEPPEL REIT — FY2025
+  // Source: Keppel REIT AR 2025
+  // ⚠️ Remuneration: estimated ranges — re-extract from AR CG section for exact figures
+  // ════════════════════════════════════════════
+  {
+    id:'kreit-ceo-25', name:'Quah Ley Hoon', role:'CEO', role_type:'CEO',
+    entity:'Keppel REIT', entity_short:'Keppel REIT', ar_year:'FY2025',
+    appointed:'2009', tenure_yrs:16,
+    rem_exact:null, rem_fixed:null, rem_bonus:null, rem_other:null,
+    rem_note:'Exact quantum not extracted this session. CEO remuneration must be disclosed by name per MAS Notice SFA04-N14 — retrieve exact figure from Keppel REIT AR 2025 Corporate Governance section. Band estimate based on comparable Singapore office REIT CEOs.',
+    rem_band:'S$500K–S$800K (est.)', rem_pct_fixed:null, rem_pct_bonus:null, rem_pct_other:null,
+    edu:'Not extracted this session',
+    bio:'CEO of Keppel REIT Management since 2009, overseeing 16 years of portfolio expansion from a pure Singapore office play to a multi-market platform spanning Singapore, Australia, Japan and South Korea. Led the landmark MBFC Tower 3 acquisition (S$1,453M, Dec 2025) and entry into Australian retail via Top Ryde City Shopping Centre (A$393.8M, Dec 2025). Portfolio AUM reached S$11.7B as at FY2025.',
+    prev_roles:[
+      {org:'Keppel Land',pos:'Various real estate and fund management roles'},
+    ],
+    tags:['REIT CEO','Long Tenure','SG-AU-JP-KR Portfolio','Keppel Group']
+  },
+  {
+    id:'kreit-chair-25', name:'Tan Swee Yiow', role:'Chairman & Non-Executive Director', role_type:'Board',
+    entity:'Keppel REIT', entity_short:'Keppel REIT', ar_year:'FY2025',
+    appointed:'2020', tenure_yrs:5,
+    rem_exact:null, rem_fixed:null, rem_bonus:null, rem_other:null,
+    rem_note:'Board fee not extracted this session. Retrieve from Keppel REIT AR 2025 remuneration table. Estimated based on SG REIT Chairman norms.',
+    rem_band:'S$150K–S$220K (est.)', rem_pct_fixed:100, rem_pct_bonus:0, rem_pct_other:0,
+    edu:'Not extracted this session',
+    bio:'Chairman of Keppel REIT Management. Former CEO of Keppel Land Limited. Deep expertise in Singapore and regional real estate development, investment and asset management across multiple property cycles.',
+    prev_roles:[
+      {org:'Keppel Land Limited',pos:'CEO'},
+    ],
+    tags:['Chairman','Non-Executive','Keppel Group','SG Real Estate']
+  },
+  {
+    id:'kreit-cfo-25', name:'Keppel REIT CFO', role:'CFO', role_type:'CFO',
+    entity:'Keppel REIT', entity_short:'Keppel REIT', ar_year:'FY2025',
+    appointed:null, tenure_yrs:null,
+    rem_exact:null, rem_fixed:null, rem_bonus:null, rem_other:null,
+    rem_note:'CFO name and remuneration not extracted this session. Retrieve from Keppel REIT AR 2025 management team and CG sections.',
+    rem_band:'S$350K–S$600K (est.)', rem_pct_fixed:null, rem_pct_bonus:null, rem_pct_other:null,
+    edu:'Not extracted this session',
+    bio:'Pending extraction from Keppel REIT AR 2025. Oversees financial reporting and treasury for a S$11.7B AUM multi-market REIT across Singapore, Australia, Japan and South Korea.',
+    prev_roles:[],
+    tags:['REIT CFO','Multi-Market','Keppel Group','To Be Updated']
+  },
+
+  // ════════════════════════════════════════════
+  // SUNTEC REIT — FY2025
+  // Manager: AEW Capital Management (formerly ESR Trust Management)
+  // ⚠️ Remuneration: estimated ranges — re-extract from AR CG section for exact figures
+  // ════════════════════════════════════════════
+  {
+    id:'suntec-ceo-25', name:'Chong Kee Hiong', role:'CEO', role_type:'CEO',
+    entity:'Suntec REIT', entity_short:'Suntec REIT', ar_year:'FY2025',
+    appointed:'2014', tenure_yrs:11,
+    rem_exact:null, rem_fixed:null, rem_bonus:null, rem_other:null,
+    rem_note:'Exact quantum not extracted this session. CEO remuneration must be disclosed by name per MAS Notice SFA04-N14 — retrieve from Suntec REIT AR 2025 Corporate Governance section. Band estimate based on comparable SG diversified REIT CEOs managing S$10B+ AUM across 3 markets.',
+    rem_band:'S$600K–S$900K (est.)', rem_pct_fixed:null, rem_pct_bonus:null, rem_pct_other:null,
+    edu:'Not extracted this session',
+    bio:'CEO of Suntec REIT Management since 2014 — longest-serving CEO across the entities in this database. Navigated three manager ownership changes (ARA → ESR → AEW Capital Management) while maintaining operational discipline. FY2025 portfolio: S$11.8B AUM across Singapore, UK and Australia. Portfolio occupancy SG near-full (99.8% Suntec City Office), UK mixed (Minster 85.4%), Australia diverging.',
+    prev_roles:[
+      {org:'ARA Asset Management',pos:'Real estate fund management roles'},
+    ],
+    tags:['REIT CEO','11-Year Tenure','SG-UK-AU','AEW Capital']
+  },
+  {
+    id:'suntec-cfo-25', name:'Suntec REIT CFO', role:'CFO', role_type:'CFO',
+    entity:'Suntec REIT', entity_short:'Suntec REIT', ar_year:'FY2025',
+    appointed:null, tenure_yrs:null,
+    rem_exact:null, rem_fixed:null, rem_bonus:null, rem_other:null,
+    rem_note:'CFO name and remuneration not extracted this session. Retrieve from Suntec REIT AR 2025.',
+    rem_band:'S$350K–S$550K (est.)', rem_pct_fixed:null, rem_pct_bonus:null, rem_pct_other:null,
+    edu:'Not extracted this session',
+    bio:'Pending extraction from Suntec REIT AR 2025. Manages multi-currency treasury (SGD, GBP, AUD) and capital structure for S$11.8B AUM REIT across three markets.',
+    prev_roles:[],
+    tags:['REIT CFO','Multi-Market','SG-UK-AU','To Be Updated']
+  },
+  {
+    id:'suntec-chair-25', name:'Suntec REIT Chairman', role:'Chairman & Independent Director', role_type:'Board',
+    entity:'Suntec REIT', entity_short:'Suntec REIT', ar_year:'FY2025',
+    appointed:null, tenure_yrs:null,
+    rem_exact:null, rem_fixed:null, rem_bonus:null, rem_other:null,
+    rem_note:'Chairman name and fee not extracted this session. Retrieve from Suntec REIT AR 2025.',
+    rem_band:'S$150K–S$220K (est.)', rem_pct_fixed:100, rem_pct_bonus:0, rem_pct_other:0,
+    edu:'Not extracted this session',
+    bio:'Pending extraction from Suntec REIT AR 2025.',
+    prev_roles:[],
+    tags:['Chairman','Independent Director','Mixed-Use REIT','To Be Updated']
+  },
+
+  // ════════════════════════════════════════════
+  // CITY DEVELOPMENTS LIMITED (CDL) — FY2025
+  // Listed Developer (not a REIT manager)
+  // ⚠️ Remuneration: estimated ranges — CDL follows Companies Act disclosure, not MAS REIT rules
+  // ════════════════════════════════════════════
+  {
+    id:'cdl-ceo-25', name:'Sherman Kwek Eik Tse', role:'Group CEO', role_type:'CEO',
+    entity:'City Developments Limited', entity_short:'CDL', ar_year:'FY2025',
+    appointed:'2018', tenure_yrs:7,
+    rem_exact:null, rem_fixed:null, rem_bonus:null, rem_other:null,
+    rem_note:'CDL is a developer — remuneration follows Companies Act, not MAS REIT manager rules. CEO/KMP disclosed in named bands. Total compensation likely S$2M–S$4M+ including LTI/share awards. Exact quantum in CDL AR 2025 Directors\' Remuneration section.',
+    rem_band:'S$2M–S$4M+ (est. incl. LTI)', rem_pct_fixed:null, rem_pct_bonus:null, rem_pct_other:null,
+    edu:'Not extracted this session',
+    bio:'Group CEO of City Developments Limited since 2018, the youngest CEO in CDL\'s history. Son of Executive Chairman Kwek Leng Beng. Leads S$20B+ global portfolio spanning Singapore, UK (Holiday Inn Kensington acquired £280M FY2025), Australia, Japan, China and 20+ countries. Overseeing the CDL turnaround narrative after M&C Hotels challenges — net asset value per share S$10.74 (FY2025) vs S$10.17 (FY2024).',
+    prev_roles:[
+      {org:'City Developments Limited',pos:'Deputy CEO (pre-2018)'},
+      {org:'Republic of Singapore Navy',pos:'Officer'},
+    ],
+    tags:['Developer CEO','Hong Leong Group','Global Portfolio','Founder Family']
+  },
+  {
+    id:'cdl-exec-chair-25', name:'Kwek Leng Beng', role:'Executive Chairman', role_type:'Board',
+    entity:'City Developments Limited', entity_short:'CDL', ar_year:'FY2025',
+    appointed:'1968', tenure_yrs:57,
+    rem_exact:null, rem_fixed:null, rem_bonus:null, rem_other:null,
+    rem_note:'Executive Chairman remuneration includes executive duties and is in CDL AR 2025 Directors\' Remuneration section. Estimated S$3M–S$6M+ for Executive Chairman role of a S$20B developer.',
+    rem_band:'S$3M–S$6M+ (est.)', rem_pct_fixed:null, rem_pct_bonus:null, rem_pct_other:null,
+    edu:'Not extracted this session',
+    bio:'Executive Chairman and patriarch of CDL and the Hong Leong Group. Built CDL into one of Asia\'s largest real estate companies over 57 years. Controls the Hong Leong Group (majority CDL shareholder). Longest-serving executive in this database at 57 years tenure.',
+    prev_roles:[
+      {org:'Hong Leong Group Singapore',pos:'Founder / Group Chairman'},
+    ],
+    tags:['Executive Chairman','57-Year Tenure','Founder','Hong Leong Group']
+  },
+  {
+    id:'cdl-cfo-25', name:'Yiong Yim Ming', role:'Group CFO', role_type:'CFO',
+    entity:'City Developments Limited', entity_short:'CDL', ar_year:'FY2025',
+    appointed:'2010', tenure_yrs:15,
+    rem_exact:null, rem_fixed:null, rem_bonus:null, rem_other:null,
+    rem_note:'KMP remuneration in CDL AR 2025 — bands per Companies Act. Senior CFO for a major developer at S$20B+ AUM. Estimated S$1M–S$2M total including performance component.',
+    rem_band:'S$1M–S$2M (est.)', rem_pct_fixed:null, rem_pct_bonus:null, rem_pct_other:null,
+    edu:'Not extracted this session',
+    bio:'Group CFO of CDL since 2010. 15-year tenure managing financial strategy and capital markets for CDL\'s global portfolio across 20+ countries. Oversees financing for hotel acquisitions (Holiday Inn Kensington £280M) and the multi-billion dollar M&C Hotels debt structure.',
+    prev_roles:[
+      {org:'City Developments Limited',pos:'Finance roles from 2010'},
+    ],
+    tags:['Developer CFO','15-Year Tenure','Global Finance','CDL']
+  },
+
+  // ════════════════════════════════════════════
+  // UOL GROUP — FY2025
+  // Listed Developer (not a REIT manager)
+  // ⚠️ Remuneration: estimated ranges — re-extract from AR for exact figures
+  // ════════════════════════════════════════════
+  {
+    id:'uol-ceo-25', name:'Liam Wee Sin', role:'Group CEO', role_type:'CEO',
+    entity:'UOL Group', entity_short:'UOL', ar_year:'FY2025',
+    appointed:'2008', tenure_yrs:17,
+    rem_exact:null, rem_fixed:null, rem_bonus:null, rem_other:null,
+    rem_note:'Developer CEO remuneration per Companies Act — disclosed in named bands in UOL AR 2025. 17-year tenure. Estimated S$1.5M–S$3M for a developer of UOL\'s scale (S$10B+ investment portfolio).',
+    rem_band:'S$1.5M–S$3M (est.)', rem_pct_fixed:null, rem_pct_bonus:null, rem_pct_other:null,
+    edu:'Not extracted this session',
+    bio:'Group CEO of UOL Group since 2008 — 17 years at the helm. Led an active FY2025: divested KINEX (S$375M), acquired 388 George Street Sydney (S$391.6M, 60% JV) and Varley Park Brighton (S$83.5M PBSA, 100%). PARKTOWN Residence 94% sold; Skye at Holland 99% sold on launch day. Overseeing the Pan Pacific Hotels Group with 30+ hotels across 16 countries.',
+    prev_roles:[
+      {org:'UOL Group',pos:'Senior roles from 2000s → Group CEO 2008'},
+    ],
+    tags:['Developer CEO','17-Year Tenure','Pan Pacific Hotels','Capital Recycling']
+  },
+  {
+    id:'uol-exec-dir-25', name:'Gwee Lian Kheng', role:'Executive Director & President', role_type:'Board',
+    entity:'UOL Group', entity_short:'UOL', ar_year:'FY2025',
+    appointed:'1995', tenure_yrs:30,
+    rem_exact:null, rem_fixed:null, rem_bonus:null, rem_other:null,
+    rem_note:'Executive Director role includes executive duties — UOL AR 2025 remuneration section. 30-year tenure. Estimated S$2M–S$4M for Executive Director/President seniority.',
+    rem_band:'S$2M–S$4M (est.)', rem_pct_fixed:null, rem_pct_bonus:null, rem_pct_other:null,
+    edu:'Not extracted this session',
+    bio:'Executive Director and President of UOL Group. One of Singapore\'s most experienced real estate executives with 30 years at UOL. Oversees group strategy alongside the CEO, with particular focus on Pan Pacific Hotels Group operations and Singapore Land Group.',
+    prev_roles:[
+      {org:'UOL Group',pos:'Executive leadership from 1995'},
+    ],
+    tags:['Executive Director','30-Year Tenure','UOL','PPHG']
+  },
+  {
+    id:'uol-chair-25', name:'Wee Ee Chao', role:'Non-Executive Chairman', role_type:'Board',
+    entity:'UOL Group', entity_short:'UOL', ar_year:'FY2025',
+    appointed:'2007', tenure_yrs:18,
+    rem_exact:null, rem_fixed:null, rem_bonus:null, rem_other:null,
+    rem_note:'Non-executive Chairman fee in UOL AR 2025. Estimated S$180K–S$280K fixed fee.',
+    rem_band:'S$180K–S$280K (est.)', rem_pct_fixed:100, rem_pct_bonus:0, rem_pct_other:0,
+    edu:'Not extracted this session',
+    bio:'Non-Executive Chairman of UOL Group and representative of the Wee family (United Overseas Bank). Major shareholder United Industrial Corporation (UIC) is effectively controlled by the Wee family. Provides strategic oversight and long-term capital allocation direction.',
+    prev_roles:[
+      {org:'United Industrial Corporation',pos:'Board leadership'},
+      {org:'United Overseas Bank (UOB)',pos:'Wee family representative'},
+    ],
+    tags:['Chairman','Wee Family','UOB-Linked','UIC Shareholder']
+  },
+  {
+    id:'uol-cfo-25', name:'UOL Group CFO', role:'CFO', role_type:'CFO',
+    entity:'UOL Group', entity_short:'UOL', ar_year:'FY2025',
+    appointed:null, tenure_yrs:null,
+    rem_exact:null, rem_fixed:null, rem_bonus:null, rem_other:null,
+    rem_note:'CFO name and remuneration not extracted this session. Retrieve from UOL AR 2025 management team and KMP remuneration disclosure.',
+    rem_band:'S$800K–S$1.5M (est.)', rem_pct_fixed:null, rem_pct_bonus:null, rem_pct_other:null,
+    edu:'Not extracted this session',
+    bio:'Pending extraction from UOL AR 2025. Manages financial strategy for S$10B+ investment portfolio and Pan Pacific Hotels Group treasury across SGD, AUD, GBP and other currencies.',
+    prev_roles:[],
+    tags:['Developer CFO','Multi-Market','PPHG Finance','To Be Updated']
+  },
+
+  // ════════════════════════════════════════════
+  // OUE REIT — FY2025
+  // Manager: OUE REIT Management Ltd
+  // ⚠️ Remuneration: estimated ranges — re-extract from AR CG section for exact figures
+  // ════════════════════════════════════════════
+  {
+    id:'oue-ceo-25', name:'Han Khim Siew', role:'CEO', role_type:'CEO',
+    entity:'OUE REIT', entity_short:'OUE REIT', ar_year:'FY2025',
+    appointed:'2013', tenure_yrs:12,
+    rem_exact:null, rem_fixed:null, rem_bonus:null, rem_other:null,
+    rem_note:'Exact quantum not extracted this session. CEO remuneration must be disclosed by name per MAS Notice SFA04-N14 — retrieve from OUE REIT AR 2025 Corporate Governance section. Band estimate based on comparable SG office/hospitality REIT CEOs at S$5.8B AUM.',
+    rem_band:'S$600K–S$900K (est.)', rem_pct_fixed:null, rem_pct_bonus:null, rem_pct_other:null,
+    edu:'Not extracted this session',
+    bio:'CEO of OUE REIT Management since the REIT\'s formation in 2013 — 12-year tenure. Led the strategic pivot: divested Lippo Plaza Shanghai (RMB1,917M / S$357.4M, Dec 2024) to sharpen focus on Singapore CBD. FY2025 Singapore office at near-full occupancy (OUE Bayfront 99.0%, OUE Downtown 93.4%, One Raffles Place 95.3%). Manages S$5.8B AUM across office, retail and hospitality.',
+    prev_roles:[
+      {org:'OUE REIT Management Ltd',pos:'CEO from REIT formation 2013'},
+    ],
+    tags:['REIT CEO','12-Year Tenure','Office-Hospitality','China Exit']
+  },
+  {
+    id:'oue-cfo-25', name:'OUE REIT CFO', role:'CFO', role_type:'CFO',
+    entity:'OUE REIT', entity_short:'OUE REIT', ar_year:'FY2025',
+    appointed:null, tenure_yrs:null,
+    rem_exact:null, rem_fixed:null, rem_bonus:null, rem_other:null,
+    rem_note:'CFO name and remuneration not extracted this session. Retrieve from OUE REIT AR 2025 management and CG sections.',
+    rem_band:'S$350K–S$600K (est.)', rem_pct_fixed:null, rem_pct_bonus:null, rem_pct_other:null,
+    edu:'Not extracted this session',
+    bio:'Pending extraction from OUE REIT AR 2025. Manages treasury and capital structure for S$5.8B portfolio including utilisation of Lippo Plaza Shanghai disposal proceeds for debt repayment in FY2025.',
+    prev_roles:[],
+    tags:['REIT CFO','Office-Hospitality','Singapore-Focus','To Be Updated']
+  },
+  {
+    id:'oue-chair-25', name:'OUE REIT Chairman', role:'Chairman & Independent Director', role_type:'Board',
+    entity:'OUE REIT', entity_short:'OUE REIT', ar_year:'FY2025',
+    appointed:null, tenure_yrs:null,
+    rem_exact:null, rem_fixed:null, rem_bonus:null, rem_other:null,
+    rem_note:'Chairman name and fee not extracted this session. Retrieve from OUE REIT AR 2025 board of directors and remuneration disclosures.',
+    rem_band:'S$120K–S$200K (est.)', rem_pct_fixed:100, rem_pct_bonus:0, rem_pct_other:0,
+    edu:'Not extracted this session',
+    bio:'Pending extraction from OUE REIT AR 2025.',
+    prev_roles:[],
+    tags:['Chairman','Independent Director','OUE REIT','To Be Updated']
   }
 ];
 
@@ -2106,13 +2363,15 @@ function talentTenureTag(yrs){
 
 function talentFilter(){
   var q = (document.getElementById('talent-search').value||'').toLowerCase();
+  var entityF = document.getElementById('talent-entity-filter') ? document.getElementById('talent-entity-filter').value : '';
   return TALENT_DATA.filter(function(p){
     var roleOk = talentRoleFilter==='all' || p.role_type===talentRoleFilter;
+    var entityOk = !entityF || p.entity===entityF;
     var qOk = !q || p.name.toLowerCase().indexOf(q)>=0
       || p.entity.toLowerCase().indexOf(q)>=0
       || p.role.toLowerCase().indexOf(q)>=0
       || (p.tags||[]).join(' ').toLowerCase().indexOf(q)>=0;
-    return roleOk && qOk;
+    return roleOk && entityOk && qOk;
   });
 }
 
@@ -2260,10 +2519,10 @@ function talentInitSummary(){
     .map(function(p){return p.rem_exact;});
 
   var sumCards = [
-    {val:'S$677K', lbl:'Highest CEO Pay', sub:'Donald Han FY2024'},
-    {val:'S$100K', lbl:'CEO Pay (FY2025)', sub:'Karen Lee (pro-rated Q4)'},
-    {val:'S$180K', lbl:'Top Board Fee', sub:'Tan Cheong Hin FY2024'},
-    {val:'S$14K', lbl:'Board Fee (FY2025)', sub:'Doshi (pro-rated Q4)'},
+    {val:'S$677K', lbl:'Highest disclosed CEO pay', sub:'Donald Han · Sabana FY2024'},
+    {val:'6', lbl:'Entities indexed', sub:'3 REITs · 2 Developers · 1 Former'},
+    {val:'32', lbl:'Profiles in database', sub:'C-Suite + Board'},
+    {val:'57 yrs', lbl:'Longest tenure', sub:'Kwek Leng Beng · CDL Chairman'},
   ];
   document.getElementById('talent-sum-row').innerHTML = sumCards.map(function(c){
     return '<div class="talent-sum-card"><div class="talent-sum-val">'+c.val+'</div><div class="talent-sum-lbl">'+c.lbl+'</div><div class="talent-sum-sub">'+c.sub+'</div></div>';
