@@ -226,9 +226,9 @@ html,body{background:var(--bg);color:var(--txt);font-family:'DM Sans',sans-serif
 #reit-tbl tbody tr:last-child{border-bottom:none}
 #reit-tbl tbody tr:hover{background:var(--glt)}
 #reit-tbl td{padding:7px 11px;vertical-align:middle;max-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-#reit-tbl td[data-rtd="tenure"]{white-space:normal}
 #reit-tbl td.td-name{font-weight:600;color:var(--txt);max-width:220px}
-#reit-tbl td.td-mono{font-family:'DM Mono',monospace;font-size:11px;text-align:right}
+#reit-tbl td.td-mono{font-family:'DM Mono',monospace;font-size:11px;text-align:left}
+#reit-tbl td[data-rtd="tenure"]{white-space:normal}
 #reit-tbl td.td-badge span{padding:2px 6px;border-radius:3px;font-size:9px;font-weight:700}
 .rtbl-hidden{display:none!important}
 
@@ -1417,7 +1417,7 @@ html,body{background:var(--bg);color:var(--txt);font-family:'DM Sans',sans-serif
         <button class="dir-tbtn on" data-devf="" onclick="reitSetFilter(this,'dev','')">All</button>
         <button class="dir-tbtn" data-devf="Acrophyte Hospitality Trust" onclick="reitSetFilter(this,'dev','Acrophyte Hospitality Trust')">Acrophyte HT <span style="color:#4ade80;font-size:8px">●</span></button>
         <button class="dir-tbtn" data-devf="Bukit Sembawang Estates" onclick="reitSetFilter(this,'dev','Bukit Sembawang Estates')">Bukit Sembawang <span style="color:#4ade80;font-size:8px">●</span></button>
-        <button class="dir-tbtn" data-devf="CDL" onclick="reitSetFilter(this,'dev','CDL')">CDL <span style="color:#f59e0b;font-size:8px">●</span></button>
+        <button class="dir-tbtn" data-devf="CDL" onclick="reitSetFilter(this,'dev','CDL')">CDL <span style="color:#4ade80;font-size:8px">●</span></button>
         <button class="dir-tbtn" data-devf="Far East Hospitality Trust" onclick="reitSetFilter(this,'dev','Far East Hospitality Trust')">FE H-Trust <span style="color:#f59e0b;font-size:8px">●</span></button>
         <button class="dir-tbtn" data-devf="Far East Orchard" onclick="reitSetFilter(this,'dev','Far East Orchard')">FE Orchard <span style="color:#f59e0b;font-size:8px">●</span></button>
         <button class="dir-tbtn" data-devf="Ho Bee Land" onclick="reitSetFilter(this,'dev','Ho Bee Land')">Ho Bee Land <span style="color:#f59e0b;font-size:8px">●</span></button>
@@ -1451,7 +1451,7 @@ html,body{background:var(--bg);color:var(--txt);font-family:'DM Sans',sans-serif
 
     <!-- Table view wrapper -->
     <div id="reit-tbl-wrap" style="display:none;margin-bottom:14px">
-      <!-- Entity + Asset Class quick filters -->
+      <!-- Entity + Asset Class filter dropdowns -->
       <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-bottom:8px">
         <select id="reit-tbl-entity" onchange="reitSearch(0)" class="cs-select" style="min-width:180px">
           <option value="">All Entities</option>
@@ -1461,14 +1461,16 @@ html,body{background:var(--bg);color:var(--txt);font-family:'DM Sans',sans-serif
           <option value="Business Park">Business Park</option>
           <option value="Data Centre">Data Centre</option>
           <option value="Hotel">Hotel</option>
+          <option value="Hi-Tech">Hi-Tech</option>
           <option value="Industrial">Industrial</option>
           <option value="Logistics">Logistics</option>
           <option value="Office">Office</option>
           <option value="Residential">Residential</option>
           <option value="Retail">Retail</option>
           <option value="Serviced Suites">Serviced Suites</option>
+          <option value="Warehouse">Warehouse</option>
         </select>
-        <span id="reit-tbl-count" style="font-size:11px;color:var(--mut);font-family:'DM Mono',monospace"></span>
+        <span id="reit-tbl-count" style="font-size:11px;color:var(--mut);font-family:'DM Mono',monospace;font-weight:600"></span>
       </div>
       <!-- Column toggles -->
       <div style="display:flex;gap:5px;flex-wrap:wrap;align-items:center;margin-bottom:8px;padding:7px 10px;background:var(--srf2);border:1px solid var(--bdr);border-radius:8px">
@@ -1481,7 +1483,7 @@ html,body{background:var(--bg);color:var(--txt);font-family:'DM Sans',sans-serif
         <button class="rcol-tog on" data-rcol="nla"     onclick="reitColToggle(this)">NLA (sqm)</button>
         <button class="rcol-tog on" data-rcol="occ"     onclick="reitColToggle(this)">Occupancy</button>
         <button class="rcol-tog on" data-rcol="val"     onclick="reitColToggle(this)">Valuation</button>
-        <button class="rcol-tog on" data-rcol="yoy"     onclick="reitColToggle(this)">YoY</button>
+        <button class="rcol-tog"    data-rcol="yoy"     onclick="reitColToggle(this)">YoY</button>
         <button class="rcol-tog on" data-rcol="ar"      onclick="reitColToggle(this)">AR Year</button>
         <button class="rcol-tog"    data-rcol="status"  onclick="reitColToggle(this)">Status</button>
       </div>
@@ -1695,8 +1697,8 @@ var NEWS=[
   {id:19,date:"2026-02-26",title:"MPs Call for 15% Stamp Duty Tier on Properties Above S$5M",source:"Straits Times",category:"Policy",tag:"Property Tax",summary:"Budget 2026 debate: calls for 15% marginal rate on residential properties above S$5M. Fiscal surplus S$15.1B. SG wealth Gini 0.55.",sentiment:"neutral"},
   {id:20,date:"2026-02-26",title:"Singapore Land H2 Profit Down 11% at S$160.9M",source:"Business Times",category:"Commercial",tag:"Earnings",summary:"FY2025 net profit S$272.3M (-4%). Revenue +7% to S$783.1M. Drag from higher finance costs (+23%) on Sydney acquisition. DPS S$0.045.",sentiment:"negative"},
   {id:21,date:"2026-02-20",title:"Serenity Park Condo in Yio Chu Kang Put on Market at S$505M",source:"Business Times",category:"Commercial",tag:"En Bloc",summary:"179-unit freehold condo, Tamarind Road. First freehold residential en-bloc of 2026. S$1,453 psf ppr. Owner premium >40%. Closes 26 Mar 2026.",sentiment:"neutral"},
-  {id:25,date:"2026-04-04",title:"Suntec REIT FY2025: Singapore Portfolio Near Full, UK Minster Slips, Australia Mixed",source:"PropertyAtlas.sg",category:"Commercial",tag:"Earnings · REIT Update",sourceLabel:"PropertyAtlas.sg Analysis · Suntec REIT AR 2025",sentiment:"positive",summary:"Suntec REIT FY2025 Annual Report (year ended 31 Dec 2025) shows a resilient Singapore portfolio at near-full occupancy, a standout UK occupancy decline at The Minster Building, and diverging trends across the Australian portfolio. Total portfolio valuation rose +0.7% to S$11.83B.\n\nSINGAPORE — NEAR FULL OCCUPANCY\n\nSuntec City Office: Occ +1.0pp to 99.8%; gross rent reversion +25.9% — strongest leasing momentum in the portfolio.\nOne Raffles Quay: Occ -1.6pp to 97.1%; valuation +S$27.0M (+2.0%) to S$1,387.0M.\nMBFC Towers 1 & 2: Occ -3.1pp to 95.4%; Marina Bay Link Mall retail occ +4.5pp to 98.9%; combined valuation +S$43.9M (+2.4%) to S$1,877.2M.\nSuntec City Mall: Retail occ +1.1pp to 99.5%; strong full-year rent reversion of 16.2%.\n\nUNITED KINGDOM — MINSTER DRAG\n\nNova Properties: Achieved 100% committed occupancy (FY2024: 99.6%); valuation +S$17.8M (+2.6%) to S$691.0M.\nThe Minster Building: Occ -5.4pp to 85.4% — standout occupancy decline in FY2025; valuation nonetheless +S$9.9M (+2.2%) to S$468.5M.\n\nAUSTRALIA — DIVERGING PERFORMANCE\n\n177 Pacific Highway: Occ held at 100%; valuation -S$23.1M (-4.6%) to S$477.1M on weaker AUD and market softening.\n21 Harris Street: Occ -2.2pp to 97.8%; valuation -S$16.0M (-7.6%) to S$195.1M.\nOlderfleet 477 Collins Street: Occ held at 100%; valuation +S$5.0M to S$365.3M.\nSouthgate Complex: Office occ -1.5pp to 88.5%; retail occ fell sharply -15.7pp to 75.3%; overall valuation -S$4.4M to S$279.9M.\n55 Currie Street: Occ improved +4.6pp to 66.0% — positive leasing momentum but remains highest-vacancy asset; valuation +S$4.8M to S$102.3M.\n\nKEY TAKEAWAY\n\nSuntec REIT\'s FY2025 narrative is one of Singapore strength offsetting overseas pressure. The SG portfolio operates at near-capacity with positive rent reversions; the UK and Australian books face selective softening — Minster occupancy and Australian valuations are the key watch items heading into FY2026. New management under Tang Organization (via ESR Trust Management) has maintained operational discipline. NAV per unit stood at S$1.688 (FY2024: S$1.680)."},
-  {id:24,date:"2026-04-03",title:"CDL FY2025: Holiday Inn Kensington Acquired, South Beach Reclassified, Tech Park Shenzhen Expanded",source:"PropertyAtlas.sg",category:"Commercial",tag:"Earnings · Developer Update",sourceLabel:"PropertyAtlas.sg Analysis · CDL AR 2025",sentiment:"positive",summary:"City Developments Limited (CDL) FY2025 Annual Report (year ended 31 Dec 2025) shows an active year of portfolio repositioning — one high-profile hotel acquisition, structural reclassifications of two major Singapore assets, and continued expansion of its China technology park.\n\nSINGAPORE INVESTMENT PROPERTIES — OCCUPANCY\\n\\nCDL's Singapore office portfolio achieved a committed occupancy of 97.8% as of 31 Dec 2025 (FY2024: 97.7%), outperforming the island-wide rate of 88.9%. Republic Plaza reached 98.3% (FY2024: 99.3%) post-AEI at Tower 2. City House hit 100% (FY2024: 98.6%). The retail portfolio came in at 97.6% (FY2024: 98.0%), comfortably above the island-wide 93.7%. City Square Mall led at 98.7% (FY2024: 95.7% on unaffected areas), buoyed by AEI completion in 1H 2025 which added ~26,000 sq ft GFA. Palais Renaissance held at 95.1% (FY2024: 99.5%), continuing to attract luxury retail and beauty concepts along Orchard Road.\\n\\nUK COMMERCIAL — STRONG RECOVERY\\n\\nCDL's UK commercial portfolio committed occupancy surged to 91.1% (FY2024: 79.5%) — the standout improvement in the FY2025 portfolio. All three assets improved: 125 Old Broad Street from 79.6% → 92.9% (reception refurbishment drove tenant expansions), Aldgate House from 75.8% → 98.6% (ground floor retail let, existing tenant expanded), and St Katharine Docks from 81.0% → 87.0% (new letting secured). CDL secured 250,000+ sq ft in renewals, lettings and under-offer transactions — about 24% of the UK NLA.\\n\\nCHINA — OCCUPANCY DRAG FROM NEW SUPPLY\\n\\nHong Leong Technology Park Shenzhen's occupancy fell sharply from 58.6% to 27.6%, driven entirely by the Phase 4 expansion adding 67,183 sqm of new NLA — not by vacancy at existing buildings. China's office rental market remains challenging. Hong Leong Plaza Hongqiao has been reclassified as an asset held for sale.\\n\\nKEY PORTFOLIO CHANGES\n\nHoliday Inn London Kensington (Acquired): CDL's most significant move in FY2025 was the acquisition of the 706-room Holiday Inn London Kensington High Street (Wrights Lane, W8) for approximately £280M (S$480.2M) — the largest single hotel acquisition in its FY2025 report. The freehold asset is 100% CDL-owned and is now listed as a Millennium & Copthorne asset in its 2025 AR. The deal meaningfully deepens CDL's London hospitality footprint.\n\nSouth Beach Reclassified: The South Beach mixed-use development — which included the 634-room JW Marriott Hotel Singapore South Beach and 508,869 sq ft of office space (CDL's 50.1% interest) — no longer appears in CDL's 2025 Major Properties list. This follows the asset's operational maturity. The South Beach Tower office and JW Marriott hotel now appear under CDL Hospitality Trusts coverage in the market.\n\nDelfi Orchard Fully Acquired: CDL completed its acquisition of the remaining 24 strata units in Delfi Orchard (Orchard Road) in January 2025, as flagged in the 2024 AR footnote. NLA increased from 73,895 sq ft to 91,279 sq ft — effectively a full-floor add. CDL now holds 100% effective interest.\n\nCity Industrial Building Removed: The 127,594 sq ft flatted factory at Tannery Lane quietly drops off the 2025 AR. No public announcement of disposal was made — CDL may have divested or reclassified this non-core industrial asset.\n\nQuayside Isle (Divestment Feb 2026): Still listed as of 31 Dec 2025 but a footnote confirms divestment completed in February 2026, following completion of the sale of the Sentosa Cove F&B and retail development.\n\nYaojiang International (Divestment Feb 2026): The Shanghai North Bund office building is also footnoted as divested February 2026, continuing CDL's China portfolio rationalisation.\n\nHK TECHNOLOGY PARK EXPANSION\n\nHong Leong Technology Park in Shenzhen's Longgang District is CDL's largest ongoing development. Site area grew from 196,753 to 220,864 sq ft (+24,111 sq ft) and total NLA expanded from 808,019 to 931,274 sq ft (+123,255 sq ft) — reflecting Phase 4 construction. Phase 4 of this leasehold-to-2045 mixed industrial/office park remains active, with CDL holding 100% interest.\n\nHOTELS — KEY MOVEMENTS\n\nNew Zealand interest uplift: All New Zealand Millennium, Copthorne and Kingsgate hotels saw effective group interest increase from 81% to 86%. Sofitel Brisbane Central also increased from 90% to 93%. These reflect additional share acquisitions in M&C's Australasian subsidiary.\n\nHeritage Hotel Manila AEI: Room count increased from 325 to 450 — an AEI that expanded the Manila hotel's inventory and upgraded F&B facilities.\n\nHoliday Inn Moscow Exit: The 201-room Holiday Inn Moscow Seligerskaya (50% CDL interest) was removed from the 2025 AR — continuing CDL's exit from Russia-linked assets.\n\nBespoke Hotel Shinsaibashi: The 256-room Osaka hotel operated by Bespoke Hotels is no longer listed under M&C Asia in the 2025 AR.\n\nThe Mayfair Hotel Christchurch: 67-room hotel in New Zealand added to the Australasia list for the first time in FY2025.\n\nSINGAPORE RESIDENTIAL PIPELINE\n\nTwo new EC GLS sites added to the development pipeline in FY2025: Senja Close EC (Bukit Panjang, 10,159 sqm, 100% CDL, expected 2030) and Woodlands Drive 17 EC (25,207 sqm, 100% CDL, expected 2030). Active pipeline completions in 2025 included Tembusu Grand (TOP'd), Piccadilly Grand/Galleria (TOP'd) and Copen Grand EC (TOP'd). Norwood Grand at Champions Way was accelerated — expected completion moved from 2028 to 2026, now 74% complete.\n\nZyon Grand (formerly Zion Road Parcel A) at Kim Seng Road was renamed and its expected completion updated to 2030 (50% JV).\n\nKEY TAKEAWAY\n\nCDL's FY2025 narrative is one of quiet but deliberate portfolio reshaping — exiting sub-scale or non-core assets (Moscow, Tannery Lane, China offices) and concentrating on premium London hospitality (Holiday Inn Kensington) and China technology park expansion. Singapore's investment portfolio is lean and high-quality; the residential pipeline is well-stocked with EC and private launches through 2030. Net Asset Value per share stood at S$10.74 (2024: S$10.17), with Revalued NAV at S$17.99 (2024: S$17.57)."},
+  {id:25,date:"2026-04-04",title:"Suntec REIT FY2025: Singapore Portfolio Near Full, UK Minster Slips, Australia Mixed",source:"PropertyAtlas.sg",category:"Commercial",tag:"Earnings · REIT Update",sourceLabel:"PropertyAtlas.sg Analysis · Suntec REIT AR 2025",sentiment:"positive",summary:"Suntec REIT FY2025 Annual Report (year ended 31 Dec 2025) shows a resilient Singapore portfolio at near-full occupancy, a standout UK occupancy decline at The Minster Building, and diverging trends across the Australian portfolio. Total portfolio valuation rose +0.7% to S$11.83B.\n\nSINGAPORE — NEAR FULL OCCUPANCY\n\nSuntec City Office: Occ +1.0pp to 99.8%; gross rent reversion +25.9% — strongest leasing momentum in the portfolio.\nOne Raffles Quay: Occ -1.6pp to 97.1%; valuation +S$27.0M (+2.0%) to S$1,387.0M.\nMBFC Towers 1 & 2: Occ -3.1pp to 95.4%; Marina Bay Link Mall retail occ +4.5pp to 98.9%; combined valuation +S$43.9M (+2.4%) to S$1,877.2M.\nSuntec City Mall: Retail occ +1.1pp to 99.5%; strong full-year rent reversion of 16.2%.\n\nUNITED KINGDOM — MINSTER DRAG\n\nNova Properties: Achieved 100% committed occupancy (FY2024: 99.6%); valuation +S$17.8M (+2.6%) to S$691.0M.\nThe Minster Building: Occ -5.4pp to 85.4% — standout occupancy decline in FY2025; valuation nonetheless +S$9.9M (+2.2%) to S$468.5M.\n\nAUSTRALIA — DIVERGING PERFORMANCE\n\n177 Pacific Highway: Occ held at 100%; valuation -S$23.1M (-4.6%) to S$477.1M on weaker AUD and market softening.\n21 Harris Street: Occ -2.2pp to 97.8%; valuation -S$16.0M (-7.6%) to S$195.1M.\nOlderfleet 477 Collins Street: Occ held at 100%; valuation +S$5.0M to S$365.3M.\nSouthgate Complex: Office occ -1.5pp to 88.5%; retail occ fell sharply -15.7pp to 75.3%; overall valuation -S$4.4M to S$279.9M.\n55 Currie Street: Occ improved +4.6pp to 66.0% — positive leasing momentum but remains highest-vacancy asset; valuation +S$4.8M to S$102.3M.\n\nKEY TAKEAWAY\n\nSuntec REIT\'s FY2025 narrative is one of Singapore strength offsetting overseas pressure. The SG portfolio operates at near-capacity with positive rent reversions; the UK and Australian books face selective softening — Minster occupancy and Australian valuations are the key watch items heading into FY2026. New management under Tang Organization has maintained operational discipline. NAV per unit stood at S$1.688 (FY2024: S$1.680)."},
+  {id:24,date:"2026-04-03",title:"CDL FY2025: Holiday Inn Kensington Acquired, South Beach Reclassified, Tech Park Shenzhen Expanded",source:"PropertyAtlas.sg",category:"Commercial",tag:"Earnings · Developer Update",sourceLabel:"PropertyAtlas.sg Analysis · CDL AR 2025",sentiment:"positive",summary:"City Developments Limited (CDL) FY2025 Annual Report (year ended 31 Dec 2025) shows an active year of portfolio repositioning — one high-profile hotel acquisition, structural reclassifications of two major Singapore assets, and continued expansion of its China technology park.\n\nSINGAPORE INVESTMENT PROPERTIES — OCCUPANCY\n\nCDL's Singapore office portfolio achieved a committed occupancy of 97.8% as of 31 Dec 2025 (FY2024: 97.7%), outperforming the island-wide rate of 88.9%. Republic Plaza reached 98.3% (FY2024: 99.3%) post-AEI at Tower 2. City House hit 100% (FY2024: 98.6%). The retail portfolio came in at 97.6% (FY2024: 98.0%), comfortably above the island-wide 93.7%. City Square Mall led at 98.7% (FY2024: 95.7% on unaffected areas), buoyed by AEI completion in 1H 2025 which added ~26,000 sq ft GFA. Palais Renaissance held at 95.1% (FY2024: 99.5%), continuing to attract luxury retail and beauty concepts along Orchard Road.\n\nUK COMMERCIAL — STRONG RECOVERY\n\nCDL's UK commercial portfolio committed occupancy surged to 91.1% (FY2024: 79.5%) — the standout improvement in the FY2025 portfolio. All three assets improved: 125 Old Broad Street from 79.6% → 92.9% (reception refurbishment drove tenant expansions), Aldgate House from 75.8% → 98.6% (ground floor retail let, existing tenant expanded), and St Katharine Docks from 81.0% → 87.0% (new letting secured). CDL secured 250,000+ sq ft in renewals, lettings and under-offer transactions — about 24% of the UK NLA.\n\nCHINA — OCCUPANCY DRAG FROM NEW SUPPLY\n\nHong Leong Technology Park Shenzhen's occupancy fell sharply from 58.6% to 27.6%, driven entirely by the Phase 4 expansion adding 67,183 sqm of new NLA — not by vacancy at existing buildings. China's office rental market remains challenging. Hong Leong Plaza Hongqiao has been reclassified as an asset held for sale.\n\nKEY PORTFOLIO CHANGES\n\nHoliday Inn London Kensington (Acquired): CDL's most significant move in FY2025 was the acquisition of the 706-room Holiday Inn London Kensington High Street (Wrights Lane, W8) for approximately £280M (S$480.2M) — the largest single hotel acquisition in its FY2025 report. The freehold asset is 100% CDL-owned and is now listed as a Millennium & Copthorne asset in its 2025 AR. The deal meaningfully deepens CDL's London hospitality footprint.\n\nSouth Beach Reclassified: The South Beach mixed-use development — which included the 634-room JW Marriott Hotel Singapore South Beach and 508,869 sq ft of office space (CDL's 50.1% interest) — no longer appears in CDL's 2025 Major Properties list. This follows the asset's operational maturity. The South Beach Tower office and JW Marriott hotel now appear under CDL Hospitality Trusts coverage in the market.\n\nDelfi Orchard Fully Acquired: CDL completed its acquisition of the remaining 24 strata units in Delfi Orchard (Orchard Road) in January 2025, as flagged in the 2024 AR footnote. NLA increased from 73,895 sq ft to 91,279 sq ft — effectively a full-floor add. CDL now holds 100% effective interest.\n\nCity Industrial Building Removed: The 127,594 sq ft flatted factory at Tannery Lane quietly drops off the 2025 AR. No public announcement of disposal was made — CDL may have divested or reclassified this non-core industrial asset.\n\nQuayside Isle (Divestment Feb 2026): Still listed as of 31 Dec 2025 but a footnote confirms divestment completed in February 2026, following completion of the sale of the Sentosa Cove F&B and retail development.\n\nYaojiang International (Divestment Feb 2026): The Shanghai North Bund office building is also footnoted as divested February 2026, continuing CDL's China portfolio rationalisation.\n\nHK TECHNOLOGY PARK EXPANSION\n\nHong Leong Technology Park in Shenzhen's Longgang District is CDL's largest ongoing development. Site area grew from 196,753 to 220,864 sq ft (+24,111 sq ft) and total NLA expanded from 808,019 to 931,274 sq ft (+123,255 sq ft) — reflecting Phase 4 construction. Phase 4 of this leasehold-to-2045 mixed industrial/office park remains active, with CDL holding 100% interest.\n\nHOTELS — KEY MOVEMENTS\n\nNew Zealand interest uplift: All New Zealand Millennium, Copthorne and Kingsgate hotels saw effective group interest increase from 81% to 86%. Sofitel Brisbane Central also increased from 90% to 93%. These reflect additional share acquisitions in M&C's Australasian subsidiary.\n\nHeritage Hotel Manila AEI: Room count increased from 325 to 450 — an AEI that expanded the Manila hotel's inventory and upgraded F&B facilities.\n\nHoliday Inn Moscow Exit: The 201-room Holiday Inn Moscow Seligerskaya (50% CDL interest) was removed from the 2025 AR — continuing CDL's exit from Russia-linked assets.\n\nBespoke Hotel Shinsaibashi: The 256-room Osaka hotel operated by Bespoke Hotels is no longer listed under M&C Asia in the 2025 AR.\n\nThe Mayfair Hotel Christchurch: 67-room hotel in New Zealand added to the Australasia list for the first time in FY2025.\n\nSINGAPORE RESIDENTIAL PIPELINE\n\nTwo new EC GLS sites added to the development pipeline in FY2025: Senja Close EC (Bukit Panjang, 10,159 sqm, 100% CDL, expected 2030) and Woodlands Drive 17 EC (25,207 sqm, 100% CDL, expected 2030). Active pipeline completions in 2025 included Tembusu Grand (TOP'd), Piccadilly Grand/Galleria (TOP'd) and Copen Grand EC (TOP'd). Norwood Grand at Champions Way was accelerated — expected completion moved from 2028 to 2026, now 74% complete.\n\nZyon Grand (formerly Zion Road Parcel A) at Kim Seng Road was renamed and its expected completion updated to 2030 (50% JV).\n\nKEY TAKEAWAY\n\nCDL's FY2025 narrative is one of quiet but deliberate portfolio reshaping — exiting sub-scale or non-core assets (Moscow, Tannery Lane, China offices) and concentrating on premium London hospitality (Holiday Inn Kensington) and China technology park expansion. Singapore's investment portfolio is lean and high-quality; the residential pipeline is well-stocked with EC and private launches through 2030. Net Asset Value per share stood at S$10.74 (2024: S$10.17), with Revalued NAV at S$17.99 (2024: S$17.57)."},
   {id:23,date:"2026-04-03",title:"UOL Group FY2025: KINEX Sold, Two New Acquisitions, Portfolio Refreshed Across 8 Markets",source:"PropertyAtlas.sg",category:"Commercial",tag:"Earnings · Developer Update",sourceLabel:"PropertyAtlas.sg Analysis · UOL AR 2025",sentiment:"positive",summary:"UOL Group's FY2025 Annual Report (year ended 31 Dec 2025) reveals an active year of portfolio recycling and strategic growth across its S$10B+ investment property, hospitality and residential businesses.\n\nKEY TRANSACTIONS\n\nKINEX Divestment (Oct 2025): UOL sold its freehold Katong retail mall for S$375M — a 1.4% premium to book — recycling capital from a sub-scale retail asset. The mall had been valued at S$370M in FY2024 at 98% occupancy.\n\nNew Acquisitions: Two new assets entered the portfolio in 2025. 388 George Street, Sydney — a fully occupied 30-storey commercial tower (41,098 sqm NLA) acquired at S$391.6M (60% JV interest) — significantly deepens UOL's Australian office exposure. Varley Park, Brighton (UK) — 771-bed purpose-built student accommodation, 100% leased to University of Brighton, acquired at S$83.5M.\n\nPending Disposal: In January 2026 (post-balance sheet), UOL signed an Asset Purchase Agreement to sell Pan Pacific Tianjin. Completion is expected by April 2026, marking a further retreat from China hospitality.\n\nAEI HIGHLIGHTS\n\nWest Mall completed its asset enhancement (cost not publicly disclosed) in February 2025, adding the 'Eat@W' basement wing (~2,043 sqm of new F&B/retail), a direct MRT link to Bukit Batok station and a sheltered plaza. Singapore Land Tower completed its AEI in Q3 2025, introducing 'The Exchange' — a tenant amenity hub on levels 4-5 — alongside a refreshed lobby and new rooftop observation deck. Both assets have achieved Green Mark Platinum Super Low Energy certification post-AEI.\n\nHOSPITALITY — PIPELINE\n\nPPHG added three new managed/owned properties in 2025: The Hotel Higashiyama Kyoto Tokyu (143 rooms, Jan 2025 — Pan Pacific brand debut in Kyoto), PARKROYAL Serviced Suites Hanoi (122 rooms, Sep 2025) and Pan Pacific Dalian (216 rooms, Oct 2025). The pipeline for 2026-2027 includes PARKROYAL Jakarta, Pan Pacific Phnom Penh and Siam Pan Pacific Bangkok, extending PPHG's reach to 16 countries.\n\nSINGAPORE OFFICE: STABLE, SUPPORTED BY TIGHT SUPPLY\n\nAll Singapore investment office assets maintained high occupancies: Novena Square and One Upper Pickering 100%, United Square 99%, SGX Centre 2 99%, Singapore Land Tower 97%, The Gateway 97%, Odeon 98%. Clifford at Raffles Place (35-storey Grade A, ~37,626 sqm NLA) is under redevelopment for completion in 2028. No new CBD supply until then.\n\nSINGAPORE RESIDENTIAL\n\nAMO Residence received TOP in October 2025 (372 units, 100% sold). PARKTOWN Residence (1,193 units, 40% JV with CapitaLand) was 94% sold as at Dec 2025. Skye at Holland (666 units) launched October 2025, sold 99% on launch day. Post-period, UOL secured two new landbank sites: Dorset Road (428 units, 80:20 JV with Kheng Leong) and Hougang Central (mixed-use 800+ units, 40:10:50 JV with Kheng Leong / CapitaLand, won at S$1.50B).\n\nKEY TAKEAWAY\n\nUOL's FY2025 story is disciplined capital recycling — exiting non-core assets (KINEX, Tianjin hotel, Myanmar and Vietnam hotels) while deploying into diversified new verticals (PBSA, Sydney office) and completing AEIs that elevate Green Mark ratings. The Singapore investment portfolio remains a high-quality, near-fully-occupied engine, while residential pre-sales momentum is strong heading into 2026."}
 ];
 
@@ -6023,18 +6025,18 @@ var REIT_DATA = [
   {name:"47 LOGISTICS PLACE LARAPINTA",addr:"47 Logistics Place, Larapinta, QLD, Australia",type:"Logistics",entity:"ESR-REIT",entity_type:"REIT",tenure:"Freehold",nla_sqm:7704,occ:100.0,val:16.5,region:"Brisbane",area:"Larapinta",country:"Australia",ar_year:"FY2024",source:"ESR-REIT AR 2024",status:"Master lease; A$18.7M val; GFA 7,704sqm"},
   {name:"21 CURLEW STREET PORT OF BRISBANE",addr:"21 Curlew Street, Port of Brisbane, QLD, Australia",type:"Logistics",entity:"ESR-REIT",entity_type:"REIT",tenure:"Leasehold to 19 Nov 2062",nla_sqm:12307,occ:100.0,val:53.2,region:"Brisbane",area:"Port of Brisbane",country:"Australia",ar_year:"FY2024",source:"ESR-REIT AR 2024",status:"Master lease; A$60.5M val; GFA 12,307sqm"},
 
-  // --- Suntec REIT --- Updated to FY2025 (Suntec REIT Annual Report 2025, as of 31 Dec 2025) ---
+  // --- Suntec REIT --- Updated FY2025 ---
   {name:"SUNTEC CITY",addr:"3-9 Temasek Blvd & 1 Raffles Blvd",type:"Office",entity:"Suntec REIT",entity_type:"REIT",tenure:"Leasehold 99yr from 1989",nla_sqm:196939,prev_nla_sqm:198022,occ:99.8,prev_occ:98.6,val:5488.8,prev_val:5479.0,region:"Central",area:"Marina Centre",country:"Singapore",ar_year:"FY2025",source:"Suntec REIT AR 2025",notes:"Office NLA ~1.2M sq ft across Towers 1-5; retail (Suntec City Mall) 916,010 sq ft. Office occ +1.0pp to 99.8%; retail occ +1.1pp to 99.5%. Valuation +S$9.8M. Gross rent reversion +25.9% FY2025."},
-  {name:"SUNTEC SINGAPORE CONVENTION CENTRE",addr:"1 Raffles Boulevard",type:"Retail",entity:"Suntec REIT",entity_type:"REIT",tenure:"Leasehold 99yr from 1989",nla_sqm:null,occ:null,val:497.9,prev_val:495.0,region:"Central",area:"Marina Centre",country:"Singapore",ar_year:"FY2025",source:"Suntec REIT AR 2025",status:"66.3% interest; Convention/Exhibition",notes:"66.3% interest. Convention and exhibition centre adjoining Suntec City. Valuation +S$2.9M to S$497.9M. Occupancy not separately disclosed."},
-  {name:"ONE RAFFLES QUAY",addr:"1 Raffles Quay",type:"Office",entity:"Suntec REIT",entity_type:"REIT",tenure:"Leasehold 99yr from 2001",nla_sqm:41103,prev_nla_sqm:41103,occ:97.1,prev_occ:98.7,val:1387.0,prev_val:1360.0,region:"Central",area:"Raffles Place",country:"Singapore",ar_year:"FY2025",source:"Suntec REIT AR 2025",status:"1/3 interest",notes:"1/3 interest; 442,463 sq ft NLA; 58 tenants as at 31 Dec 2025. Occ -1.6pp to 97.1%; valuation +S$27.0M (+2.0%) to S$1,387.0M."},
-  {name:"MBFC TOWERS 1 & 2 + MARINA BAY LINK MALL",addr:"8, 8A & 10 Marina Boulevard",type:"Office",entity:"Suntec REIT",entity_type:"REIT",tenure:"Leasehold 99yr from 2005",nla_sqm:53129,prev_nla_sqm:53249,occ:95.4,prev_occ:98.3,val:1877.2,prev_val:1833.3,region:"Central",area:"Marina Bay",country:"Singapore",ar_year:"FY2025",source:"Suntec REIT AR 2025",status:"1/3 interest",notes:"1/3 interest; 571,905 sq ft NLA (T1&2 + Marina Bay Link Mall); 157 tenants. Occ -3.1pp to 95.4%; MBLM retail occ +4.5pp to 98.9%. Valuation +S$43.9M (+2.4%) to S$1,877.2M."},
-  {name:"177 PACIFIC HIGHWAY",addr:"177 Pacific Highway, North Sydney NSW",type:"Office",entity:"Suntec REIT",entity_type:"REIT",tenure:"Freehold",nla_sqm:40033,prev_nla_sqm:40033,occ:100.0,prev_occ:100.0,val:477.1,prev_val:500.2,region:null,area:"North Sydney",country:"Australia",ar_year:"FY2025",source:"Suntec REIT AR 2025",notes:"430,910 sq ft NLA; 12 tenants; freehold North Sydney. Occ maintained at 100%; valuation -S$23.1M (-4.6%) to S$477.1M on AUD/SGD movement and softer AU market."},
-  {name:"21 HARRIS STREET",addr:"21 Harris Street, Pyrmont NSW",type:"Office",entity:"Suntec REIT",entity_type:"REIT",tenure:"Freehold",nla_sqm:18727,prev_nla_sqm:18738,occ:97.8,prev_occ:100.0,val:195.1,prev_val:211.1,region:null,area:"Sydney",country:"Australia",ar_year:"FY2025",source:"Suntec REIT AR 2025",notes:"201,576 sq ft NLA; 12 tenants; campus-style freehold in Pyrmont. Occ -2.2pp to 97.8%; valuation -S$16.0M (-7.6%) to S$195.1M."},
-  {name:"SOUTHGATE COMPLEX",addr:"40 & 60 City Road, Southbank Melbourne",type:"Office",entity:"Suntec REIT",entity_type:"REIT",tenure:"Freehold",nla_sqm:37249,prev_nla_sqm:37491,occ:88.5,prev_occ:90.1,val:279.9,prev_val:284.3,region:null,area:"Melbourne CBD",country:"Australia",ar_year:"FY2025",source:"Suntec REIT AR 2025",status:"50% interest",notes:"50% interest; 400,968 sq ft NLA (office 348,941 + retail 52,477 sq ft). Office occ -1.5pp to 88.5%; retail occ fell sharply -15.7pp to 75.3%. Valuation -S$4.4M (-1.5%) to S$279.9M."},
-  {name:"OLDERFLEET 477 COLLINS STREET",addr:"477 Collins Street, Melbourne",type:"Office",entity:"Suntec REIT",entity_type:"REIT",tenure:"Freehold",nla_sqm:29300,prev_nla_sqm:29299,occ:100.0,prev_occ:100.0,val:365.3,prev_val:360.3,region:null,area:"Melbourne CBD",country:"Australia",ar_year:"FY2025",source:"Suntec REIT AR 2025",status:"50% interest",notes:"50% interest; 315,351 sq ft NLA; 22 tenants; premium Melbourne CBD. Occ maintained at 100%; valuation +S$5.0M (+1.4%) to S$365.3M."},
-  {name:"55 CURRIE STREET",addr:"55 Currie Street, Adelaide SA",type:"Office",entity:"Suntec REIT",entity_type:"REIT",tenure:"Freehold",nla_sqm:26277,prev_nla_sqm:26271,occ:66.0,prev_occ:61.4,val:102.3,prev_val:97.5,region:null,area:"Adelaide CBD",country:"Australia",ar_year:"FY2025",source:"Suntec REIT AR 2025",notes:"282,865 sq ft NLA; 13 tenants; freehold Adelaide CBD. Occ improved +4.6pp to 66.0%; valuation +S$4.8M (+4.9%) to S$102.3M. Remains Suntec REIT\'s highest-vacancy asset."},
-  {name:"NOVA PROPERTIES",addr:"Nova Estate, Buckingham Palace Road, London SW1",type:"Office",entity:"Suntec REIT",entity_type:"REIT",tenure:"Leasehold to 3062",nla_sqm:25985,prev_nla_sqm:25988,occ:100.0,prev_occ:99.6,val:691.0,prev_val:673.2,region:null,area:"Victoria",country:"UK",ar_year:"FY2025",source:"Suntec REIT AR 2025",status:"50% interest",notes:"50% interest; 279,719 sq ft NLA (Nova North, Nova South, The Nova Building); 32 tenants. Achieved 100% committed occ in FY2025; valuation +S$17.8M (+2.6%) to S$691.0M."},
-  {name:"THE MINSTER BUILDING",addr:"21 Mincing Lane, London EC3",type:"Office",entity:"Suntec REIT",entity_type:"REIT",tenure:"Leasehold to 2989",nla_sqm:27258,prev_nla_sqm:27266,occ:85.4,prev_occ:90.8,val:468.5,prev_val:458.6,region:null,area:"City of London",country:"UK",ar_year:"FY2025",source:"Suntec REIT AR 2025",notes:"293,398 sq ft NLA; 13 tenants; City of London EC3. Occ -5.4pp to 85.4% — standout decline in FY2025 UK portfolio. Valuation +S$9.9M (+2.2%) to S$468.5M despite occupancy drag."},
+  {name:"SUNTEC SINGAPORE CONVENTION CENTRE",addr:"1 Raffles Boulevard",type:"Retail",entity:"Suntec REIT",entity_type:"REIT",tenure:"Leasehold 99yr from 1989",nla_sqm:null,occ:null,val:497.9,prev_val:495.0,region:"Central",area:"Marina Centre",country:"Singapore",ar_year:"FY2025",source:"Suntec REIT AR 2025",status:"66.3% interest; Convention/Exhibition",notes:"66.3% interest. Convention and exhibition centre adjoining Suntec City. Valuation +S$2.9M to S$497.9M."},
+  {name:"ONE RAFFLES QUAY",addr:"1 Raffles Quay",type:"Office",entity:"Suntec REIT",entity_type:"REIT",tenure:"Leasehold 99yr from 2001",nla_sqm:41103,prev_nla_sqm:41103,occ:97.1,prev_occ:98.7,val:1387.0,prev_val:1360.0,region:"Central",area:"Raffles Place",country:"Singapore",ar_year:"FY2025",source:"Suntec REIT AR 2025",status:"1/3 interest",notes:"1/3 interest; 442,463 sq ft NLA; 58 tenants. Occ -1.6pp to 97.1%; valuation +S$27.0M (+2.0%) to S$1,387.0M."},
+  {name:"MBFC TOWERS 1 & 2 + MARINA BAY LINK MALL",addr:"8, 8A & 10 Marina Boulevard",type:"Office",entity:"Suntec REIT",entity_type:"REIT",tenure:"Leasehold 99yr from 2005",nla_sqm:53129,prev_nla_sqm:53249,occ:95.4,prev_occ:98.3,val:1877.2,prev_val:1833.3,region:"Central",area:"Marina Bay",country:"Singapore",ar_year:"FY2025",source:"Suntec REIT AR 2025",status:"1/3 interest",notes:"1/3 interest; 571,905 sq ft NLA. Occ -3.1pp to 95.4%; MBLM retail +4.5pp to 98.9%. Valuation +S$43.9M (+2.4%) to S$1,877.2M."},
+  {name:"177 PACIFIC HIGHWAY",addr:"177 Pacific Highway, North Sydney NSW",type:"Office",entity:"Suntec REIT",entity_type:"REIT",tenure:"Freehold",nla_sqm:40033,prev_nla_sqm:40033,occ:100.0,prev_occ:100.0,val:477.1,prev_val:500.2,region:null,area:"North Sydney",country:"Australia",ar_year:"FY2025",source:"Suntec REIT AR 2025",notes:"430,910 sq ft NLA; 12 tenants. Occ held 100%; valuation -S$23.1M (-4.6%) to S$477.1M on AUD softening."},
+  {name:"21 HARRIS STREET",addr:"21 Harris Street, Pyrmont NSW",type:"Office",entity:"Suntec REIT",entity_type:"REIT",tenure:"Freehold",nla_sqm:18727,prev_nla_sqm:18738,occ:97.8,prev_occ:100.0,val:195.1,prev_val:211.1,region:null,area:"Sydney",country:"Australia",ar_year:"FY2025",source:"Suntec REIT AR 2025",notes:"201,576 sq ft NLA; 12 tenants. Occ -2.2pp to 97.8%; valuation -S$16.0M (-7.6%) to S$195.1M."},
+  {name:"SOUTHGATE COMPLEX",addr:"40 & 60 City Road, Southbank Melbourne",type:"Office",entity:"Suntec REIT",entity_type:"REIT",tenure:"Freehold",nla_sqm:37249,prev_nla_sqm:37491,occ:88.5,prev_occ:90.1,val:279.9,prev_val:284.3,region:null,area:"Melbourne CBD",country:"Australia",ar_year:"FY2025",source:"Suntec REIT AR 2025",status:"50% interest",notes:"50% interest; 400,968 sq ft NLA. Office occ -1.5pp to 88.5%; retail occ -15.7pp to 75.3%. Valuation -S$4.4M to S$279.9M."},
+  {name:"OLDERFLEET 477 COLLINS STREET",addr:"477 Collins Street, Melbourne",type:"Office",entity:"Suntec REIT",entity_type:"REIT",tenure:"Freehold",nla_sqm:29300,prev_nla_sqm:29299,occ:100.0,prev_occ:100.0,val:365.3,prev_val:360.3,region:null,area:"Melbourne CBD",country:"Australia",ar_year:"FY2025",source:"Suntec REIT AR 2025",status:"50% interest",notes:"50% interest; 315,351 sq ft NLA; 22 tenants. Occ maintained 100%; valuation +S$5.0M to S$365.3M."},
+  {name:"55 CURRIE STREET",addr:"55 Currie Street, Adelaide SA",type:"Office",entity:"Suntec REIT",entity_type:"REIT",tenure:"Freehold",nla_sqm:26277,prev_nla_sqm:26271,occ:66.0,prev_occ:61.4,val:102.3,prev_val:97.5,region:null,area:"Adelaide CBD",country:"Australia",ar_year:"FY2025",source:"Suntec REIT AR 2025",notes:"282,865 sq ft NLA; 13 tenants. Occ +4.6pp to 66.0%; valuation +S$4.8M to S$102.3M. Highest-vacancy asset in portfolio."},
+  {name:"NOVA PROPERTIES",addr:"Nova Estate, Buckingham Palace Road, London SW1",type:"Office",entity:"Suntec REIT",entity_type:"REIT",tenure:"Leasehold to 3062",nla_sqm:25985,prev_nla_sqm:25988,occ:100.0,prev_occ:99.6,val:691.0,prev_val:673.2,region:null,area:"Victoria",country:"UK",ar_year:"FY2025",source:"Suntec REIT AR 2025",status:"50% interest",notes:"50% interest; 279,719 sq ft NLA; 32 tenants. Achieved 100% committed occ; valuation +S$17.8M (+2.6%) to S$691.0M."},
+  {name:"THE MINSTER BUILDING",addr:"21 Mincing Lane, London EC3",type:"Office",entity:"Suntec REIT",entity_type:"REIT",tenure:"Leasehold to 2989",nla_sqm:27258,prev_nla_sqm:27266,occ:85.4,prev_occ:90.8,val:468.5,prev_val:458.6,region:null,area:"City of London",country:"UK",ar_year:"FY2025",source:"Suntec REIT AR 2025",notes:"293,398 sq ft NLA; 13 tenants. Occ -5.4pp to 85.4% — standout FY2025 decline; valuation +S$9.9M (+2.2%) to S$468.5M despite occupancy drag."},
 
   // --- Keppel REIT ---
   {name:"255 GEORGE STREET",addr:"255 George Street, Sydney NSW 2000",type:"Office",entity:"Keppel REIT",entity_type:"REIT",tenure:"Freehold",nla_sqm:39017,occ:96.1,val:323.4,region:null,area:"Sydney CBD",country:"Australia",ar_year:"FY2024",source:"Keppel REIT AR 2024",status:"Grade A; ~420,000 sf NLA; 5.5-star NABERS Energy"},
@@ -6732,21 +6734,20 @@ var reitPageSize = 18;
 var reitSearchTimer = null;
 var reitViewMode = 'grid';
 var reitTblSort = {col:'type',dir:'asc'};
-var reitCols = {entity:true,type:true,country:true,area:false,tenure:true,nla:true,occ:true,val:true,yoy:true,ar:true,status:false};
+var reitCols = {entity:true,type:true,country:true,area:false,tenure:true,nla:true,occ:true,val:true,yoy:false,ar:true,status:false};
 
-// AR links for entities with FY2025 updates
+// AR report links per entity
 var ENTITY_AR_LINKS = {
-  'Suntec REIT': 'https://links.sgx.com/FileOpen/Suntec%20REIT%20Annual%20Report%202025.ashx?App=Announcement&FileID=881464',
-  'CDL': 'https://ir.cdl.com.sg/static-files/40cc0b62-b580-4607-a670-4003c75acda8',
-  'UOL Group': 'https://links.sgx.com/FileOpen/UOL%20Group%20Limited%20-%20Annual%20Report%202025.ashx?App=Announcement&FileID=881833'
+  'Suntec REIT':'https://links.sgx.com/FileOpen/Suntec%20REIT%20Annual%20Report%202025.ashx?App=Announcement&FileID=881464',
+  'CDL':'https://ir.cdl.com.sg/static-files/40cc0b62-b580-4607-a670-4003c75acda8',
+  'UOL Group':'https://links.sgx.com/FileOpen/UOL%20Group%20Limited%20-%20Annual%20Report%202025.ashx?App=Announcement&FileID=881833'
 };
 
-// Newsroom post lookup by entity
-function getEntityNewsPost(entity) {
-  var map = {'CDL':24,'UOL Group':23,'Suntec REIT':25};
-  var id = map[entity];
-  if (!id) return null;
-  return typeof NEWS !== 'undefined' ? (NEWS.find(function(n){ return n.id === id; }) || null) : null;
+function getEntityNewsPost(entity){
+  var map={'CDL':24,'UOL Group':23,'Suntec REIT':25};
+  var id=map[entity];
+  if(!id) return null;
+  return typeof NEWS!=='undefined'?(NEWS.find(function(n){return n.id===id;})||null):null;
 }
 
 function reitSetView(mode){
@@ -6794,10 +6795,10 @@ function reitRenderTable(data){
     {key:'status', label:'Status'},
   ];
 
-  // Sort: default type asc, then entity asc as secondary
+  // Sort: type asc → entity asc as secondary
   var s = reitTblSort;
   data = data.slice().sort(function(a,b){
-    var av, bv, av2, bv2;
+    var av, bv, av2='', bv2='';
     if(s.col==='name'){ av=a.name||''; bv=b.name||''; }
     else if(s.col==='entity'){ av=a.entity||''; bv=b.entity||''; }
     else if(s.col==='type'){ av=a.type||''; bv=b.type||''; av2=a.entity||''; bv2=b.entity||''; }
@@ -6810,24 +6811,19 @@ function reitRenderTable(data){
     else if(s.col==='ar'){ av=a.ar_year||''; bv=b.ar_year||''; }
     else if(s.col==='status'){ av=a.status||''; bv=b.status||''; }
     else { av=a.type||''; bv=b.type||''; av2=a.entity||''; bv2=b.entity||''; }
-    var cmp;
-    if(typeof av==='number') cmp = s.dir==='asc'?av-bv:bv-av;
-    else cmp = s.dir==='asc'?av.localeCompare(bv):bv.localeCompare(av);
-    // secondary sort by entity asc when primary ties
-    if(cmp===0 && av2!=null) cmp = av2.localeCompare(bv2||'');
-    return cmp;
+    var cmp = typeof av==='number' ? (s.dir==='asc'?av-bv:bv-av) : (s.dir==='asc'?av.localeCompare(bv):bv.localeCompare(av));
+    return cmp!==0 ? cmp : av2.localeCompare(bv2);
   });
 
   // Build header
   function thSort(col, label){
     var isAct = reitTblSort.col===col;
-    var arrow = isAct ? (reitTblSort.dir==='asc'?' ↑':' ↓') : '';
+    var arrow = isAct?(reitTblSort.dir==='asc'?' ↑':' ↓'):'';
     return '<th data-rth="'+col+'" onclick="reitTblSortBy(\''+col+'\')" class="'+(isAct?'rth-act':'')+
            (reitCols[col]===false?' rtbl-hidden':'')+'" style="white-space:nowrap">'+label+arrow+'</th>';
   }
-
   var hdHtml = '<tr><th onclick="reitTblSortBy(\'name\')" class="'+(reitTblSort.col==='name'?'rth-act':'')+
-    '" style="padding:8px 11px;min-width:160px;white-space:nowrap">Asset Name'+(reitTblSort.col==='name'?(reitTblSort.dir==='asc'?' ↑':' ↓'):'')+
+    '" style="padding:8px 11px;min-width:170px;white-space:nowrap">Asset Name'+(reitTblSort.col==='name'?(reitTblSort.dir==='asc'?' ↑':' ↓'):'')+
     '</th>';
   COLS.forEach(function(c){ hdHtml += thSort(c.key, c.label); });
   hdHtml += '</tr>';
@@ -6842,79 +6838,93 @@ function reitRenderTable(data){
     var isNewAcq   = p.notes && p.notes.indexOf('NEW ACQUISITION')>=0;
     var rowBg = isDivested?'background:rgba(127,29,29,.06)':isPending?'background:rgba(120,53,15,.06)':isNewAcq?'background:rgba(20,83,45,.06)':'';
 
-    // YoY badge
+    // YoY (hidden by default but still computed for column toggle)
     var yoyBits = [];
-    if(p.val!=null && p.prev_val!=null){
-      var dv=p.val-p.prev_val, pct=(dv/p.prev_val*100).toFixed(1);
-      yoyBits.push('<span style="color:'+(dv>=0?'#16a34a':'#c8364a')+'">'+(dv>=0?'▲':'▼')+pct+'%</span>');
-    }
-    if(p.occ!=null && p.prev_occ!=null){
-      var do2=p.occ-p.prev_occ;
-      yoyBits.push('<span style="color:'+(do2>=0?'#16a34a':'#c8364a')+'">'+(do2>=0?'▲':'▼')+Math.abs(do2).toFixed(1)+'pp</span>');
-    }
-    if(p.nla_sqm!=null && p.prev_nla_sqm!=null && p.nla_sqm!==p.prev_nla_sqm){
-      yoyBits.push('<span style="color:#7c3aed">AEI</span>');
-    }
+    if(p.val!=null && p.prev_val!=null){ var dv=p.val-p.prev_val, pct=(dv/p.prev_val*100).toFixed(1); yoyBits.push('<span style="color:'+(dv>=0?'#16a34a':'#c8364a')+'">'+(dv>=0?'▲':'▼')+pct+'%</span>'); }
+    if(p.occ!=null && p.prev_occ!=null){ var do2=p.occ-p.prev_occ; yoyBits.push('<span style="color:'+(do2>=0?'#16a34a':'#c8364a')+'">'+(do2>=0?'▲':'▼')+Math.abs(do2).toFixed(1)+'pp</span>'); }
+    if(p.nla_sqm!=null && p.prev_nla_sqm!=null && p.nla_sqm!==p.prev_nla_sqm){ yoyBits.push('<span style="color:#7c3aed">AEI</span>'); }
     var yoyCell = yoyBits.join(' ');
 
     // Status badge
     var statusCell = '';
-    if(isDivested){ statusCell = '<span style="background:#7f1d1d20;color:#7f1d1d;padding:2px 5px;border-radius:3px;font-size:9px;font-weight:700">DIVESTED</span>'; }
-    else if(isPending){ statusCell = '<span style="background:#78350f20;color:#78350f;padding:2px 5px;border-radius:3px;font-size:9px;font-weight:700">PENDING</span>'; }
-    else if(isNewAcq){ statusCell = '<span style="background:#14532d20;color:#14532d;padding:2px 5px;border-radius:3px;font-size:9px;font-weight:700">NEW</span>'; }
-    else if(p.status){ statusCell = '<span style="color:var(--mut);font-size:10px">'+p.status.split(' — ')[0].substring(0,28)+'</span>'; }
+    if(isDivested){ statusCell='<span style="background:#7f1d1d20;color:#7f1d1d;padding:2px 5px;border-radius:3px;font-size:9px;font-weight:700">DIVESTED</span>'; }
+    else if(isPending){ statusCell='<span style="background:#78350f20;color:#78350f;padding:2px 5px;border-radius:3px;font-size:9px;font-weight:700">PENDING</span>'; }
+    else if(isNewAcq){ statusCell='<span style="background:#14532d20;color:#14532d;padding:2px 5px;border-radius:3px;font-size:9px;font-weight:700">NEW</span>'; }
+    else if(p.status){ statusCell='<span style="color:var(--mut);font-size:10px">'+p.status.split(' — ')[0].substring(0,28)+'</span>'; }
 
     // AR year dot
     var arDot = p.ar_year==='FY2025'?'<span style="color:#4ade80;font-size:8px">● </span>':p.ar_year==='FY2024'?'<span style="color:#f59e0b;font-size:8px">● </span>':'<span style="color:#6b7280;font-size:8px">● </span>';
 
-    // Tenure — split into two lines at first space after 12 chars
-    var tenureDisplay = p.tenure || '—';
-    if(tenureDisplay.length > 14){
-      var splitAt = tenureDisplay.indexOf(' ', 12);
-      if(splitAt > 0) tenureDisplay = tenureDisplay.substring(0,splitAt)+'<br><span style="color:var(--mut2)">'+tenureDisplay.substring(splitAt+1)+'</span>';
+    // #1 Tenure: split after "Leasehold" keyword so it stays on line 1
+    var tenureRaw = p.tenure||'—';
+    var tenureHtml = tenureRaw;
+    if(tenureRaw !== '—'){
+      // Split after "Leasehold", "Freehold" stays single line
+      var splitIdx = -1;
+      var lhIdx = tenureRaw.indexOf('Leasehold');
+      if(lhIdx>=0){
+        // Find first space after "Leasehold" word
+        var afterLH = lhIdx + 'Leasehold'.length;
+        if(afterLH < tenureRaw.length){
+          splitIdx = afterLH; // split right after "Leasehold"
+        }
+      }
+      if(splitIdx>0){
+        tenureHtml = tenureRaw.substring(0,splitIdx)+'<br><span style="color:var(--mut2,#4a5a72)">'+tenureRaw.substring(splitIdx).trim()+'</span>';
+      }
     }
 
-    // Country — single flag only
-    var countryCell = p.country==='Singapore' ? '🇸🇬 SG' : (p.country||'—');
+    // #2 Entity: full name, wrap at ~24 chars on second line
+    var entityLine1 = p.entity;
+    var entityLine2 = '';
+    if(p.entity.length > 24){
+      var wrapAt = p.entity.lastIndexOf(' ', 24);
+      if(wrapAt < 8) wrapAt = 24;
+      entityLine1 = p.entity.substring(0, wrapAt);
+      entityLine2 = p.entity.substring(wrapAt).trim();
+    }
+    var entityHtml = '<div style="font-size:11px;color:'+rc+';font-weight:600;line-height:1.4">'+entityLine1+(entityLine2?'<br>'+entityLine2:'')+'</div>'
+      +'<div style="font-size:9px;color:var(--mut);margin-top:1px">'+(p.entity_type==='DEV'?'DEV':'REIT')+'</div>';
 
-    // Entity — two lines: name + type label
-    var entityType = p.entity_type==='DEV' ? 'DEV' : 'REIT';
-    var entityShort = p.entity.length > 22 ? p.entity.substring(0,22)+'…' : p.entity;
+    // #5 Country: single flag only (no double SG)
+    var countryCell = p.country==='Singapore'?'🇸🇬 SG':(p.country||'—');
 
     var assetKey = p.name.replace(/'/g,"\\'");
 
+    // #3 All td left-aligned — remove td-mono right-align class, use inline left
     rowHtml += '<tr onclick="reitOpenDetail(\''+assetKey+'\')" style="'+rowBg+'">';
-    // Name col (always visible)
     rowHtml += '<td class="td-name" style="max-width:200px"><span style="display:flex;align-items:center;gap:6px">'
-      +'<span style="width:3px;height:24px;border-radius:2px;background:'+rc+';flex-shrink:0;display:inline-block"></span>'
-      +'<span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap" title="'+p.name+'">'+p.name+'</span></span></td>';
-    // Entity — two lines
-    rowHtml += '<td data-rtd="entity" class="'+(reitCols.entity?'':'rtbl-hidden')+'" style="max-width:150px"><div style="font-size:11px;color:'+rc+';font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap" title="'+p.entity+'">'+entityShort+'</div><div style="font-size:9px;color:var(--mut);margin-top:1px">'+entityType+'</div></td>';
+      +'<span style="width:3px;height:28px;border-radius:2px;background:'+rc+';flex-shrink:0;display:inline-block"></span>'
+      +'<span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-weight:600" title="'+p.name+'">'+p.name+'</span></span></td>';
+    // Entity — full name, two lines
+    rowHtml += '<td data-rtd="entity" class="'+(reitCols.entity?'':'rtbl-hidden')+'" style="min-width:140px;white-space:normal">'+entityHtml+'</td>';
     // Asset class
-    rowHtml += '<td data-rtd="type" class="'+(reitCols.type?'':'rtbl-hidden')+'">'+( p.type||'—')+'</td>';
-    // Country — no double flag
-    rowHtml += '<td data-rtd="country" class="'+(reitCols.country?'':'rtbl-hidden')+'"><span style="font-size:11px">'+countryCell+'</span></td>';
-    // Area — hidden by default
-    rowHtml += '<td data-rtd="area" class="'+(reitCols.area?'':'rtbl-hidden')+'" style="max-width:110px"><span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap;display:block;font-size:11px;color:var(--mut)" title="'+(p.area||'')+'">'+( p.area||'—')+'</span></td>';
-    // Tenure — two lines
-    rowHtml += '<td data-rtd="tenure" class="'+(reitCols.tenure?'':'rtbl-hidden')+'" style="max-width:120px"><span style="font-size:10px;color:var(--mut);display:block;line-height:1.5">'+tenureDisplay+'</span></td>';
-    // NLA
-    rowHtml += '<td data-rtd="nla" class="td-mono '+(reitCols.nla?'':'rtbl-hidden')+'">'+( p.nla_sqm ? p.nla_sqm.toLocaleString() : '—')+'</td>';
-    // Occ
-    rowHtml += '<td data-rtd="occ" class="td-mono '+(reitCols.occ?'':'rtbl-hidden')+'" style="color:'+(p.occ!=null?(p.occ>=95?'#16a34a':p.occ>=85?'var(--txt)':'#c8364a'):'var(--mut)')+'">'+( p.occ!=null ? p.occ.toFixed(1)+'%' : '—')+'</td>';
-    // Val
-    rowHtml += '<td data-rtd="val" class="td-mono '+(reitCols.val?'':'rtbl-hidden')+'">'+( p.val!=null ? 'S$'+p.val.toLocaleString()+'M' : '—')+'</td>';
-    // YoY
+    rowHtml += '<td data-rtd="type" class="'+(reitCols.type?'':'rtbl-hidden')+'" style="white-space:nowrap">'+( p.type||'—')+'</td>';
+    // Country — single flag
+    rowHtml += '<td data-rtd="country" class="'+(reitCols.country?'':'rtbl-hidden')+'" style="white-space:nowrap;font-size:11px">'+countryCell+'</td>';
+    // Area
+    rowHtml += '<td data-rtd="area" class="'+(reitCols.area?'':'rtbl-hidden')+'" style="max-width:110px;font-size:11px;color:var(--mut)"><span style="display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap" title="'+(p.area||'')+'">'+( p.area||'—')+'</span></td>';
+    // Tenure — split after Leasehold keyword, left-aligned
+    rowHtml += '<td data-rtd="tenure" class="'+(reitCols.tenure?'':'rtbl-hidden')+'" style="min-width:110px;white-space:normal;font-size:10px;color:var(--txt)">'+tenureHtml+'</td>';
+    // NLA — left aligned
+    rowHtml += '<td data-rtd="nla" class="'+(reitCols.nla?'':'rtbl-hidden')+'" style="font-family:\'DM Mono\',monospace;font-size:11px;text-align:left">'+( p.nla_sqm?p.nla_sqm.toLocaleString():'—')+'</td>';
+    // Occ — left aligned, coloured
+    rowHtml += '<td data-rtd="occ" class="'+(reitCols.occ?'':'rtbl-hidden')+'" style="font-family:\'DM Mono\',monospace;font-size:11px;text-align:left;color:'+(p.occ!=null?(p.occ>=95?'#16a34a':p.occ>=85?'var(--txt)':'#c8364a'):'var(--mut)')+'">'+( p.occ!=null?p.occ.toFixed(1)+'%':'—')+'</td>';
+    // Val — left aligned
+    rowHtml += '<td data-rtd="val" class="'+(reitCols.val?'':'rtbl-hidden')+'" style="font-family:\'DM Mono\',monospace;font-size:11px;text-align:left">'+( p.val!=null?'S$'+p.val.toLocaleString()+'M':'—')+'</td>';
+    // YoY (hidden by default)
     rowHtml += '<td data-rtd="yoy" class="'+(reitCols.yoy?'':'rtbl-hidden')+'" style="white-space:nowrap;font-size:10px">'+( yoyCell||'—')+'</td>';
-    // AR
-    rowHtml += '<td data-rtd="ar" class="'+(reitCols.ar?'':'rtbl-hidden')+'">'+arDot+(p.ar_year||'—')+'</td>';
-    // Status — hidden by default
-    rowHtml += '<td data-rtd="status" class="'+(reitCols.status?'':'rtbl-hidden')+'">'+statusCell+'</td>';
+    // AR — left aligned
+    rowHtml += '<td data-rtd="ar" class="'+(reitCols.ar?'':'rtbl-hidden')+'" style="white-space:nowrap;font-size:11px">'+arDot+(p.ar_year||'—')+'</td>';
+    // Status
+    rowHtml += '<td data-rtd="status" class="'+(reitCols.status?'':'rtbl-hidden')+'" style="white-space:nowrap">'+statusCell+'</td>';
     rowHtml += '</tr>';
   });
 
   document.getElementById('reit-tbl-bd').innerHTML = rowHtml || '<tr><td colspan="12" style="text-align:center;padding:40px;color:var(--mut)">No properties found</td></tr>';
 }
+
+
 
 function reitSearchDelay(){
   clearTimeout(reitSearchTimer);
@@ -7016,20 +7026,15 @@ function reitSearch(page){
     return true;
   });
 
-  // Populate entity dropdown (do once when in table mode)
+  // Populate entity dropdown once when table mode is active
   if(reitViewMode==='table'){
     var entSel = document.getElementById('reit-tbl-entity');
-    if(entSel && entSel.options.length <= 1){
-      var entities = REIT_DATA.map(function(p){ return p.entity; })
-        .filter(function(v,i,a){ return a.indexOf(v)===i; }).sort();
-      entities.forEach(function(e){
-        var opt = document.createElement('option');
-        opt.value = e; opt.textContent = e;
-        entSel.appendChild(opt);
-      });
+    if(entSel && entSel.options.length<=1){
+      var entities = REIT_DATA.map(function(p){return p.entity;}).filter(function(v,i,a){return a.indexOf(v)===i;}).sort();
+      entities.forEach(function(e){ var o=document.createElement('option'); o.value=e; o.textContent=e; entSel.appendChild(o); });
     }
     var cntEl = document.getElementById('reit-tbl-count');
-    if(cntEl) cntEl.textContent = filtered.length + ' properties';
+    if(cntEl) cntEl.textContent = filtered.length+' properties';
   }
 
   filtered.sort(function(a,b){
@@ -7037,10 +7042,7 @@ function reitSearch(page){
     if(sort==='val.asc') return (a.val||0)-(b.val||0);
     if(sort==='occ.desc') return (b.occ||0)-(a.occ||0);
     if(sort==='entity.asc') return (a.entity||'').localeCompare(b.entity||'');
-    // Default: type asc, then entity asc
-    var tc = (a.type||'').localeCompare(b.type||'');
-    if(tc!==0) return tc;
-    return (a.entity||'').localeCompare(b.entity||'');
+    var tc=(a.type||'').localeCompare(b.type||''); return tc!==0?tc:(a.entity||'').localeCompare(b.entity||'');
   });
 
   document.getElementById('reit-kpi-props').textContent = filtered.length;
@@ -7194,9 +7196,7 @@ function reitOpenDetail(idx){
   document.getElementById('rdet-name').textContent=p.name;
   document.getElementById('rdet-reit-pill').textContent=p.entity;
   document.getElementById('rdet-reit-pill').style.background=rc;
-
-  // Push browser history state so back button works
-  history.pushState({reitDetail: p.name}, '', window.location.href.split('#')[0]+'#asset-detail');
+  history.pushState({reitDetail:p.name},'',window.location.href.split('#')[0]+'#asset-detail');
 
   var regionLabel = p.country==='Singapore' ? 'Region' : 'Country';
   var regionVal = p.country==='Singapore' ? (p.region||'\u2014') : p.country;
@@ -7251,19 +7251,16 @@ function reitOpenDetail(idx){
   // Notes / analyst commentary
   var notesHtml = p.notes ? '<div style="background:#f0f7ff;border:1px solid #bfdbfe;border-radius:8px;padding:14px"><div style="font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.06em;color:#1d4ed8;margin-bottom:6px">📝 Notes</div><div style="font-size:11px;color:#1e3a5f;line-height:1.6">'+p.notes+'</div></div>' : '';
 
-  // Newsroom summary for this entity
+  // Newsroom summary for entities with FY2025 updates
   var newsPost = getEntityNewsPost(p.entity);
   var newsHtml = '';
   if(newsPost){
     var arLink = ENTITY_AR_LINKS[p.entity];
-    var arLinkHtml = arLink
-      ? '<div style="margin-top:10px"><a href="'+arLink+'" target="_blank" rel="noopener" style="font-size:11px;color:#2563bc;font-weight:600;text-decoration:none;display:inline-flex;align-items:center;gap:4px">📄 Click here for full annual report <span style="font-size:10px">↗</span></a></div>'
-      : '';
+    var arLinkHtml = arLink ? '<div style="margin-top:12px;padding-top:10px;border-top:1px solid #bfdbfe"><a href="'+arLink+'" target="_blank" rel="noopener" style="font-size:11px;color:#2563bc;font-weight:600;text-decoration:none;display:inline-flex;align-items:center;gap:5px">📄 Click here for full annual report <span style="font-size:10px">↗</span></a></div>' : '';
     newsHtml = '<div style="background:#f0f7ff;border:1px solid #bfdbfe;border-radius:8px;padding:14px">'
-      +'<div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:#1d4ed8;margin-bottom:8px">📰 Latest Annual Report Summary — '+newsPost.date+'</div>'
+      +'<div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:#1d4ed8;margin-bottom:10px">📰 Latest Annual Report Summary — '+newsPost.date+'</div>'
       +'<div style="font-size:11px;color:#1e3a5f;line-height:1.65">'+formatNewsSummary(newsPost.summary)+'</div>'
-      +arLinkHtml
-      +'</div>';
+      +arLinkHtml+'</div>';
   }
 
   document.getElementById('rdet-extra').innerHTML=
@@ -7302,16 +7299,13 @@ function reitCloseDetail(){
     document.getElementById('reit-grid').style.display='grid';
   }
   document.getElementById('reit-pagination').style.display='flex';
-  // Clean up hash without triggering popstate
   history.replaceState(null,'',window.location.href.replace('#asset-detail',''));
 }
 
 // Browser back button closes detail panel
-window.addEventListener('popstate', function(e){
-  var det = document.getElementById('reit-detail');
-  if(det && det.style.display!=='none'){
-    reitCloseDetail();
-  }
+window.addEventListener('popstate',function(e){
+  var det=document.getElementById('reit-detail');
+  if(det && det.style.display!=='none'){ reitCloseDetail(); }
 });
 
 function reitClear(){
