@@ -6869,7 +6869,7 @@ function reitRenderTable(data){
     }
 
     // #4/#5 Country: single flag only
-    var countryCell=p.country==='Singapore'?'🇸🇬':(p.country||'—');
+    var countryCell=p.country==='Singapore'?'Singapore':(p.country||'—');
 
     var assetKey=p.name.replace(/'/g,"\'");
 
@@ -7098,7 +7098,7 @@ function reitSearch(page){
       +'<div style="font-size:10px;color:var(--mut);margin-bottom:8px">'+locLine+countryFlag+'</div>'
       +'<div style="display:flex;gap:5px;flex-wrap:wrap;margin-bottom:10px">'
       +'<span style="padding:2px 7px;border-radius:4px;font-size:10px;font-weight:600;background:'+rc+'18;color:'+rc+';border:1px solid '+rc+'30">'+p.type+'</span>'
-      +(p.tenure?'<span class="pill p-neu" style="font-size:10px">'+p.tenure.substring(0,20)+'</span>':'')
+      +(p.tenure?'<span class="pill p-neu" style="font-size:10px">'+p.tenure+'</span>':'')
       +statusBadge+'</div>'
       +'<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:5px;margin-top:auto">'
       +'<div style="background:var(--srf2);border-radius:7px;padding:7px 5px;text-align:center"><div style="font-size:12px;font-weight:700;color:var(--g1)">'+val+yoyVal+'</div><div style="font-size:8px;color:var(--mut);text-transform:uppercase;letter-spacing:.04em;margin-top:1px">Valuation</div></div>'
