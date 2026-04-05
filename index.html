@@ -1668,7 +1668,6 @@ html,body{background:var(--bg);color:var(--txt);font-family:'DM Sans',sans-serif
 
   </div>
 
-
 <!-- ═══════════════════════════════════════════════════════════════
      RE HUMAN CAPITAL TAB — inline styles injected here
      ═══════════════════════════════════════════════════════════════ -->
@@ -1841,7 +1840,6 @@ html,body{background:var(--bg);color:var(--txt);font-family:'DM Sans',sans-serif
     </table>
   </div>
 </div>
-
 </div>
 
 <!-- end main wrap -->
@@ -5088,10 +5086,14 @@ document.querySelectorAll(".navtab").forEach(function(t){
         searchTransactions(0);
       }
     }
-    if(tab === "talent" && !talentInited){
-      talentInited = true;
-      talentInitSummary();
-      talentLoadEnrichment().then(function(){ talentRender(); }).catch(function(){ talentRender(); });
+    if(tab === "talent"){
+      if(!talentInited){
+        talentInited = true;
+        talentInitSummary();
+        talentLoadEnrichment().then(function(){ talentRender(); }).catch(function(){ talentRender(); });
+      } else {
+        talentRender();
+      }
     }
     if(tab === "projects"){
       if(!projLoaded) projLoadUnits();
