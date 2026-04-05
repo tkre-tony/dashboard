@@ -1397,7 +1397,7 @@ html,body{background:var(--bg);color:var(--txt);font-family:'DM Sans',sans-serif
         <button class="dir-tbtn" data-reitf="AIMS APAC REIT" onclick="reitSetFilter(this,'reit','AIMS APAC REIT')">AIMS APAC <span style="color:#4ade80;font-size:8px">●</span></button>
         <button class="dir-tbtn" data-reitf="Alpha Integrated REIT (former Sabana)" onclick="reitSetFilter(this,'reit','Alpha Integrated REIT (former Sabana)')">AI REIT <span style="color:#f59e0b;font-size:8px">●</span></button>
         <button class="dir-tbtn" data-reitf="CapitaLand China Trust" onclick="reitSetFilter(this,'reit','CapitaLand China Trust')">CLCT <span style="color:#4ade80;font-size:8px">●</span></button>
-        <button class="dir-tbtn" data-reitf="CapitaLand Ascott Trust (CLAS)" onclick="reitSetFilter(this,'reit','CapitaLand Ascott Trust (CLAS)')">CLAS <span style="color:#f59e0b;font-size:8px">●</span></button>
+        <button class="dir-tbtn" data-reitf="CapitaLand Ascott Trust (CLAS)" onclick="reitSetFilter(this,'reit','CapitaLand Ascott Trust (CLAS)')">CLAS <span style="color:#4ade80;font-size:8px">●</span></button>
         <button class="dir-tbtn" data-reitf="CapitaLand Ascendas REIT (CLAR)" onclick="reitSetFilter(this,'reit','CapitaLand Ascendas REIT (CLAR)')">CLAR <span style="color:#4ade80;font-size:8px">●</span></button>
         <button class="dir-tbtn" data-reitf="CDL Hospitality Trusts" onclick="reitSetFilter(this,'reit','CDL Hospitality Trusts')">CDL Hosp <span style="color:#4ade80;font-size:8px">●</span></button>
         <button class="dir-tbtn" data-reitf="CapitaLand Integrated Commercial Trust" onclick="reitSetFilter(this,'reit','CapitaLand Integrated Commercial Trust')">CICT <span style="color:#f59e0b;font-size:8px">●</span></button>
@@ -1796,6 +1796,7 @@ html,body{background:var(--bg);color:var(--txt);font-family:'DM Sans',sans-serif
     <select class="talent-sort-sel" id="talent-entity-filter" onchange="talentRender()" style="max-width:160px">
       <option value="">All Entities</option>
       <option value="Alpha Integrated REIT">AI-REIT (FY2025)</option>
+      <option value="CapitaLand Ascott Trust (CLAS)">CLAS (FY2025)</option>
       <option value="CapitaLand China Trust">CLCT (FY2025)</option>
       <option value="CapitaLand Investment Limited">CLI (FY2025)</option>
       <option value="CDL Hospitality Trusts">CDLHT (FY2025)</option>
@@ -2940,7 +2941,135 @@ var TALENT_DATA = [
     tags:['Independent','ARC Chair','KPMG','Real Estate','New 2025']
   },
 
-  // ── CAPITALAND CHINA TRUST (CLCT) — FY2025 ─────────────────────────────
+
+  // ── CAPITALAND ASCOTT TRUST (CLAS) — Updated FY2025 ─────────────────────
+  {name:"CLAS — AUSTRALIA PORTFOLIO",addr:"Melbourne, Sydney, Brisbane, Perth, Australia",type:"Serviced Apartments / Hotel",entity:"CapitaLand Ascott Trust (CLAS)",entity_type:"REIT",tenure:"Mostly Freehold (1 leasehold: Quest Sydney Olympic Park, 99yr to 2111)",nla_sqm:null,occ:null,val:804.6,prev_val:822.3,region:null,area:"Australia",country:"Australia",ar_year:"FY2025",source:"CLAS AR 2025",notes:"12 properties, 2,450 units across Brisbane, Sydney (incl. Mascot, Macquarie Park, Olympic Park), Melbourne and Perth. Mix of 5 master leases, 1 MCMGI (Sydney Central Hotel), and Quest-branded serviced apartments. Total Revenue S$149.5M, Gross Profit S$35.9M (9% of CLAS total GP). Val -S$17.7M (-2.2%) to S$804.6M."},
+  {name:"CLAS — BELGIUM PORTFOLIO",addr:"Brussels, Belgium",type:"Serviced Apartments",entity:"CapitaLand Ascott Trust (CLAS)",entity_type:"REIT",tenure:"Freehold",nla_sqm:null,occ:null,val:80.1,prev_val:74.2,region:null,area:"Brussels",country:"Belgium",ar_year:"FY2025",source:"CLAS AR 2025",notes:"2 freehold serviced residences in Brussels under MCMGI: Citadines Sainte-Catherine (169 units) and Citadines Toison d'Or (155 units); 324 units total. RevPAU +6% YoY in EUR terms on higher occupancy. Total Revenue S$19.1M, GP S$6.4M. Val +S$5.9M (+8.0%) to S$80.1M."},
+  {name:"CLAS — CHINA PORTFOLIO",addr:"Dalian, Shenyang, Suzhou, Wuhan, China",type:"Serviced Apartments",entity:"CapitaLand Ascott Trust (CLAS)",entity_type:"REIT",tenure:"Leasehold (40–70yr)",nla_sqm:null,occ:null,val:142.9,prev_val:158.9,region:"China",area:"China",country:"China",ar_year:"FY2025",source:"CLAS AR 2025",notes:"4 leasehold serviced residences under management contracts: Somerset Grand Central Dalian (195u), Somerset Heping Shenyang (270u), Citadines Xinghai Suzhou (167u), Citadines Zhuankou Wuhan (249u); 881 units total. Somerset Olympic Tower Tianjin divested Apr 2025. RevPAU -11% YoY in RMB terms due to slow business recovery. Total Revenue S$16.5M, GP S$2.9M. Val -S$16.0M (-10.1%) to S$142.9M."},
+  {name:"SOMERSET OLYMPIC TOWER — TIANJIN",addr:"Tianjin, China",type:"Serviced Apartments",entity:"CapitaLand Ascott Trust (CLAS)",entity_type:"REIT",tenure:"DIVESTED Apr 2025",nla_sqm:null,occ:null,val:null,prev_val:null,region:"China",area:"Tianjin",country:"China",ar_year:"FY2025",source:"CLAS AR 2025",status:"DIVESTED Apr 2025",notes:"DIVESTED Apr 2025. Part of CLAS\'s ~S$300M FY2025 divestment programme unlocking S$50M+ net gains. Proceeds deployed into Japan acquisitions."},
+  {name:"CLAS — FRANCE PORTFOLIO",addr:"Paris (10 properties), Lyon, Montpellier, France",type:"Serviced Apartments",entity:"CapitaLand Ascott Trust (CLAS)",entity_type:"REIT",tenure:"Freehold",nla_sqm:null,occ:null,val:646.5,prev_val:573.0,region:null,area:"France",country:"France",ar_year:"FY2025",source:"CLAS AR 2025",notes:"12 freehold serviced residences (all master leases), 1,266 units: 10 Citadines in Paris (near Eiffel Tower, Louvre, Notre Dame, Champs-Élysées), 2 La Clef by The Crest Collection (luxury), 1 each in Lyon and Montpellier. Lease terms 1–10 years remaining. Revenue +1% in EUR on rent indexation; Citadines République Paris under AEI 2Q–4Q 2025. Total Revenue S$35.1M, GP S$31.8M (8% of total). Val +S$73.5M (+12.8%) to S$646.5M on strong Paris fundamentals."},
+  {name:"CLAS — GERMANY PORTFOLIO",addr:"Munich, Frankfurt, Berlin, Hamburg, Germany",type:"Serviced Apartments",entity:"CapitaLand Ascott Trust (CLAS)",entity_type:"REIT",tenure:"Mostly Freehold (1 leasehold: Citadines Michel Hamburg, 99yr to 2111)",nla_sqm:null,occ:null,val:262.3,prev_val:254.1,region:null,area:"Germany",country:"Germany",ar_year:"FY2025",source:"CLAS AR 2025",notes:"5 serviced residences (all master leases, fixed rent + annual German CPI indexation), 721 units: Citadines Arnulfpark Munich (146u), Citadines City Centre Frankfurt (165u), Citadines Kurfürstendamm Berlin (117u), Citadines Michel Hamburg (127u), The Madison Hamburg (166u). Lease terms 6–22 years incl. extension options. Revenue +4% YoY in EUR on higher variable rent. Total Revenue S$17.3M, GP S$16.3M. Val +S$8.2M (+3.2%) to S$262.3M."},
+  {name:"CLAS — INDONESIA PORTFOLIO",addr:"Jakarta, Indonesia",type:"Serviced Apartments",entity:"CapitaLand Ascott Trust (CLAS)",entity_type:"REIT",tenure:"Leasehold (20–30yr)",nla_sqm:null,occ:null,val:141.7,prev_val:144.3,region:null,area:"Jakarta",country:"Indonesia",ar_year:"FY2025",source:"CLAS AR 2025",notes:"3 leasehold serviced residences under management contracts in Jakarta\'s Golden Triangle: Ascott Jakarta (204u, to 2054), Ascott Kuningan Jakarta (185u, to 2027), Somerset Grand Citra Jakarta (198u, to 2044); 587 units total. RevPAU +11% YoY in IDR on higher ADR and occupancies. Total Revenue S$23.2M, GP S$7.7M. Val -S$2.6M (-1.8%) to S$141.7M."},
+  {name:"CLAS — IRELAND PORTFOLIO",addr:"Dublin, Ireland",type:"Hotel",entity:"CapitaLand Ascott Trust (CLAS)",entity_type:"REIT",tenure:"Freehold",nla_sqm:null,occ:null,val:122.0,prev_val:117.4,region:null,area:"Dublin",country:"Ireland",ar_year:"FY2025",source:"CLAS AR 2025",notes:"1 freehold hotel under MCMGI: Temple Bar Hotel Dublin by The Unlimited Collection (136 units) in Dublin\'s Temple Bar entertainment district. Near Dublin Castle and National Gallery of Ireland. RevPAU in EUR stable YoY; property exceeded minimum guarantee. Total Revenue S$20.3M, GP S$6.5M. Val +S$4.6M (+3.9%) to S$122.0M."},
+  {name:"CLAS — JAPAN PORTFOLIO",addr:"Tokyo, Osaka, Kanazawa, Fukuoka, Hiroshima, Sapporo, Kyoto, Nagoya, Japan",type:"Hotel / Serviced Apartments / Rental Housing / Student Accommodation",entity:"CapitaLand Ascott Trust (CLAS)",entity_type:"REIT",tenure:"Freehold",nla_sqm:null,occ:null,val:1347.2,prev_val:1123.9,region:null,area:"Japan",country:"Japan",ar_year:"FY2025",source:"CLAS AR 2025",notes:"32 freehold properties, 5,456 units: 2 hotels under master leases (Sotetsu Grand Fresa Tokyo-Bay Ariake 912u, Sotetsu Grand Fresa Osaka-Namba 698u — lease renewed 11 years from Jan 2026), 1 serviced residence + 2 hotels under management contracts (Citadines Shinjuku Tokyo 160u, ibis Styles Tokyo Ginza 224u, Chisun Budget Kanazawa Ekimae 392u), 26 rental housing properties, 1 student accommodation. FY2025 acquisitions: ibis Styles Tokyo Ginza + Chisun Budget Kanazawa Ekimae (JPY21.0B / S$178.5M, Jan 2025) + 3 rental housing (JPY4.0B / S$34.2M, Aug 2025). Divested: Citadines Central Shinjuku Tokyo (Oct 2025). RevPAU +14% YoY same-store in JPY terms. Japan inbound tourism record 42M+ visitors. Total Revenue S$96.0M, GP S$65.4M (17% of total — largest GP contributor). Val +S$223.3M (+19.9%) to S$1,347.2M."},
+  {name:"CLAS — MALAYSIA PORTFOLIO",addr:"Kuala Lumpur, Malaysia",type:"Serviced Apartments",entity:"CapitaLand Ascott Trust (CLAS)",entity_type:"REIT",tenure:"Freehold",nla_sqm:null,occ:null,val:35.6,prev_val:36.7,region:null,area:"Kuala Lumpur",country:"Malaysia",ar_year:"FY2025",source:"CLAS AR 2025",notes:"1 freehold serviced residence under management contract: Somerset Kuala Lumpur (205 units) on Jalan Ampang near KL Golden Triangle. RevPAU +6% YoY in MYR on higher ADR and occupancy. Total Revenue S$4.8M, GP S$1.5M. Val -S$1.1M (-3.0%) to S$35.6M."},
+  {name:"CLAS — PHILIPPINES PORTFOLIO",addr:"Makati City, The Philippines",type:"Serviced Apartments",entity:"CapitaLand Ascott Trust (CLAS)",entity_type:"REIT",tenure:"Leasehold (to 2044) / Freehold",nla_sqm:null,occ:null,val:91.9,prev_val:102.1,region:null,area:"Makati",country:"Philippines",ar_year:"FY2025",source:"CLAS AR 2025",notes:"2 serviced residences under management contracts in Makati\'s CBD: Ascott Makati (362 units, leasehold to 2044) in Glorietta Mall Ayala Center, and Somerset Millennium Makati (76 units owned by CLAS of 76 total, freehold). RevPAU +2% YoY in PHP on higher ADR. Total Revenue S$21.2M, GP S$7.5M. Val -S$10.2M (-10.0%) to S$91.9M."},
+  {name:"CLAS — SINGAPORE PORTFOLIO",addr:"Singapore",type:"Serviced Apartments / Hotel",entity:"CapitaLand Ascott Trust (CLAS)",entity_type:"REIT",tenure:"Leasehold (60–99yr)",nla_sqm:null,occ:null,val:1504.9,prev_val:1493.5,region:"Central",area:"Singapore",country:"Singapore",ar_year:"FY2025",source:"CLAS AR 2025",notes:"5 properties, 1,401 units (incl. 192u Somerset Liang Court under development, ops 2027): lyf Funan Singapore (329u, master lease, acquired 31 Dec 2024), Ascott Orchard Singapore (220u, MCMGI), The Robertson House by The Crest Collection (336u, MCMGI hotel), lyf one-north Singapore (324u, management contract), Somerset Liang Court Property (192u, under redevelopment — topped out 2025, completion 2026). Citadines Mount Sophia divested Mar 2024. RevPAU +1% YoY on same-store basis. Total Revenue S$79.3M, GP S$36.2M (9% of total). Val +S$11.4M (+0.8%) to S$1,504.9M."},
+  {name:"SOMERSET LIANG COURT — SINGAPORE",addr:"177B River Valley Road, Singapore 179032",type:"Serviced Apartments (Under Development)",entity:"CapitaLand Ascott Trust (CLAS)",entity_type:"REIT",tenure:"Leasehold 99yr to 2120",nla_sqm:null,occ:null,val:null,prev_val:null,region:"Central",area:"Clarke Quay",country:"Singapore",ar_year:"FY2025",source:"CLAS AR 2025",status:"Development — Under Construction (2027)",notes:"192-unit serviced residence with hotel licence under redevelopment in Clarke Quay riverfront precinct. Part of an integrated waterfront development. Topped out in 2025; fit-out works to complete 2026; expected to commence operations 2027. CLAS retains 100% interest in the retained GFA (~13,000sqm). Original 197-unit property partially divested in Jul 2020."},
+  {name:"CLAS — SOUTH KOREA PORTFOLIO",addr:"Seoul, South Korea",type:"Hotel",entity:"CapitaLand Ascott Trust (CLAS)",entity_type:"REIT",tenure:"Freehold",nla_sqm:null,occ:null,val:177.3,prev_val:170.5,region:null,area:"Seoul",country:"South Korea",ar_year:"FY2025",source:"CLAS AR 2025",notes:"2 freehold hotels in Seoul under master leases with fixed + variable rent: ibis Ambassador Seoul Insadong (363u, ~8 years remaining lease), Sotetsu Hotels The Splaisir Seoul Dongdaemun (215u, ~4 years remaining at lessee\'s 10-year termination option). 578 units total. Revenue +4% YoY in KRW on strong demand. Total Revenue S$10.4M, GP S$9.9M. Val +S$6.8M (+4.0%) to S$177.3M."},
+  {name:"CLAS — SPAIN PORTFOLIO",addr:"Barcelona, Spain",type:"Serviced Apartments",entity:"CapitaLand Ascott Trust (CLAS)",entity_type:"REIT",tenure:"Freehold",nla_sqm:null,occ:null,val:100.8,prev_val:72.5,region:null,area:"Barcelona",country:"Spain",ar_year:"FY2025",source:"CLAS AR 2025",notes:"1 freehold serviced residence under MCMGI: Citadines Ramblas Barcelona (131 units) on La Rambla boulevard near Plaza Catalunya. Near 3 metro stations; prime location for business and leisure. RevPAU +7% YoY in EUR on higher ADR and occupancy; exceeded minimum guarantee. Total Revenue S$11.7M, GP S$5.6M. Val +S$28.3M (+39.0%) to S$100.8M (strong revaluation)."},
+  {name:"CLAS — UNITED KINGDOM PORTFOLIO",addr:"London, United Kingdom",type:"Serviced Apartments / Hotel",entity:"CapitaLand Ascott Trust (CLAS)",entity_type:"REIT",tenure:"Mostly Freehold (1 leasehold: The Cavendish London, 150yr to 2158)",nla_sqm:null,occ:null,val:916.0,prev_val:932.2,region:"United Kingdom",area:"London",country:"United Kingdom",ar_year:"FY2025",source:"CLAS AR 2025",notes:"5 properties, 830 units, all under MCMGI in London: Citadines Barbican (129u), Citadines Holborn-Covent Garden (192u), Citadines South Kensington (92u), Citadines Trafalgar Square (187u), The Cavendish London (230u leasehold). Cavendish London to undergo AEI + rebrand under The Crest Collection in 2026–2027 (closed Jan 2026). Holborn-Covent Garden ADR 40%+ above pre-reno FY2022 levels. RevPAU +5% YoY in GBP terms. Total Revenue S$101.4M, GP S$45.7M (12% of total). Val -S$16.2M (-1.7%) to S$916.0M."},
+  {name:"CLAS — USA PORTFOLIO",addr:"New York (3 hotels), University cities across USA (8 student accommodation)",type:"Hotel / Student Accommodation",entity:"CapitaLand Ascott Trust (CLAS)",entity_type:"REIT",tenure:"Mixed — Freehold / Leasehold",nla_sqm:null,occ:null,val:1330.5,prev_val:1359.0,region:"United States",area:"New York / Multi-State",country:"United States",ar_year:"FY2025",source:"CLAS AR 2025",notes:"11 properties, 2,528 units, all management contracts: 3 NYC hotels (Element New York Times Square West 411u leasehold, Sheraton Tribeca New York 369u leasehold — under refurb 1Q–4Q 2026, voco Times Square South 224u freehold) with RevPAU +9% YoY; 8 student accommodation properties near major US universities (Paloma Kent, Paloma Raleigh, Paloma University City, Paloma West Midtown, Seven07, Standard at Columbia, Uncommon Wilmington, Wildwood Lubbock) with AY2025-2026 avg occ ~89%. Total Revenue S$194.5M, GP S$88.3M (23% of total — largest revenue market). Val -S$28.5M (-2.1%) to S$1,330.5M."},
+  {name:"CLAS — VIETNAM PORTFOLIO",addr:"Hanoi, Ho Chi Minh City, Hai Phong, Vietnam",type:"Serviced Apartments",entity:"CapitaLand Ascott Trust (CLAS)",entity_type:"REIT",tenure:"Leasehold (36–64yr)",nla_sqm:null,occ:null,val:153.0,prev_val:173.2,region:null,area:"Vietnam",country:"Vietnam",ar_year:"FY2025",source:"CLAS AR 2025",notes:"5 leasehold serviced residences under management contracts, 893 units: Somerset Grand Hanoi (185u, to 2038), Somerset Hoa Binh Hanoi (206u, to 2042), Somerset Chancellor Court HCMC (172u, to 2041), Somerset Ho Chi Minh City (198u, to 2039), Somerset Central TD Hai Phong (132u, to 2075). Average length of stay >3 months. RevPAU +13% YoY in VND on higher ADR and occupancy. Total Revenue S$37.3M, GP S$17.7M. Val -S$20.2M (-11.7%) to S$153.0M."},
+  // ── CAPITALAND ASCOTT TRUST (CLAS) — FY2025 ────────────────────────────
+  {
+    id:'clas-ceo-25', name:'Teo Joo Ling, Serena', role:'Chief Executive Officer & Executive Non-Independent Director', role_type:'CEO',
+    entity:'CapitaLand Ascott Trust (CLAS)', entity_short:'CLAS', ar_year:'FY2025',
+    appointed:'1 Jul 2022', tenure_yrs:3.5,
+    rem_exact:1139555, rem_fixed:417996, rem_bonus:398245, rem_other:323314,
+    rem_note:'FY2025 exact S$1,139,555: fixed salary (incl. CPF) 37% = S$417,996; performance bonus (incl. CPF) 35% = S$398,245; benefits-in-kind 2% = S$18,724; deferred compensation awards (PSSP + RSSP) 26% = S$304,590. KMP (excl. CEO) aggregate S$1,242,512 for 3 individuals (senior management). Total staff remuneration by Managers ~S$4.23M (20 beneficiaries). Senior management (4 individuals with material risk impact) ~S$2.38M.',
+    rem_band:null, rem_pct_fixed:37, rem_pct_bonus:35, rem_pct_other:28,
+    rem_history:[
+      {year:'FY2025', total:1139555, pct_fixed:37, pct_bonus:35, pct_ltp:26, pct_other:2},
+    ],
+    edu:'Master in Business Administration, INSEAD; Bachelor of Electrical and Electronic Engineering (Honours), National University of Singapore',
+    bio:'CEO and Executive Non-Independent Director of CapitaLand Ascott Trust Management Limited and CapitaLand Ascott Business Trust Management Pte. Ltd. since 1 July 2022. Leads CLAS through its 20th anniversary milestone — portfolio grown from 12 properties (IPO 2006) to 103 properties across 16 countries. Key FY2025 initiatives: ~S$210M Japan acquisitions (ibis Styles Tokyo Ginza, Chisun Budget Kanazawa, 3 rental housing), ~S$300M divestments (Somerset Olympic Tower Tianjin, Citadines Central Shinjuku Tokyo), Somerset Liang Court development topped out. CLAS ranked 1st in Singapore Governance and Transparency Index (REITs/BTs category) for 5th consecutive year under her leadership. Also member of the Executive Committee.',
+    prev_roles:[],
+    cross_board_roles:[],
+    linkedin_url:null, photo_url:null,
+    tags:['REIT CEO','Lodging','Global Portfolio','CapitaLand Group','INSEAD']
+  },
+  {
+    id:'clas-chair-25', name:'Lui Chong Chee', role:'Non-Executive Independent Director & Chairman', role_type:'Board',
+    entity:'CapitaLand Ascott Trust (CLAS)', entity_short:'CLAS', ar_year:'FY2025',
+    appointed:'1 Feb 2024', tenure_yrs:1.9,
+    rem_exact:148500, rem_fixed:116000, rem_bonus:null, rem_other:32500,
+    rem_note:'FY2025 exact S$148,500 (cash S$116,000 + stapled securities S$29,000 + benefits S$3,500). NRC Chairman. First appointed to predecessor Ascott Residence Trust Management board Jun 2008–May 2010; re-appointed Feb 2024.',
+    rem_band:null, rem_pct_fixed:78, rem_pct_bonus:null, rem_pct_other:22,
+    rem_history:[
+      {year:'FY2025', total:148500, pct_fixed:78, pct_bonus:null, pct_ltp:null, pct_other:22},
+    ],
+    edu:'Advanced Management Program, Harvard Business School; MBA, New York University; BSc Business Administration, New York University',
+    bio:'Non-Executive Independent Director and Chairman of CLAS since April 2024. NRC Chairman. Age 65. Also formerly director of CapitaLand Malaysia REIT Management. Extensive experience in real estate and capital markets.',
+    prev_roles:[{org:'CapitaLand Malaysia REIT Management',pos:'Director'}],
+    cross_board_roles:[],
+    linkedin_url:null, photo_url:null,
+    tags:['Independent','Chairman','NRC Chair','Harvard AMP']
+  },
+  {
+    id:'clas-dir-loh-25', name:'Max Loh Khum Whai', role:'Non-Executive Independent Director, ARC Chairman', role_type:'Board',
+    entity:'CapitaLand Ascott Trust (CLAS)', entity_short:'CLAS', ar_year:'FY2025',
+    appointed:'23 Nov 2023', tenure_yrs:2.1,
+    rem_exact:95686, rem_fixed:76549, rem_bonus:null, rem_other:19137,
+    rem_note:'FY2025 exact S$95,686 (cash S$76,549 + stapled securities S$19,137). Appointed ARC Chairman 1 Sep 2025 (succeeding Sim Juat Quee Michael Gabriel who retired 31 Aug 2025).',
+    rem_band:null, rem_pct_fixed:80, rem_pct_bonus:null, rem_pct_other:20,
+    rem_history:[
+      {year:'FY2025', total:95686, pct_fixed:80, pct_bonus:null, pct_ltp:null, pct_other:20},
+    ],
+    edu:'Fellow Chartered Accountant (Institute of Singapore Chartered Accountants); Fellow CPA Australia; Senior Accredited Director and Vice-Chair, Singapore Institute of Directors; Bachelor of Accountancy (Honours), NUS',
+    bio:'Non-Executive Independent Director of CLAS since November 2023. Appointed ARC Chairman September 2025. Age 64. Also director of Samudera Shipping Line Ltd. Extensive audit, accounting and governance experience. Appointments include Building & Construction Authority (Deputy Chairman), Competition & Consumer Commission of Singapore (Chairman), SPH Media Holdings (Director).',
+    prev_roles:[],
+    cross_board_roles:[
+      {entity:'Samudera Shipping Line Ltd',role:'Director',listed:true},
+    ],
+    linkedin_url:null, photo_url:null,
+    tags:['Independent','ARC Chair','Chartered Accountant','New 2023']
+  },
+  {
+    id:'clas-dir-chia-25', name:'Chia Kim Huat', role:'Non-Executive Independent Director', role_type:'Board',
+    entity:'CapitaLand Ascott Trust (CLAS)', entity_short:'CLAS', ar_year:'FY2025',
+    appointed:'15 Apr 2020', tenure_yrs:5.7,
+    rem_exact:108277, rem_fixed:84000, rem_bonus:null, rem_other:24277,
+    rem_note:'FY2025 exact S$108,277 (cash S$84,000 + stapled securities S$21,000 + benefits S$3,277). ARC member, NRC member.',
+    rem_band:null, rem_pct_fixed:78, rem_pct_bonus:null, rem_pct_other:22,
+    rem_history:[
+      {year:'FY2025', total:108277, pct_fixed:78, pct_bonus:null, pct_ltp:null, pct_other:22},
+    ],
+    edu:'Bachelor of Law (Honours), NUS; Advocate & Solicitor, Supreme Court of Singapore',
+    bio:'Non-Executive Independent Director of CLAS since April 2020. Age 59. ARC member and NRC member. Partner at Rajah & Tann Singapore LLP.',
+    prev_roles:[{org:'SATS Ltd',pos:'Director (past)'}],
+    cross_board_roles:[],
+    linkedin_url:null, photo_url:null,
+    tags:['Independent','ARC Member','Legal','Rajah & Tann']
+  },
+  {
+    id:'clas-dir-lee-25', name:'Deborah Lee Siew Yin', role:'Non-Executive Independent Director', role_type:'Board',
+    entity:'CapitaLand Ascott Trust (CLAS)', entity_short:'CLAS', ar_year:'FY2025',
+    appointed:'17 Jun 2020', tenure_yrs:5.5,
+    rem_exact:107500, rem_fixed:84000, rem_bonus:null, rem_other:23500,
+    rem_note:'FY2025 exact S$107,500 (cash S$84,000 + stapled securities S$21,000 + benefits S$2,500). ARC member, NRC member.',
+    rem_band:null, rem_pct_fixed:78, rem_pct_bonus:null, rem_pct_other:22,
+    rem_history:[
+      {year:'FY2025', total:107500, pct_fixed:78, pct_bonus:null, pct_ltp:null, pct_other:22},
+    ],
+    edu:'CFA Charterholder; Master of Science (Applied Finance), NUS; Bachelor of Accountancy (Honours), NUS',
+    bio:'Non-Executive Independent Director of CLAS since June 2020. Age 68. ARC member and NRC member. Also director of Metro Holdings Limited. Trustee and Finance Committee Chair at Singapore University of Technology and Design. Active in various Singapore Chinese community organisations.',
+    prev_roles:[],
+    cross_board_roles:[
+      {entity:'Metro Holdings Limited',role:'Director',listed:true},
+    ],
+    linkedin_url:null, photo_url:null,
+    tags:['Independent','ARC Member','CFA','Finance']
+  },
+  {
+    id:'clas-dir-sim-25', name:'Sim Juat Quee Michael Gabriel', role:'Non-Executive Independent Director (retired Aug 2025)', role_type:'Board',
+    entity:'CapitaLand Ascott Trust (CLAS)', entity_short:'CLAS', ar_year:'FY2025',
+    appointed:'Prior', tenure_yrs:null,
+    rem_exact:80072, rem_fixed:72568, rem_bonus:null, rem_other:7504,
+    rem_note:'FY2025 partial year S$80,072 (all cash S$72,568 + benefits S$7,504; no stapled securities as stepped down mid-year). Retired as Non-Executive Independent Director and ARC Chairman effective 31 August 2025. Paid fully in cash per policy for directors stepping down during financial year.',
+    rem_band:null, rem_pct_fixed:91, rem_pct_bonus:null, rem_pct_other:9,
+    rem_history:[
+      {year:'FY2025', total:80072, pct_fixed:91, pct_bonus:null, pct_ltp:null, pct_other:9},
+    ],
+    edu:'Not disclosed',
+    bio:'Former Non-Executive Independent Director and ARC Chairman of CLAS. Retired effective 31 August 2025. Succeeded in ARC Chair role by Max Loh Khum Whai.',
+    prev_roles:[],
+    cross_board_roles:[],
+    linkedin_url:null, photo_url:null,
+    tags:['Independent','Former ARC Chair','Retired Aug 2025']
+  },
+
+    // ── CAPITALAND CHINA TRUST (CLCT) — FY2025 ─────────────────────────────
   {
     id:'clct-ceo-25', name:'Chan Kin Leong Gerry', role:'Chief Executive Officer', role_type:'CEO',
     entity:'CapitaLand China Trust', entity_short:'CLCT', ar_year:'FY2025',
@@ -3900,7 +4029,11 @@ var NEWS=[
   {id:19,date:"2026-02-26",title:"MPs Call for 15% Stamp Duty Tier on Properties Above S$5M",source:"Straits Times",category:"Policy",tag:"Property Tax",summary:"Budget 2026 debate: calls for 15% marginal rate on residential properties above S$5M. Fiscal surplus S$15.1B. SG wealth Gini 0.55.",sentiment:"neutral"},
   {id:20,date:"2026-02-26",title:"Singapore Land H2 Profit Down 11% at S$160.9M",source:"Business Times",category:"Commercial",tag:"Earnings",summary:"FY2025 net profit S$272.3M (-4%). Revenue +7% to S$783.1M. Drag from higher finance costs (+23%) on Sydney acquisition. DPS S$0.045.",sentiment:"negative"},
   {id:21,date:"2026-02-20",title:"Serenity Park Condo in Yio Chu Kang Put on Market at S$505M",source:"Business Times",category:"Commercial",tag:"En Bloc",summary:"179-unit freehold condo, Tamarind Road. First freehold residential en-bloc of 2026. S$1,453 psf ppr. Owner premium >40%. Closes 26 Mar 2026.",sentiment:"neutral"},
-  {id:33, date:"2026-04-05", title:"CapitaLand China Trust FY2025: Portfolio S$4.20B, Retail Occ 97.2%, Yuhuating Divested to C-REIT",
+  {id:34, date:"2026-04-05", title:"CapitaLand Ascott Trust FY2025: Portfolio S$7.9B, DPS 6.10¢ Stable, Japan +20% Revaluation",
+ entity:"CapitaLand Ascott Trust (CLAS)", tag:"AR Update",
+ sourceLabel:"PropertyAtlas.sg Analysis · CLAS AR 2025", sentiment:"positive",
+ summary:"CapitaLand Ascott Trust (CLAS) FY2025 (year ended 31 December 2025) delivered stable distributions and stronger operating performance across its globally diversified 103-property portfolio, marking 20 years since its IPO.\n\nKEY METRICS\n\nGross Revenue S$837.6M (+3% YoY). Gross Profit S$385.3M (+4% YoY). DPS 6.10¢ (stable YoY). Total Distribution S$233.5M (+1%). Portfolio Valuation S$7.9B (+1.7% / +S$130M). Total Assets S$8.9B (+1%). Aggregate Leverage 37.7% (improved from 38.3%). Cost of Debt 2.9% (down from 3.0%). Portfolio Occupancy 80% (up from 77%).\n\nPORTFOLIO PERFORMANCE BY KEY MARKET\n\nUSA (23% of GP, S$1,330.5M val): NYC hotel RevPAU +9% YoY in USD. Student accommodation AY2025-2026 occ ~89%.\nJapan (17% of GP, S$1,347.2M val, +20% YoY): Japan inbound tourism record 42M+ visitors. Same-store RevPAU +14% YoY in JPY. Sotetsu Osaka-Namba master lease renewed for new 11-year term Jan 2026.\nSingapore (9% of GP, S$1,504.9M val): lyf Funan Singapore (acquired 31 Dec 2024) commenced contributing. RevPAU +1% same-store. Somerset Liang Court topped out — ops expected 2027.\nUK (12% of GP, S$916.0M val): RevPAU +5% YoY in GBP. Holborn-Covent Garden ADR 40%+ above pre-reno levels. Cavendish London to undergo AEI and Crest Collection rebrand in 2026-2027.\nFrance (8% of GP, S$646.5M val, +13%): Master lease portfolio, Paris visitor numbers +3% YoY. Val surged S$73.5M.\nAustralia (9% of GP, S$804.6M val): Stable performance; 12 properties across Brisbane, Sydney, Melbourne, Perth.\n\nKEY EVENTS FY2025\n\nAcquisitions (~S$210M): 2 Japan hotels — ibis Styles Tokyo Ginza (224u) and Chisun Budget Kanazawa Ekimae (392u) at 4.3% blended NOI yield; 3 Japan rental housing properties — Pre de Cort Nishikyogoku (Kyoto), Pregio Esaka South and Splendide Namba West (both Osaka) at 4.0% blended NOI yield.\n\nDisvestments (~S$300M): Somerset Olympic Tower Tianjin (Apr 2025), Citadines Central Shinjuku Tokyo (Oct 2025), plus prior-year: Citadines Mount Sophia Singapore (Mar 2024). Net gains S$50M+.\n\nCLCR: CLAS listed on SGX 20 years ago from 12 properties in 6 countries to 103 properties in 16 countries. Ranked 1st in SGTI REITs category for 5th consecutive year.\n\nKEY TAKEAWAY\n\nCLAS\'s FY2025 result reflects the value of genuine geographical diversification — Japan driving a near-20% valuation uplift while China softened, and the USA student accommodation and NYC hotels both performing well. The DPS stability despite AEI disruptions (Citadines République Paris, upcoming Cavendish London) is underpinned by the retained S$23.2M of non-periodic divestment gains. The three strategic focus areas into 2026 — Japan expansion (targeting 25-30% portfolio allocation), UK AEI cycle (Cavendish), and Singapore development completion (Somerset Liang Court 2027) — give CLAS a clear catalyst pipeline. Key risks: JPY weakness on translation, Cavendish AEI income gap, and US tariff/travel sentiment headwinds on NYC hotel demand."},
+    {id:33, date:"2026-04-05", title:"CapitaLand China Trust FY2025: Portfolio S$4.20B, Retail Occ 97.2%, Yuhuating Divested to C-REIT",
  entity:"CapitaLand China Trust", tag:"AR Update",
  sourceLabel:"PropertyAtlas.sg Analysis · CLCT AR 2025", sentiment:"neutral",
  summary:"CapitaLand China Trust (CLCT) FY2025 (year ended 31 Dec 2025) delivered a resilient operating performance despite continued China macro headwinds, with its diversified 17-property portfolio across retail, business parks and logistics maintaining solid occupancy.\n\nKEY METRICS\n\nPortfolio valuation S$4,204.4M (FY2024: S$4,443.9M incl. Yuhuating; -5.4% on a like-for-like basis). NPI S$200.9M (RMB1,104.6M, -11.3% YoY in S$). Distributable income S$83.9M. Aggregate leverage 40.7% (down from 41.9%). Average cost of debt reduced from 3.6% to 3.5% (LPR cut). Gross borrowings S$1,703.0M.\n\nPORTFOLIO PERFORMANCE\n\nRetail (8 malls, S$2,971.9M): Portfolio occ 97.2% vs China average 92.8% — outperforming market by 4.4pp. Tenant sales +2.1% YoY, shopper traffic +2.7% YoY. Best performers: Nuohemule (99.5%), Xizhimen (99.1%), Rock Square (99.0%). Weakest: Xinnan (88.4%, -3.6pp).\n\nBusiness Parks (5 assets, S$981.9M): Portfolio occ 86.7% vs China average 63.0% — significant outperformance. Standout recovery: Ascendas Innovation Towers Xi'an +13.4pp to 85.2%. Drag: SH-HZ Phase II -9.5pp to 74.9% (serviced-office to direct-lease conversion impact).\n\nLogistics Parks (4 assets, S$250.6M): Portfolio occ 98.1%. Three parks at 100%. Only Chengdu Shuangliu below full (92.3%, +1.6pp improvement).\n\nKEY EVENTS\n\nYuhuating Divestment: CapitaMall Yuhuating (Changsha) divested 31 Oct 2025, transferred to CapitaLand Commercial C-REIT (CLCR) — China's first international-sponsored retail C-REIT listed on Shanghai Stock Exchange in Sep 2025. CLCT retains 5.0% stake in CLCR (RMB130.5M).\n\nCapital Management: Issued S$150M 3-year fixed rate subordinated perpetual securities in Sep 2025 (3.4x oversubscribed); used proceeds to redeem S$100M perpetual securities and refinance debt.\n\nKEY TAKEAWAY\n\nCLCT's FY2025 result reflects the tension between a well-managed portfolio outperforming Chinese market averages and the structural headwind of RMB/SGD translation and China commercial real estate softness. All logistics parks and flagship malls (Nuohemule, Xizhimen, Rock Square) remain near full occupancy. The Yuhuating divestment via C-REIT is an innovative capital recycling structure. The key watch items are the SH-HZ Phase II recovery trajectory (74.9% occ), Xinnan\'s occupancy trend, and whether logistics valuations stabilise after FY2025 declines."},
