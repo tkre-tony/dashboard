@@ -1426,6 +1426,7 @@ html,body{background:var(--bg);color:var(--txt);font-family:'DM Sans',sans-serif
         <button class="dir-tbtn" data-devf="CDL" onclick="reitSetFilter(this,'dev','CDL')">CDL <span style="color:#4ade80;font-size:8px">●</span></button>
         <button class="dir-tbtn" data-devf="CapitaLand Investment Limited" onclick="reitSetFilter(this,'dev','CapitaLand Investment Limited')">CLI <span style="color:#4ade80;font-size:8px">●</span></button>
         <button class="dir-tbtn" data-devf="Far East Orchard" onclick="reitSetFilter(this,'dev','Far East Orchard')">FE Orchard <span style="color:#4ade80;font-size:8px">●</span></button>
+        <button class="dir-tbtn" data-devf="Frasers Property Limited" onclick="reitSetFilter(this,'dev','Frasers Property Limited')">Frasers Property <span style="color:#4ade80;font-size:8px">●</span></button>
         <button class="dir-tbtn" data-devf="GuocoLand" onclick="reitSetFilter(this,'dev','GuocoLand')">GuocoLand <span style="color:#4ade80;font-size:8px">●</span></button>
         <button class="dir-tbtn" data-devf="Ho Bee Land" onclick="reitSetFilter(this,'dev','Ho Bee Land')">Ho Bee Land <span style="color:#f59e0b;font-size:8px">●</span></button>
         <button class="dir-tbtn" data-devf="Hong Fok Corporation" onclick="reitSetFilter(this,'dev','Hong Fok Corporation')">Hong Fok <span style="color:#f59e0b;font-size:8px">●</span></button>
@@ -1815,6 +1816,8 @@ html,body{background:var(--bg);color:var(--txt);font-family:'DM Sans',sans-serif
       <option value="Far East Orchard">Far East Orchard (FY2025)</option>
       <option value="Sing Holdings Limited">Sing Holdings (FY2025)</option>
       <option value="ESR-REIT">ESR-REIT (FY2024)</option>
+      <option value="Frasers Centrepoint Trust">FCT (FY2024/25)</option>
+      <option value="Frasers Property Limited">Frasers Property (FY2024/25)</option>
       <option value="Suntec REIT">Suntec REIT</option>
       <option value="UOL Group">UOL Group</option>
       <option value="GuocoLand">GuocoLand (FY2025)</option>
@@ -2157,7 +2160,7 @@ var TALENT_DATA = [
     rem_note:'FY2025 total S$150,000 (all-in Chairman fee, paid 70% cash / 30% Keppel REIT units). Same as FY2024: S$150,000. Also Senior Managing Director of Real Estate at Keppel Ltd. — fee paid to Keppel Ltd.',
     rem_band:null, rem_pct_fixed:100, rem_pct_bonus:0, rem_pct_other:0,
     edu:'BSc (First Class Honours) Estate Management, NUS; MBA in Accountancy, NTU',
-    bio:'Chairman and Non-Executive Director of Keppel REIT Management since March 2017 — 8+ year tenure. Also Senior Managing Director of Real Estate at Keppel Ltd. and President of the Real Estate Developers\' Association of Singapore (REDAS). Director of Bukit Sembawang Estates Limited (SGX-listed), E M Services, City Energy, and various Keppel REIT associated companies. Previously various roles at Keppel Land and Keppel Management Ltd.',
+    bio:'Chairman and Non-Executive Director of Keppel REIT Management since March 2017 — 8+ year tenure. Also Senior Managing Director of Real Estate at Keppel Ltd. and President of the Real Estate Developers Association of Singapore (REDAS). Director of Bukit Sembawang Estates Limited (SGX-listed), E M Services, City Energy, and various Keppel REIT associated companies. Previously various roles at Keppel Land and Keppel Management Ltd.',
     prev_roles:[
       {org:'Keppel Ltd.',pos:'Senior Managing Director, Real Estate (current)'},
       {org:'Keppel Management Ltd.',pos:'Various leadership roles'},
@@ -5080,7 +5083,170 @@ var TALENT_DATA = [
     linkedin_url:null, photo_url:null,
     tags:['Independent Director','ESR-REIT','Legal Background','Healthcare Governance','NHG','LSE']
   }
+,
 
+  // ── FRASERS CENTREPOINT TRUST — FY2024/25 (year ended 30 Sep 2025) ──────
+  {
+    id:'fct-ceo-25', name:'Richard Ng', role:'CEO', role_type:'CEO',
+    entity:'Frasers Centrepoint Trust', entity_short:'FCT', ar_year:'FY2024/25',
+    appointed:'2020', tenure_yrs:5.0,
+    rem_exact:1133985, rem_fixed:578332, rem_bonus:283496, rem_other:272157,
+    rem_note:'Exact FY2025 total S$1,133,985 per AR p.122. Mix: Salary+allowances+CPF 51% / Cash bonus+CPF 25% / Benefits in kind 0% / Long-term incentives 24%. KMP excl CEO aggregate: S$1,598,743 (3 KMP: CFO + MD Investment & AM + Head IR). No director fees as CEO. Manager pays from REIT management fees.',
+    rem_band:null, rem_pct_fixed:51, rem_pct_bonus:25, rem_pct_ltp:24, rem_pct_other:0,
+    edu:'MSc Real Estate, NUS; BSc (Hons) Estate Management, NUS',
+    bio:'CEO of Frasers Centrepoint Asset Management Ltd since 2020. Oversees FCT\'s overall business direction, investment strategies and operations. 30+ years experience in Singapore and regional property markets across marketing, investment, asset and REIT management. Prior: Executive Director, Asset Management at PGIM (Singapore) Pte. Ltd. (retail and commercial portfolio in SG + Malaysia). 14 years at CapitaLand Group including 10 years at CapitaLand Mall Trust (CMT) as Head of Asset Management; was part of the team that oversaw CMT\'s IPO in 2002. Key FY25 achievements: Northpoint City South Wing acquisition for S$1,133M; S$421.3M equity fundraise (4x covered private placement); DPU +0.6% y-o-y to 12.113¢; AUM +16.8% to S$8.2B.',
+    prev_roles:[
+      {org:'PGIM (Singapore) Pte. Ltd.',pos:'Executive Director, Asset Management — retail and commercial properties SG + Malaysia'},
+      {org:'CapitaLand Mall Trust (CMT)',pos:'Head of Asset Management (10 years); part of CMT IPO team 2002'},
+    ],
+    cross_board_roles:[],
+    linkedin_url:null, photo_url:null,
+    tags:['REIT CEO','Retail','Singapore','Suburban Malls','FCT','Frasers Property','CapitaLand Alumni','PGIM Alumni']
+  },
+  {
+    id:'fct-cfo-25', name:'Annie Khung Shyang Lee', role:'CFO', role_type:'CFO',
+    entity:'Frasers Centrepoint Trust', entity_short:'FCT', ar_year:'FY2024/25',
+    appointed:null, tenure_yrs:null,
+    rem_exact:null, rem_fixed:null, rem_bonus:null, rem_other:null,
+    rem_note:'Remuneration not individually disclosed. KMP excl CEO aggregate (3 KMP): S$1,598,743. Mix approx: 62% salary+CPF / 19% bonus / 2% benefits / 17% LTI. Manager elected non-disclosure in bands citing competitive conditions and talent retention.',
+    rem_band:null, rem_pct_fixed:62, rem_pct_bonus:19, rem_pct_ltp:17, rem_pct_other:2,
+    edu:'BCom (Accounting) and BFinance, University of Adelaide; Chartered Accountant ISCA; CPA Australia',
+    bio:'CFO of Frasers Centrepoint Asset Management Ltd. Oversees financial, taxation, treasury and compliance functions. 20+ years experience in financial and management reporting, corporate finance, consolidation, taxation, treasury, capital management, compliance and audit. Prior: Head of Finance at Frasers Logistics & Commercial Asset Management Pte. Ltd. (manager of FLCT); previously with Far East Hospitality Trust and Keppel Infrastructure Trust. Career started as auditor with Ernst & Young.',
+    prev_roles:[
+      {org:'Frasers Logistics & Commercial Asset Management Pte. Ltd.',pos:'Head of Finance'},
+      {org:'Far East Hospitality Trust',pos:'Finance role'},
+      {org:'Keppel Infrastructure Trust',pos:'Finance role'},
+      {org:'Ernst & Young',pos:'Auditor (career start)'},
+    ],
+    cross_board_roles:[],
+    linkedin_url:null, photo_url:null,
+    tags:['REIT CFO','Retail','Singapore','FCT','Frasers Property','FLCT Alumni','FEHT Alumni','EY Alumni']
+  },
+  {
+    id:'fct-chair-25', name:'Koh Choon Fah', role:'Chairman (Independent)', role_type:'Board',
+    entity:'Frasers Centrepoint Trust', entity_short:'FCT', ar_year:'FY2024/25',
+    appointed:'1 Oct 2019', tenure_yrs:6.0,
+    rem_exact:143000, rem_fixed:143000, rem_bonus:0, rem_other:0,
+    rem_note:'Director fees S$143,000 FY2025. 100% cash. Highest director fee.',
+    rem_band:null, rem_pct_fixed:100, rem_pct_bonus:0, rem_pct_other:0,
+    edu:'BSc (Estate Management) Hons NUS; MA Business Administration University of Georgia USA; FRICS; FSISV',
+    bio:'Non-Executive Independent Chairperson. Former CEO of Edmund Tie & Company (SEA) Pte. Ltd. (formerly DTZ Debenham Tie Leung SEA). Chairperson of Urban Land Institute Singapore Council (past). Management Board Member of Institute of Real Estate and Urban Studies, NUS (past). Currently: Global Governing Trustee, Urban Land Institute USA; Council Member and Chairperson of Professional Development Committee, Council for Estate Agencies SG; Adjunct Professor, College of Design & Engineering, NUS.',
+    prev_roles:[
+      {org:'Edmund Tie & Company (SEA)',pos:'Chief Executive Officer'},
+      {org:'DTZ Debenham Tie Leung (SEA)',pos:'Chief Operating Officer'},
+    ],
+    cross_board_roles:[
+      {entity:'Prime Property Fund Asia GP Pte. Limited',role:'Director',listed:false},
+    ],
+    linkedin_url:null, photo_url:null,
+    tags:['Independent Chair','FCT','Real Estate','Edmund Tie','RICS','Urban Land Institute']
+  },
+  {
+    id:'fct-dir-tan-25', name:'Tan Siew Peng (Darren)', role:'Independent Director (ARCC Chair)', role_type:'Board',
+    entity:'Frasers Centrepoint Trust', entity_short:'FCT', ar_year:'FY2024/25',
+    appointed:'26 Sep 2023', tenure_yrs:2.0,
+    rem_exact:115000, rem_fixed:115000, rem_bonus:0, rem_other:0,
+    rem_note:'Director fees S$115,000 FY2025. ARCC Chairman + NRC member.',
+    rem_band:null, rem_pct_fixed:100, rem_pct_bonus:0, rem_pct_other:0,
+    edu:'BAcc (1st Class Hons) NTU; Stanford Executive Program; CFA charterholder',
+    bio:'Non-Executive Independent Director. ARCC Chairman. Currently Chief Finance and Risk Officer at The United Nations\' Green Climate Fund. Former CFO of Oversea-Chinese Banking Corporation Limited (OCBC). Former Chief Investment Officer of Raffles Medical Group. Former Council Member and Chairman of Investment Committee at ISCA. Former Adjunct Professor at NTU Nanyang Business School.',
+    prev_roles:[
+      {org:'Oversea-Chinese Banking Corporation (OCBC)',pos:'Chief Financial Officer'},
+      {org:'Raffles Medical Group Ltd',pos:'Chief Investment Officer'},
+      {org:'UN Green Climate Fund',pos:'Chief Finance and Risk Officer (current)'},
+    ],
+    cross_board_roles:[],
+    linkedin_url:null, photo_url:null,
+    tags:['Independent Director','ARCC Chair','FCT','CFA','OCBC Alumni','UN Green Climate Fund','Raffles Medical']
+  },
+
+  // ── FRASERS PROPERTY LIMITED (SGX: TQ5) — FY2024/25 ─────────────────────
+  {
+    id:'fpl-ceo-25', name:'Panote Sirivadhanabhakdi', role:'Group CEO & Executive Director', role_type:'CEO',
+    entity:'Frasers Property Limited', entity_short:'Frasers Property', ar_year:'FY2024/25',
+    appointed:'1 Oct 2016', tenure_yrs:9.0,
+    rem_exact:3213248, rem_fixed:1176000, rem_bonus:896400, rem_other:1140848,
+    rem_note:'Exact FY2025 total S$3,213,248 per AR p.121. Mix: Salary+allowances+CPF 37% (S$1,176,000) / Cash bonus+CPF 28% (S$896,400) / Benefits in kind 4% (S$144,848) / Long-term incentives 31% (S$996,000 — cash-settled LTI, value of initial awards). No director fees (CEO). KMP excl CEO aggregate (5 KMP: Loo Choo Leong, Cameron Leggatt, Eu Chin Fen, Reinfried Otter, Soon Su Lin): S$8,258,693. Mix approx: 43% fixed / 27% bonus / 0% benefits / 30% LTI.',
+    rem_band:null, rem_pct_fixed:37, rem_pct_bonus:28, rem_pct_ltp:31, rem_pct_other:4,
+    edu:'MSc in Analysis, Design and Management of Information Systems, London School of Economics; BSc Manufacturing Engineering, Boston University USA',
+    bio:'Group CEO of Frasers Property Limited since 1 October 2016. Son of TCC Group founder Charoen Sirivadhanabhakdi; brother of Thapana Sirivadhanabhakdi (both on FPL Board). Responsible for driving overall strategy and performance of the Frasers Property Group across Singapore, Australia, Industrial (FPI), Hospitality, Thailand and Vietnam. Previously CEO of Univentures Public Company Limited. Under his leadership: FHT privatised FY25; One Bangkok opened Oct 2024 (19.8% stake); AUM grown to S$49.4B; The Orie and The Robertson Opus launched in Singapore. Extensive board commitments: Thai Beverage, Frasers Property (Thailand), Univentures, managers of FHT and FLCT; One Bangkok Company Limited; Singapore Management University Board of Trustees; National Gallery Singapore.',
+    prev_roles:[
+      {org:'Univentures Public Company Limited',pos:'Chief Executive Officer'},
+      {org:'Real Estate Developers Association of Singapore (REDAS)',pos:'Management Committee Member (past)'},
+    ],
+    cross_board_roles:[
+      {entity:'Frasers Property (Thailand) Public Company Limited',role:'Director',listed:true},
+      {entity:'Thai Beverage Public Company Limited',role:'Director',listed:true},
+      {entity:'Univentures Public Company Limited',role:'Director',listed:true},
+      {entity:'Frasers Hospitality Real Estate Investment Trust',role:'Director (managers)',listed:true},
+      {entity:'Frasers Logistics & Commercial Trust',role:'Director (managers)',listed:true},
+    ],
+    linkedin_url:null, photo_url:null,
+    tags:['Developer CEO','Multi-Market','Singapore','Australia','Industrial','Hospitality','TCC Group','Thailand','LSE']
+  },
+  {
+    id:'fpl-chair-25', name:'Chumpol NaLamlieng', role:'Non-Executive Independent Chairman', role_type:'Board',
+    entity:'Frasers Property Limited', entity_short:'Frasers Property', ar_year:'FY2024/25',
+    appointed:'8 Feb 2025', tenure_yrs:0.6,
+    rem_exact:132750, rem_fixed:132750, rem_bonus:0, rem_other:0,
+    rem_note:'Director fees S$132,750 FY2025 (pro-rated from appointment 8 Feb 2025). Full-year chairman fee rate would be higher. 100% cash. Replaced Charoen Sirivadhanabhakdi who stepped down and waived all fees.',
+    rem_band:null, rem_pct_fixed:100, rem_pct_bonus:0, rem_pct_other:0,
+    edu:'MBA, Harvard Business School; BSc Mechanical Engineering, University of Washington USA',
+    bio:'Non-Executive Independent Chairman since 8 February 2025. Distinguished Thai-Singapore business leader. Former President of The Siam Cement Public Company Limited (SCG). Former Chairman of Singapore Telecommunications Limited (SingTel). Current Vice Chairman of SCG. No familial relationship with the Sirivadhanabhakdi family or the CEO. Brings deep industrial, infrastructure and governance expertise from SCG and SingTel cross-border leadership.',
+    prev_roles:[
+      {org:'The Siam Cement Public Company Limited',pos:'President'},
+      {org:'Singapore Telecommunications Limited (SingTel)',pos:'Chairman'},
+    ],
+    cross_board_roles:[
+      {entity:'The Siam Cement Public Company Limited',role:'Vice Chairman',listed:true},
+    ],
+    linkedin_url:null, photo_url:null,
+    tags:['Independent Chair','Frasers Property','SCG','SingTel','Harvard MBA','New 2025']
+  },
+  {
+    id:'fpl-dir-chin-25', name:'Chin Yoke Choong', role:'Non-Executive Independent Director (AC Chair)', role_type:'Board',
+    entity:'Frasers Property Limited', entity_short:'Frasers Property', ar_year:'FY2024/25',
+    appointed:'8 Mar 2013', tenure_yrs:12.6,
+    rem_exact:272000, rem_fixed:272000, rem_bonus:0, rem_other:0,
+    rem_note:'Director fees S$272,000 FY2025. Highest NED fee. AC Chairman + NC + RC.',
+    rem_band:null, rem_pct_fixed:100, rem_pct_bonus:0, rem_pct_other:0,
+    edu:'BAcc, University of Singapore; also on Frasers Centrepoint Asset Management board',
+    bio:'Longest-serving independent director (12+ years). Audit Committee Chairman. Non-executive lead director. Also Director of Frasers Centrepoint Asset Management Pte. Ltd. (FCT manager) and various FPL subsidiaries. Senior board presence across the Frasers Property group.',
+    prev_roles:[],
+    cross_board_roles:[
+      {entity:'Frasers Centrepoint Asset Management Pte. Ltd.',role:'Director',listed:false},
+    ],
+    linkedin_url:null, photo_url:null,
+    tags:['Independent Director','AC Chair','Frasers Property','Longest Serving']
+  },
+  {
+    id:'fpl-dir-wee-25', name:'Wee Joo Yeow', role:'Non-Executive Independent Director', role_type:'Board',
+    entity:'Frasers Property Limited', entity_short:'Frasers Property', ar_year:'FY2024/25',
+    appointed:null, tenure_yrs:null,
+    rem_exact:238032, rem_fixed:238032, rem_bonus:0, rem_other:0,
+    rem_note:'Director fees S$238,032 FY2025. Second highest NED fee.',
+    rem_band:null, rem_pct_fixed:100, rem_pct_bonus:0, rem_pct_other:0,
+    edu:null,
+    bio:'Non-Executive Independent Director. Second highest director fee among NEDs.',
+    prev_roles:[],
+    cross_board_roles:[],
+    linkedin_url:null, photo_url:null,
+    tags:['Independent Director','Frasers Property']
+  },
+  {
+    id:'fpl-dir-thapana-25', name:'Thapana Sirivadhanabhakdi', role:'Non-Executive Non-Independent Director', role_type:'Board',
+    entity:'Frasers Property Limited', entity_short:'Frasers Property', ar_year:'FY2024/25',
+    appointed:null, tenure_yrs:null,
+    rem_exact:192500, rem_fixed:192500, rem_bonus:0, rem_other:0,
+    rem_note:'Director fees S$192,500 FY2025. Non-independent (TCC Group family). Brother of CEO Panote Sirivadhanabhakdi. Son of Charoen Sirivadhanabhakdi. Also Chairman of EXCO.',
+    rem_band:null, rem_pct_fixed:100, rem_pct_bonus:0, rem_pct_other:0,
+    edu:null,
+    bio:'Non-Executive Non-Independent Director. EXCO Chairman. Brother of CEO Panote Sirivadhanabhakdi; both sons of TCC Group founder Charoen Sirivadhanabhakdi (former FPL Chairman who stepped down Feb 2025 and waived his FY25 fees). Represents TCC Group controlling shareholder interests.',
+    prev_roles:[],
+    cross_board_roles:[],
+    linkedin_url:null, photo_url:null,
+    tags:['Non-Executive Director','Frasers Property','TCC Group','Sirivadhanabhakdi Family','EXCO Chair']
+  }
 ];
 
 // ═══════════════════════════════════════════════════
@@ -9425,6 +9591,23 @@ var REIT_DATA = [
   // UK/Europe: 38 Logistics + 12 Data Centres = 50 properties
 
   // ── FRASERS LCT — Singapore (2 additional from AR 2025, FY Sep 2025) ───────
+
+  // ── FRASERS CENTREPOINT TRUST (SGX: J69U) — FY2024/25 (year ended 30 Sep 2025) ──
+  // Singapore suburban retail REIT | Manager: Frasers Centrepoint Asset Management Ltd (wholly-owned by FPL)
+  // 9 retail malls + 1 office | AUM S$8.2B | FY: Oct-Sep | Listed 5 Jul 2006
+  {name:"FRASERS CENTREPOINT TRUST — PORTFOLIO OVERVIEW",addr:"438 Alexandra Road #21-00 Alexandra Point, Singapore 119958",type:"Portfolio Overview",entity:"Frasers Centrepoint Trust",entity_type:"REIT",tenure:"99-year Leasehold (all properties)",nla_sqm:327940,occ:98.1,val:8200.0,prev_occ:99.7,region:"Singapore",area:"Various — Suburban Singapore",country:"Singapore",ar_year:"FY2024/25",source:"FCT AR FY2025",notes:"SGX: J69U | FY ended 30 Sep 2025 | Manager: Frasers Centrepoint Asset Management Ltd (100% Frasers Property Limited) | Sponsor: Frasers Property Limited | Trustee: HSBC Institutional Trust Services (Singapore) Limited | 9 suburban retail malls + 1 office property | Total Portfolio Value S$8.2B (+16.8% y-o-y) | FCT owns 100% of Causeway Point, Northpoint City North+South Wing, Tampines 1, Tiong Bahru Plaza, Central Plaza, Century Square, Hougang Mall, White Sands; 50.0% of Waterway Point (via SST); 50.0% effective of NEX (via GRPL) | WALE ~1.8yr (by NLA and GRI) | Retail Portfolio Occ 98.1% (FY24: 99.7%; Hougang Mall excluded due to AEI) | FY25 Revenue S$389.6M (+10.8%); NPI S$278.0M (+9.7%); DPU 12.113¢ (+0.6% y-o-y) | Total Assets S$7,612.2M (+19.3%); Gearing 39.6% (FY24: 38.5%); WACD 3.8% | Equity fundraising S$421.3M net (private placement S$220M @ S$2.09 + preferential offering S$201.3M @ S$2.05; ~4x covered) | Perpetual securities S$200M @ 3.98% (Jun 2025) | Units 1,917M+ post equity fundraise | Market cap ~S$4.7B | Moody's Baa2 (Stable) | KEY FY25: (1) NEW — Northpoint City South Wing acquired for S$1,133M (26 May 2025) — strategic consolidation of Northpoint City; Singapore's largest suburban mall in North; (2) DIVESTED — Yishun 10 Retail Podium for S$34.5M to Sponsor (23 Sep 2025; portfolio reconstitution); (3) Hougang Mall AEI commenced Apr 2025; (4) SGTI 2025 ranked 6th REIT & Business Trust category; (5) GRESB Regional Sector Leader Asia Retail 5-Star (5th consecutive year)"},
+  {name:"NEX",addr:"23 Serangoon Central, Singapore 556083",type:"Retail Mall",entity:"Frasers Centrepoint Trust",entity_type:"REIT",tenure:"Leasehold 99yr from 26 Jun 2008",nla_sqm:58959,occ:100.0,val:2141.0,prev_occ:100.0,region:"Northeast",area:"Serangoon",country:"Singapore",ar_year:"FY2024/25",source:"FCT AR FY2025",notes:"FCT 50.0% effective interest via Gold Ridge Pte. Ltd. (GRPL) | GFA 89,228sqm (960,450sf) | NLA 58,959sqm (634,631sf) | 324 leases, 293 tenants | Occ 100% | FY25 Rev S$133.7M (100% basis; +1.9% y-o-y) | FY25 NPI S$102.3M | Val S$2,141.0M (100% basis; 13.1% of total portfolio) | Annual shopper traffic 37.9M (+2.7%) | Key tenants: FairPrice Xtra, Isetan, Food Junction, H&M, Courts, Popular Bookstore, Shaw Theatres | BCA Green Mark Gold | Largest suburban mall in Northeast SG; 2nd largest suburban mall in SG | Serangoon MRT + Serangoon Bus Interchange (NE + Circle Lines) | NLA includes 1,632sqm CSFS space | Upcoming: new Serangoon Polyclinic (largest in SG) across the road, due end-2025"},
+  {name:"NORTHPOINT CITY (NORTH WING + SOUTH WING)",addr:"930 Yishun Avenue 2, Singapore 769098",type:"Retail Mall",entity:"Frasers Centrepoint Trust",entity_type:"REIT",tenure:"Leasehold 99yr from 1 Apr 1990 (N Wing) / 19 Mar 2015 (S Wing)",nla_sqm:88379,occ:99.2,val:1933.0,prev_occ:100.0,region:"North",area:"Yishun",country:"Singapore",ar_year:"FY2024/25",source:"FCT AR FY2025",notes:"FCT 100% | COMBINED North Wing + South Wing as at 30 Sep 2025 | North Wing: GFA 79,002sqm (850,378sf); NLA 49,380sqm (531,529sf) — includes 3,739sqm CSFS | South Wing: NLA 38,999sqm (419,782sf) NEW ACQUISITION 26 May 2025 for S$1,133M | Combined NLA 88,379sqm | North Wing: 400 leases, 375 tenants; South Wing: 226 leases, 200 tenants | Occ: N Wing 100% / S Wing 92.3% | FY25 Rev S$85.6M (100% basis incl. partial South Wing + divested Yishun 10 Retail Podium contribution) | Val: N Wing S$800.0M + S Wing S$1,133.0M = S$1,933.0M total (23.6% of portfolio) | Annual shopper traffic: N Wing 58.6M | Yishun MRT + Yishun Bus Interchange (N-S Line) | Singapore's largest mall in the North | Key tenants: FairPrice, BHG, H&M, foodcourt | NOTE: Yishun 10 Retail Podium (was part of Northpoint portfolio) divested Sep 2025 for S$34.5M to Sponsor; deconsolidated from FY25 year-end"},
+  {name:"CAUSEWAY POINT",addr:"1 Woodlands Square, Singapore 738099",type:"Retail Mall",entity:"Frasers Centrepoint Trust",entity_type:"REIT",tenure:"Leasehold 99yr from 30 Oct 1995",nla_sqm:38999,occ:100.0,val:1354.0,prev_occ:100.0,region:"North",area:"Woodlands",country:"Singapore",ar_year:"FY2024/25",source:"FCT AR FY2025",notes:"FCT 100% | GFA 58,451sqm (629,167sf) | NLA 38,999sqm (419,782sf) | 225 leases, 201 tenants | Occ 100% | FY25 Rev S$97.7M (+2.5% y-o-y vs FY24 S$95.3M) | FY25 NPI S$69.9M | Val S$1,354.0M (16.5% of portfolio) | Annual shopper traffic 27.3M | Woodlands MRT Station directly connected (N-S Line + Thomson-East Coast Line) | Woodlands Bus Interchange | STRATEGIC ASSET: Largest FCT revenue contributor; near future RTS Link (Woodlands North — due end-2026) expected to drive incremental footfall; NCI-SEZ developments underpin medium-term catchment growth"},
+  {name:"WATERWAY POINT",addr:"83 Punggol Central, Singapore 828761",type:"Retail Mall",entity:"Frasers Centrepoint Trust",entity_type:"REIT",tenure:"Leasehold 99yr from 18 May 2011",nla_sqm:36273,occ:100.0,val:1331.0,prev_occ:100.0,region:"Northeast",area:"Punggol",country:"Singapore",ar_year:"FY2024/25",source:"FCT AR FY2025",notes:"FCT 50.0% interest via Sapphire Star Trust (SST, private trust) | GFA 52,047sqm (560,234sf) | NLA 36,273sqm (390,445sf) — includes 1,668sqm CSFS | 225 leases, 201 tenants | Occ 100% | FY25 Rev S$86.2M (100% basis; +3.6% y-o-y) | FY25 NPI S$64.5M | Val S$1,331.0M (100% basis; 8.1% of portfolio) | Annual shopper traffic 25.5M | Punggol MRT + Punggol LRT + Punggol Bus Interchange (NE Line + future Cross Island Line) | Waterfront mall in Singapore's youngest and fastest-growing new town"},
+  {name:"TAMPINES 1",addr:"10 Tampines Central 1, Singapore 529536",type:"Retail Mall",entity:"Frasers Centrepoint Trust",entity_type:"REIT",tenure:"Leasehold 99yr from 1 Apr 1990",nla_sqm:25832,occ:99.8,val:817.0,prev_occ:100.0,region:"East",area:"Tampines",country:"Singapore",ar_year:"FY2024/25",source:"FCT AR FY2025",notes:"FCT 100% | GFA 36,376sqm (391,551sf) | NLA 25,832sqm (278,059sf) — includes 729sqm CSFS | 188 leases, 172 tenants | Occ 99.8% | FY25 Rev S$55.0M (+2.8% y-o-y) | FY25 NPI S$38.9M | Val S$817.0M (10.0% of portfolio) | Annual shopper traffic 17.0M | Tampines MRT + Tampines Bus Interchange (EW + DT Lines) | Fashion and lifestyle focus; Hawkers' Street F&B concept"},
+  {name:"TIONG BAHRU PLAZA",addr:"302 Tiong Bahru Road, Singapore 168732",type:"Retail Mall",entity:"Frasers Centrepoint Trust",entity_type:"REIT",tenure:"Leasehold 99yr from 1 Sep 1991",nla_sqm:19928,occ:99.2,val:665.0,prev_occ:100.0,region:"Central",area:"Tiong Bahru",country:"Singapore",ar_year:"FY2024/25",source:"FCT AR FY2025",notes:"FCT 100% | GFA 48,235sqm (519,202sf) | NLA 19,928sqm (214,505sf) | 150 leases, 134 tenants | Occ 99.2% | FY25 Rev S$44.5M | FY25 NPI S$33.3M | Val S$665.0M (8.1% of portfolio) | Annual shopper traffic 16.6M | Tiong Bahru MRT (EW Line) | Heritage precinct; includes Central Plaza (office) in same building complex"},
+  {name:"CENTRAL PLAZA",addr:"298 Tiong Bahru Road, Singapore 168730",type:"Office",entity:"Frasers Centrepoint Trust",entity_type:"REIT",tenure:"Leasehold 99yr from 1 Sep 1991",nla_sqm:15899,occ:94.6,val:219.0,prev_occ:96.0,region:"Central",area:"Tiong Bahru",country:"Singapore",ar_year:"FY2024/25",source:"FCT AR FY2025",notes:"FCT 100% | OFFICE PROPERTY (not retail) | GFA part of Tiong Bahru Plaza complex | NLA 15,899sqm (171,136sf) — includes 2,634sqm CSFS | 35 leases, 33 tenants | Occ 94.6% | FY25 Rev S$12.1M | FY25 NPI S$8.4M | Val S$219.0M (2.7% of portfolio) | Tiong Bahru MRT (EW Line) | Office component of Tiong Bahru Plaza complex"},
+  {name:"CENTURY SQUARE",addr:"2 Tampines Central 5, Singapore 529509",type:"Retail Mall",entity:"Frasers Centrepoint Trust",entity_type:"REIT",tenure:"Leasehold 99yr from 1 Sep 1992",nla_sqm:19628,occ:91.8,val:563.0,prev_occ:93.0,region:"East",area:"Tampines",country:"Singapore",ar_year:"FY2024/25",source:"FCT AR FY2025",notes:"FCT 100% | GFA 30,400sqm (327,226sf) | NLA 19,628sqm (211,278sf) — includes 794sqm CSFS | 151 leases, 147 tenants | Occ 91.8% | FY25 Rev S$35.9M | FY25 NPI S$26.1M | Val S$563.0M (6.9% of portfolio) | Annual shopper traffic 14.5M | Tampines MRT + Tampines Bus Interchange (EW + DT Lines) | Underwent major AEI; serves Tampines community alongside Tampines 1"},
+  {name:"HOUGANG MALL",addr:"90 Hougang Avenue 10, Singapore 538766",type:"Retail Mall",entity:"Frasers Centrepoint Trust",entity_type:"REIT",tenure:"Leasehold 99yr from 1 May 1994",nla_sqm:15400,occ:73.5,val:467.0,prev_occ:97.2,region:"Northeast",area:"Hougang",country:"Singapore",ar_year:"FY2024/25",source:"FCT AR FY2025",notes:"FCT 100% | GFA 21,626sqm (232,782sf) | NLA 15,400sqm (165,765sf) — includes 1,465sqm CSFS | 92 leases, 86 tenants | Occ 73.5% (FY24: 97.2%) — AEI impact | AEI COMMENCED APR 2025 — significant occupancy reduction expected during works; 80% of total AEI NLA in advanced negotiations/leases | FY25 Rev S$27.1M (reduced by AEI) | FY25 NPI S$17.1M | Val S$467.0M (5.7% of portfolio) | Annual shopper traffic 10.9M | Hougang MRT (NE Line + future Cross Island Line) + Hougang Central Bus Interchange | NOTE: Excluded from retail portfolio occupancy calculation due to ongoing AEI"},
+  {name:"WHITE SANDS",addr:"1 Pasir Ris Central Street 3, Singapore 518457",type:"Retail Mall",entity:"Frasers Centrepoint Trust",entity_type:"REIT",tenure:"Leasehold 99yr from 1 May 1993",nla_sqm:13968,occ:100.0,val:431.0,prev_occ:100.0,region:"East",area:"Pasir Ris",country:"Singapore",ar_year:"FY2024/25",source:"FCT AR FY2025",notes:"FCT 100% | GFA 22,331sqm (240,371sf) | NLA 13,968sqm (150,352sf) — includes 2,020sqm CSFS | 143 leases, 132 tenants | Occ 100% | FY25 Rev S$31.6M (+3.6% y-o-y) | FY25 NPI S$21.7M | Val S$431.0M (5.3% of portfolio) | Annual shopper traffic 10.3M | Pasir Ris MRT (EW + future Cross Island Line) + Pasir Ris Bus Interchange | Serves Pasir Ris and Tampines East residential communities"},
+
+  // ── FRASERS LOGISTICS & COMMERCIAL TRUST ─────────────────────────────────
   {name:"ALEXANDRA TECHNOPARK",addr:"438A/438B/438C Alexandra Road, Singapore 119973",type:"Business Park",entity:"Frasers Logistics & Commercial Trust",entity_type:"REIT",tenure:"Leasehold",nla_sqm:95696,occ:77.9,val:711.0,region:"Central",area:"Alexandra",country:"Singapore",ar_year:"FY2025",source:"Frasers LCT AR 2025",status:"Leasehold exp 2108; 63 tenants incl Worley, Olympus Singapore; val S$711M"},
   {name:"2 TUAS SOUTH LINK 1",addr:"2 Tuas South Link 1, Singapore 638044",type:"Industrial",entity:"Frasers Logistics & Commercial Trust",entity_type:"REIT",tenure:"Leasehold",nla_sqm:56203,occ:91.6,val:145.0,region:"West",area:"Tuas",country:"Singapore",ar_year:"FY2025",source:"Frasers LCT AR 2025",status:"Leasehold exp Aug 2037; 15 tenants; logistics & industrial"},
   // ── FRASERS LCT — Overseas Clusters (AR 2025, FY Sep 2025) ─────────────────
@@ -10021,7 +10204,23 @@ var REIT_DATA = [
   {name:"ESR YATOMI KISOSAKI DISTRIBUTION CENTRE",addr:"1-3-4, Shinwa, Kisosaki-Cho, Kuwana-Gun, Mie, Japan",type:"Logistics",entity:"ESR-REIT",entity_type:"REIT",tenure:"Freehold",nla_sqm:134863,occ:93.0,val:null,region:"Japan",area:"Mie — Nagoya Region",country:"Japan",ar_year:"FY2024",source:"ESR-REIT AR 2024",notes:"NEW ACQUISITION Nov 2024 | Multi-tenanted | GFA 155,332sqm | NLA 134,863sqm | Freehold | Occ 93.0% | Rental income JPY 212.0M (partial Nov-Dec 2024 contribution; +approx S$0.2M income support in FY2024) | Val JPY 39,010M | Acq 15 Nov 2024 | Purchase price JPY 38,000M | Japan — Nagoya region (Central Japan logistics hub) | Transformational acquisition from ESR Group Sponsor pipeline | DPU accretive: +3.0% pro forma | Acquired at 2.3% discount to avg independent valuation"},
 
 
-  // ── GUOCOLAND — FY2025 (AR year ended 30 June 2025) ───────────────────────
+
+  // ── FRASERS PROPERTY LIMITED (SGX: TQ5) — FY2024/25 (year ended 30 Sep 2025) ──
+  // Integrated investor-developer-operator | FY: Oct-Sep | TCC Group controlled (largest shareholder: TCC Assets/Thai Beverage)
+  // AUM S$49.4B across 5 asset classes | Listed: Mainboard SGX | CEO: Panote Sirivadhanabhakdi
+  {name:"FRASERS PROPERTY — GROUP OVERVIEW",addr:"438 Alexandra Road #21-00 Alexandra Point, Singapore 119958",type:"Portfolio Overview",entity:"Frasers Property Limited",entity_type:"Developer",tenure:"Various",nla_sqm:null,occ:null,val:null,region:"Multi-Market",area:"Singapore · Australia · Europe · Thailand · Vietnam · UK · China",country:"Multi-Market",ar_year:"FY2024/25",source:"Frasers Property AR FY2025",notes:"SGX: TQ5 | FY ended 30 Sep 2025 | CEO: Panote Sirivadhanabhakdi (since 1 Oct 2016; brother of Thapana Sirivadhanabhakdi; sons of TCC Group founder Charoen Sirivadhanabhakdi) | Chairman: Chumpol NaLamlieng (since 8 Feb 2025; former Siam Cement President + SingTel Chairman) | TCC Group effective controlling shareholder via TCC Assets (Thailand) + Thai Beverage (THBEV) | Listed REITs: FCT (retail SG), FLCT (industrial/commercial), FHT (hospitality; privatised FY25), FTREIT (Thailand industrial), GVREIT (Thailand) | AUM S$49.4B (FY24: S$46.9B+): Industrial & Logistics S$15.7B + Retail S$12.5B + Commercial & Business Parks S$9.9B + Residential S$7.0B + Hospitality S$4.3B | FY25 Revenue S$3,403.5M (FY24: S$4,214.8M; -19.2% — mainly lower EC recognition vs FY24 Parc Greenwich TOP, partially offset by Sky Eden@Bedok progressive recognition and The Orie maiden contribution) | PBIT S$1,186.2M (FY24: S$1,352.2M; -12.3%) | Attributable profit S$243.1M (FY24: S$206.3M; +17.8%) — after FV changes | Basic EPS 5.9¢ (after FV) / 5.8¢ (before FV; FY24: 4.5¢) | DPS 4.5¢ (FY24: 4.5¢; maintained) | NAV/share S$2.37 (FY24: S$2.45; -3.3%) | Shareholders equity S$9,297.2M | Net debt/equity 89.2% (FY24: 83.4%; elevated — FHT privatisation + NCSW acquisition + FLCT industrial property + AU/EU capex) | Net debt/property assets 43.7% | Interest cover 2.1x | WACD ~4.0% p.a. | 75% fixed rate (incl. swaps) | Weighted avg debt maturity 2.5 years | Gross debt (incl. REITs) S$17.7B; excl. REITs S$12.6B | Undrawn banking facilities S$4.5B+ | FY25 Green/sustainability loans: S$4.2B arranged; ~61% total borrowings green/sustainability-linked | KEY FY25: (1) FHT privatisation completed (FY25); (2) FCT acquired Northpoint City South Wing S$1,133M; (3) FLCT acquired 2 Tuas South Link 1 SG + German/Dutch properties; (4) SG residential: The Orie JV (CDL + Sekisui) 93% sold; Sky Eden@Bedok progressive recognition; The Robertson Opus launched (49% sold); (5) Frasers Hospitality: Capri by Fraser Barcelona + Fraser Residence Sudirman Jakarta + Fraser Suites Perth divested; (6) Australia: strong industrial demand; Midtown MacPark won multiple UDIA awards; (7) Thailand: One Bangkok opened 25 Oct 2024 (FPL 19.8% stake)"},
+  // ── FPL SINGAPORE — Retail (via FCT; FPL effective 37.9% in most, 19.0% in NEX/WP) ──
+  {name:"THE CENTREPOINT",addr:"176 Orchard Road, Singapore 238843",type:"Retail Mall",entity:"Frasers Property Limited",entity_type:"Developer",tenure:"Leasehold 99yr",nla_sqm:33400,occ:97.8,val:575.0,prev_occ:95.1,region:"Central",area:"Orchard Road",country:"Singapore",ar_year:"FY2024/25",source:"Frasers Property AR FY2025",notes:"FPL 100% owned (not in FCT) | NLA 33.4K sqm | Val S$575.0M | Occ 97.8% (FY24: 95.1%) | Orchard Road regional mall | Part of FPS investment portfolio"},
+  {name:"YISHUN 10",addr:"51 Yishun Avenue 11, Singapore 768867",type:"Retail",entity:"Frasers Property Limited",entity_type:"Developer",tenure:"Leasehold 99yr",nla_sqm:4800,occ:100.0,val:80.5,region:"North",area:"Yishun",country:"Singapore",ar_year:"FY2024/25",source:"Frasers Property AR FY2025",notes:"FPL acquired 100% in FY25 (from FCT's divestment 23 Sep 2025 + earlier strata acquisitions from external party) | NLA 4.8K sqm | Val S$80.5M | Former Yishun 10 Retail Podium (divested by FCT to FPL) | Acquired for S$34.5M (FCT portion) + additional strata | Part of Northpoint City precinct management"},
+  // ── FPL SINGAPORE — Commercial ────────────────────────────────────────────
+  {name:"FRASERS TOWER",addr:"182 Cecil Street, Singapore 069547",type:"Office",entity:"Frasers Property Limited",entity_type:"Developer",tenure:"Leasehold 99yr",nla_sqm:63600,occ:99.4,val:2124.0,prev_occ:99.0,region:"Central",area:"Tanjong Pagar CBD",country:"Singapore",ar_year:"FY2024/25",source:"Frasers Property AR FY2025",notes:"FPS 50.0% (via Aquamarine Star Trust; presented on 100% basis) | NLA 63.6K sqm | Val S$2,124.0M (100% basis) | Occ 99.4% (FY24: 99.0%) | Grade A office tower | SmartScore + WiredScore double-Platinum | WELL Health-Safety recertified 2025 | Tanjong Pagar CBD | FY25 commercial PBIT contribution: stable"},
+  {name:"51 CUPPAGE ROAD",addr:"51 Cuppage Road, Singapore 229469",type:"Office",entity:"Frasers Property Limited",entity_type:"Developer",tenure:"Leasehold 99yr",nla_sqm:25300,occ:90.7,val:426.0,prev_occ:87.0,region:"Central",area:"Orchard / Cuppage",country:"Singapore",ar_year:"FY2024/25",source:"Frasers Property AR FY2025",notes:"FPS 100% | NLA 25.3K sqm | Val S$426.0M | Occ 90.7% (+3.7pp y-o-y) | Office in Orchard Road precinct"},
+  {name:"ALEXANDRA POINT",addr:"438 Alexandra Road, Singapore 119958",type:"Office",entity:"Frasers Property Limited",entity_type:"Developer",tenure:"Leasehold 99yr",nla_sqm:19000,occ:88.4,val:343.0,prev_occ:87.5,region:"Central",area:"Alexandra",country:"Singapore",ar_year:"FY2024/25",source:"Frasers Property AR FY2025",notes:"FPS 100% (also group HQ) | NLA 19.0K sqm | Val S$343.0M | Occ 88.4% (+0.9pp y-o-y) | WELL Health-Safety recertified 2025 | SmartScore + WiredScore Platinum"},
+  {name:"VALLEY POINT OFFICE TOWER & SHOPPING CENTRE",addr:"491 River Valley Road, Singapore 248371",type:"Mixed (Office + Retail)",entity:"Frasers Property Limited",entity_type:"Developer",tenure:"Leasehold 99yr",nla_sqm:21000,occ:79.2,val:351.0,prev_occ:77.3,region:"Central",area:"River Valley",country:"Singapore",ar_year:"FY2024/25",source:"Frasers Property AR FY2025",notes:"FPS 100% | NLA 21.0K sqm | Val S$351.0M | Occ 79.2% (+1.9pp y-o-y) | Office + retail mixed use | River Valley Road"},
+  // ── FPL HOSPITALITY — Owned Properties (key Singapore/Asia Pacific) ──────
+  {name:"FRASERS HOSPITALITY — GLOBAL PORTFOLIO",addr:"438 Alexandra Road, Singapore 119958",type:"Hospitality Portfolio",entity:"Frasers Property Limited",entity_type:"Developer",tenure:"Various",nla_sqm:null,occ:null,val:null,region:"Multi-Market",area:"Global",country:"Multi-Market",ar_year:"FY2024/25",source:"Frasers Property AR FY2025",notes:"Frasers Hospitality (FH) segment | As at 30 Sep 2025: 112 properties in operation, 16,600+ lodging units | AUM S$3.8B (owned properties), 20,000+ units incl. pipeline | 10 brands: Fraser Suites, Fraser Residence, Fraser Place, Capri by Fraser, Modena by Fraser, Malmaison, Hotel du Vin, YOTEL, Novotel, ANA Crowne Plaza | FY25 PBIT S$111.2M (FY24: S$132.6M; -$21.4M — property divestments: Capri by Fraser Barcelona, Fraser Residence Sudirman Jakarta, Fraser Suites Perth) | Diversified across Asia Pacific (AU, Japan, China, Singapore, Malaysia), Europe (Germany, UK, France), Middle East and Africa | KEY FY25: 6 new properties opened in China and Vietnam; Modena by Fraser Shenzhen + Wujiaochang Shanghai (premium rental apartments, new format); 4 new management agreements (Cambodia, China, Japan, Malaysia) | GRESB 4-star rating | FY25 highlights: Japan and Australia best performers; Singapore softer due to no major events + wind-down of Fraser Place Robertson Walk; Europe facing competition and cost pressures"},
+
+  // ── GUOCOLAND ─────────────────────────────────────────────────────────────────
   {name:"GUOCO TOWER",addr:"1 Wallich Street, Singapore 078881",type:"Mixed (Office + Retail + Hotel + Resi)",entity:"GuocoLand",entity_type:"Dev",tenure:"Leasehold 99 yrs from 2012",nla_sqm:91974,occ:100,val:null,prev_occ:100,region:"Singapore",area:"Tanjong Pagar CBD",country:"Singapore",ar_year:"FY2025",source:"GuocoLand AR 2025",notes:"Singapore\'s tallest building at 290m | 890,000 sq ft (82,776sqm) Grade A office + 100,000 sq ft (9,290sqm) retail + Sofitel Singapore City Centre hotel + 181 ultra-luxury homes at Wallich Residence | Directly connected to Tanjong Pagar MRT | 100% committed as at 30 Jun 2025 (office + retail) | Tenants: MNCs from technology, banking & finance, investment services, insurance, media | Flagship transit-oriented integrated mixed development; transformed Tanjong Pagar into prime office district | BCA Green Mark certified | 150,000 sq ft Urban Park at podium | Part of SG investment portfolio: total IP val S$6.97B (FY2025) vs S$6.785B (FY2024); SG fair value gain S$76M in FY2025"},
   {name:"GUOCO MIDTOWN",addr:"120 Beach Road, Singapore 189759",type:"Mixed (Office + Retail + Resi)",entity:"GuocoLand",entity_type:"Dev",tenure:"Leasehold 99 yrs from 2018",nla_sqm:65870,occ:100,val:null,prev_occ:100,region:"Singapore",area:"Beach Road–Bugis",country:"Singapore",ar_year:"FY2025",source:"GuocoLand AR 2025",notes:"3.2-hectare mega transit-oriented integrated mixed development | 709,000 sq ft (65,870sqm) premium Grade A office (30-storey tower + 5-storey Network Hub with on-demand office + MICE) + 50,000 sq ft retail (3 clusters) + Midtown Bay (219 units) + Midtown Modern (558 units, fully sold Dec 2024) | Directly connected to Bugis MRT interchange (EWL + DTL underground link) | 100% committed as at 30 Jun 2025 | Completed in phases 2023–2025; Guoco Midtown II retail podium (Tan Quee Lan St) opened May 2025 — final phase | BCA Green Mark Platinum certified | PUB Water Efficient (Basic) Building | Community: Guoco Midtown Public Art Wall (44m underpass); Education Panels (former Beach Road Police Station)"},
   {name:"20 COLLYER QUAY",addr:"20 Collyer Quay, Singapore 049319",type:"Office",entity:"GuocoLand",entity_type:"Dev",tenure:"Leasehold",nla_sqm:15236,occ:98,val:null,prev_occ:null,region:"Singapore",area:"Raffles Place CBD",country:"Singapore",ar_year:"FY2025",source:"GuocoLand AR 2025",notes:"164,000 sq ft (15,236sqm) NLA | 24-storey office building above Raffles Place MRT interchange, overlooking Marina Bay | 98% committed as at 30 Jun 2025 | Modern infrastructure + sustainability certifications + flexible leasing | Sought-after address for financial and professional services | PUB Water Efficient (Basic) Building"},
@@ -10099,6 +10298,7 @@ var ENTITY_COLORS = {
   "Lendlease Global Commercial REIT":"#884ea0",
   "Frasers Logistics & Commercial Trust":"#1a7a4a",
   "Frasers Centrepoint Trust":"#d35400",
+  "Frasers Property Limited":"#1a6b3a",
   "Mapletree Logistics Trust":"#2e6da4",
   "Mapletree Industrial Trust":"#16697a",
   "SingLand":"#21513b",
