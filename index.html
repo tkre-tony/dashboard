@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+=<!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8"/>
@@ -1809,6 +1809,10 @@ html,body{background:var(--bg);color:var(--txt);font-family:'DM Sans',sans-serif
       <option value="tenure_desc">Sort: Tenure ↓</option>
       <option value="entity">Sort: Entity</option>
     </select>
+    <div style="display:flex;border:1px solid var(--bdr);border-radius:6px;overflow:hidden;flex-shrink:0">
+      <button id="talent-vbtn-grid" onclick="talentSetView('grid')" title="Card view" style="padding:6px 10px;border:none;background:var(--g1);color:#fff;cursor:pointer;font-size:13px">⊞</button>
+      <button id="talent-vbtn-tbl"  onclick="talentSetView('table')" title="Table view" style="padding:6px 10px;border:none;background:var(--srf2);color:var(--mut);cursor:pointer;font-size:13px;border-left:1px solid var(--bdr)">☰</button>
+    </div>
     <span id="talent-count" style="font-size:11px;color:var(--mut);margin-left:4px"></span>
   </div>
   <div style="font-size:10px;color:var(--mut2);margin-bottom:12px;padding:6px 10px;background:var(--srf2);border-radius:5px;border:1px solid var(--bdr)">
@@ -1818,6 +1822,14 @@ html,body{background:var(--bg);color:var(--txt);font-family:'DM Sans',sans-serif
 
   <!-- Cards grid -->
   <div class="talent-grid" id="talent-grid"></div>
+
+  <!-- Table view -->
+  <div id="talent-tbl-wrap" style="display:none;overflow-x:auto;margin-bottom:14px">
+    <table class="ptable" id="talent-tbl">
+      <thead id="talent-tbl-hd"></thead>
+      <tbody id="talent-tbl-body"></tbody>
+    </table>
+  </div>
 </div>
 
 <!-- Detail drawer -->
@@ -2798,6 +2810,117 @@ var TALENT_DATA = [
 // TALENT TAB — STATE & RENDER
 // ═══════════════════════════════════════════════════
 var talentRoleFilter = 'all';
+var talentViewMode = 'grid';
+var talentTblSort = {col:'entity', dir:'asc'};
+
+function talentSetView(mode){
+  talentViewMode = mode;
+  var gBtn = document.getElementById('talent-vbtn-grid');
+  var tBtn = document.getElementById('talent-vbtn-tbl');
+  if(gBtn){ gBtn.style.background = mode==='grid'?'var(--g1)':'var(--srf2)'; gBtn.style.color = mode==='grid'?'#fff':'var(--mut)'; }
+  if(tBtn){ tBtn.style.background = mode==='table'?'var(--g1)':'var(--srf2)'; tBtn.style.color = mode==='table'?'#fff':'var(--mut)'; }
+  document.getElementById('talent-grid').style.display      = mode==='grid'  ? 'grid' : 'none';
+  document.getElementById('talent-tbl-wrap').style.display  = mode==='table' ? 'block': 'none';
+  talentRender();
+}
+
+function talentTblSortBy(col){
+  if(talentTblSort.col===col) talentTblSort.dir = talentTblSort.dir==='asc'?'desc':'asc';
+  else { talentTblSort.col=col; talentTblSort.dir='asc'; }
+  talentRenderTable(talentSort(talentFilter()));
+}
+
+function talentRenderTable(data){
+  var ROLE_COLORS = {CEO:'#7c3aed',CFO:'#0891b2',CIO:'#16a34a',Board:'#d97706',Other:'#64748b'};
+
+  // Sort by talentTblSort
+  var col=talentTblSort.col, dir=talentTblSort.dir;
+  data = data.slice().sort(function(a,b){
+    var av,bv;
+    if(col==='name'){av=a.name;bv=b.name;}
+    else if(col==='entity'){av=a.entity;bv=b.entity;}
+    else if(col==='role'){av=a.role_type;bv=b.role_type;}
+    else if(col==='rem'){av=a.rem_exact||0;bv=b.rem_exact||0; return dir==='asc'?av-bv:bv-av;}
+    else if(col==='tenure'){av=a.tenure_yrs||0;bv=b.tenure_yrs||0; return dir==='asc'?av-bv:bv-av;}
+    else if(col==='yoy'){
+      var ah=(a.rem_history&&a.rem_history.length>=2&&a.rem_history[0].total&&a.rem_history[1].total)?Math.round((a.rem_history[0].total-a.rem_history[1].total)/a.rem_history[1].total*100):null;
+      var bh=(b.rem_history&&b.rem_history.length>=2&&b.rem_history[0].total&&b.rem_history[1].total)?Math.round((b.rem_history[0].total-b.rem_history[1].total)/b.rem_history[1].total*100):null;
+      av=ah!=null?ah:-999;bv=bh!=null?bh:-999; return dir==='asc'?av-bv:bv-av;
+    }
+    else {av=(a[col]||'').toString();bv=(b[col]||'').toString();}
+    var cmp=dir==='asc'?av.localeCompare(bv):bv.localeCompare(av);
+    return cmp!==0?cmp:a.entity.localeCompare(b.entity);
+  });
+
+  function th(c,lbl){
+    var act=talentTblSort.col===c;
+    var arr=act?(talentTblSort.dir==='asc'?' ↑':' ↓'):'';
+    return '<th onclick="talentTblSortBy(\''+c+'\')" class="'+(act?'rth-act':'')+'" style="cursor:pointer;white-space:nowrap">'+lbl+arr+'</th>';
+  }
+  var hd='<tr>'+th('name','Name')+th('entity','Entity')+th('role','Role')+th('tenure','Tenure')+th('rem','Remuneration')+th('yoy','YoY')+
+    '<th>Fixed/Bonus</th><th>Source</th><th>Appointed</th></tr>';
+  document.getElementById('talent-tbl-hd').innerHTML=hd;
+
+  var rows = data.map(function(p){
+    var rc = ROLE_COLORS[p.role_type]||'#64748b';
+
+    // Remuneration cell
+    var remCell;
+    if(p.rem_exact){
+      remCell = '<span style="font-family:\'DM Mono\',monospace;font-size:12px;font-weight:700">S$'+Math.round(p.rem_exact/1000).toLocaleString()+'K</span>';
+    } else if(p.rem_band){
+      remCell = '<span style="font-size:11px;color:var(--mut)">'+p.rem_band+'</span>';
+    } else {
+      remCell = '<span style="color:var(--mut2);font-size:10px">—</span>';
+    }
+
+    // Source badge
+    var srcBadge = p.rem_exact
+      ? '<span style="font-size:9px;background:#f0fdf4;color:#166534;border:1px solid #bbf7d0;border-radius:3px;padding:1px 5px;font-weight:600">AR</span>'
+      : (p.rem_band&&p.rem_band.indexOf('est')>=0
+        ? '<span style="font-size:9px;background:#fffbeb;color:#92400e;border:1px solid #fde68a;border-radius:3px;padding:1px 5px;font-weight:600">EST</span>'
+        : '<span style="font-size:9px;background:#f5f3ff;color:#5b21b6;border:1px solid #ddd6fe;border-radius:3px;padding:1px 5px;font-weight:600">AR</span>');
+
+    // YoY cell
+    var yoyCell = '—';
+    var hist = p.rem_history;
+    if(hist&&hist.length>=2&&hist[0].total&&hist[1].total){
+      var pct=Math.round((hist[0].total-hist[1].total)/hist[1].total*100);
+      var up=pct>=0;
+      yoyCell='<span style="font-size:11px;font-weight:700;color:'+(up?'#16a34a':'#c8364a')+'">'+(up?'▲':'▼')+Math.abs(pct)+'%</span>';
+    }
+
+    // Fixed/Bonus split
+    var splitCell = '—';
+    if((p.rem_pct_fixed||0)+(p.rem_pct_bonus||0)>0){
+      splitCell='<span style="font-size:10px;color:var(--mut)">'+Math.round(p.rem_pct_fixed||0)+'% / '+Math.round(p.rem_pct_bonus||0)+'%</span>';
+    }
+
+    // Tenure
+    var tenCell = p.tenure_yrs!=null
+      ? '<span style="font-size:11px;color:var(--mut)">'+p.tenure_yrs+(p.tenure_yrs===1?' yr':' yrs')+'</span>'
+      : '<span style="color:var(--mut2);font-size:10px">—</span>';
+
+    // LinkedIn
+    var liLink = p.linkedin_url
+      ? ' <a href="'+p.linkedin_url+'" target="_blank" onclick="event.stopPropagation()" style="color:#0077b5;font-size:10px;text-decoration:none;vertical-align:middle" title="LinkedIn">in</a>'
+      : '';
+
+    return '<tr style="cursor:pointer" onclick="talentOpenDrawer(\''+p.id+'\')">'+
+      '<td><span style="font-size:12px;font-weight:600;color:var(--txt)">'+p.name+'</span>'+liLink+'</td>'+
+      '<td><span style="font-size:11px;color:var(--mut)">'+p.entity_short+'</span></td>'+
+      '<td><span style="font-size:10px;font-weight:700;color:'+rc+';background:'+rc+'22;border-radius:3px;padding:2px 7px">'+p.role_type+'</span></td>'+
+      '<td>'+tenCell+'</td>'+
+      '<td>'+remCell+'</td>'+
+      '<td style="text-align:center">'+yoyCell+'</td>'+
+      '<td>'+splitCell+'</td>'+
+      '<td>'+srcBadge+'</td>'+
+      '<td><span style="font-size:10px;color:var(--mut2)">'+( p.appointed||'—')+'</span></td>'+
+      '</tr>';
+  }).join('');
+
+  document.getElementById('talent-tbl-body').innerHTML = rows || '<tr><td colspan="9" style="text-align:center;color:var(--mut);padding:24px">No profiles match current filters</td></tr>';
+}
 var talentOpenId = null;
 
 var ROLE_COLORS = {
@@ -2882,6 +3005,10 @@ function talentSort(arr){
 function talentRender(){
   var filtered = talentSort(talentFilter());
   document.getElementById('talent-count').textContent = filtered.length+' profile'+(filtered.length!==1?'s':'');
+  if(talentViewMode==='table'){
+    talentRenderTable(filtered);
+    return;
+  }
   var grid = document.getElementById('talent-grid');
   grid.innerHTML = filtered.map(function(p){
     var remLbl = talentRemLabel(p);
