@@ -4257,17 +4257,8 @@ async function talentLoadEnrichment(){
   } catch(err){ /* silent — enrichment optional */ }
 }
 
-// Init on tab activation (lazy)
+// Init on tab activation (lazy) — handler consolidated into unified tab switcher below
 var talentInited = false;
-document.querySelectorAll('.navtab').forEach(function(t){
-  t.addEventListener('click',function(){
-    if(t.dataset.tab==='talent' && !talentInited){
-      talentInited = true;
-      talentInitSummary();
-      talentLoadEnrichment().then(function(){ talentRender(); }).catch(function(){ talentRender(); });
-    }
-  });
-});
 </script>
 
 <script>
@@ -4788,15 +4779,42 @@ function renderMonthlyChart(data){
   wrap.innerHTML=svg;
 }
 
-// TABS
+// TABS — unified single handler (prevents duplicate listener conflicts)
 document.querySelectorAll(".navtab").forEach(function(t){
-  t.addEventListener("click",function(){
-    document.querySelectorAll(".navtab").forEach(function(x){x.classList.remove("on");});
-    document.querySelectorAll(".panel").forEach(function(x){x.classList.remove("on");});
+  t.addEventListener("click", function(){
+    var tab = t.dataset.tab;
+    // 1. Update nav highlights
+    document.querySelectorAll(".navtab").forEach(function(x){ x.classList.remove("on"); });
     t.classList.add("on");
-    var p=document.getElementById("tab-"+t.dataset.tab);
-    if(p)p.classList.add("on");
-    if(t.dataset.tab==="analytics"){ renderAnalytics(); if(!pnlLoaded) pnlLoadData(); }
+    // 2. Hide all panels
+    document.querySelectorAll(".panel").forEach(function(x){ x.classList.remove("on"); });
+    // 3. Show correct panel
+    if(tab === "assetdir"){
+      // assetdir navtab uses tab-reit panel (no id="tab-assetdir" exists)
+      var rp = document.getElementById("tab-reit");
+      if(rp) rp.classList.add("on");
+      reitSearch(0); loadARTracker();
+    } else {
+      var p = document.getElementById("tab-" + tab);
+      if(p) p.classList.add("on");
+    }
+    // 4. Tab-specific init/load
+    if(tab === "analytics"){ renderAnalytics(); if(!pnlLoaded) pnlLoadData(); }
+    if(tab === "directory"){ dirSearch(0); }
+    if(tab === "transactions"){
+      if(document.getElementById("tx-tbody") && document.getElementById("tx-tbody").innerHTML === ""){
+        searchTransactions(0);
+      }
+    }
+    if(tab === "talent" && !talentInited){
+      talentInited = true;
+      talentInitSummary();
+      talentLoadEnrichment().then(function(){ talentRender(); }).catch(function(){ talentRender(); });
+    }
+    if(tab === "projects"){
+      if(!projLoaded) projLoadUnits();
+      sophiaLoadCaveats();
+    }
   });
 });
 
@@ -6802,9 +6820,7 @@ function dirCloseDetail(){
   else{document.getElementById("dir-list").style.display="block";document.getElementById("dir-grid").style.display="none";}
 }
 
-document.querySelectorAll(".navtab").forEach(function(t){
-  if(t.dataset.tab==="directory") t.addEventListener("click",function(){ dirSearch(0); });
-});
+// directory tab handler consolidated into unified tab switcher above
 document.addEventListener("keydown",function(e){ if(e.key==="Enter"&&document.activeElement.id==="dir-search") dirSearch(0); });
 
 // ─── SUPABASE ─────────────────────────────────────────────────────────
@@ -6935,16 +6951,7 @@ function clearSearch(){
   document.getElementById("tx-stat-strip").style.display = "none";
 }
 
-// Load transactions when tab is clicked
-document.querySelectorAll(".navtab").forEach(function(t){
-  if(t.dataset.tab === "transactions"){
-    t.addEventListener("click", function(){
-      if(document.getElementById("tx-tbody").innerHTML === ""){
-        searchTransactions(0);
-      }
-    });
-  }
-});
+// transactions tab handler consolidated into unified tab switcher above
 
 // ─── OVERVIEW SMART SEARCH ────────────────────────────────────────────
 var ovPage = 0;
@@ -9325,18 +9332,7 @@ function reitClear(){
   reitSearch(0);
 }
 
-// Trigger search on tab click
-document.querySelectorAll(".navtab").forEach(function(t){
-  if(t.dataset.tab==="reit" || t.dataset.tab==="assetdir") t.addEventListener("click",function(){
-    // Both tabs use the same tab-reit panel
-    if(t.dataset.tab==="assetdir"){
-      document.querySelectorAll(".panel").forEach(function(x){x.classList.remove("on");});
-      var p=document.getElementById("tab-reit");
-      if(p) p.classList.add("on");
-    }
-    reitSearch(0); loadARTracker();
-  });
-});
+// assetdir/reit tab handler consolidated into unified tab switcher above
 
 // ══════════════════════════════════════════════════════════
 // PROJECTS FOR SALE — One Sophia
@@ -9720,15 +9716,7 @@ function sophiaComputeCaveatMap() {
   projRenderStack();
 }
 
-// ── Load when tab is clicked ───────────────────────────────
-document.querySelectorAll(".navtab").forEach(function(t) {
-  t.addEventListener("click", function() {
-    if (t.dataset.tab === "projects") {
-      if (!projLoaded) projLoadUnits();
-      sophiaLoadCaveats();
-    }
-  });
-});
+// projects tab handler consolidated into unified tab switcher above
 
 
 // ── One Sophia · URA Caveats ──────────────────────────────────────────
