@@ -359,7 +359,7 @@ html,body{background:var(--bg);color:var(--txt);font-family:'DM Sans',sans-serif
   <div class="navtab" data-tab="transactions"><span class="navtab-icon">💹</span>Transactions</div>
   <div class="navtab" data-tab="news"><span class="navtab-icon">📰</span>Newsroom</div>
   <div class="navtab" data-tab="pipeline"><span class="navtab-icon">🔭</span>Pipeline</div>
-  <div class="navtab" data-tab="reit" style="display:flex;align-items:center;gap:6px">
+  <div class="navtab" data-tab="assetdir" style="display:flex;align-items:center;gap:6px">
     <span class="navtab-icon">🗂</span>Asset Directory
     <span style="font-size:9px;background:var(--g3);border-radius:3px;padding:1px 5px;font-weight:800;letter-spacing:.05em;color:#fff">NEW</span>
   </div>
@@ -699,7 +699,7 @@ html,body{background:var(--bg);color:var(--txt);font-family:'DM Sans',sans-serif
       <button class="dir-tbtn on" data-down="" onclick="dirSetOwnership(this,'')">All</button>
       <button class="dir-tbtn" data-down="strata" onclick="dirSetOwnership(this,'strata')">🏠 Strata</button>
       <button class="dir-tbtn" data-down="corporate" onclick="dirSetOwnership(this,'corporate')">🏢 Corporate</button>
-      <button class="dir-tbtn" data-down="reit" onclick="document.querySelector('.navtab[data-tab=reit]').click()">📊 REITs</button>
+      <button class="dir-tbtn" data-down="reit" onclick="document.querySelector('.navtab[data-tab=assetdir]').click()">📊 REITs</button>
     </div>
     <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px" id="dir-type-btns">
       <button class="dir-tbtn on" data-dtype="" onclick="dirSetType(this,'')">All Types</button>
@@ -8792,7 +8792,15 @@ function reitClear(){
 
 // Trigger search on tab click
 document.querySelectorAll(".navtab").forEach(function(t){
-  if(t.dataset.tab==="reit") t.addEventListener("click",function(){ reitSearch(0); loadARTracker(); });
+  if(t.dataset.tab==="reit" || t.dataset.tab==="assetdir") t.addEventListener("click",function(){
+    // Both tabs use the same tab-reit panel
+    if(t.dataset.tab==="assetdir"){
+      document.querySelectorAll(".panel").forEach(function(x){x.classList.remove("on");});
+      var p=document.getElementById("tab-reit");
+      if(p) p.classList.add("on");
+    }
+    reitSearch(0); loadARTracker();
+  });
 });
 
 // ══════════════════════════════════════════════════════════
