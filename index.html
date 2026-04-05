@@ -1418,6 +1418,8 @@ html,body{background:var(--bg);color:var(--txt);font-family:'DM Sans',sans-serif
         <button class="dir-tbtn" data-reitf="First REIT" onclick="reitSetFilter(this,'reit','First REIT')">First REIT <span style="color:#f59e0b;font-size:8px">●</span></button>
         <button class="dir-tbtn" data-reitf="Starhill Global REIT" onclick="reitSetFilter(this,'reit','Starhill Global REIT')">Starhill Global <span style="color:#4ade80;font-size:8px">●</span></button>
         <button class="dir-tbtn" data-reitf="Suntec REIT" onclick="reitSetFilter(this,'reit','Suntec REIT')">Suntec REIT <span style="color:#4ade80;font-size:8px">●</span></button>
+        <button class="dir-tbtn" data-reitf="IREIT Global" onclick="reitSetFilter(this,'reit','IREIT Global')">iREIT Global <span style="color:#4ade80;font-size:8px">●</span></button>
+        <button class="dir-tbtn" data-reitf="Stoneweg Europe Stapled Trust" onclick="reitSetFilter(this,'reit','Stoneweg Europe Stapled Trust')">SERT <span style="color:#4ade80;font-size:8px">●</span></button>
       </div>
       <div id="chip-dev-row" style="display:flex;gap:6px;flex-wrap:wrap;align-items:center;margin-bottom:9px">
         <span class="fbar-label">Developer</span>
@@ -1437,6 +1439,7 @@ html,body{background:var(--bg);color:var(--txt);font-family:'DM Sans',sans-serif
         <button class="dir-tbtn" data-devf="UOL Group" onclick="reitSetFilter(this,'dev','UOL Group')">UOL Group <span style="color:#4ade80;font-size:8px">●</span></button>
         <button class="dir-tbtn" data-devf="Wee Hur Holdings" onclick="reitSetFilter(this,'dev','Wee Hur Holdings')">Wee Hur <span style="color:#f59e0b;font-size:8px">●</span></button>
         <button class="dir-tbtn" data-devf="Wing Tai Holdings" onclick="reitSetFilter(this,'dev','Wing Tai Holdings')">Wing Tai <span style="color:#4ade80;font-size:8px">●</span></button>
+        <button class="dir-tbtn" data-devf="Tuan Sing Holdings" onclick="reitSetFilter(this,'dev','Tuan Sing Holdings')">Tuan Sing <span style="color:#4ade80;font-size:8px">●</span></button>
       </div>
 
       <!-- Row 3: Asset type chips -->
@@ -1824,6 +1827,9 @@ html,body{background:var(--bg);color:var(--txt);font-family:'DM Sans',sans-serif
       <option value="Digital Core REIT">Digital Core REIT (FY2025)</option>
       <option value="SingLand">SingLand (FY2024)</option>
       <option value="Lendlease Global Commercial REIT">Lendlease REIT (FY2025)</option>
+      <option value="IREIT Global">iREIT Global (FY2024)</option>
+      <option value="Stoneweg Europe Stapled Trust">SERT (FY2024)</option>
+      <option value="Tuan Sing Holdings">Tuan Sing (FY2024)</option>
     </select>
     <select class="talent-sort-sel" id="talent-sort" onchange="talentRender()">
       <option value="name">Sort: Name</option>
@@ -5251,321 +5257,364 @@ var TALENT_DATA = [
   },
 
 // ════════════════════════════════════════════════════════════
-// SINGAPORE LAND GROUP (SINGLAND) — FY2024
-// Source: Singapore Land Group AR 2024 — Companies Act developer
+// IREIT GLOBAL — FY2024
+// Source: IREIT Global Annual Report 2024
+// Joint sponsors: Tikehau Capital (manager) + City Developments Limited (CDL)
 // ════════════════════════════════════════════════════════════
   {
-    id:'singland-ceo-24', name:'Eu Zai Jie, Jonathan', role:'Chief Executive Officer and Executive Director', role_type:'CEO',
-    entity:'SingLand', entity_short:'SingLand', ar_year:'FY2024',
-    appointed:'1 Jul 2022', tenure_yrs:2.5,
-    rem_exact:1351172, rem_fixed:581004, rem_bonus:473910, rem_other:297258,
-    rem_note:'Total S$1,351,172 for FY2024. Mix: 43% Fixed Pay (S$581,004), 35% Variable Pay/STI (S$473,910), 22% LTI & Benefits (S$297,258). LTI under LTIPP (Long-Term Incentive Performance Plan): Initial Awards granted annually; Final Awards vest and settle in cash after 3-year performance period, value linked to SingLand share price. Clawback provisions apply. CEO does not receive director fees. Note: Jonathan Eu is the nephew of Chairman Wee Ee Lim. Source: SingLand AR 2024 p.48.',
-    rem_band:null, rem_pct_fixed:43, rem_pct_bonus:35, rem_pct_other:22,
-    edu:'Bachelor of Science in Economics (concentrations in Finance and Operations & Information Management), Wharton School, University of Pennsylvania',
-    bio:'CEO and Executive Director of Singapore Land Group since 1 July 2022. Led strategic transformation and rebranding to Singapore Land Group in 2021. Joined SingLand in 2020 as Chief Operating Officer. Prior to SingLand, spent 10 years at UOL Group as General Manager, Investment and Asset Management, spearheading innovation and digital transformation. Appointed Executive Committee Vice Chair of Urban Land Institute Singapore in 2024. Member of the Council for Board Diversity. Oversees a S$7.2B investment property portfolio across Singapore\'s CBD office, suburban retail, and hotels.',
+    id:'ireit-ceo-prev-24', name:'Louis d\'Estienne d\'Orves', role:'Chief Executive Officer (1 Jan 2024 – 4 Nov 2024)', role_type:'CEO',
+    entity:'IREIT Global', entity_short:'iREIT', ar_year:'FY2024',
+    appointed:'2022', tenure_yrs:2.8,
+    rem_exact:722766, rem_fixed:310789, rem_bonus:115642, rem_other:296335,
+    rem_note:'Total S$722,766 for FY2024 (full year as CEO until 4 Nov 2024 departure). Mix: 43% Base/Fixed Salary, 16% Performance-related Cash Bonus, 41% LTI (unvested Tikehau Capital performance shares under 2024 Plans). Fixed salary and bonus paid by Tikehau Capital\'s investment management subsidiary (TIM) under Services Agreement and recharged to Manager; LTI is Tikehau Capital equity-linked. Source: IREIT Global AR 2024 p.152-153.',
+    rem_band:null, rem_pct_fixed:43, rem_pct_bonus:16, rem_pct_other:41,
+    edu:'Master of Finance, EDHEC Business School; Master Degree in Asset Management, Paris Dauphine',
+    bio:'CEO of IREIT Global Manager from 1 January 2024 until 4 November 2024. Head of Asia-Pacific at Tikehau Capital from 2018. Previously responsible for planning and implementing IREIT\'s investment strategy, day-to-day management, and leading the team across Germany, Spain, France and Singapore. Appointed Director of IREIT Global\'s Manager on 5 November 2024 (post-CEO departure). Earlier career roles in Paris and Cologne across investment and corporate finance at Tikehau.',
     prev_roles:[
-      {org:'SingLand', pos:'Chief Operating Officer, 2020–2022'},
-      {org:'UOL Group Limited', pos:'General Manager, Investment and Asset Management, ~10 years'},
+      {org:'Tikehau Capital', pos:'Head of Asia-Pacific, 2018–present'},
     ],
     rem_history:[
-      {year:'FY2024', total:1351172, pct_fixed:43, pct_bonus:35, pct_ltp:22, pct_other:0},
+      {year:'FY2024', total:722766, pct_fixed:43, pct_bonus:16, pct_ltp:41, pct_other:0},
     ],
-    cross_board_roles:[],
+    cross_board_roles:[
+      {entity:'IREIT Global Manager Pte. Ltd.', role:'Non-Executive Director (from 5 Nov 2024)', listed:false},
+    ],
     linkedin_url:null, photo_url:null,
-    tags:['Developer CEO','Office','Retail','UOL Alumni','Wharton']
+    tags:['REIT CEO','Former','IREIT Global','Tikehau Capital','French','Paris']
   },
   {
-    id:'singland-chair-24', name:'Wee Ee Lim', role:'Non-Executive Chairman', role_type:'Board',
-    entity:'SingLand', entity_short:'SingLand', ar_year:'FY2024',
-    appointed:'28 May 1999', tenure_yrs:25.6,
-    rem_exact:90000, rem_fixed:90000, rem_bonus:0, rem_other:0,
-    rem_note:'Director fees S$90,000 for FY2024. Board Chairman fee S$90,000 (per fee framework). Non-executive; no variable pay. Note: Uncle of CEO Jonathan Eu. Source: SingLand AR 2024 p.48.',
-    rem_band:null, rem_pct_fixed:100, rem_pct_bonus:0, rem_pct_other:0,
+    id:'ireit-ceo2-24', name:'Peter Viens', role:'Chief Executive Officer (from 5 November 2024)', role_type:'CEO',
+    entity:'IREIT Global', entity_short:'iREIT', ar_year:'FY2024',
+    appointed:'5 Nov 2024', tenure_yrs:0.16,
+    rem_exact:66783, rem_fixed:30052, rem_bonus:7346, rem_other:29385,
+    rem_note:'Total S$66,783 for period 5 Nov 2024 to 31 Dec 2024 (approximately 2 months only). Mix: 45% Base/Fixed Salary, 11% Performance-related Cash Bonus, 44% LTI (unvested Tikehau Capital performance shares). Annualised estimate ~S$400K. Salary and bonus paid by TIM under Services Agreement; LTI is Tikehau Capital equity-linked. Seconded by Tikehau Capital Investment Management S.A.S. Source: IREIT Global AR 2024 p.153.',
+    rem_band:null, rem_pct_fixed:45, rem_pct_bonus:11, rem_pct_other:44,
     edu:'Not disclosed in AR',
-    bio:'Non-Executive Chairman of Singapore Land Group since 1999. UOL Group family principal and longstanding steward of the SingLand board. Uncle of CEO Jonathan Eu.',
-    prev_roles:[],
-    rem_history:[
-      {year:'FY2024', total:90000, pct_fixed:100, pct_bonus:0, pct_ltp:0, pct_other:0},
-    ],
-    cross_board_roles:[],
-    linkedin_url:null, photo_url:null,
-    tags:['Chairman','Non-Executive','UOL Group','Wee Family']
-  },
-  {
-    id:'singland-dir-lance-24', name:'Lance Yu Gokongwei', role:'Non-Executive Director', role_type:'Board',
-    entity:'SingLand', entity_short:'SingLand', ar_year:'FY2024',
-    appointed:'28 May 1999', tenure_yrs:25.6,
-    rem_exact:67500, rem_fixed:67500, rem_bonus:0, rem_other:0,
-    rem_note:'Director fees S$67,500 for FY2024. Board Member S$45,000 + ARC Member S$22,500. Source: SingLand AR 2024 p.48.',
-    rem_band:null, rem_pct_fixed:100, rem_pct_bonus:0, rem_pct_other:0,
-    edu:'Not disclosed in AR',
-    bio:'Non-Executive Director and ARC Member of Singapore Land Group since 1999. Represents the Gokongwei family interests (JG Summit Holdings). Long-standing strategic investor in SingLand.',
-    prev_roles:[],
-    rem_history:[
-      {year:'FY2024', total:67500, pct_fixed:100, pct_bonus:0, pct_ltp:0, pct_other:0},
-    ],
-    cross_board_roles:[],
-    linkedin_url:null, photo_url:null,
-    tags:['Non-Executive Director','ARC Member','Gokongwei Family','JG Summit']
-  },
-  {
-    id:'singland-dir-liam-24', name:'Liam Wee Sin', role:'Non-Executive Director', role_type:'Board',
-    entity:'SingLand', entity_short:'SingLand', ar_year:'FY2024',
-    appointed:'10 Jun 2019', tenure_yrs:5.6,
-    rem_exact:67500, rem_fixed:67500, rem_bonus:0, rem_other:0,
-    rem_note:'Director fees S$67,500 for FY2024. Board Member S$45,000 + RC Member S$11,250 + NC Member S$11,250. Does not receive fees from SingLand subsidiaries/associates in nominee capacity. Source: SingLand AR 2024 p.48.',
-    rem_band:null, rem_pct_fixed:100, rem_pct_bonus:0, rem_pct_other:0,
-    edu:'Not disclosed in AR',
-    bio:'Non-Executive Director of SingLand; RC and NC Member. Represents UOL Group interests on the board. Formerly Group CEO of UOL Group.',
+    bio:'CEO of IREIT Global Manager from 5 November 2024. Based in Paris. Has over 20 years of experience in real estate investment management. Previously Head of Corporate Real Estate at Air Liquide where he managed rental expenses globally. Prior to that roles at various real estate institutions in Paris. Seconded by Tikehau Capital Investment Management S.A.S.',
     prev_roles:[
-      {org:'UOL Group Limited', pos:'Group Chief Executive Officer'},
+      {org:'Air Liquide', pos:'Head of Corporate Real Estate'},
     ],
     rem_history:[
-      {year:'FY2024', total:67500, pct_fixed:100, pct_bonus:0, pct_ltp:0, pct_other:0},
+      {year:'FY2024', total:66783, pct_fixed:45, pct_bonus:11, pct_ltp:44, pct_other:0},
     ],
     cross_board_roles:[],
     linkedin_url:null, photo_url:null,
-    tags:['Non-Executive Director','RC Member','NC Member','UOL Alumni']
+    tags:['REIT CEO','New Nov 2024','IREIT Global','Tikehau Capital','Paris']
   },
   {
-    id:'singland-dir-chng-24', name:'Chng Hwee Hong', role:'Independent Non-Executive Director, RC Chairperson', role_type:'Board',
-    entity:'SingLand', entity_short:'SingLand', ar_year:'FY2024',
-    appointed:'23 Mar 2018', tenure_yrs:6.8,
-    rem_exact:101250, rem_fixed:101250, rem_bonus:0, rem_other:0,
-    rem_note:'Director fees S$101,250 for FY2024. Board Member S$45,000 + RC Chairperson S$22,500 + NC Member S$11,250 + ARC Member S$22,500. Source: SingLand AR 2024 p.48.',
-    rem_band:null, rem_pct_fixed:100, rem_pct_bonus:0, rem_pct_other:0,
-    edu:'Not disclosed in AR',
-    bio:'Independent Non-Executive Director of SingLand; RC Chairperson, NC and ARC Member.',
-    prev_roles:[],
-    rem_history:[
-      {year:'FY2024', total:101250, pct_fixed:100, pct_bonus:0, pct_ltp:0, pct_other:0},
-    ],
-    cross_board_roles:[],
-    linkedin_url:null, photo_url:null,
-    tags:['Independent Director','RC Chair','ARC Member','NC Member']
-  },
-  {
-    id:'singland-dir-tan-kn-24', name:'Tan Khiaw Ngoh', role:'Independent Non-Executive Director, ARC Chairperson', role_type:'Board',
-    entity:'SingLand', entity_short:'SingLand', ar_year:'FY2024',
-    appointed:'27 Feb 2020', tenure_yrs:4.8,
-    rem_exact:78750, rem_fixed:78750, rem_bonus:0, rem_other:0,
-    rem_note:'Director fees S$78,750 for FY2024. Board Member S$45,000 + ARC Chairperson S$33,750. Source: SingLand AR 2024 p.48.',
-    rem_band:null, rem_pct_fixed:100, rem_pct_bonus:0, rem_pct_other:0,
-    edu:'Not disclosed in AR',
-    bio:'Independent Non-Executive Director and ARC Chairperson of SingLand.',
-    prev_roles:[],
-    rem_history:[
-      {year:'FY2024', total:78750, pct_fixed:100, pct_bonus:0, pct_ltp:0, pct_other:0},
-    ],
-    cross_board_roles:[],
-    linkedin_url:null, photo_url:null,
-    tags:['Independent Director','ARC Chair']
-  },
-  {
-    id:'singland-dir-sim-24', name:'Peter Sim Swee Yam', role:'Independent Non-Executive Director, NC Chairperson', role_type:'Board',
-    entity:'SingLand', entity_short:'SingLand', ar_year:'FY2024',
-    appointed:'30 Jun 2021', tenure_yrs:3.5,
-    rem_exact:78750, rem_fixed:78750, rem_bonus:0, rem_other:0,
-    rem_note:'Director fees S$78,750 for FY2024. Board Member S$45,000 + NC Chairperson S$22,500 + RC Member S$11,250. Source: SingLand AR 2024 p.48.',
-    rem_band:null, rem_pct_fixed:100, rem_pct_bonus:0, rem_pct_other:0,
-    edu:'Not disclosed in AR',
-    bio:'Independent Non-Executive Director and NC Chairperson of SingLand; RC Member.',
-    prev_roles:[],
-    rem_history:[
-      {year:'FY2024', total:78750, pct_fixed:100, pct_bonus:0, pct_ltp:0, pct_other:0},
-    ],
-    cross_board_roles:[],
-    linkedin_url:null, photo_url:null,
-    tags:['Independent Director','NC Chair','RC Member']
-  },
-  {
-    id:'singland-dir-ng-24', name:'Ng Shin Ein', role:'Independent Non-Executive Director', role_type:'Board',
-    entity:'SingLand', entity_short:'SingLand', ar_year:'FY2024',
+    id:'ireit-chair-24', name:'Mark Andrew Yeo Kah Chong', role:'Chairman, Independent Non-Executive Director, NRC Chair', role_type:'Board',
+    entity:'IREIT Global', entity_short:'iREIT', ar_year:'FY2024',
     appointed:'1 Jan 2022', tenure_yrs:3.0,
-    rem_exact:45000, rem_fixed:45000, rem_bonus:0, rem_other:0,
-    rem_note:'Director fees S$45,000 for FY2024. Board Member S$45,000 only; no committee membership. Source: SingLand AR 2024 p.48.',
-    rem_band:null, rem_pct_fixed:100, rem_pct_bonus:0, rem_pct_other:0,
-    edu:'Not disclosed in AR',
-    bio:'Independent Non-Executive Director of SingLand.',
-    prev_roles:[],
-    rem_history:[
-      {year:'FY2024', total:45000, pct_fixed:100, pct_bonus:0, pct_ltp:0, pct_other:0},
+    rem_exact:113000, rem_fixed:90400, rem_bonus:0, rem_other:22600,
+    rem_note:'Director fees S$113,000 for FY2024: S$90,400 in cash (80%) + S$22,600 in Units (20%) from Units held by Manager. Breakdown: Board Chairman S$88,000 + NRC Chairman S$10,000 + ARC Member S$15,000 = S$113,000. Fee structure: 10% increase approved for FY2024 (Chair from S$80K to S$88K; Members from S$50K to S$55K). Source: IREIT Global AR 2024 p.151.',
+    rem_band:null, rem_pct_fixed:80, rem_pct_bonus:0, rem_pct_other:20,
+    edu:'Master of Arts, University of Oxford; Master of Laws, National University of Singapore; Advanced Management Programme, INSEAD; Senior Accredited Director, SID',
+    bio:'Chairman and Independent Non-Executive Director of IREIT Global since 1 January 2022. Chairman of NRC; Member of ARC. Director of Keppel Infrastructure Fund Management Pte. Ltd. (trustee-manager of Keppel Infrastructure Trust). Director of Niks Professional Ltd. and Vicplas International Ltd. Previously held senior banking positions in infrastructure/project finance in Asia, Europe and Latin America, and leadership roles in corporates across Asia and Middle East. Began career in Singapore civil service.',
+    prev_roles:[
+      {org:'Changi Airport Group', pos:'Director'},
+      {org:'CitySpring Infrastructure Management', pos:'Independent Director'},
     ],
-    cross_board_roles:[],
+    rem_history:[
+      {year:'FY2024', total:113000, pct_fixed:80, pct_bonus:0, pct_ltp:0, pct_other:20},
+    ],
+    cross_board_roles:[
+      {entity:'Keppel Infrastructure Fund Management Pte. Ltd.', role:'Director (trustee-manager of Keppel Infrastructure Trust)', listed:true},
+      {entity:'Vicplas International Ltd', role:'Director', listed:true},
+    ],
     linkedin_url:null, photo_url:null,
-    tags:['Independent Director']
+    tags:['Chairman','Independent Director','NRC Chair','Oxford','Project Finance','Keppel Infra Cross-Board']
   },
   {
-    id:'singland-dir-tan-tc-24', name:'Tan Tiong Cheng', role:'Independent Non-Executive Director', role_type:'Board',
-    entity:'SingLand', entity_short:'SingLand', ar_year:'FY2024',
-    appointed:'1 Jul 2022', tenure_yrs:2.5,
-    rem_exact:45000, rem_fixed:45000, rem_bonus:0, rem_other:0,
-    rem_note:'Director fees S$45,000 for FY2024. Board Member S$45,000 only. Source: SingLand AR 2024 p.48.',
-    rem_band:null, rem_pct_fixed:100, rem_pct_bonus:0, rem_pct_other:0,
-    edu:'Not disclosed in AR',
-    bio:'Independent Non-Executive Director of SingLand.',
-    prev_roles:[],
+    id:'ireit-dir-chng-24', name:'Chng Lay Chew', role:'Independent Non-Executive Director, ARC Chair', role_type:'Board',
+    entity:'IREIT Global', entity_short:'iREIT', ar_year:'FY2024',
+    appointed:'1 Jan 2021', tenure_yrs:4.0,
+    rem_exact:85000, rem_fixed:68000, rem_bonus:0, rem_other:17000,
+    rem_note:'Director fees S$85,000 for FY2024: S$68,000 cash (80%) + S$17,000 in Units (20%). Breakdown: Board Member S$55,000 + ARC Chairman S$30,000 = S$85,000. Source: IREIT Global AR 2024 p.151.',
+    rem_band:null, rem_pct_fixed:80, rem_pct_bonus:0, rem_pct_other:20,
+    edu:'Bachelor of Commerce and Administration, Victoria University of Wellington; Fellow ISCA; Fellow CA ANZ; Fellow CPA Australia; Senior Accredited Director, SID; International Directors Programme, INSEAD (2021)',
+    bio:'Independent Non-Executive Director and ARC Chair of IREIT Global since 1 January 2021. Retired in 2020 from Singapore Exchange Limited after 9 years as CFO. Previously held senior Finance positions at DBS Bank and JP Morgan across Singapore, Hong Kong, Tokyo and New York. Contributed to Singapore accounting profession development as board member of Singapore Accountancy Commission and past President of Singapore Division of CPA Australia. Currently serves on boards of AWWA Ltd, NUHS Fund Ltd, Worldwide Fund for Nature (Singapore), and ISTARI Pte Ltd group.',
+    prev_roles:[
+      {org:'Singapore Exchange Limited (SGX)', pos:'Chief Financial Officer, ~2011–2020'},
+      {org:'DBS Bank', pos:'Senior Finance positions'},
+      {org:'JP Morgan', pos:'Senior Finance positions (SG/HK/Tokyo/NY)'},
+    ],
     rem_history:[
-      {year:'FY2024', total:45000, pct_fixed:100, pct_bonus:0, pct_ltp:0, pct_other:0},
+      {year:'FY2024', total:85000, pct_fixed:80, pct_bonus:0, pct_ltp:0, pct_other:20},
     ],
     cross_board_roles:[],
     linkedin_url:null, photo_url:null,
-    tags:['Independent Director']
+    tags:['Independent Director','ARC Chair','SGX Alumni','CPA Australia','Finance']
+  },
+  {
+    id:'ireit-dir-cher-24', name:'Cher Mui Sim Susanna', role:'Independent Non-Executive Director', role_type:'Board',
+    entity:'IREIT Global', entity_short:'iREIT', ar_year:'FY2024',
+    appointed:'13 Jun 2023', tenure_yrs:1.6,
+    rem_exact:75000, rem_fixed:60000, rem_bonus:0, rem_other:15000,
+    rem_note:'Director fees S$75,000 for FY2024: S$60,000 cash (80%) + S$15,000 in Units (20%). Breakdown: Board Member S$55,000 + ARC Member S$15,000 + NRC Member S$5,000 = S$75,000. Source: IREIT Global AR 2024 p.151.',
+    rem_band:null, rem_pct_fixed:80, rem_pct_bonus:0, rem_pct_other:20,
+    edu:'Bachelor of Accountancy, NUS; Chartered Accountant ISCA; CPA Australia; Accredited Director, SID',
+    bio:'Independent Non-Executive Director of IREIT Global since 13 June 2023. ARC and NRC Member. Over 35 years senior management experience with over 20 years managing finance departments of SGX-listed entities. Former CFO of Frasers Logistics & Commercial Trust manager (6 years until retirement Dec 2021). Previously CFO at CitySpring Infrastructure Management Pte Ltd (2013–2015) and Thomson Medical Centre Ltd (1993–2006).',
+    prev_roles:[
+      {org:'Frasers Logistics & Commercial Trust (REIT Manager)', pos:'CFO, ~2016–2021'},
+      {org:'CitySpring Infrastructure Management Pte Ltd', pos:'CFO, 2013–2015'},
+      {org:'Thomson Medical Centre Ltd', pos:'CFO, 1993–2006'},
+    ],
+    rem_history:[
+      {year:'FY2024', total:75000, pct_fixed:80, pct_bonus:0, pct_ltp:0, pct_other:20},
+    ],
+    cross_board_roles:[],
+    linkedin_url:null, photo_url:null,
+    tags:['Independent Director','ARC Member','NRC Member','REIT CFO Background','Frasers Alumni']
+  },
+  {
+    id:'ireit-dir-kwek-24', name:'Sherman Kwek Eik Tse', role:'Non-Executive Director (CDL representative)', role_type:'Board',
+    entity:'IREIT Global', entity_short:'iREIT', ar_year:'FY2024',
+    appointed:'1 Dec 2022', tenure_yrs:2.0,
+    rem_exact:0, rem_fixed:0, rem_bonus:0, rem_other:0,
+    rem_note:'No director fees received — non-independent non-executive director representing CDL (joint sponsor). Per IREIT disclosure: non-independent NEDs do not receive fees. Source: IREIT Global AR 2024 p.151.',
+    rem_band:null, rem_pct_fixed:0, rem_pct_bonus:0, rem_pct_other:0,
+    edu:'Bachelor of Science in Business Administration, Boston University (Finance and Marketing, minor Psychology)',
+    bio:'Non-Executive Director of IREIT Global since 1 December 2022. Represents City Developments Limited (CDL) as joint sponsor of IREIT. Group CEO of CDL since January 2018; Executive Director since May 2019. Also Executive Chairman of CDL China Limited. Previously Deputy CEO and Chief Investment Officer of CDL. Spearheading CDL\'s global expansion across Singapore, UK, Australia, Japan and China. Earlier career: CEO of City e-Solutions (HK-listed), COO of Thakral Corporation, ED of HL Global Enterprises.',
+    prev_roles:[
+      {org:'City Developments Limited', pos:'Deputy CEO / Chief Investment Officer, prior to 2018'},
+      {org:'CDL China Limited', pos:'CEO; now Executive Chairman'},
+    ],
+    rem_history:[
+      {year:'FY2024', total:0, pct_fixed:0, pct_bonus:0, pct_ltp:0, pct_other:0},
+    ],
+    cross_board_roles:[
+      {entity:'City Developments Limited', role:'Group CEO and Executive Director', listed:true},
+      {entity:'CDL China Limited', role:'Executive Chairman', listed:false},
+    ],
+    linkedin_url:null, photo_url:null,
+    tags:['Non-Executive Director','CDL Representative','Non-Independent','Real Estate','Boston University']
   },
 
 // ════════════════════════════════════════════════════════════
-// LENDLEASE GLOBAL COMMERCIAL REIT — FY2025
-// Source: Lendlease Global Commercial REIT AR FY2025 — exact figures
+// STONEWEG EUROPE STAPLED TRUST (SERT) — FY2024
+// Source: SERT Annual Report 2024 | SGX-listed Stapled Trust
+// Manager: Stoneweg EREIT Management Pte. Ltd. (SWI Group subsidiary)
 // ════════════════════════════════════════════════════════════
   {
-    id:'llreit-ceo-25', name:'Kelvin Chow Chung Yip', role:'Chief Executive Officer (until 31 March 2025)', role_type:'CEO',
-    entity:'Lendlease Global Commercial REIT', entity_short:'Lendlease REIT', ar_year:'FY2025',
-    appointed:null, tenure_yrs:null,
-    rem_exact:742074, rem_fixed:348774, rem_bonus:51945, rem_other:341355,
-    rem_note:'Total S$742,074 for period 1 Jul 2024 to 31 Mar 2025 (9 months). Mix: 47% Base/Fixed Salary (S$348,774), 7% Performance-related Cash Bonus (S$51,945), 0% Unit-based Incentive Award, 46% Other Benefits (S$341,355 — includes termination benefits per contractual terms). The 46% "other benefits" is dominated by termination benefits paid on departure. Exact remuneration disclosed per MAS Notice SFA04-N14. KMP aggregate not disclosed — Manager cited commercial sensitivity; fewer than 5 KMP total. Source: Lendlease Global Commercial REIT AR FY2025 p.79.',
-    rem_band:null, rem_pct_fixed:47, rem_pct_bonus:7, rem_pct_other:46,
-    edu:'Not disclosed in AR',
-    bio:'CEO of Lendlease Global Commercial REIT Management Pte. Ltd. until 31 March 2025. Succeeded by Guy Cawthra from 1 April 2025.',
+    id:'sert-ceo-24', name:'Simon Garing', role:'Chief Executive Officer and Executive Director', role_type:'CEO',
+    entity:'Stoneweg Europe Stapled Trust', entity_short:'SERT', ar_year:'FY2024',
+    appointed:'13 May 2019', tenure_yrs:5.6,
+    rem_exact:1277926, rem_fixed:613885, rem_bonus:511170, rem_other:152871,
+    rem_note:'Total S$1,277,926 for FY2024. Mix: 48% Base/Fixed Salary (S$613,885), 40% Variable/Performance-related Cash Bonus (S$511,170), 12% LTI — Performance Unit Plan (PUP) at 50% of face value (S$152,871). PUP: 3-year vesting against DPU and Total Unitholder Return targets (EPRA Developed Euro Index benchmark). Additional 574,537 Retention Unit Plans (RUPs) issued Nov 2024 to recognise Manager ownership change from Cromwell to SWI Group — RUPs vest Oct 2026; excluded from table. Remuneration paid by Manager, not SERT. KMP aggregate (incl CEO): S$3,001,958. Source: SERT AR 2024 p.118-119.',
+    rem_band:null, rem_pct_fixed:48, rem_pct_bonus:40, rem_pct_other:12,
+    edu:'Bachelor of Commerce (Accounting and Finance), University of New South Wales; Fellow CPA Australia; Member Singapore Institute of Directors; Member Hong Kong Institute of Directors',
+    bio:'CEO and Executive Director of Stoneweg EREIT Management Pte. Ltd. (SERT Manager) since 13 May 2019 (Acting CEO from 3 Sep 2018). Works with the Board to set SERT strategy and oversees daily operations. Over 25 years investment management, financial markets and accounting experience in global real estate. Previously Chief Capital Officer of Cromwell Property Group (global leadership team, capital management and fund raising). Before Cromwell, Managing Director of Bank of America APAC and Bank of America Australia — global head of real estate research, Chair APAC Recommendation Review Committee (130 equity analysts, 1,200 companies). Earlier: Senior roles at Bell Potter, Babcock & Brown; MD of UBS Australia as Co-Head of Global Real Estate Research. Member of REITAS executive committee.',
+    prev_roles:[
+      {org:'Cromwell Property Group', pos:'Chief Capital Officer, global leadership team'},
+      {org:'Bank of America (Merrill Lynch) APAC', pos:'Managing Director — Global Head Real Estate Research'},
+      {org:'UBS Australia', pos:'Managing Director, Co-Head Global Real Estate Research'},
+    ],
+    rem_history:[
+      {year:'FY2024', total:1277926, pct_fixed:48, pct_bonus:40, pct_ltp:12, pct_other:0},
+    ],
+    cross_board_roles:[],
+    linkedin_url:null, photo_url:null,
+    tags:['REIT CEO','Executive Director','SERT','Cromwell Alumni','Bank of America Alumni','CPA Australia','REITAS']
+  },
+  {
+    id:'sert-chair-24', name:'Lim Swe Guan', role:'Chair and Independent Non-Executive Director', role_type:'Board',
+    entity:'Stoneweg Europe Stapled Trust', entity_short:'SERT', ar_year:'FY2024',
+    appointed:'28 Jul 2017', tenure_yrs:7.4,
+    rem_exact:190000, rem_fixed:190000, rem_bonus:0, rem_other:0,
+    rem_note:'Director fees S$190,000 for FY2024. 100% cash. Framework: Board Chair S$120,000 + ARC Member S$30,000 + NRC Member S$20,000 + SC Member S$20,000 = S$190,000. All director fees paid by Manager, not SERT. Source: SERT AR 2024 p.116.',
+    rem_band:null, rem_pct_fixed:100, rem_pct_bonus:0, rem_pct_other:0,
+    edu:'Darden School of Business, University of Virginia (MBA-equivalent); Chartered Financial Analyst (CFA)',
+    bio:'Chair and Independent Non-Executive Director of Stoneweg Europe Stapled Trust Manager since 28 July 2017. Extensive investment management and real estate experience. 1986–1995: Jones Lang Wootton Sydney (last role: Research Director). 1995–1997: Suncorp Investments Brisbane (Portfolio Manager, Property Funds). 1997–2011: GIC — last held positions: Regional Manager, then Managing Director GIC Real Estate (Regional Head Property Investment for Australia, Japan and Southeast Asia; Global Head Corporate Investments Group — public REITs and property companies). Currently: Independent Non-Executive Chairman of Thakral Corporation Limited; Investment Committee Member at CIMB-Trust Capital Advisors and Fife Capital Singapore; Director of Asia Pacific Real Estate Association.',
+    prev_roles:[
+      {org:'GIC Real Estate', pos:'Managing Director / Regional Head APAC; Global Head Corporate Investments, 1997–2011'},
+      {org:'Jones Lang Wootton Sydney', pos:'Research Director, 1986–1995'},
+      {org:'Suncorp Investments Brisbane', pos:'Portfolio Manager Property Funds, 1995–1997'},
+    ],
+    rem_history:[
+      {year:'FY2024', total:190000, pct_fixed:100, pct_bonus:0, pct_ltp:0, pct_other:0},
+    ],
+    cross_board_roles:[
+      {entity:'Thakral Corporation Limited', role:'Independent Non-Executive Chairman', listed:true},
+    ],
+    linkedin_url:null, photo_url:null,
+    tags:['Chairman','Independent Director','CFA','GIC Alumni','Asia Pacific Real Estate']
+  },
+  {
+    id:'sert-dir-fang-24', name:'Fang Ai Lian', role:'Independent Non-Executive Director, ARC Chair', role_type:'Board',
+    entity:'Stoneweg Europe Stapled Trust', entity_short:'SERT', ar_year:'FY2024',
+    appointed:'31 Jul 2017', tenure_yrs:7.4,
+    rem_exact:160000, rem_fixed:160000, rem_bonus:0, rem_other:0,
+    rem_note:'Director fees S$160,000 for FY2024. 100% cash. Framework: Board Member S$80,000 + ARC Chair S$40,000 + NRC Member S$20,000 + SC Member S$20,000 = S$160,000. Source: SERT AR 2024 p.116.',
+    rem_band:null, rem_pct_fixed:100, rem_pct_bonus:0, rem_pct_other:0,
+    edu:'Fellow, Institute of Chartered Accountants in England and Wales; Fellow, Institute of Singapore Chartered Accountants',
+    bio:'Independent Non-Executive Director and ARC Chair of SERT Manager since 31 July 2017. Over 30 years experience in accounting, risk management and governance at Ernst & Young LLP (1974–2008), rising to Managing Partner (1996) then Chair (2005). Currently Independent Director of Singapore Post Limited; Chair of Singapore Business Federation Board of Trustees; Chair of Medishield Life Council; Director of SingHealth Fund and various other charitable/community boards. Former Independent Director of Metro Holdings Limited.',
+    prev_roles:[
+      {org:'Ernst & Young LLP', pos:'Chair, 2005–2008; Managing Partner, 1996–2005; Partner, 1974–1996'},
+    ],
+    rem_history:[
+      {year:'FY2024', total:160000, pct_fixed:100, pct_bonus:0, pct_ltp:0, pct_other:0},
+    ],
+    cross_board_roles:[
+      {entity:'Singapore Post Limited', role:'Independent Director', listed:true},
+    ],
+    linkedin_url:null, photo_url:null,
+    tags:['Independent Director','ARC Chair','Ernst & Young Alumni','ISCA Fellow','SingPost Cross-Board']
+  },
+  {
+    id:'sert-dir-delaire-24', name:'Christian Delaire', role:'Independent Non-Executive Director, NRC Chair', role_type:'Board',
+    entity:'Stoneweg Europe Stapled Trust', entity_short:'SERT', ar_year:'FY2024',
+    appointed:'24 Aug 2017', tenure_yrs:7.3,
+    rem_exact:160000, rem_fixed:160000, rem_bonus:0, rem_other:0,
+    rem_note:'Director fees S$160,000 for FY2024. 100% cash. Framework: Board Member S$80,000 + NRC Chair S$30,000 + ARC Member S$30,000 + SC Member S$20,000 = S$160,000. Source: SERT AR 2024 p.116.',
+    rem_band:null, rem_pct_fixed:100, rem_pct_bonus:0, rem_pct_other:0,
+    edu:'Master of Science in Management, ESSEC Business School Paris',
+    bio:'Independent Non-Executive Director and NRC Chair of SERT Manager since 24 August 2017. Over 30 years in investment management and real estate. Started career at KPMG audit. AXA Real Estate (1994–2009): Head of Asset Management France → Global Head Corporate Finance → Global CIO. AEW Europe (2009–2014): CEO. Generali Real Estate (2014–2016): Global CEO responsible for €28B of assets. Currently Independent Director of Atenor (Belgian listed) and Covivio (French listed).',
+    prev_roles:[
+      {org:'Generali Real Estate', pos:'Global CEO, €28B AUM, 2014–2016'},
+      {org:'AEW Europe', pos:'CEO, 2009–2014'},
+      {org:'AXA Real Estate', pos:'Global CIO; Global Head Corporate Finance; Head AM France, 1994–2009'},
+    ],
+    rem_history:[
+      {year:'FY2024', total:160000, pct_fixed:100, pct_bonus:0, pct_ltp:0, pct_other:0},
+    ],
+    cross_board_roles:[
+      {entity:'Atenor', role:'Independent Director', listed:true},
+      {entity:'Covivio', role:'Independent Director', listed:true},
+    ],
+    linkedin_url:null, photo_url:null,
+    tags:['Independent Director','NRC Chair','ARC Member','AXA Real Estate Alumni','Generali RE Alumni','European REIT','ESSEC']
+  },
+  {
+    id:'sert-dir-sabater-24', name:'Jaume Sabater', role:'Non-Independent Non-Executive Director (SWI Group / Stoneweg)', role_type:'Board',
+    entity:'Stoneweg Europe Stapled Trust', entity_short:'SERT', ar_year:'FY2024',
+    appointed:'24 Dec 2024', tenure_yrs:0.02,
+    rem_exact:0, rem_fixed:0, rem_bonus:0, rem_other:0,
+    rem_note:'No director fees received for FY2024 — appointed 24 December 2024 (less than 1 month in year). Non-independent non-executive director representing Stoneweg / SWI Group (sponsor). Source: SERT AR 2024 p.116.',
+    rem_band:null, rem_pct_fixed:0, rem_pct_bonus:0, rem_pct_other:0,
+    edu:'Master in International Management, Community of European Management Schools (St. Gallen University and ESADE Barcelona)',
+    bio:'Non-Independent Non-Executive Director of SERT Manager from 24 December 2024. Founder of Stoneweg Group and CEO of Stoneweg Asset Management S.A. Over 18 years in real estate investment, fund management, project management and capital management across Europe. Previously: First VP at Edmond de Rothschild (Suisse) S.A. Asset Management Geneva (2003–2014) — established real estate investment operations, launched first Swiss Real Estate SICAV (ERRES, 2011, CHF 1B+). Manages CHF 5B AUM platform. Executive Vice Chairman of Varia US Properties AG (Swiss Stock Exchange).',
+    prev_roles:[
+      {org:'Edmond de Rothschild (Suisse) S.A.', pos:'First VP, Head Real Estate, Head Dedicated Accounts, 2003–2014'},
+    ],
+    rem_history:[
+      {year:'FY2024', total:0, pct_fixed:0, pct_bonus:0, pct_ltp:0, pct_other:0},
+    ],
+    cross_board_roles:[
+      {entity:'Varia US Properties AG', role:'Executive Vice Chairman', listed:true},
+      {entity:'Varia Europe Properties AG', role:'Board Member', listed:true},
+    ],
+    linkedin_url:null, photo_url:null,
+    tags:['Non-Independent Director','SWI Group / Stoneweg Founder','SERT Sponsor Rep','Edmond de Rothschild Alumni','Swiss RE','ESADE']
+  },
+
+// ════════════════════════════════════════════════════════════
+// TUAN SING HOLDINGS — FY2024
+// Source: Tuan Sing Holdings Annual Report 2024 | Developer
+// ════════════════════════════════════════════════════════════
+  {
+    id:'tuansing-ceo-24', name:'William Nursalim alias William Liem', role:'Executive Director and Chief Executive Officer', role_type:'CEO',
+    entity:'Tuan Sing Holdings', entity_short:'Tuan Sing', ar_year:'FY2024',
+    appointed:'15 Jan 2004 (Director); 1 Jan 2008 (CEO)', tenure_yrs:17.0,
+    rem_exact:2060426, rem_fixed:1341600, rem_bonus:670800, rem_other:48026,
+    rem_note:'Total S$2,060,426 for FY2024. Breakdown: Base Salary S$1,341,600 (65.1%), Variable Bonus S$670,800 (32.6%), Benefits (car + handphone) S$48,026 (2.3%). No director fees as Executive Director. No LTI scheme, no stock options. Bonus reflects performance against KPIs including net profit, ROA, ROE, TSR, ESG, and operational targets. Mercer engaged in 2024 for salary review and compensation benchmarking. Source: Tuan Sing Holdings AR 2024 Table A p.82.',
+    rem_band:null, rem_pct_fixed:65, rem_pct_bonus:33, rem_pct_other:2,
+    edu:'Bachelor of Science in Business, University of California Berkeley; MBA, Massachusetts Institute of Technology (MIT)',
+    bio:'Executive Director and CEO of Tuan Sing Holdings since 1 January 2008; Director since 15 January 2004. Son of controlling shareholder. Led Tuan Sing\'s transformation into a diversified real estate group spanning premium Grade A Singapore office (18 Robinson), suburban commercial (Link@896), Australian hotels (Grand Hyatt Melbourne, Residence on Langley Park), and serviced apartments (Fraser Residence River Promenade). Also drives regional expansion in Indonesia (Opus Bay, The Grand Outlet East Jakarta) and China. Previously held management roles in GT Asia Pacific Holdings Pte Ltd and Habitat Properties Pte Ltd; began career as Corporate Analyst at Lehman Brothers. Award: Best CEO Award (companies $300M–$1B market cap) at Business Times Singapore Corporate Awards 2016.',
+    prev_roles:[
+      {org:'Habitat Properties Pte Ltd', pos:'Management roles'},
+      {org:'GT Asia Pacific Holdings Pte Ltd', pos:'Management roles'},
+      {org:'Lehman Brothers', pos:'Corporate Analyst'},
+    ],
+    rem_history:[
+      {year:'FY2024', total:2060426, pct_fixed:65, pct_bonus:33, pct_ltp:0, pct_other:2},
+    ],
+    cross_board_roles:[
+      {entity:'Gul Technologies Singapore Pte. Ltd.', role:'Director', listed:false},
+    ],
+    linkedin_url:null, photo_url:null,
+    tags:['Developer CEO','Executive Director','Singapore','Australia','Indonesia','MIT MBA','UC Berkeley','Office','Hotels','Serviced Apartments']
+  },
+  {
+    id:'tuansing-chair-24', name:'Eu Yee Ming Richard', role:'Non-Executive Chairman, Independent Director', role_type:'Board',
+    entity:'Tuan Sing Holdings', entity_short:'Tuan Sing', ar_year:'FY2024',
+    appointed:'19 Aug 2019 (Director); 24 Feb 2021 (Chairman)',
+    tenure_yrs:5.3,
+    rem_exact:157500, rem_fixed:157500, rem_bonus:0, rem_other:0,
+    rem_note:'Director fees S$157,500 for FY2024. Total: Board Chair S$100,000 + NC Chair S$15,000 + ARC Member S$20,000 + RC Member S$7,500 + attendance fees S$15,000. No fixed formula in table — fee derived from framework: Board Member S$50,000 + Chairman additional S$50,000 + ARC Member S$20,000 + NC Chair additional S$7,500 + RC Member S$7,500 + attendance fees. Source: Tuan Sing Holdings AR 2024 Table A p.82.',
+    rem_band:null, rem_pct_fixed:100, rem_pct_bonus:0, rem_pct_other:0,
+    edu:'Bachelor of Laws (LL.B) Hons, University of London',
+    bio:'Non-Executive Chairman of Tuan Sing Holdings since 24 February 2021; Independent Director since 19 August 2019. NC Chairman, ARC and RC Member. Distinguished background as former Group CEO of Eu Yan Sang International (2002–2017) and Chairman from 2017 — built iconic traditional Chinese medicine brand into a multi-country healthcare group. Currently Chairman of Eu Yan Sang International Limited; Director of SUTL Enterprise Limited and Mewah International Inc. (both SGX-listed). Awards: EY Entrepreneur of the Year 2003 and 2011; Public Service Medal (PBM) 2020.',
+    prev_roles:[
+      {org:'Eu Yan Sang International Limited', pos:'Group CEO, 2002–2017; Chairman, 2017–present'},
+      {org:'Haw Par Corporation Ltd', pos:'Various senior positions'},
+    ],
+    rem_history:[
+      {year:'FY2024', total:157500, pct_fixed:100, pct_bonus:0, pct_ltp:0, pct_other:0},
+    ],
+    cross_board_roles:[
+      {entity:'SUTL Enterprise Limited', role:'Director', listed:true},
+      {entity:'Mewah International Inc.', role:'Director', listed:true},
+    ],
+    linkedin_url:null, photo_url:null,
+    tags:['Chairman','Independent Director','NC Chair','Eu Yan Sang Alumni','Entrepreneur','London LLB','PBM']
+  },
+  {
+    id:'tuansing-dir-cheng-24', name:'Cheng Hong Kok', role:'Independent Non-Executive Director, RC Chair', role_type:'Board',
+    entity:'Tuan Sing Holdings', entity_short:'Tuan Sing', ar_year:'FY2024',
+    appointed:'15 Aug 2017', tenure_yrs:7.4,
+    rem_exact:107751, rem_fixed:107751, rem_bonus:0, rem_other:0,
+    rem_note:'Director fees S$107,751 for FY2024. RC Chairman, ARC Member, NC Member. Higher than standard due to RC Chair premium + two overseas engagements in FY2024. Source: Tuan Sing Holdings AR 2024 Table A p.82.',
+    rem_band:null, rem_pct_fixed:100, rem_pct_bonus:0, rem_pct_other:0,
+    edu:'Bachelor of Science (Chemical Engineering) First Class Hons, University of London; Advanced Executive Management Program, Kellogg School Northwestern; Singapore State Scholar; Eisenhower Fellow',
+    bio:'Independent Non-Executive Director of Tuan Sing Holdings since 15 August 2017. RC Chairman, ARC and NC Member. Long career at Singapore Petroleum Company Limited (SPC) — President and CEO 1981–1996; Board/ExCo member 1999–2009. Previously Independent Director and ARC Chair of Far East Orchard Ltd (1996–2017). Chairman of SP Corporation Limited until delisting in 2022. Board member of Singapore Economic Development Board; Member of Government Economic Planning Committee.',
+    prev_roles:[
+      {org:'Singapore Petroleum Company (SPC)', pos:'President and CEO, 1981–1996'},
+      {org:'Far East Orchard Ltd', pos:'Independent Director and ARC Chair, 1996–2017'},
+      {org:'SP Corporation Limited', pos:'Non-Executive Independent Chairman, until 2022'},
+    ],
+    rem_history:[
+      {year:'FY2024', total:107751, pct_fixed:100, pct_bonus:0, pct_ltp:0, pct_other:0},
+    ],
+    cross_board_roles:[],
+    linkedin_url:null, photo_url:null,
+    tags:['Independent Director','RC Chair','Singapore Petroleum Alumni','Chemical Engineering','Kellogg','EDB']
+  },
+  {
+    id:'tuansing-dir-michelle-24', name:'Michelle Liem Mei Fung', role:'Non-Executive Non-Independent Director', role_type:'Board',
+    entity:'Tuan Sing Holdings', entity_short:'Tuan Sing', ar_year:'FY2024',
+    appointed:'5 Apr 2001', tenure_yrs:23.7,
+    rem_exact:98000, rem_fixed:98000, rem_bonus:0, rem_other:0,
+    rem_note:'Director fees S$98,000 for FY2024. ARC, NC, and RC Member. Non-independent — daughter of controlling shareholder family; sister of CEO William Nursalim. Source: Tuan Sing Holdings AR 2024 Table A p.82.',
+    rem_band:null, rem_pct_fixed:100, rem_pct_bonus:0, rem_pct_other:0,
+    edu:'Bachelor of Science (Economics) Hons, London School of Economics; MBA, University of Chicago',
+    bio:'Non-Executive Non-Independent Director of Tuan Sing Holdings since 5 April 2001 (23+ years). Sister of CEO William Nursalim. Managing Director of Nuri Holdings (S) Pte Ltd, Habitat Properties Pte Ltd, and Ardent Investment Partners Pte. Ltd. Honorary Consul, Consulate of Grand Duchy of Luxembourg in Singapore. Distinguished community involvement: Co-Chair Singapore LSE Trust; Stanford University International Advisory Council; Conservation International Asia Pacific advisory; SingHealth Fund Board Member. Award: Public Service Medal (PBM) 2016; Officer of the Order of Merit by HRH Grand Duke Henri of Luxembourg 2022.',
     prev_roles:[],
     rem_history:[
-      {year:'FY2025', total:742074, pct_fixed:47, pct_bonus:7, pct_ltp:0, pct_other:46},
+      {year:'FY2024', total:98000, pct_fixed:100, pct_bonus:0, pct_ltp:0, pct_other:0},
     ],
     cross_board_roles:[],
     linkedin_url:null, photo_url:null,
-    tags:['REIT CEO','Former','Lendlease REIT','Departed Mar 2025']
+    tags:['Non-Executive Director','Non-Independent','LSE Economics','Chicago MBA','Liem Family','PBM']
   },
   {
-    id:'llreit-ceo2-25', name:'Guy Cawthra', role:'Chief Executive Officer (from 1 April 2025)', role_type:'CEO',
-    entity:'Lendlease Global Commercial REIT', entity_short:'Lendlease REIT', ar_year:'FY2025',
-    appointed:'1 Apr 2025', tenure_yrs:0.25,
-    rem_exact:217577, rem_fixed:134897, rem_bonus:41338, rem_other:41342,
-    rem_note:'Total S$217,577 for period 1 Apr 2025 to 30 Jun 2025 (one quarter only). Mix: 62% Base/Fixed Salary, 19% Performance-related Cash Bonus, 19% Unit-based Incentive Award. One-quarter figure; full-year run-rate significantly higher. Annualised estimate ~S$870K. Exact remuneration disclosed per MAS Notice SFA04-N14. Source: Lendlease Global Commercial REIT AR FY2025 p.79.',
-    rem_band:null, rem_pct_fixed:62, rem_pct_bonus:19, rem_pct_other:19,
-    edu:'Bachelor of Science (First Class Honours) in Accounting and Finance, University of Warwick; CFA Charterholder',
-    bio:'CEO of Lendlease Global Commercial REIT Management Pte. Ltd. from 1 April 2025. Previously led the S$12B Lendlease Asia Investment & Asset Management business, providing tailored institutional investment solutions across commercial, retail, data centres, life sciences, and innovation properties including Paya Lebar Quarter and Parkway Parade. Over a decade with Lendlease from 2014; prior roles in international investment management, management consulting, and investment banking.',
+    id:'tuansing-dir-ooi-24', name:'Ooi Joon Hin', role:'Independent Non-Executive Director, ARC Chair', role_type:'Board',
+    entity:'Tuan Sing Holdings', entity_short:'Tuan Sing', ar_year:'FY2024',
+    appointed:'7 May 2021', tenure_yrs:3.6,
+    rem_exact:105000, rem_fixed:105000, rem_bonus:0, rem_other:0,
+    rem_note:'Director fees S$105,000 for FY2024. ARC Chairman only (no other committee role listed in table). Total reflects ARC Chair premium + attendance fees including overseas engagements. Source: Tuan Sing Holdings AR 2024 Table A p.82.',
+    rem_band:null, rem_pct_fixed:100, rem_pct_bonus:0, rem_pct_other:0,
+    edu:'Bachelor of Arts in Engineering Sciences (Magna cum Laude), Dartmouth College; MS Accounting, New York University; MS Management, MIT',
+    bio:'Independent Non-Executive Director and ARC Chair of Tuan Sing Holdings since 7 May 2021. Managing Director and co-founder of Millennia Investment Management Pte. Ltd. Prior career: Senior VP and Co-head of Lehman Brothers Asia Energy Group (2001–2002); VP corporate finance Southeast Asia investment banking at Lehman Brothers; Senior accountant Grant Thornton New York. Director of multiple Millennia group entities.',
     prev_roles:[
-      {org:'Lendlease Group', pos:'Head of Asia Investment & Asset Management (S$12B platform), until Mar 2025'},
-      {org:'Various international investment/banking firms', pos:'More than a decade, pre-2014'},
+      {org:'Lehman Brothers', pos:'Senior VP, Co-head Asia Energy Group; VP Southeast Asia Investment Banking'},
+      {org:'Grant Thornton New York', pos:'Senior Accountant'},
     ],
     rem_history:[
-      {year:'FY2025', total:217577, pct_fixed:62, pct_bonus:19, pct_ltp:19, pct_other:0},
+      {year:'FY2024', total:105000, pct_fixed:100, pct_bonus:0, pct_ltp:0, pct_other:0},
     ],
     cross_board_roles:[],
     linkedin_url:null, photo_url:null,
-    tags:['REIT CEO','New Apr 2025','Lendlease REIT','CFA','Retail','Milan']
-  },
-  {
-    id:'llreit-chair-25', name:'Justin Marco Gabbani', role:'Chairperson and Non-Independent Non-Executive Director', role_type:'Board',
-    entity:'Lendlease Global Commercial REIT', entity_short:'Lendlease REIT', ar_year:'FY2025',
-    appointed:'26 Oct 2021', tenure_yrs:3.7,
-    rem_exact:157000, rem_fixed:157000, rem_bonus:0, rem_other:0,
-    rem_note:'Director fees S$157,000 for FY2025 (includes annual fees + Attendance Fee). 100% cash. Fees paid to Lendlease Asia Holdings Pte. Ltd. (his employer) per arrangement. Non-Independent Non-Executive Director — Lendlease Group employee. Source: Lendlease Global Commercial REIT AR FY2025 p.79.',
-    rem_band:null, rem_pct_fixed:100, rem_pct_bonus:0, rem_pct_other:0,
-    edu:'Bachelor of Finance and Bachelor of Commerce, Bond University, Queensland; Chartered Accountant, Australia',
-    bio:'Chairperson and Non-Independent Non-Executive Director of Lendlease Global Commercial REIT Management Ltd. Currently CEO of Investment Management, Lendlease Group; Director of Lendlease Asia Holdings Pte. Ltd. and Lendlease Investment Management Pte. Ltd. Previously CEO, Asia, Lendlease Group (2021–2024) and CFO, Asia, Lendlease Group (2016–2021). Deep expertise in investment and capital markets across Asia and Europe.',
-    prev_roles:[
-      {org:'Lendlease Group', pos:'CEO, Asia, 2021–2024'},
-      {org:'Lendlease Group', pos:'CFO, Asia, 2016–2021'},
-      {org:'Lendlease Group', pos:'Head of Investment & Capital Markets, Asia & Europe, 2015–2016'},
-    ],
-    rem_history:[
-      {year:'FY2025', total:157000, pct_fixed:100, pct_bonus:0, pct_ltp:0, pct_other:0},
-    ],
-    cross_board_roles:[
-      {entity:'Lendlease Asia Holdings Pte. Ltd.', role:'Director', listed:false},
-      {entity:'Lendlease Investment Management Pte. Ltd.', role:'Director', listed:false},
-    ],
-    linkedin_url:null, photo_url:null,
-    tags:['Chairperson','Non-Independent','Lendlease Group','Chartered Accountant','Bond University']
-  },
-  {
-    id:'llreit-lead-id-25', name:'Tsui Kai Chong', role:'Lead Independent Non-Executive Director, ARC Chair', role_type:'Board',
-    entity:'Lendlease Global Commercial REIT', entity_short:'Lendlease REIT', ar_year:'FY2025',
-    appointed:'29 Aug 2019', tenure_yrs:5.8,
-    rem_exact:138000, rem_fixed:138000, rem_bonus:0, rem_other:0,
-    rem_note:'Director fees S$138,000 for FY2025. ARC Chairperson S$40,000 + Board S$60,000 + NRC Member S$10,000 + ESG Member S$6,000 + attendance. Source: Lendlease Global Commercial REIT AR FY2025 p.79.',
-    rem_band:null, rem_pct_fixed:100, rem_pct_bonus:0, rem_pct_other:0,
-    edu:'BA (Hons) Business Studies, First Class Honours, Polytechnic of Central London; MPhil and PhD (Finance), New York University; Chartered Financial Analyst (CFA)',
-    bio:'Lead Independent Non-Executive Director and ARC Chairperson of Lendlease Global Commercial REIT Management Ltd. Professor Emeritus, Singapore University of Social Sciences (from 2021); formerly Provost of SUSS (2005–2021). Director of Digital Core REIT Management Pte. Ltd. (as manager of Digital Core REIT).',
-    prev_roles:[
-      {org:'Singapore University of Social Sciences (SUSS)', pos:'Provost, 2005–2021'},
-    ],
-    rem_history:[
-      {year:'FY2025', total:138000, pct_fixed:100, pct_bonus:0, pct_ltp:0, pct_other:0},
-    ],
-    cross_board_roles:[
-      {entity:'Digital Core REIT Management Pte. Ltd.', role:'Director (as manager of Digital Core REIT)', listed:true},
-    ],
-    linkedin_url:null, photo_url:null,
-    tags:['Lead Independent Director','ARC Chair','PhD Finance NYU','CFA','SUSS','Digital Core REIT Cross-Board']
-  },
-  {
-    id:'llreit-dir-lee-25', name:'Lee Ai Ming', role:'Independent Non-Executive Director, NRC Chair', role_type:'Board',
-    entity:'Lendlease Global Commercial REIT', entity_short:'Lendlease REIT', ar_year:'FY2025',
-    appointed:'29 Aug 2019', tenure_yrs:5.8,
-    rem_exact:137500, rem_fixed:137500, rem_bonus:0, rem_other:0,
-    rem_note:'Director fees S$137,500 for FY2025. NRC Chairperson S$25,000 + Board S$60,000 + ARC Member S$25,000 + ESG Member S$6,000 + attendance. Source: Lendlease Global Commercial REIT AR FY2025 p.79.',
-    rem_band:null, rem_pct_fixed:100, rem_pct_bonus:0, rem_pct_other:0,
-    edu:'Bachelor of Laws (Honours), National University of Singapore',
-    bio:'Independent Non-Executive Director and NRC Chairperson of Lendlease Global Commercial REIT Management Ltd. Senior Consultant at Dentons Rodyk & Davidson LLP (2015–2025). Previously Deputy Managing Partner at Dentons Rodyk (1982–2014). Also Independent Director of HomesToLife Ltd; Director of Temasek Life Sciences Laboratory Limited and Independent Director of MS First Capital Insurance Limited.',
-    prev_roles:[
-      {org:'Dentons Rodyk & Davidson LLP', pos:'Senior Consultant, 2015–2025'},
-      {org:'Dentons Rodyk & Davidson LLP', pos:'Deputy Managing Partner, 1982–2014'},
-    ],
-    rem_history:[
-      {year:'FY2025', total:137500, pct_fixed:100, pct_bonus:0, pct_ltp:0, pct_other:0},
-    ],
-    cross_board_roles:[
-      {entity:'HomesToLife Ltd', role:'Independent Director', listed:true},
-      {entity:'Temasek Life Sciences Laboratory Limited', role:'Director', listed:false},
-      {entity:'MS First Capital Insurance Limited', role:'Independent Director', listed:false},
-    ],
-    linkedin_url:null, photo_url:null,
-    tags:['Independent Director','NRC Chair','ARC Member','Dentons Rodyk','Property Law']
-  },
-  {
-    id:'llreit-dir-perrott-25', name:'Simon John Perrott', role:'Independent Non-Executive Director, ESGC Chair', role_type:'Board',
-    entity:'Lendlease Global Commercial REIT', entity_short:'Lendlease REIT', ar_year:'FY2025',
-    appointed:'29 Aug 2019', tenure_yrs:5.8,
-    rem_exact:121000, rem_fixed:121000, rem_bonus:0, rem_other:0,
-    rem_note:'Director fees S$121,000 for FY2025. ESG Chairperson S$12,000 + Board S$60,000 + NRC Member S$10,000 + ARC Member S$25,000 + attendance. Source: Lendlease Global Commercial REIT AR FY2025 p.79.',
-    rem_band:null, rem_pct_fixed:100, rem_pct_bonus:0, rem_pct_other:0,
-    edu:'Bachelor of Science, University of Melbourne; MBA, University of New South Wales',
-    bio:'Independent Non-Executive Director and ESGC Chairperson of Lendlease Global Commercial REIT Management Ltd. Chairperson and NED of The Wayside Chapel; Chairperson and Independent NED of Lendlease Real Estate Investments Limited. Previously Co-Head of Banking at ABN AMRO Bank N.V. (2002–2009); Chairperson of RBS Australia (2009–2012) and CIMB Bank Australia (2012–2014).',
-    prev_roles:[
-      {org:'ABN AMRO Bank N.V.', pos:'Co-Head of Banking, 2002–2009'},
-      {org:'RBS Australia', pos:'Chairperson, 2009–2012'},
-      {org:'CIMB Bank Australia', pos:'Chairperson, 2012–2014'},
-    ],
-    rem_history:[
-      {year:'FY2025', total:121000, pct_fixed:100, pct_bonus:0, pct_ltp:0, pct_other:0},
-    ],
-    cross_board_roles:[
-      {entity:'Lendlease Real Estate Investments Limited', role:'Chairperson and Independent NED', listed:false},
-    ],
-    linkedin_url:null, photo_url:null,
-    tags:['Independent Director','ESGC Chair','ARC Member','Banking','ABN AMRO Alumni']
-  },
-  {
-    id:'llreit-dir-ransom-25', name:'Penelope Jane Ransom', role:'Non-Independent Non-Executive Director', role_type:'Board',
-    entity:'Lendlease Global Commercial REIT', entity_short:'Lendlease REIT', ar_year:'FY2025',
-    appointed:'8 Nov 2023', tenure_yrs:1.6,
-    rem_exact:93000, rem_fixed:93000, rem_bonus:0, rem_other:0,
-    rem_note:'Director fees S$93,000 for FY2025 (paid to Lendlease (Australia) Pty Limited, her employer). Non-Independent Non-Executive Director — Lendlease Group employee. Source: Lendlease Global Commercial REIT AR FY2025 p.79.',
-    rem_band:null, rem_pct_fixed:100, rem_pct_bonus:0, rem_pct_other:0,
-    edu:'Bachelor of Business (Land Economics), University of Western Sydney; Graduate Diploma Applied Finance and Investment (FINSIA); Advanced Management and Leadership Program, Said Business School, University of Oxford; MRICS; Member of Chief Executive Women (CEW)',
-    bio:'Non-Independent Non-Executive Director of Lendlease Global Commercial REIT Management Ltd. Currently Chief Investment Officer, Lendlease Group. Previously Group Head of Investments, Lendlease (2022–2024); MD Investments Europe, Lendlease (2023–2024); CIO of Investa Property Group (2021–2022); Fund Manager and Head of Capital at Dexus Property Group (2011–2016).',
-    prev_roles:[
-      {org:'Lendlease Group', pos:'Group Head of Investments, 2022–2024; MD Investments Europe, 2023–2024'},
-      {org:'Investa Property Group', pos:'Chief Investment Officer, 2021–2022'},
-      {org:'Dexus Property Group', pos:'Group Executive Head of Investment Management; Head of Capital, 2011–2016'},
-    ],
-    rem_history:[
-      {year:'FY2025', total:93000, pct_fixed:100, pct_bonus:0, pct_ltp:0, pct_other:0},
-    ],
-    cross_board_roles:[],
-    linkedin_url:null, photo_url:null,
-    tags:['Non-Independent Director','Lendlease Group CIO','MRICS','Investa Alumni','Dexus Alumni']
+    tags:['Independent Director','ARC Chair','Lehman Alumni','MIT','Dartmouth','Investment Management']
   }
 ];
 
@@ -10602,42 +10651,79 @@ var REIT_DATA = [
   {name:"HIKARI HEIGHTS VARUS TSUKISAMU-KOEN",addr:"Toyohira-ku, Sapporo, Hokkaido, Japan",type:"Nursing Home",entity:"First REIT",entity_type:"REIT",tenure:"Freehold",nla_sqm:4362,occ:100,val:5.6,prev_occ:100,prev_val:null,region:"Japan",area:"Sapporo — Hokkaido",country:"Japan",ar_year:"FY2025",source:"First REIT AR 2025",notes:"Hikari Heights Varus Tsukisamu-Koen | Freehold | Nursing Home | Max Rooms: 58 | GFA: 4,362sqm | Land Area: 2,249sqm | Purchase Price: JPY 641M | FY2025 Rental Income: S$0.4M | Appraised Value: JPY 681M = S$5.6M | Lease: 30+5yr | Lease Expiry: 24 Apr 2043 | Tenant: Hikari Heights Varus Co., Ltd. | Valuer: Colliers KK"},
   {name:"ORCHARD KAICHI WEST",addr:"Tsukuba-shi, Ibaraki Prefecture, Japan",type:"Nursing Home",entity:"First REIT",entity_type:"REIT",tenure:"Freehold",nla_sqm:1561,occ:100,val:3.9,prev_occ:100,prev_val:null,region:"Japan",area:"Ibaraki",country:"Japan",ar_year:"FY2025",source:"First REIT AR 2025",notes:"Orchard Kaichi West | Freehold | Nursing Home | Max Rooms: 29 | GFA: 1,561sqm | Land Area: 797sqm | Purchase Price: JPY 405M | FY2025 Rental Income: S$0.3M | Appraised Value: JPY 469M = S$3.9M | Lease: 30+5yr | Lease Expiry: 24 Apr 2043 | Tenant: Orchard Care Co., Ltd. | Valuer: C&W KK"},
 
-// ═══════════════════════════════════════════════════════════════
-// SINGAPORE LAND GROUP (SINGLAND) — FY2024 (year ended 31 Dec 2024)
-// Source: Singapore Land Group AR 2024 — DEV (UOL-type), per-asset val
-// ═══════════════════════════════════════════════════════════════
+// ════════════════════════════════════════════════════════════
+// IREIT GLOBAL — FY2024 (year ended 31 Dec 2024)
+// Source: IREIT Global AR 2024 | REIT, external manager
+// Portfolio: Germany (5 offices), Spain (4 offices),
+//            France — Decathlon Portfolio (27 retail) + B&M Portfolio (17 retail)
+// ════════════════════════════════════════════════════════════
 
-// SINGAPORE — INVESTMENT PROPERTIES (subsidiaries, 100% effective unless noted)
-  {name:"CLIFFORD CENTRE",addr:"24 Raffles Place, Singapore 048621",type:"Office",entity:"SingLand",entity_type:"DEV",tenure:"999-year lease from 1826",nla_sqm:null,occ:null,val:988.0,prev_occ:null,prev_val:null,region:"CBD",area:"Raffles Place",country:"Singapore",ar_year:"FY2024",source:"SingLand AR 2024",status:"Redevelopment",notes:"Site area 3,343 sqm | 999-yr lease from 1826 | SingLand 100% (eff. 99.7%) | NLA not disclosed — closed for redevelopment from 1 January 2023 | Val S$988M (FY2024) | Committed occ: nil (closed for redevelopment)."},
-  {name:"SGX CENTRE 2",addr:"4 Shenton Way, Singapore 068807",type:"Office",entity:"SingLand",entity_type:"DEV",tenure:"Leasehold 99yr from 1995",nla_sqm:25800,occ:99.0,val:582.0,prev_occ:null,prev_val:null,region:"CBD",area:"Shenton Way / Tanjong Pagar",country:"Singapore",ar_year:"FY2024",source:"SingLand AR 2024",status:"Investment",notes:"29-storey office | GFA 36,590 sqm | NLA 25,800 sqm (incl. 3,336 sqm in SGX Centre 1) | Leasehold 99yr from 1995 | SingLand 100% (eff. 99.7%) | 136 car park lots | Val S$582M; occ 99%."},
-  {name:"SINGAPORE LAND TOWER",addr:"50 Raffles Place, Singapore 048623",type:"Office",entity:"SingLand",entity_type:"DEV",tenure:"999-year lease from 1826",nla_sqm:57500,occ:86.0,val:1930.0,prev_occ:null,prev_val:null,region:"CBD",area:"Raffles Place",country:"Singapore",ar_year:"FY2024",source:"SingLand AR 2024",status:"Investment",notes:"47-storey office | Site 5,064 sqm | GFA 74,215 sqm | NLA 57,500 sqm | 999-yr lease from 1826 | SingLand 100% (eff. 99.7%) | 288 car park lots | AEI underway — scheduled completion 1H 2025; NLA/GFA figures to be updated post-AEI | Val S$1,930M; occ 86%."},
-  {name:"TAMPINES PLAZA 1",addr:"3 Tampines Central 1, Singapore 529540",type:"Office",entity:"SingLand",entity_type:"DEV",tenure:"Leasehold 99yr from 1996",nla_sqm:8397,occ:100.0,val:112.0,prev_occ:null,prev_val:null,region:"East",area:"Tampines",country:"Singapore",ar_year:"FY2024",source:"SingLand AR 2024",status:"Investment",notes:"8-storey office | Site 2,614 sqm | GFA 10,970 sqm | NLA 8,397 sqm | Leasehold 99yr from 1996 | SingLand 100% (eff. 99.7%) | 87 car park lots | Val S$112M; occ 100%."},
-  {name:"TAMPINES PLAZA 2",addr:"5 Tampines Central 1, Singapore 529541",type:"Office",entity:"SingLand",entity_type:"DEV",tenure:"Leasehold 99yr from 1996",nla_sqm:8397,occ:100.0,val:113.0,prev_occ:null,prev_val:null,region:"East",area:"Tampines",country:"Singapore",ar_year:"FY2024",source:"SingLand AR 2024",status:"Investment",notes:"8-storey office | Site 2,613 sqm | GFA 10,965 sqm | NLA 8,397 sqm | Leasehold 99yr from 1996 | SingLand 100% (eff. 99.7%) | 79 car park lots | Val S$113M; occ 100%."},
-  {name:"THE GATEWAY",addr:"150 & 152 Beach Road, Singapore 189720/189721",type:"Office",entity:"SingLand",entity_type:"DEV",tenure:"Leasehold 99yr from 1982",nla_sqm:69803,occ:92.0,val:1240.0,prev_occ:null,prev_val:null,region:"CBD",area:"Beach Road / Bugis",country:"Singapore",ar_year:"FY2024",source:"SingLand AR 2024",status:"Investment",notes:"Pair of 37-storey office towers (Gateway West + Gateway East) | Site 21,961 sqm | GFA 97,430 sqm | NLA 69,803 sqm | Leasehold 99yr from 1982 | SingLand 100% (eff. 99.7%) | 689 car park lots | Val S$1,240M; occ 92%."},
-  {name:"UIC BUILDING",addr:"5 Shenton Way, Singapore 068808",type:"Office",entity:"SingLand",entity_type:"DEV",tenure:"Leasehold 99yr from 2011",nla_sqm:26373,occ:93.0,val:740.0,prev_occ:null,prev_val:null,region:"CBD",area:"Shenton Way / Tanjong Pagar",country:"Singapore",ar_year:"FY2024",source:"SingLand AR 2024",status:"Investment",notes:"23-storey office | Site 6,065 sqm (incl. V on Shenton mixed dev) | GFA 30,935 sqm | NLA 26,373 sqm | Leasehold 99yr from 2011 | SingLand 100% (eff. 99.7%) | Val S$740M; occ 93%."},
-  {name:"MARINA SQUARE SHOPPING MALL",addr:"6 Raffles Boulevard, Singapore 039594",type:"Retail Mall",entity:"SingLand",entity_type:"DEV",tenure:"Leasehold 99yr from 1980",nla_sqm:74389,occ:100.0,val:1050.0,prev_occ:null,prev_val:null,region:"CBD",area:"Marina Bay / Promenade",country:"Singapore",ar_year:"FY2024",source:"SingLand AR 2024",status:"Investment (77%)",notes:"5-storey retail mall (incl. basement) | Site 92,197 sqm (mixed dev incl. Pan Pacific SG, PARKROYAL COLLECTION Marina Bay, Mandarin Oriental) | GFA 315,046 sqm | NLA 74,389 sqm | Leasehold 99yr from 1980 | SingLand 77% interest | 1,990 car park lots | Val S$1,050M (retail mall only); occ 100%."},
-  {name:"WEST MALL",addr:"1 Bukit Batok Central Link, Singapore 658713",type:"Retail Mall",entity:"SingLand",entity_type:"DEV",tenure:"Leasehold 99yr from 1995",nla_sqm:17042,occ:100.0,val:434.0,prev_occ:null,prev_val:null,region:"West",area:"Bukit Batok",country:"Singapore",ar_year:"FY2024",source:"SingLand AR 2024",status:"Investment",notes:"6-storey retail mall (incl. basement) | Site 9,890 sqm | GFA 26,300 sqm | NLA 17,042 sqm | Leasehold 99yr from 1995 | SingLand 100% (eff. 99.8%) | 314 car park lots | AEI underway — completion 1H 2025 | Val S$434M; occ 100%."},
+// GERMANY — OFFICE PORTFOLIO
+  {name:"BERLIN CAMPUS",addr:"Schreiberhauer Straße 22, 10317 Berlin, Germany",type:"Office",entity:"IREIT Global",entity_type:"REIT",tenure:"Freehold",nla_sqm:79097,occ:0.8,val:230.8,prev_occ:null,prev_val:243.1,region:"Europe",area:"Berlin — Lichtenberg",country:"Germany",ar_year:"FY2024",source:"IREIT Global AR 2024",status:"Repositioning",notes:"5 connected buildings (8–13 upper floors) + 2-level underground car park (496 spaces) | Lichtenberg district, 6km east of city centre | NLA 79,097 sqm | Purchase price €144.2M | Sole tenant Deutsche Rentenversicherung Bund (DRV) — lease expired 31 Dec 2024 | Occ 0.8% (only small ground-floor leases remain) | WALE 3.3yr | Manager plans to reposition Berlin Campus into multi-let mixed-use asset under Project RE:O; secured two hospitality leases for ~24% of NLA in FY2024 | Val €230.8M (FY2023: €243.1M; -5.1% cap rate widening) | GRI FY2024: €14.0M (incl. DRV dilapidation cost recovery €10.3M + one-off) | No income from office post-DRV departure — repositioning CAPEX phase commences 2025."},
+  {name:"BONN CAMPUS",addr:"Landgrabenweg 151, 53227 Bonn, Germany",type:"Office",entity:"IREIT Global",entity_type:"REIT",tenure:"Freehold",nla_sqm:32736,occ:100.0,val:112.4,prev_occ:null,prev_val:113.2,region:"Europe",area:"Bonn — Bundesviertel",country:"Germany",ar_year:"FY2024",source:"IREIT Global AR 2024",status:"Investment",notes:"U-shaped property: 4 connected buildings (3–5 upper floors) | Bundesviertel (federal quarter), 100m from U-Bahn | NLA 32,736 sqm | Purchase price €99.5M | Built to suit for Deutsche Telekom; connected by pedestrian bridge to Deutsche Telekom HQ | Single tenant: GMG (wholly-owned Deutsche Telekom subsidiary) | Occ 100% | WALE 4.3yr | Val €112.4M (FY2023: €113.2M; stable) | GRI FY2024: €7.3M."},
+  {name:"DARMSTADT CAMPUS",addr:"Landwehrstraße 55, 64293 Darmstadt, Germany",type:"Office",entity:"IREIT Global",entity_type:"REIT",tenure:"Freehold",nla_sqm:30371,occ:42.6,val:50.7,prev_occ:null,prev_val:49.2,region:"Europe",area:"Darmstadt — Europaviertel",country:"Germany",ar_year:"FY2024",source:"IREIT Global AR 2024",status:"Investment",notes:"Located at entrance of Europaviertel | NLA 30,371 sqm | Purchase price €74.1M | Major tenant Deutsche Telekom vacated in 2022; currently backfilling | Occ 42.6% (FY2023: below this) | WALE 12.2yr (new leases are long) | Val €50.7M (FY2023: €49.2M; +3.0% new leases and cap rate improvement) | GRI FY2024: €1.2M — income recovery in progress."},
+  {name:"MÜNSTER CAMPUS",addr:"Hafenweg 16, 48155 Münster, Germany",type:"Office",entity:"IREIT Global",entity_type:"REIT",tenure:"Freehold",nla_sqm:27487,occ:82.2,val:53.4,prev_occ:null,prev_val:54.2,region:"Europe",area:"Münster — Hafenviertel",country:"Germany",ar_year:"FY2024",source:"IREIT Global AR 2024",status:"Investment",notes:"Two office buildings (Münster North and Münster South) with 100 underground + 66 outdoor parking spaces | NLA 27,487 sqm | Purchase price €50.9M | Multi-tenanted; leased to several tenants | Occ 82.2% | WALE 4.6yr | Val €53.4M (FY2023: €54.2M; -1.5%) | GRI FY2024: €4.4M."},
+  {name:"CONCOR PARK",addr:"Fraunhoferstraße 9–11, 85737 Ismaning (Munich), Germany",type:"Office",entity:"IREIT Global",entity_type:"REIT",tenure:"Freehold",nla_sqm:31412,occ:96.9,val:80.9,prev_occ:null,prev_val:79.8,region:"Europe",area:"Munich — Ismaning / Schwabing",country:"Germany",ar_year:"FY2024",source:"IREIT Global AR 2024",status:"Investment",notes:"Business park in Ismaning (Munich northern fringe) | NLA 31,412 sqm | Purchase price €58.6M | S-Bahn 200m | First German property to win Green Building Certification (GBC) | Multi-tenanted; well-diversified | Occ 96.9% | WALE 3.1yr | Val €80.9M (FY2023: €79.8M; +1.4% positive reversion) | GRI FY2024: €5.1M."},
 
-// SINGAPORE — INVESTMENT PROPERTIES (associates & JVs)
-  {name:"NOVENA SQUARE",addr:"238/238A/238B Thomson Road, Singapore 307683",type:"Mixed (Office + Retail)",entity:"SingLand",entity_type:"DEV",tenure:"Leasehold 99yr from 1997",nla_sqm:57339,occ:100.0,val:1473.0,prev_occ:null,prev_val:null,region:"Central",area:"Novena",country:"Singapore",ar_year:"FY2024",source:"SingLand AR 2024",status:"Investment (SingLand 20%)",notes:"Two blocks of 18- and 25-storey offices + 3-storey retail mall | Site 16,673 sqm | GFA 70,010 sqm | NLA 57,339 sqm | Leasehold 99yr from 1997 | SingLand 20% associate interest | 491 car park lots | 100% retail occ; 100% office occ | Val S$1,473M (100% basis); SingLand share ~S$295M."},
+// SPAIN — OFFICE PORTFOLIO
+  {name:"DELTA NOVA IV",addr:"Av. de Manoteras 38, 28050 Madrid, Spain",type:"Office",entity:"IREIT Global",entity_type:"REIT",tenure:"Freehold",nla_sqm:25112,occ:89.8,val:23.3,prev_occ:null,prev_val:25.1,region:"Europe",area:"Madrid — Manoteras",country:"Spain",ar_year:"FY2024",source:"IREIT Global AR 2024",status:"Investment",notes:"Part of Delta Nova office complex | Ground floor + 4 upper floors + 2 basement levels (249 parking spaces) | LEED Gold certified (2015) | NLA 25,112 sqm | Purchase price €29.2M | Multi-tenanted; major tenants Gesif, Plaza Salud24, Anticipa | Occ 89.8% | WALE 2.2yr | Val €23.3M (FY2023: €25.1M; -7.2%) | GRI FY2024: €1.9M."},
+  {name:"DELTA NOVA VI",addr:"Av. de Manoteras 48, 28050 Madrid, Spain",type:"Office",entity:"IREIT Global",entity_type:"REIT",tenure:"Freehold",nla_sqm:26134,occ:86.0,val:34.9,prev_occ:null,prev_val:34.9,region:"Europe",area:"Madrid — Manoteras",country:"Spain",ar_year:"FY2024",source:"IREIT Global AR 2024",status:"Investment",notes:"Part of Delta Nova office complex | Ground floor + 6 upper floors + 2 basement levels (384 parking spaces) | LEED Gold certified (2015) | NLA 26,134 sqm | Purchase price €39.8M | Multi-tenanted; 13 tenants | Major tenants Almaraz, Clece, S2 Grupo | Occ 86.0% | WALE 6.7yr | Val €34.9M (FY2023: €34.9M; flat) | GRI FY2024: €1.6M."},
+  {name:"SANT CUGAT GREEN",addr:"Parc Empresarial Can Sant Joan, Sant Cugat del Vallès, Barcelona, Spain",type:"Office",entity:"IREIT Global",entity_type:"REIT",tenure:"Freehold",nla_sqm:26134,occ:70.4,val:45.4,prev_occ:null,prev_val:46.7,region:"Europe",area:"Barcelona — Sant Cugat del Vallès",country:"Spain",ar_year:"FY2024",source:"IREIT Global AR 2024",status:"Investment",notes:"Modern office building with ~6,500 sqm Tier III data centre space | LEED Gold certified | Ground floor + 4 upper floors + 3 basement levels (580 parking spaces) | NLA ~26,134 sqm | Purchase price €40.3M | Multi-tenanted; 8 tenants | Major tenants DXC Technology, Oxygen Data Center, Uriach | Data centre inaugurated 2024 | Occ 70.4% | WALE 9.8yr | Val €45.4M (FY2023: €46.7M; -2.8%) | GRI FY2024: €2.4M."},
+  {name:"PARC CUGAT GREEN",addr:"Avinguda de la Generalitat 163–167, Sant Cugat del Vallès, Barcelona, Spain",type:"Office",entity:"IREIT Global",entity_type:"REIT",tenure:"Freehold",nla_sqm:15511,occ:64.0,val:23.9,prev_occ:null,prev_val:25.4,region:"Europe",area:"Barcelona — Sant Cugat del Vallès",country:"Spain",ar_year:"FY2024",source:"IREIT Global AR 2024",status:"Investment",notes:"Modern office building within business park in Sant Cugat del Vallès | LEED Silver certified | 12,000 sqm office + auditorium (200 cap) | 4 basement + ground + 4 upper floors (400+ parking spaces) | NLA 15,511 sqm | Purchase price €27.2M | Multi-tenanted; 7 tenants | Major tenants Cargill, Markem Imaje, IBM | Occ 64.0% | WALE 6.3yr | Val €23.9M (FY2023: €25.4M; -5.9%) | GRI FY2024: €1.6M | Located 3km from Sant Cugat Green."},
 
-// OVERSEAS — INVESTMENT PROPERTIES
-  {name:"120 HOLBORN",addr:"120 Holborn, Midtown London EC1N 2TD, United Kingdom",type:"Office",entity:"SingLand",entity_type:"DEV",tenure:"Freehold",nla_sqm:32055,occ:84.0,val:307.0,prev_occ:null,prev_val:null,region:"International",area:"London — Midtown / Holborn",country:"United Kingdom",ar_year:"FY2024",source:"SingLand AR 2024",status:"Investment (SingLand 50%)",notes:"9-storey mixed-use (office + retail) | Site 10,522 sqm | GFA 70,859 sqm | NLA 32,055 sqm | Freehold | SingLand 50% JV interest | 36 car park lots | Val S$307M (50% basis); occ 84%."},
+// FRANCE — RETAIL PORTFOLIOS
+  {name:"DECATHLON PORTFOLIO (27 PROPERTIES)",addr:"Various locations across France",type:"Retail",entity:"IREIT Global",entity_type:"REIT",tenure:"Freehold (all 27)",nla_sqm:95500,occ:100.0,val:124.6,prev_occ:null,prev_val:124.7,region:"Europe",area:"France — Pan-France (out-of-town retail)",country:"France",ar_year:"FY2024",source:"IREIT Global AR 2024",status:"Investment",notes:"27 freehold out-of-town retail properties | Total NLA 95,500 sqm | Land area 622,544 sqm | ~7,500 parking spaces | Purchase price €110.5M | All properties green-certified | All 100% leased to Decathlon (world's largest sporting goods retailer; 1,700+ stores in 78 countries) | Properties developed by Decathlon, average owner-occupation ~15 years prior to acquisition | Single tenant per asset (NNN-style) | Occ 100% | Portfolio WALE 6.6yr | Portfolio val €124.6M (FY2023: €124.7M) | Portfolio GRI FY2024: €6.9M | 28 tenants (Decathlon across all 27 assets)."},
+  {name:"B&M PORTFOLIO (17 PROPERTIES)",addr:"Various locations across France",type:"Retail",entity:"IREIT Global",entity_type:"REIT",tenure:"Freehold / Leasehold mix",nla_sqm:61756,occ:100.0,val:77.0,prev_occ:null,prev_val:77.0,region:"Europe",area:"France — Pan-France (out-of-town retail parks)",country:"France",ar_year:"FY2024",source:"IREIT Global AR 2024",status:"Investment",notes:"17 retail park properties in well-established regional retail areas | Total NLA 61,756 sqm | 1,291 parking spaces | Purchase price €76.8M | All 100% leased to B&M Group (LSE-listed discount retailer active in UK and France since 2014) | One lease per asset; discount retail sector outperforming broader retail | Occ 100% | Portfolio WALE 6.8yr | Portfolio val €77.0M (FY2023: €77.0M; stable) | Portfolio GRI FY2024: €6.9M | 27 tenants (B&M across all 17 assets)."},
 
-// SINGAPORE — HOTELS (book value in PP&E, not investment properties)
-  {name:"PAN PACIFIC SINGAPORE",addr:"7 Raffles Boulevard, Singapore 039595",type:"Hotel",entity:"SingLand",entity_type:"DEV",tenure:"Leasehold 99yr from 1980",nla_sqm:null,occ:null,val:null,prev_occ:null,prev_val:null,region:"CBD",area:"Marina Bay / Promenade",country:"Singapore",ar_year:"FY2024",source:"SingLand AR 2024",status:"Hotel",notes:"790 rooms | Leasehold 99yr from 1980 | SingLand 77% interest | Completed 1986 | Part of Marina Square mixed development | Hotel val carried under PP&E (not separately disclosed)."},
-  {name:"PARKROYAL COLLECTION MARINA BAY",addr:"6 Raffles Boulevard, Singapore 039594",type:"Hotel",entity:"SingLand",entity_type:"DEV",tenure:"Leasehold 99yr from 1980",nla_sqm:null,occ:null,val:null,prev_occ:null,prev_val:null,region:"CBD",area:"Marina Bay / Promenade",country:"Singapore",ar_year:"FY2024",source:"SingLand AR 2024",status:"Hotel",notes:"583 rooms | Leasehold 99yr from 1980 | SingLand 58% interest | Completed 1986 | Part of Marina Square mixed development | Hotel val carried under PP&E."},
-  {name:"MANDARIN ORIENTAL SINGAPORE",addr:"5 Raffles Avenue, Singapore 039797",type:"Hotel",entity:"SingLand",entity_type:"DEV",tenure:"Leasehold 99yr from 1980",nla_sqm:null,occ:null,val:null,prev_occ:null,prev_val:null,region:"CBD",area:"Marina Bay / Promenade",country:"Singapore",ar_year:"FY2024",source:"SingLand AR 2024",status:"Hotel",notes:"510 rooms | Leasehold 99yr from 1980 | SingLand 39% associate interest | Completed 1986 | Part of Marina Square mixed development | Hotel val carried under PP&E."},
-  {name:"THE WESTIN TIANJIN",addr:"101 Nanjing Road, Heping District, Tianjin, China",type:"Hotel",entity:"SingLand",entity_type:"DEV",tenure:"Leasehold 50yr from 2005",nla_sqm:null,occ:null,val:null,prev_occ:null,prev_val:null,region:"China",area:"Tianjin",country:"China",ar_year:"FY2024",source:"SingLand AR 2024",status:"Hotel",notes:"275 rooms | Leasehold 50yr from 2005 | SingLand 100% | Completed 2010 | Tianjin Heping District | Hotel val carried under PP&E."},
+// ════════════════════════════════════════════════════════════
+// STONEWEG EUROPE STAPLED TRUST (SERT) — FY2024 (year ended 31 Dec 2024)
+// Source: SERT Annual Report 2024 | REIT Stapled Trust (SGX)
+// 104 properties across 10 countries; reported as 14 sub-portfolio segments
+// Note: SERT reports by country×asset-class segment (no individual asset vals disclosed)
+// ════════════════════════════════════════════════════════════
 
-// ═══════════════════════════════════════════════════════════════
-// LENDLEASE GLOBAL COMMERCIAL REIT — FY2025 (year ended 30 Jun 2025)
-// Source: Lendlease Global Commercial REIT AR FY2025
-// ═══════════════════════════════════════════════════════════════
-  {name:"JEM",addr:"50 & 52 Jurong Gateway Road, Singapore 608549/608550",type:"Mixed (Retail + Office)",entity:"Lendlease Global Commercial REIT",entity_type:"REIT",tenure:"Leasehold 99yr from 27 Sep 2010",nla_sqm:82975,occ:99.9,val:2299.0,prev_occ:null,prev_val:2254.0,region:"West",area:"Jurong East / Jurong Lake District",country:"Singapore",ar_year:"FY2025",source:"Lendlease Global Commercial REIT AR FY2025",status:"Investment",notes:"893,092 sqft NLA (82,975sqm) | 6 retail levels + 12 office floors (fully leased to MND) | 251 tenants | 674 car park lots | Leasehold 99yr from 27 Sep 2010 | BCA Green Mark Platinum v4; Universal Design Mark Gold Plus | Cap rate: Retail 4.50%, Office 3.50% | FY2025 Rev S$129.8M; NPI S$94.1M | Val +S$45M to S$2,299M; occ 99.9% | +13% office rental uplift in FY2025 | POST-YEAR-END: Jem office component divested 4 Aug 2025 for S$462M (in line with 31 Jul 2025 independent val). Post-divestment, SG retail = >85% of portfolio by val."},
-  {name:"313@SOMERSET",addr:"313 Orchard Road, Singapore 238895",type:"Retail Mall",entity:"Lendlease Global Commercial REIT",entity_type:"REIT",tenure:"Leasehold 99yr from 21 Nov 2006",nla_sqm:26839,occ:98.8,val:1048.9,prev_occ:null,prev_val:1046.3,region:"Central",area:"Orchard Road / Somerset",country:"Singapore",ar_year:"FY2025",source:"Lendlease Global Commercial REIT AR FY2025",status:"Investment",notes:"288,956 sqft NLA (26,839sqm) | 8 floors retail | 147 tenants | 220 car park lots | Leasehold 99yr from 21 Nov 2006 | Purchased S$1,003M | Cap rate 4.25% | FY2025 Rev S$58.7M; NPI S$40.8M | Val +S$2.6M to S$1,048.9M; occ 98.8% | Multifunctional Event Space adjacent (100% interest; ~48,200 sqft site, ~86,500 sqft GFA) under construction, completion expected 2H 2026; Live Nation as anchor tenant."},
-  {name:"SKY COMPLEX (BUILDING 1, 2 & 3)",addr:"Via Luigi Russolo 4 (Bldg 1 & 2) and Via Luigi Russolo 9 (Bldg 3), 20138 Milan, Italy",type:"Office",entity:"Lendlease Global Commercial REIT",entity_type:"REIT",tenure:"Freehold",nla_sqm:78873,occ:81.6,val:415.5,prev_occ:null,prev_val:382.1,region:"Europe",area:"Milan — Milano Santa Giulia",country:"Italy",ar_year:"FY2025",source:"Lendlease Global Commercial REIT AR FY2025",status:"Investment",notes:"Three Grade A commercial buildings | Total NLA 78,873 sqm | 501 car park lots | Freehold | Purchased €262.5M | LEED Gold (all three buildings); Spark Business District: Italy\'s first LEED Neighbourhood Development Gold | Val +€14.3M to €277.4M = S$415.5M (prev €263.1M = S$382.1M at 30 Jun 2024 FX); occ 81.6% | Building 1 & 2: fully leased to Sky Italia (Comcast subsidiary) until Jan 2033 | Building 3: multi-tenancy lease-up (4 tenants, leases beyond FY2029); broadcasting sector 89.7% of GRI | FY2025 Rev S$18.0M; NPI S$13.9M | +1.7% office rental uplift (Bldg 1 & 2)."},
-  {name:"PARKWAY PARADE (10% INTEREST)",addr:"80 Marine Parade Road, Singapore 449269",type:"Retail Mall",entity:"Lendlease Global Commercial REIT",entity_type:"REIT",tenure:"Leasehold",nla_sqm:null,occ:null,val:null,prev_occ:null,prev_val:null,region:"East",area:"Marine Parade / Katong",country:"Singapore",ar_year:"FY2025",source:"Lendlease Global Commercial REIT AR FY2025",status:"Investment (10% via PPP)",notes:"Lendlease REIT holds 10.0% interest in PPP (Parkway Parade Partnership), which holds indirect 100% interest in 291 strata lots representing 77.09% of total share value of Parkway Parade | One of Singapore\'s largest suburban malls — 250+ stores across 7 levels | Direct MRT linkway AEI underway (completion 2027) | Carried as equity instrument at fair value; not separately valued in REIT_DATA | Marine Parade MRT (TEL4) opened boosting accessibility."},
+// LOGISTICS / LIGHT INDUSTRIAL SEGMENTS
+  {name:"SERT — NETHERLANDS LOGISTICS PORTFOLIO (7 ASSETS)",addr:"Greater Amsterdam / Schiphol area, The Netherlands",type:"Logistics / Light Industrial",entity:"Stoneweg Europe Stapled Trust",entity_type:"REIT",tenure:"Freehold (majority)",nla_sqm:null,occ:99.6,val:111.3,prev_occ:null,prev_val:107.8,region:"Europe",area:"Netherlands — Amsterdam / Schiphol",country:"The Netherlands",ar_year:"FY2024",source:"SERT Annual Report 2024",notes:"7 logistics/light industrial properties | Located in wider Amsterdam area including near Schiphol Airport | Diverse tenant base | Val €111.3M (FY2023: €107.8M; +3.2%) | FY2024 Gross Revenue €7.1M; NPI €5.2M | Occ 99.6% | WALE 3.7yr; WALB 3.4yr | Rent reversion +4.7% portfolio average."},
+  {name:"SERT — FRANCE LOGISTICS PORTFOLIO (17 ASSETS)",addr:"Île-de-France (14 assets) + Lyon / Nancy / Lille, France",type:"Logistics / Light Industrial",entity:"Stoneweg Europe Stapled Trust",entity_type:"REIT",tenure:"Freehold (majority)",nla_sqm:null,occ:90.6,val:397.4,prev_occ:null,prev_val:388.1,region:"Europe",area:"France — Greater Paris + Secondary Cities",country:"France",ar_year:"FY2024",source:"SERT Annual Report 2024",notes:"17 logistics/light industrial properties | 14 in Greater Paris area; remainder near Lyon, Nancy, Lille | Diverse tenant base with 200+ separate leases; major tenants include transport/logistics sector | Val €397.4M (FY2023: €388.1M; +2.4%) | FY2024 Gross Revenue €34.1M; NPI €20.8M | Occ 90.6% | WALE 5.2yr; WALB 2.4yr | Key assets include Parc des Docks Paris (NLA 73,372 sqm; val €172.1M; occ 85.1%; initial yield 5.3%)."},
+  {name:"SERT — ITALY LOGISTICS PORTFOLIO (5 ASSETS)",addr:"Vittuone (Milan) + Coccaglio (Lombardy/Brescia), Italy",type:"Logistics / Light Industrial",entity:"Stoneweg Europe Stapled Trust",entity_type:"REIT",tenure:"Freehold (majority)",nla_sqm:null,occ:100.0,val:165.5,prev_occ:null,prev_val:154.1,region:"Europe",area:"Italy — Milan / Lombardy",country:"Italy",ar_year:"FY2024",source:"SERT Annual Report 2024",notes:"5 logistics/light industrial properties | 2 assets in Vittuone (close to Milan); 1 in Coccaglio (Lombardy, near Brescia/Bergamo airports) | Via dell'Industria 18, Vittuone under redevelopment (new 11,800 sqm lease for 7yr signed) | Val €165.5M (FY2023: €154.1M; +7.4% standout uplift) | FY2024 Gross Revenue €12.8M; NPI €8.5M | Occ 100% | WALE 5.1yr; WALB 4.3yr."},
+  {name:"SERT — GERMANY LOGISTICS PORTFOLIO (14 ASSETS)",addr:"Multiple cities: Frankfurt, Hamburg, Munich, Bischofsheim, Sangerhausen, Germany",type:"Logistics / Light Industrial",entity:"Stoneweg Europe Stapled Trust",entity_type:"REIT",tenure:"Freehold (majority)",nla_sqm:null,occ:95.2,val:212.9,prev_occ:null,prev_val:204.6,region:"Europe",area:"Germany — Major Cities",country:"Germany",ar_year:"FY2024",source:"SERT Annual Report 2024",notes:"14 logistics/light industrial properties | Located across several German cities | Diverse tenant base: global engineering, technology, automotive, reusable packaging | Key AEI: Spennymoor (UK) commitment + Kolumbusstraße 16 Munich under redevelopment (excluded from occ) | Val €212.9M (FY2023: €204.6M; +4.1%) | FY2024 Gross Revenue €18.9M; NPI €12.4M | Occ 95.2% | WALE 5.1yr; WALB 5.1yr."},
+  {name:"SERT — DENMARK LOGISTICS PORTFOLIO (12 ASSETS)",addr:"Copenhagen area (predominantly), Denmark",type:"Logistics / Light Industrial",entity:"Stoneweg Europe Stapled Trust",entity_type:"REIT",tenure:"Freehold (majority)",nla_sqm:null,occ:86.3,val:140.8,prev_occ:null,prev_val:128.3,region:"Europe",area:"Denmark — Copenhagen",country:"Denmark",ar_year:"FY2024",source:"SERT Annual Report 2024",notes:"12 logistics/light industrial properties | Predominantly Copenhagen area | Diverse tenant base: shipping/logistics, wholesale/retail, payment technology | Val €140.8M (FY2023: €128.3M; +9.7% — strong rent reversion + new leases) | FY2024 Gross Revenue €12.2M; NPI €7.0M | Occ 86.3% | WALE 3.7yr; WALB 3.6yr | Key asset Priorparken 800, Brøndby: 9,100 sqm new 6yr lease signed with innovative technology company."},
+  {name:"SERT — CZECH REPUBLIC LOGISTICS PORTFOLIO (7 ASSETS)",addr:"Lovosice / Pisek / Hradec Králové, Czech Republic",type:"Logistics / Light Industrial",entity:"Stoneweg Europe Stapled Trust",entity_type:"REIT",tenure:"Freehold (majority)",nla_sqm:null,occ:88.0,val:76.4,prev_occ:null,prev_val:77.4,region:"Europe",area:"Czech Republic — Multiple Industrial Zones",country:"Czech Republic",ar_year:"FY2024",source:"SERT Annual Report 2024",notes:"7 logistics/light industrial properties | Established industrial zones: Lovosice, Pisek, Hradec Králové | Val €76.4M (FY2023: €77.4M; -1.3% cap rate widening) | FY2024 Gross Revenue €5.4M; NPI €3.8M | Occ 88.0% | WALE 5.2yr; WALB 5.2yr."},
+  {name:"SERT — SLOVAKIA LOGISTICS PORTFOLIO (5 ASSETS)",addr:"Established industrial clusters, Slovakia",type:"Logistics / Light Industrial",entity:"Stoneweg Europe Stapled Trust",entity_type:"REIT",tenure:"Freehold (majority)",nla_sqm:null,occ:92.5,val:71.4,prev_occ:null,prev_val:70.8,region:"Europe",area:"Slovakia — Industrial Clusters",country:"Slovakia",ar_year:"FY2024",source:"SERT Annual Report 2024",notes:"5 logistics/light industrial properties | Established industrial clusters/zones | Diverse tenant base: logistics, fashion retailers, industrial chimney/steel manufacturer | Val €71.4M (FY2023: €70.8M; +0.8%) | FY2024 Gross Revenue €6.7M; NPI €4.3M | Occ 92.5% | WALE 5.7yr; WALB 4.6yr | Note: Slovakia portfolio divested in 2H 2025 (post FY2024)."},
+  {name:"SERT — UK LOGISTICS PORTFOLIO (3 ASSETS)",addr:"Warrington / Durham / NW England, United Kingdom",type:"Logistics / Light Industrial",entity:"Stoneweg Europe Stapled Trust",entity_type:"REIT",tenure:"Freehold (majority)",nla_sqm:null,occ:100.0,val:68.6,prev_occ:null,prev_val:60.9,region:"Europe",area:"United Kingdom — NW England / Durham",country:"United Kingdom",ar_year:"FY2024",source:"SERT Annual Report 2024",notes:"3 logistics/light industrial properties | Kingsland Grange Industrial Estate Warrington (UK premium home delivery specialist); Thorn Lighting Durham (41,600 sqm 10yr lease renewal — lighting global supplier); NW England asset (UK 3PL company) | Val €68.6M (FY2023: €60.9M; +12.6% strong rent reversion) | FY2024 Gross Revenue €4.7M; NPI €4.1M | Occ 100% | WALE 11.8yr; WALB 11.2yr — longest WALE in portfolio."},
+
+// OFFICE SEGMENTS
+  {name:"SERT — NETHERLANDS OFFICE PORTFOLIO (7 ASSETS)",addr:"Amsterdam / Rotterdam / The Hague / Utrecht / s'Hertogenbosch, The Netherlands",type:"Office",entity:"Stoneweg Europe Stapled Trust",entity_type:"REIT",tenure:"Freehold (majority)",nla_sqm:null,occ:98.7,val:497.3,prev_occ:null,prev_val:513.8,region:"Europe",area:"Netherlands — Major Cities",country:"The Netherlands",ar_year:"FY2024",source:"SERT Annual Report 2024",notes:"7 office properties | Predominantly CBD of Amsterdam, Rotterdam, The Hague, Utrecht, s'Hertogenbosch | Multi-tenanted with diverse tenant base: insurance, engineering, e-commerce, government, professional/legal | Key assets: Haagse Poort Den Haag (NLA 68,415 sqm; val €174.0M; occ 98.9%; 34,700 sqm 5yr renewal signed), Veemarkt Amsterdam (NLA 21,957 sqm; val €57.5M; occ 100%), Bastion s'Hertogenbosch (18,500 sqm 15yr Essent renewal) | Val €497.3M (FY2023: €513.8M; -3.2% mostly cap rate widening offset by rental growth) | FY2024 Gross Revenue €47.6M; NPI €31.6M | Occ 98.7% | WALE 6.1yr; WALB 5.3yr."},
+  {name:"SERT — FRANCE OFFICE PORTFOLIO (2 ASSETS)",addr:"Île-de-France (Paris fringe), France",type:"Office",entity:"Stoneweg Europe Stapled Trust",entity_type:"REIT",tenure:"Freehold (majority)",nla_sqm:null,occ:79.6,val:55.2,prev_occ:null,prev_val:55.9,region:"Europe",area:"France — Greater Paris",country:"France",ar_year:"FY2024",source:"SERT Annual Report 2024",notes:"2 office properties (FY2023: 3; one office divested during FY2024) | One 6km from Paris city centre near transport nodes; one in Greater Paris area | Multi-tenanted; main tenants professional services and global engineering | Val €55.2M (FY2023: €55.9M; -1.3%) | FY2024 Gross Revenue €6.5M; NPI €2.6M | Occ 79.6% | WALE 6.1yr; WALB 2.7yr."},
+  {name:"SERT — ITALY OFFICE PORTFOLIO (8 ASSETS + 1 HFS)",addr:"Rome / Milan / Florence / Venice / Genova, Italy",type:"Office",entity:"Stoneweg Europe Stapled Trust",entity_type:"REIT",tenure:"Freehold (majority)",nla_sqm:null,occ:93.1,val:179.9,prev_occ:null,prev_val:197.3,region:"Europe",area:"Italy — Rome / Milan + Secondary Cities",country:"Italy",ar_year:"FY2024",source:"SERT Annual Report 2024",notes:"8 operating office properties + 1 held-for-sale (€15M, contracted sale Dec 2024) | FY2023: 10 assets — Venice Mestre divested + Florence asset reclassified HFS | Major cities Rome and Milan plus Florence, Venice, Genova | Mix of single- and multi-tenanted; main tenants: Italian government (Agenzia del Demanio), telecom, professional services, marketing | Nervesa21 Rome redevelopment completed — major driver of NPI uplift | Val €179.9M + €15.0M HFS = €194.9M total (FY2023: €197.3M) | FY2024 Gross Revenue €15.0M; NPI €8.8M | Occ 93.1% | WALE 5.5yr; WALB 3.5yr | +5.1% 5yr office lease Building F7-F11 Assago signed."},
+  {name:"SERT — POLAND OFFICE PORTFOLIO (5 ASSETS)",addr:"Warsaw / Kraków / Poznań / Gdańsk, Poland",type:"Office",entity:"Stoneweg Europe Stapled Trust",entity_type:"REIT",tenure:"Freehold (majority)",nla_sqm:null,occ:88.3,val:157.5,prev_occ:null,prev_val:166.3,region:"Europe",area:"Poland — Warsaw / Kraków / Poznań / Gdańsk",country:"Poland",ar_year:"FY2024",source:"SERT Annual Report 2024",notes:"5 office properties | Warsaw, Krakow, Poznan, Gdansk (Tricity) | All multi-tenanted; main tenants multinationals in technology, pharma, media, banking/financial services | Grójecka 5 Warsaw divested during FY2024 for €15.9M (+€2.4M over Dec 2023 val) | Val €157.5M (FY2023: €166.3M; -5.3% cap rate widening — most significant negative in portfolio) | FY2024 Gross Revenue €26.8M; NPI €13.3M | Occ 88.3% | WALE 2.5yr; WALB 2.3yr | Key leasing: 7,000 sqm 3yr renewal with major international bank at Avatar Kraków."},
+  {name:"SERT — FINLAND OFFICE PORTFOLIO (9 ASSETS)",addr:"Helsinki (established office parks), Finland",type:"Office",entity:"Stoneweg Europe Stapled Trust",entity_type:"REIT",tenure:"Freehold (majority)",nla_sqm:null,occ:70.4,val:54.1,prev_occ:null,prev_val:70.6,region:"Europe",area:"Finland — Helsinki",country:"Finland",ar_year:"FY2024",source:"SERT Annual Report 2024",notes:"9 office properties (FY2023: 10 — one divested during FY2024 for €2.1M, 47.5% above carrying value) | Established office parks in Helsinki | Multi-tenanted; main tenants: energy, healthcare, professional services, retail, construction/manufacturing | Val €54.1M (FY2023: €70.6M; -23.4% — significant cap rate widening, weakest office submarket) | FY2024 Gross Revenue €8.9M; NPI €4.3M | Occ 70.4% — lowest in portfolio | WALE 2.4yr; WALB 1.9yr | Grandinkulma Vantaa divested FY2024 for €2.1M."},
+
+// OTHERS SEGMENT
+  {name:"SERT — ITALY OTHERS PORTFOLIO (3 ASSETS)",addr:"Rome / Milan area, Italy",type:"Mixed",entity:"Stoneweg Europe Stapled Trust",entity_type:"REIT",tenure:"Freehold (majority)",nla_sqm:null,occ:100.0,val:43.6,prev_occ:null,prev_val:43.9,region:"Europe",area:"Italy — Rome / Milan",country:"Italy",ar_year:"FY2024",source:"SERT Annual Report 2024",notes:"3 'others' properties comprising: (1) property leased to Italian government; (2) 480-room hotel; (3) leisure complex with large cinema | Val €43.6M (FY2023: €43.9M; stable) | FY2024 Gross Revenue €6.1M; NPI €4.5M | Occ 100% | WALE 5.3yr (FY2023: 6.4yr) | WALB 4.0yr | Agenzia del Demanio government lease: exposure now 2.8% of total headline rent (vs nearly 20% at IPO after Italian asset divestments)."},
+
+// ════════════════════════════════════════════════════════════
+// TUAN SING HOLDINGS — FY2024 (year ended 31 Dec 2024)
+// Source: Tuan Sing Holdings AR 2024 | Developer / Developer-Investor
+// Mixed portfolio: investment properties (SG/AU/CN/ID/MY) + hotels (PP&E)
+// ════════════════════════════════════════════════════════════
+
+// SINGAPORE — INVESTMENT PROPERTIES
+  {name:"18 ROBINSON",addr:"18 Robinson Road, Singapore 048547",type:"Office",entity:"Tuan Sing Holdings",entity_type:"DEV",tenure:"999yr from 1884/1885 + 99yr from 2013",nla_sqm:17782,occ:88.0,val:689.0,prev_occ:null,prev_val:685.0,region:"CBD",area:"Raffles Place / Tanjong Pagar",country:"Singapore",ar_year:"FY2024",source:"Tuan Sing Holdings AR 2024",notes:"Premium Grade A office | 28-storey commercial building: office tower (10–28F), retail podium (G–7F), sky terrace, 6 basement levels with automated guided vehicle (AGV) carpark | NLA 17,782 sqm | Designed by Kohn Pedersen Fox + Architects 61 | BCA Green Mark Platinum; CONQUAS Star; CSC May 2021 | Average occupancy 88% in 2024 | Tenants: family offices, embassies, financial and professional services | Tuan Sing HQ relocated here in 2024 | Val S$689M (FY2023: S$685M; +0.6%) | Income capitalisation 3.0% cap rate; DCF 6.25% discount rate."},
+  {name:"LINK@896",addr:"896 Dunearn Road, Singapore 589472",type:"Mixed (Retail + Office)",entity:"Tuan Sing Holdings",entity_type:"DEV",tenure:"Freehold / 999yr from 1879 (part)",nla_sqm:16865,occ:null,val:410.0,prev_occ:null,prev_val:396.0,region:"Fringe",area:"Bukit Timah / King Albert Park",country:"Singapore",ar_year:"FY2024",source:"Tuan Sing Holdings AR 2024",status:"AEI",notes:"5-storey commercial building | Mix of retail and office | NLA 16,865 sqm | Site 13,089 sqm; freehold + 999yr from 1879 (part) | Connected to King Albert Park MRT | Major AEI commenced 2024 — phased completion by late 2025: diverse lifestyle trade mix, improved circulation, redesigned facade, sheltered MRT link | Occupancy adversely affected during AEI (adversely impacted revenue FY2024) | Val S$410M (FY2023: S$396M; +3.5% — residual/development method used reflecting redevelopment potential) | 870 Dunearn Road (adjacent freehold site, S$59M) held for future development."},
+  {name:"THE OXLEY",addr:"9 Oxley Rise, Singapore 238596",type:"Commercial (Strata)",entity:"Tuan Sing Holdings",entity_type:"DEV",tenure:"Freehold",nla_sqm:2491,occ:null,val:79.5,prev_occ:null,prev_val:42.9,region:"Fringe",area:"Orchard / River Valley",country:"Singapore",ar_year:"FY2024",source:"Tuan Sing Holdings AR 2024",notes:"3 floors of commercial space within 10-storey mixed-use building (residential above) | Commercial: 1st–3rd floor (strata); tower: residential 4th–10th | NLA 2,491 sqm (commercial) | Freehold | Reclassified from PP&E to investment property during FY2024 (commercial space for lease) | Val S$79.5M (FY2023: S$42.9M — reclassification uplift on transfer from PPE) | Commercial space being reconfigured for broader tenant appeal."},
+  {name:"CONSERVATION WAREHOUSES AT 5 JIAK KIM STREET",addr:"5 Jiak Kim Street, Singapore 169044",type:"Mixed (Heritage / F&B / Event)",entity:"Tuan Sing Holdings",entity_type:"DEV",tenure:"Leasehold 99yr from 2018",nla_sqm:1123,occ:null,val:33.3,prev_occ:null,prev_val:null,region:"Fringe",area:"Robertson Quay / Havelock",country:"Singapore",ar_year:"FY2024",source:"Tuan Sing Holdings AR 2024",notes:"3 conservation warehouse buildings from 1919 | Contemporary architecture combining heritage and modern design | 11.6m-high ceilings; open atmosphere | NFA 1,123 sqm | Leasehold 99yr from 2018 | Adjacent to Great World mall; near Havelock MRT | Part of same site as Fraser Residence River Promenade | Val S$33.3M (transferred to investment properties in FY2024; previously part of PPE) | Cap rate 3.50%; DCF 6.5% discount rate."},
+  {name:"L&Y BUILDING (3 STRATA UNITS)",addr:"59 Jalan Pemimpin, Singapore 577220",type:"Light Industrial (Strata)",entity:"Tuan Sing Holdings",entity_type:"DEV",tenure:"Leasehold 999yr from 1885",nla_sqm:2100,occ:null,val:16.4,prev_occ:null,prev_val:15.8,region:"Fringe",area:"Marymount / Thomson",country:"Singapore",ar_year:"FY2024",source:"Tuan Sing Holdings AR 2024",notes:"3 of 24 strata units in 5-storey light industrial building | NLA 2,100 sqm | 999yr lease from 1885 | Proximity to Marymount MRT | Val S$16.4M (FY2023: S$15.8M; +3.8%) | Direct comparison method $6,800–$8,800 psm strata."},
+  {name:"FAR EAST FINANCE BUILDING (11TH FLOOR)",addr:"14 Robinson Road, #11-01/02, Singapore 048547",type:"Office (Strata)",entity:"Tuan Sing Holdings",entity_type:"DEV",tenure:"Leasehold 999yr from 1884",nla_sqm:340,occ:null,val:12.2,prev_occ:null,prev_val:12.0,region:"CBD",area:"Raffles Place",country:"Singapore",ar_year:"FY2024",source:"Tuan Sing Holdings AR 2024",notes:"1 strata floor (entire 11th floor) in 13-storey commercial building | Adjacent to 18 Robinson on Robinson Road near Cecil Street/Finlayson Green | NLA 340 sqm | 999yr from 1884 | Val S$12.2M (FY2023: S$12.0M; +1.7%) | Cap rate 2.15%; DCF 6.0%."},
+
+// AUSTRALIA — INVESTMENT PROPERTIES
+  {name:"COMMERCIAL CENTRE AT 123 COLLINS STREET",addr:"123 Collins Street, Melbourne, Victoria 3000, Australia",type:"Retail (Luxury)",entity:"Tuan Sing Holdings",entity_type:"DEV",tenure:"Freehold",nla_sqm:3024,occ:85.0,val:83.1,prev_occ:null,prev_val:86.5,region:"International",area:"Melbourne — Collins Street",country:"Australia",ar_year:"FY2024",source:"Tuan Sing Holdings AR 2024",notes:"3 flagship luxury retail tenancies fronting Collins Street + 2 retail tenancies facing Grand Hyatt Melbourne porte-cochere + basement hospitality space + 589-bay basement carpark | NLA 3,024 sqm | Freehold | Tenant portfolio: Bvlgari, Paspaley Pearls, Giorgio Armani | Average occ 85% in 2024 | Carpark self-managed | Val S$83.1M (AUD 98.0M; FY2023: S$86.5M — cap rate 8.25% up from 7.75%; slight AUD weakness) | Adjacent to Grand Hyatt Melbourne hotel | Town Planning Application Nov 2024 for major mixed-use redevelopment of 121-131 Collins Street + 23-25 George Parade — aim to transform podium into luxury retail/F&B precinct."},
+  {name:"COMMERCIAL CENTRE AT 99 ADELAIDE TERRACE",addr:"99 Adelaide Terrace, East Perth, Western Australia 6004, Australia",type:"Office",entity:"Tuan Sing Holdings",entity_type:"DEV",tenure:"Freehold",nla_sqm:29411,occ:null,val:103.7,prev_occ:null,prev_val:105.0,region:"International",area:"Perth — East CBD",country:"Australia",ar_year:"FY2024",source:"Tuan Sing Holdings AR 2024",status:"AEI",notes:"3-level commercial building + plaza-level shops/suites + 2 basement levels carpark (883 bays) | NLA 29,411 sqm (incl. area under AEI) | Freehold | Overlooks Swan River | Adjacent to Residence on Langley Park hotel | Shoppe on Langley Park (retail/lifestyle component) undergoing phased major AEI — anchor tenants Foodies Market and Track Gym commenced trading 2024 | Anchor tenant Fortescue Metal Group leases expiring 2025–2026; replacement tenants being secured | Val S$103.7M (AUD 122.4M; FY2023: S$105.0M; -1.2%) | Cap rate 8.25% up from 7.75%."},
+
+// SINGAPORE — HOTELS (PP&E)
+  {name:"FRASER RESIDENCE RIVER PROMENADE",addr:"5 Jiak Kim Street, Singapore 169044",type:"Serviced Apartment",entity:"Tuan Sing Holdings",entity_type:"DEV",tenure:"Leasehold 99yr from 2018",nla_sqm:2562,occ:null,val:114.7,prev_occ:null,prev_val:null,region:"Fringe",area:"Robertson Quay / Havelock",country:"Singapore",ar_year:"FY2024",source:"Tuan Sing Holdings AR 2024",notes:"72 serviced apartments | Mixed-use property: 72 serviced apartments + 3 conservation warehouses (accounted under investment properties) + 47 car park lots | NFA 2,562 sqm (serviced apartments) | Leasehold 99yr from 2018 | Managed by Frasers Hospitality | Acquired by Group in 2024 as first Singapore hospitality asset | Expansion of hospitality portfolio alongside Australian hotels | Average occupancy ~87% at launch; ~120 tenants-guests | Val S$114.7M (carried under PP&E as owner-managed; cap rate 3.50%) | Source markets include tourism and business travellers."},
+  {name:"GRAND HYATT MELBOURNE",addr:"123 Collins Street, Melbourne, Victoria 3000, Australia",type:"Hotel",entity:"Tuan Sing Holdings",entity_type:"DEV",tenure:"Freehold",nla_sqm:null,occ:null,val:366.9,prev_occ:null,prev_val:391.8,region:"International",area:"Melbourne — Collins Street (Paris End)",country:"Australia",ar_year:"FY2024",source:"Tuan Sing Holdings AR 2024",notes:"5-star hotel with 33 levels | International flagship property | Freehold | Part of integrated development at Collins Street | Retail and carpark accounted separately under investment properties (S$83.1M + S$53.4M) | Hotel PP&E: S$313.5M (AUD 370M); Carpark PP&E: S$53.4M (AUD 63M); Total S$366.9M (FY2023: S$391.8M — AUD weakening; cap rate 6.00%) | Average room value per room AUD 550,800–593,200 | Town Planning Application Nov 2024 for major podium redevelopment (luxury retail/F&B) while hotel continues operating."},
+  {name:"RESIDENCE ON LANGLEY PARK",addr:"99 Adelaide Terrace, East Perth, Western Australia 6004, Australia",type:"Hotel",entity:"Tuan Sing Holdings",entity_type:"DEV",tenure:"Freehold",nla_sqm:null,occ:76.0,val:55.9,prev_occ:null,prev_val:50.0,region:"International",area:"Perth — East CBD / Swan River",country:"Australia",ar_year:"FY2024",source:"Tuan Sing Holdings AR 2024",notes:"Integrated hotel/serviced apartments + office + retail + parking complex | 9-level hotel built over mixed-use complex | Freehold | Rebranded from Hyatt Regency Perth to Residence on Langley Park as Hyatt-managed hotel in August 2024 | Adjacent to 99 Adelaide Terrace commercial centre (under Shoppe on Langley Park AEI) | Average occ 76% in 2024 | Val S$55.9M (AUD 66M; FY2023: S$50.0M — cap rate 8.0% up from 6.0%; lower valuation reflecting Perth hotel transition) | ADR and RevPAR improving as asset enhancement completes."},
 
 ];
 
@@ -10689,7 +10775,10 @@ var ENTITY_COLORS = {
   "United Hampshire US REIT":"#1a3a5c",
   "Sasseur REIT":"#8B1A1A",
   "Daiwa House Logistics Trust":"#1a4a72",
-  "Elite UK REIT":"#1a5276"
+  "Elite UK REIT":"#1a5276",
+  "IREIT Global":"#5d4e8a",
+  "Stoneweg Europe Stapled Trust":"#e55a1c",
+  "Tuan Sing Holdings":"#1a5c45"
 };
 var REIT_COLORS = ENTITY_COLORS;
 
