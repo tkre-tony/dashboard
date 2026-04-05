@@ -1425,7 +1425,7 @@ html,body{background:var(--bg);color:var(--txt);font-family:'DM Sans',sans-serif
         <button class="dir-tbtn" data-devf="CDL" onclick="reitSetFilter(this,'dev','CDL')">CDL <span style="color:#4ade80;font-size:8px">●</span></button>
         <button class="dir-tbtn" data-devf="CapitaLand Investment Limited" onclick="reitSetFilter(this,'dev','CapitaLand Investment Limited')">CLI <span style="color:#4ade80;font-size:8px">●</span></button>
         <button class="dir-tbtn" data-devf="Far East Orchard" onclick="reitSetFilter(this,'dev','Far East Orchard')">FE Orchard <span style="color:#f59e0b;font-size:8px">●</span></button>
-        <button class="dir-tbtn" data-devf="GuocoLand" onclick="reitSetFilter(this,'dev','GuocoLand')">GuocoLand <span style="color:#f59e0b;font-size:8px">●</span></button>
+        <button class="dir-tbtn" data-devf="GuocoLand" onclick="reitSetFilter(this,'dev','GuocoLand')">GuocoLand <span style="color:#4ade80;font-size:8px">●</span></button>
         <button class="dir-tbtn" data-devf="Ho Bee Land" onclick="reitSetFilter(this,'dev','Ho Bee Land')">Ho Bee Land <span style="color:#f59e0b;font-size:8px">●</span></button>
         <button class="dir-tbtn" data-devf="Hong Fok Corporation" onclick="reitSetFilter(this,'dev','Hong Fok Corporation')">Hong Fok <span style="color:#f59e0b;font-size:8px">●</span></button>
         <button class="dir-tbtn" data-devf="Oxley Holdings" onclick="reitSetFilter(this,'dev','Oxley Holdings')">Oxley Holdings <span style="color:#4ade80;font-size:8px">●</span></button>
@@ -1767,7 +1767,7 @@ html,body{background:var(--bg);color:var(--txt);font-family:'DM Sans',sans-serif
       <div class="talent-hero-title">👤 RE Human Capital Intelligence</div>
       <div class="talent-hero-sub">C-Suite · Board · Key Management · Remuneration — sourced from SGX-listed REIT &amp; Developer Annual Reports</div>
       <div style="margin-top:8px;display:flex;gap:8px;flex-wrap:wrap">
-        <span style="font-size:9px;background:rgba(167,139,250,.15);border:1px solid rgba(167,139,250,.3);color:#c4b5fd;padding:2px 8px;border-radius:10px;letter-spacing:.04em">PILOT · 6 Entities · AI-REIT · Keppel REIT · Suntec · CDL · UOL · OUE REIT</span>
+        <span style="font-size:9px;background:rgba(167,139,250,.15);border:1px solid rgba(167,139,250,.3);color:#c4b5fd;padding:2px 8px;border-radius:10px;letter-spacing:.04em">PILOT · 7 Entities · AI-REIT · Keppel REIT · Suntec · CDL · UOL · OUE REIT · GuocoLand</span>
         <span style="font-size:9px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);color:rgba(255,255,255,.4);padding:2px 8px;border-radius:10px;letter-spacing:.04em">LinkedIn via Supabase · Cross-board roles · YoY pay history</span>
       </div>
     </div>
@@ -1810,6 +1810,7 @@ html,body{background:var(--bg);color:var(--txt);font-family:'DM Sans',sans-serif
       <option value="Parkway Life REIT">PLife REIT (FY2025)</option>
       <option value="Suntec REIT">Suntec REIT</option>
       <option value="UOL Group">UOL Group</option>
+      <option value="GuocoLand">GuocoLand (FY2025)</option>
     </select>
     <select class="talent-sort-sel" id="talent-sort" onchange="talentRender()">
       <option value="name">Sort: Name</option>
@@ -4064,7 +4065,148 @@ var TALENT_DATA = [
     ],
     linkedin_url:null, photo_url:null,
     tags:['Non-Independent NED','CLI Group CFO','New Appointment 2026','IC Member','CapitaLand']
+  },
+
+  // ── GUOCOLAND — FY2025 (AR year ended 30 June 2025) ───────────────────────
+  {
+    id:'gl-ceo-25', name:'Cheng Hsing Yao', role:'Group CEO', role_type:'CEO',
+    entity:'GuocoLand', entity_short:'GL', ar_year:'FY2025',
+    appointed:'1 Jul 2021', tenure_yrs:4.0,
+    rem_exact:2715457, rem_fixed:1248311, rem_bonus:573063, rem_other:29870,
+    rem_note:'Exact FY2025 remuneration S$2,715,457 per AR p.53. Mix: Fixed 46.0% (incl CPF) / Variable Bonus 21.1% (incl CPF) / Share Grant 31.8% (260,274 shares @ open market value on vest date) / Other Benefits 1.1%. Share grant ESS vests over 3 years in 3 tranches (1st tranche 2025, last 2027). FY2024: band S$2.5M–S$2.75M (46% fixed / 22.1% bonus / 28.8% share grant / 1.0% other).',
+    rem_band:null,
+    rem_pct_fixed:46.0, rem_pct_bonus:21.1, rem_pct_ltp:31.8, rem_pct_other:1.1,
+    rem_history:[
+      {year:'FY2024', rem_band:'S$2,500,001–S$2,750,000', rem_exact:null, pct_fixed:48.1, pct_bonus:22.1, pct_ltp:28.8, pct_other:1.0, note:'In-band disclosure only; exact quantum not provided in FY2024 AR.'}
+    ],
+    edu:'BA (Architectural Studies) NUS; BArch First Class Hons Newcastle University UK; Master in Design Studies with Distinction Harvard Graduate School of Design',
+    bio:'Group CEO of GuocoLand since Jul 2021 and Executive Director since 1 Jul 2021. Joined GuocoLand Oct 2012; last posting before CEO was Group Managing Director of GuocoLand Singapore (from 2014). Prior career: Singapore public service at Urban Redevelopment Authority (URA) and Centre for Liveable Cities (CLC), both under Ministry of National Development. Former Nominated Member of Parliament (Jan 2021–Jul 2023). Architect by training; championed Guoco Tower (SG\'s tallest building) and Guoco Midtown integrated mixed developments.',
+    prev_roles:[
+      {org:'GuocoLand',pos:'Group Managing Director, GuocoLand Singapore (from 2014)'},
+      {org:'Urban Redevelopment Authority (URA)',pos:'Senior role, public service'},
+      {org:'Centre for Liveable Cities (CLC)',pos:'Senior role — under Ministry of National Development'},
+    ],
+    cross_board_roles:[
+      {entity:'Land Transport Authority',role:'Board Member',listed:false},
+      {entity:'Centre for Liveable Cities (CLC)',role:'Advisory Panel Member',listed:false},
+      {entity:'URA Heritage and Identity Partnership',role:'Member',listed:false},
+      {entity:'Changi Airport Group',role:'Executive Committee of Airport Development',listed:false},
+    ],
+    linkedin_url:null, photo_url:null,
+    tags:['Developer CEO','Mixed-Use','Tanjong Pagar','Beach Road-Bugis','Architect','Former NMP','GuocoLand']
+  },
+  {
+    id:'gl-cfo-25', name:'Andrew Chew', role:'Group CFO', role_type:'CFO',
+    entity:'GuocoLand', entity_short:'GL', ar_year:'FY2025',
+    appointed:'2022', tenure_yrs:3.0,
+    rem_exact:null, rem_fixed:null, rem_bonus:null, rem_other:null,
+    rem_note:'Remuneration not separately disclosed. Within top-5 KMP aggregate of S$3,490,504 for FY2025 (FY2024: S$2,173,529). KMP bands FY2025: 2x S$750K–S$1M, 1x S$500K–S$750K, 2x S$250K–S$500K. Company policy: no named individual KMP disclosure to protect competitive talent retention.',
+    rem_band:null, rem_pct_fixed:null, rem_pct_bonus:null, rem_pct_other:null,
+    edu:'BBus (Accounting) Monash University Australia; Fellow CPA (FCPA) CPA Australia; Chartered Accountant Malaysian Institute of Accountants',
+    bio:'Group CFO since 2022; joined GuocoLand in 2011. Held several positions including CFO of GuocoLand Singapore operations until 2021. Responsible for all financial matters of the Group: financial reporting, corporate finance, taxation, risk management, treasury. Also drives GuocoLand\'s ESG and digitalisation efforts. Prior to GuocoLand: GL Limited (then GuocoLeisure Limited), owned by Hong Kong-listed Guoco Group.',
+    prev_roles:[
+      {org:'GuocoLand',pos:'CFO, Singapore Operations (until 2021)'},
+      {org:'GL Limited (GuocoLeisure Limited)',pos:'Finance role — Guoco Group HK subsidiary'},
+    ],
+    cross_board_roles:[],
+    linkedin_url:null, photo_url:null,
+    tags:['Developer CFO','GuocoLand','Hong Leong Group','ESG']
+  },
+  {
+    id:'gl-md-am-25', name:'Valerie Wong', role:'MD, Asset Management', role_type:'Mgmt',
+    entity:'GuocoLand', entity_short:'GL', ar_year:'FY2025',
+    appointed:'2014', tenure_yrs:11.0,
+    rem_exact:null, rem_fixed:null, rem_bonus:null, rem_other:null,
+    rem_note:'Remuneration not separately disclosed. Within top-5 KMP aggregate.',
+    rem_band:null, rem_pct_fixed:null, rem_pct_bonus:null, rem_pct_other:null,
+    edu:'BSc (Real Estate) 2nd Class Upper Hons NUS; MBA University of Western Australia',
+    bio:'Managing Director, Asset Management for GuocoLand Group. Joined 2014 as General Manager, Commercial Leasing for Singapore business. Oversees asset management strategies for investment properties in Singapore, China and Malaysia. ~30 years experience. Spearheaded the launch and leasing of Guoco Tower (SG\'s tallest, 100% committed) and Guoco Midtown (100% committed) — both flagship Grade A integrated mixed developments.',
+    prev_roles:[
+      {org:'GuocoLand',pos:'General Manager, Commercial Leasing — Singapore'},
+    ],
+    cross_board_roles:[],
+    linkedin_url:null, photo_url:null,
+    tags:['Asset Management','GuocoLand','Grade A Office','Singapore','Guoco Tower','Guoco Midtown']
+  },
+  {
+    id:'gl-chair-25', name:'Quek Leng Chan', role:'Chairman', role_type:'Board',
+    entity:'GuocoLand', entity_short:'GL', ar_year:'FY2025',
+    appointed:'19 Dec 1988', tenure_yrs:36.5,
+    rem_exact:0, rem_fixed:0, rem_bonus:0, rem_other:0,
+    rem_note:'No Director\'s fees. Non-Independent Non-Executive Director and Board Chairman. Appointed Chairman 14 Oct 2022. Also RC member.',
+    rem_band:'Nil', rem_pct_fixed:null, rem_pct_bonus:null, rem_pct_other:null,
+    edu:'Barrister-at-Law, Middle Temple, United Kingdom',
+    bio:'Chairman of GuocoLand since Oct 2022. Appointed to GuocoLand Board Dec 1988. Chairman of GuoLine Capital Assets Limited (ultimate holding company of GuocoLand). Chairman and CEO of Hong Leong Company (Malaysia) Berhad (public listed); Chairman of Hong Leong Assurance Berhad; Chairman of Council of Members of Hong Leong Bank Vietnam Limited. Extensive experience in financial services, manufacturing and real estate.',
+    prev_roles:[],
+    cross_board_roles:[
+      {entity:'GuoLine Capital Assets Limited',role:'Chairman (ultimate holding co. of GuocoLand)',listed:false},
+      {entity:'Hong Leong Company (Malaysia) Berhad',role:'Chairman and CEO',listed:true},
+      {entity:'Hong Leong Assurance Berhad',role:'Chairman',listed:false},
+      {entity:'Hong Leong Financial Group Berhad',role:'Non-Executive Chairman',listed:true},
+      {entity:'Hong Leong Bank Berhad',role:'Non-Executive Chairman',listed:true},
+    ],
+    linkedin_url:null, photo_url:null,
+    tags:['Board Chair','Non-Independent NED','Hong Leong Group','GuocoLand']
+  },
+  {
+    id:'gl-dir-saw-25', name:'Saw Kok Wei', role:'Independent Director (ARC Chair)', role_type:'Board',
+    entity:'GuocoLand', entity_short:'GL', ar_year:'FY2025',
+    appointed:'24 Oct 2020', tenure_yrs:4.7,
+    rem_exact:143000, rem_fixed:143000, rem_bonus:0, rem_other:0,
+    rem_note:'Director fees S$143,000 for FY2025 (proposed, subject to AGM approval Oct 2025). Same as FY2024 (S$143,000). ARC Chairman + NC member + RC member. Highest fee-paid director.',
+    rem_band:null, rem_pct_fixed:100, rem_pct_bonus:0, rem_pct_other:0,
+    edu:'Chartered accountant; started career at Arthur Young London',
+    bio:'Independent Non-Executive Director and Chairman of the Audit and Risk Committee. Currently CFO of Swan & Maclaren Group Pte. Ltd. Previously CFO of Jurong Port Pte Ltd (Oct 2021–Dec 2022; first stint Sep 2013–Mar 2019); President, Business Units at Jurong Port (Apr 2019–Sep 2021). Prior: Chase Manhattan, Inchcape Berhad, Nike South East Asia, Merck Sharp & Dohme, Electrolux Asia (VP Finance; President-Director Indonesia; CFO China; Deputy Head Strategy Asia Pacific). Broad commercial/financial experience across UK, Singapore, Indonesia, China.',
+    prev_roles:[
+      {org:'Swan & Maclaren Group Pte. Ltd.',pos:'CFO (current)'},
+      {org:'Jurong Port Pte Ltd',pos:'CFO (2021–2022 and 2013–2019); President, Business Units (2019–2021)'},
+      {org:'Electrolux',pos:'VP Finance & Admin East Asia; President-Director Indonesia; CFO China; Deputy Head Strategy Asia Pacific'},
+    ],
+    cross_board_roles:[],
+    linkedin_url:null, photo_url:null,
+    tags:['Independent Director','ARC Chair','GuocoLand','CFO Background']
+  },
+  {
+    id:'gl-dir-wee-25', name:'Wee Lieng Seng', role:'Independent Director (NC Chair, RC Chair)', role_type:'Board',
+    entity:'GuocoLand', entity_short:'GL', ar_year:'FY2025',
+    appointed:'29 Oct 2021', tenure_yrs:3.7,
+    rem_exact:138000, rem_fixed:138000, rem_bonus:0, rem_other:0,
+    rem_note:'Director fees S$138,000 for FY2025 (proposed). Same as FY2024 (S$138,000). NC Chairman + RC Chairman + ARC member.',
+    rem_band:null, rem_pct_fixed:100, rem_pct_bonus:0, rem_pct_other:0,
+    edu:'BBA (Valedictorian) NUS; Adjunct professor at SMU, Columbia University, Peking University; Senior Fellow Wharton School',
+    bio:'CEO & Co-Founder of Dragonfly LLC (New York — strategy, risk management, investment advice). Independent Director and Chairman of Private Infrastructure Development Group Ltd; Investor Committee of Mapletree US Logistics Private Trust; Management Advisory Board of NUS Business School; Director of Eldridge Capital Management (Pte) Ltd; Managing Director, Risk and Sustainability of Danantara Indonesia. Former: partner and head of risk/shareholder value practice at The Capital Markets Company (Capco); partner at Capital Market Risk Advisors NY; MD Global Risk Management at Bankers Trust (now Deutsche Bank); senior associate at Booz Allen NY; banker at Banque Paribas Singapore and NY. Co-authored "What Every CEO Must Know About Risk" and "RAROC and Risk Management".',
+    prev_roles:[
+      {org:'Dragonfly LLC',pos:'CEO & Co-Founder'},
+      {org:'Danantara Indonesia',pos:'Managing Director, Risk and Sustainability'},
+      {org:'The Capital Markets Company (Capco)',pos:'Partner, Risk & Shareholder Value Practice'},
+      {org:'Bankers Trust (now Deutsche Bank)',pos:'MD Global Risk Management'},
+    ],
+    cross_board_roles:[
+      {entity:'Private Infrastructure Development Group Ltd',role:'Independent Director + Investment Committee Chair',listed:false},
+      {entity:'Mapletree US Logistics Private Trust',role:'Investor Committee Member',listed:false},
+    ],
+    linkedin_url:null, photo_url:null,
+    tags:['Independent Director','NC Chair','RC Chair','GuocoLand','Risk Management','New York']
+  },
+  {
+    id:'gl-dir-lee-25', name:'Madeleine Lee Suh Shin', role:'Independent Director', role_type:'Board',
+    entity:'GuocoLand', entity_short:'GL', ar_year:'FY2025',
+    appointed:'1 Apr 2023', tenure_yrs:2.3,
+    rem_exact:120000, rem_fixed:120000, rem_bonus:0, rem_other:0,
+    rem_note:'Director fees S$120,000 for FY2025 (proposed). Same as FY2024 (S$120,000). ARC member.',
+    rem_band:null, rem_pct_fixed:100, rem_pct_bonus:0, rem_pct_other:0,
+    edu:'BA Hons (Economics and Accounting) University of Leeds UK; MBA University of Leeds',
+    bio:'Founder/MD and Chief Investment Officer of Athenaeum Private Limited (MAS-licensed investment/endowment advisor, Asian Family Offices focus). Director of Pericles Investments Pte Ltd and Green Phyto Pte Ltd. Former Deputy CIO of NUS Investment Office (2004–2007). Founded Athenaeum 2008; nearly 40 years in investment management at GIC, Morgan Grenfell (Deutsche Bank) Asset Management, and Commerzbank Asset Management Asia. Former board member of Mapletree Investments Pte Ltd, Aetos Holdings Pte Ltd, ECICS Holdings. Published author of twelve poetry books in English.',
+    prev_roles:[
+      {org:'NUS Investment Office',pos:'Deputy Chief Investment Officer (2004–2007)'},
+      {org:'GIC',pos:'Investment professional'},
+      {org:'Commerzbank Asset Management Asia',pos:'Managing Director'},
+    ],
+    cross_board_roles:[],
+    linkedin_url:null, photo_url:null,
+    tags:['Independent Director','ARC Member','GuocoLand','Investment Management','GIC Alumni','Family Office']
   }
+
 ];
 
 // ═══════════════════════════════════════════════════
@@ -4564,6 +4706,7 @@ var NEWS=[
   {id:19,date:"2026-02-26",title:"MPs Call for 15% Stamp Duty Tier on Properties Above S$5M",source:"Straits Times",category:"Policy",tag:"Property Tax",summary:"Budget 2026 debate: calls for 15% marginal rate on residential properties above S$5M. Fiscal surplus S$15.1B. SG wealth Gini 0.55.",sentiment:"neutral"},
   {id:20,date:"2026-02-26",title:"Singapore Land H2 Profit Down 11% at S$160.9M",source:"Business Times",category:"Commercial",tag:"Earnings",summary:"FY2025 net profit S$272.3M (-4%). Revenue +7% to S$783.1M. Drag from higher finance costs (+23%) on Sydney acquisition. DPS S$0.045.",sentiment:"negative"},
   {id:21,date:"2026-02-20",title:"Serenity Park Condo in Yio Chu Kang Put on Market at S$505M",source:"Business Times",category:"Commercial",tag:"En Bloc",summary:"179-unit freehold condo, Tamarind Road. First freehold residential en-bloc of 2026. S$1,453 psf ppr. Owner premium >40%. Closes 26 Mar 2026.",sentiment:"neutral"},
+  {id:39,date:"2026-04-05",title:"GuocoLand FY2025: Investment Portfolio S$6.97B, Singapore Flagships at 100%, DPS Raised to 7 Cents",source:"PropertyAtlas.sg",category:"Commercial",tag:"Earnings · Developer Update",sourceLabel:"PropertyAtlas.sg Analysis · GuocoLand AR 2025",sentiment:"positive",summary:"GuocoLand FY2025 Annual Report (year ended 30 June 2025) shows a resilient investment property portfolio reaching S$6.97B — up from S$6.785B in FY2024 (+2.7%) — anchored by two Singapore flagships both at 100% committed occupancy. Group attributable profit S$107M (-17% YoY) on revenue of S$1,916M (+5% YoY).\n\nSINGAPORE INVESTMENT PROPERTIES — BOTH AT 100%\n\nGuoco Tower (Tanjong Pagar CBD): Singapore's tallest building at 290m. 990,000 sq ft total NLA (890K office + 100K retail). 100% committed as at 30 Jun 2025 (unchanged from FY2024). Tenants: MNCs across technology, banking, finance, insurance, media. Singapore IP fair value gains doubled to S$76M in FY2025.\nGuoco Midtown (Beach Road–Bugis): 3.2-hectare transit-oriented mega development. 709,000 sq ft Grade A office + 50,000 sq ft retail. 100% committed as at 30 Jun 2025. Guoco Midtown II (Tan Quee Lan St retail podium) opened May 2025 — final phase; 100% committed on opening. BCA Green Mark Platinum certified.\n20 Collyer Quay: 164,000 sq ft, 24-storey CBD office above Raffles Place MRT. 98% committed.\n\nFINANCIAL HIGHLIGHTS\n\nRevenue: S$1,916M (FY2024: S$1,820M; +5%). GuocoLand Singapore S$1,521M; China S$211M; Malaysia S$115M.\nOperating Profit: S$299M (FY2024: S$321M; -7%). Property Investment segment profit grew 29% to S$211M (FY2024: S$163M).\nAttributable Profit: S$107M (FY2024: S$129M; -17% — lower development profit recognition).\nInvestment Properties: S$6.97B (FY2024: S$6.785B; +2.7%).\nTotal Assets: S$12.375B (FY2024: S$12.530B).\nNAV per share: S$3.90 (FY2024: S$3.90).\nDPS: 7.0 cents (FY2024: 6.0 cents; +16.7%).\nDebt-to-Assets: 0.44x (FY2024: 0.43x).\n\nCHINA & MALAYSIA\n\nGuoco Changfeng City (Shanghai Putuo): Investment property — premium tenants GE Aerospace, Vanderlande, ams OSRAM. China IPs faced valuation headwinds, partially offsetting SG gains.\nDamansara City / Menara Guoco (KL, via GLM): 1.8M sq ft GFA; Menara Guoco 97% committed.\n\nRESIDENTIAL PIPELINE — SINGAPORE\n\nLentor Modern (605 units): 100% sold; TOP achieved Aug 2025; retail mall 85% committed (expected open Jan 2026).\nLentor Hills Residences (598 units, 30% GL): 99% sold; targeted completion Q2 2026.\nLentor Mansion (533 units, 60% GL): 98% sold; targeted completion 1H 2028.\nLentor Central Residences (477 units, 30% GL): 99% sold (launched Mar 2025 at 93% on launch weekend); targeted completion end 2027.\nSpringleaf Residence (941 units, 100% GL): 92% sold as at 17 Aug 2025; targeted completion 2029.\n\nGCEO REMUNERATION\n\nCheng Hsing Yao: S$2,715,457 (FY2025) — exact disclosure. Mix: 46.0% fixed / 21.1% variable bonus / 31.8% share grant (260,274 shares ESS) / 1.1% other. YoY: approximately +3.4% from FY2024 band midpoint (S$2.5M–S$2.75M). Top-5 KMP aggregate (excl CEO): S$3,490,504 (FY2024: S$2,173,529; +60.6% — team composition change). Total Director fees S$561,000 proposed at AGM Oct 2025.\n\nKEY TAKEAWAY\n\nGuocoLand's FY2025 story is twin-engine stability — investment properties (now 60% of total assets) generating recurring rental revenue at 100% committed occupancy in Singapore, while a sold-out residential pipeline in Lentor Hills contributes progressive development profits. Overall profit dipped on lower residential recognition timing; the investment segment's 29% profit jump to S$211M signals compounding recurring income strength. DPS lifted to 7 cents despite the earnings dip, reflecting confidence in cashflows."},
   {id:38, date:"2026-04-05", title:"United Hampshire US REIT FY2025: DPU 4.39¢ +8.1%, Portfolio US$774M +3.8%, Third Consecutive DPU Growth",
  entity:"United Hampshire US REIT", tag:"AR Update",
  sourceLabel:"PropertyAtlas.sg Analysis · UHREIT AR 2025", sentiment:"positive",
@@ -8935,6 +9078,13 @@ var REIT_DATA = [
   {name:"ST PAUL\'S HOUSE — CHIPPENHAM",addr:"Marshfield Road, Chippenham, SN15 1LA, UK",type:"Government Office",entity:"Elite UK REIT",entity_type:"REIT",tenure:"DIVESTED Jul 2025",nla_sqm:null,occ:null,val:null,prev_val:null,region:"United Kingdom",area:"South West England",country:"United Kingdom",ar_year:"FY2025",source:"Elite UK REIT AR 2025",status:"DIVESTED Jul 2025 — £1.6M",notes:"DIVESTED Jul 2025. Sold to Abode & Co Holdings Limited for £1.6M. Vacant asset; proceeds recycled to fund Jun 2025 acquisitions."},
   {name:"VICTORIA ROAD — KIRKCALDY",addr:"26 Victoria Road, Kirkcaldy, KY1 1EA, UK",type:"Government Office",entity:"Elite UK REIT",entity_type:"REIT",tenure:"DIVESTED Jul 2025",nla_sqm:null,occ:null,val:null,prev_val:null,region:"United Kingdom",area:"Scotland",country:"United Kingdom",ar_year:"FY2025",source:"Elite UK REIT AR 2025",status:"DIVESTED Jul 2025 — £0.3M",notes:"DIVESTED Jul 2025. Sold to Alex Penman for £0.3M. Vacant asset."},
     {name:"ELITE UK REIT — SOUTH WEST, MIDLANDS, EAST, YORKSHIRE & NORTH EAST",addr:"Bristol, Swindon, Derby, Birmingham, Basildon, Norwich, Bradford, Huddersfield, Hexham, Hartlepool, Billingham",type:"Government Office Portfolio",entity:"Elite UK REIT",entity_type:"REIT",tenure:"Freehold (mostly)",nla_sqm:null,occ:100,val:null,region:"United Kingdom",area:"South West / Midlands / East / Yorkshire / North East England",country:"United Kingdom",ar_year:"FY2025",source:"Elite UK REIT AR 2025",status:"South West (11 properties) — valuation £32.3M (FY2024: £33.6M) | 100% occupied | Key: Spring Gardens House Swindon £8.6M (47,918sqft); Brendon House Taunton £4.4M; Lodge House Bristol £4.3M | DIVESTED: St Paul's House Chippenham £1.6M (Jul 2025, +5% premium) | GRI: £2.8M | Midlands (16 properties) — valuation £28.8M (FY2024: £28.4M) | 100% occupied | Key: Holborn House Derby £4.1M (35,120sqft); Bristol Road South Birmingham £3.6M; Temple House Wolverhampton £2.7M | GRI: £2.8M | East (9 properties) — valuation £29.2M (FY2024: £26.4M; Custom House Felixstowe acquired Jun 2025) | 100% occupied (excl The Forum Stevenage 20% vacancy) | Key: Great Oaks House Basildon £5.5M (54,432sqft); Beaufort House Harlow £6.1M; Custom House Felixstowe £3.7M (NEW ACQUISITION Jun 2025; 52,578sqft Home Office) | GRI: £2.7M | Yorkshire & Humber (10 properties) — valuation £11.5M (FY2024: £11.9M) | 100% occupied | Key: Phoenix House Bradford £2.7M (37,649sqft); Castle House Huddersfield £2.2M | GRI: £1.2M | North East (11 properties) — valuation £12.3M (FY2024: £11.8M) | 100% occupied | Key: St Andrew's House Hexham £2.5M; Ward Jackson House Hartlepool £2.3M; Hadrian House Eston £1.4M | GRI: £1.5M | Wales (20 properties) — valuation £29.4M (FY2024: £27.8M; Merlin House Carmarthen acquired Jun 2025; Crown Buildings Caerphilly divested Mar 2025) | Key: Parc Menai Bangor £4.4M (250-yr leasehold); Crown Buildings Bridgend £3.8M; Merlin House Carmarthen £2.3M (NEW ACQUISITION Jun 2025; 15,337sqft DEFRA tenant) | Cambria House Cardiff vacant — pre-planning consultation for 348-bed PBSA completed | GRI: £2.7M"},
+  // ── GUOCOLAND — FY2025 (AR year ended 30 June 2025) ───────────────────────
+  {name:"GUOCO TOWER",addr:"1 Wallich Street, Singapore 078881",type:"Mixed (Office + Retail + Hotel + Resi)",entity:"GuocoLand",entity_type:"Dev",tenure:"Leasehold 99 yrs from 2012",nla_sqm:91974,occ:100,val:null,prev_occ:100,region:"Singapore",area:"Tanjong Pagar CBD",country:"Singapore",ar_year:"FY2025",source:"GuocoLand AR 2025",notes:"Singapore\'s tallest building at 290m | 890,000 sq ft (82,776sqm) Grade A office + 100,000 sq ft (9,290sqm) retail + Sofitel Singapore City Centre hotel + 181 ultra-luxury homes at Wallich Residence | Directly connected to Tanjong Pagar MRT | 100% committed as at 30 Jun 2025 (office + retail) | Tenants: MNCs from technology, banking & finance, investment services, insurance, media | Flagship transit-oriented integrated mixed development; transformed Tanjong Pagar into prime office district | BCA Green Mark certified | 150,000 sq ft Urban Park at podium | Part of SG investment portfolio: total IP val S$6.97B (FY2025) vs S$6.785B (FY2024); SG fair value gain S$76M in FY2025"},
+  {name:"GUOCO MIDTOWN",addr:"120 Beach Road, Singapore 189759",type:"Mixed (Office + Retail + Resi)",entity:"GuocoLand",entity_type:"Dev",tenure:"Leasehold 99 yrs from 2018",nla_sqm:65870,occ:100,val:null,prev_occ:100,region:"Singapore",area:"Beach Road–Bugis",country:"Singapore",ar_year:"FY2025",source:"GuocoLand AR 2025",notes:"3.2-hectare mega transit-oriented integrated mixed development | 709,000 sq ft (65,870sqm) premium Grade A office (30-storey tower + 5-storey Network Hub with on-demand office + MICE) + 50,000 sq ft retail (3 clusters) + Midtown Bay (219 units) + Midtown Modern (558 units, fully sold Dec 2024) | Directly connected to Bugis MRT interchange (EWL + DTL underground link) | 100% committed as at 30 Jun 2025 | Completed in phases 2023–2025; Guoco Midtown II retail podium (Tan Quee Lan St) opened May 2025 — final phase | BCA Green Mark Platinum certified | PUB Water Efficient (Basic) Building | Community: Guoco Midtown Public Art Wall (44m underpass); Education Panels (former Beach Road Police Station)"},
+  {name:"20 COLLYER QUAY",addr:"20 Collyer Quay, Singapore 049319",type:"Office",entity:"GuocoLand",entity_type:"Dev",tenure:"Leasehold",nla_sqm:15236,occ:98,val:null,prev_occ:null,region:"Singapore",area:"Raffles Place CBD",country:"Singapore",ar_year:"FY2025",source:"GuocoLand AR 2025",notes:"164,000 sq ft (15,236sqm) NLA | 24-storey office building above Raffles Place MRT interchange, overlooking Marina Bay | 98% committed as at 30 Jun 2025 | Modern infrastructure + sustainability certifications + flexible leasing | Sought-after address for financial and professional services | PUB Water Efficient (Basic) Building"},
+  {name:"GUOCO CHANGFENG CITY",addr:"Changfeng Eco-Business District, Putuo District, Shanghai, China",type:"Mixed (Office + Retail)",entity:"GuocoLand",entity_type:"Dev",tenure:"Leasehold",nla_sqm:null,occ:null,val:null,region:"China",area:"Shanghai — Putuo / Changfeng",country:"China",ar_year:"FY2025",source:"GuocoLand AR 2025",notes:"GuocoLand\'s flagship investment property in China | Located in Changfeng Eco-Business District, Putuo District, Shanghai | Mixed-use development with office + retail | Premium tenants: GE Aerospace, Vanderlande, ams OSRAM, Huizheng Finance | Award: Shanghai Fire Protection Association 2024 Advanced Member Unit; 2024 Annual Advanced Unit for Public Security & Security in Putuo District; Excellence in High-Efficiency & Quality Contribution of Buildings | Contributing to China investment property segment | China IPs impacted by prevailing headwinds in FY2025 (lower valuations partially offsetting SG IP gains)"},
+  {name:"DAMANSARA CITY / MENARA GUOCO",addr:"Damansara Heights, Kuala Lumpur, Malaysia",type:"Mixed (Office + Retail + Hotel + Resi)",entity:"GuocoLand",entity_type:"Dev",tenure:"Leasehold",nla_sqm:167225,occ:97,val:null,prev_occ:null,region:"Malaysia",area:"Damansara Heights, KL",country:"Malaysia",ar_year:"FY2025",source:"GuocoLand AR 2025",notes:"1.8M sq ft (~167,225sqm) total GFA | Developed by GuocoLand (Malaysia) Berhad (GLM) — indirect subsidiary listed on Bursa Malaysia (Main Market) | First integrated mixed development in KL\'s prime Damansara Heights | Components: two Grade A office towers (incl Menara Guoco) + DC Residensi (370 luxury units, 2 towers) + DC Mall (~170,000 sq ft retail, 5 levels) + Sofitel KL Damansara (312 rooms, 15,000+ sq ft events facilities) | Menara Guoco committed occupancy: 97% as at 30 Jun 2025 | Award-winning development"},
+
 ];
 
 var ENTITY_COLORS = {
