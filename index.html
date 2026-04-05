@@ -5388,6 +5388,7 @@ document.querySelectorAll(".navtab").forEach(function(t){
       if(!talentInited){
         talentInited = true;
         talentInitSummary();
+        talentRender(); // render immediately from local TALENT_DATA
         talentLoadEnrichment().then(function(){ talentRender(); }).catch(function(){ talentRender(); });
       } else {
         talentRender();
