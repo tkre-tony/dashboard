@@ -1396,6 +1396,7 @@ html,body{background:var(--bg);color:var(--txt);font-family:'DM Sans',sans-serif
         <button class="dir-tbtn" data-reitf="Acrophyte Hospitality Trust" onclick="reitSetFilter(this,'reit','Acrophyte Hospitality Trust')">Acrophyte HT <span style="color:#4ade80;font-size:8px">●</span></button>
         <button class="dir-tbtn" data-reitf="AIMS APAC REIT" onclick="reitSetFilter(this,'reit','AIMS APAC REIT')">AIMS APAC <span style="color:#4ade80;font-size:8px">●</span></button>
         <button class="dir-tbtn" data-reitf="Alpha Integrated REIT (former Sabana)" onclick="reitSetFilter(this,'reit','Alpha Integrated REIT (former Sabana)')">AI REIT <span style="color:#f59e0b;font-size:8px">●</span></button>
+        <button class="dir-tbtn" data-reitf="CapitaLand China Trust" onclick="reitSetFilter(this,'reit','CapitaLand China Trust')">CLCT <span style="color:#4ade80;font-size:8px">●</span></button>
         <button class="dir-tbtn" data-reitf="CapitaLand Ascott Trust (CLAS)" onclick="reitSetFilter(this,'reit','CapitaLand Ascott Trust (CLAS)')">CLAS <span style="color:#f59e0b;font-size:8px">●</span></button>
         <button class="dir-tbtn" data-reitf="CapitaLand Ascendas REIT (CLAR)" onclick="reitSetFilter(this,'reit','CapitaLand Ascendas REIT (CLAR)')">CLAR <span style="color:#4ade80;font-size:8px">●</span></button>
         <button class="dir-tbtn" data-reitf="CDL Hospitality Trusts" onclick="reitSetFilter(this,'reit','CDL Hospitality Trusts')">CDL Hosp <span style="color:#4ade80;font-size:8px">●</span></button>
@@ -1796,6 +1797,7 @@ html,body{background:var(--bg);color:var(--txt);font-family:'DM Sans',sans-serif
     <select class="talent-sort-sel" id="talent-entity-filter" onchange="talentRender()" style="max-width:160px">
       <option value="">All Entities</option>
       <option value="Alpha Integrated REIT">AI-REIT (FY2025)</option>
+      <option value="CapitaLand China Trust">CLCT (FY2025)</option>
       <option value="CapitaLand Investment Limited">CLI (FY2025)</option>
       <option value="CDL Hospitality Trusts">CDLHT (FY2025)</option>
       <option value="CapitaLand Ascendas REIT">CLAR (FY2025)</option>
@@ -2937,7 +2939,96 @@ var TALENT_DATA = [
     tags:['Independent','ARC Chair','KPMG','Real Estate','New 2025']
   },
 
-  // ── CAPITALAND INVESTMENT LIMITED (CLI) — FY2025 ─────────────────────────
+  // ── CAPITALAND CHINA TRUST (CLCT) — FY2025 ─────────────────────────────
+  {
+    id:'clct-ceo-25', name:'Chan Kin Leong Gerry', role:'Chief Executive Officer', role_type:'CEO',
+    entity:'CapitaLand China Trust', entity_short:'CLCT', ar_year:'FY2025',
+    appointed:'2022', tenure_yrs:3,
+    rem_exact:966251, rem_fixed:387096, rem_bonus:258913, rem_other:320242,
+    rem_note:'FY2025 exact S$966,251: fixed salary (incl. CPF) 40% = S$387,096; performance bonus (incl. CPF) 27% = S$258,913; benefits-in-kind 3% = S$28,714; deferred compensation awards (PUP + RUP) 30% = S$291,528. KMP (excl. CEO) aggregate S$1,276,917 for 5 persons — not individually named.',
+    rem_band:null, rem_pct_fixed:40, rem_pct_bonus:27, rem_pct_other:33,
+    rem_history:[
+      {year:'FY2025', total:966251, pct_fixed:40, pct_bonus:27, pct_ltp:30, pct_other:3},
+    ],
+    edu:'Not disclosed in AR',
+    bio:'CEO of CapitaLand China Trust Management Limited. Appointed executive Director and CEO. Oversees CLCT\'s diversified portfolio of 17 properties across 11 cities in China comprising retail malls, business parks and logistics parks. Total portfolio value S$4.2B as at FY2025. Leads strategy of portfolio reconstitution, AEI and sustainability initiatives. Joanne Tan serves as CFO.',
+    prev_roles:[],
+    cross_board_roles:[],
+    linkedin_url:null, photo_url:null,
+    tags:['REIT CEO','China Real Estate','CapitaLand Group']
+  },
+  {
+    id:'clct-chair-25', name:'Tan Tee How', role:'Non-Executive Independent Director & Chairman', role_type:'Board',
+    entity:'CapitaLand China Trust', entity_short:'CLCT', ar_year:'FY2025',
+    appointed:'2022', tenure_yrs:3,
+    rem_exact:145000, rem_fixed:116000, rem_bonus:null, rem_other:29000,
+    rem_note:'FY2025 exact S$145,000 (cash S$116,000 + units S$29,000). NRC Chairman. Non-executive Directors paid ~80% cash / ~20% in CLCT units.',
+    rem_band:null, rem_pct_fixed:80, rem_pct_bonus:null, rem_pct_other:20,
+    rem_history:[
+      {year:'FY2025', total:145000, pct_fixed:80, pct_bonus:null, pct_ltp:null, pct_other:20},
+    ],
+    edu:'Master of Public Administration, Harvard',
+    bio:'Non-Executive Independent Director and Chairman of CLCT. Also Chairman of Nominating and Remuneration Committee. Age 66. Previously held senior positions in the Singapore public sector. Also director of Hong Leong Finance Limited. Awarded Meritorious Service Medal (2025).',
+    prev_roles:[{org:'Singapore Public Sector',pos:'Senior positions'}],
+    cross_board_roles:[
+      {entity:'Hong Leong Finance Limited',role:'Director',listed:true},
+    ],
+    linkedin_url:null, photo_url:null,
+    tags:['Independent','Chairman','NRC Chair','Public Sector Background']
+  },
+  {
+    id:'clct-dir-chua-25', name:'Chua Keng Kim', role:'Non-Executive Independent Director, ARC Chairman', role_type:'Board',
+    entity:'CapitaLand China Trust', entity_short:'CLCT', ar_year:'FY2025',
+    appointed:'1 Jan 2025', tenure_yrs:1,
+    rem_exact:95018, rem_fixed:76014, rem_bonus:null, rem_other:19004,
+    rem_note:'FY2025 exact S$95,018 (cash S$76,014 + units S$19,004). Appointed ARC Chairman 1 Nov 2025, succeeding Neo Poh Kiat. Appointed NRC member 1 Nov 2025. New director in FY2025.',
+    rem_band:null, rem_pct_fixed:80, rem_pct_bonus:null, rem_pct_other:20,
+    rem_history:[
+      {year:'FY2025', total:95018, pct_fixed:80, pct_bonus:null, pct_ltp:null, pct_other:20},
+    ],
+    edu:'Not disclosed',
+    bio:'Non-Executive Independent Director of CLCT, appointed 1 January 2025. Became ARC Chairman on 1 November 2025 (succeeding Neo Poh Kiat who retired). Also appointed NRC member in November 2025. Age 70. Brings extensive audit and risk management experience.',
+    prev_roles:[],
+    cross_board_roles:[],
+    linkedin_url:null, photo_url:null,
+    tags:['Independent','ARC Chair','New 2025']
+  },
+  {
+    id:'clct-dir-neo-25', name:'Neo Poh Kiat', role:'Non-Executive Independent Director (retired Nov 2025)', role_type:'Board',
+    entity:'CapitaLand China Trust', entity_short:'CLCT', ar_year:'FY2025',
+    appointed:'Prior', tenure_yrs:null,
+    rem_exact:104111, rem_fixed:104111, rem_bonus:null, rem_other:0,
+    rem_note:'FY2025 partial year S$104,111 (all cash; no units as stepped down mid-year). Retired as Non-Executive Independent Director and ARC Chairman effective 1 November 2025. Paid fully in cash per policy for directors stepping down during financial year.',
+    rem_band:null, rem_pct_fixed:100, rem_pct_bonus:null, rem_pct_other:0,
+    rem_history:[
+      {year:'FY2025', total:104111, pct_fixed:100, pct_bonus:null, pct_ltp:null, pct_other:0},
+    ],
+    edu:'Not disclosed',
+    bio:'Former Non-Executive Independent Director and ARC Chairman of CLCT. Retired effective 1 November 2025. Served as ARC Chairman for multiple years. Succeeded in ARC role by Chua Keng Kim.',
+    prev_roles:[],
+    cross_board_roles:[],
+    linkedin_url:null, photo_url:null,
+    tags:['Independent','Former ARC Chair','Retired 2025']
+  },
+  {
+    id:'clct-dir-liu-25', name:'Liu Sing Cheong', role:'Non-Executive Independent Director', role_type:'Board',
+    entity:'CapitaLand China Trust', entity_short:'CLCT', ar_year:'FY2025',
+    appointed:'1 Nov 2025', tenure_yrs:0.2,
+    rem_exact:12861, rem_fixed:10289, rem_bonus:null, rem_other:2572,
+    rem_note:'FY2025 pro-rated S$12,861 for ~2 months (cash S$10,289 + units S$2,572). Appointed 1 November 2025; also ARC member from Feb 2026. Age 70. Pro-rated fees reflect partial year.',
+    rem_band:null, rem_pct_fixed:80, rem_pct_bonus:null, rem_pct_other:20,
+    rem_history:[
+      {year:'FY2025', total:12861, pct_fixed:80, pct_bonus:null, pct_ltp:null, pct_other:20},
+    ],
+    edu:'Not disclosed',
+    bio:'Non-Executive Independent Director of CLCT appointed 1 November 2025. Also appointed ARC member effective 5 February 2026. Age 70. Brings extensive business leadership experience relevant to China real estate and governance.',
+    prev_roles:[],
+    cross_board_roles:[],
+    linkedin_url:null, photo_url:null,
+    tags:['Independent','New Nov 2025','ARC Member']
+  },
+
+    // ── CAPITALAND INVESTMENT LIMITED (CLI) — FY2025 ─────────────────────────
   {
     id:'cli-ceo-25', name:'Lee Chee Koon', role:'Group CEO & Executive Director', role_type:'CEO',
     entity:'CapitaLand Investment Limited', entity_short:'CLI', ar_year:'FY2025',
@@ -3808,7 +3899,11 @@ var NEWS=[
   {id:19,date:"2026-02-26",title:"MPs Call for 15% Stamp Duty Tier on Properties Above S$5M",source:"Straits Times",category:"Policy",tag:"Property Tax",summary:"Budget 2026 debate: calls for 15% marginal rate on residential properties above S$5M. Fiscal surplus S$15.1B. SG wealth Gini 0.55.",sentiment:"neutral"},
   {id:20,date:"2026-02-26",title:"Singapore Land H2 Profit Down 11% at S$160.9M",source:"Business Times",category:"Commercial",tag:"Earnings",summary:"FY2025 net profit S$272.3M (-4%). Revenue +7% to S$783.1M. Drag from higher finance costs (+23%) on Sydney acquisition. DPS S$0.045.",sentiment:"negative"},
   {id:21,date:"2026-02-20",title:"Serenity Park Condo in Yio Chu Kang Put on Market at S$505M",source:"Business Times",category:"Commercial",tag:"En Bloc",summary:"179-unit freehold condo, Tamarind Road. First freehold residential en-bloc of 2026. S$1,453 psf ppr. Owner premium >40%. Closes 26 Mar 2026.",sentiment:"neutral"},
-  {id:32, date:"2026-04-05", title:"CapitaLand Investment FY2025: FUM S$125B, Operating PATMI +6%, DPS 12¢",
+  {id:33, date:"2026-04-05", title:"CapitaLand China Trust FY2025: Portfolio S$4.20B, Retail Occ 97.2%, Yuhuating Divested to C-REIT",
+ entity:"CapitaLand China Trust", tag:"AR Update",
+ sourceLabel:"PropertyAtlas.sg Analysis · CLCT AR 2025", sentiment:"neutral",
+ summary:"CapitaLand China Trust (CLCT) FY2025 (year ended 31 Dec 2025) delivered a resilient operating performance despite continued China macro headwinds, with its diversified 17-property portfolio across retail, business parks and logistics maintaining solid occupancy.\n\nKEY METRICS\n\nPortfolio valuation S$4,204.4M (FY2024: S$4,443.9M incl. Yuhuating; -5.4% on a like-for-like basis). NPI S$200.9M (RMB1,104.6M, -11.3% YoY in S$). Distributable income S$83.9M. Aggregate leverage 40.7% (down from 41.9%). Average cost of debt reduced from 3.6% to 3.5% (LPR cut). Gross borrowings S$1,703.0M.\n\nPORTFOLIO PERFORMANCE\n\nRetail (8 malls, S$2,971.9M): Portfolio occ 97.2% vs China average 92.8% — outperforming market by 4.4pp. Tenant sales +2.1% YoY, shopper traffic +2.7% YoY. Best performers: Nuohemule (99.5%), Xizhimen (99.1%), Rock Square (99.0%). Weakest: Xinnan (88.4%, -3.6pp).\n\nBusiness Parks (5 assets, S$981.9M): Portfolio occ 86.7% vs China average 63.0% — significant outperformance. Standout recovery: Ascendas Innovation Towers Xi'an +13.4pp to 85.2%. Drag: SH-HZ Phase II -9.5pp to 74.9% (serviced-office to direct-lease conversion impact).\n\nLogistics Parks (4 assets, S$250.6M): Portfolio occ 98.1%. Three parks at 100%. Only Chengdu Shuangliu below full (92.3%, +1.6pp improvement).\n\nKEY EVENTS\n\nYuhuating Divestment: CapitaMall Yuhuating (Changsha) divested 31 Oct 2025, transferred to CapitaLand Commercial C-REIT (CLCR) — China's first international-sponsored retail C-REIT listed on Shanghai Stock Exchange in Sep 2025. CLCT retains 5.0% stake in CLCR (RMB130.5M).\n\nCapital Management: Issued S$150M 3-year fixed rate subordinated perpetual securities in Sep 2025 (3.4x oversubscribed); used proceeds to redeem S$100M perpetual securities and refinance debt.\n\nKEY TAKEAWAY\n\nCLCT's FY2025 result reflects the tension between a well-managed portfolio outperforming Chinese market averages and the structural headwind of RMB/SGD translation and China commercial real estate softness. All logistics parks and flagship malls (Nuohemule, Xizhimen, Rock Square) remain near full occupancy. The Yuhuating divestment via C-REIT is an innovative capital recycling structure. The key watch items are the SH-HZ Phase II recovery trajectory (74.9% occ), Xinnan\'s occupancy trend, and whether logistics valuations stabilise after FY2025 declines."},
+    {id:32, date:"2026-04-05", title:"CapitaLand Investment FY2025: FUM S$125B, Operating PATMI +6%, DPS 12¢",
  source:"PropertyAtlas.sg", category:"Commercial", tag:"Earnings · Developer Update",
  sourceLabel:"PropertyAtlas.sg Analysis · CapitaLand Investment AR 2025", sentiment:"neutral",
  summary:"CapitaLand Investment (CLI) FY2025 (year ended 31 Dec 2025) delivered improved operating performance alongside a headline PATMI decline — a recurring feature of CLI's asset-light model where paper revaluation swings dominate reported earnings.\n\nKEY METRICS\n\nFUM grew 7% to S$125B (FY2024: S$117B), underpinned by larger follow-on funds, SCCP integration (40% stake) and Wingate (Australia). Fee-Related Revenue S$1.23B (+3% YoY; including SCCP: S$1.23B). Operating PATMI S$539M (+6% YoY). Total PATMI S$145M (FY2024: S$479M) — lower due to S$439M in China revaluation losses and reduced portfolio gains (S$45M vs S$230M). Revenue S$2.1B (broadly stable, adjusting for CLAS deconsolidation in Dec 2024).\n\nSEGMENT PERFORMANCE\n\nFRB (Fee Business): Higher contributions from listed funds management and private funds; offset by growth-related expenses to scale private funds and lodging management. EBITDA margin stable at 36%.\nREIB (Investment Business): Positive from lower interest and operating costs; offset by reduced contribution from divested China assets and higher revaluation losses reflecting continued China market softness. China + Singapore = 52% of total revenue.\n\nLISTED FUNDS FY2025: SG-sponsored REITs delivered 15.6%–29.9% total unitholder returns. ~S$3.7B in acquisitions by listed funds.\n\nCAPITAL DISCIPLINE\n\nDPS 12.0¢ (ordinary, stable YoY; no special dividend vs 6.5¢ CICT-units special in FY2024). Equity raised S$6.5B (S$1.6B listed + S$4.9B private). Capital recycled S$3.1B. Net debt/equity 0.43x. Interest cost down to 3.9% p.a. (FY2024: 4.4% rebased). Debt headroom S$6.4B.\n\nKEY TAKEAWAY\n\nCLI is executing its transformation to an asset-light, fee-driven real asset manager — FUM at record S$125B, fee revenue growth across all segments, AI-driven efficiency gains. The China portfolio remains a drag: S$439M in revaluation losses and S$3.1B of capital recycling are both expressions of the same strategic priority — reduce China REIB exposure, redeploy into higher-growth fee-generating mandates. The 2026 pipeline (REIT listings, SCCP fund launches, Wingate scaling) could be a meaningful catalyst for both FUM growth and fee revenue."},
@@ -8110,12 +8205,33 @@ var REIT_DATA = [
   {name:"ELITE UK REIT — SCOTLAND PROPERTIES (26)",addr:"Glasgow, Edinburgh, Falkirk, Dundee and across Scotland",type:"Government Office Portfolio",entity:"Elite UK REIT",entity_type:"REIT",tenure:"Freehold (mostly)",nla_sqm:null,occ:100,val:null,region:"United Kingdom",area:"Scotland",country:"United Kingdom",ar_year:"FY2024",source:"Elite UK REIT AR FY2024",status:"Scotland — 26 properties | 100% occupied (excl 2 vacants: Ladywell House Edinburgh + Victoria Road Kirkcaldy) | Total valuation ~£57M | NIA: 21% of total portfolio | KEY ASSETS: Glasgow Benefits Centre £22.8M (DWP, 137,287sqft); Parklands Falkirk £6.2M (81,350sqft); Ladywell House Edinburgh £4.3M (54,622sqft — VACANT); Coustonholm Road Glasgow £3.7M; Crown Building Kilmarnock £3.1M; Wallacetoun House Ayr £2.8M; Claverhouse Industrial Park Dundee £2.8M | DIVESTED: Sidlaw House Dundee £1.3M (+40% premium; Oct 2024) | Sustainability: Coustonholm Road Glasgow (LED upgrade) + Flemington House Motherwell (air-source heat pumps) — DWP co-investment"},
   {name:"ELITE UK REIT — LONDON PROPERTIES (10)",addr:"Romford, Ealing, Barnet, Stratford, Peckham, Ilford, Finsbury Park, Canning Town, Hendon",type:"Government Office Portfolio",entity:"Elite UK REIT",entity_type:"REIT",tenure:"Freehold",nla_sqm:null,occ:100,val:null,region:"United Kingdom",area:"London",country:"United Kingdom",ar_year:"FY2024",source:"Elite UK REIT AR FY2024",status:"London — 10 properties | 100% occupied | Total valuation £62.1M (~15% of portfolio — highest value density by NIA) | KEY ASSETS: Crown House Romford £8.6M (35,119sqft; near Elizabeth Line); Broadway House Ealing £7.3M (17,303sqft); Raydean House Barnet £7.0M (28,716sqft); Oates House Stratford £6.6M (14,424sqft); Peckham High Street £6.4M (17,470sqft); Collyer Court Peckham £6.0M (16,786sqft); High Road Ilford £5.7M (18,741sqft); Medina Road Finsbury Park £5.1M (15,710sqft); Kilner House Canning Town £4.9M (VRF AC system upgrade underway); Finchley Lane Hendon £4.4M | All DWP JobCentre Plus | PBSA/BTR repositioning potential under expanded strategy"},
   {name:"ELITE UK REIT — SOUTH EAST PROPERTIES (12)",addr:"Canterbury, Southampton, Chatham, Isle of Wight, Lewes, Folkestone, Worthing, Banbury, Bognor Regis, Aldershot, Epsom, Tonbridge",type:"Government Office Portfolio",entity:"Elite UK REIT",entity_type:"REIT",tenure:"Freehold (mostly)",nla_sqm:null,occ:100,val:null,region:"United Kingdom",area:"South East England",country:"United Kingdom",ar_year:"FY2024",source:"Elite UK REIT AR FY2024",status:"South East — 12 properties | 100% occupied | Total valuation £46.0M (~11% of portfolio) | KEY ASSETS: Nutwood House Canterbury £6.8M (27,172sqft); St Cross House Southampton £5.4M (42,700sqft); Crown House Chatham £5.3M (30,088sqft); Broadlands House Newport IoW £4.6M (31,930sqft); Medwyn House Lewes £4.3M; Crown House Worthing £3.5M; Palting House Folkestone £3.5M; Crown Building Banbury £3.2M | DIVESTING: St Paul's House Chippenham (South West) £1.6M (+18.5% premium; expected 1H 2025)"},
+
+  // ── CAPITALAND CHINA TRUST (CLCT) — Updated FY2025 ──────────────────────
+  {name:"CAPITALAND MALL XIZHIMEN",addr:"Xizhimen, Beijing, China",type:"Retail",entity:"CapitaLand China Trust",entity_type:"REIT",tenure:"Leasehold to 23 Aug 2044 / 2054",nla_sqm:50424,occ:99.1,val:684.4,prev_occ:100.0,prev_val:680.4,region:"China",area:"Beijing",country:"China",ar_year:"FY2025",source:"CLCT AR 2025",notes:"GFA 83,075sqm, NLA 50,424sqm; directly connected to Xizhimen interchange metro station; green certified 2023; anchor tenants include Huawei. Occ -0.9pp to 99.1%; val +S$4.0M (+0.6%) to S$684.4M reflecting stable Beijing prime retail."},
+  {name:"ROCK SQUARE",addr:"Haizhu District, Guangzhou, China",type:"Retail",entity:"CapitaLand China Trust",entity_type:"REIT",tenure:"Leasehold to 17 Oct 2045",nla_sqm:53077,occ:99.0,val:623.9,prev_occ:99.2,prev_val:632.5,region:"China",area:"Guangzhou",country:"China",ar_year:"FY2025",source:"CLCT AR 2025",notes:"GFA 88,279sqm, NLA 53,077sqm; one of Guangzhou\'s largest malls in Jiangnanxi retail cluster; directly connected to Shayuan Metro Station Line 8; green certified 2022. Occ stable at 99.0%; val -S$8.6M (-1.4%) to S$623.9M."},
+  {name:"CAPITALAND MALL WANGJING",addr:"Wangjing, Beijing, China",type:"Retail",entity:"CapitaLand China Trust",entity_type:"REIT",tenure:"Leasehold to 15 May 2043 / 2053",nla_sqm:41611,occ:96.0,val:516.3,prev_occ:97.6,prev_val:527.6,region:"China",area:"Beijing",country:"China",ar_year:"FY2025",source:"CLCT AR 2025",notes:"GFA 83,768sqm, NLA 41,611sqm; Wangjing residential enclave near North 4th Ring Road; AEI completed 2025 bringing in 7Fresh supermarket; green certified 2022. Occ -1.6pp to 96.0%; val -S$11.3M (-2.1%) to S$516.3M."},
+  {name:"CAPITALAND MALL XUEFU",addr:"Nangang District, Harbin, China",type:"Retail",entity:"CapitaLand China Trust",entity_type:"REIT",tenure:"Leasehold to 15 Dec 2045",nla_sqm:63218,occ:98.8,val:327.3,prev_occ:99.7,prev_val:331.9,region:"China",area:"Harbin",country:"China",ar_year:"FY2025",source:"CLCT AR 2025",notes:"GFA 123,811sqm, NLA 63,218sqm; regional experiential mall adjacent to cluster of 8 tertiary institutions; features Harbin\'s first all-year indoor garden; directly connected to Harbin Metro Line 1; green certified 2024. Occ -0.9pp to 98.8%; val -S$4.6M (-1.4%) to S$327.3M."},
+  {name:"CAPITALAND MALL GRAND CANYON",addr:"Fengtai District, Beijing, China",type:"Retail",entity:"CapitaLand China Trust",entity_type:"REIT",tenure:"Leasehold to 29 Aug 2044 / 2054",nla_sqm:40672,occ:96.9,val:325.7,prev_occ:98.6,prev_val:333.3,region:"China",area:"Beijing",country:"China",ar_year:"FY2025",source:"CLCT AR 2025",notes:"GFA 92,918sqm, NLA 40,672sqm; faces South 3rd Ring Road Fengtai; near Beijing South Railway Station and Metro Line 4; tenants include 7Fresh, Poly Cinema, Uniqlo. Occ -1.7pp to 96.9%; val -S$7.6M (-2.3%) to S$325.7M."},
+  {name:"CAPITALAND MALL XINNAN",addr:"Gaoxin District, Chengdu, China",type:"Retail",entity:"CapitaLand China Trust",entity_type:"REIT",tenure:"Leasehold to 17 Oct 2047",nla_sqm:36854,occ:88.4,val:238.4,prev_occ:92.0,prev_val:256.9,region:"China",area:"Chengdu",country:"China",ar_year:"FY2025",source:"CLCT AR 2025",notes:"GFA 91,816sqm, NLA 36,854sqm; affluent Gaoxin District south of Chengdu near South Railway Station hub (Metro Lines 1, 7, 18); tenants include Huawei, Sephora, Uniqlo. Occ -3.6pp to 88.4% (weakest in retail portfolio); val -S$18.5M (-7.2%) to S$238.4M reflecting softness."},
+  {name:"CAPITALAND MALL NUOHEMULE",addr:"Yuquan District, Hohhot, Inner Mongolia, China",type:"Retail",entity:"CapitaLand China Trust",entity_type:"REIT",tenure:"Leasehold to 26 Jul 2049",nla_sqm:44404,occ:99.5,val:188.4,prev_occ:99.8,prev_val:191.1,region:"China",area:"Hohhot",country:"China",ar_year:"FY2025",source:"CLCT AR 2025",notes:"GFA 100,047sqm, NLA 44,404sqm; 'mall in a garden' concept with 10,000sqm greenery; atop Nuohemule Station Metro Line 2; green certified 2024; flagship tenants Pop Mart, DJI, Haidilao. Occ 99.5% (near full); val -S$2.7M (-1.4%) to S$188.4M."},
+  {name:"CAPITALAND MALL AIDEMENGDUN",addr:"Downtown Harbin, China",type:"Retail",entity:"CapitaLand China Trust",entity_type:"REIT",tenure:"Leasehold to 7 Sep 2042",nla_sqm:28130,occ:96.6,val:67.5,prev_occ:97.0,prev_val:70.9,region:"China",area:"Harbin",country:"China",ar_year:"FY2025",source:"CLCT AR 2025",notes:"GFA 49,040sqm, NLA 28,130sqm; community mall serving high-density residential catchment and nearby tertiary institutions; 1.5km from two Harbin Metro Line 1 stations. Occ -0.4pp to 96.6%; val -S$3.4M (-4.8%) to S$67.5M."},
+  {name:"CAPITALAND MALL YUHUATING",addr:"Yuhua District, Changsha, China",type:"Retail",entity:"CapitaLand China Trust",entity_type:"REIT",tenure:"DIVESTED Oct 2025",nla_sqm:null,occ:null,val:null,prev_val:145.6,region:"China",area:"Changsha",country:"China",ar_year:"FY2025",source:"CLCT AR 2025",status:"DIVESTED Oct 2025 — transferred to CapitaLand Commercial C-REIT (CLCR)",notes:"DIVESTED Oct 2025. Transferred to CLCR (China\'s first international-sponsored retail C-REIT, listed Shanghai Stock Exchange 29 Sep 2025). CLCT retains 5.0% interest in CLCR units (RMB130.5M as at Dec 2025; cost RMB114.4M). Last appraised val S$145.6M (FY2024)."},
+  {name:"ASCENDAS XINSU PORTFOLIO",addr:"Suzhou Industrial Park, Suzhou, China",type:"Business Park",entity:"CapitaLand China Trust",entity_type:"REIT",tenure:"Leasehold to 31 Dec 2046–30 May 2057",nla_sqm:348804,occ:95.3,val:428.1,prev_occ:96.6,prev_val:434.1,region:"China",area:"Suzhou",country:"China",ar_year:"FY2025",source:"CLCT AR 2025",notes:"GFA 373,334sqm, NLA 348,804sqm; 6 properties, 61 buildings including R&D and industrial; near Suzhou High Speed Railway and Metro Lines 1/3/6; LEED Gold certified (R&D blocks 2024, 4 industrial blocks 2025). Occ -1.3pp to 95.3%; val -S$6.0M (-1.4%) to S$428.1M."},
+  {name:"SINGAPORE-HANGZHOU SCIENCE & TECHNOLOGY PARK PHASE I",addr:"Hangzhou Economic & Technological Development Area, Hangzhou, China",type:"Business Park",entity:"CapitaLand China Trust",entity_type:"REIT",tenure:"Leasehold to 4 Sep 2056",nla_sqm:101450,occ:73.6,val:147.3,prev_occ:74.6,prev_val:150.3,region:"China",area:"Hangzhou",country:"China",ar_year:"FY2025",source:"CLCT AR 2025",notes:"GFA 101,811sqm, NLA 101,450sqm; 5 R&D buildings (4–20 storeys) + 2 ancillary; near Hangzhou Metro Lines 1 & 8 and Zhejiang\'s largest university zone; LEED Gold certified. Occ -1.0pp to 73.6% amid weak leasing sentiment; val -S$3.0M (-2.0%) to S$147.3M."},
+  {name:"SINGAPORE-HANGZHOU SCIENCE & TECHNOLOGY PARK PHASE II",addr:"Hangzhou Economic & Technological Development Area, Hangzhou, China",type:"Business Park",entity:"CapitaLand China Trust",entity_type:"REIT",tenure:"Leasehold to 6 Jul 2060",nla_sqm:130161,occ:74.9,val:186.1,prev_occ:84.4,prev_val:190.1,region:"China",area:"Hangzhou",country:"China",ar_year:"FY2025",source:"CLCT AR 2025",notes:"GFA 130,261sqm, NLA 130,161sqm; 5 R&D towers (11–15 storeys) + 5 semi-detached R&D blocks; in 2025 CLCT converted two serviced-office leases (55,334sqm) to direct leases to reduce tenant concentration risk; green certified 2024. Occ -9.5pp to 74.9% (significant drop post serviced-office conversion); val -S$4.0M (-2.1%) to S$186.1M."},
+  {name:"ASCENDAS INNOVATION TOWERS",addr:"Xi\'an High-Tech Industries Development Zone, Xi\'an, China",type:"Business Park",entity:"CapitaLand China Trust",entity_type:"REIT",tenure:"Leasehold to 19 Feb 2064",nla_sqm:95654,occ:85.2,val:159.3,prev_occ:71.8,prev_val:163.1,region:"China",area:"Xi'an",country:"China",ar_year:"FY2025",source:"CLCT AR 2025",notes:"GFA 118,495sqm, NLA 95,654sqm; two office towers (Block A & B); landmark asset in Xi\'an new economy zone; tenants include Ping An Insurance, iSoftStone, ChangXin Memory; green certified 2023. Occ +13.4pp to 85.2% (strong recovery); val -S$3.8M (-2.3%) to S$159.3M."},
+  {name:"ASCENDAS INNOVATION HUB",addr:"Xi\'an Software Park, Hi-Tech Industries Development Zone, Xi\'an, China",type:"Business Park",entity:"CapitaLand China Trust",entity_type:"REIT",tenure:"Leasehold to 23 May 2051",nla_sqm:36288,occ:86.7,val:61.1,prev_occ:89.6,prev_val:63.6,region:"China",area:"Xi'an",country:"China",ar_year:"FY2025",source:"CLCT AR 2025",notes:"GFA 40,547sqm, NLA 36,288sqm; two office towers in core Xi\'an Software Park; tenants include UniIC Semiconductors, Montage Technology, New H3C Technologies; green certified 2023. Occ -2.9pp to 86.7%; val -S$2.5M (-3.9%) to S$61.1M."},
+  {name:"SHANGHAI FENGXIAN LOGISTICS PARK",addr:"Fengxian District, Shanghai, China",type:"Logistics",entity:"CapitaLand China Trust",entity_type:"REIT",tenure:"Leasehold to 20 Jul 2059",nla_sqm:null,occ:100.0,val:80.1,prev_occ:100.0,prev_val:94.6,region:"China",area:"Shanghai",country:"China",ar_year:"FY2025",source:"CLCT AR 2025",notes:"GFA 62,785sqm; double-storey lift warehouse with cargo and pallet lifts; near road/rail/air/sea nodes in Fengxian; single tenant (100% Logistics & Warehouse). Occ 100%; val -S$14.5M (-15.3%) to S$80.1M (significant decline)."},
+  {name:"WUHAN YANGLUO LOGISTICS PARK",addr:"Yangluo Development Zone, Wuhan, China",type:"Logistics",entity:"CapitaLand China Trust",entity_type:"REIT",tenure:"Leasehold to 14 Jul 2064",nla_sqm:null,occ:100.0,val:59.6,prev_occ:99.7,prev_val:61.6,region:"China",area:"Wuhan",country:"China",ar_year:"FY2025",source:"CLCT AR 2025",notes:"GFA 86,973sqm; four blocks of single-storey warehouse; eastern gateway of Wuhan near airport, highway, railway and port; 99.2% e-commerce tenant by GRI. Occ 100%; val -S$2.0M (-3.2%) to S$59.6M."},
+  {name:"CHENGDU SHUANGLIU LOGISTICS PARK",addr:"Shuangliu District, Chengdu, China",type:"Logistics",entity:"CapitaLand China Trust",entity_type:"REIT",tenure:"Leasehold to 25 Apr 2062",nla_sqm:null,occ:92.3,val:59.1,prev_occ:90.7,prev_val:62.3,region:"China",area:"Chengdu",country:"China",ar_year:"FY2025",source:"CLCT AR 2025",notes:"GFA 71,556sqm; one single-storey + two double-storey ramped warehouses; <30 min to Chengdu international airport and major railway station; inner- and inter-city distribution and express delivery for Western China. Occ +1.6pp to 92.3%; val -S$3.2M (-5.1%) to S$59.1M."},
+  {name:"KUNSHAN BACHENG LOGISTICS PARK",addr:"Bacheng Town, Kunshan, Jiangsu, China",type:"Logistics",entity:"CapitaLand China Trust",entity_type:"REIT",tenure:"Leasehold to 16 Jun 2064",nla_sqm:null,occ:100.0,val:51.8,prev_occ:100.0,prev_val:54.0,region:"China",area:"Kunshan",country:"China",ar_year:"FY2025",source:"CLCT AR 2025",notes:"GFA 43,945sqm; three single-storey warehouse blocks + 4 ancillary blocks; Yangtze River Delta distribution hub within 1hr drive to Shanghai; multi-sector tenants (logistics 54%, e-commerce 32%, manufacturing 10%). Occ 100%; val -S$2.2M (-4.1%) to S$51.8M."},
   {name:"ELITE UK REIT — SOUTH WEST, MIDLANDS, EAST, YORKSHIRE & NORTH EAST",addr:"Bristol, Swindon, Derby, Birmingham, Basildon, Norwich, Bradford, Huddersfield, Hexham, Hartlepool, Billingham",type:"Government Office Portfolio",entity:"Elite UK REIT",entity_type:"REIT",tenure:"Freehold (mostly)",nla_sqm:null,occ:100,val:null,region:"United Kingdom",area:"South West / Midlands / East / Yorkshire / North East England",country:"United Kingdom",ar_year:"FY2024",source:"Elite UK REIT AR FY2024",status:"South West (12 properties) — valuation £33.6M | Key: Spring Gardens House Swindon £7.8M (47,918sqft); Brendon House Taunton £4.8M; Lodge House Bristol £4.6M | DIVESTING: St Paul's House Chippenham £1.6M (+18.5% premium) | Midlands (16 properties) — valuation £28.4M | 100% occupied | Key: Holborn House Derby £4.7M (35,120sqft); Bristol Road South Birmingham £3.4M; Temple House Wolverhampton £2.7M | East (8 properties) — valuation £26.4M | Mostly 100% occupied (The Forum Stevenage 80% vacant) | Key: Great Oaks House Basildon £7.1M (54,432sqft; 999-yr leasehold from Jun 2004); Beaufort House Harlow £5.8M | Yorkshire & Humber (10 properties) — valuation £11.9M | Key: Phoenix House Bradford £3.0M (37,649sqft; 10-yr lease renewal Jun 2024, 30% reversion, no break to Jun 2034); Theatre Buildings Billingham £0.6M (5% reversion, lease to Mar 2028) | North East (11 properties) — valuation £11.8M | Key: St Andrew's House Hexham £2.5M; Ward Jackson House Hartlepool £1.9M | Wales (20 properties) — valuation £27.8M | Key: Crown Buildings Bridgend £4.0M; Parc Menai Bangor £3.5M (250-yr leasehold from 2005); Newport Road Cardiff £3.4M"},
 ];
 
 var ENTITY_COLORS = {
   "AIMS APAC REIT":"#1a5276",
   "Alpha Integrated REIT (former Sabana)":"#6e2f8a",
+  "CapitaLand China Trust":"#c0392b",
   "CapitaLand Ascendas REIT (CLAR)":"#1e8449",
   "CapitaLand Integrated Commercial Trust":"#1a6b3c",
   "CDL Hospitality Trusts":"#b7770d",
