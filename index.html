@@ -1796,6 +1796,7 @@ html,body{background:var(--bg);color:var(--txt);font-family:'DM Sans',sans-serif
     <select class="talent-sort-sel" id="talent-entity-filter" onchange="talentRender()" style="max-width:160px">
       <option value="">All Entities</option>
       <option value="Alpha Integrated REIT">AI-REIT (FY2025)</option>
+      <option value="Sasseur REIT">Sasseur REIT (FY2025)</option>
       <option value="Daiwa House Logistics Trust">DHLT (FY2025)</option>
       <option value="Elite UK REIT">Elite UK REIT (FY2025)</option>
       <option value="CapitaLand Ascott Trust (CLAS)">CLAS (FY2025)</option>
@@ -2964,6 +2965,13 @@ var TALENT_DATA = [
   {name:"CLAS — USA PORTFOLIO",addr:"New York (3 hotels), University cities across USA (8 student accommodation)",type:"Hotel / Student Accommodation",entity:"CapitaLand Ascott Trust (CLAS)",entity_type:"REIT",tenure:"Mixed — Freehold / Leasehold",nla_sqm:null,occ:null,val:1330.5,prev_val:1359.0,region:"United States",area:"New York / Multi-State",country:"United States",ar_year:"FY2025",source:"CLAS AR 2025",notes:"11 properties, 2,528 units, all management contracts: 3 NYC hotels (Element New York Times Square West 411u leasehold, Sheraton Tribeca New York 369u leasehold — under refurb 1Q–4Q 2026, voco Times Square South 224u freehold) with RevPAU +9% YoY; 8 student accommodation properties near major US universities (Paloma Kent, Paloma Raleigh, Paloma University City, Paloma West Midtown, Seven07, Standard at Columbia, Uncommon Wilmington, Wildwood Lubbock) with AY2025-2026 avg occ ~89%. Total Revenue S$194.5M, GP S$88.3M (23% of total — largest revenue market). Val -S$28.5M (-2.1%) to S$1,330.5M."},
   {name:"CLAS — VIETNAM PORTFOLIO",addr:"Hanoi, Ho Chi Minh City, Hai Phong, Vietnam",type:"Serviced Apartments",entity:"CapitaLand Ascott Trust (CLAS)",entity_type:"REIT",tenure:"Leasehold (36–64yr)",nla_sqm:null,occ:null,val:153.0,prev_val:173.2,region:null,area:"Vietnam",country:"Vietnam",ar_year:"FY2025",source:"CLAS AR 2025",notes:"5 leasehold serviced residences under management contracts, 893 units: Somerset Grand Hanoi (185u, to 2038), Somerset Hoa Binh Hanoi (206u, to 2042), Somerset Chancellor Court HCMC (172u, to 2041), Somerset Ho Chi Minh City (198u, to 2039), Somerset Central TD Hai Phong (132u, to 2075). Average length of stay >3 months. RevPAU +13% YoY in VND on higher ADR and occupancy. Total Revenue S$37.3M, GP S$17.7M. Val -S$20.2M (-11.7%) to S$153.0M."},
 
+
+  // ── SASSEUR REIT — FY2025 ─────────────────────────────────────────────────
+  {name:"SASSEUR REIT — PORTFOLIO OVERVIEW",addr:"1 Raffles Place, #40-02 One Raffles Place Tower 1, Singapore 048616",type:"Portfolio Overview",entity:"Sasseur REIT",entity_type:"REIT",tenure:"Land Use Rights (2047–2054)",nla_sqm:310241,occ:98.8,val:1536.3,prev_occ:98.9,prev_val:1582.3,region:null,area:"China — Chongqing / Hefei / Kunming",country:"China",ar_year:"FY2025",source:"Sasseur REIT AR 2025",notes:"SGX: CRPU | First retail outlet mall REIT listed in Asia (listed 28 Mar 2018) | Manager: Sasseur Asset Management Pte. Ltd. | CEO: Cheng Hsing Yuen (since 29 Oct 2025; Tan Hong Lye Cecilia until 28 Oct 2025) | CFO: Ella Jia (from Jan 2026) | Trustee: DBS Trustee Limited | Sponsor: Sasseur Cayman Holding Limited (Sasseur Group, founded by Xu Rongcan) | FY ended 31 Dec 2025 | UNIQUE EMA MODEL: Fixed Component (3% annual step-up) + Variable Component (% of outlet sales) + Performance Sharing. Sponsor bears ALL operating expenses | 4 outlet malls in China | Total NLA 310,241sqm | Portfolio val RMB8,363M / S$1,536.3M (-0.7% RMB; -2.9% SGD) | Occ 98.8% (Q4 2025 avg) | EMA Rental Income S$124.2M (RMB682.3M; +2.7% YoY; Fixed RMB474.8M +3.0%, Variable RMB207.5M +2.2%) | DPU 6.138¢ (+0.9% YoY) | Total Outlet Sales RMB4,599.0M (+2.6% YoY) | Shopper Traffic 17.0M (+23.2% YoY) | VIP Members 4.9M (+16.7%) | Total Assets S$1,740.9M | NAV/unit S$0.79 (FY2024: S$0.83) | Units 1,260M | Market Cap S$857M | Agg Leverage 25.1% (lowest in S-REIT sector) | ICR 4.7x | Avg debt maturity 4.2yr | Borrowing cost 4.4% (-90bps YoY) | 100% RMB-denominated debt (natural hedge) | KEY FY2025: proactively refinanced SGD/USD offshore debt with RMB borrowings; obtained maiden Green Loan; secured up to RMB906M new 5-yr onshore facilities in 2026 at lower cost to early-refinance 2028 maturities | Included in iEdge Singapore Next 50 Index 2025"},
+  {name:"SASSEUR (CHONGQING LIANGJIANG) OUTLET",addr:"No. 1 Aotelaisi Road, Beibuxin District, Chongqing, PRC",type:"Outlet Mall",entity:"Sasseur REIT",entity_type:"REIT",tenure:"Land Use Right to 2047",nla_sqm:50885,occ:100.0,val:600.7,prev_occ:100.0,prev_val:599.1,region:null,area:"China — Chongqing",country:"China",ar_year:"FY2025",source:"Sasseur REIT AR 2025",notes:"Flagship outlet, commenced operations May 2008. GFA 73,373sqm, NLA 50,885sqm. 376 tenants (FY2024: 386). Occupancy 100%. Acquired 2018 for RMB2,452M. Land use right to 2047. Three 7-storey + one 2-storey retail buildings, 40,189sqm site, 458 carpark lots. EMA VC rate: 4.0% of outlet sales. FY2025: Outlet Sales RMB2,547.4M (+5.1% YoY; FY2024: RMB2,423.9M); EMA Rental Income RMB312.8M (FY2024: RMB301.7M). Shopper Traffic 7.12M (FY2024: 6.37M). VIP 1.72M. Major tenants: Nike, Bosideng, POLOwalk, Adidas, FILA. Trade mix: Domestic Fashion 47%, Sports 20%, Int\'l Brands 16%, Children 9%. Val RMB3,270M / S$600.7M (FY2024: RMB3,188M / S$599.1M; +2.6% RMB). AEI Jun 2025: Phase 1 A/C system upgrade completed. ~7km from Guanyinqiao retail hub, ~20km from Jiefangbei, ~10km from Jiangbei Airport."},
+  {name:"SASSEUR (CHONGQING BISHAN) OUTLET",addr:"No. 9 Baiyang Road, Bishan District, Chongqing, PRC",type:"Outlet Mall",entity:"Sasseur REIT",entity_type:"REIT",tenure:"Land Use Right to 2051",nla_sqm:44706,occ:99.4,val:139.8,prev_occ:97.0,prev_val:146.6,region:null,area:"China — Chongqing",country:"China",ar_year:"FY2025",source:"Sasseur REIT AR 2025",notes:"Commenced operations Jan 2014. GFA 68,791sqm, NLA 44,706sqm. 196 tenants (FY2024: 201). Occ 99.4% (FY2024: 97.0%; +2.4pp). Acquired 2018 for RMB729M. Land use right to 2051. 21 blocks (seven 4-storey + seven 3-storey + five 2-storey + two 1-storey), site 78,793sqm, 400 carpark lots. EMA VC rate: 4.5% of outlet sales. FY2025: Outlet Sales RMB391.3M (FY2024: RMB377.2M; +3.7%); EMA Rental Income RMB60.7M (FY2024: RMB58.8M). Shopper Traffic 1.24M (FY2024: 1.12M). VIP 0.61M. Major tenants: POLOwalk, Anta, Lining, QIAODAN, Bosideng. Trade mix: Domestic Fashion 46%, Sports 30%, Int\'l Brands 8%, Children 9%, F&B 2%. Val RMB761M / S$139.8M (FY2024: RMB780M / S$146.6M; -2.4% RMB). 30+ new brands introduced in FY2025. ~42km from Jiangbei Airport. One-stop destination for Bishan and West Chongqing."},
+  {name:"SASSEUR (HEFEI) OUTLET",addr:"No. 1888 Changning Avenue, Gaoxin District, Hefei, Anhui Province, PRC",type:"Outlet Mall",entity:"Sasseur REIT",entity_type:"REIT",tenure:"Land Use Right to 2053",nla_sqm:144583,occ:98.2,val:509.6,prev_occ:98.8,prev_val:533.3,region:null,area:"China — Hefei",country:"China",ar_year:"FY2025",source:"Sasseur REIT AR 2025",notes:"Commenced operations May 2016. GFA 147,316sqm, NLA 144,583sqm (largest in portfolio). 439 tenants. Occ 98.2% (FY2024: 98.8%). Acquired 2018 for RMB2,250M. Land use right to 2053. Five retail levels incl. basement, site 132,212sqm, 1,566 carpark lots. EMA VC rate: 5.5% of outlet sales. FY2025: Outlet Sales RMB996.0M (FY2024: RMB1,028.1M; -3.1%); EMA Rental Income RMB189.4M (FY2024: RMB187.3M). Shopper Traffic 5.50M (FY2024: 3.28M; +67.7% — significant surge). VIP 1.50M (FY2024: 1.29M). Major tenants: POLOwalk, Hazzys, Bosideng, Peacebird, Coach. Trade mix: Domestic Fashion 48%, Int\'l Brands 16%, Sports 14%, F&B 7%. Val RMB2,774M / S$509.6M (FY2024: RMB2,838M / S$533.3M; -2.3% RMB). Located in Hefei High-Tech Industrial Development Zone. Metro Lines 2 & 4 nearby (Metro Line 2 also connects to Line 7). AEI Sep 2025: Children entertainment zone reconfigured into sports-concept area. 2026 AEI: ~2,000sqm former cinema to be converted to multi-tenanted F&B zone. LEED Gold certified."},
+  {name:"SASSEUR (KUNMING) OUTLET",addr:"No. 181 Aotelaisi Avenue, Anning City, Kunming, Yunnan Province, PRC",type:"Outlet Mall",entity:"Sasseur REIT",entity_type:"REIT",tenure:"Land Use Right to 2054",nla_sqm:70067,occ:98.4,val:286.2,prev_occ:99.7,prev_val:303.3,region:null,area:"China — Kunming",country:"China",ar_year:"FY2025",source:"Sasseur REIT AR 2025",notes:"Commenced operations Dec 2016. GFA 88,257sqm, NLA 70,067sqm. 291 tenants (FY2024: 312). Occ 98.4% (FY2024: 99.7%). Acquired 2018 for RMB1,350M. Land use right to 2054. Two 7-storey buildings (4 retail + 3 basement levels), site 34,488sqm, 2,000 carpark lots. Integrated Hantang Xiyue Hotel (8,200sqm, G.D Hotel Group). EMA VC rate: 5.0% of outlet sales. FY2025: Outlet Sales RMB664.3M (FY2024: RMB652.9M; +1.7%); EMA Rental Income RMB119.4M (FY2024: RMB116.3M). Shopper Traffic 3.16M (FY2024: 3.09M). VIP 1.03M (FY2024: 0.91M). Major tenants: Lining, Anta, POLOwalk, Bosideng, +39 Space. Trade mix: Domestic Fashion 41%, Sports 26%, Int\'l Brands 14%, Children 8%. Val RMB1,558M / S$286.2M (FY2024: RMB1,614M / S$303.3M; -3.5% RMB). Gateway to western Yunnan. AEI Aug 2024: expanded carpark by 400 lots; major tenancy reconfiguration for sports/children wear. LEED Gold certified."},
   // ── DAIWA HOUSE LOGISTICS TRUST (DHLT) — Updated FY2025 ─────────────────
   {name:"DAIWA HOUSE LOGISTICS TRUST — PORTFOLIO OVERVIEW",addr:"6 Shenton Way, #21-08 OUE Downtown 2, Singapore 068809",type:"Portfolio Overview",entity:"Daiwa House Logistics Trust",entity_type:"REIT",tenure:"Mix: 11 Freehold + 8 Leasehold (various expiries to 2068)",nla_sqm:497943,occ:87.8,val:835.2,prev_occ:97.6,prev_val:835.9,region:null,area:"Japan / Vietnam",country:"Japan",ar_year:"FY2025",source:"DHLT AR FY2025",notes:"SGX: DHLT | Listed 26 Nov 2021 | Manager: Daiwa House Asset Management Asia Pte. Ltd. | CEO: Jun Yamamura | Trustee: HSBC Institutional Trust Services (Singapore) | Sponsor: Daiwa House Industry Co., Ltd. (TSE-listed) | FY ended 31 Dec 2025 | 19 properties: 18 Japan + 1 Vietnam | Total NLA 497,943sqm | Portfolio val S$835.2M (FY2024: S$835.9M; -0.1% in S$ terms due to FX; Japan +6.1% in JPY, Vietnam +2.2% in VND) | Occ 87.8% (FY2024: 97.6%; -9.8pp — DPL Sendai Port 31.9%, DPL Koriyama 74.6%, DPL Kawasaki Yako 90.0%; 16/19 properties fully occupied) | WALE 6.6yr (by GRI) | Gross Revenue S$57.8M (+1.2%) | NPI S$44.2M (+0.7%) | Distributable Income S$30.4M (-9.4%) | DPU 4.33¢ (-9.6%; lower FX gain + higher interest from new borrowings) | Total Assets S$1,060.4M | NAV/unit S$0.65 | Agg Leverage 40.2% | ICR 5.5x | Borrowing cost 2.04% all-in | 99.3% fixed rate | 100% JPY-denominated debt (natural hedge) | 100% unencumbered | WADR 2.9yr | Rent uplift: all 9 renewed/new leases achieved higher rent, wtd avg +11.1% | 96.0% portfolio green-certified (by val) — 17/19 BELS-rated, 9 at 6-star | 18.8 MWp solar capacity across 13 properties | FY2025 acquisition: DPL Gunma Fujioka (Mar 2025, JPY3,990M, 31.1% below independent val) | Sustainability-linked loan framework established Dec 2025 (first SLL S$30M)"},
   {name:"DPL SAPPORO HIGASHI KARIKI",addr:"1-1, Higashikariki 13-jyo 3-chome, Higashi-ku, Sapporo-shi, Hokkaido, Japan",type:"Logistics",entity:"Daiwa House Logistics Trust",entity_type:"REIT",tenure:"Freehold",nla_sqm:60348,occ:100.0,val:112.3,prev_occ:100.0,prev_val:85.0,region:"Japan",area:"Hokkaido/Tohoku — Sapporo",country:"Japan",ar_year:"FY2025",source:"DHLT AR FY2025",notes:"Multi-tenanted DPL facility, NLA 60,348sqm, completed Feb 2018. WALE 2.3yr. Purchase JPY10,520M. Located in Sapporo, Hokkaido near logistics infrastructure. BELS-rated. Val JPY13,700M (S$112.3M; FY2024: JPY12,900M / S$85.0M)."},
@@ -2985,7 +2993,153 @@ var TALENT_DATA = [
   {name:"D PROJECT MATSUYAMA S",addr:"Toon-shi, Ehime, Japan",type:"Logistics",entity:"Daiwa House Logistics Trust",entity_type:"REIT",tenure:"Freehold",nla_sqm:5347,occ:100.0,val:8.0,prev_occ:100.0,prev_val:6.3,region:"Japan",area:"Chugoku/Shikoku/Kyushu — Matsuyama",country:"Japan",ar_year:"FY2025",source:"DHLT AR FY2025",notes:"Single-tenanted BTS temperature-controlled warehouse, NLA 5,347sqm, 2 buildings (1994 + 2017). WALE 3.6yr. Purchase JPY800M. Freehold. Tenant: Nippon Access Inc. (leading integrated food trading company). Equipped with temperature control facilities for frozen/chilled goods. Val JPY971M (S$8.0M; FY2024: JPY956M / S$6.3M)."},
   {name:"D PROJECT FUKUOKA TOBARA S",addr:"Kasuya-gun, Fukuoka, Japan",type:"Logistics",entity:"Daiwa House Logistics Trust",entity_type:"REIT",tenure:"Leasehold to Mar 2068",nla_sqm:10508,occ:100.0,val:11.5,prev_occ:100.0,prev_val:10.1,region:"Japan",area:"Chugoku/Shikoku/Kyushu — Fukuoka",country:"Japan",ar_year:"FY2025",source:"DHLT AR FY2025",notes:"Single-tenanted BTS temperature-controlled warehouse, NLA 10,508sqm, completed Feb 2019. WALE 8.6yr. Purchase JPY1,260M. Leasehold to Mar 2068. Tenant: Sonoda Rikuun Co. Ltd. (3PL, F&B). Two-storey, temperature control (dry/freeze/chill), 64 parking bays. Near Fukuoka Metropolitan Expressway Kasuya IC. Val JPY1,400M (S$11.5M; FY2024: JPY1,540M / S$10.1M)."},
   {name:"D PROJECT TAN DUC 2",addr:"Lot 6, Street No. 15A, Tan Duc Industrial Park, Tay Ninh Province, Vietnam",type:"Logistics",entity:"Daiwa House Logistics Trust",entity_type:"REIT",tenure:"Leasehold to Jun 2058",nla_sqm:18465,occ:100.0,val:25.7,prev_occ:100.0,prev_val:27.4,region:null,area:"Vietnam — Ho Chi Minh City",country:"Vietnam",ar_year:"FY2025",source:"DHLT AR FY2025",notes:"Single-tenanted BTS cold storage warehouse (single storey), NLA 18,465sqm, completed Sep 2023. WALE 17.8yr (longest in portfolio). Leasehold to Jun 2058. Acquired Jul 2024. Tenant: Meito Vietnam (Japanese 3PL specialising in frozen/chilled food; TSE-listed group). 5 frozen rooms (-25°C), 3 cold-to-frozen rooms, 2 chill rooms. Located in Long An Province (merged into Tay Ninh Province) near HCMC and Mekong Delta gateway. Val VND524,200M (S$25.7M; FY2024: VND512,700M / S$27.4M; growth +2.2% in VND but FX drag)."},
-  // ── DAIWA HOUSE LOGISTICS TRUST (DHLT) — FY2025 ─────────────────────────
+  // ── SASSEUR REIT — FY2025 ──────────────────────────────────────────────────
+  {
+    id:'sasseur-ceo-25', name:'Cheng Hsing Yuen', role:'Chief Executive Officer', role_type:'CEO',
+    entity:'Sasseur REIT', entity_short:'Sasseur REIT', ar_year:'FY2025',
+    appointed:'29 Oct 2025', tenure_yrs:0.2,
+    rem_exact:313010, rem_fixed:112684, rem_bonus:200326, rem_other:0,
+    rem_note:'FY2025 partial-year: S$313,010 (appointed CEO-Designate 14 Aug 2025, assumed CEO role 29 Oct 2025). Fixed 36% = S$112,684; Variable/Performance-related bonus 64% = S$200,326. All cash. Predecessor Tan Hong Lye Cecilia paid S$443,264 (FY2025, 100% fixed, resigned 28 Oct 2025). Paid by REIT Manager from its own assets.',
+    rem_band:null, rem_pct_fixed:36, rem_pct_bonus:64, rem_pct_other:0,
+    rem_history:[
+      {year:'FY2025', total:313010, pct_fixed:36, pct_bonus:64, pct_ltp:0, pct_other:0},
+    ],
+    edu:'Master of Science (Real Estate), National University of Singapore; Bachelor of Social Sciences (Honours), NUS',
+    bio:'CEO of Sasseur Asset Management Pte. Ltd. since 29 October 2025 (CEO-Designate from 14 August 2025). Previously COO of the Manager from June 2025 and led Asset Management since 2018. 25+ years in asset and property management across retail malls, offices, business parks and industrial buildings. Prior to joining Sasseur REIT: Senior Asset Manager at Mapletree Industrial Trust (business parks, data centres); portfolio management at Ascendas Pte. Ltd. and NTUC Income. Responsible for strategic management of Sasseur REIT\'s 4 outlet malls in China with focus on AEI and value creation.',
+    prev_roles:[
+      {org:'Mapletree Industrial Trust',pos:'Senior Asset Manager — business parks, data centres'},
+      {org:'Ascendas Pte. Ltd.',pos:'Portfolio Management'},
+    ],
+    cross_board_roles:[],
+    linkedin_url:null, photo_url:null,
+    tags:['REIT CEO','China Retail','Mapletree Alumni','NUS Real Estate']
+  },
+  {
+    id:'sasseur-ceo-prev-25', name:'Tan Hong Lye, Cecilia', role:'Former Chief Executive Officer (resigned 28 Oct 2025)', role_type:'CEO',
+    entity:'Sasseur REIT', entity_short:'Sasseur REIT', ar_year:'FY2025',
+    appointed:'Prior', tenure_yrs:null,
+    rem_exact:443264, rem_fixed:443264, rem_bonus:0, rem_other:0,
+    rem_note:'FY2025: S$443,264 (100% fixed salary; resigned 28 Oct 2025). Represented full year as CEO until resignation.',
+    rem_band:null, rem_pct_fixed:100, rem_pct_bonus:0, rem_pct_other:0,
+    rem_history:[
+      {year:'FY2025', total:443264, pct_fixed:100, pct_bonus:0, pct_ltp:0, pct_other:0},
+    ],
+    edu:'Not disclosed in AR',
+    bio:'Former CEO of Sasseur Asset Management Pte. Ltd. Resigned 28 October 2025. Succeeded by Cheng Hsing Yuen.',
+    prev_roles:[],
+    cross_board_roles:[],
+    linkedin_url:null, photo_url:null,
+    tags:['Former CEO','Sasseur REIT']
+  },
+  {
+    id:'sasseur-chair-25', name:'Xu Rongcan (Vito Xu)', role:'Non-Executive Non-Independent Chairman', role_type:'Board',
+    entity:'Sasseur REIT', entity_short:'Sasseur REIT', ar_year:'FY2025',
+    appointed:'11 Apr 2017', tenure_yrs:8.7,
+    rem_exact:145000, rem_fixed:145000, rem_bonus:null, rem_other:0,
+    rem_note:'FY2025 Directors fees S$145,000. All cash. No performance-related pay, no unit incentives. NRC Member, Sustainability Committee Member. Fees paid by REIT Manager from own assets.',
+    rem_band:null, rem_pct_fixed:100, rem_pct_bonus:null, rem_pct_other:0,
+    rem_history:[
+      {year:'FY2025', total:145000, pct_fixed:100, pct_bonus:null, pct_ltp:null, pct_other:0},
+    ],
+    edu:'Specialisation in Agronomy, Chongqing Yongchuan Agricultural School',
+    bio:'Founder of Sasseur Group (founded 1989) and Non-Executive Non-Independent Chairman. Currently Chairman of Sasseur Group (Sponsor of Sasseur REIT). Pioneer of "Art Commerce Super Outlets" concept in China and the "A x (1+N) x AI x S" business model. 30+ years in outlet mall operations. Launched first Sasseur outlet in Chongqing in 2008. Grew Sasseur Group into a Top 500 Chinese Service Enterprise. Recipient of "The Knight of the Order of the Star of Italy" (awarded by Italian president), "Meritorious Figure of 40th Anniversary of China\'s Commercial Reform" and "Outstanding Asian Entrepreneur". First outlet mall REIT listed in Asia.',
+    prev_roles:[
+      {org:'Sasseur Group',pos:'Founder and Chairman (since 1989)'},
+    ],
+    cross_board_roles:[
+      {entity:'Sasseur Cayman Holding Limited',role:'Executive Director and Chairman',listed:false},
+    ],
+    linkedin_url:null, photo_url:null,
+    tags:['Non-Independent','Sponsor Chairman','Founder','China Outlet Pioneer']
+  },
+  {
+    id:'sasseur-dir-cheng-25', name:'Cheng Heng Tan', role:'Independent Director, ARC Chairman', role_type:'Board',
+    entity:'Sasseur REIT', entity_short:'Sasseur REIT', ar_year:'FY2025',
+    appointed:'16 Nov 2017', tenure_yrs:8.1,
+    rem_exact:138000, rem_fixed:138000, rem_bonus:null, rem_other:0,
+    rem_note:'FY2025 Directors fees S$138,000. ARC Chairman, Sustainability Committee Member.',
+    rem_band:null, rem_pct_fixed:100, rem_pct_bonus:null, rem_pct_other:0,
+    rem_history:[
+      {year:'FY2025', total:138000, pct_fixed:100, pct_bonus:null, pct_ltp:null, pct_other:0},
+    ],
+    edu:'Life Fellow, ISCA; Retired Fellow, ACCA UK; Retired Member, AICPA; Senior Accredited Director, SID',
+    bio:'Independent Director aged 74, appointed Nov 2017. ARC Chairman. 33 years at Ernst & Young LLP (1977–2010), admitted as Audit Partner from 1990, retired as Senior Partner 2010. Experience in financial audit, bank audit, IPOs in Singapore, Taiwan, China, USA. Former Independent Director of Chip Eng Seng (Jul 2011–Apr 2017) and Powermatic Data Systems (Feb 2021–Jul 2024).',
+    prev_roles:[
+      {org:'Ernst & Young LLP',pos:'Senior Partner (retired 2010; Audit Partner from 1990)'},
+      {org:'Chip Eng Seng Corporation',pos:'Independent Director (2011–2017)'},
+    ],
+    cross_board_roles:[],
+    linkedin_url:null, photo_url:null,
+    tags:['Independent','ARC Chair','EY Alumni','Accountant']
+  },
+  {
+    id:'sasseur-dir-gu-25', name:'Dr Gu Qingyang', role:'Lead Independent Director, NRC Chairman, Sustainability Committee Chairman', role_type:'Board',
+    entity:'Sasseur REIT', entity_short:'Sasseur REIT', ar_year:'FY2025',
+    appointed:'16 Nov 2017', tenure_yrs:8.1,
+    rem_exact:138000, rem_fixed:138000, rem_bonus:null, rem_other:0,
+    rem_note:'FY2025 Directors fees S$138,000. Lead ID, NRC Chairman, Sustainability Committee Chairman, ARC Member.',
+    rem_band:null, rem_pct_fixed:100, rem_pct_bonus:null, rem_pct_other:0,
+    rem_history:[
+      {year:'FY2025', total:138000, pct_fixed:100, pct_bonus:null, pct_ltp:null, pct_other:0},
+    ],
+    edu:'PhD, Nanyang Technological University',
+    bio:'Lead Independent Director aged 64, appointed Nov 2017. Associate Professor at Lee Kuan Yew School of Public Policy, NUS since Aug 2009. Lectures on Chinese economy, public sector economics, urban development. Economic adviser to Chinese provincial/municipal governments. Research: Chinese economy, Singapore public policy, urban development. Editor-in-Chief of Journal of Infrastructure, Policy and Development since 2016. Also Independent Director of China Taiping Insurance (Singapore). Previously NTU (2001–2009).',
+    prev_roles:[
+      {org:'Nanyang Technological University',pos:'Assistant Professor (2001–2009)'},
+    ],
+    cross_board_roles:[
+      {entity:'PCI-Suntek Technology Co., Ltd',role:'External Non-Executive Director',listed:true},
+      {entity:'Intchains Group Limited',role:'Independent Director',listed:true},
+      {entity:'Willfar Information Technology Co., Ltd',role:'Independent Director',listed:true},
+    ],
+    linkedin_url:null, photo_url:null,
+    tags:['Lead Independent','NRC Chair','Academic','China Economist']
+  },
+  {
+    id:'sasseur-dir-wu-25', name:'Wu Geng', role:'Independent Director', role_type:'Board',
+    entity:'Sasseur REIT', entity_short:'Sasseur REIT', ar_year:'FY2025',
+    appointed:'16 Nov 2017', tenure_yrs:8.1,
+    rem_exact:135000, rem_fixed:135000, rem_bonus:null, rem_other:0,
+    rem_note:'FY2025 Directors fees S$135,000. ARC Member, NRC Member.',
+    rem_band:null, rem_pct_fixed:100, rem_pct_bonus:null, rem_pct_other:0,
+    rem_history:[
+      {year:'FY2025', total:135000, pct_fixed:100, pct_bonus:null, pct_ltp:null, pct_other:0},
+    ],
+    edu:'LLB, Peking University; LLM, NUS; MA, University of Delaware; Member, Law Society of Singapore; Member, Singapore Academy of Law',
+    bio:'Independent Director aged 54, appointed Nov 2017. Director at Drew & Napier LLC since May 2016; practised there since April 2008. Areas: corporate finance, capital markets, general corporate legal advisory. Previously Hoh Law Corporation (2003–2008), Hoh & Partners (2002–2003). Career began as Judicial Clerk at Supreme People\'s Court of PRC (1995–1998). Non-Executive Director of Southern Packaging Group Limited (SGX Mainboard, since Jan 2024).',
+    prev_roles:[
+      {org:'Drew & Napier LLC',pos:'Director, Corporate and Finance (since 2008)'},
+      {org:'Supreme People\'s Court of PRC',pos:'Judicial Clerk (1995–1998)'},
+    ],
+    cross_board_roles:[
+      {entity:'Southern Packaging Group Limited',role:'Independent Non-Executive Director',listed:true},
+    ],
+    linkedin_url:null, photo_url:null,
+    tags:['Independent','Legal','Drew & Napier','China Law']
+  },
+  {
+    id:'sasseur-dir-yang-25', name:'Yang Xue', role:'Non-Executive Non-Independent Director', role_type:'Board',
+    entity:'Sasseur REIT', entity_short:'Sasseur REIT', ar_year:'FY2025',
+    appointed:'16 Nov 2017', tenure_yrs:8.1,
+    rem_exact:80000, rem_fixed:80000, rem_bonus:null, rem_other:0,
+    rem_note:'FY2025 Directors fees S$80,000. No board committee memberships listed. Spouse of Xu Rongcan (Chairman/Sponsor founder).',
+    rem_band:null, rem_pct_fixed:100, rem_pct_bonus:null, rem_pct_other:0,
+    rem_history:[
+      {year:'FY2025', total:80000, pct_fixed:100, pct_bonus:null, pct_ltp:null, pct_other:0},
+    ],
+    edu:'Specialisation in Garment Marketing, Chongqing Material Technical School',
+    bio:'Non-Executive Non-Independent Director aged 42, appointed Nov 2017. Co-founder of Sasseur Outlets and Co-chairman of Sasseur Group. Spouse of Chairman Xu Rongcan. Key figure in strategic development of Sasseur Group, particularly public relations, international brand leasing and strategic planning. Consolidated collaboration between Sasseur Group and international brands, including successful opening of first Sasseur outlet in Chongqing. Named "Most Stylish Figure of 2019" by Yaok Institute.',
+    prev_roles:[
+      {org:'Sasseur Group',pos:'Co-founder and Co-chairman'},
+    ],
+    cross_board_roles:[
+      {entity:'Sasseur Cayman Holding Limited',role:'Non-Executive Non-Independent Director',listed:false},
+    ],
+    linkedin_url:null, photo_url:null,
+    tags:['Non-Independent','Co-Founder','Sponsor Director']
+  },
+
+    // ── DAIWA HOUSE LOGISTICS TRUST (DHLT) — FY2025 ─────────────────────────
   {
     id:'dhlt-ceo-25', name:'Jun Yamamura', role:'Chief Executive Officer & Non-Independent Executive Director', role_type:'CEO',
     entity:'Daiwa House Logistics Trust', entity_short:'DHLT', ar_year:'FY2025',
@@ -4292,7 +4446,11 @@ var NEWS=[
   {id:19,date:"2026-02-26",title:"MPs Call for 15% Stamp Duty Tier on Properties Above S$5M",source:"Straits Times",category:"Policy",tag:"Property Tax",summary:"Budget 2026 debate: calls for 15% marginal rate on residential properties above S$5M. Fiscal surplus S$15.1B. SG wealth Gini 0.55.",sentiment:"neutral"},
   {id:20,date:"2026-02-26",title:"Singapore Land H2 Profit Down 11% at S$160.9M",source:"Business Times",category:"Commercial",tag:"Earnings",summary:"FY2025 net profit S$272.3M (-4%). Revenue +7% to S$783.1M. Drag from higher finance costs (+23%) on Sydney acquisition. DPS S$0.045.",sentiment:"negative"},
   {id:21,date:"2026-02-20",title:"Serenity Park Condo in Yio Chu Kang Put on Market at S$505M",source:"Business Times",category:"Commercial",tag:"En Bloc",summary:"179-unit freehold condo, Tamarind Road. First freehold residential en-bloc of 2026. S$1,453 psf ppr. Owner premium >40%. Closes 26 Mar 2026.",sentiment:"neutral"},
-  {id:36, date:"2026-04-05", title:"Daiwa House Logistics Trust FY2025: DPU 4.33¢ (-9.6%), Portfolio S$835M, Occupancy Eases to 87.8%",
+  {id:37, date:"2026-04-05", title:"Sasseur REIT FY2025: DPU 6.138¢ (+0.9%), EMA Income RMB682M +2.7%, Outlet Sales RMB4,599M, Leverage 25.1%",
+ entity:"Sasseur REIT", tag:"AR Update",
+ sourceLabel:"PropertyAtlas.sg Analysis · Sasseur REIT AR 2025", sentiment:"positive",
+ summary:"Sasseur REIT FY2025 (year ended 31 December 2025) delivered a resilient performance against a challenging China macro backdrop, with EMA rental income up 2.7% in RMB terms, DPU growing 0.9% YoY, and aggregate leverage maintained at a sector-low 25.1%.\n\nKEY METRICS\n\nEMA Rental Income S$124.2M / RMB682.3M (+2.7% YoY; Fixed Component RMB474.8M +3.0%; Variable Component RMB207.5M +2.2%). DPU 6.138¢ (+0.9%; FY2024: 6.082¢). Total Outlet Sales RMB4,599.0M (+2.6%; FY2024: RMB4,482.1M). Shopper Traffic 17.0M (+23.2%). VIP Members 4.9M (FY2024: 4.2M). Portfolio Occupancy 98.8%. Portfolio Valuation RMB8,363M / S$1,536.3M (-0.7% RMB; -2.9% SGD due to FX). Total Assets S$1,740.9M. NAV/unit S$0.79. Units 1,260M.\n\nCAPITAL MANAGEMENT\n\nAggregate Leverage 25.1% — lowest in the S-REIT sector. ICR 4.7x. Avg debt maturity extended to 4.2yr (FY2024: 2.5yr). Borrowing cost 4.4% (-90bps YoY). 100% RMB-denominated debt (natural hedge). KEY MOVE: proactively refinanced SGD/USD offshore debt with RMB borrowings, eliminating FX risk on liabilities; obtained maiden Green Loan; secured up to RMB906M of new 5-year onshore RMB facilities in early 2026 to early-refinance 2028 maturities at materially lower cost.\n\nPROPERTY PERFORMANCE\n\nChongqing Liangjiang (Flagship): Outlet Sales RMB2,547.4M (+5.1%); Traffic 7.12M; Val RMB3,270M (+2.6%). Leading performer. Phase 1 A/C upgrade completed Jun 2025.\n\nChongqing Bishan: Outlet Sales RMB391.3M (+3.7%); Occ improved to 99.4% (+2.4pp); Val RMB761M (-2.4%). 30+ new brands introduced.\n\nHefei: Outlet Sales RMB996.0M (-3.1% — traffic surge +67.7% to 5.50M but conversion impact from AEI disruption); Val RMB2,774M (-2.3%). Sep 2025 AEI: children zone reconfigured to sports-concept area. 2026 AEI: former cinema to be converted to F&B zone. LEED Gold certified.\n\nKunming: Outlet Sales RMB664.3M (+1.7%); Traffic 3.16M; Val RMB1,558M (-3.5%). Hotel integration (Hantang Xiyue, 8,200sqm). LEED Gold certified.\n\nEMA MODEL NOTE\n\nSasseur REIT\'s EMA model is structurally unique: the Sponsor (Sasseur Group) bears ALL operating expenses of the outlets; REIT receives EMA rent = Fixed Component (3% annual step-up) + Variable Component (% of outlet sales: Liangjiang 4.0%, Bishan 4.5%, Hefei 5.5%, Kunming 5.0%) + Performance Sharing. This means REIT income is largely insulated from operating cost inflation, providing a structurally superior NPI margin compared to standard commercial REITs.\n\nMANAGEMENT TRANSITION\n\nCEO transition: Tan Hong Lye Cecilia stepped down 28 Oct 2025 (paid S$443,264 FY2025, 100% fixed). Cheng Hsing Yuen appointed CEO-Designate 14 Aug 2025, assumed office 29 Oct 2025 (paid S$313,010 for partial year, 36% fixed / 64% bonus). CFO: Xie Jianfeng resigned 26 Sep 2025; Ella Jia appointed CFO Jan 2026.\n\nKEY TAKEAWAY\n\nSasseur REIT offers a structurally unique China retail exposure: the EMA model provides a near-guaranteed income floor (Fixed Component with 3% annual step-up) plus a variable kicker from outlet sales performance, with operating cost risk sitting entirely with the Sponsor. At 25.1% leverage — sector-lowest — and with borrowing costs having been reduced 90bps in a single year, the balance sheet is in strong shape. The main risk is China macro / consumer sentiment, which affected Hefei outlet sales (-3.1%) and led to valuation softness (-0.7% RMB terms). Resolution of the RMB906M refinancing in 2026 will further reduce financing costs and provide further DPU support."},
+    {id:36, date:"2026-04-05", title:"Daiwa House Logistics Trust FY2025: DPU 4.33¢ (-9.6%), Portfolio S$835M, Occupancy Eases to 87.8%",
  entity:"Daiwa House Logistics Trust", tag:"AR Update",
  sourceLabel:"PropertyAtlas.sg Analysis · DHLT AR FY2025", sentiment:"neutral",
  summary:"Daiwa House Logistics Trust (DHLT) FY2025 (year ended 31 December 2025) delivered higher revenue and NPI driven by portfolio growth, but distributable income and DPU declined due to lower FX gains and higher interest expenses from new acquisitions.\n\nKEY METRICS\n\nGross Revenue S$57.8M (+1.2% YoY). NPI S$44.2M (+0.7% YoY). Distributable Income S$30.4M (-9.4%). DPU 4.33¢ (-9.6%). Portfolio Valuation S$835.2M (-0.1% in S$; Japan JPY98,759M +6.1%, Vietnam VND524.2B +2.2% in local currency — FX headwinds from weaker JPY/VND). Total Assets S$1,060.4M. NAV/unit S$0.65. Aggregate Leverage 40.2%. ICR 5.5x. Borrowing Cost 2.04% all-in. 99.3% fixed rate debt. 100% unencumbered.\n\nOCCUPANCY PRESSURE\n\nPortfolio occupancy eased to 87.8% (FY2024: 97.6%), with the main drag from three properties: DPL Sendai Port (31.9% — significant vacancy), DPL Koriyama (74.6%), and DPL Kawasaki Yako (90.0%). 16 of 19 properties remain fully occupied. On the positive side, all 9 renewed or new leases achieved higher rents (weighted avg +11.1%), demonstrating rental reversion potential. WALE remained long at 6.6 years.\n\nPORTFOLIO GROWTH\n\nDPL Gunma Fujioka (Greater Tokyo): Acquired Mar 2025 for JPY3,990M — a 23.4% discount to the then-independent valuation of JPY5,210M. DHLT\'s 19th property, a freehold logistics facility completed Jan 2022, NLA 22,514sqm. Tenant: Japanese group company of one of the world\'s largest multinational consumer goods corporations. BELS 5-star green certified, 2.6 MWp solar. As at Dec 2025, valued at JPY5,230M — already +31.1% above purchase price.\n\nSUSTAINABILITY\n\nEstablished sustainability-linked loan framework (Dec 2025). Entered first SLL for S$30M revolving credit facility. 17/19 properties green-certified (BELS), representing 96.0% of portfolio by val. 9 properties at highest 6-star BELS rating. Solar capacity 18.8 MWp across 13 properties.\n\nKEY TAKEAWAY\n\nDHLT\'s FY2025 result is a tale of two stories: solid fundamentals (rent reversion +11%, long WALE, near-zero borrowing cost at 2.04%, 16/19 properties fully occupied, DPL Gunma Fujioka acquired at 23% discount) vs near-term headwinds (occupancy softness at Sendai Port and Koriyama, FX translation drag, DPU down 9.6%). The Japan logistics market remains well-supported by e-commerce growth and moderating new supply. The key watch item is filling vacancies at DPL Sendai Port (31.9% occ), which at 63,117sqm is the second largest property in the portfolio. Resolution of Sendai Port vacancy would materially improve DPU."},
@@ -8696,6 +8854,7 @@ var ENTITY_COLORS = {
   "CapitaLand Investment Limited":"#154360",
   "Manulife US REIT":"#1f618d",
   "EC World REIT":"#7f8c8d",
+  "Sasseur REIT":"#8B1A1A",
   "Daiwa House Logistics Trust":"#1a4a72",
   "Elite UK REIT":"#1a5276"
 };
