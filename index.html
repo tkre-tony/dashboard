@@ -8186,6 +8186,14 @@ document.querySelectorAll(".navtab").forEach(function(t){
     if(tab === "talent"){
       if(!talentInited){
         talentInited = true;
+        // Reset filters to default state — prevents browser session-restore
+        // from leaving entity dropdown on a stale value that matches nothing
+        talentRoleFilter = 'all';
+        document.querySelectorAll('[data-tfilter]').forEach(function(b){
+          b.classList.toggle('on', b.dataset.tfilter === 'all');
+        });
+        var ef = document.getElementById('talent-entity-filter');
+        if(ef) ef.value = '';
         talentInitSummary();
         talentRender(); // render from local TALENT_DATA immediately
         talentLoadEnrichment().then(function(){
@@ -10741,6 +10749,7 @@ function fmtPropType(t){
 function renderOvTable(rows){
   var tbody = document.getElementById("ov-tx-tbody");
   tbody.innerHTML = rows.map(function(r){
+    var isLoss = r.buy_price && r.transacted_price && r.transacted_price < r.buy_price;
     var price = r.transacted_price ? "S$"+Number(r.transacted_price).toLocaleString() : "-";
     var area  = r.area_sqft ? Number(parseFloat(r.area_sqft).toFixed(0)).toLocaleString() : "-";
     var psf   = r.unit_price_psf ? "S$"+Math.round(r.unit_price_psf) : "-";
@@ -10752,11 +10761,13 @@ function renderOvTable(rows){
     var boughtLabel = "<div style='font-size:9px;color:var(--mut2);text-transform:uppercase;letter-spacing:.04em;margin-top:4px;font-family:\"DM Sans\",sans-serif'>Bought</div>";
     var dateCell = "<div style='font-size:11px;font-weight:600'>"+date+"</div>"
       + (r.buy_date ? boughtLabel+"<div style='"+mutStyle+"'>"+r.buy_date.substring(0,10)+"</div>" : "");
-    var priceCell = "<div style='font-size:11px;font-weight:700'>"+price+"</div>"
+    var sellPriceColor = isLoss ? "color:#b71c1c;" : "";
+    var priceCell = "<div style='font-size:11px;font-weight:700;"+sellPriceColor+"'>"+price+(isLoss ? " 📉" : "")+"</div>"
       + (r.buy_price ? boughtLabel+"<div style='"+mutStyle+"'>S$"+Number(Math.round(r.buy_price)).toLocaleString()+"</div>" : "");
     var psfCell = "<div style='font-size:11px'>"+psf+"</div>"
       + (r.buy_psf ? boughtLabel+"<div style='"+mutStyle+"'>S$"+Math.round(r.buy_psf).toLocaleString()+"</div>" : "");
-    return "<tr style='font-size:11px'>"
+    var rowBg = isLoss ? "background:#fff5f5;" : "";
+    return "<tr style='font-size:11px;"+rowBg+"'>"
       +"<td class='mono' style='white-space:nowrap;vertical-align:top;font-size:10.5px'>"+dateCell+"</td>"
       +"<td class='mono' style='font-size:10.5px;white-space:nowrap;vertical-align:top'>"+dist+"</td>"
       +"<td style='font-weight:600;font-size:10.5px;vertical-align:top;word-break:break-word'>"+(r.project_name||"-")+"</td>"
