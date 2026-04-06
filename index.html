@@ -3814,7 +3814,7 @@ var TALENT_DATA = [
     entity:'Parkway Life REIT', entity_short:'PLife REIT', ar_year:'FY2025',
     appointed:'29 Jan 2009', tenure_yrs:16.9,
     rem_exact:1702010, rem_fixed:953127, rem_bonus:408482, rem_other:340401,
-    rem_note:'FY2025 exact S$1,702,010. Fixed salary (incl. CPF) 56% = S$953,127; cash bonus 24% = S$408,482; long-term incentives (unit awards) 18% = S$306,362; benefits-in-kind 2% = S$34,040.',
+    rem_note:'FY2025 exact S$1,702,010 (+4.6% from FY2024). Fixed salary (incl. CPF) 56% = S$953,127; cash bonus 24% = S$408,482; LTI unit awards 18% = S$306,362; benefits-in-kind 2% = S$34,040. FY2024 exact S$1,626,935 (53%/26%/18%/3%).',
     rem_band:null, rem_pct_fixed:56, rem_pct_bonus:24, rem_pct_other:20,
     rem_history:[
       {year:'FY2025', total:1702010, pct_fixed:56, pct_bonus:24, pct_ltp:18, pct_other:2},
@@ -3838,14 +3838,20 @@ var TALENT_DATA = [
     entity:'Parkway Life REIT', entity_short:'PLife REIT', ar_year:'FY2025',
     appointed:'2016', tenure_yrs:9,
     rem_exact:null, rem_fixed:null, rem_bonus:null, rem_other:null,
-    rem_note:'FY2025 band: S$750,001–S$1,000,000. 63% fixed / 19% bonus / 16% LTI / 2% benefits. Exact quantum not disclosed.',
-    rem_band:'S$750K–S$1M', rem_pct_fixed:63, rem_pct_bonus:19, rem_pct_other:18,
+    rem_note:'FY2025 band S$750,001-S$1,000,000. Mix: 63% fixed / 19% bonus / 16% LTI / 2% benefits. FY2024 band same (60%/23%/15%/2%). Exact not disclosed.',
+    rem_band:'S$750K-S$1M', rem_pct_fixed:63, rem_pct_bonus:19, rem_pct_other:18,
+    rem_history:[
+      {year:'FY2025', total:null, pct_fixed:63, pct_bonus:19, pct_ltp:16, pct_other:2, band:'S$750K-S$1M'},
+      {year:'FY2024', total:null, pct_fixed:60, pct_bonus:23, pct_ltp:15, pct_other:2, band:'S$750K-S$1M'},
+    ],
     edu:null,
-    bio:'CFO and COO of Parkway Trust Management Limited. Oversees financial management and operations of PLife REIT.',
-    prev_roles:[],
+    bio:'CFO and COO of Parkway Trust Management Limited. 30+ years banking and corporate experience. Oversees Finance, Corporate Services and Investor Relations. Previously Senior VP Corporate Advisory of Global Financial Markets at DBS Bank Ltd, advising large corporates on treasury management, corporate finance and M&A; expertise in interest rate and FX risk management structuring.',
+    prev_roles:[
+      {org:'DBS Bank Ltd', pos:'Senior VP, Corporate Advisory — Global Financial Markets'},
+    ],
     cross_board_roles:[],
     linkedin_url:null, photo_url:null,
-    tags:['REIT CFO','Healthcare','Singapore','COO']
+    tags:['REIT CFO','COO','DBS Alumni','30-Year Career','Healthcare','Treasury']
   },
   {
     id:'plife-chair-25', name:'Robin Hu Yee Cheng', role:'Chairman & Independent Director', role_type:'Board',
@@ -3902,10 +3908,10 @@ var TALENT_DATA = [
     entity:'Parkway Life REIT', entity_short:'PLife REIT', ar_year:'FY2025',
     appointed:'17 Nov 2023', tenure_yrs:2.1,
     rem_exact:60000, rem_fixed:60000, rem_bonus:0, rem_other:0,
-    rem_note:'FY2025 exact S$60,000. Director fees paid to Mitsui & Co., Ltd.',
+    rem_note:'FY2025 exact S$60,000. Director fees paid to Mitsui & Co., Ltd. FY2024: S$55,000.',
     rem_band:null, rem_pct_fixed:100, rem_pct_bonus:0, rem_pct_other:0,
     edu:'BA Law, University of Tokyo; MBA, Kellogg School of Management, Northwestern University; US CPA (Delaware)',
-    bio:'Unit Operating Officer, Mitsui & Co. (Asia Pacific) since Apr 2025. 26+ years at Mitsui spanning strategic planning, business development and operations. Previously COO of MIMS Pte Ltd (2015–2018); seconded to Parkway Pantai for strategic planning (2013–2015). Mitsui sponsor representative.',
+    bio:'Unit Operating Officer, Mitsui & Co. (Asia Pacific) since Apr 2025. 26+ years at Mitsui spanning strategic planning, business development and operations. Previously COO of MIMS Pte Ltd (2015-2018); seconded to Parkway Pantai for strategic planning (2013-2015). Mitsui sponsor representative.',
     prev_roles:[
       {org:'Mitsui & Co., Ltd.',pos:'Multiple divisions including Consumer-Centric BDU'},
       {org:'MIMS Pte Ltd',pos:'Chief Operating Officer'},
@@ -3913,8 +3919,153 @@ var TALENT_DATA = [
     cross_board_roles:[
       {entity:'IHH Healthcare Berhad',role:'Non-Executive Director',listed:true},
     ],
+    rem_history:[
+      {year:'FY2025', total:60000, note:'Fees paid to Mitsui & Co., Ltd.'},
+      {year:'FY2024', total:55000, note:'Fees paid to Mitsui & Co., Ltd.'},
+    ],
     linkedin_url:null, photo_url:null,
     tags:['Non-Independent NED','Mitsui Sponsor Rep','Japan','Kellogg MBA','IHH Cross-Board']
+  },
+  {
+    id:'plife-dir-prem-25', name:'Dr. Prem Kumar Nair', role:'Non-Independent Non-Executive Director', role_type:'Board',
+    entity:'Parkway Life REIT', entity_short:'PLife REIT', ar_year:'FY2025',
+    appointed:'17 Nov 2023', tenure_yrs:2.1,
+    rem_exact:73000, rem_fixed:73000, rem_bonus:0, rem_other:0,
+    rem_note:'FY2025 exact S$73,000. Director fees paid to Parkway Holdings Limited (IHH subsidiary). FY2024: S$67,000. NRC Member.',
+    rem_band:null, rem_pct_fixed:100, rem_pct_bonus:0, rem_pct_other:0,
+    rem_history:[
+      {year:'FY2025', total:73000, note:'Fees paid to Parkway Holdings Limited'},
+      {year:'FY2024', total:67000, note:'Fees paid to Parkway Holdings Limited'},
+    ],
+    edu:'MBBS, National University of Singapore; MBA (Distinction), Manchester Business School, United Kingdom',
+    bio:'Group CEO of IHH Healthcare since 1 October 2023, leading 70,000+ employees across 80+ hospitals in 10 countries (Acibadem, Gleneagles, Fortis, Mount Elizabeth, Pantai, Parkway, Prince Court). Previously CEO of IHH Singapore from 2020, overseeing Mount Elizabeth, Gleneagles, Parkway East, Parkway Shenton and ancillary businesses. Prior to IHH, spent 27 years at Raffles Medical Group in concurrent roles as Chief Corporate Officer and MD Singapore Healthcare. Recipient of Public Service Medal (2010), Public Service Star and PBM COVID-19 (2022). Justice of the Peace; Adjunct Associate Professor, NUS Saw Swee Hock School of Public Health.',
+    prev_roles:[
+      {org:'IHH Healthcare Berhad',pos:'CEO Singapore (2020-2023)'},
+      {org:'Raffles Medical Group',pos:'Chief Corporate Officer & MD Singapore Healthcare (27 years)'},
+    ],
+    cross_board_roles:[
+      {entity:'IHH Healthcare Berhad',role:'Group CEO',listed:true},
+      {entity:'Fortis Healthcare Limited',role:'Vice Chairman',listed:true},
+    ],
+    linkedin_url:null, photo_url:null,
+    tags:['Non-Independent NED','IHH Group CEO','Healthcare','NRC Member','NUS','Manchester MBA']
+  },
+  {
+    id:'plife-dir-muthanna-25', name:'Dato\' Sri Muthanna bin Abdullah', role:'Non-Independent Non-Executive Director', role_type:'Board',
+    entity:'Parkway Life REIT', entity_short:'PLife REIT', ar_year:'FY2025',
+    appointed:'17 Nov 2023', tenure_yrs:2.1,
+    rem_exact:60000, rem_fixed:60000, rem_bonus:0, rem_other:0,
+    rem_note:'FY2025 exact S$60,000. FY2024: S$55,000.',
+    rem_band:null, rem_pct_fixed:100, rem_pct_bonus:0, rem_pct_other:0,
+    rem_history:[
+      {year:'FY2025', total:60000},
+      {year:'FY2024', total:55000},
+    ],
+    edu:'Bachelor of Law, University of Buckingham, England; Barrister-at-Law, Honourable Society of Middle Temple (England)',
+    bio:'Consultant of Abdullah Chan & Co (Advocates & Solicitors). Called to Bar of England and Wales 1982 and Malaysian Bar 1983. Honorary Consul to Kuala Lumpur of the Republic of San Marino (since 2017). Non-executive director of IHH Healthcare Berhad, MSIG Insurance Malaysia Berhad and Apollo Food Holdings Berhad. Extensive Malaysian legal and corporate governance background.',
+    prev_roles:[],
+    cross_board_roles:[
+      {entity:'IHH Healthcare Berhad',role:'Independent Non-Executive Director',listed:true},
+      {entity:'MSIG Insurance (Malaysia) Bhd',role:'Chairman, Independent NED',listed:true},
+      {entity:'Apollo Food Holdings Berhad',role:'Independent Non-Executive Director',listed:true},
+    ],
+    linkedin_url:null, photo_url:null,
+    tags:['Non-Independent NED','Legal','Malaysia','IHH Cross-Board','Barrister']
+  },
+  {
+    id:'plife-dir-peterchow-25', name:'Dr. Chow Chorng Ann Peter', role:'Non-Independent Non-Executive Director', role_type:'Board',
+    entity:'Parkway Life REIT', entity_short:'PLife REIT', ar_year:'FY2025',
+    appointed:'5 Dec 2023', tenure_yrs:2.1,
+    rem_exact:60000, rem_fixed:60000, rem_bonus:0, rem_other:0,
+    rem_note:'FY2025 exact S$60,000. Director fees paid to Parkway Holdings Limited (IHH subsidiary). FY2024: S$55,000.',
+    rem_band:null, rem_pct_fixed:100, rem_pct_bonus:0, rem_pct_other:0,
+    rem_history:[
+      {year:'FY2025', total:60000, note:'Fees paid to Parkway Holdings Limited'},
+      {year:'FY2024', total:55000, note:'Fees paid to Parkway Holdings Limited'},
+    ],
+    edu:'Bachelor of Dental Surgery, National University of Singapore; Master of Health Science (Management), University of Sydney',
+    bio:'CEO of IHH Singapore since 1 October 2023, overseeing IHH\'s Singapore business including Mount Elizabeth, Mount Elizabeth Novena, Gleneagles and Parkway East hospitals, Parkway Shenton primary care, Parkway MediCentre, and ancillary entities. Previously CEO of Mount Elizabeth Novena Hospital (2020-2023), where he led strategic development during COVID-19. Prior career at National Healthcare Group in Director of Quality, Director of Corporate Development, and COO of NHG Polyclinics roles. Recipient of Public Service Medal (Covid-19) 2022.',
+    prev_roles:[
+      {org:'Mount Elizabeth Novena Hospital',pos:'CEO (2020-2023)'},
+      {org:'NHG Polyclinics',pos:'Chief Operating Officer'},
+      {org:'National Healthcare Group',pos:'Director of Quality & Corporate Development'},
+    ],
+    cross_board_roles:[
+      {entity:'IHH Healthcare Berhad',role:'Board Director (via IHH Singapore CEO role)',listed:false},
+    ],
+    linkedin_url:null, photo_url:null,
+    tags:['Non-Independent NED','IHH Singapore CEO','Healthcare Operations','NUS','Sydney']
+  },
+  {
+    id:'plife-cio-25', name:'Tan Seak Sze', role:'Chief Investment Officer', role_type:'Mgmt',
+    entity:'Parkway Life REIT', entity_short:'PLife REIT', ar_year:'FY2025',
+    appointed:'Jun 2009', tenure_yrs:15.5,
+    rem_exact:null, rem_fixed:null, rem_bonus:null, rem_other:null,
+    rem_note:'FY2025 band S$250,001-S$500,000. Mix: 65% fixed / 18% bonus / 14% LTI / 3% benefits. FY2024 band same (61%/22%/14%/3%). Exact not disclosed.',
+    rem_band:'S$250K-S$500K', rem_pct_fixed:65, rem_pct_bonus:18, rem_pct_other:17,
+    rem_history:[
+      {year:'FY2025', total:null, pct_fixed:65, pct_bonus:18, pct_ltp:14, pct_other:3, band:'S$250K-S$500K'},
+      {year:'FY2024', total:null, pct_fixed:61, pct_bonus:22, pct_ltp:14, pct_other:3, band:'S$250K-S$500K'},
+    ],
+    edu:null,
+    bio:'Chief Investment Officer of Parkway Trust Management Limited since June 2009. 30+ years of real estate experience. Oversees investment, asset management and project management functions. Previously VP Investment at CapitaLand Group (retail business unit in India). Earlier roles: COO of BPO firm in Philippines; CEO of L&T Infocity-Ascendas Ltd (IT complexes developer, Hyderabad, India — seconded by Ascendas 2004); corporate finance positions within Ascendas Group (2001-2003); business development and planning at JTC International Pte Ltd (1994-2000). Career started as a loan officer in corporate banking.',
+    prev_roles:[
+      {org:'CapitaLand Group',pos:'VP Investment — Retail Business Unit India'},
+      {org:'L&T Infocity-Ascendas Ltd (Hyderabad)',pos:'CEO (seconded by Ascendas, 2004)'},
+      {org:'Ascendas Group',pos:'Corporate Finance (2001-2003)'},
+      {org:'JTC International Pte Ltd',pos:'Business Development & Investment (1994-2000)'},
+    ],
+    cross_board_roles:[],
+    linkedin_url:null, photo_url:null,
+    tags:['CIO','30-Year Career','CapitaLand Alumni','Ascendas Alumni','Healthcare','Japan','France']
+  },
+  {
+    id:'plife-hd-fin-25', name:'Patricia Ng', role:'Head, Finance', role_type:'Mgmt',
+    entity:'Parkway Life REIT', entity_short:'PLife REIT', ar_year:'FY2025',
+    appointed:null, tenure_yrs:null,
+    rem_exact:null, rem_fixed:null, rem_bonus:null, rem_other:null,
+    rem_note:'FY2025 band not individually disclosed; part of top-5 KMP group (aggregate S$3.3M excl. CEO). Mix: 77% fixed / 19% bonus / 4% LTI / N.M. benefits. FY2024: 74%/25%/0%/1%.',
+    rem_band:null, rem_pct_fixed:77, rem_pct_bonus:19, rem_pct_other:4,
+    rem_history:[
+      {year:'FY2025', total:null, pct_fixed:77, pct_bonus:19, pct_ltp:4, pct_other:0},
+      {year:'FY2024', total:null, pct_fixed:74, pct_bonus:25, pct_ltp:0, pct_other:1},
+    ],
+    edu:null, bio:'Head of Finance, Parkway Trust Management Limited. Oversees financial reporting, accounting and finance functions of the Manager and PLife REIT.',
+    prev_roles:[], cross_board_roles:[],
+    linkedin_url:null, photo_url:null,
+    tags:['Head Finance','Healthcare REIT','Finance Management']
+  },
+  {
+    id:'plife-hd-inv-25', name:'Wayne Lee', role:'Head, Investment', role_type:'Mgmt',
+    entity:'Parkway Life REIT', entity_short:'PLife REIT', ar_year:'FY2025',
+    appointed:null, tenure_yrs:null,
+    rem_exact:null, rem_fixed:null, rem_bonus:null, rem_other:null,
+    rem_note:'FY2025 band not individually disclosed; part of top-5 KMP group (aggregate S$3.3M excl. CEO). Mix: 79% fixed / 18% bonus / 3% LTI / N.M. benefits. FY2024: 75%/24%/0%/1%.',
+    rem_band:null, rem_pct_fixed:79, rem_pct_bonus:18, rem_pct_other:3,
+    rem_history:[
+      {year:'FY2025', total:null, pct_fixed:79, pct_bonus:18, pct_ltp:3, pct_other:0},
+      {year:'FY2024', total:null, pct_fixed:75, pct_bonus:24, pct_ltp:0, pct_other:1},
+    ],
+    edu:null, bio:'Head of Investment, Parkway Trust Management Limited. Responsible for investment activities and portfolio expansion of PLife REIT across Singapore, Japan and France.',
+    prev_roles:[], cross_board_roles:[],
+    linkedin_url:null, photo_url:null,
+    tags:['Head Investment','Healthcare REIT','Japan','France','Singapore']
+  },
+  {
+    id:'plife-hd-am-25', name:'Tan Ling Cher', role:'Head, Asset Management', role_type:'Mgmt',
+    entity:'Parkway Life REIT', entity_short:'PLife REIT', ar_year:'FY2025',
+    appointed:null, tenure_yrs:null,
+    rem_exact:null, rem_fixed:null, rem_bonus:null, rem_other:null,
+    rem_note:'FY2025 band not individually disclosed; part of top-5 KMP group (aggregate S$3.3M excl. CEO). Mix: 78% fixed / 18% bonus / 3% LTI / 1% benefits. FY2024: 78%/21%/0%/1%.',
+    rem_band:null, rem_pct_fixed:78, rem_pct_bonus:18, rem_pct_other:4,
+    rem_history:[
+      {year:'FY2025', total:null, pct_fixed:78, pct_bonus:18, pct_ltp:3, pct_other:1},
+      {year:'FY2024', total:null, pct_fixed:78, pct_bonus:21, pct_ltp:0, pct_other:1},
+    ],
+    edu:null, bio:'Head of Asset Management, Parkway Trust Management Limited. Manages asset performance and value creation across PLife REIT\'s Singapore, Japan and France portfolio.',
+    prev_roles:[], cross_board_roles:[],
+    linkedin_url:null, photo_url:null,
+    tags:['Head Asset Management','Healthcare REIT','Japan','France','Singapore']
   },
 
   // ── CAPITALAND ASCENDAS REIT (CLAR) — FY2025 ──────────────────────────
