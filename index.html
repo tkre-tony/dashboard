@@ -1756,110 +1756,118 @@ html,body{background:var(--bg);color:var(--txt);font-family:'DM Sans',sans-serif
     </div>
 
 
-  <div class="panel" id="tab-talent">
+  </div>
 
-    <!-- Hero -->
-    <div class="talent-hero">
-      <div>
-        <div class="talent-hero-title">👤 RE Human Capital Intelligence</div>
-        <div class="talent-hero-sub">C-Suite · Board · Key Management · Remuneration — sourced from SGX-listed REIT &amp; Developer Annual Reports</div>
-        <div style="margin-top:8px;display:flex;gap:8px;flex-wrap:wrap">
-          <span style="font-size:9px;background:rgba(167,139,250,.15);border:1px solid rgba(167,139,250,.3);color:#c4b5fd;padding:2px 8px;border-radius:10px;letter-spacing:.04em">PILOT · 18 Entities · AI-REIT · CICT · Keppel REIT · Suntec · CDL · UOL · OUE REIT · Wing Tai · GuocoLand · Digital Core REIT · First REIT · FE H-Trust · FE Orchard · Sing Holdings · MINT · MPACT · SingLand · Lendlease REIT</span>
-          <span style="font-size:9px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);color:rgba(255,255,255,.4);padding:2px 8px;border-radius:10px;letter-spacing:.04em">LinkedIn via Supabase · Cross-board roles · YoY pay history</span>
-        </div>
-      </div>
-      <div class="talent-hero-stats">
-        <div class="talent-hs"><div class="talent-hs-val" id="thc-total">—</div><div class="talent-hs-lbl">Profiles</div></div>
-        <div class="talent-hs"><div class="talent-hs-val" id="thc-entities" style="color:#34d399">—</div><div class="talent-hs-lbl">Entities</div></div>
-        <div class="talent-hs"><div class="talent-hs-val" id="thc-ceos" style="color:#f9a8d4">—</div><div class="talent-hs-lbl">CEOs</div></div>
+<!-- ═══════════════════════════════════════════════════════════════
+     RE HUMAN CAPITAL TAB — inline styles injected here
+     ═══════════════════════════════════════════════════════════════ -->
+
+<!-- ═══════════════════════════════════════════════════════════ -->
+<!-- RE HUMAN CAPITAL PANEL                                      -->
+<!-- ═══════════════════════════════════════════════════════════ -->
+<div class="panel" id="tab-talent">
+
+  <!-- Hero -->
+  <div class="talent-hero">
+    <div>
+      <div class="talent-hero-title">👤 RE Human Capital Intelligence</div>
+      <div class="talent-hero-sub">C-Suite · Board · Key Management · Remuneration — sourced from SGX-listed REIT &amp; Developer Annual Reports</div>
+      <div style="margin-top:8px;display:flex;gap:8px;flex-wrap:wrap">
+        <span style="font-size:9px;background:rgba(167,139,250,.15);border:1px solid rgba(167,139,250,.3);color:#c4b5fd;padding:2px 8px;border-radius:10px;letter-spacing:.04em">PILOT · 18 Entities · AI-REIT · CICT · Keppel REIT · Suntec · CDL · UOL · OUE REIT · Wing Tai · GuocoLand · Digital Core REIT · First REIT · FE H-Trust · FE Orchard · Sing Holdings · MINT · MPACT · SingLand · Lendlease REIT</span>
+        <span style="font-size:9px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);color:rgba(255,255,255,.4);padding:2px 8px;border-radius:10px;letter-spacing:.04em">LinkedIn via Supabase · Cross-board roles · YoY pay history</span>
       </div>
     </div>
-
-    <!-- Summary stat row -->
-    <div class="talent-summary-row" id="talent-sum-row"></div>
-
-    <!-- Filters -->
-    <div class="talent-filters">
-      <div class="talent-search-wrap">
-        <input class="talent-search" id="talent-search" placeholder="Search name, entity, role…" oninput="talentRender()">
-      </div>
-      <button class="talent-filter-btn on" data-tfilter="all" onclick="talentSetFilter(this,'role','all')">All Roles</button>
-      <button class="talent-filter-btn role-ceo" data-tfilter="CEO" onclick="talentSetFilter(this,'role','CEO')">CEO</button>
-      <button class="talent-filter-btn role-cfo" data-tfilter="CFO" onclick="talentSetFilter(this,'role','CFO')">CFO</button>
-      <button class="talent-filter-btn role-cio" data-tfilter="CIO" onclick="talentSetFilter(this,'role','CIO')">CIO / Head RE</button>
-      <button class="talent-filter-btn role-board" data-tfilter="Board" onclick="talentSetFilter(this,'role','Board')">Board</button>
-      <select class="talent-sort-sel" id="talent-entity-filter" onchange="talentRender()" style="max-width:160px">
-        <option value="">All Entities</option>
-        <option value="Alpha Integrated REIT">AI-REIT (FY2025)</option>
-        <option value="United Hampshire US REIT">UHREIT (FY2025)</option>
-        <option value="Sasseur REIT">Sasseur REIT (FY2025)</option>
-        <option value="Daiwa House Logistics Trust">DHLT (FY2025)</option>
-        <option value="Elite UK REIT">Elite UK REIT (FY2025)</option>
-        <option value="CapitaLand Ascott Trust (CLAS)">CLAS (FY2025)</option>
-        <option value="CapitaLand China Trust">CLCT (FY2025)</option>
-        <option value="CapitaLand Investment Limited">CLI (FY2025)</option>
-        <option value="CDL Hospitality Trusts">CDLHT (FY2025)</option>
-        <option value="CapitaLand Ascendas REIT">CLAR (FY2025)</option>
-        <option value="City Developments Limited">CDL</option>
-        <option value="Keppel REIT">Keppel REIT</option>
-        <option value="OUE REIT">OUE REIT</option>
-        <option value="Sabana REIT (now AI-REIT)">Sabana / Former</option>
-        <option value="Parkway Life REIT">PLife REIT (FY2025)</option>
-        <option value="First REIT">First REIT (FY2025)</option>
-        <option value="Far East Hospitality Trust">Far East H-Trust (FY2025)</option>
-        <option value="Far East Orchard">Far East Orchard (FY2025)</option>
-        <option value="Sing Holdings Limited">Sing Holdings (FY2025)</option>
-        <option value="ESR-REIT">ESR-REIT (FY2024)</option>
-        <option value="Frasers Centrepoint Trust">FCT (FY2024/25)</option>
-        <option value="Frasers Property Limited">Frasers Property (FY2024/25)</option>
-        <option value="Suntec REIT">Suntec REIT</option>
-        <option value="UOL Group">UOL Group</option>
-        <option value="GuocoLand">GuocoLand (FY2025)</option>
-        <option value="Digital Core REIT">Digital Core REIT (FY2025)</option>
-        <option value="SingLand">SingLand (FY2024)</option>
-        <option value="Lendlease Global Commercial REIT">Lendlease REIT (FY2025)</option>
-        <option value="Mapletree Industrial Trust">MINT (FY24/25)</option>
-        <option value="MPACT">MPACT (FY24/25)</option>
-        <option value="Mapletree Logistics Trust">MLT (FY2024/25)</option>
-        <option value="AIMS APAC REIT">AIMS APAC REIT (FY2025)</option>
-        <option value="IREIT Global">iREIT Global (FY2024)</option>
-        <option value="Stoneweg Europe Stapled Trust">SERT (FY2024)</option>
-        <option value="Tuan Sing Holdings">Tuan Sing (FY2024)</option>
-        <option value="Oxley Holdings">Oxley Holdings (FY2025)</option>
-      </select>
-      <select class="talent-sort-sel" id="talent-sort" onchange="talentRender()">
-        <option value="name">Sort: Name</option>
-        <option value="rem_desc">Sort: Rem ↓</option>
-        <option value="rem_asc">Sort: Rem ↑</option>
-        <option value="tenure_desc">Sort: Tenure ↓</option>
-        <option value="entity">Sort: Entity</option>
-      </select>
-      <div style="display:flex;border:1px solid var(--bdr);border-radius:6px;overflow:hidden;flex-shrink:0">
-        <button id="talent-vbtn-grid" onclick="talentSetView('grid')" title="Card view" style="padding:6px 10px;border:none;background:var(--g1);color:#fff;cursor:pointer;font-size:13px">⊞</button>
-        <button id="talent-vbtn-tbl"  onclick="talentSetView('table')" title="Table view" style="padding:6px 10px;border:none;background:var(--srf2);color:var(--mut);cursor:pointer;font-size:13px;border-left:1px solid var(--bdr)">☰</button>
-      </div>
-      <span id="talent-count" style="font-size:11px;color:var(--mut);margin-left:4px"></span>
-    </div>
-    <div style="font-size:10px;color:var(--mut2);margin-bottom:12px;padding:6px 10px;background:var(--srf2);border-radius:5px;border:1px solid var(--bdr)">
-      <span style="font-size:9px;background:#f0fdf4;color:#166534;border:1px solid #bbf7d0;border-radius:3px;padding:1px 5px;font-weight:600">AR</span> = Exact figures sourced from published Annual Report &nbsp;·&nbsp;
-      <span style="font-size:9px;background:#fffbeb;color:#92400e;border:1px solid #fde68a;border-radius:3px;padding:1px 5px;font-weight:600">EST</span> = Industry estimate — verify against entity's AR Corporate Governance section before relying on figures.
-    </div>
-
-    <!-- Cards grid -->
-    <div class="talent-grid" id="talent-grid"></div>
-
-    <!-- Table view -->
-    <div id="talent-tbl-wrap" style="display:none;overflow-x:auto;margin-bottom:14px">
-      <table class="ptable" id="talent-tbl">
-        <thead id="talent-tbl-hd"></thead>
-        <tbody id="talent-tbl-body"></tbody>
-      </table>
+    <div class="talent-hero-stats">
+      <div class="talent-hs"><div class="talent-hs-val" id="thc-total">—</div><div class="talent-hs-lbl">Profiles</div></div>
+      <div class="talent-hs"><div class="talent-hs-val" id="thc-entities" style="color:#34d399">—</div><div class="talent-hs-lbl">Entities</div></div>
+      <div class="talent-hs"><div class="talent-hs-val" id="thc-ceos" style="color:#f9a8d4">—</div><div class="talent-hs-lbl">CEOs</div></div>
     </div>
   </div>
+
+  <!-- Summary stat row -->
+  <div class="talent-summary-row" id="talent-sum-row"></div>
+
+  <!-- Filters -->
+  <div class="talent-filters">
+    <div class="talent-search-wrap">
+      <input class="talent-search" id="talent-search" placeholder="Search name, entity, role…" oninput="talentRender()">
+    </div>
+    <button class="talent-filter-btn on" data-tfilter="all" onclick="talentSetFilter(this,'role','all')">All Roles</button>
+    <button class="talent-filter-btn role-ceo" data-tfilter="CEO" onclick="talentSetFilter(this,'role','CEO')">CEO</button>
+    <button class="talent-filter-btn role-cfo" data-tfilter="CFO" onclick="talentSetFilter(this,'role','CFO')">CFO</button>
+    <button class="talent-filter-btn role-cio" data-tfilter="CIO" onclick="talentSetFilter(this,'role','CIO')">CIO / Head RE</button>
+    <button class="talent-filter-btn role-board" data-tfilter="Board" onclick="talentSetFilter(this,'role','Board')">Board</button>
+    <select class="talent-sort-sel" id="talent-entity-filter" onchange="talentRender()" style="max-width:160px">
+      <option value="">All Entities</option>
+      <option value="Alpha Integrated REIT">AI-REIT (FY2025)</option>
+      <option value="United Hampshire US REIT">UHREIT (FY2025)</option>
+      <option value="Sasseur REIT">Sasseur REIT (FY2025)</option>
+      <option value="Daiwa House Logistics Trust">DHLT (FY2025)</option>
+      <option value="Elite UK REIT">Elite UK REIT (FY2025)</option>
+      <option value="CapitaLand Ascott Trust (CLAS)">CLAS (FY2025)</option>
+      <option value="CapitaLand China Trust">CLCT (FY2025)</option>
+      <option value="CapitaLand Investment Limited">CLI (FY2025)</option>
+      <option value="CDL Hospitality Trusts">CDLHT (FY2025)</option>
+      <option value="CapitaLand Ascendas REIT">CLAR (FY2025)</option>
+      <option value="City Developments Limited">CDL</option>
+      <option value="Keppel REIT">Keppel REIT</option>
+      <option value="OUE REIT">OUE REIT</option>
+      <option value="Sabana REIT (now AI-REIT)">Sabana / Former</option>
+      <option value="Parkway Life REIT">PLife REIT (FY2025)</option>
+      <option value="First REIT">First REIT (FY2025)</option>
+      <option value="Far East Hospitality Trust">Far East H-Trust (FY2025)</option>
+      <option value="Far East Orchard">Far East Orchard (FY2025)</option>
+      <option value="Sing Holdings Limited">Sing Holdings (FY2025)</option>
+      <option value="ESR-REIT">ESR-REIT (FY2024)</option>
+      <option value="Frasers Centrepoint Trust">FCT (FY2024/25)</option>
+      <option value="Frasers Property Limited">Frasers Property (FY2024/25)</option>
+      <option value="Suntec REIT">Suntec REIT</option>
+      <option value="UOL Group">UOL Group</option>
+      <option value="GuocoLand">GuocoLand (FY2025)</option>
+      <option value="Digital Core REIT">Digital Core REIT (FY2025)</option>
+      <option value="SingLand">SingLand (FY2024)</option>
+      <option value="Lendlease Global Commercial REIT">Lendlease REIT (FY2025)</option>
+      <option value="Mapletree Industrial Trust">MINT (FY24/25)</option>
+      <option value="MPACT">MPACT (FY24/25)</option>
+      <option value="Mapletree Logistics Trust">MLT (FY2024/25)</option>
+      <option value="AIMS APAC REIT">AIMS APAC REIT (FY2025)</option>
+      <option value="IREIT Global">iREIT Global (FY2024)</option>
+      <option value="Stoneweg Europe Stapled Trust">SERT (FY2024)</option>
+      <option value="Tuan Sing Holdings">Tuan Sing (FY2024)</option>
+      <option value="Oxley Holdings">Oxley Holdings (FY2025)</option>
+    </select>
+    <select class="talent-sort-sel" id="talent-sort" onchange="talentRender()">
+      <option value="name">Sort: Name</option>
+      <option value="rem_desc">Sort: Rem ↓</option>
+      <option value="rem_asc">Sort: Rem ↑</option>
+      <option value="tenure_desc">Sort: Tenure ↓</option>
+      <option value="entity">Sort: Entity</option>
+    </select>
+    <div style="display:flex;border:1px solid var(--bdr);border-radius:6px;overflow:hidden;flex-shrink:0">
+      <button id="talent-vbtn-grid" onclick="talentSetView('grid')" title="Card view" style="padding:6px 10px;border:none;background:var(--g1);color:#fff;cursor:pointer;font-size:13px">⊞</button>
+      <button id="talent-vbtn-tbl"  onclick="talentSetView('table')" title="Table view" style="padding:6px 10px;border:none;background:var(--srf2);color:var(--mut);cursor:pointer;font-size:13px;border-left:1px solid var(--bdr)">☰</button>
+    </div>
+    <span id="talent-count" style="font-size:11px;color:var(--mut);margin-left:4px"></span>
   </div>
+  <div style="font-size:10px;color:var(--mut2);margin-bottom:12px;padding:6px 10px;background:var(--srf2);border-radius:5px;border:1px solid var(--bdr)">
+    <span style="font-size:9px;background:#f0fdf4;color:#166534;border:1px solid #bbf7d0;border-radius:3px;padding:1px 5px;font-weight:600">AR</span> = Exact figures sourced from published Annual Report &nbsp;·&nbsp;
+    <span style="font-size:9px;background:#fffbeb;color:#92400e;border:1px solid #fde68a;border-radius:3px;padding:1px 5px;font-weight:600">EST</span> = Industry estimate — verify against entity's AR Corporate Governance section before relying on figures.
+  </div>
+
+  <!-- Cards grid -->
+  <div class="talent-grid" id="talent-grid"></div>
+
+  <!-- Table view -->
+  <div id="talent-tbl-wrap" style="display:none;overflow-x:auto;margin-bottom:14px">
+    <table class="ptable" id="talent-tbl">
+      <thead id="talent-tbl-hd"></thead>
+      <tbody id="talent-tbl-body"></tbody>
+    </table>
+  </div>
+</div>
+</div>
 
 <!-- end main wrap -->
-</div><!-- /.wrap -->
 
 <!-- Detail drawer -->
 <div class="talent-drawer-overlay" id="talent-overlay" onclick="talentCloseDrawer(event)">
