@@ -1487,9 +1487,11 @@ html,body{background:var(--bg);color:var(--txt);font-family:'DM Sans',sans-serif
         <button class="dir-tbtn" data-reitf="CapitaLand Integrated Commercial Trust" onclick="reitSetFilter(this,'reit','CapitaLand Integrated Commercial Trust')">CICT <span style="color:#4ade80;font-size:8px">●</span></button>
         <button class="dir-tbtn" data-reitf="Digital Core REIT" onclick="reitSetFilter(this,'reit','Digital Core REIT')">Digital Core <span style="color:#4ade80;font-size:8px">●</span></button>
         <button class="dir-tbtn" data-reitf="ESR-REIT" onclick="reitSetFilter(this,'reit','ESR-REIT')">ESR-REIT <span style="color:#4ade80;font-size:8px">●</span></button>
-        <button class="dir-tbtn" data-reitf="Far East Hospitality Trust" onclick="reitSetFilter(this,'reit','Far East Hospitality Trust')">FE H-Trust <span style="color:#4ade80;font-size:8px">●</span></button>
         <button class="dir-tbtn" data-reitf="Frasers Centrepoint Trust" onclick="reitSetFilter(this,'reit','Frasers Centrepoint Trust')">FCT <span style="color:#4ade80;font-size:8px">●</span></button>
+        <button class="dir-tbtn" data-reitf="Far East Hospitality Trust" onclick="reitSetFilter(this,'reit','Far East Hospitality Trust')">FE H-Trust <span style="color:#4ade80;font-size:8px">●</span></button>
+        <button class="dir-tbtn" data-reitf="First REIT" onclick="reitSetFilter(this,'reit','First REIT')">First REIT <span style="color:#4ade80;font-size:8px">●</span></button>
         <button class="dir-tbtn" data-reitf="Frasers Logistics & Commercial Trust" onclick="reitSetFilter(this,'reit','Frasers Logistics & Commercial Trust')">FLCT <span style="color:#4ade80;font-size:8px">●</span></button>
+        <button class="dir-tbtn" data-reitf="IREIT Global" onclick="reitSetFilter(this,'reit','IREIT Global')">iREIT Global <span style="color:#4ade80;font-size:8px">●</span></button>
         <button class="dir-tbtn" data-reitf="Keppel DC REIT" onclick="reitSetFilter(this,'reit','Keppel DC REIT')">Keppel DC <span style="color:#f59e0b;font-size:8px">●</span></button>
         <button class="dir-tbtn" data-reitf="Keppel REIT" onclick="reitSetFilter(this,'reit','Keppel REIT')">Keppel REIT <span style="color:#4ade80;font-size:8px">●</span></button>
         <button class="dir-tbtn" data-reitf="Lendlease Global Commercial REIT" onclick="reitSetFilter(this,'reit','Lendlease Global Commercial REIT')">Lendlease <span style="color:#4ade80;font-size:8px">●</span></button>
@@ -1499,11 +1501,9 @@ html,body{background:var(--bg);color:var(--txt);font-family:'DM Sans',sans-serif
         <button class="dir-tbtn" data-reitf="OUE REIT" onclick="reitSetFilter(this,'reit','OUE REIT')">OUE REIT <span style="color:#4ade80;font-size:8px">●</span></button>
         <button class="dir-tbtn" data-reitf="Paragon REIT (Delisted)" onclick="reitSetFilter(this,'reit','Paragon REIT (Delisted)')">Paragon ⚫</button>
         <button class="dir-tbtn" data-reitf="Parkway Life REIT" onclick="reitSetFilter(this,'reit','Parkway Life REIT')">PLife REIT <span style="color:#4ade80;font-size:8px">●</span></button>
-        <button class="dir-tbtn" data-reitf="First REIT" onclick="reitSetFilter(this,'reit','First REIT')">First REIT <span style="color:#f59e0b;font-size:8px">●</span></button>
+        <button class="dir-tbtn" data-reitf="Stoneweg Europe Stapled Trust" onclick="reitSetFilter(this,'reit','Stoneweg Europe Stapled Trust')">SERT <span style="color:#4ade80;font-size:8px">●</span></button>
         <button class="dir-tbtn" data-reitf="Starhill Global REIT" onclick="reitSetFilter(this,'reit','Starhill Global REIT')">Starhill Global <span style="color:#4ade80;font-size:8px">●</span></button>
         <button class="dir-tbtn" data-reitf="Suntec REIT" onclick="reitSetFilter(this,'reit','Suntec REIT')">Suntec REIT <span style="color:#4ade80;font-size:8px">●</span></button>
-        <button class="dir-tbtn" data-reitf="IREIT Global" onclick="reitSetFilter(this,'reit','IREIT Global')">iREIT Global <span style="color:#4ade80;font-size:8px">●</span></button>
-        <button class="dir-tbtn" data-reitf="Stoneweg Europe Stapled Trust" onclick="reitSetFilter(this,'reit','Stoneweg Europe Stapled Trust')">SERT <span style="color:#4ade80;font-size:8px">●</span></button>
       </div>
       <div id="chip-dev-row" style="display:flex;gap:6px;flex-wrap:wrap;align-items:center;margin-bottom:9px">
         <span class="fbar-label">Developer</span>
@@ -13747,9 +13747,28 @@ function reitSetFilter(btn, kind, val){
   if(kind==='reit'){
     reitActiveEntity = val;
     document.querySelectorAll('[data-reitf]').forEach(function(b){ b.classList.remove('on'); });
+    // Auto-switch geo to ALL when a specific entity is selected so overseas-only entities show their properties
+    if(val !== ''){
+      reitActiveGeo = 'ALL';
+      ['sg','ov','all'].forEach(function(k){
+        var gb = document.getElementById('geo-'+k);
+        if(gb){ var a=(k==='all'); gb.style.background=a?'var(--g1)':'transparent'; gb.style.color=a?'#fff':'var(--mut)'; gb.style.fontWeight=a?'700':'600'; }
+      });
+      var cSel=document.getElementById('reit-country'); var rSel=document.getElementById('reit-region');
+      if(cSel) cSel.style.display='none'; if(rSel) rSel.style.display='';
+    }
   } else if(kind==='dev'){
     reitActiveDev = val;
     document.querySelectorAll('[data-devf]').forEach(function(b){ b.classList.remove('on'); });
+    if(val !== ''){
+      reitActiveGeo = 'ALL';
+      ['sg','ov','all'].forEach(function(k){
+        var gb = document.getElementById('geo-'+k);
+        if(gb){ var a=(k==='all'); gb.style.background=a?'var(--g1)':'transparent'; gb.style.color=a?'#fff':'var(--mut)'; gb.style.fontWeight=a?'700':'600'; }
+      });
+      var cSel=document.getElementById('reit-country'); var rSel=document.getElementById('reit-region');
+      if(cSel) cSel.style.display='none'; if(rSel) rSel.style.display='';
+    }
   } else {
     reitActiveAsset = val;
     document.querySelectorAll('[data-rasset]').forEach(function(b){ b.classList.remove('on'); });
