@@ -8924,51 +8924,120 @@ function renderMonthlyChart(data){
 }
 
 // TABS — unified single handler (prevents duplicate listener conflicts)
-document.querySelectorAll(".navtab").forEach(function(t){
-  t.addEventListener("click", function(){
-    var tab = t.dataset.tab;
-    // 1. Update nav highlights
-    document.querySelectorAll(".navtab").forEach(function(x){ x.classList.remove("on"); });
-    t.classList.add("on");
-    // 2. Hide all panels
-    document.querySelectorAll(".panel").forEach(function(x){ x.classList.remove("on"); });
-    // 3. Show correct panel
-    if(tab === "assetdir"){
-      // assetdir navtab uses tab-reit panel (no id="tab-assetdir" exists)
-      var rp = document.getElementById("tab-reit");
-      if(rp) rp.classList.add("on");
-      reitSearch(0); loadARTracker();
+// ─── TAB SWITCHING ────────────────────────────────────────────────────────────
+// ARCHITECTURE NOTE (do not revert):
+// Tab panels are switched using an EXPLICIT ID MAP, not querySelectorAll(".panel").
+// This makes switching immune to HTML nesting bugs — a stray </div> that accidentally
+// nests one panel inside another will NOT break tab switching, because we never rely
+// on DOM hierarchy. Each panel is hidden/shown by its exact ID via style.display.
+//
+// The tab→panelId map is the single source of truth. "assetdir" maps to "tab-reit"
+// because no separate tab-assetdir element exists. All other tabs follow tab-{name}.
+//
+// ADDING A NEW TAB: add its entry to ATLAS_TAB_MAP below. That's the only change needed.
+
+var ATLAS_TAB_MAP = {
+  "overview":     "tab-overview",
+  "analytics":    "tab-analytics",
+  "directory":    "tab-directory",
+  "transactions": "tab-transactions",
+  "news":         "tab-news",
+  "pipeline":     "tab-pipeline",
+  "assetdir":     "tab-reit",
+  "talent":       "tab-talent",
+  "projects":     "tab-projects"
+};
+
+function atlasShowTab(tab) {
+  // 1. Update nav highlights
+  document.querySelectorAll(".navtab").forEach(function(x){ x.classList.remove("on"); });
+  var navBtn = document.querySelector(".navtab[data-tab='" + tab + "']");
+  if(navBtn) navBtn.classList.add("on");
+
+  // 2. Hide ALL known panels by ID — never touches unknown/nested elements
+  Object.values(ATLAS_TAB_MAP).forEach(function(id){
+    var el = document.getElementById(id);
+    if(el) el.style.display = "none";
+  });
+
+  // 3. Show target panel by ID
+  var targetId = ATLAS_TAB_MAP[tab];
+  var target = targetId ? document.getElementById(targetId) : null;
+  if(target) target.style.display = "block";
+
+  // 4. Tab-specific init/load
+  if(tab === "assetdir"){ reitSearch(0); loadARTracker(); }
+  if(tab === "analytics"){ renderAnalytics(); if(!pnlLoaded) pnlLoadData(); }
+  if(tab === "directory"){ dirSearch(0); }
+  if(tab === "transactions"){
+    if(document.getElementById("tx-tbody") && document.getElementById("tx-tbody").innerHTML === ""){
+      searchTransactions(0);
+    }
+  }
+  if(tab === "talent"){
+    if(!talentInited){
+      talentInited = true;
+      talentInitSummary();
+      talentRender();
+      talentLoadEnrichment().then(function(){
+        if(Object.keys(TALENT_ENRICHMENT).length > 0) talentRender();
+      }).catch(function(){});
     } else {
-      var p = document.getElementById("tab-" + tab);
-      if(p) p.classList.add("on");
+      talentRender();
     }
-    // 4. Tab-specific init/load
-    if(tab === "analytics"){ renderAnalytics(); if(!pnlLoaded) pnlLoadData(); }
-    if(tab === "directory"){ dirSearch(0); }
-    if(tab === "transactions"){
-      if(document.getElementById("tx-tbody") && document.getElementById("tx-tbody").innerHTML === ""){
-        searchTransactions(0);
+  }
+  if(tab === "projects"){
+    if(!projLoaded) projLoadUnits();
+    if(!sophiaCaveatsLoaded) sophiaLoadCaveats();
+  }
+}
+
+// ─── INITIAL PANEL STATE ─────────────────────────────────────────────────────
+// Set display states explicitly so tab switching never depends on CSS class inheritance.
+(function initPanelDisplay(){
+  var initial = "overview";
+  Object.entries(ATLAS_TAB_MAP).forEach(function(entry){
+    var tab = entry[0], id = entry[1];
+    var el = document.getElementById(id);
+    if(!el) return;
+    el.style.display = (tab === initial) ? "block" : "none";
+  });
+  // Mark overview nav tab as active
+  var navBtn = document.querySelector(".navtab[data-tab='overview']");
+  if(navBtn){
+    document.querySelectorAll(".navtab").forEach(function(x){ x.classList.remove("on"); });
+    navBtn.classList.add("on");
+  }
+})();
+
+// Attach click handlers using atlasShowTab
+document.querySelectorAll(".navtab").forEach(function(t){
+  t.addEventListener("click", function(){ atlasShowTab(t.dataset.tab); });
+});
+
+// ─── PANEL NESTING VALIDATOR ──────────────────────────────────────────────────
+// Runs once on load. Checks that no panel is a descendant of another panel.
+// If nesting is detected, logs a clear error with the offending IDs so the bug
+// is caught immediately — never silently breaks tab switching again.
+(function validatePanelNesting(){
+  var ids = Object.values(ATLAS_TAB_MAP);
+  var seen = {};
+  ids.forEach(function(id){ seen[id] = true; });
+  ids.forEach(function(id){
+    var el = document.getElementById(id);
+    if(!el) return;
+    var parent = el.parentElement;
+    while(parent){
+      if(parent.id && seen[parent.id]){
+        console.error(
+          "[ATLAS] PANEL NESTING BUG: #" + id + " is nested inside #" + parent.id +
+          ". This causes tab switching to fail. Fix the div balance in index.html."
+        );
       }
-    }
-    if(tab === "talent"){
-      if(!talentInited){
-        talentInited = true;
-        talentInitSummary();
-        talentRender(); // render from local TALENT_DATA immediately
-        talentLoadEnrichment().then(function(){
-          // Re-render only if enrichment added linkedin/photo data worth showing
-          if(Object.keys(TALENT_ENRICHMENT).length > 0) talentRender();
-        }).catch(function(){ /* enrichment optional — skip re-render on error */ });
-      } else {
-        talentRender();
-      }
-    }
-    if(tab === "projects"){
-      if(!projLoaded) projLoadUnits();
-      if(!sophiaCaveatsLoaded) sophiaLoadCaveats();
+      parent = parent.parentElement;
     }
   });
-});
+})();
 
 // KPIs
 function renderKPIs(){
