@@ -504,19 +504,15 @@ html,body{background:var(--bg);color:var(--txt);font-family:'DM Sans',sans-serif
   <div class="navtab" data-tab="pipeline"><span class="navtab-icon">🔭</span>Pipeline</div>
   <div class="navtab" data-tab="assetdir" style="display:flex;align-items:center;gap:6px">
     <span class="navtab-icon">🗂</span>Asset Directory
-    <span style="font-size:9px;background:var(--g3);border-radius:3px;padding:1px 5px;font-weight:800;letter-spacing:.05em;color:#fff">NEW</span>
   </div>
   <div class="navtab" data-tab="talent" style="display:flex;align-items:center;gap:6px">
     <span class="navtab-icon">👤</span>RE Human Capital
-    <span style="font-size:9px;background:#7c3aed;border-radius:3px;padding:1px 5px;font-weight:800;letter-spacing:.05em;color:#fff">PILOT</span>
   </div>
   <div class="navtab" data-tab="projects" style="display:flex;align-items:center;gap:6px">
     <span class="navtab-icon">🏗</span>Projects For Sale
-    <span style="font-size:9px;background:var(--amber);border-radius:3px;padding:1px 5px;font-weight:800;letter-spacing:.05em;color:#fff">BETA</span>
   </div>
   <div class="navtab" data-tab="inventory" style="display:flex;align-items:center;gap:6px">
     <span class="navtab-icon">📋</span>Inventory
-    <span style="font-size:9px;background:#1a6b3a;border-radius:3px;padding:1px 5px;font-weight:800;letter-spacing:.05em;color:#fff">NEW</span>
   </div>
 </div>
 <div id="tt"></div>
@@ -1664,6 +1660,114 @@ html,body{background:var(--bg);color:var(--txt);font-family:'DM Sans',sans-serif
         <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px" id="rdet-extra"></div>
         <div style="padding:12px 16px;background:var(--glt);border-radius:8px;font-size:11px;color:var(--mut);border-left:3px solid var(--g2);line-height:1.6" id="rdet-source"></div>
       </div>
+
+      <!-- ── KNOWN TENANTS PANEL ────────────────────────────── -->
+      <div class="card" id="tenant-panel" style="margin-top:14px">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;flex-wrap:wrap;gap:8px">
+          <div>
+            <div style="font-size:13px;font-weight:700;color:var(--txt);display:flex;align-items:center;gap:8px">
+              <span style="width:8px;height:8px;border-radius:2px;background:#1a6b3a;display:inline-block;flex-shrink:0"></span>
+              Known Tenants
+              <span id="tenant-count-badge" style="font-size:10px;font-weight:600;background:var(--srf2);border:1px solid var(--bdr);border-radius:10px;padding:1px 8px;color:var(--mut)">—</span>
+            </div>
+            <div style="font-size:11px;color:var(--mut);margin-top:2px">Companies registered at this address · Source: ACRA via Supabase</div>
+          </div>
+          <div style="display:flex;gap:6px;align-items:center;flex-wrap:wrap">
+            <input id="tenant-search" placeholder="Filter tenants…" oninput="tenantFilter()" style="height:28px;padding:0 10px;border:1px solid var(--bdr);border-radius:5px;background:var(--srf);color:var(--txt);font-size:11px;font-family:'DM Sans',sans-serif;width:150px">
+            <select id="tenant-status-filter" onchange="tenantFilter()" style="height:28px;padding:0 8px;border:1px solid var(--bdr);border-radius:5px;background:var(--srf);color:var(--txt);font-size:11px;font-family:'DM Sans',sans-serif">
+              <option value="">All status</option>
+              <option value="Live">Live only</option>
+              <option value="Dissolved">Dissolved</option>
+            </select>
+            <button onclick="exportTenantCSV()" style="height:28px;padding:0 10px;border:1px solid var(--bdr);border-radius:5px;background:var(--srf2);color:var(--mut);font-size:11px;font-family:'DM Sans',sans-serif;cursor:pointer" title="Export as CSV">⬇ CSV</button>
+          </div>
+        </div>
+
+        <!-- Stats row -->
+        <div id="tenant-stats-row" style="display:flex;gap:8px;margin-bottom:14px;flex-wrap:wrap"></div>
+
+        <!-- Loading / empty states -->
+        <div id="tenant-loading" style="display:none;text-align:center;padding:24px;color:var(--mut);font-size:12px">
+          <div style="margin-bottom:6px">⟳ Loading tenant data from ACRA registry…</div>
+        </div>
+        <div id="tenant-empty" style="display:none;padding:20px;text-align:center;color:var(--mut);font-size:12px">
+          No registered tenants found at this address. Try the address lookup below.
+        </div>
+        <div id="tenant-no-supabase" style="display:none;padding:16px;background:rgba(201,124,26,.08);border:1px solid rgba(201,124,26,.2);border-radius:8px;font-size:12px;color:var(--amber)">
+          ⚠️ Tenant registry not yet loaded. Run the ACRA import script to populate Supabase, then refresh.
+          <div style="margin-top:8px;font-size:11px;color:var(--mut)">See setup instructions below ↓</div>
+        </div>
+
+        <!-- Tenant table -->
+        <div id="tenant-tbl-wrap" style="display:none;overflow-x:auto;border:1px solid var(--bdr);border-radius:7px">
+          <table style="width:100%;border-collapse:collapse;font-size:12px">
+            <thead>
+              <tr style="background:var(--srf2)">
+                <th style="padding:8px 12px;text-align:left;font-weight:600;color:var(--mut);font-size:10px;text-transform:uppercase;letter-spacing:.05em;border-bottom:1px solid var(--bdr);white-space:nowrap">Company</th>
+                <th style="padding:8px 12px;text-align:left;font-weight:600;color:var(--mut);font-size:10px;text-transform:uppercase;letter-spacing:.05em;border-bottom:1px solid var(--bdr)">Unit</th>
+                <th style="padding:8px 12px;text-align:left;font-weight:600;color:var(--mut);font-size:10px;text-transform:uppercase;letter-spacing:.05em;border-bottom:1px solid var(--bdr)">Industry (SSIC)</th>
+                <th style="padding:8px 12px;text-align:left;font-weight:600;color:var(--mut);font-size:10px;text-transform:uppercase;letter-spacing:.05em;border-bottom:1px solid var(--bdr)">Type</th>
+                <th style="padding:8px 12px;text-align:left;font-weight:600;color:var(--mut);font-size:10px;text-transform:uppercase;letter-spacing:.05em;border-bottom:1px solid var(--bdr)">Status</th>
+                <th style="padding:8px 12px;text-align:left;font-weight:600;color:var(--mut);font-size:10px;text-transform:uppercase;letter-spacing:.05em;border-bottom:1px solid var(--bdr)">UEN</th>
+                <th style="padding:8px 12px;text-align:left;font-weight:600;color:var(--mut);font-size:10px;text-transform:uppercase;letter-spacing:.05em;border-bottom:1px solid var(--bdr)">Reg. Date</th>
+              </tr>
+            </thead>
+            <tbody id="tenant-tbl-body"></tbody>
+          </table>
+        </div>
+
+        <!-- Prospecting insight box (shown when tenants loaded) -->
+        <div id="tenant-insight" style="display:none;margin-top:12px;padding:12px 16px;background:rgba(26,79,156,.05);border:1px solid rgba(26,79,156,.15);border-radius:8px">
+          <div style="font-size:11px;font-weight:700;color:var(--g1);margin-bottom:6px;text-transform:uppercase;letter-spacing:.05em">💡 Prospecting Intelligence</div>
+          <div id="tenant-insight-text" style="font-size:11px;color:var(--txt2);line-height:1.6"></div>
+        </div>
+
+        <!-- Manual lookup fallback -->
+        <div style="margin-top:14px;padding-top:14px;border-top:1px solid var(--srf3)">
+          <div style="font-size:11px;font-weight:600;color:var(--mut);margin-bottom:8px;text-transform:uppercase;letter-spacing:.04em">Manual Address Lookup</div>
+          <div style="display:flex;gap:8px;flex-wrap:wrap">
+            <input id="tenant-manual-addr" placeholder="e.g. 16 Tai Seng Street" style="flex:1;min-width:160px;height:30px;padding:0 10px;border:1px solid var(--bdr);border-radius:5px;background:var(--srf);color:var(--txt);font-size:12px;font-family:'DM Sans',sans-serif">
+            <button onclick="tenantManualLookup()" style="height:30px;padding:0 14px;background:var(--g1);color:#fff;border:none;border-radius:5px;font-size:12px;font-family:'DM Sans',sans-serif;cursor:pointer;font-weight:600">Search ACRA</button>
+            <button onclick="window.open('https://www.sgpbusiness.com/search?q='+encodeURIComponent(document.getElementById(\'tenant-manual-addr\').value),'_blank')" style="height:30px;padding:0 12px;background:var(--srf2);color:var(--mut);border:1px solid var(--bdr);border-radius:5px;font-size:12px;font-family:'DM Sans',sans-serif;cursor:pointer">Open SGPBusiness ↗</button>
+          </div>
+        </div>
+
+        <!-- Supabase setup instructions (collapsible) -->
+        <div style="margin-top:14px;padding-top:14px;border-top:1px solid var(--srf3)">
+          <button onclick="var el=document.getElementById('tenant-setup-block');el.style.display=el.style.display==='none'?'block':'none'" style="font-size:11px;color:var(--mut);background:none;border:none;cursor:pointer;font-family:'DM Sans',sans-serif;padding:0">
+            ⚙️ Setup: Load ACRA data into Supabase ▾
+          </button>
+          <div id="tenant-setup-block" style="display:none;margin-top:10px">
+            <div style="background:var(--hdr);border-radius:7px;padding:14px 16px;font-size:11px;color:rgba(255,255,255,.7);font-family:'DM Mono',monospace;line-height:1.8;overflow-x:auto">
+              <div style="color:#4ade80;margin-bottom:6px">-- 1. Create table in Supabase SQL editor</div>
+              <div>CREATE TABLE IF NOT EXISTS tenant_registry (</div>
+              <div>&nbsp;&nbsp;uen TEXT PRIMARY KEY,</div>
+              <div>&nbsp;&nbsp;entity_name TEXT NOT NULL,</div>
+              <div>&nbsp;&nbsp;street_name TEXT,</div>
+              <div>&nbsp;&nbsp;blk_no TEXT,</div>
+              <div>&nbsp;&nbsp;unit_no TEXT,</div>
+              <div>&nbsp;&nbsp;postal_code TEXT,</div>
+              <div>&nbsp;&nbsp;entity_type TEXT,</div>
+              <div>&nbsp;&nbsp;entity_status TEXT,</div>
+              <div>&nbsp;&nbsp;primary_ssic_code TEXT,</div>
+              <div>&nbsp;&nbsp;primary_ssic_desc TEXT,</div>
+              <div>&nbsp;&nbsp;reg_date DATE,</div>
+              <div>&nbsp;&nbsp;last_updated TIMESTAMPTZ DEFAULT now()</div>
+              <div>);</div>
+              <div style="margin-top:8px">CREATE INDEX idx_tenant_street ON tenant_registry(street_name, blk_no);</div>
+              <div>CREATE INDEX idx_tenant_postal ON tenant_registry(postal_code);</div>
+              <div style="color:#4ade80;margin-top:12px;margin-bottom:6px">-- 2. Download ACRA CSV from data.gov.sg</div>
+              <div style="color:rgba(255,255,255,.5)">-- https://data.gov.sg/datasets/d_3f960c10fed6145404ca7b821f263b87/view</div>
+              <div style="color:rgba(255,255,255,.5)">-- Filter: street_name IS NOT NULL (industrial addresses)</div>
+              <div style="color:#4ade80;margin-top:12px;margin-bottom:6px">-- 3. Enable Row Level Security + public read policy</div>
+              <div>ALTER TABLE tenant_registry ENABLE ROW LEVEL SECURITY;</div>
+              <div>CREATE POLICY "public_read" ON tenant_registry FOR SELECT USING (true);</div>
+              <div style="color:#4ade80;margin-top:12px;margin-bottom:6px">-- 4. Monthly refresh (run via cron or Supabase scheduled function)</div>
+              <div style="color:rgba(255,255,255,.5)">-- Truncate + re-import from latest ACRA CSV download</div>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
   </div><!-- /tab-reit -->
 
@@ -2011,7 +2115,8 @@ html,body{background:var(--bg);color:var(--txt);font-family:'DM Sans',sans-serif
     <div class="inv-stat"><div class="inv-stat-val" id="inv-s-sqft">—</div><div class="inv-stat-lbl">Total sqft</div></div>
     <div class="inv-stat"><div class="inv-stat-val" id="inv-s-imm">—</div><div class="inv-stat-lbl">Immediate</div></div>
     <div class="inv-stat"><div class="inv-stat-val" id="inv-s-props">—</div><div class="inv-stat-lbl">Properties</div></div>
-    <div class="inv-stat"><div class="inv-stat-val" id="inv-s-avgrent">—</div><div class="inv-stat-lbl">Avg asking rent</div></div>
+    <div class="inv-stat"><div class="inv-stat-val" id="inv-s-lorent">—</div><div class="inv-stat-lbl">Lowest asking</div></div>
+    <div class="inv-stat"><div class="inv-stat-val" id="inv-s-hirent">—</div><div class="inv-stat-lbl">Highest asking</div></div>
   </div>
 
   <!-- Card grid -->
@@ -16660,13 +16765,15 @@ function invRender() {
   var props = [...new Set(filtered.map(function(d){return d.addr}))].length;
   var imm = filtered.filter(function(d){return /immediate/i.test(d.avail)}).length;
   var rents = filtered.filter(function(d){return d.rent}).map(function(d){return parseFloat(d.rent.replace(/[^0-9.]/g,''))});
-  var avgRent = rents.length ? (rents.reduce(function(a,b){return a+b},0)/rents.length).toFixed(2) : null;
+  var loRent = rents.length ? Math.min.apply(null,rents).toFixed(2) : null;
+  var hiRent = rents.length ? Math.max.apply(null,rents).toFixed(2) : null;
 
   document.getElementById('inv-s-listings').textContent = filtered.length;
   document.getElementById('inv-s-sqft').textContent = totalSqft>0 ? (totalSqft/1000).toFixed(0)+'K' : '0';
   document.getElementById('inv-s-imm').textContent = imm;
   document.getElementById('inv-s-props').textContent = props;
-  document.getElementById('inv-s-avgrent').textContent = avgRent ? '$'+avgRent+' psf' : '—';
+  document.getElementById('inv-s-lorent').textContent = loRent ? '$'+loRent+' psf' : '—';
+  document.getElementById('inv-s-hirent').textContent = hiRent ? '$'+hiRent+' psf' : '—';
   document.getElementById('inv-total-units').textContent = filtered.length;
   document.getElementById('inv-total-sqft').textContent = totalSqft>0 ? (totalSqft/1000).toFixed(0)+'K' : '0';
   document.getElementById('inv-total-props').textContent = props;
@@ -16731,6 +16838,245 @@ document.addEventListener('DOMContentLoaded', function() {
       }
     });
   });
+});
+</script>
+
+<script>
+// ═══════════════════════════════════════════════════════════
+// TENANT REGISTRY — ACRA lookup via Supabase
+// Table: tenant_registry (populated from ACRA monthly CSV)
+// ═══════════════════════════════════════════════════════════
+
+var TENANT_CACHE = {};
+var TENANT_ALL = [];
+var TENANT_CURRENT_ADDR = null;
+
+var SSIC_LABELS = {
+  '46':'Wholesale Trade','47':'Retail Trade','26':'Electronics / IT Mfg',
+  '27':'Electrical Equipment','28':'Machinery Mfg','29':'Motor Vehicle Parts',
+  '20':'Chemicals','21':'Pharmaceuticals','22':'Rubber / Plastics',
+  '25':'Fabricated Metal','62':'IT / Software','63':'Information Services',
+  '72':'R&D','77':'Equipment Leasing','82':'Admin Support',
+  '70':'Holding / Management','74':'Professional Services',
+  '49':'Transport / Logistics','52':'Warehousing','33':'Repair & Maintenance',
+  '32':'Other Manufacturing','10':'Food Manufacturing','13':'Textiles','31':'Furniture'
+};
+
+function ssicLabel(code) {
+  if (!code) return '—';
+  return SSIC_LABELS[code.substring(0,2)] || 'Industry ' + code.substring(0,2);
+}
+
+function statusDot(status) {
+  var color = status==='Live' ? '#1a7a4a' : status==='Dissolved' ? '#c8364a' : '#c97c1a';
+  return '<span style="width:7px;height:7px;border-radius:50%;background:'+color+';display:inline-block;margin-right:5px;flex-shrink:0"></span>';
+}
+
+function parseAddress(addrStr) {
+  if (!addrStr) return null;
+  var m = addrStr.match(/^(\d+[A-Za-z]?)\s+(.+)$/);
+  if (!m) return null;
+  return { blk: m[1].toUpperCase(), street: m[2].toUpperCase() };
+}
+
+function tenantStatCard(val, lbl, color) {
+  return '<div style="background:var(--srf2);border:1px solid var(--bdr);border-radius:6px;padding:8px 14px;flex:1;min-width:80px">'+
+    '<div style="font-size:16px;font-weight:700;color:'+(color||'var(--txt)')+';font-family:\'DM Mono\',monospace;line-height:1">'+val+'</div>'+
+    '<div style="font-size:10px;color:var(--mut);margin-top:3px">'+lbl+'</div></div>';
+}
+
+async function tenantLoad(addrFull) {
+  TENANT_CURRENT_ADDR = addrFull;
+  ['tenant-search','tenant-status-filter'].forEach(function(id){var el=document.getElementById(id);if(el)el.value='';});
+  ['tenant-loading','tenant-empty','tenant-no-supabase','tenant-tbl-wrap','tenant-insight'].forEach(function(id){
+    var el=document.getElementById(id); if(el) el.style.display='none';
+  });
+  var statsRow=document.getElementById('tenant-stats-row'); if(statsRow) statsRow.innerHTML='';
+  var badge=document.getElementById('tenant-count-badge'); if(badge) badge.textContent='—';
+  var manualAddr=document.getElementById('tenant-manual-addr'); if(manualAddr) manualAddr.value=addrFull||'';
+
+  if (!addrFull || /portfolio|various/i.test(addrFull)) {
+    var el=document.getElementById('tenant-empty');
+    if(el){el.style.display='block'; el.textContent='Portfolio-level entry — open an individual asset to look up tenants.';}
+    return;
+  }
+
+  var parsed = parseAddress(addrFull);
+  if (!parsed) { var el=document.getElementById('tenant-empty'); if(el) el.style.display='block'; return; }
+
+  var cacheKey = parsed.blk+'|'+parsed.street;
+  if (TENANT_CACHE[cacheKey]) { tenantDisplay(TENANT_CACHE[cacheKey]); return; }
+
+  var loading=document.getElementById('tenant-loading'); if(loading) loading.style.display='block';
+
+  try {
+    var q = 'blk_no=eq.'+encodeURIComponent(parsed.blk)+
+            '&street_name=ilike.*'+encodeURIComponent(parsed.street.replace(/ /g,'*'))+'*'+
+            '&order=entity_name.asc&limit=300';
+
+    var resp = await fetch(SB_URL+'/rest/v1/tenant_registry?'+q, {
+      headers:{'apikey':SB_KEY,'Authorization':'Bearer '+SB_KEY,'Accept':'application/json'}
+    });
+
+    if(loading) loading.style.display='none';
+
+    if (!resp.ok) {
+      var el=document.getElementById('tenant-no-supabase'); if(el) el.style.display='block';
+      return;
+    }
+
+    var data = await resp.json();
+    if (!Array.isArray(data)) { var el=document.getElementById('tenant-no-supabase'); if(el) el.style.display='block'; return; }
+
+    TENANT_CACHE[cacheKey] = data;
+    tenantDisplay(data);
+
+  } catch(e) {
+    if(loading) loading.style.display='none';
+    var el=document.getElementById('tenant-no-supabase'); if(el) el.style.display='block';
+  }
+}
+
+function tenantDisplay(data) {
+  TENANT_ALL = data;
+  var badge=document.getElementById('tenant-count-badge'); if(badge) badge.textContent=data.length;
+
+  if (!data || data.length===0) {
+    var el=document.getElementById('tenant-empty');
+    if(el){el.style.display='block'; el.textContent='No registered tenants found at this address.';}
+    return;
+  }
+
+  var live=data.filter(function(d){return d.entity_status==='Live';});
+  var dissolved=data.length-live.length;
+
+  var industries={};
+  live.forEach(function(d){ var l=ssicLabel(d.primary_ssic_code); industries[l]=(industries[l]||0)+1; });
+  var topInd=Object.entries(industries).sort(function(a,b){return b[1]-a[1];})[0];
+
+  var statsRow=document.getElementById('tenant-stats-row');
+  if(statsRow) statsRow.innerHTML=
+    tenantStatCard(live.length,'Live tenants','#1a7a4a')+
+    tenantStatCard(dissolved,'Dissolved','#c8364a')+
+    (topInd?tenantStatCard(topInd[0],'Top industry','#1a4f9c'):'')+
+    tenantStatCard(data.length,'Total registered',null);
+
+  tenantRenderTable(data);
+  tenantBuildInsight(live,data);
+}
+
+function tenantRenderTable(data) {
+  var q=(document.getElementById('tenant-search')||{value:''}).value.toLowerCase();
+  var sf=(document.getElementById('tenant-status-filter')||{value:''}).value;
+
+  var filtered=data.filter(function(d){
+    if(sf && d.entity_status!==sf) return false;
+    if(q && !((d.entity_name||'').toLowerCase().includes(q)||(d.unit_no||'').toLowerCase().includes(q)||(d.uen||'').toLowerCase().includes(q))) return false;
+    return true;
+  });
+
+  var wrap=document.getElementById('tenant-tbl-wrap');
+  var empty=document.getElementById('tenant-empty');
+
+  if(!filtered.length){
+    if(wrap) wrap.style.display='none';
+    if(empty){empty.style.display='block'; empty.textContent='No tenants match the current filter.';}
+    return;
+  }
+  if(empty) empty.style.display='none';
+  if(wrap) wrap.style.display='block';
+
+  var body=document.getElementById('tenant-tbl-body');
+  if(!body) return;
+  body.innerHTML=filtered.map(function(d){
+    var isLive=d.entity_status==='Live';
+    return '<tr style="'+(isLive?'':'opacity:.5')+'">' +
+      '<td style="padding:8px 12px;border-bottom:1px solid var(--srf3);font-weight:600;font-size:12px"><div style="display:flex;align-items:center">'+statusDot(d.entity_status)+(d.entity_name||'—')+'</div></td>'+
+      '<td style="padding:8px 12px;border-bottom:1px solid var(--srf3);color:var(--mut);font-size:11px;white-space:nowrap">'+(d.unit_no||'—')+'</td>'+
+      '<td style="padding:8px 12px;border-bottom:1px solid var(--srf3);color:var(--txt2);font-size:11px">'+ssicLabel(d.primary_ssic_code)+'</td>'+
+      '<td style="padding:8px 12px;border-bottom:1px solid var(--srf3);color:var(--mut);font-size:11px">'+(d.entity_type||'—')+'</td>'+
+      '<td style="padding:8px 12px;border-bottom:1px solid var(--srf3);font-size:11px"><span style="padding:2px 8px;border-radius:10px;font-size:10px;font-weight:600;background:'+(isLive?'rgba(26,122,74,.1)':'rgba(200,54,74,.08)')+';color:'+(isLive?'#1a7a4a':'#c8364a')+'">'+(d.entity_status||'—')+'</span></td>'+
+      '<td style="padding:8px 12px;border-bottom:1px solid var(--srf3);color:var(--mut2);font-size:11px;font-family:\'DM Mono\',monospace">'+(d.uen||'—')+'</td>'+
+      '<td style="padding:8px 12px;border-bottom:1px solid var(--srf3);color:var(--mut2);font-size:11px;white-space:nowrap">'+(d.reg_date?d.reg_date.substring(0,10):'—')+'</td>'+
+    '</tr>';
+  }).join('');
+}
+
+function tenantFilter() { tenantRenderTable(TENANT_ALL); }
+
+function tenantBuildInsight(live,all) {
+  if(!live||live.length===0) return;
+  var insights=[];
+
+  var industries={};
+  live.forEach(function(d){ var l=ssicLabel(d.primary_ssic_code); industries[l]=(industries[l]||0)+1; });
+  var topInds=Object.entries(industries).sort(function(a,b){return b[1]-a[1];}).slice(0,3);
+  if(topInds.length) insights.push('Dominant industries: '+topInds.map(function(i){return i[0]+' ('+i[1]+')'}).join(', ')+'.');
+
+  var recent=live.filter(function(d){ return d.reg_date && new Date(d.reg_date)>new Date('2023-01-01'); });
+  if(recent.length>0) insights.push(recent.length+' compan'+(recent.length===1?'y':'ies')+' registered here since 2023 — potentially early-stage and could be looking to right-size as they grow.');
+
+  var dissolvedCount=all.length-live.length;
+  if(dissolvedCount>live.length*0.3) insights.push('High churn signal: '+dissolvedCount+' dissolved vs '+live.length+' live entities. Worth monitoring for upcoming lease events.');
+
+  if(live.length<=3) insights.push('Low registered entity count — likely owner-occupied or master-leased. Cross-reference with REIT annual report disclosures.');
+
+  if(live.length>20) insights.push('High tenant density ('+live.length+' live entities). Good prospecting pool — filter by industry to find relevant contacts.');
+
+  if(!insights.length) return;
+  var box=document.getElementById('tenant-insight');
+  var txt=document.getElementById('tenant-insight-text');
+  if(box) box.style.display='block';
+  if(txt) txt.innerHTML=insights.map(function(i){return '• '+i;}).join('<br>');
+}
+
+function tenantManualLookup() {
+  var addr=(document.getElementById('tenant-manual-addr')||{value:''}).value.trim();
+  if(addr) tenantLoad(addr);
+}
+
+function exportTenantCSV() {
+  var q=(document.getElementById('tenant-search')||{value:''}).value.toLowerCase();
+  var sf=(document.getElementById('tenant-status-filter')||{value:''}).value;
+  var filtered=TENANT_ALL.filter(function(d){
+    if(sf && d.entity_status!==sf) return false;
+    if(q && !((d.entity_name||'').toLowerCase().includes(q))) return false;
+    return true;
+  });
+  if(!filtered.length){alert('No data to export.');return;}
+  var header=['UEN','Entity Name','Unit No','Street','Postal Code','Entity Type','Status','SSIC Code','Industry','Reg Date'];
+  var rows=filtered.map(function(d){
+    return [d.uen,d.entity_name,d.unit_no,d.street_name,d.postal_code,d.entity_type,d.entity_status,d.primary_ssic_code,ssicLabel(d.primary_ssic_code),d.reg_date]
+      .map(function(v){return '"'+(v||'').toString().replace(/"/g,'""')+'"';}).join(',');
+  });
+  var csv=[header.join(',')].concat(rows).join('\n');
+  var blob=new Blob([csv],{type:'text/csv'});
+  var url=URL.createObjectURL(blob);
+  var a=document.createElement('a'); a.href=url;
+  a.download='tenants_'+(TENANT_CURRENT_ADDR||'export').replace(/\s+/g,'_')+'.csv';
+  a.click(); URL.revokeObjectURL(url);
+}
+
+// Hook into asset detail open — auto-trigger tenant load when detail opens
+document.addEventListener('DOMContentLoaded', function() {
+  var reitDetail=document.getElementById('reit-detail');
+  if(!reitDetail) return;
+  var observer=new MutationObserver(function(){
+    if(reitDetail.style.display!=='none'){
+      var sourceEl=document.getElementById('rdet-source');
+      var addrText=null;
+      if(sourceEl){
+        var m=sourceEl.textContent.match(/(\d+[A-Za-z]?\s+[\w\s]+(?:Road|Street|Avenue|Ave|Way|Lane|Drive|Place|Close|Crescent|Boulevard|Walk))/i);
+        if(m) addrText=m[1].trim();
+      }
+      if(!addrText){
+        var nameEl=document.getElementById('rdet-name');
+        if(nameEl && /^\d/.test(nameEl.textContent.trim())) addrText=nameEl.textContent.trim();
+      }
+      if(addrText) tenantLoad(addrText);
+    }
+  });
+  observer.observe(reitDetail,{attributes:true,attributeFilter:['style']});
 });
 </script>
 </body>
