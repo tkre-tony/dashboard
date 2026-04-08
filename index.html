@@ -320,6 +320,65 @@ html,body{background:var(--bg);color:var(--txt);font-family:'DM Sans',sans-serif
 </style>
 <style>
 /* ── TALENT TAB ── */
+/* ── INVENTORY TAB ── */
+#tab-inventory{padding-bottom:40px}
+.inv-hero{background:linear-gradient(135deg,#0d2b1a 0%,#1a4a2e 50%,#0f3320 100%);border-radius:8px;padding:20px 24px;margin-bottom:16px;border:1px solid rgba(255,255,255,.07);display:flex;align-items:flex-start;justify-content:space-between;flex-wrap:wrap;gap:12px}
+.inv-hero-title{color:#fff;font-size:16px;font-weight:700;letter-spacing:-.02em;margin-bottom:4px}
+.inv-hero-sub{color:rgba(255,255,255,.45);font-size:11px;letter-spacing:.02em}
+.inv-hero-stats{display:flex;gap:24px;flex-shrink:0}
+.inv-hs{text-align:right}.inv-hs-val{font-size:22px;font-weight:700;color:#fff;font-family:'DM Mono',monospace;line-height:1}.inv-hs-lbl{font-size:10px;color:rgba(255,255,255,.4);letter-spacing:.05em;margin-top:2px}
+.inv-controls{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:12px;align-items:center}
+.inv-search-wrap{flex:1;min-width:180px;position:relative}
+.inv-search{width:100%;height:32px;padding:0 10px 0 30px;border:1px solid var(--bdr);border-radius:6px;background:var(--srf);color:var(--txt);font-size:12px;font-family:'DM Sans',sans-serif}
+.inv-search-icon{position:absolute;left:9px;top:50%;transform:translateY(-50%);font-size:13px;opacity:.4;pointer-events:none}
+.inv-sel{height:32px;padding:0 10px;border:1px solid var(--bdr);border-radius:6px;background:var(--srf);color:var(--txt);font-size:12px;font-family:'DM Sans',sans-serif;cursor:pointer}
+.inv-stats-row{display:flex;gap:8px;margin-bottom:14px;flex-wrap:wrap}
+.inv-stat{background:var(--srf);border:1px solid var(--bdr);border-radius:6px;padding:10px 16px;flex:1;min-width:80px}
+.inv-stat-val{font-size:20px;font-weight:700;color:var(--txt);font-family:'DM Mono',monospace;line-height:1}
+.inv-stat-lbl{font-size:10px;color:var(--mut);letter-spacing:.04em;margin-top:3px}
+.inv-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(290px,1fr));gap:10px}
+.inv-card{background:var(--srf);border:1px solid var(--bdr);border-radius:8px;padding:14px 16px;transition:box-shadow .12s,border-color .12s}
+.inv-card:hover{box-shadow:var(--shadow);border-color:var(--bdr2)}
+.inv-card-top{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:8px;gap:8px}
+.inv-card-addr{font-size:13px;font-weight:700;color:var(--txt);line-height:1.3}
+.inv-card-sub{font-size:11px;color:var(--mut);margin-top:2px}
+.inv-zone-badge{font-size:10px;font-weight:700;padding:2px 8px;border-radius:10px;white-space:nowrap;flex-shrink:0;letter-spacing:.02em}
+.zb-bp{background:rgba(26,79,156,.12);color:#1a4f9c}
+.zb-b1{background:rgba(26,107,58,.12);color:#1a6b3a}
+.zb-b2{background:rgba(201,124,26,.12);color:#8a5010}
+.zb-ret{background:rgba(200,54,74,.1);color:#c8364a}
+.inv-area{font-size:22px;font-weight:700;color:var(--txt);font-family:'DM Mono',monospace;margin-bottom:6px;line-height:1}
+.inv-area-unit{font-size:12px;font-weight:400;color:var(--mut);font-family:'DM Sans',sans-serif;margin-left:4px}
+.inv-pills{display:flex;flex-wrap:wrap;gap:5px;margin-bottom:8px}
+.inv-pill{font-size:11px;padding:2px 9px;border-radius:10px;border:1px solid var(--bdr);background:var(--srf2);color:var(--mut);font-family:'DM Sans',sans-serif}
+.inv-pill.p-imm{background:rgba(26,122,74,.1);border-color:rgba(26,122,74,.25);color:#1a7a4a}
+.inv-pill.p-neg{background:rgba(201,124,26,.1);border-color:rgba(201,124,26,.25);color:#8a5010}
+.inv-pill.p-soon{background:rgba(26,79,156,.09);border-color:rgba(26,79,156,.2);color:#1a4f9c}
+.inv-pill.p-offer{background:rgba(200,54,74,.09);border-color:rgba(200,54,74,.2);color:#c8364a}
+.inv-remarks{font-size:11px;color:var(--mut);line-height:1.5;padding-top:8px;border-top:1px solid var(--srf3);margin-top:4px}
+.inv-reit-tag{display:inline-flex;align-items:center;gap:4px;font-size:10px;font-weight:600;color:var(--mut2);letter-spacing:.03em;margin-top:6px;text-transform:uppercase}
+.inv-reit-dot{width:6px;height:6px;border-radius:50%;background:currentColor;flex-shrink:0}
+.inv-cluster-lbl{font-size:10px;color:var(--mut2);letter-spacing:.05em;text-transform:uppercase;margin-top:3px}
+.inv-empty{text-align:center;padding:48px 20px;color:var(--mut);font-size:13px;grid-column:1/-1}
+.inv-section-hdr{display:flex;align-items:center;gap:10px;margin:16px 0 10px;padding-bottom:6px;border-bottom:1px solid var(--bdr)}
+.inv-section-hdr-title{font-size:12px;font-weight:700;color:var(--mut);text-transform:uppercase;letter-spacing:.06em}
+.inv-section-hdr-count{font-size:11px;color:var(--mut2);background:var(--srf2);border:1px solid var(--bdr);border-radius:10px;padding:1px 8px}
+.inv-reit-selector{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:14px}
+.inv-reit-btn{padding:5px 12px;border-radius:5px;border:1px solid var(--bdr);background:var(--srf2);color:var(--mut);font-size:11px;cursor:pointer;font-family:'DM Sans',sans-serif;font-weight:600;transition:all .12s;display:inline-flex;align-items:center;gap:5px}
+.inv-reit-btn:hover{border-color:var(--g2);color:var(--g1);background:var(--glt)}
+.inv-reit-btn.on{background:var(--g1);border-color:var(--g1);color:#fff}
+.inv-reit-btn .inv-reit-btn-dot{width:6px;height:6px;border-radius:50%;background:currentColor}
+.inv-view-toggle{display:flex;border:1px solid var(--bdr);border-radius:5px;overflow:hidden}
+.inv-view-btn{padding:4px 10px;font-size:11px;background:var(--srf2);color:var(--mut);border:none;cursor:pointer;font-family:'DM Sans',sans-serif;transition:all .12s}
+.inv-view-btn.on{background:var(--g1);color:#fff}
+.inv-tbl-wrap{overflow-x:auto;border:1px solid var(--bdr);border-radius:8px;margin-top:4px}
+.inv-tbl{width:100%;border-collapse:collapse;font-size:12px}
+.inv-tbl th{background:var(--srf2);padding:8px 12px;text-align:left;font-weight:600;color:var(--mut);font-size:10px;text-transform:uppercase;letter-spacing:.05em;border-bottom:1px solid var(--bdr);white-space:nowrap}
+.inv-tbl td{padding:8px 12px;border-bottom:1px solid var(--srf3);color:var(--txt);vertical-align:top}
+.inv-tbl tr:last-child td{border-bottom:none}
+.inv-tbl tr:hover td{background:var(--srf2)}
+#tab-inventory{padding-bottom:40px}
+
 #tab-talent{padding-bottom:40px}
 .talent-hero{background:linear-gradient(135deg,var(--hdr) 0%,#1a2e4a 45%,#1e1a3a 100%);border-radius:8px;padding:20px 24px;margin-bottom:16px;border:1px solid rgba(255,255,255,.06);display:flex;align-items:flex-start;justify-content:space-between;flex-wrap:wrap;gap:12px}
 .talent-hero-title{color:#fff;font-size:16px;font-weight:700;letter-spacing:-.02em;margin-bottom:4px}
@@ -454,6 +513,10 @@ html,body{background:var(--bg);color:var(--txt);font-family:'DM Sans',sans-serif
   <div class="navtab" data-tab="projects" style="display:flex;align-items:center;gap:6px">
     <span class="navtab-icon">🏗</span>Projects For Sale
     <span style="font-size:9px;background:var(--amber);border-radius:3px;padding:1px 5px;font-weight:800;letter-spacing:.05em;color:#fff">BETA</span>
+  </div>
+  <div class="navtab" data-tab="inventory" style="display:flex;align-items:center;gap:6px">
+    <span class="navtab-icon">📋</span>Inventory
+    <span style="font-size:9px;background:#1a6b3a;border-radius:3px;padding:1px 5px;font-weight:800;letter-spacing:.05em;color:#fff">NEW</span>
   </div>
 </div>
 <div id="tt"></div>
@@ -1865,6 +1928,105 @@ html,body{background:var(--bg);color:var(--txt);font-family:'DM Sans',sans-serif
     </table>
   </div>
 </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════════ -->
+<!-- INVENTORY PANEL                                                 -->
+<!-- ═══════════════════════════════════════════════════════════════ -->
+<div class="panel" id="tab-inventory">
+
+  <!-- Hero -->
+  <div class="inv-hero">
+    <div>
+      <div class="inv-hero-title">📋 Vacancy Inventory</div>
+      <div class="inv-hero-sub">Live availability across Singapore REITs · Industrial · Business Park · Retail · Updated monthly from REIT leasing sheets</div>
+      <div style="margin-top:8px;display:flex;gap:8px;flex-wrap:wrap">
+        <span style="font-size:9px;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.12);color:rgba(255,255,255,.5);padding:2px 8px;border-radius:10px;letter-spacing:.04em">PILOT · ESR-REIT · Mar 2026</span>
+        <span style="font-size:9px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.08);color:rgba(255,255,255,.35);padding:2px 8px;border-radius:10px;letter-spacing:.04em">More REITs coming soon</span>
+      </div>
+    </div>
+    <div class="inv-hero-stats">
+      <div class="inv-hs"><div class="inv-hs-val" id="inv-total-units">—</div><div class="inv-hs-lbl">Listings</div></div>
+      <div class="inv-hs"><div class="inv-hs-val" id="inv-total-sqft" style="color:#4ade80">—</div><div class="inv-hs-lbl">Sqft (\'000)</div></div>
+      <div class="inv-hs"><div class="inv-hs-val" id="inv-total-props" style="color:#93c5fd">—</div><div class="inv-hs-lbl">Properties</div></div>
+    </div>
+  </div>
+
+  <!-- REIT selector -->
+  <div class="inv-reit-selector" id="inv-reit-btns">
+    <button class="inv-reit-btn on" data-reit="all" onclick="invSetReit(this,'all')">All REITs</button>
+    <button class="inv-reit-btn" data-reit="ESR-REIT" onclick="invSetReit(this,'ESR-REIT')"><span class="inv-reit-btn-dot"></span>ESR-REIT <span style="opacity:.5;font-weight:400">Mar 2026</span></button>
+  </div>
+
+  <!-- Filters row -->
+  <div class="inv-controls">
+    <div class="inv-search-wrap">
+      <span class="inv-search-icon">🔍</span>
+      <input class="inv-search" id="inv-search" placeholder="Search address, unit, remarks…" oninput="invRender()">
+    </div>
+    <select class="inv-sel" id="inv-zone" onchange="invRender()">
+      <option value="">All zones</option>
+      <option value="Business Park">Business Park</option>
+      <option value="B1">B1 Industrial</option>
+      <option value="B2">B2 Industrial</option>
+      <option value="Retail">Retail / F&B</option>
+    </select>
+    <select class="inv-sel" id="inv-cluster" onchange="invRender()">
+      <option value="">All clusters</option>
+      <option value="Business Park">Changi / Chai Chee</option>
+      <option value="Central East">Central East</option>
+      <option value="Central">Central</option>
+      <option value="North">North</option>
+      <option value="West">West</option>
+    </select>
+    <select class="inv-sel" id="inv-avail" onchange="invRender()">
+      <option value="">All availability</option>
+      <option value="Immediate">Immediate</option>
+      <option value="Soon">Available soon</option>
+      <option value="Negotiation">Under negotiation</option>
+    </select>
+    <select class="inv-sel" id="inv-size" onchange="invRender()">
+      <option value="">Any size</option>
+      <option value="0-3000">Under 3,000 sqft</option>
+      <option value="3000-10000">3,000 – 10,000 sqft</option>
+      <option value="10000-30000">10,000 – 30,000 sqft</option>
+      <option value="30000-100000">30,000 – 100,000 sqft</option>
+      <option value="100000-9999999">100,000 sqft+</option>
+    </select>
+    <select class="inv-sel" id="inv-fit" onchange="invRender()">
+      <option value="">Any fit-out</option>
+      <option value="Bare">Bare condition</option>
+      <option value="Partial">Partially fitted</option>
+      <option value="Fitted">Fitted / As-is</option>
+    </select>
+    <div class="inv-view-toggle">
+      <button class="inv-view-btn on" id="inv-vbtn-card" onclick="invSetView('card')">Cards</button>
+      <button class="inv-view-btn" id="inv-vbtn-table" onclick="invSetView('table')">Table</button>
+    </div>
+  </div>
+
+  <!-- Summary stats -->
+  <div class="inv-stats-row">
+    <div class="inv-stat"><div class="inv-stat-val" id="inv-s-listings">—</div><div class="inv-stat-lbl">Listings shown</div></div>
+    <div class="inv-stat"><div class="inv-stat-val" id="inv-s-sqft">—</div><div class="inv-stat-lbl">Total sqft</div></div>
+    <div class="inv-stat"><div class="inv-stat-val" id="inv-s-imm">—</div><div class="inv-stat-lbl">Immediate</div></div>
+    <div class="inv-stat"><div class="inv-stat-val" id="inv-s-props">—</div><div class="inv-stat-lbl">Properties</div></div>
+    <div class="inv-stat"><div class="inv-stat-val" id="inv-s-avgrent">—</div><div class="inv-stat-lbl">Avg asking rent</div></div>
+  </div>
+
+  <!-- Card grid -->
+  <div class="inv-grid" id="inv-grid"></div>
+
+  <!-- Table view -->
+  <div id="inv-tbl-wrap" style="display:none">
+    <div class="inv-tbl-wrap">
+      <table class="inv-tbl">
+        <thead><tr id="inv-tbl-hdr"></tr></thead>
+        <tbody id="inv-tbl-body"></tbody>
+      </table>
+    </div>
+  </div>
+
 </div>
 
 <!-- end main wrap -->
@@ -9859,7 +10021,8 @@ var ATLAS_TAB_MAP = {
   "pipeline":     "tab-pipeline",
   "assetdir":     "tab-reit",
   "talent":       "tab-talent",
-  "projects":     "tab-projects"
+  "projects":     "tab-projects",
+  "inventory":    "tab-inventory"
 };
 
 function atlasShowTab(tab) {
@@ -16303,6 +16466,272 @@ function sophiaRenderTxnList(data) {
     });
   });
 })();
+</script>
+
+<script>
+// ═══════════════════════════════════════════════════
+// VACANCY INVENTORY DATA
+// Source: REIT monthly leasing availability sheets
+// ═══════════════════════════════════════════════════
+var VACANCY_DATA = [
+  // ── ESR-REIT — March 2026 ──────────────────────────────────────────────
+  // Business Park — Changi
+  {reit:'ESR-REIT',reit_color:'#6e2f7f',month:'Mar 2026',addr:'ESR BizPark @ Changi',addrFull:'6 & 8 Changi Business Park',unit:'#03-21 North Tower',sqft:24637,sqm:2289,rent:null,avail:'1 Mar 2026',zone:'Business Park',cluster:'Business Park',fit:'Bare',remarks:'Bare condition'},
+  {reit:'ESR-REIT',reit_color:'#6e2f7f',month:'Mar 2026',addr:'ESR BizPark @ Changi',addrFull:'6 & 8 Changi Business Park',unit:'#04-21 & #04-51/52 North & South Tower',sqft:61696,sqm:5732,rent:null,avail:'Immediate',zone:'Business Park',cluster:'Business Park',fit:'Bare',remarks:'Whole floor plate. Exclusive lobby & toilets across both towers. Can be amalgamated for whole floor plate.'},
+  {reit:'ESR-REIT',reit_color:'#6e2f7f',month:'Mar 2026',addr:'ESR BizPark @ Changi',addrFull:'6 & 8 Changi Business Park',unit:'#05-21A North Tower',sqft:7293,sqm:678,rent:null,avail:'Mid Mar 2026',zone:'Business Park',cluster:'Business Park',fit:'Bare',remarks:'Bare condition'},
+  {reit:'ESR-REIT',reit_color:'#6e2f7f',month:'Mar 2026',addr:'ESR BizPark @ Changi',addrFull:'6 & 8 Changi Business Park',unit:'#05-53 South Tower',sqft:6932,sqm:644,rent:null,avail:'Immediate',zone:'Business Park',cluster:'Business Park',fit:'Bare',remarks:'Bare condition'},
+  {reit:'ESR-REIT',reit_color:'#6e2f7f',month:'Mar 2026',addr:'ESR BizPark @ Changi',addrFull:'6 & 8 Changi Business Park',unit:'#07-52 South Tower',sqft:3327,sqm:309,rent:null,avail:'Immediate',zone:'Business Park',cluster:'Business Park',fit:'Bare',remarks:'Bare condition'},
+  {reit:'ESR-REIT',reit_color:'#6e2f7f',month:'Mar 2026',addr:'ESR BizPark @ Changi',addrFull:'6 & 8 Changi Business Park',unit:'#08-52 South Tower',sqft:6308,sqm:586,rent:null,avail:'Under Negotiation',zone:'Business Park',cluster:'Business Park',fit:'Bare',remarks:'Bare condition. Provisional unit numbering subject to final survey.'},
+  {reit:'ESR-REIT',reit_color:'#6e2f7f',month:'Mar 2026',addr:'ESR BizPark @ Changi',addrFull:'6 & 8 Changi Business Park',unit:'#08-21 North Tower',sqft:14625,sqm:1359,rent:null,avail:'Immediate',zone:'Business Park',cluster:'Business Park',fit:'Bare',remarks:'Bare condition'},
+  {reit:'ESR-REIT',reit_color:'#6e2f7f',month:'Mar 2026',addr:'ESR BizPark @ Changi',addrFull:'6 & 8 Changi Business Park',unit:'#08-23 North Tower',sqft:2354,sqm:219,rent:null,avail:'Under Negotiation',zone:'Business Park',cluster:'Business Park',fit:'Bare',remarks:'Bare condition'},
+  // Business Park — Chai Chee 750
+  {reit:'ESR-REIT',reit_color:'#6e2f7f',month:'Mar 2026',addr:'ESR BizPark @ Chai Chee Blk 750',addrFull:'750 Chai Chee Road',unit:'#02-06 to 08',sqft:27830,sqm:2586,rent:null,avail:'Immediate',zone:'Business Park',cluster:'Business Park',fit:'Bare',remarks:'Bare condition'},
+  {reit:'ESR-REIT',reit_color:'#6e2f7f',month:'Mar 2026',addr:'ESR BizPark @ Chai Chee Blk 750',addrFull:'750 Chai Chee Road',unit:'#03-10/13',sqft:8210,sqm:763,rent:null,avail:'Immediate',zone:'Business Park',cluster:'Business Park',fit:'Bare',remarks:'Bare condition'},
+  {reit:'ESR-REIT',reit_color:'#6e2f7f',month:'Mar 2026',addr:'ESR BizPark @ Chai Chee Blk 750',addrFull:'750 Chai Chee Road',unit:'#04-03',sqft:5156,sqm:479,rent:null,avail:'Immediate',zone:'Business Park',cluster:'Business Park',fit:'Bare',remarks:'Bare condition'},
+  {reit:'ESR-REIT',reit_color:'#6e2f7f',month:'Mar 2026',addr:'ESR BizPark @ Chai Chee Blk 750',addrFull:'750 Chai Chee Road',unit:'#04-04',sqft:17933,sqm:1666,rent:null,avail:'Immediate',zone:'Business Park',cluster:'Business Park',fit:'Bare',remarks:'Bare condition'},
+  {reit:'ESR-REIT',reit_color:'#6e2f7f',month:'Mar 2026',addr:'ESR BizPark @ Chai Chee Blk 750',addrFull:'750 Chai Chee Road',unit:'#04-01',sqft:11890,sqm:1105,rent:null,avail:'Immediate',zone:'Business Park',cluster:'Business Park',fit:'Bare',remarks:'Bare condition'},
+  {reit:'ESR-REIT',reit_color:'#6e2f7f',month:'Mar 2026',addr:'ESR BizPark @ Chai Chee Blk 750',addrFull:'750 Chai Chee Road',unit:'#06-01',sqft:17428,sqm:1619,rent:null,avail:'1 May 2026',zone:'Business Park',cluster:'Business Park',fit:'Bare',remarks:'Bare condition'},
+  {reit:'ESR-REIT',reit_color:'#6e2f7f',month:'Mar 2026',addr:'ESR BizPark @ Chai Chee Blk 750',addrFull:'750 Chai Chee Road',unit:'#06-02/03',sqft:20368,sqm:1892,rent:null,avail:'Immediate',zone:'Business Park',cluster:'Business Park',fit:'Partial',remarks:'Partially fitted'},
+  {reit:'ESR-REIT',reit_color:'#6e2f7f',month:'Mar 2026',addr:'ESR BizPark @ Chai Chee Blk 750',addrFull:'750 Chai Chee Road',unit:'#07-10',sqft:603,sqm:56,rent:null,avail:'Immediate',zone:'Business Park',cluster:'Business Park',fit:'Bare',remarks:'Bare condition'},
+  // Business Park — Chai Chee 750A
+  {reit:'ESR-REIT',reit_color:'#6e2f7f',month:'Mar 2026',addr:'ESR BizPark @ Chai Chee Blk 750A',addrFull:'750A Chai Chee Road',unit:'#07-01A',sqft:1991,sqm:185,rent:null,avail:'Immediate',zone:'Business Park',cluster:'Business Park',fit:'Bare',remarks:'Bare condition. Internal unit.'},
+  {reit:'ESR-REIT',reit_color:'#6e2f7f',month:'Mar 2026',addr:'ESR BizPark @ Chai Chee Blk 750A',addrFull:'750A Chai Chee Road',unit:'#07-01C',sqft:6695,sqm:622,rent:null,avail:'Immediate',zone:'Business Park',cluster:'Business Park',fit:'Bare',remarks:'Bare condition. High power provision.'},
+  {reit:'ESR-REIT',reit_color:'#6e2f7f',month:'Mar 2026',addr:'ESR BizPark @ Chai Chee Blk 750A',addrFull:'750A Chai Chee Road',unit:'#07-17',sqft:797,sqm:74,rent:null,avail:'Immediate',zone:'Business Park',cluster:'Business Park',fit:'Partial',remarks:'Partial fitted — flooring (vinyl)'},
+  {reit:'ESR-REIT',reit_color:'#6e2f7f',month:'Mar 2026',addr:'ESR BizPark @ Chai Chee Blk 750A',addrFull:'750A Chai Chee Road',unit:'#07-18/20',sqft:1249,sqm:116,rent:null,avail:'Immediate',zone:'Business Park',cluster:'Business Park',fit:'Bare',remarks:'Bare condition'},
+  {reit:'ESR-REIT',reit_color:'#6e2f7f',month:'Mar 2026',addr:'ESR BizPark @ Chai Chee Blk 750A',addrFull:'750A Chai Chee Road',unit:'#07-13',sqft:420,sqm:39,rent:null,avail:'Immediate',zone:'Business Park',cluster:'Business Park',fit:'Bare',remarks:'Bare condition'},
+  {reit:'ESR-REIT',reit_color:'#6e2f7f',month:'Mar 2026',addr:'ESR BizPark @ Chai Chee Blk 750A',addrFull:'750A Chai Chee Road',unit:'#07-14',sqft:570,sqm:53,rent:null,avail:'Immediate',zone:'Business Park',cluster:'Business Park',fit:'Bare',remarks:'Bare condition'},
+  {reit:'ESR-REIT',reit_color:'#6e2f7f',month:'Mar 2026',addr:'ESR BizPark @ Chai Chee Blk 750A',addrFull:'750A Chai Chee Road',unit:'#07-16',sqft:560,sqm:52,rent:null,avail:'Immediate',zone:'Business Park',cluster:'Business Park',fit:'Bare',remarks:'Bare condition'},
+  {reit:'ESR-REIT',reit_color:'#6e2f7f',month:'Mar 2026',addr:'ESR BizPark @ Chai Chee Blk 750A',addrFull:'750A Chai Chee Road',unit:'#08-01 to 03 (Exclusive floorplate)',sqft:6792,sqm:631,rent:null,avail:'Immediate',zone:'Business Park',cluster:'Business Park',fit:'Bare',remarks:'Entire floor plate + exclusive lift lobby + roof terrace'},
+  // Business Park — Chai Chee 750D
+  {reit:'ESR-REIT',reit_color:'#6e2f7f',month:'Mar 2026',addr:'ESR BizPark @ Chai Chee Blk 750D',addrFull:'750D Chai Chee Road',unit:'#03-05',sqft:5442,sqm:506,rent:null,avail:'Immediate',zone:'Business Park',cluster:'Business Park',fit:'Bare',remarks:'Bare condition'},
+  {reit:'ESR-REIT',reit_color:'#6e2f7f',month:'Mar 2026',addr:'ESR BizPark @ Chai Chee Blk 750D',addrFull:'750D Chai Chee Road',unit:'#03-06',sqft:4026,sqm:374,rent:null,avail:'Immediate',zone:'Business Park',cluster:'Business Park',fit:'Bare',remarks:'Bare condition'},
+  {reit:'ESR-REIT',reit_color:'#6e2f7f',month:'Mar 2026',addr:'ESR BizPark @ Chai Chee Blk 750D',addrFull:'750D Chai Chee Road',unit:'#04-01/02',sqft:12489,sqm:1160,rent:null,avail:'Immediate',zone:'Business Park',cluster:'Business Park',fit:'Bare',remarks:'Bare condition. Greenery view level. Subject to final measurements.'},
+  {reit:'ESR-REIT',reit_color:'#6e2f7f',month:'Mar 2026',addr:'ESR BizPark @ Chai Chee Blk 750D',addrFull:'750D Chai Chee Road',unit:'#04-06',sqft:6996,sqm:650,rent:null,avail:'Immediate',zone:'Business Park',cluster:'Business Park',fit:'Bare',remarks:'Bare condition'},
+  {reit:'ESR-REIT',reit_color:'#6e2f7f',month:'Mar 2026',addr:'ESR BizPark @ Chai Chee Blk 750D',addrFull:'750D Chai Chee Road',unit:'#05-01',sqft:7061,sqm:656,rent:null,avail:'Immediate',zone:'Business Park',cluster:'Business Park',fit:'Bare',remarks:'Bare condition'},
+  {reit:'ESR-REIT',reit_color:'#6e2f7f',month:'Mar 2026',addr:'ESR BizPark @ Chai Chee Blk 750D',addrFull:'750D Chai Chee Road',unit:'#08-02/03',sqft:10423,sqm:968,rent:null,avail:'Immediate',zone:'Business Park',cluster:'Business Park',fit:'Bare',remarks:'Bare condition. Top floor with good view.'},
+  // Business Park — Chai Chee 750E
+  {reit:'ESR-REIT',reit_color:'#6e2f7f',month:'Mar 2026',addr:'ESR BizPark @ Chai Chee Blk 750E',addrFull:'750E Chai Chee Road',unit:'#01-01',sqft:6944,sqm:645,rent:null,avail:'Immediate',zone:'Business Park',cluster:'Business Park',fit:'Fitted',remarks:'Existing unit fitted as canteen. To be taken over as-is-where-is.'},
+  {reit:'ESR-REIT',reit_color:'#6e2f7f',month:'Mar 2026',addr:'ESR BizPark @ Chai Chee Blk 750E',addrFull:'750E Chai Chee Road',unit:'#03-01 to 04',sqft:24148,sqm:2243,rent:null,avail:'Immediate',zone:'Business Park',cluster:'Business Park',fit:'Partial',remarks:'Partially fitted. With rooms and storage area.'},
+  {reit:'ESR-REIT',reit_color:'#6e2f7f',month:'Mar 2026',addr:'ESR BizPark @ Chai Chee Blk 750E',addrFull:'750E Chai Chee Road',unit:'#03-05 to 09',sqft:28405,sqm:2639,rent:null,avail:'Immediate',zone:'Business Park',cluster:'Business Park',fit:'Partial',remarks:'Partial fitted. Meeting/manager rooms with open concept area.'},
+  {reit:'ESR-REIT',reit_color:'#6e2f7f',month:'Mar 2026',addr:'ESR BizPark @ Chai Chee Blk 750E',addrFull:'750E Chai Chee Road',unit:'#04-01 to 04',sqft:18586,sqm:1727,rent:null,avail:'Immediate',zone:'Business Park',cluster:'Business Park',fit:'Partial',remarks:'Partial fitted. Provisional unit numbering subject to final survey.'},
+  {reit:'ESR-REIT',reit_color:'#6e2f7f',month:'Mar 2026',addr:'ESR BizPark @ Chai Chee Blk 750E',addrFull:'750E Chai Chee Road',unit:'#05-02A',sqft:2825,sqm:262,rent:null,avail:'Immediate',zone:'Business Park',cluster:'Business Park',fit:'Bare',remarks:'Bare condition'},
+  {reit:'ESR-REIT',reit_color:'#6e2f7f',month:'Mar 2026',addr:'ESR BizPark @ Chai Chee Blk 750E',addrFull:'750E Chai Chee Road',unit:'#05-07/08',sqft:10527,sqm:978,rent:null,avail:'Immediate',zone:'Business Park',cluster:'Business Park',fit:'Bare',remarks:'Bare condition'},
+  {reit:'ESR-REIT',reit_color:'#6e2f7f',month:'Mar 2026',addr:'ESR BizPark @ Chai Chee Blk 750E',addrFull:'750E Chai Chee Road',unit:'#07-01/02',sqft:14333,sqm:1332,rent:null,avail:'Immediate',zone:'Business Park',cluster:'Business Park',fit:'Partial',remarks:'Partial fitted'},
+  {reit:'ESR-REIT',reit_color:'#6e2f7f',month:'Mar 2026',addr:'ESR BizPark @ Chai Chee Blk 750E',addrFull:'750E Chai Chee Road',unit:'#07-04',sqft:2835,sqm:263,rent:null,avail:'Immediate',zone:'Business Park',cluster:'Business Park',fit:'Partial',remarks:'Partial fitted'},
+  {reit:'ESR-REIT',reit_color:'#6e2f7f',month:'Mar 2026',addr:'ESR BizPark @ Chai Chee Blk 750E',addrFull:'750E Chai Chee Road',unit:'#07-08',sqft:5274,sqm:490,rent:null,avail:'Immediate',zone:'Business Park',cluster:'Business Park',fit:'Bare',remarks:'Bare condition'},
+  // Retail / F&B
+  {reit:'ESR-REIT',reit_color:'#6e2f7f',month:'Mar 2026',addr:'ESR BizPark @ Changi',addrFull:'2 & 4 Changi Business Park',unit:'#B1-11 (Retail)',sqft:1012,sqm:94,rent:'$12.00',avail:'Immediate',zone:'Retail',cluster:'Business Park',fit:'Bare',remarks:'Retail shop'},
+  {reit:'ESR-REIT',reit_color:'#6e2f7f',month:'Mar 2026',addr:'ESR BizPark @ Changi',addrFull:'2 & 4 Changi Business Park',unit:'#01-05 (F&B)',sqft:2378,sqm:221,rent:'$12.00',avail:'Immediate',zone:'Retail',cluster:'Business Park',fit:'Bare',remarks:'F&B approved'},
+  {reit:'ESR-REIT',reit_color:'#6e2f7f',month:'Mar 2026',addr:'ESR BizPark @ Changi',addrFull:'6 Changi Business Park',unit:'#01-31 (F&B)',sqft:1390,sqm:129,rent:'$12.00',avail:'Immediate',zone:'Retail',cluster:'Business Park',fit:'Partial',remarks:'F&B approved. Partially fitted.'},
+  {reit:'ESR-REIT',reit_color:'#6e2f7f',month:'Mar 2026',addr:'ESR BizPark @ Changi',addrFull:'6 Changi Business Park',unit:'#01-24 (F&B)',sqft:739,sqm:69,rent:'$12.00',avail:'Mid Mar 2026',zone:'Retail',cluster:'Business Park',fit:'Partial',remarks:'F&B approved. Partially fitted.'},
+  {reit:'ESR-REIT',reit_color:'#6e2f7f',month:'Mar 2026',addr:'ESR BizPark @ Changi',addrFull:'8 Changi Business Park',unit:'#01-54 (F&B)',sqft:839,sqm:78,rent:'$12.00',avail:'Immediate',zone:'Retail',cluster:'Business Park',fit:'Bare',remarks:'F&B approved'},
+  // B1 — Central East
+  {reit:'ESR-REIT',reit_color:'#6e2f7f',month:'Mar 2026',addr:'130 Joo Seng Road',addrFull:'130 Joo Seng Road',unit:'#05-07',sqft:2304,sqm:214,rent:'$2.50',avail:'Immediate',zone:'B1',cluster:'Central East',fit:'Bare',remarks:'Bare condition'},
+  {reit:'ESR-REIT',reit_color:'#6e2f7f',month:'Mar 2026',addr:'11 Lorong 3 Toa Payoh (Jackson Sq)',addrFull:'11 Lorong 3 Toa Payoh',unit:'Blk B #02-11 to #02-15 & #02-26 to #02-28',sqft:27317,sqm:2538,rent:null,avail:'Immediate',zone:'B1',cluster:'Central East',fit:'Bare',remarks:'Bare condition. Anchor tenant sublet status required.'},
+  {reit:'ESR-REIT',reit_color:'#6e2f7f',month:'Mar 2026',addr:'11 Lorong 3 Toa Payoh (Jackson Sq)',addrFull:'11 Lorong 3 Toa Payoh',unit:'Blk B #02-16 to #02-25',sqft:28505,sqm:2648,rent:null,avail:'Immediate',zone:'B1',cluster:'Central East',fit:'Fitted',remarks:'Fitted unit. As-is-where-is. Anchor tenant sublet required.'},
+  {reit:'ESR-REIT',reit_color:'#6e2f7f',month:'Mar 2026',addr:'11 Lorong 3 Toa Payoh (Jackson Sq)',addrFull:'11 Lorong 3 Toa Payoh',unit:'Blk B #03-16 to 19',sqft:9383,sqm:872,rent:null,avail:'Immediate',zone:'B1',cluster:'Central East',fit:'Bare',remarks:'Bare condition. Anchor tenant sublet required.'},
+  {reit:'ESR-REIT',reit_color:'#6e2f7f',month:'Mar 2026',addr:'11 Lorong 3 Toa Payoh (Jackson Sq)',addrFull:'11 Lorong 3 Toa Payoh',unit:'Blk B #03-22 to 24',sqft:10782,sqm:1002,rent:null,avail:'Immediate',zone:'B1',cluster:'Central East',fit:'Bare',remarks:'Bare condition. Anchor tenant sublet required.'},
+  {reit:'ESR-REIT',reit_color:'#6e2f7f',month:'Mar 2026',addr:'11 Lorong 3 Toa Payoh (Jackson Sq)',addrFull:'11 Lorong 3 Toa Payoh',unit:'Blk B #04-16 to #04-21',sqft:11410,sqm:1060,rent:null,avail:'Immediate',zone:'B1',cluster:'Central East',fit:'Bare',remarks:'Bare condition (with false ceiling). Anchor tenant sublet required.'},
+  {reit:'ESR-REIT',reit_color:'#6e2f7f',month:'Mar 2026',addr:'54 Serangoon North Ave 4',addrFull:'54 Serangoon North Ave 4',unit:'#02-01',sqft:21054,sqm:1956,rent:'$2.50',avail:'Under Negotiation',zone:'B1',cluster:'Central East',fit:'Bare',remarks:'Bare condition. Anchor tenant sublet required.'},
+  {reit:'ESR-REIT',reit_color:'#6e2f7f',month:'Mar 2026',addr:'54 Serangoon North Ave 4',addrFull:'54 Serangoon North Ave 4',unit:'#03-02',sqft:9784,sqm:909,rent:'$2.50',avail:'Immediate',zone:'B1',cluster:'Central East',fit:'Bare',remarks:'Bare condition. Anchor tenant sublet required.'},
+  {reit:'ESR-REIT',reit_color:'#6e2f7f',month:'Mar 2026',addr:'12 Ang Mo Kio Street 65',addrFull:'12 Ang Mo Kio Street 65',unit:'#06-01',sqft:13745,sqm:1277,rent:'$1.90',avail:'Immediate',zone:'B1',cluster:'Central East',fit:'Fitted',remarks:'As-is-where-is condition'},
+  // B2 — Central East
+  {reit:'ESR-REIT',reit_color:'#6e2f7f',month:'Mar 2026',addr:'16 Tai Seng Street',addrFull:'16 Tai Seng Street',unit:'#03-01',sqft:18923,sqm:1758,rent:'$4.80',avail:'15 Mar 2026',zone:'B2',cluster:'Central East',fit:'Bare',remarks:'Bare condition. Corporate look with VRV aircon. JTC anchor sublet required.'},
+  {reit:'ESR-REIT',reit_color:'#6e2f7f',month:'Mar 2026',addr:'16 Tai Seng Street',addrFull:'16 Tai Seng Street',unit:'#05-04',sqft:3983,sqm:370,rent:'$5.20',avail:'Immediate',zone:'B2',cluster:'Central East',fit:'Bare',remarks:'Bare condition. Corporate look.'},
+  {reit:'ESR-REIT',reit_color:'#6e2f7f',month:'Mar 2026',addr:'16 Tai Seng Street',addrFull:'16 Tai Seng Street',unit:'#05-06',sqft:6275,sqm:583,rent:'$5.20',avail:'Immediate',zone:'B2',cluster:'Central East',fit:'Bare',remarks:'Bare condition.'},
+  {reit:'ESR-REIT',reit_color:'#6e2f7f',month:'Mar 2026',addr:'16 Tai Seng Street',addrFull:'16 Tai Seng Street',unit:'#06-01',sqft:16057,sqm:1492,rent:'$4.80',avail:'15 Mar 2026',zone:'B2',cluster:'Central East',fit:'Bare',remarks:'Bare condition. VRV aircon. JTC anchor sublet required.'},
+  {reit:'ESR-REIT',reit_color:'#6e2f7f',month:'Mar 2026',addr:'16 Tai Seng Street',addrFull:'16 Tai Seng Street',unit:'#06-02',sqft:22236,sqm:2066,rent:'$4.80',avail:'15 Mar 2026',zone:'B2',cluster:'Central East',fit:'Bare',remarks:'Bare condition.'},
+  {reit:'ESR-REIT',reit_color:'#6e2f7f',month:'Mar 2026',addr:'16 Tai Seng Street',addrFull:'16 Tai Seng Street',unit:'#07-01',sqft:16587,sqm:1541,rent:'$4.80',avail:'Immediate',zone:'B2',cluster:'Central East',fit:'Bare',remarks:'Bare condition.'},
+  {reit:'ESR-REIT',reit_color:'#6e2f7f',month:'Mar 2026',addr:'16 Tai Seng Street',addrFull:'16 Tai Seng Street',unit:'#08-01',sqft:13660,sqm:1269,rent:'$4.80',avail:'Under Negotiation',zone:'B2',cluster:'Central East',fit:'Bare',remarks:'Bare condition.'},
+  {reit:'ESR-REIT',reit_color:'#6e2f7f',month:'Mar 2026',addr:'19 Tai Seng Ave',addrFull:'19 Tai Seng Ave',unit:'#02-01',sqft:6043,sqm:561,rent:'$4.40',avail:'Under Negotiation',zone:'B2',cluster:'Central East',fit:'Bare',remarks:'Bare condition'},
+  {reit:'ESR-REIT',reit_color:'#6e2f7f',month:'Mar 2026',addr:'29 Tai Seng Street',addrFull:'29 Tai Seng Street',unit:'#01-01',sqft:4219,sqm:392,rent:'$8.00',avail:'Under Negotiation',zone:'B2',cluster:'Central East',fit:'Fitted',remarks:'Ancillary canteen. Building undergoing AEI. TOP expected 2Q 2026.'},
+  {reit:'ESR-REIT',reit_color:'#6e2f7f',month:'Mar 2026',addr:'29 Tai Seng Street',addrFull:'29 Tai Seng Street',unit:'#01-02',sqft:2659,sqm:247,rent:'$8.00',avail:'Under Negotiation',zone:'B2',cluster:'Central East',fit:'Bare',remarks:'Building undergoing AEI. TOP 2Q 2026. Corporate look with VRV aircon.'},
+  {reit:'ESR-REIT',reit_color:'#6e2f7f',month:'Mar 2026',addr:'29 Tai Seng Street',addrFull:'29 Tai Seng Street',unit:'#02-01',sqft:14833,sqm:1378,rent:'$4.80',avail:'Under Negotiation',zone:'B2',cluster:'Central East',fit:'Bare',remarks:'Building undergoing AEI. TOP 2Q 2026. JTC anchor sublet required for >1,000 sqm.'},
+  {reit:'ESR-REIT',reit_color:'#6e2f7f',month:'Mar 2026',addr:'29 Tai Seng Street',addrFull:'29 Tai Seng Street',unit:'#03-01',sqft:5124,sqm:476,rent:'$4.80',avail:'Under Negotiation',zone:'B2',cluster:'Central East',fit:'Bare',remarks:'Building undergoing AEI. TOP 2Q 2026.'},
+  {reit:'ESR-REIT',reit_color:'#6e2f7f',month:'Mar 2026',addr:'29 Tai Seng Street',addrFull:'29 Tai Seng Street',unit:'#03-02',sqft:3305,sqm:307,rent:'$4.80',avail:'Under Negotiation',zone:'B2',cluster:'Central East',fit:'Bare',remarks:'Building undergoing AEI. TOP 2Q 2026.'},
+  {reit:'ESR-REIT',reit_color:'#6e2f7f',month:'Mar 2026',addr:'29 Tai Seng Street',addrFull:'29 Tai Seng Street',unit:'#03-03',sqft:2174,sqm:202,rent:'$4.80',avail:'Under Negotiation',zone:'B2',cluster:'Central East',fit:'Bare',remarks:'Building undergoing AEI. TOP 2Q 2026.'},
+  {reit:'ESR-REIT',reit_color:'#6e2f7f',month:'Mar 2026',addr:'29 Tai Seng Street',addrFull:'29 Tai Seng Street',unit:'#03-04',sqft:3907,sqm:363,rent:'$4.80',avail:'Under Negotiation',zone:'B2',cluster:'Central East',fit:'Bare',remarks:'Building undergoing AEI. TOP 2Q 2026.'},
+  {reit:'ESR-REIT',reit_color:'#6e2f7f',month:'Mar 2026',addr:'29 Tai Seng Street',addrFull:'29 Tai Seng Street',unit:'#04-01',sqft:17039,sqm:1583,rent:'$4.80',avail:'Under Negotiation',zone:'B2',cluster:'Central East',fit:'Bare',remarks:'Building undergoing AEI. TOP 2Q 2026.'},
+  // Central cluster
+  {reit:'ESR-REIT',reit_color:'#6e2f7f',month:'Mar 2026',addr:'21 Ubi Road 1',addrFull:'21 Ubi Road 1',unit:'#05-01',sqft:9526,sqm:885,rent:'$2.80',avail:'1 Feb 2026',zone:'B1',cluster:'Central',fit:'Bare',remarks:'Bare condition. Central aircon. Anchor tenant sublet required.'},
+  {reit:'ESR-REIT',reit_color:'#6e2f7f',month:'Mar 2026',addr:'21 Ubi Road 1',addrFull:'21 Ubi Road 1',unit:'#04-04 (Provisional)',sqft:1862,sqm:173,rent:'$2.80',avail:'1 Jul 2026',zone:'B1',cluster:'Central',fit:'Bare',remarks:'Anchor tenant sublet required.'},
+  {reit:'ESR-REIT',reit_color:'#6e2f7f',month:'Mar 2026',addr:'21 Ubi Road 1',addrFull:'21 Ubi Road 1',unit:'#04-03',sqft:3111,sqm:289,rent:'$2.80',avail:'Immediate',zone:'B1',cluster:'Central',fit:'Fitted',remarks:'As-is-where-is condition'},
+  {reit:'ESR-REIT',reit_color:'#6e2f7f',month:'Mar 2026',addr:'160 Kallang Way',addrFull:'160 Kallang Way',unit:'#02-01',sqft:12301,sqm:1143,rent:'$1.80',avail:'Immediate',zone:'B2',cluster:'Central',fit:'Bare',remarks:'Bare condition'},
+  {reit:'ESR-REIT',reit_color:'#6e2f7f',month:'Mar 2026',addr:'160 Kallang Way',addrFull:'160 Kallang Way',unit:'#03-01/02',sqft:71578,sqm:6650,rent:'$1.80',avail:'Immediate',zone:'B2',cluster:'Central',fit:'Bare',remarks:'Bare condition. No loading bay.'},
+  {reit:'ESR-REIT',reit_color:'#6e2f7f',month:'Mar 2026',addr:'160 Kallang Way',addrFull:'160 Kallang Way',unit:'#04-01/02',sqft:71578,sqm:6650,rent:'$1.80',avail:'Immediate',zone:'B2',cluster:'Central',fit:'Bare',remarks:'Bare condition.'},
+  {reit:'ESR-REIT',reit_color:'#6e2f7f',month:'Mar 2026',addr:'DistriCentre 1 @ 5 Changi South Lane',addrFull:'5 Changi South Lane',unit:'#05-01',sqft:62595,sqm:5815,rent:'$2.40',avail:'20 Apr 2026',zone:'B2',cluster:'Central',fit:'Bare',remarks:'Bare condition. Warehouse and ancillary office to be leased together.'},
+  {reit:'ESR-REIT',reit_color:'#6e2f7f',month:'Mar 2026',addr:'DistriCentre 1 @ 5 Changi South Lane',addrFull:'5 Changi South Lane',unit:'#05-06',sqft:2183,sqm:203,rent:'$2.40',avail:'20 Apr 2026',zone:'B2',cluster:'Central',fit:'Bare',remarks:'Bare condition.'},
+  {reit:'ESR-REIT',reit_color:'#6e2f7f',month:'Mar 2026',addr:'DistriCentre 1 @ 5 Changi South Lane',addrFull:'5 Changi South Lane',unit:'#02-06 (Ancillary Office)',sqft:2436,sqm:226,rent:null,avail:'Immediate',zone:'B2',cluster:'Central',fit:'Bare',remarks:'Bare condition'},
+  {reit:'ESR-REIT',reit_color:'#6e2f7f',month:'Mar 2026',addr:'DistriCentre 1 @ 5 Changi South Lane',addrFull:'5 Changi South Lane',unit:'Level 6 (Ancillary Office)',sqft:26335,sqm:2447,rent:null,avail:'Immediate (3 mths notice)',zone:'B2',cluster:'Central',fit:'Fitted',remarks:'As-is-where-is condition'},
+  {reit:'ESR-REIT',reit_color:'#6e2f7f',month:'Mar 2026',addr:'7000 Ang Mo Kio Ave 5',addrFull:'7000 Ang Mo Kio Ave 5',unit:'Level 2 (Ancillary Office)',sqft:22597,sqm:2099,rent:'$3.30',avail:'Immediate',zone:'B2',cluster:'Central',fit:'Bare',remarks:'Bare condition. Industrial 60/40 usage applicable.'},
+  {reit:'ESR-REIT',reit_color:'#6e2f7f',month:'Mar 2026',addr:'7000 Ang Mo Kio Ave 5',addrFull:'7000 Ang Mo Kio Ave 5',unit:'Level 4 (Ancillary Office)',sqft:22890,sqm:2127,rent:'$3.30',avail:'Immediate',zone:'B2',cluster:'Central',fit:'Bare',remarks:'Bare condition. Industrial 60/40 usage applicable.'},
+  {reit:'ESR-REIT',reit_color:'#6e2f7f',month:'Mar 2026',addr:'7000 Ang Mo Kio Ave 5',addrFull:'7000 Ang Mo Kio Ave 5',unit:'Level 4 Production',sqft:23659,sqm:2198,rent:'$3.30',avail:'Immediate',zone:'B2',cluster:'Central',fit:'Bare',remarks:'Bare condition. Industrial 60/40 usage applicable.'},
+  {reit:'ESR-REIT',reit_color:'#6e2f7f',month:'Mar 2026',addr:'7000 Ang Mo Kio Ave 5',addrFull:'7000 Ang Mo Kio Ave 5',unit:'Level 5 Production (approx 25,166–76,435 sqft)',sqft:50800,sqm:4719,rent:'$3.30',avail:'Immediate',zone:'B2',cluster:'Central',fit:'Bare',remarks:'Industrial 60/40. Entire level 5 floor plate.'},
+  {reit:'ESR-REIT',reit_color:'#6e2f7f',month:'Mar 2026',addr:'11 Chang Charn Road',addrFull:'11 Chang Charn Road',unit:'#04-01',sqft:5000,sqm:465,rent:'$2.70',avail:'Immediate',zone:'B1',cluster:'Central',fit:'Bare',remarks:'Bare condition. Anchor tenant sublet required.'},
+  {reit:'ESR-REIT',reit_color:'#6e2f7f',month:'Mar 2026',addr:'11 Chang Charn Road',addrFull:'11 Chang Charn Road',unit:'#05-01',sqft:5120,sqm:476,rent:'$2.70',avail:'Immediate',zone:'B1',cluster:'Central',fit:'Bare',remarks:'Bare condition. Anchor tenant sublet required. Entire level 5 floor plate ~1,500 sqm.'},
+  {reit:'ESR-REIT',reit_color:'#6e2f7f',month:'Mar 2026',addr:'11 Chang Charn Road',addrFull:'11 Chang Charn Road',unit:'#05-02/03',sqft:9149,sqm:850,rent:'$2.70',avail:'Immediate',zone:'B1',cluster:'Central',fit:'Bare',remarks:'Bare condition.'},
+  // North cluster
+  {reit:'ESR-REIT',reit_color:'#6e2f7f',month:'Mar 2026',addr:'30 Marsiling Industrial Estate Rd 8',addrFull:'30 Marsiling Industrial Estate Road 8',unit:'Level 3',sqft:39924,sqm:3709,rent:'$2.40',avail:'1 Apr 2026',zone:'B2',cluster:'North',fit:'Bare',remarks:'Bare condition. Anchor tenant sublet required. Contiguous floor plate.'},
+  {reit:'ESR-REIT',reit_color:'#6e2f7f',month:'Mar 2026',addr:'30 Marsiling Industrial Estate Rd 8',addrFull:'30 Marsiling Industrial Estate Road 8',unit:'Level 4',sqft:40193,sqm:3734,rent:'$2.40',avail:'1 Apr 2026',zone:'B2',cluster:'North',fit:'Bare',remarks:'Bare condition. Anchor tenant sublet required.'},
+  {reit:'ESR-REIT',reit_color:'#6e2f7f',month:'Mar 2026',addr:'30 Marsiling Industrial Estate Rd 8',addrFull:'30 Marsiling Industrial Estate Road 8',unit:'#05-01B',sqft:5813,sqm:540,rent:'$2.40',avail:'Immediate',zone:'B2',cluster:'North',fit:'Bare',remarks:'Bare condition'},
+  {reit:'ESR-REIT',reit_color:'#6e2f7f',month:'Mar 2026',addr:'30 Marsiling Industrial Estate Rd 8',addrFull:'30 Marsiling Industrial Estate Road 8',unit:'Level 6',sqft:6932,sqm:644,rent:'$2.40',avail:'Immediate',zone:'B2',cluster:'North',fit:'Fitted',remarks:'As-is-where-is condition'},
+  // West cluster
+  {reit:'ESR-REIT',reit_color:'#6e2f7f',month:'Mar 2026',addr:'120 Pioneer Road',addrFull:'120 Pioneer Road',unit:'#02-03 (Ancillary Office)',sqft:6114,sqm:568,rent:'$1.20',avail:'Immediate',zone:'B2',cluster:'West',fit:'Bare',remarks:'Bare condition. Anchor tenant sublet required.'},
+  {reit:'ESR-REIT',reit_color:'#6e2f7f',month:'Mar 2026',addr:'120 Pioneer Road',addrFull:'120 Pioneer Road',unit:'#04-01 (Ancillary Office)',sqft:11277,sqm:1048,rent:'$1.20',avail:'Immediate',zone:'B2',cluster:'West',fit:'Partial',remarks:'Partially fitted. Aircon, ceiling board, lightings. Industrial 60/40. Anchor sublet required.'},
+  {reit:'ESR-REIT',reit_color:'#6e2f7f',month:'Mar 2026',addr:'120 Pioneer Road',addrFull:'120 Pioneer Road',unit:'#04-02 (Ancillary Office)',sqft:5744,sqm:534,rent:'$1.20',avail:'Immediate',zone:'B2',cluster:'West',fit:'Bare',remarks:'Industrial 60/40. Anchor tenant sublet required.'},
+  {reit:'ESR-REIT',reit_color:'#6e2f7f',month:'Mar 2026',addr:'5 & 7 Gul Street 1',addrFull:'5 & 7 Gul Street 1',unit:'#02-01 to #02-04 + #03-01 + #03-02 + #04-01 + #04-02 (Ancillary Offices)',sqft:39717,sqm:3688,rent:'$1.80',avail:'Immediate',zone:'B2',cluster:'West',fit:'Bare',remarks:'All ancillary office units. Industrial 60/40. #02-03/04 accessible via stairs. 8 units total. #04-02 available 1 Feb 2026.'},
+  {reit:'ESR-REIT',reit_color:'#6e2f7f',month:'Mar 2026',addr:'160A Gul Circle',addrFull:'160A Gul Circle',unit:'#01-01/04',sqft:37865,sqm:3518,rent:'$1.80',avail:'Under Offer',zone:'B2',cluster:'West',fit:'Bare',remarks:'Bare condition. #01-01/04 & #03-01 to be leased together. Anchor sublet required.'},
+  {reit:'ESR-REIT',reit_color:'#6e2f7f',month:'Mar 2026',addr:'160A Gul Circle',addrFull:'160A Gul Circle',unit:'#03-01',sqft:14567,sqm:1353,rent:'$1.80',avail:'Immediate',zone:'B2',cluster:'West',fit:'Bare',remarks:'Bare condition. Anchor tenant sublet required.'},
+  {reit:'ESR-REIT',reit_color:'#6e2f7f',month:'Mar 2026',addr:'24 Jurong Port Road',addrFull:'24 Jurong Port Road',unit:'#01-01 (Ancillary Office)',sqft:153,sqm:14,rent:'$1.30',avail:'Immediate',zone:'B2',cluster:'West',fit:'Bare',remarks:'Bare condition. Suitable for light storage, packing, distribution.'},
+  {reit:'ESR-REIT',reit_color:'#6e2f7f',month:'Mar 2026',addr:'24 Jurong Port Road',addrFull:'24 Jurong Port Road',unit:'#02-04 (Ancillary Office)',sqft:1670,sqm:155,rent:'$1.30',avail:'Immediate',zone:'B2',cluster:'West',fit:'Bare',remarks:'Bare condition. Suitable for light storage, packing, distribution.'},
+  {reit:'ESR-REIT',reit_color:'#6e2f7f',month:'Mar 2026',addr:'24 Jurong Port Road',addrFull:'24 Jurong Port Road',unit:'Part Level 3 WH (Middle)',sqft:32446,sqm:3014,rent:'$1.40',avail:'Immediate',zone:'B2',cluster:'West',fit:'Bare',remarks:'Bare condition warehouse. Shared cargo lift, loading bay and dock leveler.'},
+  {reit:'ESR-REIT',reit_color:'#6e2f7f',month:'Mar 2026',addr:'24 Penjuru Road',addrFull:'24 Penjuru Road',unit:'#01-03',sqft:100747,sqm:9360,rent:'$1.80',avail:'Immediate',zone:'B2',cluster:'West',fit:'Bare',remarks:'Bare condition. Available for lease until 31 Dec 2027.'},
+  {reit:'ESR-REIT',reit_color:'#6e2f7f',month:'Mar 2026',addr:'24 Penjuru Road',addrFull:'24 Penjuru Road',unit:'#09-02',sqft:21281,sqm:1977,rent:'$1.80',avail:'1 Jul 2026',zone:'B2',cluster:'West',fit:'Bare',remarks:'Bare condition'},
+  {reit:'ESR-REIT',reit_color:'#6e2f7f',month:'Mar 2026',addr:'24 Penjuru Road',addrFull:'24 Penjuru Road',unit:'#09-04',sqft:96360,sqm:8952,rent:'$1.80',avail:'Under Negotiation',zone:'B2',cluster:'West',fit:'Bare',remarks:'Bare condition. Available for lease until 31 Dec 2027.'},
+  {reit:'ESR-REIT',reit_color:'#6e2f7f',month:'Mar 2026',addr:'24 Penjuru Road',addrFull:'24 Penjuru Road',unit:'Ancillary Offices (#01-01, #02-01, #02-02, #10-04)',sqft:5827,sqm:548,rent:null,avail:'Immediate',zone:'B2',cluster:'West',fit:'Bare',remarks:'Bare condition. Ancillary office units. Industrial 60/40 usage applicable.'},
+  {reit:'ESR-REIT',reit_color:'#6e2f7f',month:'Mar 2026',addr:'8 Tuas South Lane',addrFull:'8 Tuas South Lane',unit:'#02-01',sqft:50819,sqm:4721,rent:null,avail:'Immediate',zone:'B2',cluster:'West',fit:'Bare',remarks:'Bare condition. Lighting and fan in warehouse.'},
+  {reit:'ESR-REIT',reit_color:'#6e2f7f',month:'Mar 2026',addr:'8 Tuas South Lane',addrFull:'8 Tuas South Lane',unit:'#05-01',sqft:51730,sqm:4806,rent:null,avail:'Immediate',zone:'B2',cluster:'West',fit:'Bare',remarks:'Bare condition. Lighting and fan in warehouse.'},
+  {reit:'ESR-REIT',reit_color:'#6e2f7f',month:'Mar 2026',addr:'8 Tuas South Lane',addrFull:'8 Tuas South Lane',unit:'#08-01',sqft:49284,sqm:4579,rent:null,avail:'Immediate',zone:'B2',cluster:'West',fit:'Bare',remarks:'Bare condition. Lighting and fan in warehouse.'},
+  {reit:'ESR-REIT',reit_color:'#6e2f7f',month:'Mar 2026',addr:'20A Tuas South Avenue 14',addrFull:'20A Tuas South Avenue 14',unit:'#01-04',sqft:37480,sqm:3482,rent:null,avail:'Under Negotiation',zone:'B2',cluster:'West',fit:'Bare',remarks:'Bare condition. Direct loading with dock levelers. Warehouse installed with racking.'}
+];
+
+// ── Inventory state ──────────────────────────────────
+var INV_REIT = 'all';
+var INV_VIEW = 'card';
+
+function invSetReit(btn, reit) {
+  INV_REIT = reit;
+  document.querySelectorAll('.inv-reit-btn').forEach(function(b){ b.classList.remove('on'); });
+  btn.classList.add('on');
+  invRender();
+}
+
+function invSetView(v) {
+  INV_VIEW = v;
+  document.getElementById('inv-vbtn-card').classList.toggle('on', v==='card');
+  document.getElementById('inv-vbtn-table').classList.toggle('on', v==='table');
+  document.getElementById('inv-grid').style.display = v==='card' ? 'grid' : 'none';
+  document.getElementById('inv-tbl-wrap').style.display = v==='table' ? 'block' : 'none';
+  invRender();
+}
+
+function invAvailClass(a) {
+  if(/immediate/i.test(a)) return 'p-imm';
+  if(/negotiation/i.test(a)) return 'p-neg';
+  if(/offer/i.test(a)) return 'p-offer';
+  return 'p-soon';
+}
+
+function invZoneBadge(z) {
+  if(z==='Business Park') return 'zb-bp';
+  if(z==='B1') return 'zb-b1';
+  if(z==='B2') return 'zb-b2';
+  return 'zb-ret';
+}
+
+function invRender() {
+  var q = (document.getElementById('inv-search').value||'').toLowerCase();
+  var zf = document.getElementById('inv-zone').value;
+  var cf = document.getElementById('inv-cluster').value;
+  var af = document.getElementById('inv-avail').value;
+  var sf = document.getElementById('inv-size').value;
+  var ff = document.getElementById('inv-fit').value;
+
+  var filtered = VACANCY_DATA.filter(function(d) {
+    if(INV_REIT !== 'all' && d.reit !== INV_REIT) return false;
+    if(q && !(d.addr.toLowerCase().includes(q)||d.unit.toLowerCase().includes(q)||(d.remarks||'').toLowerCase().includes(q)||(d.addrFull||'').toLowerCase().includes(q)||(d.cluster||'').toLowerCase().includes(q))) return false;
+    if(zf && d.zone !== zf) return false;
+    if(cf && d.cluster !== cf) return false;
+    if(ff && d.fit !== ff) return false;
+    if(af) {
+      if(af==='Immediate' && !/immediate/i.test(d.avail)) return false;
+      if(af==='Soon' && (/immediate/i.test(d.avail)||/negotiation/i.test(d.avail)||/offer/i.test(d.avail))) return false;
+      if(af==='Negotiation' && !/negotiation|offer/i.test(d.avail)) return false;
+    }
+    if(sf) {
+      var p=sf.split('-'); var lo=+p[0], hi=+p[1];
+      if(d.sqft<lo||d.sqft>hi) return false;
+    }
+    return true;
+  });
+
+  // Stats
+  var totalSqft = filtered.reduce(function(s,d){return s+d.sqft},0);
+  var props = [...new Set(filtered.map(function(d){return d.addr}))].length;
+  var imm = filtered.filter(function(d){return /immediate/i.test(d.avail)}).length;
+  var rents = filtered.filter(function(d){return d.rent}).map(function(d){return parseFloat(d.rent.replace(/[^0-9.]/g,''))});
+  var avgRent = rents.length ? (rents.reduce(function(a,b){return a+b},0)/rents.length).toFixed(2) : null;
+
+  document.getElementById('inv-s-listings').textContent = filtered.length;
+  document.getElementById('inv-s-sqft').textContent = totalSqft>0 ? (totalSqft/1000).toFixed(0)+'K' : '0';
+  document.getElementById('inv-s-imm').textContent = imm;
+  document.getElementById('inv-s-props').textContent = props;
+  document.getElementById('inv-s-avgrent').textContent = avgRent ? '$'+avgRent+' psf' : '—';
+  document.getElementById('inv-total-units').textContent = filtered.length;
+  document.getElementById('inv-total-sqft').textContent = totalSqft>0 ? (totalSqft/1000).toFixed(0)+'K' : '0';
+  document.getElementById('inv-total-props').textContent = props;
+
+  if(INV_VIEW === 'card') {
+    var grid = document.getElementById('inv-grid');
+    if(!filtered.length) {
+      grid.innerHTML = '<div class="inv-empty">No listings match your filters.</div>';
+      return;
+    }
+    grid.innerHTML = filtered.map(function(d) {
+      return '<div class="inv-card">'+
+        '<div class="inv-card-top">'+
+          '<div>'+
+            '<div class="inv-card-addr">'+d.addr+'</div>'+
+            '<div class="inv-card-sub">'+d.unit+'</div>'+
+            '<div class="inv-cluster-lbl">'+d.cluster+' cluster</div>'+
+          '</div>'+
+          '<span class="inv-zone-badge '+invZoneBadge(d.zone)+'">'+d.zone+'</span>'+
+        '</div>'+
+        '<div class="inv-area">'+d.sqft.toLocaleString()+'<span class="inv-area-unit">sqft &nbsp;/&nbsp; '+d.sqm.toLocaleString()+' sqm</span></div>'+
+        '<div class="inv-pills">'+
+          '<span class="inv-pill '+invAvailClass(d.avail)+'">'+d.avail+'</span>'+
+          '<span class="inv-pill">'+d.fit+'</span>'+
+          (d.rent ? '<span class="inv-pill">'+d.rent+' psf/mth</span>' : '')+
+        '</div>'+
+        (d.remarks ? '<div class="inv-remarks">'+d.remarks+'</div>' : '')+
+        '<div class="inv-reit-tag" style="color:'+d.reit_color+'"><span class="inv-reit-dot"></span>'+d.reit+' · '+d.month+'</div>'+
+      '</div>';
+    }).join('');
+  } else {
+    // Table view
+    var hdr = document.getElementById('inv-tbl-hdr');
+    var body = document.getElementById('inv-tbl-body');
+    hdr.innerHTML = '<th>Address</th><th>Unit</th><th>Sqft</th><th>Zone</th><th>Cluster</th><th>Availability</th><th>Fit-out</th><th>Asking Rent</th><th>Remarks</th>';
+    if(!filtered.length) {
+      body.innerHTML = '<tr><td colspan="9" style="text-align:center;padding:24px;color:var(--mut)">No listings match your filters.</td></tr>';
+      return;
+    }
+    body.innerHTML = filtered.map(function(d) {
+      return '<tr>'+
+        '<td style="font-weight:600;min-width:150px">'+d.addr+'</td>'+
+        '<td style="color:var(--mut);min-width:120px;font-size:11px">'+d.unit+'</td>'+
+        '<td style="font-family:\'DM Mono\',monospace;white-space:nowrap">'+d.sqft.toLocaleString()+'<span style="color:var(--mut);font-size:10px"> sf</span></td>'+
+        '<td><span class="inv-zone-badge '+invZoneBadge(d.zone)+'" style="font-size:10px">'+d.zone+'</span></td>'+
+        '<td style="font-size:11px;color:var(--mut)">'+d.cluster+'</td>'+
+        '<td><span class="inv-pill '+invAvailClass(d.avail)+'" style="font-size:10px">'+d.avail+'</span></td>'+
+        '<td style="font-size:11px;color:var(--mut)">'+d.fit+'</td>'+
+        '<td style="font-family:\'DM Mono\',monospace;font-size:12px">'+(d.rent||'—')+'</td>'+
+        '<td style="font-size:11px;color:var(--mut);max-width:220px">'+d.remarks+'</td>'+
+      '</tr>';
+    }).join('');
+  }
+}
+
+// Init on tab switch
+document.addEventListener('DOMContentLoaded', function() {
+  document.querySelectorAll('.navtab').forEach(function(tab) {
+    tab.addEventListener('click', function() {
+      if(tab.dataset.tab === 'inventory') {
+        setTimeout(invRender, 50);
+      }
+    });
+  });
+});
 </script>
 </body>
 </html>
