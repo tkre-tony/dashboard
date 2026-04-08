@@ -506,7 +506,7 @@ html,body{background:var(--bg);color:var(--txt);font-family:'DM Sans',sans-serif
             class="cs-input" style="font-size:13px"/>
           <div class="ac-dropdown" id="ov-ac-dropdown"></div>
         </div>
-        <button onclick="ovSearch()" class="cs-btn" style="white-space:nowrap">Search</button>
+        <button onclick="ovSearchBtn()" class="cs-btn" style="white-space:nowrap">Search</button>
         <button onclick="ovClear()" class="cs-btn-ghost" style="white-space:nowrap">Clear</button>
         <div id="ov-search-info" style="font-size:11px;color:var(--g1);font-weight:600;padding:5px 10px;background:var(--glt);border-radius:5px;display:none"></div>
       </div>
@@ -6723,7 +6723,9 @@ var TALENT_DATA = [
     rem_note:'FY24/25 Chairman fees S$157,500 exact per AR.',
     rem_band:null, rem_pct_fixed:100, rem_pct_bonus:0, rem_pct_other:0,
     edu:null, bio:'Chairman and Independent Non-Executive Director of Mapletree Industrial Trust Management Ltd.',
-    prev_roles:[], rem_history:[{year:'FY24/25', total:157500, pct_fixed:100, pct_bonus:0, pct_ltp:0, pct_other:0}],
+    prev_roles:[], rem_history:[{year:'FY24/25', total:157500, pct_fixed:100, pct_bonus:0, pct_ltp:0, pct_other:0},
+      {year:'FY2023/24', total:167500, pct_fixed:100, pct_bonus:0, pct_ltp:0, pct_other:0}
+    ],
     cross_board_roles:[], linkedin_url:null, photo_url:null,
     tags:['Independent Chairman','REIT Board','Mapletree Group']
   },
@@ -6735,7 +6737,9 @@ var TALENT_DATA = [
     rem_note:'FY24/25 Lead ID fees S$116,000 exact per AR.',
     rem_band:null, rem_pct_fixed:100, rem_pct_bonus:0, rem_pct_other:0,
     edu:null, bio:'Lead Independent Non-Executive Director of Mapletree Industrial Trust Management Ltd.',
-    prev_roles:[], rem_history:[{year:'FY24/25', total:116000, pct_fixed:100, pct_bonus:0, pct_ltp:0, pct_other:0}],
+    prev_roles:[], rem_history:[{year:'FY24/25', total:116000, pct_fixed:100, pct_bonus:0, pct_ltp:0, pct_other:0},
+      {year:'FY2023/24', total:126000, pct_fixed:100, pct_bonus:0, pct_ltp:0, pct_other:0}
+    ],
     cross_board_roles:[], linkedin_url:null, photo_url:null,
     tags:['Lead Independent Director','REIT Board','Mapletree Group']
   },
@@ -6747,7 +6751,9 @@ var TALENT_DATA = [
     rem_note:'FY24/25 ARC Chair fees S$127,500 exact per AR.',
     rem_band:null, rem_pct_fixed:100, rem_pct_bonus:0, rem_pct_other:0,
     edu:null, bio:'Independent Non-Executive Director and ARC Chair, Mapletree Industrial Trust Management Ltd.',
-    prev_roles:[], rem_history:[{year:'FY24/25', total:127500, pct_fixed:100, pct_bonus:0, pct_ltp:0, pct_other:0}],
+    prev_roles:[], rem_history:[{year:'FY24/25', total:127500, pct_fixed:100, pct_bonus:0, pct_ltp:0, pct_other:0},
+      {year:'FY2023/24', total:137500, pct_fixed:100, pct_bonus:0, pct_ltp:0, pct_other:0}
+    ],
     cross_board_roles:[], linkedin_url:null, photo_url:null,
     tags:['Independent Director','ARC Chair','REIT Board','Mapletree Group']
   },
@@ -6759,7 +6765,9 @@ var TALENT_DATA = [
     rem_note:'FY24/25 director fees S$101,250 exact per AR.',
     rem_band:null, rem_pct_fixed:100, rem_pct_bonus:0, rem_pct_other:0,
     edu:null, bio:'Independent Non-Executive Director, Mapletree Industrial Trust Management Ltd.',
-    prev_roles:[], rem_history:[{year:'FY24/25', total:101250, pct_fixed:100, pct_bonus:0, pct_ltp:0, pct_other:0}],
+    prev_roles:[], rem_history:[{year:'FY24/25', total:101250, pct_fixed:100, pct_bonus:0, pct_ltp:0, pct_other:0},
+      {year:'FY2023/24', total:110000, pct_fixed:100, pct_bonus:0, pct_ltp:0, pct_other:0}
+    ],
     cross_board_roles:[], linkedin_url:null, photo_url:null,
     tags:['Independent Director','REIT Board','Mapletree Group']
   },
@@ -6771,7 +6779,9 @@ var TALENT_DATA = [
     rem_note:'FY24/25 director fees S$101,250 exact per AR.',
     rem_band:null, rem_pct_fixed:100, rem_pct_bonus:0, rem_pct_other:0,
     edu:null, bio:'Independent Non-Executive Director, Mapletree Industrial Trust Management Ltd.',
-    prev_roles:[], rem_history:[{year:'FY24/25', total:101250, pct_fixed:100, pct_bonus:0, pct_ltp:0, pct_other:0}],
+    prev_roles:[], rem_history:[{year:'FY24/25', total:101250, pct_fixed:100, pct_bonus:0, pct_ltp:0, pct_other:0},
+      {year:'FY2023/24', total:112500, pct_fixed:100, pct_bonus:0, pct_ltp:0, pct_other:0}
+    ],
     cross_board_roles:[], linkedin_url:null, photo_url:null,
     tags:['Independent Director','REIT Board','Mapletree Group']
   },
@@ -6783,7 +6793,9 @@ var TALENT_DATA = [
     rem_note:'FY24/25 director fees S$95,000 exact per AR.',
     rem_band:null, rem_pct_fixed:100, rem_pct_bonus:0, rem_pct_other:0,
     edu:null, bio:'Independent Non-Executive Director, Mapletree Industrial Trust Management Ltd.',
-    prev_roles:[], rem_history:[{year:'FY24/25', total:95000, pct_fixed:100, pct_bonus:0, pct_ltp:0, pct_other:0}],
+    prev_roles:[], rem_history:[{year:'FY24/25', total:95000, pct_fixed:100, pct_bonus:0, pct_ltp:0, pct_other:0},
+      {year:'FY2023/24', total:122500, pct_fixed:100, pct_bonus:0, pct_ltp:0, pct_other:0}
+    ],
     cross_board_roles:[], linkedin_url:null, photo_url:null,
     tags:['Independent Director','REIT Board','Mapletree Group']
   },
@@ -6795,7 +6807,9 @@ var TALENT_DATA = [
     rem_note:'FY24/25 director fees S$95,000 exact per AR.',
     rem_band:null, rem_pct_fixed:100, rem_pct_bonus:0, rem_pct_other:0,
     edu:null, bio:'Independent Non-Executive Director, Mapletree Industrial Trust Management Ltd.',
-    prev_roles:[], rem_history:[{year:'FY24/25', total:95000, pct_fixed:100, pct_bonus:0, pct_ltp:0, pct_other:0}],
+    prev_roles:[], rem_history:[{year:'FY24/25', total:95000, pct_fixed:100, pct_bonus:0, pct_ltp:0, pct_other:0},
+      {year:'FY2023/24', total:122500, pct_fixed:100, pct_bonus:0, pct_ltp:0, pct_other:0}
+    ],
     cross_board_roles:[], linkedin_url:null, photo_url:null,
     tags:['Independent Director','REIT Board','Mapletree Group']
   },
@@ -6807,7 +6821,9 @@ var TALENT_DATA = [
     rem_note:'FY24/25 director fees S$80,000 exact per AR.',
     rem_band:null, rem_pct_fixed:100, rem_pct_bonus:0, rem_pct_other:0,
     edu:null, bio:'Independent Non-Executive Director, Mapletree Industrial Trust Management Ltd.',
-    prev_roles:[], rem_history:[{year:'FY24/25', total:80000, pct_fixed:100, pct_bonus:0, pct_ltp:0, pct_other:0}],
+    prev_roles:[], rem_history:[{year:'FY24/25', total:80000, pct_fixed:100, pct_bonus:0, pct_ltp:0, pct_other:0},
+      {year:'FY2023/24', total:107500, pct_fixed:100, pct_bonus:0, pct_ltp:0, pct_other:0}
+    ],
     cross_board_roles:[], linkedin_url:null, photo_url:null,
     tags:['Independent Director','REIT Board','Mapletree Group']
   },
@@ -6819,7 +6835,9 @@ var TALENT_DATA = [
     rem_note:'FY24/25 director fees S$80,000 exact per AR.',
     rem_band:null, rem_pct_fixed:100, rem_pct_bonus:0, rem_pct_other:0,
     edu:null, bio:'Independent Non-Executive Director, Mapletree Industrial Trust Management Ltd.',
-    prev_roles:[], rem_history:[{year:'FY24/25', total:80000, pct_fixed:100, pct_bonus:0, pct_ltp:0, pct_other:0}],
+    prev_roles:[], rem_history:[{year:'FY24/25', total:80000, pct_fixed:100, pct_bonus:0, pct_ltp:0, pct_other:0},
+      {year:'FY2023/24', total:0, pct_fixed:0, pct_bonus:0, pct_ltp:0, pct_other:0, note:'Nil — Sponsor employee'}
+    ],
     cross_board_roles:[], linkedin_url:null, photo_url:null,
     tags:['Independent Director','REIT Board','Mapletree Group']
   },
@@ -7138,7 +7156,9 @@ var TALENT_DATA = [
       {org:'Jurong Port Pte Ltd', pos:'Non-Executive Chairman'},
       {org:'Temasek Holdings', pos:'Corporate Advisor'}
     ],
-    rem_history:[{year:'FY2024/25', total:163500, pct_fixed:100, pct_bonus:0, pct_ltp:0, pct_other:0}],
+    rem_history:[{year:'FY2024/25', total:163500, pct_fixed:100, pct_bonus:0, pct_ltp:0, pct_other:0},
+      {year:'FY2023/24', total:163500, pct_fixed:100, pct_bonus:0, pct_ltp:0, pct_other:0}
+    ],
     cross_board_roles:[{entity:'Mapletree Investments Pte Ltd', role:'Board Director & Transaction Review Committee Chairman', listed:false}],
     linkedin_url:null, photo_url:null,
     tags:['Non-Executive Chairman','REIT Board','Mapletree Group','Singapore Institute of Directors Fellow']
@@ -7153,7 +7173,9 @@ var TALENT_DATA = [
     edu:'Diploma in Financial Management (Accounting), Tunku Abdul Rahman University College. Fellow, Association of Chartered and Certified Accountants (UK). Chartered Accountant, Malaysian Institute of Accountants. Fellow, Malaysian Institute of Chartered Secretaries and Administrators.',
     bio:'Lead Independent Non-Executive Director and NRC Chairman of Mapletree Logistics Trust Management Ltd. Previously held various positions at CIMB Investment Bank Berhad over 25+ years (1982–2007), including Head of International Banking and Transaction Service, Head of Capital Markets Division and Co-Head of Corporate Finance. Served as Advisor to Head of International Banking and Transaction Service 2008–2009 until retirement.',
     prev_roles:[{org:'CIMB Investment Bank Berhad', pos:'Multiple senior roles including Head of Capital Markets and Co-Head Corporate Finance (25+ years)'}],
-    rem_history:[{year:'FY2024/25', total:142000, pct_fixed:100, pct_bonus:0, pct_ltp:0, pct_other:0}],
+    rem_history:[{year:'FY2024/25', total:142000, pct_fixed:100, pct_bonus:0, pct_ltp:0, pct_other:0},
+      {year:'FY2023/24', total:142000, pct_fixed:100, pct_bonus:0, pct_ltp:0, pct_other:0}
+    ],
     cross_board_roles:[], linkedin_url:null, photo_url:null,
     tags:['Lead Independent Director','REIT Board','Banking Background','Malaysia']
   },
@@ -7167,7 +7189,9 @@ var TALENT_DATA = [
     edu:null,
     bio:'Independent Non-Executive Director and ARC Chairman of Mapletree Logistics Trust Management Ltd. Adjunct Associate Professor at NUS Business School and Advisor to OWW II Private Equity Fund. Started career at Accenture in 1978; held senior leadership positions in Singapore and Asia Pacific; was Senior Partner before retirement in 2003. Previously Chairman of Singapore Turf Club, Chairman of Pteris Global Limited, and Director of Singapore Pools, SIA Engineering Company and IRAS.',
     prev_roles:[{org:'Accenture Singapore', pos:'Senior Partner (retired 2003)'}],
-    rem_history:[{year:'FY2024/25', total:133500, pct_fixed:100, pct_bonus:0, pct_ltp:0, pct_other:0}],
+    rem_history:[{year:'FY2024/25', total:133500, pct_fixed:100, pct_bonus:0, pct_ltp:0, pct_other:0},
+      {year:'FY2023/24', total:133500, pct_fixed:100, pct_bonus:0, pct_ltp:0, pct_other:0}
+    ],
     cross_board_roles:[], linkedin_url:null, photo_url:null,
     tags:['Independent Director','REIT Board','Audit Committee Chair','NUS Academic']
   },
@@ -7185,7 +7209,9 @@ var TALENT_DATA = [
       {org:'Bank of Singapore', pos:'Chairman'},
       {org:'Lion Global Investors', pos:'Vice Chairman'}
     ],
-    rem_history:[{year:'FY2024/25', total:118500, pct_fixed:100, pct_bonus:0, pct_ltp:0, pct_other:0}],
+    rem_history:[{year:'FY2024/25', total:118500, pct_fixed:100, pct_bonus:0, pct_ltp:0, pct_other:0},
+      {year:'FY2023/24', total:118500, pct_fixed:100, pct_bonus:0, pct_ltp:0, pct_other:0}
+    ],
     cross_board_roles:[{entity:'Singapore Power Limited', role:'Non-Executive Director', listed:false}],
     linkedin_url:null, photo_url:null,
     tags:['Independent Director','REIT Board','Banking & Finance','OCBC Alumni']
@@ -7203,7 +7229,9 @@ var TALENT_DATA = [
       {org:'Dragonfly LLC', pos:'Managing Director (current)'},
       {org:'AlTi Global Inc.', pos:'Board Director (former)'}
     ],
-    rem_history:[{year:'FY2024/25', total:162500, pct_fixed:100, pct_bonus:0, pct_ltp:0, pct_other:0}],
+    rem_history:[{year:'FY2024/25', total:162500, pct_fixed:100, pct_bonus:0, pct_ltp:0, pct_other:0},
+      {year:'FY2023/24', total:150000, pct_fixed:100, pct_bonus:0, pct_ltp:0, pct_other:0}
+    ],
     cross_board_roles:[
       {entity:'DBS Group Holdings Ltd', role:'Board Director', listed:true},
       {entity:'SMRT Corporation Ltd', role:'Board Director', listed:false},
@@ -7222,7 +7250,9 @@ var TALENT_DATA = [
     edu:'Bachelor of Law (Honours), National University of Singapore. Member of the Singapore Bar.',
     bio:'Independent Non-Executive Director of Mapletree Logistics Trust Management Ltd. Co-Head of the Corporate Mergers & Acquisitions Department at Allen & Gledhill LLP. Extensive experience in M&A, equity capital markets and derivatives. Also a Non-Executive Director of SPH Media Holdings Pte. Ltd.',
     prev_roles:[{org:'Allen & Gledhill LLP', pos:'Co-Head, Corporate M&A Department (current)'}],
-    rem_history:[{year:'FY2024/25', total:106000, pct_fixed:100, pct_bonus:0, pct_ltp:0, pct_other:0}],
+    rem_history:[{year:'FY2024/25', total:106000, pct_fixed:100, pct_bonus:0, pct_ltp:0, pct_other:0},
+      {year:'FY2023/24', total:106000, pct_fixed:100, pct_bonus:0, pct_ltp:0, pct_other:0}
+    ],
     cross_board_roles:[{entity:'SPH Media Holdings Pte. Ltd.', role:'Non-Executive Director', listed:false}],
     linkedin_url:null, photo_url:null,
     tags:['Independent Director','REIT Board','Legal Background','M&A','Allen & Gledhill']
@@ -7241,7 +7271,9 @@ var TALENT_DATA = [
       {org:'KPMG Asia Pacific', pos:'Head of Healthcare Practice'},
       {org:'Sembcorp Marine Ltd', pos:'Board Director (former)'}
     ],
-    rem_history:[{year:'FY2024/25', total:118500, pct_fixed:100, pct_bonus:0, pct_ltp:0, pct_other:0}],
+    rem_history:[{year:'FY2024/25', total:118500, pct_fixed:100, pct_bonus:0, pct_ltp:0, pct_other:0},
+      {year:'FY2023/24', total:118500, pct_fixed:100, pct_bonus:0, pct_ltp:0, pct_other:0}
+    ],
     cross_board_roles:[
       {entity:'Genting Singapore Limited', role:'Independent Non-Executive Director', listed:true},
       {entity:'M1 Limited', role:'Board Director', listed:false}
@@ -7585,6 +7617,7 @@ var TALENT_DATA = [
     prev_roles:[], tags:['Former REIT CEO','CapitaLand Alumni','CICT Merger CEO'],
     rem_history:[
       {year:'FY2025', total:425828, pct_fixed:37, pct_bonus:44, pct_ltp:17, pct_other:2, note:'4 months (Jan–Apr 2025)'},
+      {year:'FY2024', total:1403431, pct_fixed:33, pct_bonus:25, pct_ltp:40, pct_other:2, note:'Full year CEO'},
     ],
     cross_board_roles:[], linkedin_url:null, photo_url:null,
   },
@@ -7637,6 +7670,8 @@ var TALENT_DATA = [
     prev_roles:[], tags:['REIT Chairman','NRC Chair','HSBC Board','SingPost Board'],
     rem_history:[
       {year:'FY2025', total:160000, pct_fixed:100, pct_bonus:0, pct_ltp:0, pct_other:0},
+    ,
+      {year:'FY2024', total:160000, pct_fixed:100, pct_bonus:0, pct_ltp:0, pct_other:0}
     ],
     cross_board_roles:[
       {entity:'Singapore Post Limited', role:'Director', listed:true},
@@ -7657,6 +7692,8 @@ var TALENT_DATA = [
     prev_roles:[], tags:['REIT Board','ARC Chair','Chartered Accountant','IHH Board'],
     rem_history:[
       {year:'FY2025', total:124000, pct_fixed:100, pct_bonus:0, pct_ltp:0, pct_other:0},
+    ,
+      {year:'FY2024', total:124000, pct_fixed:100, pct_bonus:0, pct_ltp:0, pct_other:0}
     ],
     cross_board_roles:[
       {entity:'IHH Healthcare Berhad', role:'Director', listed:true},
@@ -7674,7 +7711,9 @@ var TALENT_DATA = [
     edu:'BAccountancy, National University of Singapore; MFinance (International Finance), RMIT University Singapore',
     bio:'Non-Executive Independent Director of CICTML since 1 January 2021; ARC Member. 5 years on CICT Board. Finance and real estate background. No other listed company directorships as at Dec 2025.',
     prev_roles:[], tags:['REIT Board','ARC Member','Finance Background'],
-    rem_history:[{year:'FY2025', total:104000}],
+    rem_history:[{year:'FY2025', total:104000},
+      {year:'FY2024', total:104000, pct_fixed:100, pct_bonus:0, pct_ltp:0, pct_other:0}
+    ],
     cross_board_roles:[], linkedin_url:null, photo_url:null,
   },
   {
@@ -7687,7 +7726,9 @@ var TALENT_DATA = [
     edu:'BAccountancy (Hons), National University of Singapore; Fellow of the Institute of Singapore Chartered Accountants',
     bio:'Non-Executive Independent Director of CICTML since 16 August 2021; ARC Member. Fellow Chartered Accountant with extensive CFO and audit background. Also serves on boards of Advanced Info Service Public Company Limited, Aztech Global Ltd, Hong Leong Finance Limited and Advanced Wireless Network Co., Ltd. Former Director of Intouch Holdings Public Company. Senior Advisor at Singapore Telecommunications Limited. Recipient of Best CFO awards (2010–2012).',
     prev_roles:[], tags:['REIT Board','ARC Member','FICA','Multiple Listed Boards'],
-    rem_history:[{year:'FY2025', total:104000}],
+    rem_history:[{year:'FY2025', total:104000},
+      {year:'FY2024', total:104000, pct_fixed:100, pct_bonus:0, pct_ltp:0, pct_other:0}
+    ],
     cross_board_roles:[
       {entity:'Advanced Info Service Public Company Limited', role:'Director', listed:true},
       {entity:'Aztech Global Ltd', role:'Director', listed:true},
@@ -7705,7 +7746,9 @@ var TALENT_DATA = [
     edu:'BSc Electrical and Electronics Engineering, University of Birmingham, UK; MBA and Management, Imperial College London, UK',
     bio:'Non-Executive Independent Director of CICTML since 16 August 2021; NRC Member. Technology, engineering and business leadership background. CEO and Managing Director of SQL View Pte Ltd. Also serves as Independent Commissioner of PT Diamond Food Indonesia Tbk (listed). Director of ESP Aspire Holding Pte. Ltd. Recipient of The Meritorious Service, NTUC May Day Awards (2021) and IT Person of the Year (2007).',
     prev_roles:[], tags:['REIT Board','NRC Member','Technology CEO','Imperial Alumni'],
-    rem_history:[{year:'FY2025', total:90000}],
+    rem_history:[{year:'FY2025', total:90000},
+      {year:'FY2024', total:90000, pct_fixed:100, pct_bonus:0, pct_ltp:0, pct_other:0}
+    ],
     cross_board_roles:[
       {entity:'PT Diamond Food Indonesia Tbk', role:'Independent Commissioner', listed:true},
     ],
@@ -7721,7 +7764,9 @@ var TALENT_DATA = [
     edu:'LLB First Class, University of Nottingham, UK; Advocate & Solicitor',
     bio:'Non-Executive Independent Director of CICTML since 25 April 2022; ARC Member. Lawyer and governance executive. CEO of Therme Group Services (Singapore) Pte Ltd. Also serves as Director of Singapore Aerospace Manufacturing Pte Ltd, Stellar Ace Pte. Ltd., Stellar Ace Outdoor Pte. Ltd. and Btan Corporate Advisory Pte. Ltd. Former Director of China-Singapore Suzhou Industrial Park Development Group Co., Ltd.',
     prev_roles:[], tags:['REIT Board','ARC Member','Legal Background','Nottingham Alumni'],
-    rem_history:[{year:'FY2025', total:104000}],
+    rem_history:[{year:'FY2025', total:104000},
+      {year:'FY2024', total:104000, pct_fixed:100, pct_bonus:0, pct_ltp:0, pct_other:0}
+    ],
     cross_board_roles:[], linkedin_url:null, photo_url:null,
   },
   {
@@ -7738,7 +7783,9 @@ var TALENT_DATA = [
       {org:'CapitaLand Malaysia REIT Management Sdn. Bhd.', pos:'Director (manager of CapitaLand Malaysia Trust)'},
     ],
     tags:['REIT Board','ExCo Chair','NRC Member','CapitaLand Group Representative'],
-    rem_history:[{year:'FY2025', total:116000, note:'Fees paid to employer CapitaLand Group Pte. Ltd.'}],
+    rem_history:[{year:'FY2025', total:116000, note:'Fees paid to employer CapitaLand Group Pte. Ltd.'},
+      {year:'FY2024', total:116000, pct_fixed:100, pct_bonus:0, pct_ltp:0, pct_other:0}
+    ],
     cross_board_roles:[
       {entity:'CapitaLand Group Pte. Ltd.', role:'CEO CapitaLand Development & Executive NID', listed:false},
     ],
@@ -11424,10 +11471,13 @@ async function ovFetchAgg(q){
   } else if(ovExactProject){
     filter = "project_name=eq." + encSQ(detected.val);
   } else {
-    filter = "or=(project_name.ilike.*" + encSQ(detected.val) + "*,address.ilike.*" + encSQ(detected.val) + "*)";
+    // Chart aggregation: match project_name only (NOT address) to avoid false positives
+    // e.g. searching "Enterprise One" would otherwise match every address containing "ONE"
+    filter = "project_name.ilike.*" + encSQ(detected.val) + "*";
   }
-  // Fetch up to 50000 rows for chart aggregation
-  var url = SB_URL + "/rest/v1/transactions?select=sale_date,property_type,transacted_price&" + filter + "&limit=50000";
+  // Apply date filter to match selected period (chart was previously fetching all-time data)
+  var dateFilter = "&sale_date=gte." + getSliderStartDate() + "&sale_date=lte." + getSliderEndDate();
+  var url = SB_URL + "/rest/v1/transactions?select=sale_date,property_type,transacted_price&" + filter + dateFilter + "&limit=50000";
   var res = await fetch(url, {headers:{"apikey":SB_KEY,"Authorization":"Bearer "+SB_KEY}});
   return await res.json();
 }
@@ -11452,6 +11502,23 @@ async function ovFetchRows(q, page){
   var total = parseInt(res.headers.get("content-range")?.split("/")[1]||"0");
   var data = await res.json();
   return {data:data, total:total};
+}
+
+// Search button handler — resolves exact project name before firing ovSearch
+// Prevents wildcard address matches from polluting the chart (e.g. "Enterprise One"
+// matching every address containing "ONE" across all of Singapore)
+async function ovSearchBtn(){
+  var q = document.getElementById("ov-search").value.trim();
+  if(!q) return;
+  if(/^\d{1,2}$/.test(q)){ ovExactProject=false; ovSearch(0); return; }
+  // Try exact project match first
+  try {
+    var url = SB_URL + "/rest/v1/transactions?select=project_name&project_name=eq." + encSQ(q) + "&limit=1";
+    var res = await fetch(url, {headers:{"apikey":SB_KEY,"Authorization":"Bearer "+SB_KEY,"Prefer":"count=exact"}});
+    var count = parseInt(res.headers.get("content-range")?.split("/")[1]||"0");
+    ovExactProject = count > 0;
+  } catch(e){ ovExactProject = false; }
+  ovSearch(0);
 }
 
 async function ovSearch(page){
@@ -12034,7 +12101,7 @@ function initOvAutocomplete(){
   });
 
   inp.addEventListener("keydown", function(e){
-    if(e.key==="Enter"){ dd.style.display="none"; ovExactProject=false; ovSearch(0); }
+    if(e.key==="Enter"){ dd.style.display="none"; ovSearchBtn(); }
     if(e.key==="Escape"){ dd.style.display="none"; }
   });
 
