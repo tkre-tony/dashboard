@@ -506,7 +506,7 @@ html,body{background:var(--bg);color:var(--txt);font-family:'DM Sans',sans-serif
             class="cs-input" style="font-size:13px"/>
           <div class="ac-dropdown" id="ov-ac-dropdown"></div>
         </div>
-        <button onclick="ovSearchBtn()" class="cs-btn" style="white-space:nowrap">Search</button>
+        <button onclick="ovSearch()" class="cs-btn" style="white-space:nowrap">Search</button>
         <button onclick="ovClear()" class="cs-btn-ghost" style="white-space:nowrap">Clear</button>
         <div id="ov-search-info" style="font-size:11px;color:var(--g1);font-weight:600;padding:5px 10px;background:var(--glt);border-radius:5px;display:none"></div>
       </div>
@@ -6683,6 +6683,25 @@ var TALENT_DATA = [
   // MAPLETREE INDUSTRIAL TRUST (MINT) — FY24/25
   // Manager: Mapletree Industrial Trust Management Ltd
   // ════════════════════════════════════════════
+  // ── MINT Prior CEO ──
+  {
+    id:'mint-ceo-tham-24', name:'Tham Kuo Wei', role:'Executive Director and CEO (until 22 Jul 2024)', role_type:'CEO',
+    entity:'Mapletree Industrial Trust', entity_short:'MINT', ar_year:'FY2023/24',
+    appointed:null, tenure_yrs:null,
+    rem_exact:null, rem_fixed:null, rem_bonus:null, rem_other:null,
+    rem_note:'FY2023/24 remuneration band S$1,500,000–S$1,750,000 (band only — exact quantum not disclosed in AR). Mix: 31% fixed salary, 44% variable bonus, 25% LTI. Stepped down as CEO 22 Jul 2024; transferred to new responsibilities at Mapletree Sponsor.',
+    rem_band:'S$1,500,000–S$1,750,000', rem_pct_fixed:31, rem_pct_bonus:44, rem_pct_other:25,
+    edu:null,
+    bio:'CEO of Mapletree Industrial Trust Management Ltd until 22 Jul 2024, when he stepped down to assume new responsibilities at the Mapletree Sponsor. Led MINT\'s expansion into North American data centres and growth of the industrial portfolio in Singapore and Japan. Succeeded by Ler Lily on 22 Jul 2024.',
+    prev_roles:[
+      {org:'Mapletree Investments (Sponsor)', pos:'New responsibilities (from 22 Jul 2024)'}
+    ],
+    rem_history:[
+      {year:'FY2023/24', total:null, band:'S$1,500,000–S$1,750,000', pct_fixed:31, pct_bonus:44, pct_ltp:25, pct_other:0}
+    ],
+    cross_board_roles:[], linkedin_url:null, photo_url:null,
+    tags:['REIT CEO','Industrial','Data Centre','Mapletree Group','Prior CEO']
+  },
   {
     id:'mint-ceo-25', name:'Ler Lily', role:'Chief Executive Officer', role_type:'CEO',
     entity:'Mapletree Industrial Trust', entity_short:'MINT', ar_year:'FY24/25',
@@ -7280,6 +7299,28 @@ var TALENT_DATA = [
     ],
     linkedin_url:null, photo_url:null,
     tags:['Independent Director','REIT Board','KPMG Alumni','Ambassador','Mapletree Group']
+  },
+
+  // ── MLT Prior CEO ──
+  {
+    id:'mlt-ceo-ngkiat-24', name:'Ng Kiat', role:'Executive Director and CEO (until 22 Jul 2024)', role_type:'CEO',
+    entity:'Mapletree Logistics Trust', entity_short:'MLT', ar_year:'FY2023/24',
+    appointed:null, tenure_yrs:null,
+    rem_exact:null, rem_fixed:null, rem_bonus:null, rem_other:null,
+    rem_note:'FY2023/24 remuneration band S$1,750,000–S$2,000,000 (band only — exact quantum not disclosed in AR). Mix: 26% fixed salary, 40% variable bonus, 34% LTI. Stepped down as CEO 22 Jul 2024; transferred to new responsibilities at Mapletree Sponsor.',
+    rem_band:'S$1,750,000–S$2,000,000', rem_pct_fixed:26, rem_pct_bonus:40, rem_pct_other:34,
+    edu:'MEng Aeronautical Engineering (First Class Honours), Imperial College London (Singapore Technologies Scholar).',
+    bio:'CEO of Mapletree Logistics Trust Management Ltd from Jul 2012 until 22 Jul 2024, when he stepped down to assume new responsibilities at the Mapletree Sponsor. Under his leadership MLT expanded significantly across Asia-Pacific. Previously Chief Investment Officer SEA at Mapletree. Prior to joining Mapletree in 2007: Temasek Holdings (~5 years, PE fund investments); CapitaLand Group VP (real estate investments & M&A, SEA and Europe). Succeeded by Jean Kam Sok Kam on 22 Jul 2024.',
+    prev_roles:[
+      {org:'Mapletree Investments (Sponsor)', pos:'Chief Investment Officer, SEA'},
+      {org:'Temasek Holdings', pos:'PE Fund Investments (~5 years)'},
+      {org:'CapitaLand Group', pos:'VP, Real Estate Investments & M&A (SEA & Europe)'}
+    ],
+    rem_history:[
+      {year:'FY2023/24', total:null, band:'S$1,750,000–S$2,000,000', pct_fixed:26, pct_bonus:40, pct_ltp:34, pct_other:0}
+    ],
+    cross_board_roles:[], linkedin_url:null, photo_url:null,
+    tags:['REIT CEO','Logistics & Industrial','Mapletree Group','Prior CEO','Imperial College']
   },
 
   // ════════════════════════════════════════════
@@ -11471,13 +11512,10 @@ async function ovFetchAgg(q){
   } else if(ovExactProject){
     filter = "project_name=eq." + encSQ(detected.val);
   } else {
-    // Chart aggregation: match project_name only (NOT address) to avoid false positives
-    // e.g. searching "Enterprise One" would otherwise match every address containing "ONE"
-    filter = "project_name.ilike.*" + encSQ(detected.val) + "*";
+    filter = "or=(project_name.ilike.*" + encSQ(detected.val) + "*,address.ilike.*" + encSQ(detected.val) + "*)";
   }
-  // Apply date filter to match selected period (chart was previously fetching all-time data)
-  var dateFilter = "&sale_date=gte." + getSliderStartDate() + "&sale_date=lte." + getSliderEndDate();
-  var url = SB_URL + "/rest/v1/transactions?select=sale_date,property_type,transacted_price&" + filter + dateFilter + "&limit=50000";
+  // Fetch up to 50000 rows for chart aggregation
+  var url = SB_URL + "/rest/v1/transactions?select=sale_date,property_type,transacted_price&" + filter + "&limit=50000";
   var res = await fetch(url, {headers:{"apikey":SB_KEY,"Authorization":"Bearer "+SB_KEY}});
   return await res.json();
 }
@@ -11502,23 +11540,6 @@ async function ovFetchRows(q, page){
   var total = parseInt(res.headers.get("content-range")?.split("/")[1]||"0");
   var data = await res.json();
   return {data:data, total:total};
-}
-
-// Search button handler — resolves exact project name before firing ovSearch
-// Prevents wildcard address matches from polluting the chart (e.g. "Enterprise One"
-// matching every address containing "ONE" across all of Singapore)
-async function ovSearchBtn(){
-  var q = document.getElementById("ov-search").value.trim();
-  if(!q) return;
-  if(/^\d{1,2}$/.test(q)){ ovExactProject=false; ovSearch(0); return; }
-  // Try exact project match first
-  try {
-    var url = SB_URL + "/rest/v1/transactions?select=project_name&project_name=eq." + encSQ(q) + "&limit=1";
-    var res = await fetch(url, {headers:{"apikey":SB_KEY,"Authorization":"Bearer "+SB_KEY,"Prefer":"count=exact"}});
-    var count = parseInt(res.headers.get("content-range")?.split("/")[1]||"0");
-    ovExactProject = count > 0;
-  } catch(e){ ovExactProject = false; }
-  ovSearch(0);
 }
 
 async function ovSearch(page){
@@ -12101,7 +12122,7 @@ function initOvAutocomplete(){
   });
 
   inp.addEventListener("keydown", function(e){
-    if(e.key==="Enter"){ dd.style.display="none"; ovSearchBtn(); }
+    if(e.key==="Enter"){ dd.style.display="none"; ovExactProject=false; ovSearch(0); }
     if(e.key==="Escape"){ dd.style.display="none"; }
   });
 
