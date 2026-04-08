@@ -1436,6 +1436,88 @@ html,body{background:var(--bg);color:var(--txt);font-family:'DM Sans',sans-serif
   <!-- REIT DIRECTORY TAB -->
   <div class="panel" id="tab-reit">
 
+    <!-- ── Asset Directory Sub-tabs ── -->
+    <div style="display:flex;gap:0;border-bottom:2px solid var(--bdr);margin-bottom:16px">
+      <button id="adir-sub-properties" onclick="adirSubTab('properties')" style="padding:9px 20px;font-size:12px;font-weight:600;font-family:'DM Sans',sans-serif;border:none;border-bottom:2px solid var(--g1);margin-bottom:-2px;background:transparent;color:var(--g1);cursor:pointer;letter-spacing:.01em">🏢 Properties</button>
+      <button id="adir-sub-companies" onclick="adirSubTab('companies')" style="padding:9px 20px;font-size:12px;font-weight:600;font-family:'DM Sans',sans-serif;border:none;border-bottom:2px solid transparent;margin-bottom:-2px;background:transparent;color:var(--mut);cursor:pointer;letter-spacing:.01em">🏭 Companies
+        <span style="font-size:9px;background:rgba(26,107,58,.15);border:1px solid rgba(26,107,58,.3);color:#1a6b3a;border-radius:3px;padding:1px 5px;margin-left:4px;font-weight:700">ACRA</span>
+      </button>
+    </div>
+
+    <!-- ── Companies Sub-panel ── -->
+    <div id="adir-companies-panel" style="display:none">
+      <div style="background:linear-gradient(135deg,var(--hdr) 0%,#1a3a2e 100%);border-radius:8px;padding:20px 24px;margin-bottom:14px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;border:1px solid rgba(255,255,255,.06)">
+        <div>
+          <div style="color:#fff;font-size:16px;font-weight:700;letter-spacing:-.02em;margin-bottom:4px">🏭 Singapore Company Registry</div>
+          <div style="color:rgba(255,255,255,.5);font-size:11px;letter-spacing:.02em">ACRA-sourced · Search by company name, industry, address or postal code</div>
+        </div>
+        <div style="display:flex;gap:10px;flex-wrap:wrap">
+          <div style="background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.2);border-radius:8px;padding:10px 16px;text-align:center">
+            <div id="co-kpi-rows" style="font-size:20px;font-weight:700;color:#fff;font-family:'DM Mono',monospace">170K+</div>
+            <div style="font-size:10px;color:rgba(255,255,255,.6);text-transform:uppercase;letter-spacing:.06em;margin-top:2px">Companies (A–)</div>
+          </div>
+          <div style="background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.2);border-radius:8px;padding:10px 16px;text-align:center">
+            <div style="font-size:20px;font-weight:700;color:#4ade80;font-family:'DM Mono',monospace">Live</div>
+            <div style="font-size:10px;color:rgba(255,255,255,.6);text-transform:uppercase;letter-spacing:.06em;margin-top:2px">Supabase</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Search bar -->
+      <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px;align-items:center">
+        <input id="co-search" placeholder="🔍  Company name, UEN, or keyword…" autocomplete="off"
+          style="flex:2;min-width:220px;height:34px;padding:0 12px;border:1px solid var(--bdr);border-radius:6px;background:var(--srf);color:var(--txt);font-size:13px;font-family:'DM Sans',sans-serif"
+          onkeydown="if(event.key==='Enter')coSearch()">
+        <input id="co-addr" placeholder="Street name (e.g. Tai Seng Street)"
+          style="flex:2;min-width:180px;height:34px;padding:0 12px;border:1px solid var(--bdr);border-radius:6px;background:var(--srf);color:var(--txt);font-size:13px;font-family:'DM Sans',sans-serif"
+          onkeydown="if(event.key==='Enter')coSearch()">
+        <input id="co-postal" placeholder="Postal code"
+          style="width:110px;height:34px;padding:0 12px;border:1px solid var(--bdr);border-radius:6px;background:var(--srf);color:var(--txt);font-size:13px;font-family:'DM Sans',sans-serif"
+          onkeydown="if(event.key==='Enter')coSearch()">
+        <select id="co-status" style="height:34px;padding:0 10px;border:1px solid var(--bdr);border-radius:6px;background:var(--srf);color:var(--txt);font-size:12px;font-family:'DM Sans',sans-serif">
+          <option value="">All status</option>
+          <option value="Live Company">Live only</option>
+          <option value="Dissolved">Dissolved</option>
+        </select>
+        <button onclick="coSearch()" style="height:34px;padding:0 18px;background:var(--g1);color:#fff;border:none;border-radius:6px;font-size:12px;font-weight:600;font-family:'DM Sans',sans-serif;cursor:pointer">Search</button>
+        <button onclick="coClear()" style="height:34px;padding:0 14px;background:var(--srf2);color:var(--mut);border:1px solid var(--bdr);border-radius:6px;font-size:12px;font-family:'DM Sans',sans-serif;cursor:pointer">Clear</button>
+        <button onclick="coExportCSV()" style="height:34px;padding:0 14px;background:var(--srf2);color:var(--mut);border:1px solid var(--bdr);border-radius:6px;font-size:12px;font-family:'DM Sans',sans-serif;cursor:pointer">⬇ CSV</button>
+      </div>
+
+      <!-- Stats row -->
+      <div id="co-stats-row" style="display:flex;gap:8px;margin-bottom:12px;flex-wrap:wrap"></div>
+
+      <!-- States -->
+      <div id="co-idle" style="padding:40px;text-align:center;color:var(--mut);font-size:13px;background:var(--srf);border:1px solid var(--bdr);border-radius:8px">
+        Enter a company name, street address, or postal code and press Search.
+      </div>
+      <div id="co-loading" style="display:none;padding:32px;text-align:center;color:var(--mut);font-size:12px">⟳ Searching ACRA registry…</div>
+      <div id="co-empty" style="display:none;padding:32px;text-align:center;color:var(--mut);font-size:12px">No companies found matching your query.</div>
+
+      <!-- Results table -->
+      <div id="co-tbl-wrap" style="display:none;overflow-x:auto;border:1px solid var(--bdr);border-radius:8px">
+        <table style="width:100%;border-collapse:collapse;font-size:12px">
+          <thead>
+            <tr style="background:var(--srf2)">
+              <th style="padding:9px 12px;text-align:left;font-weight:600;color:var(--mut);font-size:10px;text-transform:uppercase;letter-spacing:.05em;border-bottom:1px solid var(--bdr)">Company</th>
+              <th style="padding:9px 12px;text-align:left;font-weight:600;color:var(--mut);font-size:10px;text-transform:uppercase;letter-spacing:.05em;border-bottom:1px solid var(--bdr)">UEN</th>
+              <th style="padding:9px 12px;text-align:left;font-weight:600;color:var(--mut);font-size:10px;text-transform:uppercase;letter-spacing:.05em;border-bottom:1px solid var(--bdr)">Address</th>
+              <th style="padding:9px 12px;text-align:left;font-weight:600;color:var(--mut);font-size:10px;text-transform:uppercase;letter-spacing:.05em;border-bottom:1px solid var(--bdr)">Postal</th>
+              <th style="padding:9px 12px;text-align:left;font-weight:600;color:var(--mut);font-size:10px;text-transform:uppercase;letter-spacing:.05em;border-bottom:1px solid var(--bdr)">Industry (SSIC)</th>
+              <th style="padding:9px 12px;text-align:left;font-weight:600;color:var(--mut);font-size:10px;text-transform:uppercase;letter-spacing:.05em;border-bottom:1px solid var(--bdr)">Type</th>
+              <th style="padding:9px 12px;text-align:left;font-weight:600;color:var(--mut);font-size:10px;text-transform:uppercase;letter-spacing:.05em;border-bottom:1px solid var(--bdr)">Status</th>
+              <th style="padding:9px 12px;text-align:left;font-weight:600;color:var(--mut);font-size:10px;text-transform:uppercase;letter-spacing:.05em;border-bottom:1px solid var(--bdr)">Reg. Date</th>
+            </tr>
+          </thead>
+          <tbody id="co-tbl-body"></tbody>
+        </table>
+      </div>
+      <div id="co-limit-note" style="display:none;margin-top:8px;font-size:11px;color:var(--mut);text-align:right"></div>
+    </div>
+
+    <!-- ── Properties Sub-panel (existing content) ── -->
+    <div id="adir-properties-panel">
+
     <div style="background:linear-gradient(135deg,var(--hdr) 0%,var(--hdr3) 50%,#1a4a2e 100%);border-radius:8px;padding:20px 24px;margin-bottom:14px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;border:1px solid rgba(255,255,255,.06)">
       <div>
         <div style="color:#fff;font-size:16px;font-weight:700;letter-spacing:-.02em;margin-bottom:4px">🏢 Singapore REIT &amp; Developer Property Directory</div>
@@ -1770,6 +1852,7 @@ html,body{background:var(--bg);color:var(--txt);font-family:'DM Sans',sans-serif
         </div>
       </div>
     </div>
+    </div><!-- /adir-properties-panel -->
   </div><!-- /tab-reit -->
 
 
@@ -16881,6 +16964,144 @@ function parseAddress(addrStr) {
   var m = addrStr.match(/^(\d+[A-Za-z]?)\s+(.+)$/);
   if (!m) return null;
   return { blk: m[1].toUpperCase(), street: m[2].toUpperCase() };
+}
+
+
+// ── ASSET DIRECTORY SUB-TABS ──────────────────────────────────────────────────
+function adirSubTab(sub) {
+  var isProps = sub === 'properties';
+  document.getElementById('adir-properties-panel').style.display = isProps ? 'block' : 'none';
+  document.getElementById('adir-companies-panel').style.display  = isProps ? 'none'  : 'block';
+  var btnP = document.getElementById('adir-sub-properties');
+  var btnC = document.getElementById('adir-sub-companies');
+  btnP.style.borderBottomColor = isProps ? 'var(--g1)' : 'transparent';
+  btnP.style.color = isProps ? 'var(--g1)' : 'var(--mut)';
+  btnC.style.borderBottomColor = isProps ? 'transparent' : 'var(--g1)';
+  btnC.style.color = isProps ? 'var(--mut)' : 'var(--g1)';
+}
+
+// ── COMPANY REGISTRY SEARCH ───────────────────────────────────────────────────
+var CO_RESULTS = [];
+var CO_LIMIT = 200;
+
+async function coSearch() {
+  var q      = (document.getElementById('co-search').value  || '').trim();
+  var addr   = (document.getElementById('co-addr').value    || '').trim();
+  var postal = (document.getElementById('co-postal').value  || '').trim();
+  var status = document.getElementById('co-status').value;
+
+  if (!q && !addr && !postal) {
+    document.getElementById('co-idle').style.display    = 'block';
+    document.getElementById('co-tbl-wrap').style.display = 'none';
+    document.getElementById('co-stats-row').innerHTML   = '';
+    document.getElementById('co-limit-note').style.display = 'none';
+    return;
+  }
+
+  ['co-idle','co-empty','co-tbl-wrap','co-limit-note'].forEach(function(id){
+    document.getElementById(id).style.display = 'none';
+  });
+  document.getElementById('co-loading').style.display = 'block';
+  document.getElementById('co-stats-row').innerHTML = '';
+
+  try {
+    var filters = [];
+    if (q)      filters.push('entity_name=ilike.*' + encodeURIComponent(q.replace(/ /g,'*')) + '*');
+    if (addr)   filters.push('street_name=ilike.*' + encodeURIComponent(addr.replace(/ /g,'*')) + '*');
+    if (postal) filters.push('postal_code=eq.' + encodeURIComponent(postal));
+    if (status) filters.push('entity_status=eq.' + encodeURIComponent(status));
+
+    var url = SB_URL + '/rest/v1/tenant_registry?select=entity_name,uen,blk_no,street_name,unit_no,postal_code,primary_ssic_desc,entity_type,entity_status,reg_date'
+      + '&' + filters.join('&')
+      + '&order=entity_name.asc'
+      + '&limit=' + CO_LIMIT;
+
+    var r = await fetch(url, { headers: { 'apikey': SB_KEY, 'Authorization': 'Bearer ' + SB_KEY } });
+    if (!r.ok) throw new Error('Supabase error ' + r.status);
+    CO_RESULTS = await r.json();
+
+    document.getElementById('co-loading').style.display = 'none';
+
+    if (!CO_RESULTS.length) {
+      document.getElementById('co-empty').style.display = 'block';
+      return;
+    }
+
+    // Stats
+    var live = CO_RESULTS.filter(function(c){ return /live/i.test(c.entity_status||''); }).length;
+    var dissolved = CO_RESULTS.filter(function(c){ return /dissolved/i.test(c.entity_status||''); }).length;
+    var industries = [...new Set(CO_RESULTS.map(function(c){ return c.primary_ssic_desc; }).filter(Boolean))].length;
+    document.getElementById('co-stats-row').innerHTML =
+      coStatCard(CO_RESULTS.length, 'Results') +
+      coStatCard(live, 'Live', '#16a34a') +
+      coStatCard(dissolved, 'Dissolved', '#c8364a') +
+      coStatCard(industries, 'Industries');
+
+    // Render table
+    coRenderTable();
+
+    document.getElementById('co-tbl-wrap').style.display = 'block';
+    if (CO_RESULTS.length >= CO_LIMIT) {
+      var note = document.getElementById('co-limit-note');
+      note.textContent = 'Showing first ' + CO_LIMIT + ' results — refine your search for more specific results.';
+      note.style.display = 'block';
+    }
+  } catch(err) {
+    document.getElementById('co-loading').style.display = 'none';
+    document.getElementById('co-empty').textContent = '⚠️ Error querying registry: ' + err.message;
+    document.getElementById('co-empty').style.display = 'block';
+  }
+}
+
+function coRenderTable() {
+  document.getElementById('co-tbl-body').innerHTML = CO_RESULTS.map(function(c) {
+    var isLive = /live/i.test(c.entity_status||'');
+    var addr = [(c.blk_no||''), (c.street_name||''), (c.unit_no||'')].filter(Boolean).join(' ');
+    return '<tr style="border-bottom:1px solid var(--bdr)">' +
+      '<td style="padding:8px 12px;font-weight:600;color:var(--txt);max-width:260px">' + (c.entity_name||'—') + '</td>' +
+      '<td style="padding:8px 12px;font-family:\'DM Mono\',monospace;font-size:11px;color:var(--mut)">' + (c.uen||'—') + '</td>' +
+      '<td style="padding:8px 12px;color:var(--txt2);font-size:11px">' + (addr||'—') + '</td>' +
+      '<td style="padding:8px 12px;font-family:\'DM Mono\',monospace;font-size:11px;color:var(--mut)">' + (c.postal_code||'—') + '</td>' +
+      '<td style="padding:8px 12px;color:var(--txt2);font-size:11px;max-width:180px">' + (c.primary_ssic_desc||'—') + '</td>' +
+      '<td style="padding:8px 12px;font-size:11px;color:var(--mut)">' + (c.entity_type||'—') + '</td>' +
+      '<td style="padding:8px 12px">' +
+        '<span style="font-size:10px;font-weight:700;color:' + (isLive?'#16a34a':'#c8364a') + ';background:' + (isLive?'#f0fdf4':'#fef2f2') + ';border:1px solid ' + (isLive?'#bbf7d0':'#fecaca') + ';border-radius:3px;padding:2px 7px">' + (c.entity_status||'—') + '</span>' +
+      '</td>' +
+      '<td style="padding:8px 12px;font-size:11px;color:var(--mut);white-space:nowrap">' + (c.reg_date||'—') + '</td>' +
+      '</tr>';
+  }).join('');
+}
+
+function coStatCard(val, lbl, color) {
+  return '<div style="background:var(--srf);border:1px solid var(--bdr);border-radius:6px;padding:8px 16px;flex:1;min-width:70px">' +
+    '<div style="font-size:18px;font-weight:700;color:' + (color||'var(--txt)') + ';font-family:\'DM Mono\',monospace;line-height:1">' + val + '</div>' +
+    '<div style="font-size:10px;color:var(--mut);margin-top:3px">' + lbl + '</div></div>';
+}
+
+function coClear() {
+  ['co-search','co-addr','co-postal'].forEach(function(id){ document.getElementById(id).value = ''; });
+  document.getElementById('co-status').value = '';
+  CO_RESULTS = [];
+  document.getElementById('co-idle').style.display     = 'block';
+  document.getElementById('co-empty').style.display    = 'none';
+  document.getElementById('co-tbl-wrap').style.display = 'none';
+  document.getElementById('co-loading').style.display  = 'none';
+  document.getElementById('co-stats-row').innerHTML    = '';
+  document.getElementById('co-limit-note').style.display = 'none';
+}
+
+function coExportCSV() {
+  if (!CO_RESULTS.length) return;
+  var headers = ['Company','UEN','Blk','Street','Unit','Postal','Industry (SSIC)','Type','Status','Reg Date'];
+  var rows = CO_RESULTS.map(function(c) {
+    return [c.entity_name,c.uen,c.blk_no,c.street_name,c.unit_no,c.postal_code,c.primary_ssic_desc,c.entity_type,c.entity_status,c.reg_date]
+      .map(function(v){ return '"'+(v||'').toString().replace(/"/g,'""')+'"'; }).join(',');
+  });
+  var csv = [headers.join(',')].concat(rows).join('\n');
+  var a = document.createElement('a');
+  a.href = 'data:text/csv;charset=utf-8,' + encodeURIComponent(csv);
+  a.download = 'company_registry_export.csv';
+  a.click();
 }
 
 function tenantStatCard(val, lbl, color) {
