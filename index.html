@@ -399,6 +399,7 @@ html,body{background:var(--bg);color:var(--txt);font-family:'DM Sans',sans-serif
 .talent-filter-btn.role-cfo.on{background:#0891b2;border-color:#0891b2}
 .talent-filter-btn.role-cio.on{background:#16a34a;border-color:#16a34a}
 .talent-filter-btn.role-board.on{background:#d97706;border-color:#d97706}
+.talent-filter-btn.role-mgmt.on{background:#2563bc;border-color:#2563bc}
 .talent-sort-sel{padding:6px 10px;border:1px solid var(--bdr);background:var(--srf);border-radius:6px;font-size:11px;color:var(--mut);cursor:pointer;font-family:'DM Sans',sans-serif;outline:none}
 
 /* ── PERSON CARDS GRID ── */
@@ -410,7 +411,7 @@ html,body{background:var(--bg);color:var(--txt);font-family:'DM Sans',sans-serif
 .talent-card.role-cfo::before{background:#0891b2}
 .talent-card.role-cio::before{background:#16a34a}
 .talent-card.role-board::before{background:#d97706}
-.talent-card.role-mgmt::before{background:var(--g2)}
+.talent-card.role-mgmt::before{background:#2563bc}
 .talent-card-top{display:flex;align-items:flex-start;gap:12px;margin-bottom:10px}
 .talent-avatar{width:40px;height:40px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:16px;font-weight:700;flex-shrink:0;color:#fff;letter-spacing:-.01em}
 .talent-name{font-size:13px;font-weight:700;color:var(--txt);letter-spacing:-.01em;line-height:1.3}
@@ -1964,6 +1965,7 @@ html,body{background:var(--bg);color:var(--txt);font-family:'DM Sans',sans-serif
     <button class="talent-filter-btn role-cfo" data-tfilter="CFO" onclick="talentSetFilter(this,'role','CFO')">CFO</button>
     <button class="talent-filter-btn role-cio" data-tfilter="CIO" onclick="talentSetFilter(this,'role','CIO')">CIO / Head RE</button>
     <button class="talent-filter-btn role-board" data-tfilter="Board" onclick="talentSetFilter(this,'role','Board')">Board</button>
+    <button class="talent-filter-btn role-mgmt" data-tfilter="Mgmt" onclick="talentSetFilter(this,'role','Mgmt')">Mgmt / KMP</button>
     <select class="talent-sort-sel" id="talent-entity-filter" onchange="talentRender()" style="max-width:160px">
       <option value="">All Entities</option>
       <option value="Alpha Integrated REIT">AI-REIT (FY2025)</option>
@@ -2153,7 +2155,7 @@ var TALENT_DATA = [
 
   // ── ACROPHYTE HOSPITALITY TRUST — FY2024 ──────────────────────────────
   {
-    id:'acro-chair-24', name:'Stephen Ray Finch', role:'Chairman & Independent Non-Executive Director', role_type:'NED',
+    id:'acro-chair-24', name:'Stephen Ray Finch', role:'Chairman & Independent Non-Executive Director', role_type:'Board',
     entity:'Acrophyte Hospitality Trust', entity_short:'ACRO-HT', ar_year:'FY2024',
     appointed:'Jan 2019', tenure_yrs:6,
     rem_exact:100000, rem_fixed:100000, rem_bonus:0, rem_other:0,
@@ -2173,7 +2175,7 @@ var TALENT_DATA = [
     linkedin_url:null, photo_url:null
   },
   {
-    id:'acro-ned1-24', name:'Randy Allan Daniels', role:'Independent Non-Executive Director', role_type:'NED',
+    id:'acro-ned1-24', name:'Randy Allan Daniels', role:'Independent Non-Executive Director', role_type:'Board',
     entity:'Acrophyte Hospitality Trust', entity_short:'ACRO-HT', ar_year:'FY2024',
     appointed:'Apr 2019', tenure_yrs:5,
     rem_exact:83279, rem_fixed:83279, rem_bonus:0, rem_other:0,
@@ -2198,7 +2200,7 @@ var TALENT_DATA = [
     linkedin_url:null, photo_url:null
   },
   {
-    id:'acro-ned2-24', name:'Wong Choong Mann', role:'Independent Non-Executive Director', role_type:'NED',
+    id:'acro-ned2-24', name:'Wong Choong Mann', role:'Independent Non-Executive Director', role_type:'Board',
     entity:'Acrophyte Hospitality Trust', entity_short:'ACRO-HT', ar_year:'FY2024',
     appointed:'Jan 2020', tenure_yrs:4,
     rem_exact:70000, rem_fixed:70000, rem_bonus:0, rem_other:0,
@@ -2216,7 +2218,7 @@ var TALENT_DATA = [
     linkedin_url:null, photo_url:null
   },
   {
-    id:'acro-ned3-24', name:'Lin Daqi', role:'Non-Independent Non-Executive Director', role_type:'NED',
+    id:'acro-ned3-24', name:'Lin Daqi', role:'Non-Independent Non-Executive Director', role_type:'Board',
     entity:'Acrophyte Hospitality Trust', entity_short:'ACRO-HT', ar_year:'FY2024',
     appointed:'Jan 2020', tenure_yrs:4,
     rem_exact:0, rem_fixed:0, rem_bonus:0, rem_other:0,
@@ -2280,7 +2282,7 @@ var TALENT_DATA = [
     linkedin_url:null, photo_url:null
   },
   {
-    id:'acro-inv-24', name:'James S. Jung', role:'Director, Investments', role_type:'KMP',
+    id:'acro-inv-24', name:'James S. Jung', role:'Director, Investments', role_type:'Mgmt',
     entity:'Acrophyte Hospitality Trust', entity_short:'ACRO-HT', ar_year:'FY2024',
     appointed:'2024', tenure_yrs:1,
     rem_exact:null, rem_fixed:null, rem_bonus:null, rem_other:null,
@@ -2295,7 +2297,7 @@ var TALENT_DATA = [
     linkedin_url:null, photo_url:null
   },
   {
-    id:'acro-fin-24', name:'Cheryl Yong', role:'Assistant Director, Finance', role_type:'KMP',
+    id:'acro-fin-24', name:'Cheryl Yong', role:'Assistant Director, Finance', role_type:'Mgmt',
     entity:'Acrophyte Hospitality Trust', entity_short:'ACRO-HT', ar_year:'FY2024',
     appointed:'May 2024', tenure_yrs:0.5,
     rem_exact:null, rem_fixed:null, rem_bonus:null, rem_other:null,
@@ -8967,7 +8969,7 @@ var TALENT_DATA = [
     tags:['CFO','Data Centre','Keppel','Singapore REIT','IPO Veteran']
   },
   {
-    id:'kdc-hpm-25', name:'Charmaine Cai Jialing', role:'Head of Portfolio Management', role_type:'Management',
+    id:'kdc-hpm-25', name:'Charmaine Cai Jialing', role:'Head of Portfolio Management', role_type:'Mgmt',
     entity:'Keppel DC REIT', entity_short:'KDC REIT', ar_year:'FY2025',
     appointed:null, tenure_yrs:null,
     rem_exact:null, rem_fixed:null, rem_bonus:null, rem_other:null,
@@ -9202,7 +9204,7 @@ function talentRenderTable(data){
 var talentOpenId = null;
 
 var ROLE_COLORS = {
-  CEO:'#7c3aed', CFO:'#0891b2', CIO:'#16a34a', Board:'#d97706', Mgmt:'#2563bc'
+  CEO:'#7c3aed', CFO:'#0891b2', CIO:'#16a34a', Board:'#d97706', Mgmt:'#2563bc', Management:'#2563bc', NED:'#d97706', KMP:'#2563bc'
 };
 
 function talentAvatarColor(rt){
@@ -10161,9 +10163,11 @@ function atlasShowTab(tab) {
       talentInited = true;
       talentInitSummary();
       talentRender();
+      // Safety re-render after tick — guards against enrichment fetch race condition
+      setTimeout(function(){ talentRender(); }, 100);
       talentLoadEnrichment().then(function(){
         if(Object.keys(TALENT_ENRICHMENT).length > 0) talentRender();
-      }).catch(function(){});
+      }).catch(function(){ talentRender(); });
     } else {
       talentRender();
     }
