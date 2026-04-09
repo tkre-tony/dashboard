@@ -17687,14 +17687,14 @@ async function pulseLoad() {
   try {
     // New registrations: recently incorporated companies (reg_date filter applies)
     document.getElementById('pulse-loading-msg').textContent = 'Loading new registrations…';
-    var r1 = await fetch(base + '&entity_status=ilike.Live*&reg_date=gte.' + dateStr + '&order=reg_date.desc&limit=1000', { headers: hdr });
+    var r1 = await fetch(base + '&entity_status=ilike.Live*&reg_date=gte.' + dateStr + '&order=reg_date.desc&limit=2000', { headers: hdr });
     if(!r1.ok){ var e1=await r1.text(); console.error('Pulse new 400:',e1); }
     PULSE_DATA_NEW = r1.ok ? await r1.json() : [];
 
     // Exits: dissolved/struck-off companies — no date filter (no cessation_date column)
     // Shows most recently registered companies that are now dissolved
     document.getElementById('pulse-loading-msg').textContent = 'Loading exits…';
-    var r2 = await fetch(base + '&entity_status=not.ilike.Live*&order=reg_date.desc&limit=1000', { headers: hdr });
+    var r2 = await fetch(base + '&entity_status=not.ilike.Live*&order=reg_date.desc&limit=2000', { headers: hdr });
     if(!r2.ok){ var e2=await r2.text(); console.error('Pulse exit 400:',e2); }
     PULSE_DATA_EXIT = r2.ok ? await r2.json() : [];
 
@@ -17796,7 +17796,8 @@ function pulseRender() {
 
   // Top industry
   var indMap = {};
-  PULSE_ALL.forEach(function(d){ var i = d.primary_ssic_desc; if(i && i.trim() && i.trim().toLowerCase() !== 'na') indMap[i.trim()] = (indMap[i.trim()]||0) + 1; });
+  // Build industry map from ALL loaded data (new + exit) regardless of mode for richer industry stats
+  PULSE_DATA_NEW.concat(PULSE_DATA_EXIT).forEach(function(d){ var i = d.primary_ssic_desc; if(i && i.trim() && i.trim().toLowerCase() !== 'na') indMap[i.trim()] = (indMap[i.trim()]||0) + 1; });
   var topInd = Object.keys(indMap).sort(function(a,b){ return indMap[b]-indMap[a]; })[0] || '—';
   document.getElementById('pulse-k-topind').textContent = topInd;
 
