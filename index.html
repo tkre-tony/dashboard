@@ -1745,8 +1745,29 @@ html,body{background:var(--bg);color:var(--txt);font-family:'DM Sans',sans-serif
       </div>
 
       <!-- ── KNOWN TENANTS PANEL ────────────────────────────── -->
+      <!-- SSIC Modal -->
+      <div id="ssic-modal" onclick="if(event.target===this)this.style.display='none'" style="display:none;position:fixed;inset:0;z-index:9999;background:rgba(0,0,0,.55);align-items:center;justify-content:center">
+        <div style="background:var(--srf,#1e2535);border:1px solid var(--bdr,#2a3347);border-radius:14px;max-width:520px;width:90%;max-height:78vh;display:flex;flex-direction:column;box-shadow:0 20px 60px rgba(0,0,0,.5)">
+          <div style="display:flex;align-items:center;justify-content:space-between;padding:14px 18px;border-bottom:1px solid var(--bdr)">
+            <div style="font-size:14px;font-weight:700;color:var(--txt)">📋 SSIC Industry Code Reference</div>
+            <button onclick="document.getElementById('ssic-modal').style.display='none'" style="background:none;border:none;cursor:pointer;color:var(--mut);font-size:18px;line-height:1">✕</button>
+          </div>
+          <div style="overflow-y:auto;padding:14px 18px">
+            <div style="font-size:11px;color:var(--mut);margin-bottom:12px">Singapore Standard Industrial Classification — first 2 digits determine the sector</div>
+            <table style="width:100%;border-collapse:collapse;font-size:12px">
+              <thead><tr style="background:var(--srf2)">
+                <th style="padding:7px 10px;text-align:left;color:var(--mut);font-size:10px;text-transform:uppercase;letter-spacing:.04em;border-bottom:1px solid var(--bdr)">Code</th>
+                <th style="padding:7px 10px;text-align:left;color:var(--mut);font-size:10px;text-transform:uppercase;letter-spacing:.04em;border-bottom:1px solid var(--bdr)">Industry</th>
+              </tr></thead>
+              <tbody id="ssic-modal-body"></tbody>
+            </table>
+          </div>
+          <div style="padding:10px 18px;border-top:1px solid var(--bdr);font-size:10px;color:var(--mut2)">Source: Department of Statistics Singapore (DOS)</div>
+        </div>
+      </div>
+
       <div class="card" id="tenant-panel" style="margin-top:14px">
-        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;flex-wrap:wrap;gap:8px">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;flex-wrap:wrap;gap:8px">
           <div>
             <div style="font-size:13px;font-weight:700;color:var(--txt);display:flex;align-items:center;gap:8px">
               <span style="width:8px;height:8px;border-radius:2px;background:#1a6b3a;display:inline-block;flex-shrink:0"></span>
@@ -1755,15 +1776,25 @@ html,body{background:var(--bg);color:var(--txt);font-family:'DM Sans',sans-serif
             </div>
             <div style="font-size:11px;color:var(--mut);margin-top:2px">Companies registered at this address · Source: ACRA via Supabase</div>
           </div>
-          <div style="display:flex;gap:6px;align-items:center;flex-wrap:wrap">
-            <input id="tenant-search" placeholder="Filter tenants…" oninput="tenantFilter()" style="height:28px;padding:0 10px;border:1px solid var(--bdr);border-radius:5px;background:var(--srf);color:var(--txt);font-size:11px;font-family:'DM Sans',sans-serif;width:150px">
-            <select id="tenant-status-filter" onchange="tenantFilter()" style="height:28px;padding:0 8px;border:1px solid var(--bdr);border-radius:5px;background:var(--srf);color:var(--txt);font-size:11px;font-family:'DM Sans',sans-serif">
-              <option value="">All status</option>
-              <option value="Live">Live only</option>
-              <option value="Dissolved">Dissolved</option>
-            </select>
-            <button onclick="exportTenantCSV()" style="height:28px;padding:0 10px;border:1px solid var(--bdr);border-radius:5px;background:var(--srf2);color:var(--mut);font-size:11px;font-family:'DM Sans',sans-serif;cursor:pointer" title="Export as CSV">⬇ CSV</button>
-          </div>
+          <button onclick="exportTenantCSV()" style="height:28px;padding:0 10px;border:1px solid var(--bdr);border-radius:5px;background:var(--srf2);color:var(--txt2);font-size:11px;font-family:'DM Sans',sans-serif;cursor:pointer">⬇ CSV</button>
+        </div>
+        <!-- Filter row -->
+        <div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:12px;align-items:center">
+          <input id="tenant-search" placeholder="🔍 Company / UEN…" oninput="tenantFilter()" style="height:30px;padding:0 10px;border:1px solid var(--bdr);border-radius:6px;background:var(--srf2);color:var(--txt);font-size:11px;font-family:'DM Sans',sans-serif;min-width:160px;flex:1">
+          <select id="tenant-industry-filter" onchange="tenantFilter()" style="height:30px;padding:0 8px;border:1px solid var(--bdr);border-radius:6px;background:var(--srf2);color:var(--txt);font-size:11px;font-family:'DM Sans',sans-serif;min-width:140px">
+            <option value="">All Industries</option>
+          </select>
+          <select id="tenant-type-filter" onchange="tenantFilter()" style="height:30px;padding:0 8px;border:1px solid var(--bdr);border-radius:6px;background:var(--srf2);color:var(--txt);font-size:11px;font-family:'DM Sans',sans-serif;min-width:120px">
+            <option value="">All Types</option>
+          </select>
+          <select id="tenant-status-filter" onchange="tenantFilter()" style="height:30px;padding:0 8px;border:1px solid var(--bdr);border-radius:6px;background:var(--srf2);color:var(--txt);font-size:11px;font-family:'DM Sans',sans-serif">
+            <option value="">All Status</option>
+            <option value="Live">🟢 Live</option>
+            <option value="Dissolved">🔴 Dissolved</option>
+            <option value="Struck Off">⚫ Struck Off</option>
+          </select>
+          <button onclick="tenantClearFilters()" style="height:30px;padding:0 10px;border:1px solid var(--bdr);border-radius:6px;background:transparent;color:var(--mut);font-size:11px;font-family:'DM Sans',sans-serif;cursor:pointer">Clear</button>
+          <button onclick="tenantShowSSICModal()" style="height:30px;padding:0 10px;border:1px solid rgba(37,99,188,.35);border-radius:6px;background:rgba(37,99,188,.1);color:#60a5fa;font-size:11px;font-family:'DM Sans',sans-serif;cursor:pointer">📋 SSIC Guide</button>
         </div>
 
         <!-- Stats row -->
@@ -17113,7 +17144,7 @@ function tenantStatCard(val, lbl, color) {
 
 async function tenantLoad(addrFull) {
   TENANT_CURRENT_ADDR = addrFull;
-  ['tenant-search','tenant-status-filter'].forEach(function(id){var el=document.getElementById(id);if(el)el.value='';});
+  ['tenant-search','tenant-status-filter','tenant-industry-filter','tenant-type-filter'].forEach(function(id){var el=document.getElementById(id);if(el)el.value='';});
   ['tenant-loading','tenant-empty','tenant-no-supabase','tenant-tbl-wrap','tenant-insight'].forEach(function(id){
     var el=document.getElementById(id); if(el) el.style.display='none';
   });
@@ -17187,6 +17218,7 @@ function tenantDisplay(data) {
     (topInd?tenantStatCard(topInd[0],'Top industry','#1a4f9c'):'')+
     tenantStatCard(data.length,'Total registered',null);
 
+  tenantPopulateFilters(data);
   tenantRenderTable(data);
   tenantBuildInsight(live,data);
 }
@@ -17194,9 +17226,18 @@ function tenantDisplay(data) {
 function tenantRenderTable(data) {
   var q=(document.getElementById('tenant-search')||{value:''}).value.toLowerCase();
   var sf=(document.getElementById('tenant-status-filter')||{value:''}).value;
+  var indF=(document.getElementById('tenant-industry-filter')||{value:''}).value;
+  var typF=(document.getElementById('tenant-type-filter')||{value:''}).value;
 
   var filtered=data.filter(function(d){
-    if(sf && d.entity_status!==sf) return false;
+    if(sf){
+      var st=(d.entity_status||'');
+      if(sf==='Live' && st!=='Live') return false;
+      if(sf==='Dissolved' && !st.toLowerCase().includes('dissolved')) return false;
+      if(sf==='Struck Off' && !st.toLowerCase().includes('struck')) return false;
+    }
+    if(indF && ssicLabel(d.primary_ssic_code)!==indF) return false;
+    if(typF && (d.entity_type||'')!==typF) return false;
     if(q && !((d.entity_name||'').toLowerCase().includes(q)||(d.unit_no||'').toLowerCase().includes(q)||(d.uen||'').toLowerCase().includes(q))) return false;
     return true;
   });
@@ -17215,20 +17256,131 @@ function tenantRenderTable(data) {
   var body=document.getElementById('tenant-tbl-body');
   if(!body) return;
   body.innerHTML=filtered.map(function(d){
-    var isLive=d.entity_status==='Live';
-    return '<tr style="'+(isLive?'':'opacity:.5')+'">' +
-      '<td style="padding:8px 12px;border-bottom:1px solid var(--srf3);font-weight:600;font-size:12px"><div style="display:flex;align-items:center">'+statusDot(d.entity_status)+(d.entity_name||'—')+'</div></td>'+
-      '<td style="padding:8px 12px;border-bottom:1px solid var(--srf3);color:var(--mut);font-size:11px;white-space:nowrap">'+(d.unit_no||'—')+'</td>'+
-      '<td style="padding:8px 12px;border-bottom:1px solid var(--srf3);color:var(--txt2);font-size:11px">'+ssicLabel(d.primary_ssic_code)+'</td>'+
-      '<td style="padding:8px 12px;border-bottom:1px solid var(--srf3);color:var(--mut);font-size:11px">'+(d.entity_type||'—')+'</td>'+
-      '<td style="padding:8px 12px;border-bottom:1px solid var(--srf3);font-size:11px"><span style="padding:2px 8px;border-radius:10px;font-size:10px;font-weight:600;background:'+(isLive?'rgba(26,122,74,.1)':'rgba(200,54,74,.08)')+';color:'+(isLive?'#1a7a4a':'#c8364a')+'">'+(d.entity_status||'—')+'</span></td>'+
-      '<td style="padding:8px 12px;border-bottom:1px solid var(--srf3);color:var(--mut2);font-size:11px;font-family:\'DM Mono\',monospace">'+(d.uen||'—')+'</td>'+
-      '<td style="padding:8px 12px;border-bottom:1px solid var(--srf3);color:var(--mut2);font-size:11px;white-space:nowrap">'+(d.reg_date?d.reg_date.substring(0,10):'—')+'</td>'+
+    var st=d.entity_status||'';
+    var isLive=st==='Live';
+    var isStruck=st.toLowerCase().includes('struck');
+    var isDissolved=!isLive&&!isStruck;
+    var statusColor=isLive?'#22c55e':isStruck?'#9ca3af':'#f87171';
+    var statusBg=isLive?'rgba(34,197,94,.12)':isStruck?'rgba(156,163,175,.12)':'rgba(248,113,113,.12)';
+    var indLabel=ssicLabel(d.primary_ssic_code);
+    return '<tr style="border-bottom:1px solid var(--srf3);'+(isLive?'':'opacity:.65')+'">' +
+      '<td style="padding:9px 12px;font-weight:600;font-size:12px;color:#e2e8f0"><div style="display:flex;align-items:center;gap:7px">'+statusDot(d.entity_status)+'<span>'+(d.entity_name||'—')+'</span></div></td>'+
+      '<td style="padding:9px 12px;color:#94a3b8;font-size:11px;white-space:nowrap">'+(d.unit_no||'—')+'</td>'+
+      '<td style="padding:9px 12px;font-size:11px"><span onclick="tenantShowSSICModal(''+indLabel+'')" style="color:#93c5fd;cursor:pointer;text-decoration:underline dotted" title="Click to view SSIC reference">'+indLabel+'</span></td>'+
+      '<td style="padding:9px 12px;color:#cbd5e1;font-size:11px">'+(d.entity_type||'—')+'</td>'+
+      '<td style="padding:9px 12px;font-size:11px"><span style="padding:2px 9px;border-radius:10px;font-size:10px;font-weight:700;background:'+statusBg+';color:'+statusColor+'">'+st+'</span></td>'+
+      '<td style="padding:9px 12px;color:#94a3b8;font-size:11px;font-family:\'DM Mono\',monospace">'+(d.uen||'—')+'</td>'+
+      '<td style="padding:9px 12px;color:#94a3b8;font-size:11px;white-space:nowrap">'+(d.reg_date?d.reg_date.substring(0,10):'—')+'</td>'+
     '</tr>';
   }).join('');
 }
 
 function tenantFilter() { tenantRenderTable(TENANT_ALL); }
+
+function tenantClearFilters() {
+  ['tenant-search','tenant-industry-filter','tenant-type-filter','tenant-status-filter'].forEach(function(id){
+    var el=document.getElementById(id); if(el) el.value='';
+  });
+  tenantRenderTable(TENANT_ALL);
+}
+
+function tenantPopulateFilters(data) {
+  // Industry dropdown
+  var indSel=document.getElementById('tenant-industry-filter');
+  var typSel=document.getElementById('tenant-type-filter');
+  if(!indSel||!typSel) return;
+  var inds=[...new Set(data.map(function(d){return ssicLabel(d.primary_ssic_code);}))].filter(Boolean).sort();
+  var typs=[...new Set(data.map(function(d){return d.entity_type||'';}).filter(Boolean))].sort();
+  indSel.innerHTML='<option value="">All Industries</option>'+inds.map(function(i){return '<option value="'+i+'">'+i+'</option>';}).join('');
+  typSel.innerHTML='<option value="">All Types</option>'+typs.map(function(t){return '<option value="'+t+'">'+t+'</option>';}).join('');
+}
+
+var SSIC_FULL = [
+  {code:'10',label:'Food Manufacturing'},
+  {code:'11',label:'Beverage Manufacturing'},
+  {code:'13',label:'Textiles & Apparel'},
+  {code:'14',label:'Wearing Apparel'},
+  {code:'20',label:'Chemicals & Chemical Products'},
+  {code:'21',label:'Pharmaceuticals & Biotech'},
+  {code:'22',label:'Rubber & Plastics'},
+  {code:'23',label:'Non-metallic Mineral Products'},
+  {code:'24',label:'Basic Metals'},
+  {code:'25',label:'Fabricated Metal Products'},
+  {code:'26',label:'Electronics & IT Manufacturing'},
+  {code:'27',label:'Electrical Equipment'},
+  {code:'28',label:'Machinery & Equipment'},
+  {code:'29',label:'Motor Vehicles & Parts'},
+  {code:'30',label:'Other Transport Equipment'},
+  {code:'31',label:'Furniture Manufacturing'},
+  {code:'32',label:'Other Manufacturing'},
+  {code:'33',label:'Repair & Maintenance'},
+  {code:'35',label:'Utilities / Electricity & Gas'},
+  {code:'36',label:'Water Supply'},
+  {code:'38',label:'Waste Collection & Treatment'},
+  {code:'41',label:'Building Construction'},
+  {code:'42',label:'Civil Engineering'},
+  {code:'43',label:'Specialised Construction'},
+  {code:'45',label:'Motor Vehicles Trade & Repair'},
+  {code:'46',label:'Wholesale Trade'},
+  {code:'47',label:'Retail Trade'},
+  {code:'49',label:'Land Transport & Logistics'},
+  {code:'50',label:'Water Transport'},
+  {code:'51',label:'Air Transport'},
+  {code:'52',label:'Warehousing & Support for Transport'},
+  {code:'53',label:'Postal & Courier Activities'},
+  {code:'55',label:'Accommodation'},
+  {code:'56',label:'Food & Beverage Services'},
+  {code:'58',label:'Publishing Activities'},
+  {code:'59',label:'Motion Picture & Sound Production'},
+  {code:'60',label:'Broadcasting'},
+  {code:'61',label:'Telecommunications'},
+  {code:'62',label:'IT Services & Software'},
+  {code:'63',label:'Information Services & Data'},
+  {code:'64',label:'Financial Services'},
+  {code:'65',label:'Insurance'},
+  {code:'66',label:'Financial Auxiliary Activities'},
+  {code:'68',label:'Real Estate'},
+  {code:'69',label:'Legal & Accounting'},
+  {code:'70',label:'Holding Companies & Management'},
+  {code:'71',label:'Architecture & Engineering'},
+  {code:'72',label:'Scientific R&D'},
+  {code:'73',label:'Advertising & Market Research'},
+  {code:'74',label:'Professional & Technical Services'},
+  {code:'75',label:'Veterinary Activities'},
+  {code:'77',label:'Equipment Leasing & Rental'},
+  {code:'78',label:'Employment Agencies'},
+  {code:'79',label:'Travel Agencies & Tour Operators'},
+  {code:'80',label:'Security & Investigation'},
+  {code:'81',label:'Facilities & Landscape Services'},
+  {code:'82',label:'Admin & Business Support'},
+  {code:'84',label:'Public Administration & Defence'},
+  {code:'85',label:'Education'},
+  {code:'86',label:'Human Health Activities'},
+  {code:'87',label:'Residential Care'},
+  {code:'88',label:'Social Work'},
+  {code:'90',label:'Arts & Creative Activities'},
+  {code:'91',label:'Libraries, Museums & Cultural'},
+  {code:'92',label:'Gambling & Betting'},
+  {code:'93',label:'Sports & Recreation'},
+  {code:'94',label:'Membership Organisations'},
+  {code:'95',label:'Computer & Personal Equipment Repair'},
+  {code:'96',label:'Personal Services'},
+  {code:'99',label:'Extraterritorial Organisations'},
+];
+
+function tenantShowSSICModal(highlight) {
+  var modal=document.getElementById('ssic-modal');
+  var tbody=document.getElementById('ssic-modal-body');
+  if(!modal||!tbody) return;
+  tbody.innerHTML=SSIC_FULL.map(function(s){
+    var isHl=highlight&&highlight.toLowerCase().includes(s.label.toLowerCase().substring(0,8));
+    return '<tr style="border-bottom:1px solid var(--srf3);'+(isHl?'background:rgba(37,99,188,.15)':'')+'">' +
+      '<td style="padding:7px 10px;font-family:\'DM Mono\',monospace;font-size:12px;color:#60a5fa;font-weight:600;white-space:nowrap">'+s.code+'</td>' +
+      '<td style="padding:7px 10px;font-size:12px;color:#e2e8f0">'+s.label+'</td>' +
+    '</tr>';
+  }).join('');
+  modal.style.display='flex';
+}
 
 function tenantBuildInsight(live,all) {
   if(!live||live.length===0) return;
