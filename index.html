@@ -17844,13 +17844,13 @@ function tenantRenderTable(data) {
     var statusBg=isLive?'rgba(34,197,94,.12)':isStruck?'rgba(156,163,175,.12)':'rgba(248,113,113,.12)';
     var indLabel=ssicLabel(d.primary_ssic_code);
     return '<tr style="border-bottom:1px solid var(--srf3);'+(isLive?'':'opacity:.78')+'">' +
-      '<td style="padding:9px 12px;font-weight:600;font-size:12px;color:#f1f5f9"><div style="display:flex;align-items:center;gap:7px">'+statusDot(d.entity_status)+'<span>'+(d.entity_name||'—')+'</span></div></td>'+
-      '<td style="padding:9px 12px;color:#b0bec5;font-size:11px;white-space:nowrap">'+(d.unit_no||'—')+'</td>'+
-      '<td style="padding:9px 12px;font-size:11px"><span onclick="tenantShowSSICModal(this.getAttribute(\'data-ind\'))" data-ind="'+indLabel+'" style="color:#93c5fd;cursor:pointer;text-decoration:underline dotted" title="Click to view SSIC reference">'+indLabel+'</span></td>'+
-      '<td style="padding:9px 12px;color:#cbd5e1;font-size:11px">'+(d.entity_type||'—')+'</td>'+
+      '<td style="padding:9px 12px;font-weight:600;font-size:12px;color:var(--txt)"><div style="display:flex;align-items:center;gap:7px">'+statusDot(d.entity_status)+'<span>'+(d.entity_name||'—')+'</span></div></td>'+
+      '<td style="padding:9px 12px;color:var(--txt2);font-size:11px;white-space:nowrap">'+(d.unit_no||'—')+'</td>'+
+      '<td style="padding:9px 12px;font-size:11px"><span onclick="tenantShowSSICModal(this.getAttribute(\'data-ind\'))" data-ind="'+indLabel+'" style="color:#3b82f6;cursor:pointer;text-decoration:underline dotted" title="Click to view SSIC reference">'+indLabel+'</span></td>'+
+      '<td style="padding:9px 12px;color:var(--txt2);font-size:11px">'+(d.entity_type||'—')+'</td>'+
       '<td style="padding:9px 12px;font-size:11px"><span style="padding:2px 9px;border-radius:10px;font-size:10px;font-weight:700;background:'+statusBg+';color:'+statusColor+'">'+st+'</span></td>'+
-      '<td style="padding:9px 12px;color:#b0bec5;font-size:11px;font-family:\'DM Mono\',monospace">'+(d.uen||'—')+'</td>'+
-      '<td style="padding:9px 12px;color:#b0bec5;font-size:11px;white-space:nowrap">'+(d.reg_date?d.reg_date.substring(0,10):'—')+'</td>'+
+      '<td style="padding:9px 12px;color:var(--mut);font-size:11px;font-family:\'DM Mono\',monospace">'+(d.uen||'—')+'</td>'+
+      '<td style="padding:9px 12px;color:var(--mut);font-size:11px;white-space:nowrap">'+(d.reg_date?d.reg_date.substring(0,10):'—')+'</td>'+
     '</tr>';
   }).join('');
 }
