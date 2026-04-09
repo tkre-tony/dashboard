@@ -1615,7 +1615,7 @@ html,body{background:var(--bg);color:var(--txt);font-family:'DM Sans',sans-serif
       </div>
 
       <!-- Row 2: Entity chips (REITs + Developers combined, shown/hidden by entity toggle) -->
-      <div id="chip-reit-row" style="display:flex;gap:6px;flex-wrap:wrap;align-items:center;margin-bottom:9px">
+      <div id="chip-reit-row" style="display:none;gap:6px;flex-wrap:wrap;align-items:center;margin-bottom:9px">
         <span class="fbar-label">REIT</span>
         <button class="dir-tbtn on" data-reitf="" onclick="reitSetFilter(this,'reit','')">All</button>
         <button class="dir-tbtn" data-reitf="Acrophyte Hospitality Trust" onclick="reitSetFilter(this,'reit','Acrophyte Hospitality Trust')">Acrophyte HT <span style="color:#4ade80;font-size:8px">●</span></button>
@@ -1646,7 +1646,7 @@ html,body{background:var(--bg);color:var(--txt);font-family:'DM Sans',sans-serif
         <button class="dir-tbtn" data-reitf="Starhill Global REIT" onclick="reitSetFilter(this,'reit','Starhill Global REIT')">Starhill Global <span style="color:#4ade80;font-size:8px">●</span></button>
         <button class="dir-tbtn" data-reitf="Suntec REIT" onclick="reitSetFilter(this,'reit','Suntec REIT')">Suntec REIT <span style="color:#4ade80;font-size:8px">●</span></button>
       </div>
-      <div id="chip-dev-row" style="display:flex;gap:6px;flex-wrap:wrap;align-items:center;margin-bottom:9px">
+      <div id="chip-dev-row" style="display:none;gap:6px;flex-wrap:wrap;align-items:center;margin-bottom:9px">
         <span class="fbar-label">Developer</span>
         <button class="dir-tbtn on" data-devf="" onclick="reitSetFilter(this,'dev','')">All</button>
         <button class="dir-tbtn" data-devf="Bukit Sembawang Estates" onclick="reitSetFilter(this,'dev','Bukit Sembawang Estates')">Bukit Sembawang <span style="color:#4ade80;font-size:8px">●</span></button>
@@ -9594,7 +9594,7 @@ function talentRender(){
       ? '<a href="'+p.linkedin_url+'" target="_blank" onclick="event.stopPropagation()" style="display:inline-flex;align-items:center;gap:3px;padding:2px 6px;background:#0077b5;color:#fff;border-radius:3px;font-size:9px;font-weight:700;text-decoration:none;flex-shrink:0">in</a>'
       : '';
 
-    return '<div class="talent-card role-'+p.role_type.toLowerCase()+'" onclick="talentOpenDrawer(\''+p.id+'\')">'+
+    return '<div class="talent-card role-'+(p.role_type||'').toLowerCase()+'" onclick="talentOpenDrawer(\''+p.id+'\')">'+
       '<div class="talent-card-top">'+
         '<div class="talent-avatar" style="background:'+avatar+';overflow:hidden">'+(p.photo_url?'<img src="'+p.photo_url+'" style="width:100%;height:100%;object-fit:cover;border-radius:50%" onerror="this.parentElement.innerHTML=\''+talentInitials(p.name)+'\'">':talentInitials(p.name))+'</div>'+
         '<div style="flex:1;min-width:0">'+
@@ -15334,8 +15334,8 @@ function reitSetEntity(type){
   });
   var reitRow = document.getElementById('chip-reit-row');
   var devRow = document.getElementById('chip-dev-row');
-  if(reitRow) reitRow.style.display = (type==='DEV') ? 'none' : 'flex';
-  if(devRow) devRow.style.display = (type==='REIT') ? 'none' : 'flex';
+  if(reitRow) reitRow.style.display = (type==='REIT') ? 'flex' : 'none';
+  if(devRow) devRow.style.display = (type==='DEV') ? 'flex' : 'none';
   document.querySelectorAll('[data-reitf]').forEach(function(b){ b.classList.remove('on'); });
   var a1 = document.querySelector('[data-reitf=""]'); if(a1) a1.classList.add('on');
   document.querySelectorAll('[data-devf]').forEach(function(b){ b.classList.remove('on'); });
@@ -17977,8 +17977,7 @@ function pulseExportCSV() {
     return [d._type==='new'?'New':'Exit', d.entity_name, d.uen, d.blk_no, d.street_name, d.postal_code, d.primary_ssic_description, d.entity_type, d.reg_date]
       .map(function(v){ return '"'+(v||'').toString().replace(/"/g,'""')+'"'; }).join(',');
   });
-  var csv = [headers.join(',')].concat(rows).join('
-');
+  var csv = [headers.join(',')].concat(rows).join('\n');
   var a = document.createElement('a'); a.href = 'data:text/csv;charset=utf-8,' + encodeURIComponent(csv);
   a.download = 'market_pulse_export.csv'; a.click();
 }
