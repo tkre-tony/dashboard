@@ -17142,7 +17142,7 @@ function ssicLabel(code) {
 }
 
 function statusDot(status) {
-  var color = status==='Live' ? '#1a7a4a' : status==='Dissolved' ? '#c8364a' : '#c97c1a';
+  var color = (status||'').startsWith('Live') ? '#1a7a4a' : (status||'').toLowerCase().includes('dissolved') ? '#c8364a' : '#c97c1a';
   return '<span style="width:7px;height:7px;border-radius:50%;background:'+color+';display:inline-block;margin-right:5px;flex-shrink:0"></span>';
 }
 
@@ -17359,7 +17359,7 @@ function tenantDisplay(data) {
     return;
   }
 
-  var live=data.filter(function(d){return d.entity_status==='Live';});
+  var live=data.filter(function(d){return (d.entity_status||'').startsWith('Live');});
   var dissolved=data.length-live.length;
 
   var industries={};
@@ -17387,7 +17387,7 @@ function tenantRenderTable(data) {
   var filtered=data.filter(function(d){
     if(sf){
       var st=(d.entity_status||'');
-      if(sf==='Live' && st!=='Live') return false;
+      if(sf==='Live' && !st.startsWith('Live')) return false;
       if(sf==='Dissolved' && !st.toLowerCase().includes('dissolved')) return false;
       if(sf==='Struck Off' && !st.toLowerCase().includes('struck')) return false;
     }
@@ -17412,7 +17412,7 @@ function tenantRenderTable(data) {
   if(!body) return;
   body.innerHTML=filtered.map(function(d){
     var st=d.entity_status||'';
-    var isLive=st==='Live';
+    var isLive=st.startsWith('Live');
     var isStruck=st.toLowerCase().includes('struck');
     var isDissolved=!isLive&&!isStruck;
     var statusColor=isLive?'#22c55e':isStruck?'#9ca3af':'#f87171';
