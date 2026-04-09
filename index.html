@@ -9570,7 +9570,7 @@ function talentRender(){
     // YoY delta badge — shown only if rem_history has 2+ entries with totals
     var yoyHtml = '';
     var hist = p.rem_history;
-    if(hist && hist.length >= 2 && hist[0].total && hist[1].total){
+    if(hist && hist.length >= 2 && hist[0] && hist[1] && hist[0].total && hist[1].total){
       var curr = hist[0].total, prev = hist[1].total;
       var pct = Math.round((curr - prev) / prev * 100);
       var up = pct >= 0;
