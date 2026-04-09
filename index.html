@@ -2275,8 +2275,8 @@ html,body{background:var(--bg);color:var(--txt);font-family:'DM Sans',sans-serif
       </div>
       <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
         <select id="pulse-period" onchange="pulseLoad()" style="height:30px;padding:0 10px;border:1px solid var(--bdr);border-radius:6px;background:var(--srf2);color:var(--txt);font-size:12px;font-family:'DM Sans',sans-serif">
-          <option value="30">Last 30 days</option>
-          <option value="90" selected>Last 90 days</option>
+          <option value="30" selected>Last 30 days</option>
+          <option value="90">Last 90 days</option>
           <option value="180">Last 6 months</option>
           <option value="365">Last 12 months</option>
         </select>
@@ -17681,7 +17681,7 @@ async function pulseLoad() {
   document.getElementById('pulse-loading-msg').textContent = 'Querying ACRA registry…';
 
   var hdr = { 'apikey': SB_KEY, 'Authorization': 'Bearer ' + SB_KEY, 'Prefer': 'count=none' };
-  var base = SB_URL + '/rest/v1/tenant_registry?select=entity_name,uen,blk_no,street_name,postal_code,entity_type,entity_status,primary_ssic_desc,reg_date&limit=1000';
+  var base = SB_URL + '/rest/v1/tenant_registry?select=entity_name,uen,blk_no,street_name,postal_code,entity_type,entity_status,primary_ssic_desc,reg_date&limit=500';
 
   try {
     // Fetch new registrations
