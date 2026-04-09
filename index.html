@@ -2271,12 +2271,12 @@ html,body{background:var(--bg);color:var(--txt);font-family:'DM Sans',sans-serif
         <div style="font-size:18px;font-weight:700;color:#f0f4ff;display:flex;align-items:center;gap:10px">
           <span>📡</span> Market Pulse
         </div>
-        <div style="font-size:12px;color:#7a8ba6;margin-top:4px">New &amp; exiting companies across Singapore · Source: ACRA registry via Supabase · 2M+ entities tracked</div>
+        <div style="font-size:12px;color:#94a3b8;margin-top:4px">New &amp; exiting companies across Singapore · Source: ACRA registry via Supabase · 2M+ entities tracked</div>
       </div>
       <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
         <select id="pulse-period" onchange="pulseLoad()" style="height:30px;padding:0 10px;border:1px solid var(--bdr);border-radius:6px;background:var(--srf2);color:var(--txt);font-size:12px;font-family:'DM Sans',sans-serif">
-          <option value="30" selected>Last 30 days</option>
-          <option value="90">Last 90 days</option>
+          <option value="30">Last 30 days</option>
+          <option value="90" selected>Last 90 days</option>
           <option value="180">Last 6 months</option>
           <option value="365">Last 12 months</option>
         </select>
@@ -2297,23 +2297,23 @@ html,body{background:var(--bg);color:var(--txt);font-family:'DM Sans',sans-serif
     <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:10px;margin-bottom:16px" id="pulse-kpi-strip">
       <div class="card" style="text-align:center;padding:14px 10px">
         <div id="pulse-k-new" style="font-size:22px;font-weight:800;color:#22c55e">—</div>
-        <div style="font-size:10px;color:var(--mut);text-transform:uppercase;letter-spacing:.05em;margin-top:3px">New Companies</div>
+        <div style="font-size:10px;color:#94a3b8;text-transform:uppercase;letter-spacing:.05em;margin-top:3px">New Companies</div>
       </div>
       <div class="card" style="text-align:center;padding:14px 10px">
         <div id="pulse-k-exit" style="font-size:22px;font-weight:800;color:#f87171">—</div>
-        <div style="font-size:10px;color:var(--mut);text-transform:uppercase;letter-spacing:.05em;margin-top:3px">Exits / Dissolved</div>
+        <div style="font-size:10px;color:#94a3b8;text-transform:uppercase;letter-spacing:.05em;margin-top:3px">Exits / Dissolved</div>
       </div>
       <div class="card" style="text-align:center;padding:14px 10px">
         <div id="pulse-k-net" style="font-size:22px;font-weight:800;color:var(--txt)">—</div>
-        <div style="font-size:10px;color:var(--mut);text-transform:uppercase;letter-spacing:.05em;margin-top:3px">Net Change</div>
+        <div style="font-size:10px;color:#94a3b8;text-transform:uppercase;letter-spacing:.05em;margin-top:3px">Net Change</div>
       </div>
       <div class="card" style="text-align:center;padding:14px 10px">
         <div id="pulse-k-districts" style="font-size:22px;font-weight:800;color:#60a5fa">—</div>
-        <div style="font-size:10px;color:var(--mut);text-transform:uppercase;letter-spacing:.05em;margin-top:3px">Active Districts</div>
+        <div style="font-size:10px;color:#94a3b8;text-transform:uppercase;letter-spacing:.05em;margin-top:3px">Active Districts</div>
       </div>
       <div class="card" style="text-align:center;padding:14px 10px">
         <div id="pulse-k-topind" style="font-size:13px;font-weight:700;color:#c4b5fd;line-height:1.3">—</div>
-        <div style="font-size:10px;color:var(--mut);text-transform:uppercase;letter-spacing:.05em;margin-top:3px">Top Industry</div>
+        <div style="font-size:10px;color:#94a3b8;text-transform:uppercase;letter-spacing:.05em;margin-top:3px">Top Industry</div>
       </div>
     </div>
 
@@ -17682,16 +17682,21 @@ async function pulseLoad() {
   document.getElementById('pulse-loading-msg').textContent = 'Querying ACRA registry…';
 
   var hdr = { 'apikey': SB_KEY, 'Authorization': 'Bearer ' + SB_KEY, 'Prefer': 'count=none' };
-  var base = SB_URL + '/rest/v1/tenant_registry?select=entity_name,uen,blk_no,street_name,postal_code,entity_type,entity_status,primary_ssic_desc,reg_date&limit=2000&order=reg_date.desc';
+  var base = SB_URL + '/rest/v1/tenant_registry?select=entity_name,uen,blk_no,street_name,postal_code,entity_type,entity_status,primary_ssic_desc,reg_date';
 
   try {
-    // Fetch most recent registrations (no status filter — split client-side)
-    document.getElementById('pulse-loading-msg').textContent = 'Loading ACRA data…';
-    var r1 = await fetch(base + '&reg_date=gte.' + dateStr, { headers: hdr });
-    if(!r1.ok){ var e1=await r1.text(); console.error('Pulse 400 body:',e1); }
-    var allData = r1.ok ? await r1.json() : [];
-    PULSE_DATA_NEW  = allData.filter(function(d){ return (d.entity_status||'').startsWith('Live'); });
-    PULSE_DATA_EXIT = allData.filter(function(d){ return !(d.entity_status||'').startsWith('Live'); });
+    // New registrations: recently incorporated companies (reg_date filter applies)
+    document.getElementById('pulse-loading-msg').textContent = 'Loading new registrations…';
+    var r1 = await fetch(base + '&entity_status=ilike.Live*&reg_date=gte.' + dateStr + '&order=reg_date.desc&limit=1000', { headers: hdr });
+    if(!r1.ok){ var e1=await r1.text(); console.error('Pulse new 400:',e1); }
+    PULSE_DATA_NEW = r1.ok ? await r1.json() : [];
+
+    // Exits: dissolved/struck-off companies — no date filter (no cessation_date column)
+    // Shows most recently registered companies that are now dissolved
+    document.getElementById('pulse-loading-msg').textContent = 'Loading exits…';
+    var r2 = await fetch(base + '&entity_status=not.ilike.Live*&order=reg_date.desc&limit=1000', { headers: hdr });
+    if(!r2.ok){ var e2=await r2.text(); console.error('Pulse exit 400:',e2); }
+    PULSE_DATA_EXIT = r2.ok ? await r2.json() : [];
 
     document.getElementById('pulse-loading').style.display = 'none';
 
@@ -17805,7 +17810,7 @@ function pulseRender() {
     var pct = (districts[d]/maxDist*100).toFixed(0);
     var barColor = showNew && !showExit ? '#22c55e' : (showExit && !showNew ? '#f87171' : '#60a5fa');
     return '<div style="display:flex;align-items:center;gap:8px">' +
-      '<span style="font-family:\'DM Mono\',monospace;font-size:11px;color:#60a5fa;min-width:24px">D' + d + '</span>' +
+      '<span style="font-family:\'DM Mono\',monospace;font-size:11px;color:#93c5fd;min-width:24px">' + d + '</span>' +
       '<div style="flex:1;height:6px;background:var(--srf2);border-radius:3px"><div style="width:'+pct+'%;height:6px;background:'+barColor+';border-radius:3px"></div></div>' +
       '<span style="font-size:11px;color:#e2e8f0;min-width:30px;text-align:right">' + districts[d] + '</span>' +
     '</div>';
@@ -17817,7 +17822,7 @@ function pulseRender() {
   document.getElementById('pulse-industries-list').innerHTML = indArr.map(function(ind){
     var pct = (indMap[ind]/maxInd*100).toFixed(0);
     return '<div style="display:flex;align-items:center;gap:8px">' +
-      '<span style="font-size:11px;color:#c4b5fd;flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap" title="'+ind+'">' + ind + '</span>' +
+      '<span style="font-size:11px;color:#ddd6fe;flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap" title="'+ind+'">' + ind + '</span>' +
       '<div style="width:80px;height:5px;background:var(--srf2);border-radius:3px;flex-shrink:0"><div style="width:'+pct+'%;height:5px;background:#7c3aed;border-radius:3px"></div></div>' +
       '<span style="font-size:11px;color:#e2e8f0;min-width:30px;text-align:right">' + indMap[ind] + '</span>' +
     '</div>';
