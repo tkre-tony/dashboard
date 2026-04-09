@@ -2288,6 +2288,7 @@ html,body{background:var(--bg);color:var(--txt);font-family:'DM Sans',sans-serif
         <select id="pulse-industry" onchange="pulseRender()" style="height:30px;padding:0 10px;border:1px solid var(--bdr);border-radius:6px;background:var(--srf2);color:var(--txt);font-size:12px;font-family:'DM Sans',sans-serif">
           <option value="">All Industries</option>
         </select>
+        <input id="pulse-bldg-search" placeholder="🏢 Search address or postal…" oninput="pulseRender()" style="height:30px;padding:0 10px;border:1px solid var(--bdr);border-radius:6px;background:var(--srf2);color:var(--txt);font-size:12px;font-family:'DM Sans',sans-serif;min-width:200px;flex:1" />
         <button onclick="pulseLoad()" style="height:30px;padding:0 14px;background:var(--g1);color:#fff;border:none;border-radius:6px;font-size:12px;font-family:'DM Sans',sans-serif;cursor:pointer;font-weight:600">↻ Refresh</button>
       </div>
     </div>
@@ -17681,20 +17682,16 @@ async function pulseLoad() {
   document.getElementById('pulse-loading-msg').textContent = 'Querying ACRA registry…';
 
   var hdr = { 'apikey': SB_KEY, 'Authorization': 'Bearer ' + SB_KEY, 'Prefer': 'count=none' };
-  var base = SB_URL + '/rest/v1/tenant_registry?select=entity_name,uen,blk_no,street_name,postal_code,entity_type,entity_status,primary_ssic_desc,reg_date&limit=1000';
+  var base = SB_URL + '/rest/v1/tenant_registry?select=entity_name,uen,blk_no,street_name,postal_code,entity_type,entity_status,primary_ssic_desc,reg_date&limit=2000&order=reg_date.desc';
 
   try {
-    // Fetch new registrations
-    document.getElementById('pulse-loading-msg').textContent = 'Loading new registrations…';
-    var r1 = await fetch(base + '&reg_date=gte.' + dateStr + '&entity_status=ilike.Live*&order=reg_date.desc', { headers: hdr });
-    if(!r1.ok){ var e1=await r1.text(); console.error('Pulse new 400 body:',e1); }
-    PULSE_DATA_NEW = r1.ok ? await r1.json() : [];
-
-    // Fetch exits (recently dissolved/struck off — use reg_date as proxy since we don't store cessation_date)
-    document.getElementById('pulse-loading-msg').textContent = 'Loading exits…';
-    var r2 = await fetch(base + '&reg_date=gte.' + dateStr + '&entity_status=not.ilike.Live*&order=reg_date.desc', { headers: hdr });
-    if(!r2.ok){ var e2=await r2.text(); console.error('Pulse exit 400 body:',e2); }
-    PULSE_DATA_EXIT = r2.ok ? await r2.json() : [];
+    // Fetch most recent registrations (no status filter — split client-side)
+    document.getElementById('pulse-loading-msg').textContent = 'Loading ACRA data…';
+    var r1 = await fetch(base + '&reg_date=gte.' + dateStr, { headers: hdr });
+    if(!r1.ok){ var e1=await r1.text(); console.error('Pulse 400 body:',e1); }
+    var allData = r1.ok ? await r1.json() : [];
+    PULSE_DATA_NEW  = allData.filter(function(d){ return (d.entity_status||'').startsWith('Live'); });
+    PULSE_DATA_EXIT = allData.filter(function(d){ return !(d.entity_status||'').startsWith('Live'); });
 
     document.getElementById('pulse-loading').style.display = 'none';
 
@@ -17727,9 +17724,15 @@ function pulseRender() {
   var newData  = PULSE_DATA_NEW;
   var exitData = PULSE_DATA_EXIT;
 
+  var bldgQ = (document.getElementById('pulse-bldg-search') ? document.getElementById('pulse-bldg-search').value : '').toLowerCase().trim();
   if(indF) {
     newData  = newData.filter(function(d){ return d.primary_ssic_desc === indF; });
     exitData = exitData.filter(function(d){ return d.primary_ssic_desc === indF; });
+  }
+  if(bldgQ) {
+    function matchBldg(d){ return ((d.blk_no||'').toLowerCase().includes(bldgQ)) || ((d.street_name||'').toLowerCase().includes(bldgQ)) || ((d.postal_code||'').includes(bldgQ)); }
+    newData  = newData.filter(matchBldg);
+    exitData = exitData.filter(matchBldg);
   }
 
   var showNew  = mode === 'new'  || mode === 'both';
@@ -17753,12 +17756,42 @@ function pulseRender() {
   var allForDistricts = showNew ? newData : exitData;
   if(mode === 'both') allForDistricts = PULSE_ALL;
   var districts = {};
-  allForDistricts.forEach(function(d){ if(d.postal_code && d.postal_code.length >= 2){ var dist = d.postal_code.substring(0,2); districts[dist] = (districts[dist]||0) + 1; }});
+  var SECTOR_TO_DIST = {
+    '01':'D01','02':'D01','03':'D01','04':'D01','05':'D01','06':'D01','07':'D01','08':'D01',
+    '09':'D02','10':'D02',
+    '11':'D03','12':'D03','13':'D03',
+    '14':'D04','15':'D04','16':'D04',
+    '17':'D05',
+    '18':'D06','19':'D06',
+    '20':'D07','21':'D07',
+    '22':'D08','23':'D08',
+    '24':'D09','25':'D09','26':'D09','27':'D09',
+    '28':'D10','29':'D10',
+    '30':'D11','31':'D11',
+    '32':'D12','33':'D12',
+    '34':'D13','35':'D13',
+    '36':'D14','37':'D14',
+    '38':'D15','39':'D15','40':'D15',
+    '41':'D16','42':'D16',
+    '43':'D17','44':'D17',
+    '45':'D18','46':'D18',
+    '47':'D19','48':'D19',
+    '49':'D20','50':'D20',
+    '51':'D21','52':'D21',
+    '53':'D22','54':'D22','55':'D22',
+    '56':'D23','57':'D23',
+    '58':'D24','59':'D24',
+    '60':'D25','61':'D25','62':'D25','63':'D25','64':'D25',
+    '65':'D26','66':'D26',
+    '67':'D27','68':'D27',
+    '69':'D28','70':'D28','71':'D28'
+  };
+  allForDistricts.forEach(function(d){ if(d.postal_code && d.postal_code.length >= 2){ var sector = d.postal_code.substring(0,2); var dist = SECTOR_TO_DIST[sector]; if(dist) districts[dist] = (districts[dist]||0) + 1; }});
   document.getElementById('pulse-k-districts').textContent = Object.keys(districts).length;
 
   // Top industry
   var indMap = {};
-  PULSE_ALL.forEach(function(d){ var i = d.primary_ssic_desc || 'Other'; indMap[i] = (indMap[i]||0) + 1; });
+  PULSE_ALL.forEach(function(d){ var i = d.primary_ssic_desc; if(i && i.trim() && i.trim().toLowerCase() !== 'na') indMap[i.trim()] = (indMap[i.trim()]||0) + 1; });
   var topInd = Object.keys(indMap).sort(function(a,b){ return indMap[b]-indMap[a]; })[0] || '—';
   document.getElementById('pulse-k-topind').textContent = topInd;
 
