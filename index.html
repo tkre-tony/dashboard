@@ -17681,7 +17681,7 @@ async function pulseLoad() {
   document.getElementById('pulse-loading-msg').textContent = 'Querying ACRA registry…';
 
   var hdr = { 'apikey': SB_KEY, 'Authorization': 'Bearer ' + SB_KEY, 'Prefer': 'count=none' };
-  var base = SB_URL + '/rest/v1/tenant_registry?select=entity_name,uen,blk_no,street_name,postal_code,entity_type,entity_status,primary_ssic_description,reg_date&limit=1000';
+  var base = SB_URL + '/rest/v1/tenant_registry?select=entity_name,uen,blk_no,street_name,postal_code,entity_type,entity_status,primary_ssic_desc,reg_date&limit=1000';
 
   try {
     // Fetch new registrations
@@ -17705,7 +17705,7 @@ async function pulseLoad() {
 
     // Populate industry filter
     var allData = PULSE_DATA_NEW.concat(PULSE_DATA_EXIT);
-    var inds = [...new Set(allData.map(function(d){ return d.primary_ssic_description || ''; }).filter(Boolean))].sort();
+    var inds = [...new Set(allData.map(function(d){ return d.primary_ssic_desc || ''; }).filter(Boolean))].sort();
     var indSel = document.getElementById('pulse-industry');
     indSel.innerHTML = '<option value="">All Industries</option>' +
       inds.map(function(i){ return '<option value="' + i + '">' + i + '</option>'; }).join('');
@@ -17728,8 +17728,8 @@ function pulseRender() {
   var exitData = PULSE_DATA_EXIT;
 
   if(indF) {
-    newData  = newData.filter(function(d){ return d.primary_ssic_description === indF; });
-    exitData = exitData.filter(function(d){ return d.primary_ssic_description === indF; });
+    newData  = newData.filter(function(d){ return d.primary_ssic_desc === indF; });
+    exitData = exitData.filter(function(d){ return d.primary_ssic_desc === indF; });
   }
 
   var showNew  = mode === 'new'  || mode === 'both';
@@ -17758,7 +17758,7 @@ function pulseRender() {
 
   // Top industry
   var indMap = {};
-  PULSE_ALL.forEach(function(d){ var i = d.primary_ssic_description || 'Other'; indMap[i] = (indMap[i]||0) + 1; });
+  PULSE_ALL.forEach(function(d){ var i = d.primary_ssic_desc || 'Other'; indMap[i] = (indMap[i]||0) + 1; });
   var topInd = Object.keys(indMap).sort(function(a,b){ return indMap[b]-indMap[a]; })[0] || '—';
   document.getElementById('pulse-k-topind').textContent = topInd;
 
@@ -17950,7 +17950,7 @@ function pulseRenderTable() {
     return '<tr style="border-bottom:1px solid var(--srf3)">' +
       '<td style="padding:8px 12px;font-weight:600;font-size:12px;color:#e2e8f0"><div style="display:flex;align-items:center">' + typeDot + (d.entity_name||'—') + '</div></td>' +
       '<td style="padding:8px 12px;font-size:11px;color:#94a3b8">' + (addr||'—') + '</td>' +
-      '<td style="padding:8px 12px;font-size:11px;color:#c4b5fd">' + (d.primary_ssic_description||'—') + '</td>' +
+      '<td style="padding:8px 12px;font-size:11px;color:#c4b5fd">' + (d.primary_ssic_desc||'—') + '</td>' +
       '<td style="padding:8px 12px;font-size:11px;color:#cbd5e1">' + (d.entity_type||'—') + '</td>' +
       '<td style="padding:8px 12px;font-size:11px">' +
         '<span style="padding:2px 7px;border-radius:8px;font-size:10px;font-weight:700;background:' + (isNew?'rgba(34,197,94,.12)':'rgba(248,113,113,.12)') + ';color:' + (isNew?'#22c55e':'#f87171') + '">' + (isNew?'New':'Exit') + '</span>' +
@@ -17976,7 +17976,7 @@ function pulseExportCSV() {
   if(!PULSE_FILTERED.length) return;
   var headers = ['Type','Company','UEN','Blk','Street','Postal','Industry','Entity Type','Date'];
   var rows = PULSE_FILTERED.map(function(d){
-    return [d._type==='new'?'New':'Exit', d.entity_name, d.uen, d.blk_no, d.street_name, d.postal_code, d.primary_ssic_description, d.entity_type, d.reg_date]
+    return [d._type==='new'?'New':'Exit', d.entity_name, d.uen, d.blk_no, d.street_name, d.postal_code, d.primary_ssic_desc, d.entity_type, d.reg_date]
       .map(function(v){ return '"'+(v||'').toString().replace(/"/g,'""')+'"'; }).join(',');
   });
   var csv = [headers.join(',')].concat(rows).join('\n');
