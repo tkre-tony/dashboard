@@ -17680,18 +17680,20 @@ async function pulseLoad() {
   document.getElementById('pulse-empty').style.display   = 'none';
   document.getElementById('pulse-loading-msg').textContent = 'Querying ACRA registry…';
 
-  var hdr = { 'apikey': SB_KEY, 'Authorization': 'Bearer ' + SB_KEY };
-  var base = SB_URL + '/rest/v1/tenant_registry?select=entity_name,uen,blk_no,street_name,postal_code,entity_type,entity_status,primary_ssic_description,reg_date&limit=2000';
+  var hdr = { 'apikey': SB_KEY, 'Authorization': 'Bearer ' + SB_KEY, 'Prefer': 'count=none' };
+  var base = SB_URL + '/rest/v1/tenant_registry?select=entity_name,uen,blk_no,street_name,postal_code,entity_type,entity_status,primary_ssic_description,reg_date&limit=1000';
 
   try {
     // Fetch new registrations
     document.getElementById('pulse-loading-msg').textContent = 'Loading new registrations…';
     var r1 = await fetch(base + '&reg_date=gte.' + dateStr + '&entity_status=eq.Live&order=reg_date.desc', { headers: hdr });
+    if(!r1.ok){ var e1=await r1.text(); console.error('Pulse new 400 body:',e1); }
     PULSE_DATA_NEW = r1.ok ? await r1.json() : [];
 
     // Fetch exits (recently dissolved/struck off — use reg_date as proxy since we don't store cessation_date)
     document.getElementById('pulse-loading-msg').textContent = 'Loading exits…';
     var r2 = await fetch(base + '&reg_date=gte.' + dateStr + '&entity_status=neq.Live&order=reg_date.desc', { headers: hdr });
+    if(!r2.ok){ var e2=await r2.text(); console.error('Pulse exit 400 body:',e2); }
     PULSE_DATA_EXIT = r2.ok ? await r2.json() : [];
 
     document.getElementById('pulse-loading').style.display = 'none';
