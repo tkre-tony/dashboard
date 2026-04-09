@@ -507,10 +507,10 @@ html,body{background:var(--bg);color:var(--txt);font-family:'DM Sans',sans-serif
     <span class="navtab-icon">🗂</span>Asset Directory
   </div>
   <div class="navtab" data-tab="talent" style="display:flex;align-items:center;gap:6px">
-    <span class="navtab-icon">👤</span>RE Human Capital
+    <span class="navtab-icon">👤</span>Human Capital
   </div>
   <div class="navtab" data-tab="forsale" style="display:flex;align-items:center;gap:6px">
-    <span class="navtab-icon">🏗</span>For Sale
+    <span class="navtab-icon">🏗</span>Stock
   </div>
   <div class="navtab" data-tab="pulse" style="display:flex;align-items:center;gap:6px">
     <span class="navtab-icon">📡</span>Market Pulse
@@ -2148,6 +2148,7 @@ html,body{background:var(--bg);color:var(--txt);font-family:'DM Sans',sans-serif
 
 
   </div>
+</div><!-- /tab-forsale -->
 
 <!-- ═══════════════════════════════════════════════════════════════
      RE HUMAN CAPITAL TAB — inline styles injected here
@@ -2161,7 +2162,7 @@ html,body{background:var(--bg);color:var(--txt);font-family:'DM Sans',sans-serif
   <!-- Hero -->
   <div class="talent-hero">
     <div>
-      <div class="talent-hero-title">👤 RE Human Capital Intelligence</div>
+      <div class="talent-hero-title">👤 Human Capital Intelligence</div>
       <div class="talent-hero-sub">C-Suite · Board · Key Management · Remuneration — sourced from SGX-listed REIT &amp; Developer Annual Reports</div>
       <div style="margin-top:8px;display:flex;gap:8px;flex-wrap:wrap">
         <span style="font-size:9px;background:rgba(167,139,250,.15);border:1px solid rgba(167,139,250,.3);color:#c4b5fd;padding:2px 8px;border-radius:10px;letter-spacing:.04em">PILOT · 18 Entities · AI-REIT · CICT · Keppel REIT · Suntec · CDL · UOL · OUE REIT · Wing Tai · GuocoLand · Digital Core REIT · First REIT · FE H-Trust · FE Orchard · Sing Holdings · MINT · MPACT · SingLand · Lendlease REIT</span>
@@ -2256,7 +2257,6 @@ html,body{background:var(--bg);color:var(--txt);font-family:'DM Sans',sans-serif
       <tbody id="talent-tbl-body"></tbody>
     </table>
   </div>
-</div>
 </div>
 
 
@@ -17421,7 +17421,7 @@ function tenantRenderTable(data) {
     return '<tr style="border-bottom:1px solid var(--srf3);'+(isLive?'':'opacity:.65')+'">' +
       '<td style="padding:9px 12px;font-weight:600;font-size:12px;color:#e2e8f0"><div style="display:flex;align-items:center;gap:7px">'+statusDot(d.entity_status)+'<span>'+(d.entity_name||'—')+'</span></div></td>'+
       '<td style="padding:9px 12px;color:#94a3b8;font-size:11px;white-space:nowrap">'+(d.unit_no||'—')+'</td>'+
-      '<td style="padding:9px 12px;font-size:11px"><span onclick="tenantShowSSICModal(''+indLabel+'')" style="color:#93c5fd;cursor:pointer;text-decoration:underline dotted" title="Click to view SSIC reference">'+indLabel+'</span></td>'+
+      '<td style="padding:9px 12px;font-size:11px"><span onclick="tenantShowSSICModal(this.getAttribute(\'data-ind\'))" data-ind="'+indLabel+'" style="color:#93c5fd;cursor:pointer;text-decoration:underline dotted" title="Click to view SSIC reference">'+indLabel+'</span></td>'+
       '<td style="padding:9px 12px;color:#cbd5e1;font-size:11px">'+(d.entity_type||'—')+'</td>'+
       '<td style="padding:9px 12px;font-size:11px"><span style="padding:2px 9px;border-radius:10px;font-size:10px;font-weight:700;background:'+statusBg+';color:'+statusColor+'">'+st+'</span></td>'+
       '<td style="padding:9px 12px;color:#94a3b8;font-size:11px;font-family:\'DM Mono\',monospace">'+(d.uen||'—')+'</td>'+
@@ -17770,7 +17770,7 @@ function pulseRender() {
     var pct = (districts[d]/maxDist*100).toFixed(0);
     var barColor = showNew && !showExit ? '#22c55e' : (showExit && !showNew ? '#f87171' : '#60a5fa');
     return '<div style="display:flex;align-items:center;gap:8px">' +
-      '<span style="font-family:'DM Mono',monospace;font-size:11px;color:#60a5fa;min-width:24px">D' + d + '</span>' +
+      '<span style="font-family:\'DM Mono\',monospace;font-size:11px;color:#60a5fa;min-width:24px">D' + d + '</span>' +
       '<div style="flex:1;height:6px;background:var(--srf2);border-radius:3px"><div style="width:'+pct+'%;height:6px;background:'+barColor+';border-radius:3px"></div></div>' +
       '<span style="font-size:11px;color:#e2e8f0;min-width:30px;text-align:right">' + districts[d] + '</span>' +
     '</div>';
