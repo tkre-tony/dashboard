@@ -18173,9 +18173,11 @@ function pulseInit() {
 // True DB counts for KPI cards — stored separately from display rows
 var PULSE_COUNT_NEW  = 0;
 var PULSE_COUNT_EXIT = 0;
+var PULSE_DAYS       = 90;
 
 async function pulseLoad() {
   var days    = parseInt(document.getElementById('pulse-period').value) || 90;
+  PULSE_DAYS = days;
   var cutoff  = new Date();
   cutoff.setDate(cutoff.getDate() - days);
   var dateStr = cutoff.toISOString().slice(0, 10);
@@ -18191,7 +18193,7 @@ async function pulseLoad() {
   var hdrCount = { 'apikey': SB_KEY, 'Authorization': 'Bearer ' + SB_KEY, 'Prefer': 'count=exact' };
 
   var base      = SB_URL + '/rest/v1/tenant_registry?select=entity_name,uen,blk_no,street_name,postal_code,entity_type,entity_status,primary_ssic_desc,reg_date';
-  var baseCount = SB_URL + '/rest/v1/tenant_registry?select=id';
+  var baseCount = SB_URL + '/rest/v1/tenant_registry?select=uen';
 
   try {
     document.getElementById('pulse-loading-msg').textContent = 'Counting registrations…';
@@ -18367,7 +18369,7 @@ function pulseRender() {
   // Chart title
   var modeLabel = mode === 'new' ? 'New Registrations' : mode === 'exit' ? 'Exits & Dissolutions' : 'New vs Exits';
   document.getElementById('pulse-chart-title').textContent = 'Monthly ' + modeLabel;
-  var d1 = new Date(); d1.setDate(d1.getDate() - days);
+  var d1 = new Date(); d1.setDate(d1.getDate() - PULSE_DAYS);
   var fmtDate = function(dt){ return dt.toLocaleDateString('en-SG',{day:'numeric',month:'short',year:'numeric'}); };
   var rangeNote = ' · ' + fmtDate(d1) + ' – ' + fmtDate(new Date());
   document.getElementById('pulse-list-title').textContent  = modeLabel + ' — ' + PULSE_ALL.length.toLocaleString() + ' companies' + (mode==='new'?rangeNote:'');
