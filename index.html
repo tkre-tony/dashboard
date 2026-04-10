@@ -18174,6 +18174,7 @@ function pulseInit() {
 var PULSE_COUNT_NEW  = 0;
 var PULSE_COUNT_EXIT = 0;
 var PULSE_DAYS       = 90;
+var PULSE_DIST_MAP   = {};
 
 async function pulseLoad() {
   var days    = parseInt(document.getElementById('pulse-period').value) || 90;
@@ -18320,7 +18321,8 @@ function pulseRender() {
     '67':'D27','68':'D27',
     '69':'D28','70':'D28','71':'D28'
   };
-  allForDistricts.forEach(function(d){ if(d.postal_code && d.postal_code.length >= 2){ var sector = d.postal_code.substring(0,2); var dist = SECTOR_TO_DIST[sector]; if(dist) districts[dist] = (districts[dist]||0) + 1; }});
+  PULSE_DIST_MAP = {};
+  allForDistricts.forEach(function(d){ if(d.postal_code && d.postal_code.length >= 2){ var sector = d.postal_code.substring(0,2); var dist = SECTOR_TO_DIST[sector]; if(dist){ districts[dist] = (districts[dist]||0) + 1; if(!PULSE_DIST_MAP[dist]) PULSE_DIST_MAP[dist] = []; PULSE_DIST_MAP[dist].push(d); } }});
   document.getElementById('pulse-k-districts').textContent = Object.keys(districts).length;
 
   // Top industry
@@ -18347,9 +18349,9 @@ function pulseRender() {
   document.getElementById('pulse-districts-list').innerHTML = distArr.map(function(d){
     var pct = (districts[d]/maxDist*100).toFixed(0);
     var barColor = showNew && !showExit ? '#22c55e' : (showExit && !showNew ? '#f87171' : '#60a5fa');
-    return '<div style="display:flex;align-items:center;gap:8px">' +
-      '<span style="font-family:\'DM Mono\',monospace;font-size:11px;color:var(--txt2);min-width:24px;font-weight:600">' + d + '</span>' +
-      '<div style="flex:1;height:6px;background:var(--srf2);border-radius:3px"><div style="width:'+pct+'%;height:6px;background:'+barColor+';border-radius:3px"></div></div>' +
+    return '<div style="display:flex;align-items:center;gap:8px;cursor:pointer;border-radius:4px;padding:2px 3px;transition:background .12s" onclick="pulseDistDrill(\''+d+'\')" onmouseenter="this.style.background=\'var(--srf2)\'" onmouseleave="this.style.background=\'\'" title="Click to filter by '+d+'">' +
+      '<span style="font-family:\'DM Mono\',monospace;font-size:11px;color:var(--g2);min-width:24px;font-weight:600">' + d + '</span>' +
+      '<div style="flex:1;height:6px;background:var(--srf3);border-radius:3px"><div style="width:'+pct+'%;height:6px;background:'+barColor+';border-radius:3px;transition:width .3s"></div></div>' +
       '<span style="font-size:11px;color:var(--txt);min-width:30px;text-align:right">' + districts[d] + '</span>' +
     '</div>';
   }).join('') || '<div style="color:var(--mut);font-size:12px">No data</div>';
@@ -18369,9 +18371,10 @@ function pulseRender() {
   // Portfolio buildings
   pulseBuildPortfolio(PULSE_ALL);
 
-  // Table
+  // Table — reset any district drill-down filter
   PULSE_FILTERED = PULSE_ALL.slice();
   PULSE_PAGE = 0;
+  document.querySelectorAll('#pulse-districts-list > div').forEach(function(el){ el.style.background=''; });
   pulseRenderTable();
 
   // Chart title
@@ -18390,8 +18393,8 @@ function pulseBuildChart(newData, exitData, mode) {
   var W = wrap.clientWidth || 560, H = 180;
   var P = { t: 16, r: 12, b: 32, l: 44 };
   var cW = W - P.l - P.r, cH = H - P.t - P.b;
+  var MONAMES = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
 
-  // Bucket by month
   function bucketByMonth(data) {
     var m = {};
     data.forEach(function(d) {
@@ -18402,17 +18405,24 @@ function pulseBuildChart(newData, exitData, mode) {
   }
   var newByMo  = bucketByMonth(newData);
   var exitByMo = bucketByMonth(exitData);
-  var allMos   = [...new Set(Object.keys(newByMo).concat(Object.keys(exitByMo)))].sort();
-  if(!allMos.length) { wrap.innerHTML = ''; return; }
+
+  // Cap to complete months only — exclude current partial month to avoid misleading spike
+  var nowYM = new Date().toISOString().slice(0,7);
+  var allMos = [...new Set(Object.keys(newByMo).concat(Object.keys(exitByMo)))]
+    .filter(function(mo){ return mo < nowYM; })
+    .sort();
+  // Always show last 12 complete months max for readability
+  if(allMos.length > 12) allMos = allMos.slice(allMos.length - 12);
+  if(!allMos.length) { wrap.innerHTML = '<div style="color:var(--mut);font-size:11px;padding:8px 0">No complete months in selected period yet.</div>'; return; }
 
   var maxVal = 1;
   allMos.forEach(function(mo) { maxVal = Math.max(maxVal, (newByMo[mo]||0), (exitByMo[mo]||0)); });
 
   var bGW = cW / allMos.length;
-  var bW  = Math.max(4, Math.min(28, bGW * 0.4));
-  var MONAMES = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+  var bW  = Math.max(4, Math.min(28, bGW * 0.55));
 
-  var svg = '<svg width="' + W + '" height="' + H + '" viewBox="0 0 ' + W + ' ' + H + '" style="width:100%;overflow:visible">';
+  // Build tooltip data for JS interactivity — embed as data attrs on rects
+  var svg = '<svg id="pulse-chart-svg" width="' + W + '" height="' + H + '" viewBox="0 0 ' + W + ' ' + H + '" style="width:100%;overflow:visible;cursor:crosshair">';
 
   // Grid lines
   for(var k = 1; k <= 4; k++) {
@@ -18424,38 +18434,69 @@ function pulseBuildChart(newData, exitData, mode) {
 
   allMos.forEach(function(mo, i) {
     var cx = P.l + i * bGW + bGW / 2;
-    var showLabel = allMos.length <= 12 || i % Math.ceil(allMos.length / 8) === 0 || i === allMos.length - 1;
+    var pts = mo.split('-');
+    var moName = MONAMES[parseInt(pts[1])-1] + " '" + pts[0].slice(2);
+
+    // Invisible hit area for tooltip
+    svg += '<rect x="' + (P.l + i*bGW).toFixed(1) + '" y="' + P.t + '" width="' + bGW.toFixed(1) + '" height="' + cH + '" fill="transparent"' +
+      ' data-mo="' + moName + '" data-new="' + (newByMo[mo]||0) + '" data-exit="' + (exitByMo[mo]||0) + '"' +
+      ' onmouseenter="pulseChartTip(event,this)" onmouseleave="pulseChartTipHide()"/>';
 
     if(mode === 'new' || mode === 'both') {
       var v = newByMo[mo] || 0;
       var bh = Math.max(2, (v / maxVal) * cH);
       var bx = mode === 'both' ? cx - bW - 1 : cx - bW / 2;
-      svg += '<rect x="' + bx.toFixed(1) + '" y="' + (P.t + cH - bh).toFixed(1) + '" width="' + bW + '" height="' + bh.toFixed(1) + '" fill="#22c55e" rx="2" opacity=".85"/>';
+      svg += '<rect x="' + bx.toFixed(1) + '" y="' + (P.t + cH - bh).toFixed(1) + '" width="' + bW + '" height="' + bh.toFixed(1) + '" fill="#22c55e" rx="2" opacity=".85" style="pointer-events:none"/>';
     }
     if(mode === 'exit' || mode === 'both') {
       var v2 = exitByMo[mo] || 0;
       var bh2 = Math.max(2, (v2 / maxVal) * cH);
       var bx2 = mode === 'both' ? cx + 1 : cx - bW / 2;
-      svg += '<rect x="' + bx2.toFixed(1) + '" y="' + (P.t + cH - bh2).toFixed(1) + '" width="' + bW + '" height="' + bh2.toFixed(1) + '" fill="#f87171" rx="2" opacity=".85"/>';
+      svg += '<rect x="' + bx2.toFixed(1) + '" y="' + (P.t + cH - bh2).toFixed(1) + '" width="' + bW + '" height="' + bh2.toFixed(1) + '" fill="#f87171" rx="2" opacity=".85" style="pointer-events:none"/>';
     }
 
-    if(showLabel) {
-      var pts = mo.split('-');
-      var lbl = MONAMES[parseInt(pts[1]) - 1] + " '" + pts[0].slice(2);
-      svg += '<text x="' + cx.toFixed(1) + '" y="' + (P.t + cH + 14) + '" text-anchor="middle" fill="#6b7280" font-size="9" font-family="DM Sans,sans-serif">' + lbl + '</text>';
-    }
+    var pts2 = mo.split('-');
+    var lbl = MONAMES[parseInt(pts2[1])-1] + " '" + pts2[0].slice(2);
+    svg += '<text x="' + cx.toFixed(1) + '" y="' + (P.t + cH + 14) + '" text-anchor="middle" fill="#6b7280" font-size="9" font-family="DM Sans,sans-serif" style="pointer-events:none">' + lbl + '</text>';
   });
 
-  // Legend
   if(mode === 'both') {
     svg += '<rect x="' + (P.l+2) + '" y="' + (P.t-12) + '" width="8" height="8" fill="#22c55e" rx="1"/>';
     svg += '<text x="' + (P.l+12) + '" y="' + (P.t-5) + '" fill="#9ca3af" font-size="9" font-family="DM Sans,sans-serif">New</text>';
     svg += '<rect x="' + (P.l+44) + '" y="' + (P.t-12) + '" width="8" height="8" fill="#f87171" rx="1"/>';
     svg += '<text x="' + (P.l+54) + '" y="' + (P.t-5) + '" fill="#9ca3af" font-size="9" font-family="DM Sans,sans-serif">Exits</text>';
   }
-
   svg += '</svg>';
+
+  // Tooltip element
+  svg += '<div id="pulse-chart-tip" style="position:absolute;display:none;background:var(--hdr);color:#fff;font-size:11px;padding:6px 10px;border-radius:6px;pointer-events:none;white-space:nowrap;z-index:50;border:1px solid rgba(255,255,255,.1);font-family:DM Sans,sans-serif;line-height:1.6"></div>';
+
+  wrap.style.position = 'relative';
   wrap.innerHTML = svg;
+}
+
+function pulseChartTip(e, el) {
+  var tip = document.getElementById('pulse-chart-tip');
+  if(!tip) return;
+  var mo = el.getAttribute('data-mo');
+  var nv = parseInt(el.getAttribute('data-new'));
+  var ev = parseInt(el.getAttribute('data-exit'));
+  var mode = document.getElementById('pulse-mode').value;
+  var html = '<strong>' + mo + '</strong><br>';
+  if(mode === 'new' || mode === 'both') html += '<span style="color:#4ade80">● New: ' + nv.toLocaleString() + '</span><br>';
+  if(mode === 'exit' || mode === 'both') html += '<span style="color:#f87171">● Exit: ' + ev.toLocaleString() + '</span>';
+  if(mode === 'both') html += '<br><span style="color:#94a3b8">Net: ' + (nv-ev >= 0 ? '+' : '') + (nv-ev).toLocaleString() + '</span>';
+  tip.innerHTML = html;
+  tip.style.display = 'block';
+  var rect = wrap.getBoundingClientRect();
+  var ex = e.clientX - rect.left, ey = e.clientY - rect.top;
+  tip.style.left = Math.min(ex + 10, rect.width - 130) + 'px';
+  tip.style.top  = Math.max(ey - 50, 0) + 'px';
+  var wrap = document.getElementById('pulse-chart-wrap');
+}
+function pulseChartTipHide() {
+  var tip = document.getElementById('pulse-chart-tip');
+  if(tip) tip.style.display = 'none';
 }
 
 function pulseBuildPortfolio(data) {
@@ -18527,7 +18568,9 @@ function pulseRenderTable() {
       : '<span style="display:inline-block;width:6px;height:6px;border-radius:50%;background:#f87171;margin-right:5px"></span>';
     var addr = [(d.blk_no||''), (d.street_name||''), (d.postal_code ? 'S('+d.postal_code+')' : '')].filter(Boolean).join(' ');
     return '<tr style="border-bottom:1px solid var(--srf3)">' +
-      '<td style="padding:8px 12px;font-weight:600;font-size:12px;color:var(--txt)"><div style="display:flex;align-items:center">' + typeDot + (d.entity_name||'—') + '</div></td>' +
+      '<td style="padding:8px 12px;font-weight:600;font-size:12px;color:var(--txt)"><div style="display:flex;align-items:center">' + typeDot +
+      '<a href="https://www.sgpbusiness.com/company/' + encodeURIComponent(d.uen||'') + '" target="_blank" style="color:var(--txt);text-decoration:none;border-bottom:1px dashed var(--bdr2);cursor:pointer" title="View on SGPBusiness">' + (d.entity_name||'—') + '</a>' +
+      '</div></td>' +
       '<td style="padding:8px 12px;font-size:11px;color:var(--txt)">' + (addr||'—') + '</td>' +
       '<td style="padding:8px 12px;font-size:11px;color:var(--txt2)">' + (d.entity_type||'—') + '</td>' +
       '<td style="padding:8px 12px;font-size:11px;color:var(--mut)">' + (d.primary_ssic_desc && d.primary_ssic_desc.toLowerCase()!=='na' ? d.primary_ssic_desc : '—') + '</td>' +
@@ -18550,6 +18593,25 @@ function pulseRenderTable() {
 }
 
 function pulsePage(p) { PULSE_PAGE = p; pulseRenderTable(); document.getElementById('tab-pulse').scrollIntoView({behavior:'smooth',block:'start'}); }
+
+function pulseDistDrill(dist) {
+  // Filter company list to selected district and scroll to table
+  var companies = PULSE_DIST_MAP[dist] || [];
+  if(!companies.length) return;
+  // Set filtered list and update title
+  PULSE_FILTERED = companies.map(function(d){ return d._type ? d : Object.assign({},d,{_type:'new'}); });
+  PULSE_PAGE = 0;
+  pulseRenderTable();
+  var listTitle = document.getElementById('pulse-list-title');
+  if(listTitle) listTitle.textContent = dist + ' — ' + companies.length.toLocaleString() + ' companies · click elsewhere to reset';
+  // Highlight the district in districts list
+  document.querySelectorAll('#pulse-districts-list > div').forEach(function(el){
+    el.style.background = el.querySelector('span') && el.querySelector('span').textContent.trim() === dist ? 'var(--glt)' : '';
+  });
+  // Scroll to table
+  var tbl = document.getElementById('pulse-tbl-wrap');
+  if(tbl) tbl.scrollIntoView({behavior:'smooth',block:'start'});
+}
 
 function pulseExportCSV() {
   if(!PULSE_FILTERED.length) return;
