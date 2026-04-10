@@ -2295,9 +2295,9 @@ html,body{background:var(--bg);color:var(--txt);font-family:'DM Sans',sans-serif
       <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
         <div style="display:flex;align-items:center;gap:6px">
           <label style="font-size:11px;color:rgba(255,255,255,.55);white-space:nowrap">From</label>
-          <input type="month" id="pulse-from" value="2022-01" max="2026-04" onchange="pulseLoad()" style="height:30px;padding:0 8px;border:1px solid var(--bdr);border-radius:6px;background:var(--srf2);color:var(--txt);font-size:12px;font-family:'DM Sans',sans-serif"/>
+          <input type="month" id="pulse-from" value="2025-12" min="2019-01" max="2026-02" onchange="pulseLoad()" style="height:30px;padding:0 8px;border:1px solid var(--bdr);border-radius:6px;background:var(--srf2);color:var(--txt);font-size:12px;font-family:'DM Sans',sans-serif"/>
           <label style="font-size:11px;color:rgba(255,255,255,.55);white-space:nowrap">To</label>
-          <input type="month" id="pulse-to" value="2026-04" max="2026-04" onchange="pulseLoad()" style="height:30px;padding:0 8px;border:1px solid var(--bdr);border-radius:6px;background:var(--srf2);color:var(--txt);font-size:12px;font-family:'DM Sans',sans-serif"/>
+          <input type="month" id="pulse-to" value="2026-02" min="2019-01" max="2026-02" onchange="pulseLoad()" style="height:30px;padding:0 8px;border:1px solid var(--bdr);border-radius:6px;background:var(--srf2);color:var(--txt);font-size:12px;font-family:'DM Sans',sans-serif"/>
         </div>
         <select id="pulse-mode" onchange="pulseRender()" style="height:30px;padding:0 10px;border:1px solid var(--bdr);border-radius:6px;background:var(--srf2);color:var(--txt);font-size:12px;font-family:'DM Sans',sans-serif">
           <option value="new">🟢 New Registrations</option>
@@ -18647,7 +18647,7 @@ async function pulseLoad() {
     var inds = usingSSIC
       ? ssicVals
       : [...new Set(allData.map(function(d){ return (d.entity_type||'').trim(); }).filter(Boolean))].sort();
-    indSel.innerHTML = '<option value="">' + (usingSSIC ? 'All Industries' : 'All Types') + '</option>' +
+    indSel.innerHTML = '<option value="">All Industries</option>' +
       inds.map(function(i){ return '<option value="' + i.replace(/"/g,'&quot;') + '">' + i + '</option>'; }).join('');
     // Update the label in the header bar too
     var indLabelEl = document.getElementById('pulse-industry-label');
