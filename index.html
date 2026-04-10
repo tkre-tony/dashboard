@@ -2360,8 +2360,13 @@ html,body{background:var(--bg);color:var(--txt);font-family:'DM Sans',sans-serif
       <!-- Row 2: Portfolio buildings full width -->
       <div style="margin-bottom:12px">
         <div class="card" style="padding:16px">
-          <div style="font-size:12px;font-weight:700;color:var(--txt);margin-bottom:4px">🏢 Activity in Our Portfolio Buildings</div>
-          <div style="font-size:10px;color:var(--mut);margin-bottom:10px">REIT/Dev assets with new or exiting tenants in this period</div>
+          <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;margin-bottom:4px">
+            <div style="font-size:12px;font-weight:700;color:var(--txt)">🏢 Activity in Our Portfolio Buildings</div>
+            <select id="pulse-portfolio-entity" onchange="pulseBuildPortfolio(PULSE_ALL)" style="height:28px;padding:0 8px;border:1px solid var(--bdr);border-radius:6px;background:var(--srf2);color:var(--txt);font-size:11px;font-family:'DM Sans',sans-serif;max-width:220px">
+              <option value="">All Entities</option>
+            </select>
+          </div>
+          <div style="font-size:10px;color:var(--mut);margin-bottom:10px">REIT/Dev assets with new or exiting tenants in this period · click asset to view in Asset Directory</div>
           <div id="pulse-portfolio-list" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:6px"></div>
         </div>
       </div>
@@ -18133,7 +18138,7 @@ var PULSE_DATA_EXIT = [];
 var PULSE_ALL       = [];
 var PULSE_FILTERED  = [];
 var PULSE_PAGE      = 0;
-var PULSE_PAGE_SIZE = 50;
+var PULSE_PAGE_SIZE = 100;
 var pulseInited     = false;
 
 // Build address→asset lookup from REIT_DATA for portfolio matching
@@ -18164,6 +18169,8 @@ function pulseInit() {
 // True DB counts for KPI cards — stored separately from display rows
 var PULSE_COUNT_NEW  = 0;
 var PULSE_COUNT_EXIT = 0;
+var PULSE_MONTHLY_NEW  = {};
+var PULSE_MONTHLY_EXIT = {};
 var PULSE_DAYS       = 90;
 var PULSE_DIST_MAP   = {};
 var PULSE_FROM_MO    = '2025-12';
@@ -18215,6 +18222,37 @@ async function pulseLoad() {
     if(!r2.ok){ console.error('Pulse exit err:', await r2.text()); }
     PULSE_DATA_NEW  = r1.ok ? await r1.json() : [];
     PULSE_DATA_EXIT = r2.ok ? await r2.json() : [];
+
+    // If we hit the row cap, fetch additional pages to get all records
+    var pageSize = 3000;
+    if(PULSE_COUNT_NEW && PULSE_DATA_NEW.length === pageSize && PULSE_COUNT_NEW > pageSize) {
+      document.getElementById('pulse-loading-msg').textContent = 'Loading all ' + PULSE_COUNT_NEW.toLocaleString() + ' registrations…';
+      var extraPages = [];
+      var totalPages = Math.ceil(PULSE_COUNT_NEW / pageSize);
+      for(var pg = 1; pg < Math.min(totalPages, 7); pg++) { // max 7 pages = 21,000 rows
+        extraPages.push(fetch(base + newFilter + '&order=reg_date.desc&limit=' + pageSize + '&offset=' + (pg * pageSize), { headers: hdrData }));
+      }
+      var extraResults = await Promise.all(extraPages);
+      for(var i = 0; i < extraResults.length; i++) {
+        if(extraResults[i].ok) PULSE_DATA_NEW = PULSE_DATA_NEW.concat(await extraResults[i].json());
+      }
+    }
+
+    // Fetch true monthly counts — lightweight date-only queries, no row limit needed
+    // since we only select reg_date and PostgREST returns all matching rows
+    document.getElementById('pulse-loading-msg').textContent = 'Loading monthly breakdown…';
+    var baseDates = SB_URL + '/rest/v1/tenant_registry?select=reg_date';
+    var [rm1, rm2] = await Promise.all([
+      fetch(baseDates + newFilter  + '&order=reg_date.asc', { headers: hdrData }),
+      fetch(baseDates + exitFilter + '&order=reg_date.asc', { headers: hdrData })
+    ]);
+    function bucketRows(rows) {
+      var m = {};
+      (rows||[]).forEach(function(r){ var mo=(r.reg_date||'').slice(0,7); if(mo) m[mo]=(m[mo]||0)+1; });
+      return m;
+    }
+    PULSE_MONTHLY_NEW  = rm1.ok ? bucketRows(await rm1.json()) : {};
+    PULSE_MONTHLY_EXIT = rm2.ok ? bucketRows(await rm2.json()) : {};
 
     document.getElementById('pulse-loading').style.display = 'none';
 
@@ -18390,16 +18428,9 @@ function pulseBuildChart(newData, exitData, mode) {
   var cW = W - P.l - P.r, cH = H - P.t - P.b;
   var MONAMES = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
 
-  function bucketByMonth(data) {
-    var m = {};
-    data.forEach(function(d) {
-      var mo = (d.reg_date || '').slice(0, 7);
-      if(mo) m[mo] = (m[mo] || 0) + 1;
-    });
-    return m;
-  }
-  var newByMo  = bucketByMonth(newData);
-  var exitByMo = bucketByMonth(exitData);
+  // Use pre-fetched true monthly counts instead of display rows
+  var newByMo  = PULSE_MONTHLY_NEW;
+  var exitByMo = PULSE_MONTHLY_EXIT;
 
   // Show all months within selected range — exclude current partial month
   var nowYM = new Date().toISOString().slice(0,7);
@@ -18496,12 +18527,13 @@ function pulseBuildPortfolio(data) {
   var listEl = document.getElementById('pulse-portfolio-list');
   if(!listEl || !PULSE_PORTFOLIO_IDX) return;
 
+  var entitySel = document.getElementById('pulse-portfolio-entity');
+  var entityFilter = entitySel ? entitySel.value : '';
+
   // Match companies to portfolio buildings
   var hits = {};
   data.forEach(function(d) {
     if(!d.blk_no || !d.street_name) return;
-    var key = d.blk_no.toUpperCase() + '|' + d.street_name.toUpperCase().trim();
-    // Partial match — check if any portfolio key starts with blk+street prefix
     Object.keys(PULSE_PORTFOLIO_IDX).forEach(function(pk) {
       if(pk.startsWith(d.blk_no.toUpperCase() + '|')) {
         var asset = PULSE_PORTFOLIO_IDX[pk];
@@ -18515,24 +18547,49 @@ function pulseBuildPortfolio(data) {
   var hitArr = Object.values(hits).filter(function(h){ return h.new + h.exit > 0; });
   hitArr.sort(function(a, b){ return (b.new + b.exit) - (a.new + a.exit); });
 
+  // Populate entity dropdown (first call only — when no filter set)
+  if(entitySel && entitySel.options.length <= 1) {
+    var entities = [...new Set(hitArr.map(function(h){ return h.asset.entity; }))].sort();
+    entities.forEach(function(e){
+      var opt = document.createElement('option');
+      opt.value = e; opt.textContent = e;
+      entitySel.appendChild(opt);
+    });
+  }
+
+  // Apply entity filter
+  if(entityFilter) hitArr = hitArr.filter(function(h){ return h.asset.entity === entityFilter; });
+
   if(!hitArr.length) {
     listEl.innerHTML = '<div style="color:var(--mut);font-size:12px;padding:8px 0">No activity matched in tracked portfolio buildings for this period.</div>';
     return;
   }
 
-  listEl.innerHTML = hitArr.slice(0, 12).map(function(h) {
+  listEl.innerHTML = hitArr.map(function(h) {
     var rc = (typeof ENTITY_COLORS !== 'undefined' && ENTITY_COLORS[h.asset.entity]) || '#1a4f9c';
-    return '<div style="display:flex;align-items:center;gap:8px;padding:6px 0;border-bottom:1px solid var(--srf3)">' +
-      '<div style="flex:1;min-width:0">' +
-        '<div style="font-size:11px;font-weight:600;color:#e2e8f0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">' + h.asset.name + '</div>' +
-        '<div style="font-size:10px;color:' + rc + ';margin-top:1px">' + h.asset.entity + '</div>' +
-      '</div>' +
-      '<div style="display:flex;gap:5px;flex-shrink:0">' +
-        (h.new  ? '<span style="font-size:10px;font-weight:700;background:rgba(34,197,94,.12);color:#22c55e;padding:1px 6px;border-radius:8px">+' + h.new + ' new</span>' : '') +
-        (h.exit ? '<span style="font-size:10px;font-weight:700;background:rgba(248,113,113,.12);color:#f87171;padding:1px 6px;border-radius:8px">-' + h.exit + ' exit</span>' : '') +
+    var assetName = h.asset.name || '';
+    // Build Asset Directory link — switch to reit tab and filter by asset name
+    var assetLink = 'javascript:void(0)';
+    return '<div style="background:var(--srf2);border:0.5px solid var(--bdr);border-radius:8px;padding:10px 12px;cursor:pointer" ' +
+      'onclick="pulseGoToAsset('' + assetName.replace(/'/g,"\'") + '')" title="View in Asset Directory">' +
+      '<div style="font-size:11px;font-weight:600;color:var(--txt);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;margin-bottom:3px">' + assetName + '</div>' +
+      '<div style="font-size:10px;color:' + rc + ';margin-bottom:6px">' + h.asset.entity + '</div>' +
+      '<div style="display:flex;gap:5px;flex-wrap:wrap">' +
+        (h.new  ? '<span style="font-size:10px;font-weight:700;background:rgba(34,197,94,.12);color:#22c55e;padding:2px 7px;border-radius:8px">+' + h.new + ' new</span>' : '') +
+        (h.exit ? '<span style="font-size:10px;font-weight:700;background:rgba(248,113,113,.12);color:#f87171;padding:2px 7px;border-radius:8px">-' + h.exit + ' exit</span>' : '') +
       '</div>' +
     '</div>';
   }).join('');
+}
+
+function pulseGoToAsset(name) {
+  // Switch to Asset Directory tab and search for the asset
+  var reitTab = document.querySelector('[data-tab="reit"]');
+  if(reitTab) reitTab.click();
+  setTimeout(function(){
+    var search = document.getElementById('reit-search');
+    if(search){ search.value = name; search.dispatchEvent(new Event('input')); }
+  }, 200);
 }
 
 function pulseFilterList() {
