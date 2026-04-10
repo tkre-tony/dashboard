@@ -1791,7 +1791,7 @@ html,body{background:var(--bg);color:var(--txt);font-family:'DM Sans',sans-serif
         <div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:12px;align-items:center">
           <input id="tenant-search" placeholder="🔍 Company / UEN…" oninput="tenantFilter()" style="height:30px;padding:0 10px;border:1px solid var(--bdr);border-radius:6px;background:var(--srf2);color:var(--txt);font-size:11px;font-family:'DM Sans',sans-serif;min-width:160px;flex:1">
           <select id="tenant-industry-filter" onchange="tenantFilter()" style="height:30px;padding:0 8px;border:1px solid var(--bdr);border-radius:6px;background:var(--srf2);color:var(--txt);font-size:11px;font-family:'DM Sans',sans-serif;min-width:140px">
-            <option value="">All Industries</option>
+            <option value="">All Types</option>
           </select>
           <select id="tenant-type-filter" onchange="tenantFilter()" style="height:30px;padding:0 8px;border:1px solid var(--bdr);border-radius:6px;background:var(--srf2);color:var(--txt);font-size:11px;font-family:'DM Sans',sans-serif;min-width:120px">
             <option value="">All Types</option>
@@ -2296,7 +2296,7 @@ html,body{background:var(--bg);color:var(--txt);font-family:'DM Sans',sans-serif
           <option value="both">Both</option>
         </select>
         <select id="pulse-industry" onchange="pulseRender()" style="height:30px;padding:0 10px;border:1px solid var(--bdr);border-radius:6px;background:var(--srf2);color:var(--txt);font-size:12px;font-family:'DM Sans',sans-serif">
-          <option value="">All Industries</option>
+          <option value="">All Types</option>
         </select>
         <input id="pulse-bldg-search" placeholder="🏢 Search address or postal…" oninput="pulseRender()" style="height:30px;padding:0 10px;border:1px solid var(--bdr);border-radius:6px;background:var(--srf2);color:var(--txt);font-size:12px;font-family:'DM Sans',sans-serif;min-width:200px;flex:1" />
         <button onclick="pulseLoad()" style="height:30px;padding:0 14px;background:var(--g1);color:#fff;border:none;border-radius:6px;font-size:12px;font-family:'DM Sans',sans-serif;cursor:pointer;font-weight:600">↻ Refresh</button>
@@ -2363,7 +2363,7 @@ html,body{background:var(--bg);color:var(--txt);font-family:'DM Sans',sans-serif
         <!-- Top industries -->
         <div class="card" style="padding:16px">
           <div style="display:flex;align-items:baseline;justify-content:space-between;margin-bottom:4px">
-            <div style="font-size:12px;font-weight:700;color:var(--txt)">🏭 Top Industries</div>
+            <div style="font-size:12px;font-weight:700;color:var(--txt)">🏢 Top Entity Types</div>
           </div>
           <div id="pulse-ind-note" style="font-size:10px;color:var(--mut);margin-bottom:10px">By company count · new registrations + exits combined</div>
           <div id="pulse-industries-list" style="display:flex;flex-direction:column;gap:5px"></div>
@@ -17947,7 +17947,7 @@ function tenantPopulateFilters(data) {
   if(!indSel||!typSel) return;
   var inds=[...new Set(data.map(function(d){return ssicLabel(d.primary_ssic_code);}))].filter(Boolean).sort();
   var typs=[...new Set(data.map(function(d){return d.entity_type||'';}).filter(Boolean))].sort();
-  indSel.innerHTML='<option value="">All Industries</option>'+inds.map(function(i){return '<option value="'+i+'">'+i+'</option>';}).join('');
+  indSel.innerHTML='<option value="">All Types</option>'+inds.map(function(i){return '<option value="'+i+'">'+i+'</option>';}).join('');
   typSel.innerHTML='<option value="">All Types</option>'+typs.map(function(t){return '<option value="'+t+'">'+t+'</option>';}).join('');
 }
 
@@ -18233,9 +18233,9 @@ async function pulseLoad() {
 
     // Populate industry filter
     var allData = PULSE_DATA_NEW.concat(PULSE_DATA_EXIT);
-    var inds = [...new Set(allData.map(function(d){ return d.primary_ssic_desc || ''; }).filter(Boolean))].sort();
+    var inds = [...new Set(allData.map(function(d){ return d.entity_type || ''; }).filter(Boolean))].sort();
     var indSel = document.getElementById('pulse-industry');
-    indSel.innerHTML = '<option value="">All Industries</option>' +
+    indSel.innerHTML = '<option value="">All Types</option>' +
       inds.map(function(i){ return '<option value="' + i + '">' + i + '</option>'; }).join('');
 
     pulseRender();
@@ -18257,8 +18257,8 @@ function pulseRender() {
 
   var bldgQ = (document.getElementById('pulse-bldg-search') ? document.getElementById('pulse-bldg-search').value : '').toLowerCase().trim();
   if(indF) {
-    newData  = newData.filter(function(d){ return d.primary_ssic_desc === indF; });
-    exitData = exitData.filter(function(d){ return d.primary_ssic_desc === indF; });
+    newData  = newData.filter(function(d){ return d.entity_type === indF; });
+    exitData = exitData.filter(function(d){ return d.entity_type === indF; });
   }
   if(bldgQ) {
     function matchBldg(d){ return ((d.blk_no||'').toLowerCase().includes(bldgQ)) || ((d.street_name||'').toLowerCase().includes(bldgQ)) || ((d.postal_code||'').includes(bldgQ)); }
@@ -18325,8 +18325,8 @@ function pulseRender() {
 
   // Top industry
   var indMap = {};
-  // Build industry map from ALL loaded data (new + exit) regardless of mode for richer industry stats
-  PULSE_DATA_NEW.concat(PULSE_DATA_EXIT).forEach(function(d){ var i = d.primary_ssic_desc; if(i && i.trim() && i.trim().toLowerCase() !== 'na') indMap[i.trim()] = (indMap[i.trim()]||0) + 1; });
+  // Build entity type map from ALL loaded data (new + exit)
+  PULSE_DATA_NEW.concat(PULSE_DATA_EXIT).forEach(function(d){ var i = d.entity_type; if(i && i.trim() && i.trim().toLowerCase() !== 'na') indMap[i.trim()] = (indMap[i.trim()]||0) + 1; });
   var topInd = Object.keys(indMap).sort(function(a,b){ return indMap[b]-indMap[a]; })[0] || '—';
   document.getElementById('pulse-k-topind').textContent = topInd;
 
