@@ -2284,12 +2284,12 @@ html,body{background:var(--bg);color:var(--txt);font-family:'DM Sans',sans-serif
         <div style="font-size:12px;color:#94a3b8;margin-top:4px">New &amp; exiting companies across Singapore · Source: ACRA registry via Supabase · 2M+ entities tracked</div>
       </div>
       <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
-        <select id="pulse-period" onchange="pulseLoad()" style="height:30px;padding:0 10px;border:1px solid var(--bdr);border-radius:6px;background:var(--srf2);color:var(--txt);font-size:12px;font-family:'DM Sans',sans-serif">
-          <option value="30">Last 30 days</option>
-          <option value="90" selected>Last 90 days</option>
-          <option value="180">Last 6 months</option>
-          <option value="365">Last 12 months</option>
-        </select>
+        <div style="display:flex;align-items:center;gap:6px">
+          <label style="font-size:11px;color:rgba(255,255,255,.55);white-space:nowrap">From</label>
+          <input type="month" id="pulse-from" value="2025-12" max="2026-02" onchange="pulseLoad()" style="height:30px;padding:0 8px;border:1px solid var(--bdr);border-radius:6px;background:var(--srf2);color:var(--txt);font-size:12px;font-family:'DM Sans',sans-serif"/>
+          <label style="font-size:11px;color:rgba(255,255,255,.55);white-space:nowrap">To</label>
+          <input type="month" id="pulse-to" value="2026-02" max="2026-02" onchange="pulseLoad()" style="height:30px;padding:0 8px;border:1px solid var(--bdr);border-radius:6px;background:var(--srf2);color:var(--txt);font-size:12px;font-family:'DM Sans',sans-serif"/>
+        </div>
         <select id="pulse-mode" onchange="pulseRender()" style="height:30px;padding:0 10px;border:1px solid var(--bdr);border-radius:6px;background:var(--srf2);color:var(--txt);font-size:12px;font-family:'DM Sans',sans-serif">
           <option value="new">🟢 New Registrations</option>
           <option value="exit">🔴 Dissolutions / Exits</option>
@@ -2313,7 +2313,7 @@ html,body{background:var(--bg);color:var(--txt);font-family:'DM Sans',sans-serif
       <div class="card" style="text-align:center;padding:14px 10px">
         <div id="pulse-k-exit" style="font-size:22px;font-weight:800;color:#f87171">—</div>
         <div style="font-size:10px;color:var(--txt2);text-transform:uppercase;letter-spacing:.05em;margin-top:3px">Exits / Dissolved</div>
-        <div style="font-size:9px;color:var(--mut);margin-top:2px">Most recently reg, now dissolved</div>
+        <div style="font-size:9px;color:var(--mut);margin-top:2px">Dissolved · registered in period</div>
       </div>
       <div class="card" style="text-align:center;padding:14px 10px">
         <div id="pulse-k-net" style="font-size:22px;font-weight:800;color:var(--txt)">—</div>
@@ -2346,7 +2346,7 @@ html,body{background:var(--bg);color:var(--txt);font-family:'DM Sans',sans-serif
           <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:4px">
             <div style="font-size:12px;font-weight:700;color:var(--txt);display:flex;align-items:center;gap:6px">📈 <span id="pulse-chart-title">Monthly Activity Trend</span></div>
           </div>
-          <div id="pulse-chart-note" style="font-size:10px;color:var(--mut);margin-bottom:10px">Bars show companies by incorporation date in the selected period. Showing up to 3,000 most recent records — counts above may reflect true totals.</div>
+          <div id="pulse-chart-note" style="font-size:10px;color:var(--mut);margin-bottom:10px">Monthly breakdown for selected period · display capped at 3,000 rows · KPI counts reflect true database totals</div>
           <div id="pulse-chart-wrap" style="width:100%"></div>
         </div>
 
@@ -2357,25 +2357,16 @@ html,body{background:var(--bg);color:var(--txt);font-family:'DM Sans',sans-serif
         </div>
       </div>
 
-      <!-- Row 2: Top industries + Buildings in our portfolio -->
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px">
-
-        <!-- Top industries -->
-        <div class="card" style="padding:16px">
-          <div style="display:flex;align-items:baseline;justify-content:space-between;margin-bottom:4px">
-            <div style="font-size:12px;font-weight:700;color:var(--txt)">🏢 Top Entity Types</div>
-          </div>
-          <div id="pulse-ind-note" style="font-size:10px;color:var(--mut);margin-bottom:10px">By company count · new registrations + exits combined</div>
-          <div id="pulse-industries-list" style="display:flex;flex-direction:column;gap:5px"></div>
-        </div>
-
-        <!-- Portfolio buildings with activity -->
+      <!-- Row 2: Portfolio buildings full width -->
+      <div style="margin-bottom:12px">
         <div class="card" style="padding:16px">
           <div style="font-size:12px;font-weight:700;color:var(--txt);margin-bottom:4px">🏢 Activity in Our Portfolio Buildings</div>
           <div style="font-size:10px;color:var(--mut);margin-bottom:10px">REIT/Dev assets with new or exiting tenants in this period</div>
-          <div id="pulse-portfolio-list" style="display:flex;flex-direction:column;gap:5px"></div>
+          <div id="pulse-portfolio-list" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:6px"></div>
         </div>
       </div>
+      <div id="pulse-ind-note" style="display:none"></div>
+      <div id="pulse-industries-list" style="display:none"></div>
 
       <!-- Row 3: Full company list -->
       <div class="card" style="padding:16px">
@@ -18175,43 +18166,43 @@ var PULSE_COUNT_NEW  = 0;
 var PULSE_COUNT_EXIT = 0;
 var PULSE_DAYS       = 90;
 var PULSE_DIST_MAP   = {};
+var PULSE_FROM_MO    = '2025-12';
+var PULSE_TO_MO      = '2026-02';
 
 async function pulseLoad() {
-  var days    = parseInt(document.getElementById('pulse-period').value) || 90;
-  PULSE_DAYS = days;
-  var cutoff  = new Date();
-  cutoff.setDate(cutoff.getDate() - days);
-  var dateStr = cutoff.toISOString().slice(0, 10);
+  var fromMo = document.getElementById('pulse-from').value || '2025-12';
+  var toMo   = document.getElementById('pulse-to').value   || '2026-02';
+  if(fromMo > toMo){ document.getElementById('pulse-from').value = toMo; fromMo = toMo; }
+  var dateFrom = fromMo + '-01';
+  var toLastDay = new Date(parseInt(toMo.split('-')[0]), parseInt(toMo.split('-')[1]), 0).getDate();
+  var dateTo = toMo + '-' + String(toLastDay).padStart(2,'0');
+  PULSE_FROM_MO = fromMo;
+  PULSE_TO_MO   = toMo;
+  PULSE_DAYS    = Math.round((new Date(dateTo) - new Date(dateFrom)) / 86400000);
 
   document.getElementById('pulse-loading').style.display = 'block';
   document.getElementById('pulse-content').style.display = 'none';
   document.getElementById('pulse-empty').style.display   = 'none';
   document.getElementById('pulse-loading-msg').textContent = 'Querying ACRA registry…';
 
-  // Headers for display rows (no count overhead)
   var hdrData  = { 'apikey': SB_KEY, 'Authorization': 'Bearer ' + SB_KEY, 'Prefer': 'count=none' };
-  // Headers for true count — HEAD request returns Content-Range with total, no rows transferred
   var hdrCount = { 'apikey': SB_KEY, 'Authorization': 'Bearer ' + SB_KEY, 'Prefer': 'count=exact' };
-
   var base      = SB_URL + '/rest/v1/tenant_registry?select=entity_name,uen,blk_no,street_name,postal_code,entity_type,entity_status,primary_ssic_desc,reg_date';
   var baseCount = SB_URL + '/rest/v1/tenant_registry?select=uen';
+  // Both new + exits filtered by reg_date within selected month range
+  var newFilter  = '&entity_status=ilike.Live*&reg_date=gte.' + dateFrom + '&reg_date=lte.' + dateTo;
+  var exitFilter = '&entity_status=not.ilike.Live*&reg_date=gte.' + dateFrom + '&reg_date=lte.' + dateTo;
 
   try {
     document.getElementById('pulse-loading-msg').textContent = 'Counting registrations…';
 
-    // Fire all 4 requests in parallel: 2 HEAD counts + 2 data fetches
     var [rc1, rc2, r1, r2] = await Promise.all([
-      // COUNT: new registrations — GET with limit=0, count=exact
-      fetch(baseCount + '&entity_status=ilike.Live*&reg_date=gte.' + dateStr + '&limit=0', { method: 'GET', headers: hdrCount }),
-      // COUNT: exits — GET with limit=0, count=exact (HEAD on large unfiltered sets can 500)
-      fetch(baseCount + '&entity_status=not.ilike.Live*&limit=0', { method: 'GET', headers: hdrCount }),
-      // DATA: new registrations (full rows for display, capped at 3000)
-      fetch(base + '&entity_status=ilike.Live*&reg_date=gte.' + dateStr + '&order=reg_date.desc&limit=3000', { headers: hdrData }),
-      // DATA: exits (full rows for display, capped at 3000)
-      fetch(base + '&entity_status=not.ilike.Live*&order=reg_date.desc&limit=3000', { headers: hdrData })
+      fetch(baseCount + newFilter  + '&limit=0', { method: 'GET', headers: hdrCount }),
+      fetch(baseCount + exitFilter + '&limit=0', { method: 'GET', headers: hdrCount }),
+      fetch(base + newFilter  + '&order=reg_date.desc&limit=3000', { headers: hdrData }),
+      fetch(base + exitFilter + '&order=reg_date.desc&limit=3000', { headers: hdrData })
     ]);
 
-    // Parse true counts from Content-Range header: "0-0/TOTAL" or "*/TOTAL"
     function parseCount(resp) {
       var cr = resp.headers.get('Content-Range') || '';
       var m  = cr.match(/\/(\d+)$/);
@@ -18220,8 +18211,8 @@ async function pulseLoad() {
     PULSE_COUNT_NEW  = parseCount(rc1);
     PULSE_COUNT_EXIT = parseCount(rc2);
 
-    if(!r1.ok){ var e1=await r1.text(); console.error('Pulse new 400:',e1); }
-    if(!r2.ok){ var e2=await r2.text(); console.error('Pulse exit 400:',e2); }
+    if(!r1.ok){ console.error('Pulse new err:', await r1.text()); }
+    if(!r2.ok){ console.error('Pulse exit err:', await r2.text()); }
     PULSE_DATA_NEW  = r1.ok ? await r1.json() : [];
     PULSE_DATA_EXIT = r2.ok ? await r2.json() : [];
 
@@ -18232,7 +18223,6 @@ async function pulseLoad() {
       return;
     }
 
-    // Populate industry filter
     var allData = PULSE_DATA_NEW.concat(PULSE_DATA_EXIT);
     var inds = [...new Set(allData.map(function(d){ return d.entity_type || ''; }).filter(Boolean))].sort();
     var indSel = document.getElementById('pulse-industry');
@@ -18380,10 +18370,15 @@ function pulseRender() {
   // Chart title
   var modeLabel = mode === 'new' ? 'New Registrations' : mode === 'exit' ? 'Exits & Dissolutions' : 'New vs Exits';
   document.getElementById('pulse-chart-title').textContent = 'Monthly ' + modeLabel;
-  var d1 = new Date(); d1.setDate(d1.getDate() - PULSE_DAYS);
-  var fmtDate = function(dt){ return dt.toLocaleDateString('en-SG',{day:'numeric',month:'short',year:'numeric'}); };
-  var rangeNote = ' · ' + fmtDate(d1) + ' – ' + fmtDate(new Date());
-  document.getElementById('pulse-list-title').textContent  = modeLabel + ' — ' + PULSE_ALL.length.toLocaleString() + ' companies' + (mode==='new'?rangeNote:'');
+  var MONAMES2 = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+  function fmtMo(ym){ var p=ym.split('-'); return MONAMES2[parseInt(p[1])-1]+' '+p[0]; }
+  var rangeNote = ' · ' + fmtMo(PULSE_FROM_MO) + ' – ' + fmtMo(PULSE_TO_MO);
+  var trueCount = mode==='new' ? PULSE_COUNT_NEW : mode==='exit' ? PULSE_COUNT_EXIT : (PULSE_COUNT_NEW||0)+(PULSE_COUNT_EXIT||0);
+  var dispCount = PULSE_ALL.length;
+  var countNote = (trueCount && trueCount > dispCount)
+    ? 'Showing ' + dispCount.toLocaleString() + ' of ' + trueCount.toLocaleString()
+    : dispCount.toLocaleString() + ' companies';
+  document.getElementById('pulse-list-title').textContent = modeLabel + ' — ' + countNote + rangeNote;
 
   document.getElementById('pulse-content').style.display = 'block';
 }
@@ -18406,14 +18401,12 @@ function pulseBuildChart(newData, exitData, mode) {
   var newByMo  = bucketByMonth(newData);
   var exitByMo = bucketByMonth(exitData);
 
-  // Cap to complete months only — exclude current partial month to avoid misleading spike
+  // Show all months within selected range — exclude current partial month
   var nowYM = new Date().toISOString().slice(0,7);
   var allMos = [...new Set(Object.keys(newByMo).concat(Object.keys(exitByMo)))]
-    .filter(function(mo){ return mo < nowYM; })
+    .filter(function(mo){ return mo >= PULSE_FROM_MO && mo <= PULSE_TO_MO && mo < nowYM; })
     .sort();
-  // Always show last 12 complete months max for readability
-  if(allMos.length > 12) allMos = allMos.slice(allMos.length - 12);
-  if(!allMos.length) { wrap.innerHTML = '<div style="color:var(--mut);font-size:11px;padding:8px 0">No complete months in selected period yet.</div>'; return; }
+  if(!allMos.length) { wrap.innerHTML = '<div style="color:var(--mut);font-size:11px;padding:8px 0">No complete months in selected period.</div>'; return; }
 
   var maxVal = 1;
   allMos.forEach(function(mo) { maxVal = Math.max(maxVal, (newByMo[mo]||0), (exitByMo[mo]||0)); });
