@@ -18569,9 +18569,9 @@ function pulseBuildPortfolio(data) {
     var rc = (typeof ENTITY_COLORS !== 'undefined' && ENTITY_COLORS[h.asset.entity]) || '#1a4f9c';
     var assetName = h.asset.name || '';
     // Build Asset Directory link — switch to reit tab and filter by asset name
-    var assetLink = 'javascript:void(0)';
+    var safeAssetName = assetName.replace(/'/g, '&#39;');
     return '<div style="background:var(--srf2);border:0.5px solid var(--bdr);border-radius:8px;padding:10px 12px;cursor:pointer" ' +
-      'onclick="pulseGoToAsset('' + assetName.replace(/'/g,"\'") + '')" title="View in Asset Directory">' +
+      'onclick="pulseGoToAsset(\'' + safeAssetName + '\')" title="View in Asset Directory">' +
       '<div style="font-size:11px;font-weight:600;color:var(--txt);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;margin-bottom:3px">' + assetName + '</div>' +
       '<div style="font-size:10px;color:' + rc + ';margin-bottom:6px">' + h.asset.entity + '</div>' +
       '<div style="display:flex;gap:5px;flex-wrap:wrap">' +
