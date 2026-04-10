@@ -2392,7 +2392,6 @@ html,body{background:var(--bg);color:var(--txt);font-family:'DM Sans',sans-serif
               <tr style="background:var(--srf2)">
                 <th style="padding:8px 12px;text-align:left;color:var(--mut);font-size:10px;text-transform:uppercase;letter-spacing:.05em;border-bottom:1px solid var(--bdr)">Company</th>
                 <th style="padding:8px 12px;text-align:left;color:var(--mut);font-size:10px;text-transform:uppercase;letter-spacing:.05em;border-bottom:1px solid var(--bdr)">Address</th>
-                <th style="padding:8px 12px;text-align:left;color:var(--mut);font-size:10px;text-transform:uppercase;letter-spacing:.05em;border-bottom:1px solid var(--bdr)">Industry</th>
                 <th style="padding:8px 12px;text-align:left;color:var(--mut);font-size:10px;text-transform:uppercase;letter-spacing:.05em;border-bottom:1px solid var(--bdr)">Type</th>
                 <th style="padding:8px 12px;text-align:left;color:var(--mut);font-size:10px;text-transform:uppercase;letter-spacing:.05em;border-bottom:1px solid var(--bdr)">Status</th>
                 <th style="padding:8px 12px;text-align:left;color:var(--mut);font-size:10px;text-transform:uppercase;letter-spacing:.05em;border-bottom:1px solid var(--bdr)">Date</th>
@@ -18200,10 +18199,10 @@ async function pulseLoad() {
 
     // Fire all 4 requests in parallel: 2 HEAD counts + 2 data fetches
     var [rc1, rc2, r1, r2] = await Promise.all([
-      // COUNT: new registrations (HEAD — returns Content-Range total, zero rows)
-      fetch(baseCount + '&entity_status=ilike.Live*&reg_date=gte.' + dateStr + '&limit=1', { method: 'HEAD', headers: hdrCount }),
-      // COUNT: exits (HEAD)
-      fetch(baseCount + '&entity_status=not.ilike.Live*&limit=1', { method: 'HEAD', headers: hdrCount }),
+      // COUNT: new registrations — GET with limit=0, count=exact
+      fetch(baseCount + '&entity_status=ilike.Live*&reg_date=gte.' + dateStr + '&limit=0', { method: 'GET', headers: hdrCount }),
+      // COUNT: exits — GET with limit=0, count=exact (HEAD on large unfiltered sets can 500)
+      fetch(baseCount + '&entity_status=not.ilike.Live*&limit=0', { method: 'GET', headers: hdrCount }),
       // DATA: new registrations (full rows for display, capped at 3000)
       fetch(base + '&entity_status=ilike.Live*&reg_date=gte.' + dateStr + '&order=reg_date.desc&limit=3000', { headers: hdrData }),
       // DATA: exits (full rows for display, capped at 3000)
@@ -18325,8 +18324,9 @@ function pulseRender() {
 
   // Top industry
   var indMap = {};
-  // Build entity type map from ALL loaded data (new + exit)
-  PULSE_DATA_NEW.concat(PULSE_DATA_EXIT).forEach(function(d){ var i = d.entity_type; if(i && i.trim() && i.trim().toLowerCase() !== 'na') indMap[i.trim()] = (indMap[i.trim()]||0) + 1; });
+  // Build entity type map from the active dataset only
+  var indSource = mode === 'new' ? PULSE_DATA_NEW : mode === 'exit' ? PULSE_DATA_EXIT : PULSE_DATA_NEW.concat(PULSE_DATA_EXIT);
+  indSource.forEach(function(d){ var i = d.entity_type; if(i && i.trim() && i.trim().toLowerCase() !== 'na') indMap[i.trim()] = (indMap[i.trim()]||0) + 1; });
   var topInd = Object.keys(indMap).sort(function(a,b){ return indMap[b]-indMap[a]; })[0] || '—';
   document.getElementById('pulse-k-topind').textContent = topInd;
 
@@ -18521,7 +18521,6 @@ function pulseRenderTable() {
     return '<tr style="border-bottom:1px solid var(--srf3)">' +
       '<td style="padding:8px 12px;font-weight:600;font-size:12px;color:var(--txt)"><div style="display:flex;align-items:center">' + typeDot + (d.entity_name||'—') + '</div></td>' +
       '<td style="padding:8px 12px;font-size:11px;color:var(--txt)">' + (addr||'—') + '</td>' +
-      '<td style="padding:8px 12px;font-size:11px;color:var(--txt2)">' + (d.primary_ssic_desc||'—') + '</td>' +
       '<td style="padding:8px 12px;font-size:11px;color:var(--txt2)">' + (d.entity_type||'—') + '</td>' +
       '<td style="padding:8px 12px;font-size:11px">' +
         '<span style="padding:2px 7px;border-radius:8px;font-size:10px;font-weight:700;background:' + (isNew?'rgba(34,197,94,.12)':'rgba(248,113,113,.12)') + ';color:' + (isNew?'#22c55e':'#f87171') + '">' + (isNew?'New':'Exit') + '</span>' +
