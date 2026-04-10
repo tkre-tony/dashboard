@@ -18555,35 +18555,33 @@ function pulseBuildPortfolio(data) {
   var entitySel = document.getElementById('pulse-portfolio-entity');
   var entityFilter = entitySel ? entitySel.value : '';
 
-  // Match companies to portfolio buildings
-  var hits = {};
+  // Match companies to portfolio buildings — exact blk|street key, grouped by entity
+  var entityHits = {};
   data.forEach(function(d) {
     if(!d.blk_no || !d.street_name) return;
-    Object.keys(PULSE_PORTFOLIO_IDX).forEach(function(pk) {
-      if(pk.startsWith(d.blk_no.toUpperCase() + '|')) {
-        var asset = PULSE_PORTFOLIO_IDX[pk];
-        if(!hits[pk]) hits[pk] = { asset: asset, new: 0, exit: 0 };
-        if(d._type === 'new') hits[pk].new++;
-        else hits[pk].exit++;
-      }
-    });
+    var compKey = d.blk_no.toUpperCase() + '|' + d.street_name.toUpperCase().trim();
+    var asset = PULSE_PORTFOLIO_IDX[compKey];
+    if(!asset) return;
+    var ent = asset.entity || 'Unknown';
+    if(!entityHits[ent]) entityHits[ent] = { entity: ent, new: 0, exit: 0 };
+    if(d._type === 'new') entityHits[ent].new++;
+    else entityHits[ent].exit++;
   });
 
-  var hitArr = Object.values(hits).filter(function(h){ return h.new + h.exit > 0; });
+  var hitArr = Object.values(entityHits).filter(function(h){ return h.new + h.exit > 0; });
   hitArr.sort(function(a, b){ return (b.new + b.exit) - (a.new + a.exit); });
 
-  // Populate entity dropdown (first call only — when no filter set)
+  // Populate entity dropdown (first call only)
   if(entitySel && entitySel.options.length <= 1) {
-    var entities = [...new Set(hitArr.map(function(h){ return h.asset.entity; }))].sort();
-    entities.forEach(function(e){
+    hitArr.forEach(function(h){
       var opt = document.createElement('option');
-      opt.value = e; opt.textContent = e;
+      opt.value = h.entity; opt.textContent = h.entity;
       entitySel.appendChild(opt);
     });
   }
 
   // Apply entity filter
-  if(entityFilter) hitArr = hitArr.filter(function(h){ return h.asset.entity === entityFilter; });
+  if(entityFilter) hitArr = hitArr.filter(function(h){ return h.entity === entityFilter; });
 
   if(!hitArr.length) {
     listEl.innerHTML = '<div style="color:var(--mut);font-size:12px;padding:8px 0">No activity matched in tracked portfolio buildings for this period.</div>';
@@ -18591,20 +18589,15 @@ function pulseBuildPortfolio(data) {
   }
 
   listEl.innerHTML = hitArr.map(function(h) {
-    var rc = (typeof ENTITY_COLORS !== 'undefined' && ENTITY_COLORS[h.asset.entity]) || '#1a4f9c';
-    var assetName = h.asset.name || '';
-    var safeEntity = (h.asset.entity||'').replace(/'/g, '&#39;');
+    var rc = (typeof ENTITY_COLORS !== 'undefined' && ENTITY_COLORS[h.entity]) || '#1a4f9c';
     return '<div style="background:var(--srf2);border:0.5px solid var(--bdr);border-radius:8px;padding:10px 12px">' +
-      '<div style="font-size:11px;font-weight:600;color:var(--txt);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;margin-bottom:3px" title="' + assetName + '">' + assetName + '</div>' +
-      '<div style="font-size:10px;color:' + rc + ';margin-bottom:6px;cursor:pointer;text-decoration:underline dotted" ' +
-        'onclick="pulseFilterByEntity(\'' + safeEntity + '\')" title="Filter to ' + safeEntity + '">' + h.asset.entity + '</div>' +
+      '<div style="font-size:12px;font-weight:700;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;margin-bottom:6px;color:' + rc + '">' + h.entity + '</div>' +
       '<div style="display:flex;gap:5px;flex-wrap:wrap">' +
         (h.new  ? '<span style="font-size:10px;font-weight:700;background:rgba(34,197,94,.12);color:#22c55e;padding:2px 7px;border-radius:8px">+' + h.new + ' new</span>' : '') +
         (h.exit ? '<span style="font-size:10px;font-weight:700;background:rgba(248,113,113,.12);color:#f87171;padding:2px 7px;border-radius:8px">-' + h.exit + ' exit</span>' : '') +
       '</div>' +
     '</div>';
   }).join('');
-}
 
 function pulseFilterByEntity(entity) {
   var sel = document.getElementById('pulse-portfolio-entity');
