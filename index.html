@@ -2307,23 +2307,25 @@ html,body{background:var(--bg);color:var(--txt);font-family:'DM Sans',sans-serif
     <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:10px;margin-bottom:16px" id="pulse-kpi-strip">
       <div class="card" style="text-align:center;padding:14px 10px">
         <div id="pulse-k-new" style="font-size:22px;font-weight:800;color:#22c55e">—</div>
-        <div style="font-size:10px;color:#94a3b8;text-transform:uppercase;letter-spacing:.05em;margin-top:3px">New Companies</div>
+        <div style="font-size:10px;color:var(--txt2);text-transform:uppercase;letter-spacing:.05em;margin-top:3px">New Companies</div>
+        <div id="pulse-k-new-note" style="font-size:9px;color:var(--mut);margin-top:2px">Incorporated in period</div>
       </div>
       <div class="card" style="text-align:center;padding:14px 10px">
         <div id="pulse-k-exit" style="font-size:22px;font-weight:800;color:#f87171">—</div>
-        <div style="font-size:10px;color:#94a3b8;text-transform:uppercase;letter-spacing:.05em;margin-top:3px">Exits / Dissolved</div>
+        <div style="font-size:10px;color:var(--txt2);text-transform:uppercase;letter-spacing:.05em;margin-top:3px">Exits / Dissolved</div>
+        <div style="font-size:9px;color:var(--mut);margin-top:2px">Most recently reg, now dissolved</div>
       </div>
       <div class="card" style="text-align:center;padding:14px 10px">
         <div id="pulse-k-net" style="font-size:22px;font-weight:800;color:var(--txt)">—</div>
-        <div style="font-size:10px;color:#94a3b8;text-transform:uppercase;letter-spacing:.05em;margin-top:3px">Net Change</div>
+        <div style="font-size:10px;color:var(--txt2);text-transform:uppercase;letter-spacing:.05em;margin-top:3px">Net Change</div>
       </div>
       <div class="card" style="text-align:center;padding:14px 10px">
         <div id="pulse-k-districts" style="font-size:22px;font-weight:800;color:#60a5fa">—</div>
-        <div style="font-size:10px;color:#94a3b8;text-transform:uppercase;letter-spacing:.05em;margin-top:3px">Active Districts</div>
+        <div style="font-size:10px;color:var(--txt2);text-transform:uppercase;letter-spacing:.05em;margin-top:3px">Active Districts</div>
       </div>
       <div class="card" style="text-align:center;padding:14px 10px">
         <div id="pulse-k-topind" style="font-size:13px;font-weight:700;color:#c4b5fd;line-height:1.3">—</div>
-        <div style="font-size:10px;color:#94a3b8;text-transform:uppercase;letter-spacing:.05em;margin-top:3px">Top Industry</div>
+        <div style="font-size:10px;color:var(--txt2);text-transform:uppercase;letter-spacing:.05em;margin-top:3px">Top Industry</div>
       </div>
     </div>
 
@@ -2341,9 +2343,10 @@ html,body{background:var(--bg);color:var(--txt);font-family:'DM Sans',sans-serif
 
         <!-- Monthly trend chart -->
         <div class="card" style="padding:16px">
-          <div style="font-size:12px;font-weight:700;color:var(--txt);margin-bottom:12px;display:flex;align-items:center;gap:6px">
-            📈 <span id="pulse-chart-title">Monthly Activity Trend</span>
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:4px">
+            <div style="font-size:12px;font-weight:700;color:var(--txt);display:flex;align-items:center;gap:6px">📈 <span id="pulse-chart-title">Monthly Activity Trend</span></div>
           </div>
+          <div id="pulse-chart-note" style="font-size:10px;color:var(--mut);margin-bottom:10px">Bars show companies by incorporation date in the selected period. Showing up to 3,000 most recent records — counts above may reflect true totals.</div>
           <div id="pulse-chart-wrap" style="width:100%"></div>
         </div>
 
@@ -2359,7 +2362,10 @@ html,body{background:var(--bg);color:var(--txt);font-family:'DM Sans',sans-serif
 
         <!-- Top industries -->
         <div class="card" style="padding:16px">
-          <div style="font-size:12px;font-weight:700;color:var(--txt);margin-bottom:12px">🏭 Top Industries</div>
+          <div style="display:flex;align-items:baseline;justify-content:space-between;margin-bottom:4px">
+            <div style="font-size:12px;font-weight:700;color:var(--txt)">🏭 Top Industries</div>
+          </div>
+          <div id="pulse-ind-note" style="font-size:10px;color:var(--mut);margin-bottom:10px">By company count · new registrations + exits combined</div>
           <div id="pulse-industries-list" style="display:flex;flex-direction:column;gap:5px"></div>
         </div>
 
@@ -18332,9 +18338,9 @@ function pulseRender() {
     var pct = (districts[d]/maxDist*100).toFixed(0);
     var barColor = showNew && !showExit ? '#22c55e' : (showExit && !showNew ? '#f87171' : '#60a5fa');
     return '<div style="display:flex;align-items:center;gap:8px">' +
-      '<span style="font-family:\'DM Mono\',monospace;font-size:11px;color:#93c5fd;min-width:24px">' + d + '</span>' +
+      '<span style="font-family:\'DM Mono\',monospace;font-size:11px;color:var(--txt2);min-width:24px;font-weight:600">' + d + '</span>' +
       '<div style="flex:1;height:6px;background:var(--srf2);border-radius:3px"><div style="width:'+pct+'%;height:6px;background:'+barColor+';border-radius:3px"></div></div>' +
-      '<span style="font-size:11px;color:#e2e8f0;min-width:30px;text-align:right">' + districts[d] + '</span>' +
+      '<span style="font-size:11px;color:var(--txt);min-width:30px;text-align:right">' + districts[d] + '</span>' +
     '</div>';
   }).join('') || '<div style="color:var(--mut);font-size:12px">No data</div>';
 
@@ -18344,9 +18350,9 @@ function pulseRender() {
   document.getElementById('pulse-industries-list').innerHTML = indArr.map(function(ind){
     var pct = (indMap[ind]/maxInd*100).toFixed(0);
     return '<div style="display:flex;align-items:center;gap:8px">' +
-      '<span style="font-size:11px;color:#ddd6fe;flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap" title="'+ind+'">' + ind + '</span>' +
+      '<span style="font-size:11px;color:var(--txt);flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap" title="'+ind+'">' + ind + '</span>' +
       '<div style="width:80px;height:5px;background:var(--srf2);border-radius:3px;flex-shrink:0"><div style="width:'+pct+'%;height:5px;background:#7c3aed;border-radius:3px"></div></div>' +
-      '<span style="font-size:11px;color:#e2e8f0;min-width:30px;text-align:right">' + indMap[ind] + '</span>' +
+      '<span style="font-size:11px;color:var(--txt);min-width:30px;text-align:right">' + indMap[ind] + '</span>' +
     '</div>';
   }).join('') || '<div style="color:var(--mut);font-size:12px">No data</div>';
 
@@ -18361,7 +18367,10 @@ function pulseRender() {
   // Chart title
   var modeLabel = mode === 'new' ? 'New Registrations' : mode === 'exit' ? 'Exits & Dissolutions' : 'New vs Exits';
   document.getElementById('pulse-chart-title').textContent = 'Monthly ' + modeLabel;
-  document.getElementById('pulse-list-title').textContent  = modeLabel + ' — ' + PULSE_ALL.length.toLocaleString() + ' companies';
+  var d1 = new Date(); d1.setDate(d1.getDate() - days);
+  var fmtDate = function(dt){ return dt.toLocaleDateString('en-SG',{day:'numeric',month:'short',year:'numeric'}); };
+  var rangeNote = ' · ' + fmtDate(d1) + ' – ' + fmtDate(new Date());
+  document.getElementById('pulse-list-title').textContent  = modeLabel + ' — ' + PULSE_ALL.length.toLocaleString() + ' companies' + (mode==='new'?rangeNote:'');
 
   document.getElementById('pulse-content').style.display = 'block';
 }
@@ -18508,15 +18517,15 @@ function pulseRenderTable() {
       : '<span style="display:inline-block;width:6px;height:6px;border-radius:50%;background:#f87171;margin-right:5px"></span>';
     var addr = [(d.blk_no||''), (d.street_name||''), (d.postal_code ? 'S('+d.postal_code+')' : '')].filter(Boolean).join(' ');
     return '<tr style="border-bottom:1px solid var(--srf3)">' +
-      '<td style="padding:8px 12px;font-weight:600;font-size:12px;color:#e2e8f0"><div style="display:flex;align-items:center">' + typeDot + (d.entity_name||'—') + '</div></td>' +
-      '<td style="padding:8px 12px;font-size:11px;color:#94a3b8">' + (addr||'—') + '</td>' +
-      '<td style="padding:8px 12px;font-size:11px;color:#c4b5fd">' + (d.primary_ssic_desc||'—') + '</td>' +
-      '<td style="padding:8px 12px;font-size:11px;color:#cbd5e1">' + (d.entity_type||'—') + '</td>' +
+      '<td style="padding:8px 12px;font-weight:600;font-size:12px;color:var(--txt)"><div style="display:flex;align-items:center">' + typeDot + (d.entity_name||'—') + '</div></td>' +
+      '<td style="padding:8px 12px;font-size:11px;color:var(--txt)">' + (addr||'—') + '</td>' +
+      '<td style="padding:8px 12px;font-size:11px;color:var(--txt2)">' + (d.primary_ssic_desc||'—') + '</td>' +
+      '<td style="padding:8px 12px;font-size:11px;color:var(--txt2)">' + (d.entity_type||'—') + '</td>' +
       '<td style="padding:8px 12px;font-size:11px">' +
         '<span style="padding:2px 7px;border-radius:8px;font-size:10px;font-weight:700;background:' + (isNew?'rgba(34,197,94,.12)':'rgba(248,113,113,.12)') + ';color:' + (isNew?'#22c55e':'#f87171') + '">' + (isNew?'New':'Exit') + '</span>' +
       '</td>' +
-      '<td style="padding:8px 12px;font-size:11px;color:#94a3b8;font-family:DM Mono,monospace;white-space:nowrap">' + (d.reg_date?d.reg_date.substring(0,10):'—') + '</td>' +
-      '<td style="padding:8px 12px;font-size:11px;color:#64748b;font-family:DM Mono,monospace">' + (d.uen||'—') + '</td>' +
+      '<td style="padding:8px 12px;font-size:11px;color:var(--txt);font-family:DM Mono,monospace;white-space:nowrap">' + (d.reg_date?d.reg_date.substring(0,10):'—') + '</td>' +
+      '<td style="padding:8px 12px;font-size:11px;color:var(--mut);font-family:DM Mono,monospace">' + (d.uen||'—') + '</td>' +
     '</tr>';
   }).join('');
 
