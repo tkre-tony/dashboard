@@ -2296,7 +2296,7 @@ html,body{background:var(--bg);color:var(--txt);font-family:'DM Sans',sans-serif
           <option value="both" selected>Both</option>
         </select>
         <select id="pulse-industry" onchange="pulseRender()" style="height:30px;padding:0 10px;border:1px solid var(--bdr);border-radius:6px;background:var(--srf2);color:var(--txt);font-size:12px;font-family:'DM Sans',sans-serif">
-          <option value="">All Types</option>
+          <option value="">All Industries</option>
         </select>
         <input id="pulse-bldg-search" placeholder="🏢 Search address or postal…" oninput="pulseRender()" style="height:30px;padding:0 10px;border:1px solid var(--bdr);border-radius:6px;background:var(--srf2);color:var(--txt);font-size:12px;font-family:'DM Sans',sans-serif;min-width:200px;flex:1" />
         <button onclick="pulseLoad()" style="height:30px;padding:0 14px;background:var(--g1);color:#fff;border:none;border-radius:6px;font-size:12px;font-family:'DM Sans',sans-serif;cursor:pointer;font-weight:600">↻ Refresh</button>
@@ -2346,7 +2346,7 @@ html,body{background:var(--bg);color:var(--txt);font-family:'DM Sans',sans-serif
           <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:4px">
             <div style="font-size:12px;font-weight:700;color:var(--txt);display:flex;align-items:center;gap:6px">📈 <span id="pulse-chart-title">Monthly Activity Trend</span></div>
           </div>
-          <div id="pulse-chart-note" style="font-size:10px;color:var(--mut);margin-bottom:10px">Monthly breakdown for selected period · display capped at 3,000 rows · KPI counts reflect true database totals</div>
+          <div id="pulse-chart-note" style="font-size:10px;color:var(--mut);margin-bottom:10px">Monthly breakdown for selected period · KPI counts reflect true database totals</div>
           <div id="pulse-chart-wrap" style="width:100%"></div>
         </div>
 
@@ -18277,10 +18277,10 @@ async function pulseLoad() {
     }
 
     var allData = PULSE_DATA_NEW.concat(PULSE_DATA_EXIT);
-    var inds = [...new Set(allData.map(function(d){ return d.entity_type || ''; }).filter(Boolean))].sort();
+    var inds = [...new Set(allData.map(function(d){ return (d.primary_ssic_desc||'').trim(); }).filter(function(v){ return v && v.toLowerCase() !== 'na' && v !== '—'; }))].sort();
     var indSel = document.getElementById('pulse-industry');
-    indSel.innerHTML = '<option value="">All Types</option>' +
-      inds.map(function(i){ return '<option value="' + i + '">' + i + '</option>'; }).join('');
+    indSel.innerHTML = '<option value="">All Industries</option>' +
+      inds.map(function(i){ return '<option value="' + i.replace(/"/g,'&quot;') + '">' + i + '</option>'; }).join('');
 
     pulseRender();
   } catch(e) {
@@ -18301,8 +18301,8 @@ function pulseRender() {
 
   var bldgQ = (document.getElementById('pulse-bldg-search') ? document.getElementById('pulse-bldg-search').value : '').toLowerCase().trim();
   if(indF) {
-    newData  = newData.filter(function(d){ return d.entity_type === indF; });
-    exitData = exitData.filter(function(d){ return d.entity_type === indF; });
+    newData  = newData.filter(function(d){ return (d.primary_ssic_desc||'').trim() === indF; });
+    exitData = exitData.filter(function(d){ return (d.primary_ssic_desc||'').trim() === indF; });
   }
   if(bldgQ) {
     function matchBldg(d){ return ((d.blk_no||'').toLowerCase().includes(bldgQ)) || ((d.street_name||'').toLowerCase().includes(bldgQ)) || ((d.postal_code||'').includes(bldgQ)); }
@@ -18370,9 +18370,9 @@ function pulseRender() {
 
   // Top industry
   var indMap = {};
-  // Build entity type map from the active dataset only
+  // Build ssic desc map from the active dataset only
   var indSource = mode === 'new' ? PULSE_DATA_NEW : mode === 'exit' ? PULSE_DATA_EXIT : PULSE_DATA_NEW.concat(PULSE_DATA_EXIT);
-  indSource.forEach(function(d){ var i = d.entity_type; if(i && i.trim() && i.trim().toLowerCase() !== 'na') indMap[i.trim()] = (indMap[i.trim()]||0) + 1; });
+  indSource.forEach(function(d){ var i = (d.primary_ssic_desc||'').trim(); if(i && i.toLowerCase() !== 'na' && i !== '—') indMap[i] = (indMap[i]||0) + 1; });
   // Update entity types card subtitle with mode + period
   var indPeriodLabel = mode === 'new' ? 'New registrations' : mode === 'exit' ? 'Exits & dissolutions' : 'New + exits combined';
   var indD1 = new Date(); indD1.setDate(indD1.getDate() - PULSE_DAYS);
@@ -18426,11 +18426,21 @@ function pulseRender() {
   var MONAMES2 = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
   function fmtMo(ym){ var p=ym.split('-'); return MONAMES2[parseInt(p[1])-1]+' '+p[0]; }
   var rangeNote = ' · ' + fmtMo(PULSE_FROM_MO) + ' – ' + fmtMo(PULSE_TO_MO);
-  var trueCount = mode==='new' ? PULSE_COUNT_NEW : mode==='exit' ? PULSE_COUNT_EXIT : (PULSE_COUNT_NEW||0)+(PULSE_COUNT_EXIT||0);
-  var dispCount = PULSE_ALL.length;
-  var countNote = (trueCount && trueCount > dispCount)
-    ? 'Showing ' + dispCount.toLocaleString() + ' of ' + trueCount.toLocaleString()
-    : dispCount.toLocaleString() + ' companies';
+  var hasFilterActive = !!(indF || bldgQ);
+  var countNote;
+  if(hasFilterActive) {
+    countNote = PULSE_ALL.length.toLocaleString() + ' companies (filtered)';
+  } else if(mode === 'both') {
+    var nNew  = PULSE_COUNT_NEW  || 0;
+    var nExit = PULSE_COUNT_EXIT || 0;
+    countNote = nNew.toLocaleString() + ' new · ' + nExit.toLocaleString() + ' exits';
+  } else if(mode === 'new') {
+    var trueN = PULSE_COUNT_NEW || PULSE_ALL.length;
+    countNote = trueN.toLocaleString() + ' companies';
+  } else {
+    var trueE = PULSE_COUNT_EXIT || PULSE_ALL.length;
+    countNote = trueE.toLocaleString() + ' companies';
+  }
   document.getElementById('pulse-list-title').textContent = modeLabel + ' — ' + countNote + rangeNote;
 
   document.getElementById('pulse-content').style.display = 'block';
