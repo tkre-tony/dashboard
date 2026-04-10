@@ -1892,6 +1892,79 @@ html,body{background:var(--bg);color:var(--txt);font-family:'DM Sans',sans-serif
         </div>
       </div>
     </div>
+      <!-- ── VACANCY / ABSORPTION PANEL ─────────────────────── -->
+      <div class="card" id="rdet-vacancy-panel" style="margin-top:14px;display:none">
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:14px;flex-wrap:wrap">
+          <span style="width:8px;height:8px;border-radius:2px;background:#c47d00;display:inline-block;flex-shrink:0"></span>
+          <span style="font-size:13px;font-weight:700;color:var(--txt)" id="rdet-vac-title">Live Vacancy Listing</span>
+          <span id="rdet-vac-reit-badge" style="font-size:10px;font-weight:700;padding:2px 8px;border-radius:10px;background:#c47d0020;color:#c47d00;border:1px solid #c47d0040"></span>
+          <span id="rdet-vac-month-badge" style="font-size:10px;color:var(--mut);margin-left:2px"></span>
+          <div style="flex:1"></div>
+          <span id="rdet-vac-est-occ" style="font-size:11px;font-weight:600;padding:3px 10px;border-radius:10px;background:var(--srf2);border:1px solid var(--bdr);color:var(--txt)"></span>
+        </div>
+
+        <!-- KPI strip -->
+        <div style="display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px;margin-bottom:14px" id="rdet-vac-kpis"></div>
+
+        <!-- Active listings table -->
+        <div style="font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.06em;color:var(--mut);margin-bottom:8px" id="rdet-vac-active-hdr">Available units</div>
+        <div style="overflow-x:auto;border:1px solid var(--bdr);border-radius:7px;margin-bottom:14px" id="rdet-vac-active-wrap">
+          <table style="width:100%;border-collapse:collapse;font-size:12px" id="rdet-vac-active-tbl">
+            <thead>
+              <tr style="background:var(--srf2)">
+                <th style="padding:7px 10px;text-align:left;color:var(--mut);font-size:10px;text-transform:uppercase;letter-spacing:.04em;border-bottom:1px solid var(--bdr);white-space:nowrap">Unit</th>
+                <th style="padding:7px 10px;text-align:right;color:var(--mut);font-size:10px;text-transform:uppercase;letter-spacing:.04em;border-bottom:1px solid var(--bdr);white-space:nowrap">Sqft</th>
+                <th style="padding:7px 10px;text-align:left;color:var(--mut);font-size:10px;text-transform:uppercase;letter-spacing:.04em;border-bottom:1px solid var(--bdr);white-space:nowrap">Avail</th>
+                <th style="padding:7px 10px;text-align:left;color:var(--mut);font-size:10px;text-transform:uppercase;letter-spacing:.04em;border-bottom:1px solid var(--bdr);white-space:nowrap">Zone</th>
+                <th style="padding:7px 10px;text-align:left;color:var(--mut);font-size:10px;text-transform:uppercase;letter-spacing:.04em;border-bottom:1px solid var(--bdr);white-space:nowrap">Fit-out</th>
+                <th style="padding:7px 10px;text-align:right;color:var(--mut);font-size:10px;text-transform:uppercase;letter-spacing:.04em;border-bottom:1px solid var(--bdr);white-space:nowrap">PSF/mth</th>
+                <th style="padding:7px 10px;text-align:left;color:var(--mut);font-size:10px;text-transform:uppercase;letter-spacing:.04em;border-bottom:1px solid var(--bdr)">Remarks</th>
+              </tr>
+            </thead>
+            <tbody id="rdet-vac-active-tbody"></tbody>
+          </table>
+        </div>
+
+        <!-- New listings section -->
+        <div id="rdet-vac-new-section" style="display:none;margin-bottom:14px">
+          <div style="font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.06em;color:#c47d00;margin-bottom:8px">🆕 New this month</div>
+          <div style="overflow-x:auto;border:1px solid #c47d0040;border-radius:7px;background:#c47d0008">
+            <table style="width:100%;border-collapse:collapse;font-size:12px" id="rdet-vac-new-tbl">
+              <thead>
+                <tr style="background:#c47d0012">
+                  <th style="padding:7px 10px;text-align:left;color:#c47d00;font-size:10px;text-transform:uppercase;letter-spacing:.04em;border-bottom:1px solid #c47d0030;white-space:nowrap">Unit</th>
+                  <th style="padding:7px 10px;text-align:right;color:#c47d00;font-size:10px;text-transform:uppercase;letter-spacing:.04em;border-bottom:1px solid #c47d0030;white-space:nowrap">Sqft</th>
+                  <th style="padding:7px 10px;text-align:left;color:#c47d00;font-size:10px;text-transform:uppercase;letter-spacing:.04em;border-bottom:1px solid #c47d0030;white-space:nowrap">Avail</th>
+                  <th style="padding:7px 10px;text-align:right;color:#c47d00;font-size:10px;text-transform:uppercase;letter-spacing:.04em;border-bottom:1px solid #c47d0030;white-space:nowrap">PSF/mth</th>
+                  <th style="padding:7px 10px;text-align:left;color:#c47d00;font-size:10px;text-transform:uppercase;letter-spacing:.04em;border-bottom:1px solid #c47d0030">Remarks</th>
+                </tr>
+              </thead>
+              <tbody id="rdet-vac-new-tbody"></tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- Absorbed section -->
+        <div id="rdet-vac-abs-section" style="display:none">
+          <div style="font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.06em;color:#16a34a;margin-bottom:8px">✅ Recently absorbed</div>
+          <div style="overflow-x:auto;border:1px solid #16a34a40;border-radius:7px;background:#16a34a08">
+            <table style="width:100%;border-collapse:collapse;font-size:12px" id="rdet-vac-abs-tbl">
+              <thead>
+                <tr style="background:#16a34a12">
+                  <th style="padding:7px 10px;text-align:left;color:#16a34a;font-size:10px;text-transform:uppercase;letter-spacing:.04em;border-bottom:1px solid #16a34a30;white-space:nowrap">Unit</th>
+                  <th style="padding:7px 10px;text-align:right;color:#16a34a;font-size:10px;text-transform:uppercase;letter-spacing:.04em;border-bottom:1px solid #16a34a30;white-space:nowrap">Sqft</th>
+                  <th style="padding:7px 10px;text-align:left;color:#16a34a;font-size:10px;text-transform:uppercase;letter-spacing:.04em;border-bottom:1px solid #16a34a30;white-space:nowrap">Month</th>
+                  <th style="padding:7px 10px;text-align:left;color:#16a34a;font-size:10px;text-transform:uppercase;letter-spacing:.04em;border-bottom:1px solid #16a34a30">Remarks</th>
+                </tr>
+              </thead>
+              <tbody id="rdet-vac-abs-tbody"></tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- AR occupancy context note -->
+        <div id="rdet-vac-ar-note" style="margin-top:12px;padding:10px 12px;background:var(--srf2);border-radius:7px;border-left:3px solid var(--bdr);font-size:11px;color:var(--mut);line-height:1.5;display:none"></div>
+      </div>
     </div><!-- /adir-properties-panel -->
   </div><!-- /tab-reit -->
 
@@ -16482,9 +16555,149 @@ function reitOpenDetail(idx){
       : '';
     return base + checkedStr + newBadge;
   }());
+
+  // Load vacancy data for this asset
+  rdetLoadVacancy(p);
 }
 
-function reitCloseDetail(){
+function rdetLoadVacancy(p) {
+  var panel = document.getElementById('rdet-vacancy-panel');
+  if (!panel) return;
+
+  // Match VACANCY_DATA by addrFull OR addr against p.addr (normalised)
+  var pAddr = (p.addr || '').toLowerCase().trim();
+  // Also try p.name as some assets use property name as addr key
+  var pName = (p.name || '').toLowerCase().trim();
+
+  var matches = VACANCY_DATA.filter(function(v) {
+    var va = (v.addrFull || v.addr || '').toLowerCase().trim();
+    return va === pAddr || va === pName ||
+           va.replace(/[^a-z0-9]/g,'') === pAddr.replace(/[^a-z0-9]/g,'');
+  });
+
+  if (!matches.length) { panel.style.display = 'none'; return; }
+
+  panel.style.display = 'block';
+
+  var active  = matches.filter(function(v){ return v.status !== 'Absorbed'; });
+  var newList = matches.filter(function(v){ return v.status === 'New'; });
+  var absorbed= matches.filter(function(v){ return v.status === 'Absorbed'; });
+
+  var reit = matches[0].reit;
+  var reitColor = matches[0].reit_color || '#888';
+  var month = matches[0].month || '—';
+
+  // Update header badges
+  document.getElementById('rdet-vac-title').textContent = 'Live Vacancy Listing';
+  var rb = document.getElementById('rdet-vac-reit-badge');
+  rb.textContent = reit;
+  rb.style.background = reitColor + '20';
+  rb.style.color = reitColor;
+  rb.style.borderColor = reitColor + '50';
+  document.getElementById('rdet-vac-month-badge').textContent = month;
+
+  // KPIs
+  var totalSqft = active.reduce(function(s,v){ return s + v.sqft; }, 0);
+  var immSqft   = active.filter(function(v){ return /immediate/i.test(v.avail); })
+                        .reduce(function(s,v){ return s + v.sqft; }, 0);
+  var rents = active.filter(function(v){ return v.rent && v.rent !== 'null'; })
+                    .map(function(v){ return parseFloat(v.rent.replace('$','')); })
+                    .filter(function(x){ return !isNaN(x); });
+  var avgRent = rents.length ? (rents.reduce(function(a,b){return a+b;},0)/rents.length).toFixed(2) : null;
+
+  // Estimated occupancy vs AR
+  var arData = null;
+  if (p.nla_sqm && p.nla_sqm > 0) {
+    var nlaS = Math.round(p.nla_sqm * 10.7639);
+    var estOcc = Math.round((1 - totalSqft / nlaS) * 1000) / 10;
+    arData = { nlaS: nlaS, estOcc: estOcc };
+    var occColor = estOcc >= 95 ? '#16a34a' : estOcc >= 85 ? '#b45309' : '#c8364a';
+    document.getElementById('rdet-vac-est-occ').innerHTML =
+      'Est. occ <strong style="color:' + occColor + '">' + estOcc.toFixed(1) + '%</strong>';
+  } else {
+    document.getElementById('rdet-vac-est-occ').textContent = '';
+  }
+
+  var kpiData = [
+    { l: 'Active listings', v: active.length + ' units' },
+    { l: 'Total sqft', v: totalSqft.toLocaleString() },
+    { l: 'Immediate avail', v: immSqft.toLocaleString() + ' sqft' },
+    { l: 'Avg asking PSF', v: avgRent ? '$' + avgRent + '/mth' : '—' },
+  ];
+  document.getElementById('rdet-vac-kpis').innerHTML = kpiData.map(function(k){
+    return '<div style="background:var(--srf2);border-radius:7px;padding:10px;text-align:center">'
+      + '<div style="font-size:14px;font-weight:700;color:var(--g1)">' + k.v + '</div>'
+      + '<div style="font-size:9px;color:var(--mut);text-transform:uppercase;letter-spacing:.04em;margin-top:2px">' + k.l + '</div></div>';
+  }).join('');
+
+  // Active listings table
+  document.getElementById('rdet-vac-active-hdr').textContent = 'Available units (' + active.length + ')';
+  function availBadge(a) {
+    if (/immediate/i.test(a)) return '<span style="background:#e8f5e9;color:#1a6b3c;border:1px solid #81c784;padding:1px 7px;border-radius:8px;font-size:10px;font-weight:600">Immediate</span>';
+    if (/negotiation/i.test(a)) return '<span style="background:#fff3e0;color:#b45309;border:1px solid #ffb74d;padding:1px 7px;border-radius:8px;font-size:10px;font-weight:600">Negotiation</span>';
+    if (/advised/i.test(a)) return '<span style="background:var(--srf2);color:var(--mut);border:1px solid var(--bdr);padding:1px 7px;border-radius:8px;font-size:10px;font-weight:600">TBA</span>';
+    return '<span style="background:var(--srf2);color:var(--txt);padding:1px 7px;border-radius:8px;font-size:10px;border:1px solid var(--bdr)">' + a + '</span>';
+  }
+  document.getElementById('rdet-vac-active-tbody').innerHTML = active.map(function(v){
+    var isNew = v.status === 'New';
+    return '<tr style="border-bottom:1px solid var(--bdr);' + (isNew ? 'background:#c47d0008' : '') + '">'
+      + '<td style="padding:7px 10px;font-weight:600;white-space:nowrap">' + v.unit
+        + (isNew ? ' <span style="background:#c47d00;color:#fff;font-size:9px;font-weight:700;padding:1px 6px;border-radius:4px;margin-left:4px">NEW</span>' : '')
+        + '</td>'
+      + '<td style="padding:7px 10px;text-align:right;font-family:monospace">' + v.sqft.toLocaleString() + '</td>'
+      + '<td style="padding:7px 10px">' + availBadge(v.avail) + '</td>'
+      + '<td style="padding:7px 10px;color:var(--mut);font-size:11px">' + (v.zone || '—') + '</td>'
+      + '<td style="padding:7px 10px;color:var(--mut);font-size:11px">' + (v.fit || '—') + '</td>'
+      + '<td style="padding:7px 10px;text-align:right;font-weight:600;white-space:nowrap">' + (v.rent && v.rent !== 'null' ? v.rent : '—') + '</td>'
+      + '<td style="padding:7px 10px;font-size:11px;color:var(--mut);max-width:220px">' + (v.remarks || '') + '</td>'
+      + '</tr>';
+  }).join('') || '<tr><td colspan="7" style="padding:14px;text-align:center;color:var(--mut);font-size:12px">No active listings</td></tr>';
+
+  // New listings section
+  var newSec = document.getElementById('rdet-vac-new-section');
+  if (newList.length) {
+    newSec.style.display = 'block';
+    document.getElementById('rdet-vac-new-tbody').innerHTML = newList.map(function(v){
+      return '<tr style="border-bottom:1px solid #c47d0020">'
+        + '<td style="padding:7px 10px;font-weight:600">' + v.unit + '</td>'
+        + '<td style="padding:7px 10px;text-align:right;font-family:monospace">' + v.sqft.toLocaleString() + '</td>'
+        + '<td style="padding:7px 10px">' + availBadge(v.avail) + '</td>'
+        + '<td style="padding:7px 10px;text-align:right;font-weight:600">' + (v.rent && v.rent !== 'null' ? v.rent : '—') + '</td>'
+        + '<td style="padding:7px 10px;font-size:11px;color:#7d4a00">' + (v.remarks || '') + '</td>'
+        + '</tr>';
+    }).join('');
+  } else { newSec.style.display = 'none'; }
+
+  // Absorbed section
+  var absSec = document.getElementById('rdet-vac-abs-section');
+  if (absorbed.length) {
+    absSec.style.display = 'block';
+    document.getElementById('rdet-vac-abs-tbody').innerHTML = absorbed.map(function(v){
+      return '<tr style="border-bottom:1px solid #16a34a20">'
+        + '<td style="padding:7px 10px;font-weight:600;opacity:.7">' + v.unit + '</td>'
+        + '<td style="padding:7px 10px;text-align:right;font-family:monospace;opacity:.7">' + v.sqft.toLocaleString() + '</td>'
+        + '<td style="padding:7px 10px;font-size:11px;color:#16a34a">' + (v.month || '—') + '</td>'
+        + '<td style="padding:7px 10px;font-size:11px;color:var(--mut)">' + (v.remarks || 'Absorbed') + '</td>'
+        + '</tr>';
+    }).join('');
+  } else { absSec.style.display = 'none'; }
+
+  // AR context note
+  var noteEl = document.getElementById('rdet-vac-ar-note');
+  if (arData && p.occ != null) {
+    var delta = Math.round((arData.estOcc - p.occ) * 10) / 10;
+    var dStr = (delta >= 0 ? '▲ +' : '▼ ') + Math.abs(delta).toFixed(1) + 'pp vs AR ' + (p.ar_year || '');
+    var dCol = delta >= 0 ? '#16a34a' : '#c8364a';
+    noteEl.style.display = 'block';
+    noteEl.innerHTML = '<strong>AR context:</strong> As at ' + (p.ar_year || 'last AR') + ', occupancy was '
+      + p.occ.toFixed(1) + '% (NLA ' + Math.round(p.nla_sqm * 10.7639).toLocaleString() + ' sqft). '
+      + 'Based on ' + totalSqft.toLocaleString() + ' sqft currently advertised, '
+      + '<strong style="color:' + dCol + '">' + dStr + '</strong>. '
+      + '<span style="opacity:.7">Listed sqft includes future-availability units — actual live vacancy may be lower.</span>';
+  } else { noteEl.style.display = 'none'; }
+}
+
+
   document.getElementById('reit-detail').style.display='none';
   if(reitViewMode==='table'){
     document.getElementById('reit-grid').style.display='none';
