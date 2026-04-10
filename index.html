@@ -2393,6 +2393,7 @@ html,body{background:var(--bg);color:var(--txt);font-family:'DM Sans',sans-serif
                 <th style="padding:8px 12px;text-align:left;color:var(--mut);font-size:10px;text-transform:uppercase;letter-spacing:.05em;border-bottom:1px solid var(--bdr)">Company</th>
                 <th style="padding:8px 12px;text-align:left;color:var(--mut);font-size:10px;text-transform:uppercase;letter-spacing:.05em;border-bottom:1px solid var(--bdr)">Address</th>
                 <th style="padding:8px 12px;text-align:left;color:var(--mut);font-size:10px;text-transform:uppercase;letter-spacing:.05em;border-bottom:1px solid var(--bdr)">Type</th>
+                <th style="padding:8px 12px;text-align:left;color:var(--mut);font-size:10px;text-transform:uppercase;letter-spacing:.05em;border-bottom:1px solid var(--bdr)">Industry <span style="font-size:9px;color:var(--mut2);font-weight:400;text-transform:none;letter-spacing:0">(pending SSIC mapping)</span></th>
                 <th style="padding:8px 12px;text-align:left;color:var(--mut);font-size:10px;text-transform:uppercase;letter-spacing:.05em;border-bottom:1px solid var(--bdr)">Status</th>
                 <th style="padding:8px 12px;text-align:left;color:var(--mut);font-size:10px;text-transform:uppercase;letter-spacing:.05em;border-bottom:1px solid var(--bdr)">Date</th>
                 <th style="padding:8px 12px;text-align:left;color:var(--mut);font-size:10px;text-transform:uppercase;letter-spacing:.05em;border-bottom:1px solid var(--bdr)">UEN</th>
@@ -18327,6 +18328,13 @@ function pulseRender() {
   // Build entity type map from the active dataset only
   var indSource = mode === 'new' ? PULSE_DATA_NEW : mode === 'exit' ? PULSE_DATA_EXIT : PULSE_DATA_NEW.concat(PULSE_DATA_EXIT);
   indSource.forEach(function(d){ var i = d.entity_type; if(i && i.trim() && i.trim().toLowerCase() !== 'na') indMap[i.trim()] = (indMap[i.trim()]||0) + 1; });
+  // Update entity types card subtitle with mode + period
+  var indPeriodLabel = mode === 'new' ? 'New registrations' : mode === 'exit' ? 'Exits & dissolutions' : 'New + exits combined';
+  var indD1 = new Date(); indD1.setDate(indD1.getDate() - PULSE_DAYS);
+  var indFmt = function(dt){ return dt.toLocaleDateString('en-SG',{day:'numeric',month:'short',year:'numeric'}); };
+  var indPeriodRange = mode === 'new' ? ' · ' + indFmt(indD1) + ' – ' + indFmt(new Date()) : '';
+  var indNoteEl = document.getElementById('pulse-ind-note');
+  if(indNoteEl) indNoteEl.textContent = indPeriodLabel + indPeriodRange;
   var topInd = Object.keys(indMap).sort(function(a,b){ return indMap[b]-indMap[a]; })[0] || '—';
   document.getElementById('pulse-k-topind').textContent = topInd;
 
@@ -18522,6 +18530,7 @@ function pulseRenderTable() {
       '<td style="padding:8px 12px;font-weight:600;font-size:12px;color:var(--txt)"><div style="display:flex;align-items:center">' + typeDot + (d.entity_name||'—') + '</div></td>' +
       '<td style="padding:8px 12px;font-size:11px;color:var(--txt)">' + (addr||'—') + '</td>' +
       '<td style="padding:8px 12px;font-size:11px;color:var(--txt2)">' + (d.entity_type||'—') + '</td>' +
+      '<td style="padding:8px 12px;font-size:11px;color:var(--mut)">' + (d.primary_ssic_desc && d.primary_ssic_desc.toLowerCase()!=='na' ? d.primary_ssic_desc : '—') + '</td>' +
       '<td style="padding:8px 12px;font-size:11px">' +
         '<span style="padding:2px 7px;border-radius:8px;font-size:10px;font-weight:700;background:' + (isNew?'rgba(34,197,94,.12)':'rgba(248,113,113,.12)') + ';color:' + (isNew?'#22c55e':'#f87171') + '">' + (isNew?'New':'Exit') + '</span>' +
       '</td>' +
