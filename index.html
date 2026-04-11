@@ -502,7 +502,7 @@ html,body{background:var(--bg);color:var(--txt);font-family:'DM Sans',sans-serif
   </div>
   <div class="topbar-r">
     <div class="topbar-dot"></div>
-    <div class="topbar-badge">Mar 2026</div>
+    <div class="topbar-badge">Apr 2026</div>
   </div>
 </div>
 <div class="navtabs">
@@ -671,21 +671,21 @@ html,body{background:var(--bg);color:var(--txt);font-family:'DM Sans',sans-serif
               <span style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:var(--mut);white-space:nowrap">Range</span>
               <span id="slider-start-lbl" style="font-size:10px;color:var(--g1);font-family:'DM Mono',monospace;font-weight:600;white-space:nowrap">Mar 2025</span>
               <span style="font-size:10px;color:var(--mut)">–</span>
-              <span id="slider-end-lbl" style="font-size:10px;color:var(--g1);font-family:'DM Mono',monospace;font-weight:600;white-space:nowrap">Mar 2026</span>
+              <span id="slider-end-lbl" style="font-size:10px;color:var(--g1);font-family:'DM Mono',monospace;font-weight:600;white-space:nowrap">Apr 2026</span>
             </div>
             <div style="position:relative;height:24px;display:flex;align-items:center">
               <div style="position:absolute;left:0;right:0;height:4px;background:var(--srf2);border-radius:2px"></div>
               <div id="slider-track-fill" style="position:absolute;height:4px;background:var(--g1);border-radius:2px;left:0%;right:0%"></div>
-              <input type="range" id="slider-left" min="0" max="374" value="362"
+              <input type="range" id="slider-left" min="0" max="375" value="362"
                 style="position:absolute;width:100%;height:4px;appearance:none;-webkit-appearance:none;background:transparent;pointer-events:none;z-index:3;margin:0"
                 oninput="onDualSlider('left',this.value)">
-              <input type="range" id="slider-right" min="0" max="374" value="374"
+              <input type="range" id="slider-right" min="0" max="375" value="375"
                 style="position:absolute;width:100%;height:4px;appearance:none;-webkit-appearance:none;background:transparent;pointer-events:none;z-index:4;margin:0"
                 oninput="onDualSlider('right',this.value)">
             </div>
             <div style="display:flex;justify-content:space-between;margin-top:4px">
               <span style="font-size:9px;color:var(--mut2)">Jan 1995</span>
-              <span style="font-size:9px;color:var(--mut2)">Mar 2026</span>
+              <span style="font-size:9px;color:var(--mut2)">Apr 2026</span>
             </div>
           </div>
         </div>
@@ -2370,9 +2370,9 @@ html,body{background:var(--bg);color:var(--txt);font-family:'DM Sans',sans-serif
       <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
         <div style="display:flex;align-items:center;gap:6px">
           <label style="font-size:11px;color:rgba(255,255,255,.55);white-space:nowrap">From</label>
-          <input type="month" id="pulse-from" value="2025-12" min="2019-01" max="2026-02" onchange="pulseLoad()" style="height:30px;padding:0 8px;border:1px solid var(--bdr);border-radius:6px;background:var(--srf2);color:var(--txt);font-size:12px;font-family:'DM Sans',sans-serif"/>
+          <input type="month" id="pulse-from" value="2026-01" min="2019-01" max="2026-04" onchange="pulseLoad()" style="height:30px;padding:0 8px;border:1px solid var(--bdr);border-radius:6px;background:var(--srf2);color:var(--txt);font-size:12px;font-family:'DM Sans',sans-serif"/>
           <label style="font-size:11px;color:rgba(255,255,255,.55);white-space:nowrap">To</label>
-          <input type="month" id="pulse-to" value="2026-02" min="2019-01" max="2026-02" onchange="pulseLoad()" style="height:30px;padding:0 8px;border:1px solid var(--bdr);border-radius:6px;background:var(--srf2);color:var(--txt);font-size:12px;font-family:'DM Sans',sans-serif"/>
+          <input type="month" id="pulse-to" value="2026-04" min="2019-01" max="2026-04" onchange="pulseLoad()" style="height:30px;padding:0 8px;border:1px solid var(--bdr);border-radius:6px;background:var(--srf2);color:var(--txt);font-size:12px;font-family:'DM Sans',sans-serif"/>
         </div>
         <select id="pulse-mode" onchange="pulseRender()" style="height:30px;padding:0 10px;border:1px solid var(--bdr);border-radius:6px;background:var(--srf2);color:var(--txt);font-size:12px;font-family:'DM Sans',sans-serif">
           <option value="new">🟢 New Registrations</option>
@@ -10886,7 +10886,7 @@ var excludeInvSales=true; // true=exclude investment sales from chart
 var chartMoM=true;   // MoM on by default
 var sliderMonths=12;  // window size in months
 var sliderStartMonth=360; // left handle (0=Jan1995, 371=Mar2026). Default: L12 = pos 360
-var sliderEndMonth=371;   // right handle
+var sliderEndMonth=375;   // right handle
 var MONTHLY_CACHE=null; // {labels:[], datasets:{type:[vals]}}
 var showAvgPsf=true;
 var showSTI=false;
@@ -11004,8 +11004,8 @@ function fmtYM(ym){
 
 // Sync the coloured fill track and labels to current left/right positions
 function syncDualSliderUI(){
-  var pct1 = (sliderStartMonth / 374) * 100;
-  var pct2 = (sliderEndMonth   / 374) * 100;
+  var pct1 = (sliderStartMonth / 375) * 100;
+  var pct2 = (sliderEndMonth   / 375) * 100;
   var fill = document.getElementById("slider-track-fill");
   if(fill){ fill.style.left = pct1.toFixed(2)+"%"; fill.style.right = (100-pct2).toFixed(2)+"%"; }
   var s = document.getElementById("slider-start-lbl");
@@ -11055,7 +11055,7 @@ function onDualSlider(side, v){
 function syncSliderToRange(range){
   var wins = {L12:12, L18:18, "5Y":60, "10Y":120, ALL:372};
   var win = wins[range] || sliderMonths;
-  sliderEndMonth   = 374;
+  sliderEndMonth   = 375;
   sliderStartMonth = Math.max(0, 374 - win);
   sliderMonths = win;
   var lEl = document.getElementById("slider-left");
@@ -13948,6 +13948,7 @@ function fmtPropType(t){
 function renderOvTable(rows){
   var tbody = document.getElementById("ov-tx-tbody");
   tbody.innerHTML = rows.map(function(r){
+    var isLoss = r.buy_price && r.transacted_price && r.transacted_price < r.buy_price;
     var price = r.transacted_price ? "S$"+Number(r.transacted_price).toLocaleString() : "-";
     var area  = r.area_sqft ? Number(parseFloat(r.area_sqft).toFixed(0)).toLocaleString() : "-";
     var psf   = r.unit_price_psf ? "S$"+Math.round(r.unit_price_psf) : "-";
@@ -13959,7 +13960,7 @@ function renderOvTable(rows){
     var boughtLabel = "<div style='font-size:9px;color:var(--mut2);text-transform:uppercase;letter-spacing:.04em;margin-top:4px;font-family:\"DM Sans\",sans-serif'>Bought</div>";
     var dateCell = "<div style='font-size:11px;font-weight:600'>"+date+"</div>"
       + (r.buy_date ? boughtLabel+"<div style='"+mutStyle+"'>"+r.buy_date.substring(0,10)+"</div>" : "");
-    var priceCell = "<div style='font-size:11px;font-weight:700'>"+price+"</div>"
+    var priceCell = "<div style='font-size:11px;font-weight:700"+(isLoss?";color:#c62828":"")+">"+price+"</div>"
       + (r.buy_price ? boughtLabel+"<div style='"+mutStyle+"'>S$"+Number(Math.round(r.buy_price)).toLocaleString()+"</div>" : "");
     var psfCell = "<div style='font-size:11px'>"+psf+"</div>"
       + (r.buy_psf ? boughtLabel+"<div style='"+mutStyle+"'>S$"+Math.round(r.buy_psf).toLocaleString()+"</div>" : "");
@@ -13967,7 +13968,7 @@ function renderOvTable(rows){
       +"<td class='mono' style='white-space:nowrap;vertical-align:top;font-size:10.5px'>"+dateCell+"</td>"
       +"<td class='mono' style='font-size:10.5px;white-space:nowrap;vertical-align:top'>"+dist+"</td>"
       +"<td style='font-weight:600;font-size:10.5px;vertical-align:top;word-break:break-word'>"+(r.project_name||"-")+"</td>"
-      +"<td style='font-size:10px;color:var(--mut);vertical-align:top;word-break:break-word'>"+(r.address||"-")+"</td>"
+      +"<td style='font-size:10px;color:var(--mut);vertical-align:top;word-break:normal;overflow-wrap:anywhere'>"+((r.address||"-").replace(/(#\S+)/g,"<wbr>$1"))+"</td>"
       +"<td style='vertical-align:top;text-align:center'><span class='pill p-tag' style='white-space:nowrap;font-size:9.5px;padding:2px 5px'>"+fmtPropType(r.property_type||"-")+"</span></td>"
       +"<td style='font-size:10px;color:var(--mut);vertical-align:top'>"+tos+(r.buy_tos ? boughtLabel+"<div style='"+mutStyle+"'>"+r.buy_tos+"</div>" : "")+"</td>"
       +"<td style='font-size:10px;color:var(--mut);vertical-align:top'>"+(r.type_of_area||"-")+"</td>"
@@ -14295,9 +14296,9 @@ function initAutocomplete(){
   });
 }
 
-// INIT — default: MoM, Last 12 Months, slider right=371 left=360
-sliderStartMonth = 362;
-sliderEndMonth   = 374;
+// INIT — default: MoM, Last 12 Months, slider right=375 left=363
+sliderStartMonth = 363;
+sliderEndMonth   = 375;
 sliderMonths     = 12;
 initRangeBtns();
 // Mark defaults as active
