@@ -13960,7 +13960,7 @@ function renderOvTable(rows){
     var boughtLabel = "<div style='font-size:9px;color:var(--mut2);text-transform:uppercase;letter-spacing:.04em;margin-top:4px;font-family:\"DM Sans\",sans-serif'>Bought</div>";
     var dateCell = "<div style='font-size:11px;font-weight:600'>"+date+"</div>"
       + (r.buy_date ? boughtLabel+"<div style='"+mutStyle+"'>"+r.buy_date.substring(0,10)+"</div>" : "");
-    var priceCell = "<div style='font-size:11px;font-weight:700"+(isLoss?";color:#c62828":"")+">"+price+"</div>"
+    var priceCell = "<div style='font-size:11px;font-weight:700"+(isLoss?";color:#c62828":"")+"'>"+ price+"</div>"
       + (r.buy_price ? boughtLabel+"<div style='"+mutStyle+"'>S$"+Number(Math.round(r.buy_price)).toLocaleString()+"</div>" : "");
     var psfCell = "<div style='font-size:11px'>"+psf+"</div>"
       + (r.buy_psf ? boughtLabel+"<div style='"+mutStyle+"'>S$"+Math.round(r.buy_psf).toLocaleString()+"</div>" : "");
