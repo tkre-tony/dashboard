@@ -2448,6 +2448,7 @@ html,body{background:var(--bg);color:var(--txt);font-family:'DM Sans',sans-serif
       <div class="card" style="padding:16px">
         <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;flex-wrap:wrap;gap:8px">
           <div style="font-size:12px;font-weight:700;color:var(--txt)" id="pulse-list-title">Company List</div>
+          <div id="pulse-cap-note" style="display:none;font-size:10px;color:#f59e0b;background:rgba(245,158,11,.08);border:1px solid rgba(245,158,11,.25);border-radius:4px;padding:3px 8px;margin-top:4px"></div>
           <div style="display:flex;gap:6px;align-items:center">
             <input id="pulse-search" placeholder="🔍 Filter companies…" oninput="pulseFilterList()" style="height:28px;padding:0 10px;border:1px solid var(--bdr);border-radius:6px;background:var(--srf2);color:var(--txt);font-size:11px;font-family:'DM Sans',sans-serif;width:180px">
             <button onclick="pulseExportCSV()" style="height:28px;padding:0 10px;border:1px solid var(--bdr);border-radius:6px;background:var(--srf2);color:var(--txt2);font-size:11px;font-family:'DM Sans',sans-serif;cursor:pointer">⬇ CSV</button>
@@ -19222,6 +19223,19 @@ function pulseRender() {
     countNote = trueE.toLocaleString() + ' companies';
   }
   document.getElementById('pulse-list-title').textContent = modeLabel + ' — ' + countNote + rangeNote;
+
+  // Cap warning — show when true DB count exceeds fetched rows
+  var capNote = document.getElementById('pulse-cap-note');
+  if(capNote) {
+    var trueTotal = (PULSE_COUNT_NEW||0) + (PULSE_COUNT_EXIT||0);
+    var fetchedTotal = PULSE_ALL.length;
+    if(!hasFilterActive && trueTotal > fetchedTotal) {
+      capNote.style.display = 'block';
+      capNote.textContent = '⚠ Table shows ' + fetchedTotal.toLocaleString() + ' of ' + trueTotal.toLocaleString() + ' total rows (display cap). All months are included — use Search or narrow the date range to see specific entries.';
+    } else {
+      capNote.style.display = 'none';
+    }
+  }
 
   document.getElementById('pulse-content').style.display = 'block';
 }
