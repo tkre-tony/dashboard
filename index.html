@@ -19251,10 +19251,10 @@ function pulseBuildChart(newData, exitData, mode) {
   var newByMo  = PULSE_MONTHLY_NEW;
   var exitByMo = PULSE_MONTHLY_EXIT;
 
-  // Show all months within selected range — exclude current partial month
+  // Show all months within selected range — exclude current partial month and months with no data
   var nowYM = new Date().toISOString().slice(0,7);
   var allMos = [...new Set(Object.keys(newByMo).concat(Object.keys(exitByMo)))]
-    .filter(function(mo){ return mo >= PULSE_FROM_MO && mo <= PULSE_TO_MO && mo < nowYM; })
+    .filter(function(mo){ return mo >= PULSE_FROM_MO && mo <= PULSE_TO_MO && mo < nowYM && ((newByMo[mo]||0) + (exitByMo[mo]||0)) > 0; })
     .sort();
   if(!allMos.length) { wrap.innerHTML = '<div style="color:var(--mut);font-size:11px;padding:8px 0">No complete months in selected period.</div>'; return; }
 
