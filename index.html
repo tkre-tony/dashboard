@@ -2481,7 +2481,7 @@ html,body{background:var(--bg);color:var(--txt);font-family:'DM Sans',sans-serif
               <tr style="background:var(--srf2)">
                 <th style="padding:8px 12px;text-align:left;color:var(--mut);font-size:10px;text-transform:uppercase;letter-spacing:.05em;border-bottom:1px solid var(--bdr)">Company</th>
                 <th style="padding:8px 12px;text-align:left;color:var(--mut);font-size:10px;text-transform:uppercase;letter-spacing:.05em;border-bottom:1px solid var(--bdr)">Address</th>
-                <th style="padding:8px 12px;text-align:left;color:var(--mut);font-size:10px;text-transform:uppercase;letter-spacing:.05em;border-bottom:1px solid var(--bdr)">Type</th>
+                <th style="padding:8px 12px;text-align:left;color:var(--mut);font-size:10px;text-transform:uppercase;letter-spacing:.05em;border-bottom:1px solid var(--bdr);width:90px">Type</th>
                 <th style="padding:8px 12px;text-align:left;color:var(--mut);font-size:10px;text-transform:uppercase;letter-spacing:.05em;border-bottom:1px solid var(--bdr)">Industry</th>
                 <th style="padding:8px 12px;text-align:left;color:var(--mut);font-size:10px;text-transform:uppercase;letter-spacing:.05em;border-bottom:1px solid var(--bdr)">Status</th>
                 <th style="padding:8px 12px;text-align:left;color:var(--mut);font-size:10px;text-transform:uppercase;letter-spacing:.05em;border-bottom:1px solid var(--bdr)">Date</th>
@@ -19586,7 +19586,7 @@ function pulseRenderTable() {
       '<a href="https://www.sgpbusiness.com/company/' + encodeURIComponent(d.uen||'') + '" target="_blank" style="color:var(--txt);text-decoration:none;border-bottom:1px dashed var(--bdr2);cursor:pointer" title="View on SGPBusiness">' + (d.entity_name||'—') + '</a>' +
       '</div></td>' +
       '<td style="padding:8px 12px;font-size:11px;color:var(--txt)">' + (addr||'—') + '</td>' +
-      '<td style="padding:8px 12px;font-size:11px;color:var(--txt2)">' + (d.entity_type||'—') + '</td>' +
+      '<td style="padding:8px 12px;font-size:11px;color:var(--txt2);width:90px">' + (d.entity_type ? d.entity_type.replace('/ ', '/<br>') : '—') + '</td>' +
       '<td style="padding:8px 12px;font-size:11px;color:var(--mut)">' + (d.primary_ssic_desc && d.primary_ssic_desc.toLowerCase()!=='na' ? d.primary_ssic_desc : '—') + '</td>' +
       '<td style="padding:8px 12px;font-size:11px">' +
         '<span style="padding:2px 7px;border-radius:8px;font-size:10px;font-weight:700;background:' + (isNew?'rgba(34,197,94,.12)':'rgba(248,113,113,.12)') + ';color:' + (isNew?'#22c55e':'#f87171') + '">' + (isNew?'New':'Exit') + '</span>' +
