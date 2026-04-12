@@ -2368,11 +2368,32 @@ html,body{background:var(--bg);color:var(--txt);font-family:'DM Sans',sans-serif
         <div style="font-size:12px;color:#94a3b8;margin-top:4px">New &amp; exiting companies across Singapore · Source: ACRA registry via Supabase · 2M+ entities tracked</div>
       </div>
       <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
-        <div style="display:flex;align-items:center;gap:6px">
+        <div style="display:flex;align-items:center;gap:6px;position:relative">
           <label style="font-size:11px;color:rgba(255,255,255,.55);white-space:nowrap">From</label>
-          <input type="month" id="pulse-from" value="2026-01" min="2019-01" max="2026-04" onchange="pulseLoad()" style="height:30px;padding:0 8px;border:1px solid var(--bdr);border-radius:6px;background:var(--srf2);color:var(--txt);font-size:12px;font-family:'DM Sans',sans-serif"/>
+          <button id="pulse-from-btn" onclick="pulsePickerOpen('from')" style="height:30px;padding:0 10px;border:1px solid var(--bdr);border-radius:6px;background:var(--srf2);color:var(--txt);font-size:12px;font-family:'DM Sans',sans-serif;cursor:pointer;min-width:90px;text-align:left">Jan 2026</button>
           <label style="font-size:11px;color:rgba(255,255,255,.55);white-space:nowrap">To</label>
-          <input type="month" id="pulse-to" value="2026-04" min="2019-01" max="2026-04" onchange="pulseLoad()" style="height:30px;padding:0 8px;border:1px solid var(--bdr);border-radius:6px;background:var(--srf2);color:var(--txt);font-size:12px;font-family:'DM Sans',sans-serif"/>
+          <button id="pulse-to-btn" onclick="pulsePickerOpen('to')" style="height:30px;padding:0 10px;border:1px solid var(--bdr);border-radius:6px;background:var(--srf2);color:var(--txt);font-size:12px;font-family:'DM Sans',sans-serif;cursor:pointer;min-width:90px;text-align:left">Apr 2026</button>
+          <div id="pulse-picker-panel" style="display:none;position:absolute;top:36px;left:0;z-index:200;background:var(--hdr2,#1a2340);border:1px solid var(--bdr);border-radius:8px;padding:12px;box-shadow:0 8px 32px rgba(0,0,0,.4);min-width:320px">
+            <div style="display:flex;gap:16px">
+              <!-- From column -->
+              <div style="flex:1">
+                <div style="font-size:10px;font-weight:700;color:var(--mut);text-transform:uppercase;letter-spacing:.05em;margin-bottom:8px">From</div>
+                <div id="pulse-picker-from-year" style="display:flex;flex-wrap:wrap;gap:4px;margin-bottom:8px"></div>
+                <div id="pulse-picker-from-mo" style="display:grid;grid-template-columns:repeat(3,1fr);gap:3px"></div>
+              </div>
+              <div style="width:1px;background:var(--bdr)"></div>
+              <!-- To column -->
+              <div style="flex:1">
+                <div style="font-size:10px;font-weight:700;color:var(--mut);text-transform:uppercase;letter-spacing:.05em;margin-bottom:8px">To</div>
+                <div id="pulse-picker-to-year" style="display:flex;flex-wrap:wrap;gap:4px;margin-bottom:8px"></div>
+                <div id="pulse-picker-to-mo" style="display:grid;grid-template-columns:repeat(3,1fr);gap:3px"></div>
+              </div>
+            </div>
+            <div style="display:flex;justify-content:flex-end;gap:6px;margin-top:10px;border-top:1px solid var(--bdr);padding-top:8px">
+              <button onclick="pulsePickerClose()" style="height:26px;padding:0 12px;border:1px solid var(--bdr);border-radius:5px;background:var(--srf2);color:var(--txt2);font-size:11px;cursor:pointer">Cancel</button>
+              <button onclick="pulsePickerApply()" style="height:26px;padding:0 12px;border:none;border-radius:5px;background:var(--g1);color:#fff;font-size:11px;font-weight:600;cursor:pointer">Apply</button>
+            </div>
+          </div>
         </div>
         <select id="pulse-mode" onchange="pulseRender()" style="height:30px;padding:0 10px;border:1px solid var(--bdr);border-radius:6px;background:var(--srf2);color:var(--txt);font-size:12px;font-family:'DM Sans',sans-serif">
           <option value="new">🟢 New Registrations</option>
@@ -18927,10 +18948,121 @@ function buildPortfolioIndex() {
 
 var PULSE_PORTFOLIO_IDX = null;
 
+// ── Custom date range picker ──────────────────────────────────────────────────
+var PULSE_PICKER_FROM = '2026-01';
+var PULSE_PICKER_TO   = '2026-04';
+var PULSE_PICKER_DRAFT_FROM = '2026-01';
+var PULSE_PICKER_DRAFT_TO   = '2026-04';
+var MONTHS_SHORT = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+var PULSE_MIN_YM = '2019-01';
+var PULSE_MAX_YM = '2026-04';
+
+function pulsePickerOpen(side) {
+  PULSE_PICKER_DRAFT_FROM = PULSE_PICKER_FROM;
+  PULSE_PICKER_DRAFT_TO   = PULSE_PICKER_TO;
+  pulsePickerRender();
+  document.getElementById('pulse-picker-panel').style.display = 'block';
+  // Close on outside click
+  setTimeout(function(){
+    document.addEventListener('click', pulsePickerOutside, {once:true, capture:true});
+  }, 0);
+}
+
+function pulsePickerOutside(e) {
+  var panel = document.getElementById('pulse-picker-panel');
+  if(panel && !panel.contains(e.target) && !document.getElementById('pulse-from-btn').contains(e.target) && !document.getElementById('pulse-to-btn').contains(e.target)) {
+    pulsePickerClose();
+  } else {
+    document.addEventListener('click', pulsePickerOutside, {once:true, capture:true});
+  }
+}
+
+function pulsePickerClose() {
+  var panel = document.getElementById('pulse-picker-panel');
+  if(panel) panel.style.display = 'none';
+}
+
+function pulsePickerApply() {
+  if(PULSE_PICKER_DRAFT_FROM > PULSE_PICKER_DRAFT_TO) {
+    PULSE_PICKER_DRAFT_TO = PULSE_PICKER_DRAFT_FROM;
+  }
+  PULSE_PICKER_FROM = PULSE_PICKER_DRAFT_FROM;
+  PULSE_PICKER_TO   = PULSE_PICKER_DRAFT_TO;
+  pulsePickerUpdateBtns();
+  pulsePickerClose();
+  pulseLoad();
+}
+
+function pulsePickerUpdateBtns() {
+  var fParts = PULSE_PICKER_FROM.split('-');
+  var tParts = PULSE_PICKER_TO.split('-');
+  document.getElementById('pulse-from-btn').textContent = MONTHS_SHORT[parseInt(fParts[1])-1] + ' ' + fParts[0];
+  document.getElementById('pulse-to-btn').textContent   = MONTHS_SHORT[parseInt(tParts[1])-1] + ' ' + tParts[0];
+}
+
+function pulsePickerRender() {
+  var minYear = parseInt(PULSE_MIN_YM.split('-')[0]);
+  var maxYear = parseInt(PULSE_MAX_YM.split('-')[0]);
+  var fromYear = parseInt(PULSE_PICKER_DRAFT_FROM.split('-')[0]);
+  var fromMon  = parseInt(PULSE_PICKER_DRAFT_FROM.split('-')[1]);
+  var toYear   = parseInt(PULSE_PICKER_DRAFT_TO.split('-')[0]);
+  var toMon    = parseInt(PULSE_PICKER_DRAFT_TO.split('-')[1]);
+
+  function yearBtns(el, selectedYear, side) {
+    var html = '';
+    for(var y = minYear; y <= maxYear; y++) {
+      var active = y === selectedYear;
+      html += '<button onclick="pulsePickerSetYear(\''+side+'\','+y+')" style="padding:3px 7px;border-radius:4px;border:1px solid '+(active?'var(--g1)':'var(--bdr)')+';background:'+(active?'var(--g1)':'var(--srf2)')+';color:'+(active?'#fff':'var(--txt2)')+';font-size:11px;cursor:pointer;font-family:DM Sans,sans-serif">'+y+'</button>';
+    }
+    document.getElementById(el).innerHTML = html;
+  }
+
+  function moBtns(el, selectedYear, selectedMon, side) {
+    var html = '';
+    for(var m = 1; m <= 12; m++) {
+      var ym = selectedYear + '-' + String(m).padStart(2,'0');
+      var disabled = ym < PULSE_MIN_YM || ym > PULSE_MAX_YM;
+      var active = m === selectedMon;
+      html += '<button'+(disabled?' disabled':'')+' onclick="pulsePickerSetMo(\''+side+'\','+m+')" style="padding:4px 2px;border-radius:4px;border:1px solid '+(active?'var(--g1)':'var(--bdr)')+';background:'+(active?'var(--g1)':'var(--srf2)')+';color:'+(disabled?'var(--mut)':(active?'#fff':'var(--txt)'))+';font-size:11px;cursor:'+(disabled?'default':'pointer')+';font-family:DM Sans,sans-serif;text-align:center">'+MONTHS_SHORT[m-1]+'</button>';
+    }
+    document.getElementById(el).innerHTML = html;
+  }
+
+  yearBtns('pulse-picker-from-year', fromYear, 'from');
+  moBtns('pulse-picker-from-mo', fromYear, fromMon, 'from');
+  yearBtns('pulse-picker-to-year', toYear, 'to');
+  moBtns('pulse-picker-to-mo', toYear, toMon, 'to');
+}
+
+function pulsePickerSetYear(side, y) {
+  if(side === 'from') {
+    var mon = PULSE_PICKER_DRAFT_FROM.split('-')[1];
+    PULSE_PICKER_DRAFT_FROM = y + '-' + mon;
+    if(PULSE_PICKER_DRAFT_FROM > PULSE_MAX_YM) PULSE_PICKER_DRAFT_FROM = PULSE_MAX_YM;
+    if(PULSE_PICKER_DRAFT_FROM < PULSE_MIN_YM) PULSE_PICKER_DRAFT_FROM = PULSE_MIN_YM;
+  } else {
+    var mon2 = PULSE_PICKER_DRAFT_TO.split('-')[1];
+    PULSE_PICKER_DRAFT_TO = y + '-' + mon2;
+    if(PULSE_PICKER_DRAFT_TO > PULSE_MAX_YM) PULSE_PICKER_DRAFT_TO = PULSE_MAX_YM;
+    if(PULSE_PICKER_DRAFT_TO < PULSE_MIN_YM) PULSE_PICKER_DRAFT_TO = PULSE_MIN_YM;
+  }
+  pulsePickerRender();
+}
+
+function pulsePickerSetMo(side, m) {
+  var ym = (side === 'from' ? PULSE_PICKER_DRAFT_FROM : PULSE_PICKER_DRAFT_TO).split('-')[0] + '-' + String(m).padStart(2,'0');
+  if(ym < PULSE_MIN_YM || ym > PULSE_MAX_YM) return;
+  if(side === 'from') PULSE_PICKER_DRAFT_FROM = ym;
+  else PULSE_PICKER_DRAFT_TO = ym;
+  pulsePickerRender();
+}
+// ─────────────────────────────────────────────────────────────────────────────
+
 function pulseInit() {
   if(pulseInited) return;
   pulseInited = true;
   PULSE_PORTFOLIO_IDX = buildPortfolioIndex();
+  pulsePickerUpdateBtns();
   pulseLoad();
 }
 
@@ -18945,9 +19077,9 @@ var PULSE_FROM_MO    = '2025-12';
 var PULSE_TO_MO      = '2026-02';
 
 async function pulseLoad() {
-  var fromMo = document.getElementById('pulse-from').value || '2025-12';
-  var toMo   = document.getElementById('pulse-to').value   || '2026-02';
-  if(fromMo > toMo){ document.getElementById('pulse-from').value = toMo; fromMo = toMo; }
+  var fromMo = PULSE_PICKER_FROM || '2026-01';
+  var toMo   = PULSE_PICKER_TO   || '2026-04';
+  if(fromMo > toMo){ PULSE_PICKER_FROM = toMo; fromMo = toMo; pulsePickerUpdateBtns(); }
   var dateFrom = fromMo + '-01';
   var toLastDay = new Date(parseInt(toMo.split('-')[0]), parseInt(toMo.split('-')[1]), 0).getDate();
   var dateTo = toMo + '-' + String(toLastDay).padStart(2,'0');
@@ -19103,8 +19235,12 @@ function pulseRender() {
   if(showNew)  PULSE_ALL = PULSE_ALL.concat(newData.map(function(d){ return Object.assign({}, d, {_type:'new'}); }));
   if(showExit) PULSE_ALL = PULSE_ALL.concat(exitData.map(function(d){ return Object.assign({}, d, {_type:'exit'}); }));
 
-  // Sort by date desc
-  PULSE_ALL.sort(function(a, b){ return (b.reg_date||'').localeCompare(a.reg_date||''); });
+  // Sort by date desc, then alphabetically by entity name within same date
+  PULSE_ALL.sort(function(a, b){
+    var d = (b.reg_date||'').localeCompare(a.reg_date||'');
+    if(d !== 0) return d;
+    return (a.entity_name||'').localeCompare(b.entity_name||'');
+  });
 
   // KPIs — use true DB counts (HEAD request) when no filter active; fall back to array length when filtered
   var hasFilter = !!(indF || bldgQ);
@@ -19464,12 +19600,13 @@ function pulseRenderTable() {
   var trueNew  = PULSE_COUNT_NEW  > 0 ? PULSE_COUNT_NEW  : PULSE_DATA_NEW.length;
   var trueExit = PULSE_COUNT_EXIT > 0 ? PULSE_COUNT_EXIT : PULSE_DATA_EXIT.length;
   var trueResultCount = PULSE_SEARCH_Q ? PULSE_FILTERED.length : (trueNew + trueExit);
-  var totalPages = Math.ceil(PULSE_FILTERED.length / PULSE_PAGE_SIZE);
+  var totalPages = Math.ceil(trueResultCount / PULSE_PAGE_SIZE);
+  var displayedPages = Math.ceil(PULSE_FILTERED.length / PULSE_PAGE_SIZE);
   if(totalPages <= 1) { pager.innerHTML = ''; return; }
   var html = '';
   if(PULSE_PAGE > 0) html += '<button onclick="pulsePage('+(PULSE_PAGE-1)+')" style="padding:4px 10px;border:1px solid var(--bdr);border-radius:5px;background:var(--srf2);color:var(--txt);font-size:11px;cursor:pointer">← Prev</button>';
   html += '<span style="font-size:11px;color:var(--mut)">Page '+(PULSE_PAGE+1)+' of '+totalPages+' · '+trueResultCount.toLocaleString()+' results</span>';
-  if(PULSE_PAGE < totalPages-1) html += '<button onclick="pulsePage('+(PULSE_PAGE+1)+')" style="padding:4px 10px;border:1px solid var(--bdr);border-radius:5px;background:var(--srf2);color:var(--txt);font-size:11px;cursor:pointer">Next →</button>';
+  if(PULSE_PAGE < displayedPages-1) html += '<button onclick="pulsePage('+(PULSE_PAGE+1)+')" style="padding:4px 10px;border:1px solid var(--bdr);border-radius:5px;background:var(--srf2);color:var(--txt);font-size:11px;cursor:pointer">Next →</button>';
   pager.innerHTML = html;
 }
 
