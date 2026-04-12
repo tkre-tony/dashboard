@@ -19036,6 +19036,12 @@ async function pulseLoad() {
       if(em) PULSE_MONTHLY_EXIT[mo] = parseInt(em[1]);
     });
 
+    // Derive reliable totals from monthly sums (always accurate) if HEAD counts failed
+    var monthlyTotalNew  = Object.values(PULSE_MONTHLY_NEW).reduce(function(a,b){return a+b;},0);
+    var monthlyTotalExit = Object.values(PULSE_MONTHLY_EXIT).reduce(function(a,b){return a+b;},0);
+    if(!(PULSE_COUNT_NEW  > 0) && monthlyTotalNew  > 0) PULSE_COUNT_NEW  = monthlyTotalNew;
+    if(!(PULSE_COUNT_EXIT > 0) && monthlyTotalExit > 0) PULSE_COUNT_EXIT = monthlyTotalExit;
+
     document.getElementById('pulse-loading').style.display = 'none';
 
     if(!PULSE_DATA_NEW.length && !PULSE_DATA_EXIT.length) {
@@ -19213,14 +19219,14 @@ function pulseRender() {
   if(hasFilterActive) {
     countNote = PULSE_ALL.length.toLocaleString() + ' companies (filtered)';
   } else if(mode === 'both') {
-    var nNew  = PULSE_COUNT_NEW  || 0;
-    var nExit = PULSE_COUNT_EXIT || 0;
+    var nNew  = PULSE_COUNT_NEW  || newData.length;
+    var nExit = PULSE_COUNT_EXIT || exitData.length;
     countNote = nNew.toLocaleString() + ' new · ' + nExit.toLocaleString() + ' exits';
   } else if(mode === 'new') {
-    var trueN = PULSE_COUNT_NEW || PULSE_ALL.length;
+    var trueN = PULSE_COUNT_NEW || newData.length;
     countNote = trueN.toLocaleString() + ' companies';
   } else {
-    var trueE = PULSE_COUNT_EXIT || PULSE_ALL.length;
+    var trueE = PULSE_COUNT_EXIT || exitData.length;
     countNote = trueE.toLocaleString() + ' companies';
   }
   document.getElementById('pulse-list-title').textContent = modeLabel + ' — ' + countNote + rangeNote;
@@ -19455,9 +19461,9 @@ function pulseRenderTable() {
   }).join('');
 
   // Pagination
-  var trueResultCount = (!PULSE_SEARCH_Q && PULSE_COUNT_NEW > 0 && PULSE_COUNT_EXIT > 0)
-    ? (PULSE_COUNT_NEW + PULSE_COUNT_EXIT)
-    : PULSE_FILTERED.length;
+  var trueNew  = PULSE_COUNT_NEW  > 0 ? PULSE_COUNT_NEW  : PULSE_DATA_NEW.length;
+  var trueExit = PULSE_COUNT_EXIT > 0 ? PULSE_COUNT_EXIT : PULSE_DATA_EXIT.length;
+  var trueResultCount = PULSE_SEARCH_Q ? PULSE_FILTERED.length : (trueNew + trueExit);
   var totalPages = Math.ceil(PULSE_FILTERED.length / PULSE_PAGE_SIZE);
   if(totalPages <= 1) { pager.innerHTML = ''; return; }
   var html = '';
