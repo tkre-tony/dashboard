@@ -18906,6 +18906,7 @@ var PULSE_ALL       = [];
 var PULSE_FILTERED  = [];
 var PULSE_PAGE      = 0;
 var PULSE_PAGE_SIZE = 100;
+var PULSE_SEARCH_Q  = '';
 var pulseInited     = false;
 
 // Build address→asset lookup from REIT_DATA for portfolio matching
@@ -19101,8 +19102,8 @@ function pulseRender() {
 
   // KPIs — use true DB counts (HEAD request) when no filter active; fall back to array length when filtered
   var hasFilter = !!(indF || bldgQ);
-  var kNew  = (!hasFilter && PULSE_COUNT_NEW  !== null) ? PULSE_COUNT_NEW  : newData.length;
-  var kExit = (!hasFilter && PULSE_COUNT_EXIT !== null) ? PULSE_COUNT_EXIT : exitData.length;
+  var kNew  = (!hasFilter && PULSE_COUNT_NEW  > 0) ? PULSE_COUNT_NEW  : newData.length;
+  var kExit = (!hasFilter && PULSE_COUNT_EXIT > 0) ? PULSE_COUNT_EXIT : exitData.length;
   var netColor = kNew >= kExit ? '#22c55e' : '#f87171';
   var netSign  = kNew >= kExit ? '+' : '';
   document.getElementById('pulse-k-new').textContent      = kNew.toLocaleString();
@@ -19414,6 +19415,7 @@ function pulseGoToAsset(name) {
 
 function pulseFilterList() {
   var q = (document.getElementById('pulse-search').value || '').toLowerCase();
+  PULSE_SEARCH_Q = q;
   PULSE_FILTERED = q ? PULSE_ALL.filter(function(d){
     return (d.entity_name||'').toLowerCase().includes(q) ||
            (d.street_name||'').toLowerCase().includes(q) ||
@@ -19453,11 +19455,14 @@ function pulseRenderTable() {
   }).join('');
 
   // Pagination
+  var trueResultCount = (!PULSE_SEARCH_Q && PULSE_COUNT_NEW > 0 && PULSE_COUNT_EXIT > 0)
+    ? (PULSE_COUNT_NEW + PULSE_COUNT_EXIT)
+    : PULSE_FILTERED.length;
   var totalPages = Math.ceil(PULSE_FILTERED.length / PULSE_PAGE_SIZE);
   if(totalPages <= 1) { pager.innerHTML = ''; return; }
   var html = '';
   if(PULSE_PAGE > 0) html += '<button onclick="pulsePage('+(PULSE_PAGE-1)+')" style="padding:4px 10px;border:1px solid var(--bdr);border-radius:5px;background:var(--srf2);color:var(--txt);font-size:11px;cursor:pointer">← Prev</button>';
-  html += '<span style="font-size:11px;color:var(--mut)">Page '+(PULSE_PAGE+1)+' of '+totalPages+' · '+PULSE_FILTERED.length.toLocaleString()+' results</span>';
+  html += '<span style="font-size:11px;color:var(--mut)">Page '+(PULSE_PAGE+1)+' of '+totalPages+' · '+trueResultCount.toLocaleString()+' results</span>';
   if(PULSE_PAGE < totalPages-1) html += '<button onclick="pulsePage('+(PULSE_PAGE+1)+')" style="padding:4px 10px;border:1px solid var(--bdr);border-radius:5px;background:var(--srf2);color:var(--txt);font-size:11px;cursor:pointer">Next →</button>';
   pager.innerHTML = html;
 }
