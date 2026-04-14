@@ -20937,7 +20937,7 @@ async function enqSubmit() {
 
     // 2. Send email alert via Supabase Edge Function (avoids browser CORS on Resend)
     try {
-      await fetch(PROJ_SUPABASE_URL + '/functions/v1/send-lead-alert', {
+      await fetch(PROJ_SUPABASE_URL + '/functions/v1/bright-worker', {
         method: 'POST',
         headers: {
           'Content-Type':  'application/json',
