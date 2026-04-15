@@ -19599,7 +19599,12 @@ function invRender() {
   var totalSqft = active.reduce(function(s,d){return s+d.sqft},0);
   var props = [...new Set(active.map(function(d){return d.addr}))].length;
   var imm = active.filter(function(d){return /immediate/i.test(d.avail)}).length;
-  var rents = active.filter(function(d){return d.rent}).map(function(d){return parseFloat(d.rent.replace(/[^0-9.]/g,''))});
+  var rents = active.filter(function(d){return d.rent}).map(function(d){
+    var raw = parseFloat(d.rent.replace(/[^0-9.]/g,''));
+    // Clifton stores monthly rent — convert to psf/mo for comparison
+    if(d.reit === 'Clifton Partners' && d.sqft) return raw / d.sqft;
+    return raw;
+  }).filter(function(x){ return !isNaN(x) && x > 0; });
   var loRent = rents.length ? Math.min.apply(null,rents).toFixed(2) : null;
   var hiRent = rents.length ? Math.max.apply(null,rents).toFixed(2) : null;
 
@@ -19607,8 +19612,9 @@ function invRender() {
   document.getElementById('inv-s-sqft').textContent = totalSqft>0 ? (totalSqft/1000).toFixed(0)+'K' : '0';
   document.getElementById('inv-s-imm').textContent = imm;
   document.getElementById('inv-s-props').textContent = props;
-  document.getElementById('inv-s-lorent').textContent = loRent ? '$'+loRent+' psf' : '—';
-  document.getElementById('inv-s-hirent').textContent = hiRent ? '$'+hiRent+' psf' : '—';
+  var psfLabel = (INV_REIT === 'Clifton Partners') ? ' psf/mo' : ' psf';
+  document.getElementById('inv-s-lorent').textContent = loRent ? '$'+loRent+psfLabel : '—';
+  document.getElementById('inv-s-hirent').textContent = hiRent ? '$'+hiRent+psfLabel : '—';
   document.getElementById('inv-total-units').textContent = active.length;
   document.getElementById('inv-total-sqft').textContent = totalSqft>0 ? (totalSqft/1000).toFixed(0)+'K' : '0';
   document.getElementById('inv-total-props').textContent = props;
