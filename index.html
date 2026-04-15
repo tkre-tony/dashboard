@@ -1983,6 +1983,7 @@ html,body{background:var(--bg);color:var(--txt);font-family:'DM Sans',sans-serif
       <select id="forsale-view" onchange="forsaleSwitch(this.value)" style="height:32px;padding:0 12px;border:1px solid var(--bdr);border-radius:7px;background:var(--srf2);color:var(--txt);font-size:13px;font-weight:600;font-family:'DM Sans',sans-serif;cursor:pointer">
         <option value="inventory">📋 Vacancy Inventory</option>
         <option value="projects">🏗 For Sale — One Sophia</option>
+        <option value="clifton-sale">🏘 For Sale — Clifton Partners (Shophouses)</option>
       </select>
       <span style="font-size:11px;color:var(--mut)">Switch between live vacancy listings and properties for sale</span>
     </div>
@@ -1994,10 +1995,10 @@ html,body{background:var(--bg);color:var(--txt);font-family:'DM Sans',sans-serif
   <div class="inv-hero">
     <div>
       <div class="inv-hero-title">📋 Vacancy Inventory</div>
-      <div class="inv-hero-sub">Live availability across Singapore REITs · Industrial · Business Park · Retail · Updated monthly from REIT leasing sheets</div>
+      <div class="inv-hero-sub">Live availability across Singapore REITs · Industrial · Business Park · Retail · Shophouses · Updated monthly from REIT leasing sheets</div>
       <div style="margin-top:8px;display:flex;gap:8px;flex-wrap:wrap">
         <span style="font-size:9px;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.12);color:rgba(255,255,255,.5);padding:2px 8px;border-radius:10px;letter-spacing:.04em">PILOT · ESR-REIT · Mar 2026</span>
-        <span style="font-size:9px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.08);color:rgba(255,255,255,.35);padding:2px 8px;border-radius:10px;letter-spacing:.04em">More REITs coming soon</span>
+        <span style="font-size:9px;background:rgba(124,92,191,.15);border:1px solid rgba(124,92,191,.35);color:rgba(200,180,255,.7);padding:2px 8px;border-radius:10px;letter-spacing:.04em">Clifton Partners · Shophouses · Apr 2026</span>
       </div>
     </div>
     <div class="inv-hero-stats">
@@ -2013,6 +2014,7 @@ html,body{background:var(--bg);color:var(--txt);font-family:'DM Sans',sans-serif
     <button class="inv-reit-btn" data-reit="ESR-REIT" onclick="invSetReit(this,'ESR-REIT')"><span class="inv-reit-btn-dot"></span>ESR-REIT <span style="opacity:.5;font-weight:400">Mar 2026</span></button>
     <button class="inv-reit-btn" data-reit="AIMS APAC REIT" onclick="invSetReit(this,'AIMS APAC REIT')"><span class="inv-reit-btn-dot" style="background:#c47d00"></span>AIMS APAC REIT <span style="opacity:.5;font-weight:400">Apr 2026</span></button>
     <button class="inv-reit-btn" data-reit="Mapletree Industrial Trust" onclick="invSetReit(this,'Mapletree Industrial Trust')"><span class="inv-reit-btn-dot" style="background:#006B5E"></span>MIT <span style="opacity:.5;font-weight:400">Apr 2026</span></button>
+    <button class="inv-reit-btn" data-reit="Clifton Partners" onclick="invSetReit(this,'Clifton Partners')" style="border-color:rgba(180,160,220,.3)"><span class="inv-reit-btn-dot" style="background:#7c5cbf"></span>Clifton Partners <span style="opacity:.5;font-weight:400">Shophouses · Apr 2026</span></button>
   </div>
 
   <!-- Filters row -->
@@ -2027,6 +2029,7 @@ html,body{background:var(--bg);color:var(--txt);font-family:'DM Sans',sans-serif
       <option value="B1">B1 Industrial</option>
       <option value="B2">B2 Industrial</option>
       <option value="Retail">Retail / F&B</option>
+      <option value="Shophouse">Shophouse</option>
     </select>
     <select class="inv-sel" id="inv-cluster" onchange="invRender()">
       <option value="">All clusters</option>
@@ -2035,6 +2038,10 @@ html,body{background:var(--bg);color:var(--txt);font-family:'DM Sans',sans-serif
       <option value="Central">Central</option>
       <option value="North">North</option>
       <option value="West">West</option>
+      <option value="Stanley / Amoy / Telok Ayer">Clifton · Stanley / Amoy</option>
+      <option value="South Bridge / Chinatown">Clifton · South Bridge</option>
+      <option value="Upper Weld / Jalan Besar">Clifton · Upper Weld</option>
+      <option value="Circular / Boat Quay">Clifton · Circular Rd</option>
     </select>
     <select class="inv-sel" id="inv-avail" onchange="invRender()">
       <option value="">All availability</option>
@@ -2247,6 +2254,27 @@ html,body{background:var(--bg);color:var(--txt);font-family:'DM Sans',sans-serif
 
 <!-- ═══════════════════════════════════════════════════════════ -->
 <!-- RE HUMAN CAPITAL PANEL                                      -->
+    <!-- ── Clifton For Sale Panel ── -->
+    <div id="forsale-clifton-panel" style="display:none">
+      <!-- Banner -->
+      <div style="background:linear-gradient(135deg,#1a1a2e 0%,#2d1f4e 100%);border-radius:8px;padding:16px 20px;margin-bottom:14px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;border:1px solid rgba(124,92,191,.2)">
+        <div style="display:flex;align-items:center;gap:12px">
+          <div style="width:42px;height:42px;background:rgba(124,92,191,.2);border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:20px;border:1px solid rgba(124,92,191,.3)">🏘</div>
+          <div>
+            <div style="color:#fff;font-size:15px;font-weight:700;letter-spacing:-.01em">Clifton Partners — Shophouses For Sale</div>
+            <div style="color:rgba(255,255,255,.45);font-size:11px;margin-top:2px">Conservation Shophouses · Districts 1, 2, 7 · Accurate as of 1 Apr 2026</div>
+            <div style="color:rgba(255,255,255,.3);font-size:10px;margin-top:2px">Subject to contract and availability. For enquiries: Joe Poh 8928 7599 · Amy Ng 8819 2027</div>
+          </div>
+        </div>
+        <div style="display:flex;gap:6px;flex-wrap:wrap;align-items:center">
+          <div style="background:rgba(124,92,191,.2);border:1px solid rgba(124,92,191,.4);border-radius:5px;padding:5px 12px;font-size:11px;color:#b39ddb;font-weight:700" id="clifton-sale-count">— Listings</div>
+        </div>
+      </div>
+      <!-- Cards grid -->
+      <div id="clifton-sale-grid" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:12px"></div>
+    </div>
+
+
 <!-- ═══════════════════════════════════════════════════════════ -->
 <div class="panel" id="tab-talent">
 
@@ -19376,6 +19404,74 @@ var VACANCY_DATA = [
 ];
 
 // ── Inventory state ──────────────────────────────────
+// ── CLIFTON PARTNERS VACANCY DATA ────────────────────────────────────────
+// Source: Clifton Partners monthly leasing sheet · Accurate as of 6 Apr 2026
+// Shophouse leasing listings — Districts 1, 2, 7, 8
+// Subject to contract and availability. Change of use subject to URA approval.
+var CLIFTON_VAC = [
+  // ── Stanley St / Amoy St / Telok Ayer ────────────────────────────────
+  {id:'cp-8stanley-3rd-26',reit:'Clifton Partners',reit_color:'#1a1a2e',month:'Apr 2026',
+   addr:'8 Stanley St',addrFull:'8 Stanley Street, Singapore',unit:'3rd Floor + Attic',
+   sqft:2056,sqm:191,rent:'$87.55',avail:'Immediate',zone:'Shophouse',cluster:'Stanley / Amoy / Telok Ayer',
+   fit:'Fitted',usage:'Office',remarks:'Newly fitted with aircon, wet pantry and toilets. Change of use subject to URA approval.'},
+  {id:'cp-68amoy-2nd-26',reit:'Clifton Partners',reit_color:'#1a1a2e',month:'Apr 2026',
+   addr:'68 Amoy St',addrFull:'68 Amoy Street, Singapore',unit:'2nd Floor',
+   sqft:2243,sqm:208,rent:'$96.30',avail:'Immediate',zone:'Shophouse',cluster:'Stanley / Amoy / Telok Ayer',
+   fit:'Fitted',usage:'Retail',remarks:'Nicely fitted with premium finishings, with lift access. Change of use subject to URA approval.'},
+  // ── South Bridge Rd / Chinatown ────────────────────────────────────────
+  {id:'cp-202sbr-1st-26',reit:'Clifton Partners',reit_color:'#1a1a2e',month:'Apr 2026',
+   addr:'202-204 South Bridge Rd',addrFull:'202 & 204 South Bridge Road, Singapore',unit:'1st Floor',
+   sqft:2455,sqm:228,rent:'$171.08',avail:'Immediate',zone:'Shophouse',cluster:'South Bridge / Chinatown',
+   fit:'Fitted',usage:'Restaurant',remarks:'Newly renovated with exhaust duct, new aircon and toilets. Power provision 3-phase 100A. Change of use subject to URA approval.',
+   matterport:null},
+  {id:'cp-202sbr-3rd-26',reit:'Clifton Partners',reit_color:'#1a1a2e',month:'Apr 2026',
+   addr:'202-204 South Bridge Rd',addrFull:'202 & 204 South Bridge Road, Singapore',unit:'3rd Floor + Attic',
+   sqft:2723,sqm:253,rent:'$88.14',avail:'Immediate',zone:'Shophouse',cluster:'South Bridge / Chinatown',
+   fit:'Fitted',usage:'Office',remarks:'Newly renovated with aircon, wet pantries and toilets. Change of use subject to URA approval.'},
+  // ── Upper Weld Rd / Jalan Besar ───────────────────────────────────────
+  {id:'cp-upperw-2nd-26',reit:'Clifton Partners',reit_color:'#1a1a2e',month:'Apr 2026',
+   addr:'37-39 Upper Weld Road',addrFull:'37, 38 & 39 Upper Weld Road, Singapore',unit:'2nd Floor + Attic',
+   sqft:6239,sqm:580,rent:'$50.01',avail:'May 2026',zone:'Shophouse',cluster:'Upper Weld / Jalan Besar',
+   fit:'Fitted',usage:'Office',remarks:'Newly renovated, comes with new aircon, toilets and pantry. Change of use subject to URA approval.'},
+  {id:'cp-309jb-2nd-26',reit:'Clifton Partners',reit_color:'#1a1a2e',month:'Apr 2026',
+   addr:'309-311 Jalan Besar',addrFull:'309 & 311 Jalan Besar, Singapore',unit:'2nd Floor + Attic',
+   sqft:4802,sqm:446,rent:'$62.47',avail:'Flexible',zone:'Shophouse',cluster:'Upper Weld / Jalan Besar',
+   fit:'As-is',usage:'Karaoke Lounge',remarks:'Available as-is-where-is. 3-phase 100A power provision. Takeover fees may apply. Change of use subject to URA approval.'},
+  // ── Circular Rd / Boat Quay ────────────────────────────────────────────
+  {id:'cp-38circ-2nd-26',reit:'Clifton Partners',reit_color:'#1a1a2e',month:'Apr 2026',
+   addr:'38 Circular Rd',addrFull:'38 Circular Road, Singapore',unit:'2nd Floor',
+   sqft:1087,sqm:101,rent:'$99.36',avail:'Immediate',zone:'Shophouse',cluster:'Circular / Boat Quay',
+   fit:'Fitted',usage:'Office',remarks:'Fitted with meeting room, wet pantry and toilet. Change of use subject to URA approval.'},
+  {id:'cp-38circ-4th-26',reit:'Clifton Partners',reit_color:'#1a1a2e',month:'Apr 2026',
+   addr:'38 Circular Rd',addrFull:'38 Circular Road, Singapore',unit:'4th Floor',
+   sqft:1087,sqm:101,rent:'$82.80',avail:'Jun 2026',zone:'Shophouse',cluster:'Circular / Boat Quay',
+   fit:'Fitted',usage:'Office',remarks:'Fitted with wet pantry and toilet. Change of use subject to URA approval.'},
+];
+
+// ── CLIFTON PARTNERS FOR SALE DATA ────────────────────────────────────────
+// Source: Clifton Partners For Sale listing · Accurate as of 1 Apr 2026
+var CLIFTON_SALE = [
+  {id:'cps-21mosque',addr:'21 Mosque Street',district:'D1',tenure:'Freehold',
+   land_sf:1717,builtup_sf:5155,price:28000000,desc:'3 Storey Shophouse',
+   matterport:'https://my.matterport.com/show/?m=a2ZBubyZFXg'},
+  {id:'cps-29stanley',addr:'29 Stanley Street',district:'D1',tenure:'99 Yrs from 1990',
+   land_sf:1693,builtup_sf:7509,price:25000000,desc:'3.5 Storey Shophouse with Basement',
+   matterport:'https://my.matterport.com/show/?m=tPApjQ7FVaf'},
+  {id:'cps-11craig',addr:'11 Craig Road',district:'D2',tenure:'99 Yrs from 1988',
+   land_sf:3115,builtup_sf:7379,price:30000000,desc:'Pair of 2 Storey Shophouses with Attic',
+   matterport:'https://my.matterport.com/show/?m=LzgEVBY4qMm'},
+  {id:'cps-25teohong',addr:'25 Teo Hong Road',district:'D2',tenure:'Freehold',
+   land_sf:1731,builtup_sf:4631,price:28000000,desc:'3.5 Storey Shophouse',
+   matterport:'https://my.matterport.com/show/?m=8Ratx8aHdUC'},
+  {id:'cps-75maude',addr:'75 Maude Road',district:'D7',tenure:'Freehold',
+   land_sf:1334,builtup_sf:4898,price:20000000,desc:'3 Storey Shophouse with 4 Storey Rear Extension',
+   matterport:'https://my.matterport.com/show/?m=Rn6ycNtarFp'},
+];
+
+// Merge Clifton vacancy into VACANCY_DATA at runtime
+CLIFTON_VAC.forEach(function(v){ VACANCY_DATA.push(v); });
+
+
 var INV_REIT = 'all';
 var INV_VIEW = 'card';
 var INV_SHOW_ABSORBED = false;
@@ -19415,6 +19511,58 @@ function invZoneBadge(z) {
   if(z==='B1') return 'zb-b1';
   if(z==='B2') return 'zb-b2';
   return 'zb-ret';
+}
+
+
+// ── Clifton Partners For Sale Render ─────────────────────────────────────
+function cliftonRenderSale() {
+  var grid = document.getElementById('clifton-sale-grid');
+  var countEl = document.getElementById('clifton-sale-count');
+  if(!grid) return;
+  if(countEl) countEl.textContent = CLIFTON_SALE.length + ' Listing' + (CLIFTON_SALE.length !== 1 ? 's' : '');
+
+  grid.innerHTML = CLIFTON_SALE.map(function(p) {
+    var psfLand = p.land_sf ? Math.round(p.price / p.land_sf).toLocaleString() : '—';
+    var psfBuilt = p.builtup_sf ? Math.round(p.price / p.builtup_sf).toLocaleString() : '—';
+    var priceM = (p.price / 1000000).toFixed(1);
+    var tenureBadge = p.tenure === 'Freehold'
+      ? '<span style="font-size:9px;font-weight:700;background:rgba(26,122,74,.15);color:#1a7a4a;border:1px solid rgba(26,122,74,.3);padding:2px 8px;border-radius:4px;letter-spacing:.04em">FREEHOLD</span>'
+      : '<span style="font-size:9px;font-weight:700;background:rgba(180,130,0,.12);color:#b07a00;border:1px solid rgba(180,130,0,.3);padding:2px 8px;border-radius:4px;letter-spacing:.04em">'+p.tenure+'</span>';
+    return '<div style="background:var(--srf);border:1px solid var(--bdr);border-radius:8px;padding:16px;box-shadow:var(--shadow-sm);position:relative;overflow:hidden">'+
+      '<div style="position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,#7c5cbf,#9b7de0)"></div>'+
+      '<div style="display:flex;justify-content:space-between;align-items:flex-start;gap:8px;margin-bottom:10px">'+
+        '<div>'+
+          '<div style="font-size:13px;font-weight:700;color:var(--txt);line-height:1.3">'+p.addr+'</div>'+
+          '<div style="font-size:11px;color:var(--mut);margin-top:2px">'+p.desc+'</div>'+
+          '<div style="font-size:10px;color:var(--mut2);margin-top:3px">'+p.district+'</div>'+
+        '</div>'+
+        tenureBadge+
+      '</div>'+
+      '<div style="font-size:26px;font-weight:700;font-family:'DM Mono',monospace;letter-spacing:-.02em;color:var(--txt);margin-bottom:8px">S$'+priceM+'M</div>'+
+      '<div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-bottom:12px">'+
+        '<div style="background:var(--srf2);border:1px solid var(--bdr);border-radius:5px;padding:8px 10px">'+
+          '<div style="font-size:18px;font-weight:700;font-family:'DM Mono',monospace;color:var(--g1)">'+p.land_sf.toLocaleString()+'</div>'+
+          '<div style="font-size:9px;font-weight:600;text-transform:uppercase;letter-spacing:.06em;color:var(--mut);margin-top:2px">Land Area (sqft)</div>'+
+        '</div>'+
+        '<div style="background:var(--srf2);border:1px solid var(--bdr);border-radius:5px;padding:8px 10px">'+
+          '<div style="font-size:18px;font-weight:700;font-family:'DM Mono',monospace;color:var(--g1)">'+p.builtup_sf.toLocaleString()+'</div>'+
+          '<div style="font-size:9px;font-weight:600;text-transform:uppercase;letter-spacing:.06em;color:var(--mut);margin-top:2px">Built-Up (sqft)</div>'+
+        '</div>'+
+        '<div style="background:var(--srf2);border:1px solid var(--bdr);border-radius:5px;padding:8px 10px">'+
+          '<div style="font-size:16px;font-weight:700;font-family:'DM Mono',monospace;color:var(--txt)">S$'+psfLand+'</div>'+
+          '<div style="font-size:9px;font-weight:600;text-transform:uppercase;letter-spacing:.06em;color:var(--mut);margin-top:2px">psf (land)</div>'+
+        '</div>'+
+        '<div style="background:var(--srf2);border:1px solid var(--bdr);border-radius:5px;padding:8px 10px">'+
+          '<div style="font-size:16px;font-weight:700;font-family:'DM Mono',monospace;color:var(--txt)">S$'+psfBuilt+'</div>'+
+          '<div style="font-size:9px;font-weight:600;text-transform:uppercase;letter-spacing:.06em;color:var(--mut);margin-top:2px">psf (built-up)</div>'+
+        '</div>'+
+      '</div>'+
+      '<div style="display:flex;gap:6px;flex-wrap:wrap">'+
+        '<a href="'+p.matterport+'" target="_blank" rel="noopener" style="flex:1;display:inline-flex;align-items:center;justify-content:center;gap:5px;height:32px;background:rgba(124,92,191,.1);border:1px solid rgba(124,92,191,.3);border-radius:6px;font-size:11px;font-weight:600;color:#9b7de0;text-decoration:none">🏠 3D Virtual Tour</a>'+
+        '<button class="enq-btn" data-reit="'+encodeURIComponent('Clifton Partners')+'" data-addr="'+encodeURIComponent(p.addr)+'" data-unit="'+encodeURIComponent('For Sale')+'" style="flex:1;height:32px;background:var(--g1);color:#fff;border:none;border-radius:6px;font-size:11px;font-weight:600;font-family:'DM Sans',sans-serif;cursor:pointer">📩 Enquire</button>'+
+      '</div>'+
+    '</div>';
+  }).join('');
 }
 
 function invRender() {
@@ -19484,6 +19632,18 @@ function invRender() {
       var availPill = isAbsorbed
         ? '<span class="inv-pill p-leased">Leased Feb → Mar</span>'
         : '<span class="inv-pill '+invAvailClass(d.avail)+'">'+d.avail+'</span>';
+      var isClifton = d.reit === 'Clifton Partners';
+      var usageBadge = isClifton && d.usage ? '<span style="font-size:9px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;background:rgba(124,92,191,.12);color:#9b7de0;border:1px solid rgba(124,92,191,.25);padding:2px 8px;border-radius:4px">'+d.usage+'</span>' : '';
+      var areaLine = isClifton
+        ? d.sqft.toLocaleString()+'<span class="inv-area-unit">sqft</span>'
+        : d.sqft.toLocaleString()+'<span class="inv-area-unit">sqft &nbsp;/&nbsp; '+d.sqm.toLocaleString()+' sqm</span>';
+      var rentPill = d.rent
+        ? '<span class="inv-pill">'+(isClifton ? d.rent+' psf pa' : d.rent+' psf/mth')+'</span>'
+        : '';
+      var matterportBtn = isClifton && d.matterport
+        ? '<a href="'+d.matterport+'" target="_blank" rel="noopener" style="display:inline-flex;align-items:center;gap:5px;font-size:11px;font-weight:600;color:#9b7de0;text-decoration:none;margin-top:6px">🏠 3D Virtual Tour ↗</a>'
+        : '';
+      var couNote = isClifton ? '<div style="font-size:10px;color:var(--mut2);margin-top:6px;font-style:italic">Subject to URA change of use approval</div>' : '';
       return '<div class="'+cardClass+'">'+
         '<div class="inv-card-top">'+
           '<div>'+
@@ -19493,17 +19653,19 @@ function invRender() {
           '</div>'+
           '<div style="display:flex;flex-direction:column;align-items:flex-end;gap:4px">'+
             badge+
-            '<span class="inv-zone-badge '+invZoneBadge(d.zone)+'">'+d.zone+'</span>'+
+            (usageBadge || '<span class="inv-zone-badge '+invZoneBadge(d.zone)+'">'+d.zone+'</span>')+
           '</div>'+
         '</div>'+
-        '<div class="inv-area">'+d.sqft.toLocaleString()+'<span class="inv-area-unit">sqft &nbsp;/&nbsp; '+d.sqm.toLocaleString()+' sqm</span></div>'+
+        '<div class="inv-area">'+areaLine+'</div>'+
         '<div class="inv-pills">'+
           availPill+
           '<span class="inv-pill">'+d.fit+'</span>'+
-          (d.rent ? '<span class="inv-pill">'+d.rent+' psf/mth</span>' : '')+
+          rentPill+
         '</div>'+
         (d.remarks ? '<div class="inv-remarks">'+d.remarks+'</div>' : '')+
-        '<div class="inv-reit-tag" style="color:'+d.reit_color+'"><span class="inv-reit-dot"></span>'+d.reit+' · '+(isAbsorbed ? 'Feb 2026' : d.month)+'</div>'+
+        couNote+
+        matterportBtn+
+        '<div class="inv-reit-tag" style="color:'+d.reit_color+'"><span class="inv-reit-dot" style="background:'+d.reit_color+'"></span>'+d.reit+' · '+(isAbsorbed ? 'Feb 2026' : d.month)+'</div>'+
         (!isAbsorbed ? '<div style="margin-top:10px"><button class="enq-btn" data-reit="'+encodeURIComponent(d.reit)+'" data-addr="'+encodeURIComponent(d.addr)+'" data-unit="'+encodeURIComponent(d.unit)+'" style="width:100%;height:32px;background:var(--g1);color:#fff;border:none;border-radius:6px;font-size:12px;font-weight:600;font-family:\'DM Sans\',sans-serif;cursor:pointer">📩 Enquire About This Space</button></div>' : '')+
       '</div>';
     }).join('');
@@ -20062,16 +20224,18 @@ document.addEventListener('DOMContentLoaded', function() {
 // ═══════════════════════════════════════════════════════════════
 function forsaleSwitch(view) {
   var invPanel  = document.getElementById('forsale-inventory-panel');
-  var projPanel = document.getElementById('forsale-projects-panel');
+  var projPanel   = document.getElementById('forsale-projects-panel');
+  var cliftonPanel = document.getElementById('forsale-clifton-panel');
   if(!invPanel || !projPanel) return;
+  [invPanel, projPanel, cliftonPanel].forEach(function(p){ if(p) p.style.display='none'; });
   if(view === 'projects') {
-    invPanel.style.display  = 'none';
     projPanel.style.display = '';
     if(!projLoaded) projLoadUnits();
     if(!sophiaCaveatsLoaded) sophiaLoadCaveats();
+  } else if(view === 'clifton-sale') {
+    if(cliftonPanel) { cliftonPanel.style.display=''; cliftonRenderSale(); }
   } else {
     invPanel.style.display  = '';
-    projPanel.style.display = 'none';
     setTimeout(invRender, 50);
   }
 }
