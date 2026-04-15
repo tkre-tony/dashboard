@@ -13098,6 +13098,35 @@ function nrSentDot(s){
   return '<span class="sent-dot '+(s==="positive"?"sent-pos":s==="negative"?"sent-neg":"sent-neu")+'"></span>';
 }
 // Converts plain-text summary (with \n\n sections and bullet-style lines) into readable HTML
+
+// ── Newsroom: expand/collapse all cards + browser back support ──────────
+var NR_EXPANDED = false;
+function nrToggleAll(){
+  NR_EXPANDED = !NR_EXPANDED;
+  document.querySelectorAll('.nr-hero,.nr-card').forEach(function(el){
+    el.classList.toggle('open', NR_EXPANDED);
+  });
+  // Update hint text
+  var hint = document.querySelector('.nr-expand-hint');
+  if(hint) hint.textContent = NR_EXPANDED ? 'Click to collapse ↑' : 'Click to expand ↓';
+  // Push/pop state for browser back button
+  if(NR_EXPANDED){
+    history.pushState({nrExpanded:true},'',window.location.href.split('#')[0]+'#newsroom-open');
+  } else {
+    if(window.location.hash==='#newsroom-open'){
+      history.replaceState(null,'',window.location.href.replace('#newsroom-open',''));
+    }
+  }
+}
+function nrCollapseAll(){
+  NR_EXPANDED = false;
+  document.querySelectorAll('.nr-hero,.nr-card').forEach(function(el){
+    el.classList.remove('open');
+  });
+  var hint = document.querySelector('.nr-expand-hint');
+  if(hint) hint.textContent = 'Click to expand ↓';
+}
+
 function formatNewsSummary(text){
   if(!text) return '';
   // Split into paragraphs on double newline
@@ -13135,6 +13164,7 @@ function formatNewsSummary(text){
 }
 
 function renderNewsroom(){
+  NR_EXPANDED = false; // Reset expand state on re-render
   var q=(document.getElementById("nr-search")||{value:""}).value.toLowerCase().trim();
   var list=newsCat==="All"?NEWS:NEWS.filter(function(n){return n.category===newsCat;});
   if(q) list=list.filter(function(n){return (n.title+n.summary+n.tag+n.source).toLowerCase().indexOf(q)>-1;});
@@ -13171,7 +13201,7 @@ function renderNewsroom(){
   var heroImg=hero.image?'<img src="'+hero.image+'" style="width:100%;max-width:520px;border-radius:6px;margin:12px 0 4px;display:block;cursor:zoom-in" onclick="event.stopPropagation();this.style.maxWidth=this.style.maxWidth===\'100%\'?\'520px\':\'100%\'" >':'';
   var heroSrc=hero.sourceLabel?'<div class="nr-source-credit">Source: '+hero.sourceLabel+'</div>':'';
   var heroLink=hero.articleUrl?'<a href="'+hero.articleUrl+'" target="_blank" rel="noopener" onclick="event.stopPropagation()" class="nr-read-more">Read full article ↗</a>':'';
-  heroWrap.innerHTML='<div class="nr-hero '+cc+'" onclick="this.classList.toggle(\'open\')">'  
+  heroWrap.innerHTML='<div class="nr-hero '+cc+'" onclick="nrToggleAll()">'
     +'<div class="nr-hero-badge">Latest · '+hero.category+'</div>'
     +'<div class="nr-hero-title">'+hero.title+'</div>'
     +'<div class="nr-hero-meta">'
@@ -13180,7 +13210,7 @@ function renderNewsroom(){
     +'<span class="nr-src">'+hero.source+'</span>'
     +'<span class="pill p-tag">'+hero.tag+'</span>'
     +'</div>'
-    +'<div style="font-size:11px;color:var(--mut)">Click to expand ↓</div>'
+    +'<div class="nr-expand-hint" style="font-size:11px;color:var(--mut)">Click to expand ↓</div>'
     +'<div class="nr-hero-body">'+formatNewsSummary(hero.summary)+heroImg+heroSrc+heroLink+'</div>'
     +'</div>';
 
@@ -13188,7 +13218,7 @@ function renderNewsroom(){
 
   gridEl.innerHTML=rest.map(function(n){
     var cc2=nrCatClass(n.category);
-    return'<div class="nr-card '+cc2+'" onclick="this.classList.toggle(\'open\')">'
+    return'<div class="nr-card '+cc2+'" onclick="nrToggleAll()">'
       +'<div class="nr-card-meta">'
       +nrSentDot(n.sentiment)
       +'<span style="font-size:10px;color:var(--mut);font-family:\'DM Mono\',monospace">'+n.date+'</span>'
@@ -17907,6 +17937,8 @@ function reitCloseDetail(){
 window.addEventListener('popstate',function(e){
   var det=document.getElementById('reit-detail');
   if(det&&det.style.display!=='none'){reitCloseDetail();}
+  // Newsroom: collapse all if user hits back from expanded state
+  if(window.location.hash!=='#newsroom-open' && NR_EXPANDED){nrCollapseAll();}
 });
 
 function reitClear(){
