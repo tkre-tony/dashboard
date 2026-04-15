@@ -19641,9 +19641,9 @@ function invRender() {
       if(d.rent) {
         if(isClifton) {
           var monthlyRaw = parseFloat(d.rent.replace(/[^0-9.]/g,''));
-          var psfPa = d.sqft ? (monthlyRaw * 12 / d.sqft).toFixed(2) : null;
+          var psfMo = d.sqft ? (monthlyRaw / d.sqft).toFixed(2) : null;
           rentPill = '<span class="inv-pill">'+d.rent+'/mo</span>'
-                   + (psfPa ? '<span class="inv-pill" style="background:rgba(124,92,191,.08);color:#9b7de0;border-color:rgba(124,92,191,.25)">$'+psfPa+' psf pa</span>' : '');
+                   + (psfMo ? '<span class="inv-pill" style="background:rgba(124,92,191,.08);color:#9b7de0;border-color:rgba(124,92,191,.25)">$'+psfMo+' psf/mo</span>' : '');
         } else {
           rentPill = '<span class="inv-pill">'+d.rent+' psf/mth</span>';
         }
@@ -19711,7 +19711,7 @@ function invRender() {
           if(!d.rent) return '—';
           if(d.reit === 'Clifton Partners') {
             var mo = parseFloat(d.rent.replace(/[^0-9.]/g,''));
-            var ppa = d.sqft ? '$'+(mo*12/d.sqft).toFixed(2)+' psf pa' : '';
+            var ppa = d.sqft ? '$'+(mo/d.sqft).toFixed(2)+' psf/mo' : '';
             return d.rent+'/mo'+(ppa ? '<div style="font-size:9px;color:var(--mut);font-weight:400">'+ppa+'</div>' : '');
           }
           return d.rent+' psf/mth';
