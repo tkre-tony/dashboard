@@ -19412,39 +19412,39 @@ var CLIFTON_VAC = [
   // ── Stanley St / Amoy St / Telok Ayer ────────────────────────────────
   {id:'cp-8stanley-3rd-26',reit:'Clifton Partners',reit_color:'#1a1a2e',month:'Apr 2026',
    addr:'8 Stanley St',addrFull:'8 Stanley Street, Singapore',unit:'3rd Floor + Attic',
-   sqft:2056,sqm:191,rent:'$87.55',avail:'Immediate',zone:'Shophouse',cluster:'Stanley / Amoy / Telok Ayer',
+   sqft:2056,sqm:191,rent:'$15,000',avail:'Immediate',zone:'Shophouse',cluster:'Stanley / Amoy / Telok Ayer',
    fit:'Fitted',usage:'Office',remarks:'Newly fitted with aircon, wet pantry and toilets. Change of use subject to URA approval.'},
   {id:'cp-68amoy-2nd-26',reit:'Clifton Partners',reit_color:'#1a1a2e',month:'Apr 2026',
    addr:'68 Amoy St',addrFull:'68 Amoy Street, Singapore',unit:'2nd Floor',
-   sqft:2243,sqm:208,rent:'$96.30',avail:'Immediate',zone:'Shophouse',cluster:'Stanley / Amoy / Telok Ayer',
+   sqft:2243,sqm:208,rent:'$18,000',avail:'Immediate',zone:'Shophouse',cluster:'Stanley / Amoy / Telok Ayer',
    fit:'Fitted',usage:'Retail',remarks:'Nicely fitted with premium finishings, with lift access. Change of use subject to URA approval.'},
   // ── South Bridge Rd / Chinatown ────────────────────────────────────────
   {id:'cp-202sbr-1st-26',reit:'Clifton Partners',reit_color:'#1a1a2e',month:'Apr 2026',
    addr:'202-204 South Bridge Rd',addrFull:'202 & 204 South Bridge Road, Singapore',unit:'1st Floor',
-   sqft:2455,sqm:228,rent:'$171.08',avail:'Immediate',zone:'Shophouse',cluster:'South Bridge / Chinatown',
+   sqft:2455,sqm:228,rent:'$35,000',avail:'Immediate',zone:'Shophouse',cluster:'South Bridge / Chinatown',
    fit:'Fitted',usage:'Restaurant',remarks:'Newly renovated with exhaust duct, new aircon and toilets. Power provision 3-phase 100A. Change of use subject to URA approval.',
    matterport:null},
   {id:'cp-202sbr-3rd-26',reit:'Clifton Partners',reit_color:'#1a1a2e',month:'Apr 2026',
    addr:'202-204 South Bridge Rd',addrFull:'202 & 204 South Bridge Road, Singapore',unit:'3rd Floor + Attic',
-   sqft:2723,sqm:253,rent:'$88.14',avail:'Immediate',zone:'Shophouse',cluster:'South Bridge / Chinatown',
+   sqft:2723,sqm:253,rent:'$20,000',avail:'Immediate',zone:'Shophouse',cluster:'South Bridge / Chinatown',
    fit:'Fitted',usage:'Office',remarks:'Newly renovated with aircon, wet pantries and toilets. Change of use subject to URA approval.'},
   // ── Upper Weld Rd / Jalan Besar ───────────────────────────────────────
   {id:'cp-upperw-2nd-26',reit:'Clifton Partners',reit_color:'#1a1a2e',month:'Apr 2026',
    addr:'37-39 Upper Weld Road',addrFull:'37, 38 & 39 Upper Weld Road, Singapore',unit:'2nd Floor + Attic',
-   sqft:6239,sqm:580,rent:'$50.01',avail:'May 2026',zone:'Shophouse',cluster:'Upper Weld / Jalan Besar',
+   sqft:6239,sqm:580,rent:'$26,000',avail:'May 2026',zone:'Shophouse',cluster:'Upper Weld / Jalan Besar',
    fit:'Fitted',usage:'Office',remarks:'Newly renovated, comes with new aircon, toilets and pantry. Change of use subject to URA approval.'},
   {id:'cp-309jb-2nd-26',reit:'Clifton Partners',reit_color:'#1a1a2e',month:'Apr 2026',
    addr:'309-311 Jalan Besar',addrFull:'309 & 311 Jalan Besar, Singapore',unit:'2nd Floor + Attic',
-   sqft:4802,sqm:446,rent:'$62.47',avail:'Flexible',zone:'Shophouse',cluster:'Upper Weld / Jalan Besar',
+   sqft:4802,sqm:446,rent:'$25,000',avail:'Flexible',zone:'Shophouse',cluster:'Upper Weld / Jalan Besar',
    fit:'As-is',usage:'Karaoke Lounge',remarks:'Available as-is-where-is. 3-phase 100A power provision. Takeover fees may apply. Change of use subject to URA approval.'},
   // ── Circular Rd / Boat Quay ────────────────────────────────────────────
   {id:'cp-38circ-2nd-26',reit:'Clifton Partners',reit_color:'#1a1a2e',month:'Apr 2026',
    addr:'38 Circular Rd',addrFull:'38 Circular Road, Singapore',unit:'2nd Floor',
-   sqft:1087,sqm:101,rent:'$99.36',avail:'Immediate',zone:'Shophouse',cluster:'Circular / Boat Quay',
+   sqft:1087,sqm:101,rent:'$9,000',avail:'Immediate',zone:'Shophouse',cluster:'Circular / Boat Quay',
    fit:'Fitted',usage:'Office',remarks:'Fitted with meeting room, wet pantry and toilet. Change of use subject to URA approval.'},
   {id:'cp-38circ-4th-26',reit:'Clifton Partners',reit_color:'#1a1a2e',month:'Apr 2026',
    addr:'38 Circular Rd',addrFull:'38 Circular Road, Singapore',unit:'4th Floor',
-   sqft:1087,sqm:101,rent:'$82.80',avail:'Jun 2026',zone:'Shophouse',cluster:'Circular / Boat Quay',
+   sqft:1087,sqm:101,rent:'$7,500',avail:'Jun 2026',zone:'Shophouse',cluster:'Circular / Boat Quay',
    fit:'Fitted',usage:'Office',remarks:'Fitted with wet pantry and toilet. Change of use subject to URA approval.'},
 ];
 
@@ -19637,9 +19637,17 @@ function invRender() {
       var areaLine = isClifton
         ? d.sqft.toLocaleString()+'<span class="inv-area-unit">sqft</span>'
         : d.sqft.toLocaleString()+'<span class="inv-area-unit">sqft &nbsp;/&nbsp; '+d.sqm.toLocaleString()+' sqm</span>';
-      var rentPill = d.rent
-        ? '<span class="inv-pill">'+(isClifton ? d.rent+' psf pa' : d.rent+' psf/mth')+'</span>'
-        : '';
+      var rentPill = '';
+      if(d.rent) {
+        if(isClifton) {
+          var monthlyRaw = parseFloat(d.rent.replace(/[^0-9.]/g,''));
+          var psfPa = d.sqft ? (monthlyRaw * 12 / d.sqft).toFixed(2) : null;
+          rentPill = '<span class="inv-pill">'+d.rent+'/mo</span>'
+                   + (psfPa ? '<span class="inv-pill" style="background:rgba(124,92,191,.08);color:#9b7de0;border-color:rgba(124,92,191,.25)">$'+psfPa+' psf pa</span>' : '');
+        } else {
+          rentPill = '<span class="inv-pill">'+d.rent+' psf/mth</span>';
+        }
+      }
       var matterportBtn = isClifton && d.matterport
         ? '<a href="'+d.matterport+'" target="_blank" rel="noopener" style="display:inline-flex;align-items:center;gap:5px;font-size:11px;font-weight:600;color:#9b7de0;text-decoration:none;margin-top:6px">🏠 3D Virtual Tour ↗</a>'
         : '';
@@ -19699,7 +19707,15 @@ function invRender() {
         '<td style="font-size:11px;color:var(--mut)">'+d.cluster+'</td>'+
         '<td>'+availCell+'</td>'+
         '<td style="font-size:11px;color:var(--mut)">'+d.fit+'</td>'+
-        '<td style="font-family:\'DM Mono\',monospace;font-size:12px">'+(d.rent||'—')+'</td>'+
+        '<td style="font-family:\'DM Mono\',monospace;font-size:12px">'+(function(d){
+          if(!d.rent) return '—';
+          if(d.reit === 'Clifton Partners') {
+            var mo = parseFloat(d.rent.replace(/[^0-9.]/g,''));
+            var ppa = d.sqft ? '$'+(mo*12/d.sqft).toFixed(2)+' psf pa' : '';
+            return d.rent+'/mo'+(ppa ? '<div style="font-size:9px;color:var(--mut);font-weight:400">'+ppa+'</div>' : '');
+          }
+          return d.rent+' psf/mth';
+        })(d)+'</td>'+
         '<td style="font-size:11px;color:var(--mut);max-width:220px">'+d.remarks+'</td>'+
         '<td style="padding:4px 8px">'+(!isAbsorbed ? '<button class="enq-btn" data-reit="'+encodeURIComponent(d.reit)+'" data-addr="'+encodeURIComponent(d.addr)+'" data-unit="'+encodeURIComponent(d.unit)+'" style="white-space:nowrap;height:28px;padding:0 10px;background:var(--g1);color:#fff;border:none;border-radius:5px;font-size:11px;font-weight:600;font-family:\'DM Sans\',sans-serif;cursor:pointer">📩 Enquire</button>' : '')+'</td>'+
       '</tr>';
