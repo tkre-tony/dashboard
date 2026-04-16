@@ -14573,10 +14573,10 @@ async function loadDetTx(name,page){
     var priceFmt=isAb?"<span style=\"color:#c62828;text-decoration:line-through\">"+priceStr+"</span>":priceStr;
     return "<tr"+abStyle+">"
       +"<td style='white-space:nowrap;font-family:\"DM Mono\",monospace;font-size:11px'>"+(r.sale_date||"—")+"</td>"
-      +"<td style='font-size:11px;color:var(--mut);min-width:160px'>"+(r.address||"—")+abBadge+"</td>"
+      +"<td style='font-size:12px;color:var(--txt);min-width:160px'>"+(r.address||"—")+abBadge+"</td>"
       +"<td style='font-family:\"DM Mono\",monospace;font-size:12px;font-weight:600'>"+priceFmt+"</td>"
       +"<td style='font-family:\"DM Mono\",monospace;font-size:12px'>"+(r.area_sqft?parseFloat(r.area_sqft).toFixed(0):"—")+"</td>"
-      +"<td style='font-family:\"DM Mono\",monospace;font-size:12px'>"+(r.unit_price_psf?"S$"+Math.round(r.unit_price_psf):"—")+"</td>"
+      +"<td style='font-family:\"DM Mono\",monospace;font-size:12px'>"+(r.unit_price_psf?"S$"+Math.round(r.unit_price_psf).toLocaleString():"—")+"</td>"
       +"<td style='font-size:11px'>"+(r.type_of_sale||"—")+"</td>"
       +"<td style='font-size:11px;color:var(--mut)'>"+(r.tenure?r.tenure.substring(0,20):"—")+"</td>"
       +"</tr>";
@@ -14685,7 +14685,7 @@ function renderTxTable(rows){
     var isAborted = r.is_aborted === true;
     var price = r.transacted_price ? "S$" + Number(r.transacted_price).toLocaleString() : "-";
     var area  = r.area_sqft ? Number(r.area_sqft).toLocaleString() : "-";
-    var psf   = r.unit_price_psf ? "S$" + Math.round(r.unit_price_psf) : "-";
+    var psf   = r.unit_price_psf ? "S$" + Math.round(r.unit_price_psf).toLocaleString() : "-";
     var date  = r.sale_date ? r.sale_date.substring(0,10) : "-";
     var type  = r.property_type || "-";
     var tenure = r.tenure ? r.tenure.substring(0,20) : "-";
@@ -14698,7 +14698,7 @@ function renderTxTable(rows){
     return "<tr"+rowStyle+">"
       + "<td style=\"white-space:nowrap\" class=\"mono\">" + date + "</td>"
       + "<td style=\"font-weight:600;min-width:140px\">" + proj + abortedBadge + "</td>"
-      + "<td style=\"font-size:11px;color:var(--mut);min-width:160px\">" + addr + "</td>"
+      + "<td style=\"font-size:12px;color:var(--txt);min-width:160px\">" + addr + "</td>"
       + "<td><span class=\"pill p-tag\" style=\"white-space:nowrap\">" + type + "</span></td>"
       + "<td class=\"mono\" style=\""+priceStyle+"\"><b>" + price + "</b></td>"
       + "<td style=\"text-align:right\" class=\"mono\">" + area + "</td>"
@@ -15146,7 +15146,7 @@ function renderOvTable(rows){
     var isLoss = !isAborted && r.buy_price && r.transacted_price && r.transacted_price < r.buy_price;
     var price = r.transacted_price ? "S$"+Number(r.transacted_price).toLocaleString() : "-";
     var area  = r.area_sqft ? Number(parseFloat(r.area_sqft).toFixed(0)).toLocaleString() : "-";
-    var psf   = r.unit_price_psf ? "S$"+Math.round(r.unit_price_psf) : "-";
+    var psf   = r.unit_price_psf ? "S$"+Math.round(r.unit_price_psf).toLocaleString() : "-";
     var date  = r.sale_date ? r.sale_date.substring(0,10) : "-";
     var dist  = r.postal_district ? "D"+r.postal_district : "-";
     var tos   = r.type_of_sale ? r.type_of_sale : "-";
@@ -15168,7 +15168,7 @@ function renderOvTable(rows){
       +"<td class='mono' style='white-space:nowrap;vertical-align:top;font-size:10.5px'>"+dateCell+"</td>"
       +"<td class='mono' style='font-size:10.5px;white-space:nowrap;vertical-align:top'>"+dist+"</td>"
       +"<td style='font-weight:600;font-size:10.5px;vertical-align:top;word-break:break-word'>"+(r.project_name||"-")+abortedBadge+"</td>"
-      +"<td style='font-size:10px;color:var(--mut);vertical-align:top;word-break:normal;overflow-wrap:anywhere'>"+((r.address||"-").replace(/(#\S+)/g,"<wbr>$1"))+"</td>"
+      +"<td style='font-size:12px;color:var(--txt);vertical-align:top;word-break:normal;overflow-wrap:anywhere'>"+((r.address||"-").replace(/(#\S+)/g,"<wbr>$1"))+"</td>"
       +"<td style='vertical-align:top;text-align:center'><span class='pill p-tag' style='white-space:nowrap;font-size:9.5px;padding:2px 5px'>"+fmtPropType(r.property_type||"-")+"</span></td>"
       +"<td style='font-size:10px;color:var(--mut);vertical-align:top'>"+tos+(r.buy_tos ? boughtLabel+"<div style='"+mutStyle+"'>"+r.buy_tos+"</div>" : "")+"</td>"
       +"<td style='font-size:10px;color:var(--mut);vertical-align:top'>"+(r.type_of_area||"-")+"</td>"
