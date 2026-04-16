@@ -14693,7 +14693,7 @@ function renderTxTable(rows){
     var proj  = r.project_name || "-";
     var addr  = r.address || "-";
     var abortedBadge = isAborted ? "<span style=\"margin-left:6px;font-size:9px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;background:#c62828;color:#fff;padding:1px 5px;border-radius:3px;vertical-align:middle\">Aborted</span>" : "";
-    var rowStyle = isAborted ? " style=\"background:rgba(198,40,40,.06);opacity:.8\"" : "";
+    var rowStyle = isAborted ? " style=\"background:rgba(198,40,40,.10) !important;outline:1px solid rgba(198,40,40,.15);opacity:.85\"" : "";
     var priceStyle = isAborted ? "text-align:right;color:#c62828;text-decoration:line-through" : "text-align:right";
     return "<tr"+rowStyle+">"
       + "<td style=\"white-space:nowrap\" class=\"mono\">" + date + "</td>"
@@ -15151,7 +15151,7 @@ function renderOvTable(rows){
     var dist  = r.postal_district ? "D"+r.postal_district : "-";
     var tos   = r.type_of_sale ? r.type_of_sale : "-";
     var abortedBadge = isAborted ? "<span style=\"margin-left:6px;font-size:9px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;background:#c62828;color:#fff;padding:1px 5px;border-radius:3px;vertical-align:middle\">Aborted</span>" : "";
-    var rowStyle = isAborted ? "font-size:11px;background:rgba(198,40,40,.06);opacity:.8" : "font-size:11px";
+    var rowStyle = isAborted ? "font-size:11px;background:rgba(198,40,40,.10) !important;outline:1px solid rgba(198,40,40,.15);opacity:.85" : "font-size:11px";
     // Build sub-rows for bought date/price/psf (enriched by batch lookup)
     var mutStyle = "font-size:10px;color:var(--mut);margin-top:3px";
     var boughtLabel = "<div style='font-size:9px;color:var(--mut2);text-transform:uppercase;letter-spacing:.04em;margin-top:4px;font-family:\"DM Sans\",sans-serif'>Bought</div>";
