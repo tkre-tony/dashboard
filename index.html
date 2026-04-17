@@ -484,7 +484,7 @@ html,body{background:var(--bg);color:var(--txt);font-family:'DM Sans',sans-serif
   <div class="topbar-center">
     <div class="topbar-stat">
       <div class="topbar-stat-lbl">Database (URA Realis)</div>
-      <div class="topbar-stat-val">81,929 txns</div>
+      <div class="topbar-stat-val" id="db-txn-count-topbar">81,929 txns</div>
       <div style="font-size:9px;color:rgba(255,255,255,.4);margin-top:1px;font-family:'DM Mono',monospace">incl. 399 inv. sales</div>
     </div>
     <div class="topbar-stat">
@@ -536,7 +536,7 @@ html,body{background:var(--bg);color:var(--txt);font-family:'DM Sans',sans-serif
         <div style="width:36px;height:36px;background:rgba(255,255,255,.08);border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:18px;border:1px solid rgba(255,255,255,.1)">🇸🇬</div>
         <div>
           <div style="color:#fff;font-size:14px;font-weight:700;letter-spacing:-.01em">Singapore C&amp;I Market Intelligence</div>
-          <div style="color:rgba(255,255,255,.45);font-size:11px;margin-top:1px">81,929 transactions · 1995–2026 · URA REALIS · Commercial &amp; Industrial · <span style="color:rgba(255,255,255,.3)">incl. 399 inv. sales</span></div>
+          <div style="color:rgba(255,255,255,.45);font-size:11px;margin-top:1px"><span id="db-txn-count-hero">81,929</span> transactions · 1995–2026 · URA REALIS · Commercial &amp; Industrial · <span style="color:rgba(255,255,255,.3)">incl. 399 inv. sales</span></div>
         </div>
       </div>
       <div style="display:flex;gap:5px;flex-wrap:wrap">
@@ -1377,7 +1377,7 @@ html,body{background:var(--bg);color:var(--txt);font-family:'DM Sans',sans-serif
     </div>
     <div class="card">
       <div class="card-hdr">
-        <div><div class="card-title"><span class="card-title-dot"></span>Transaction Search</div><div class="card-subtitle">81,929 transactions · Commercial & Industrial · 1995–2026</div></div>
+        <div><div class="card-title"><span class="card-title-dot"></span>Transaction Search</div><div class="card-subtitle"><span id="db-txn-count-search">81,929</span> transactions · Commercial & Industrial · 1995–2026</div></div>
         <div style="font-size:11px;color:var(--mut);font-family:'DM Mono',monospace;font-weight:600" id="tx-count">—</div>
       </div>
       <!-- Search filters -->
@@ -12227,7 +12227,7 @@ function onDualSlider(side, v){
 
 // Sync slider handles to a preset period (right handle = Mar2026, left = right - window)
 function syncSliderToRange(range){
-  var wins = {L12:12, L18:18, "5Y":60, "10Y":120, ALL:372};
+  var wins = {L12:12, L18:18, "5Y":60, "10Y":120, ALL:375};
   var win = wins[range] || sliderMonths;
   sliderEndMonth   = 375;
   sliderStartMonth = Math.max(0, 374 - win);
@@ -20277,6 +20277,45 @@ document.addEventListener('DOMContentLoaded', function() {
   });
   observer.observe(reitDetail,{attributes:true,attributeFilter:['style']});
 });
+
+// ── Live DB transaction count ─────────────────────────────────────────
+// Fetches actual count from Supabase on page load and updates the 3
+// hardcoded "81,929" labels (topbar, hero subtitle, Transaction Search).
+// Counts non-aborted commercial + industrial rows (matches dashboard scope).
+async function loadDbTotals(){
+  try {
+    var url = SB_URL + "/rest/v1/transactions"
+      + "?select=id"
+      + "&property_type=in.(office,retail,shop%20house,multiple-user%20factory,single-user%20factory,warehouse,business%20park)"
+      + "&is_aborted=is.false"
+      + "&limit=1";
+    var res = await fetch(url, {
+      headers: {
+        "apikey": SB_KEY,
+        "Authorization": "Bearer " + SB_KEY,
+        "Prefer": "count=exact",
+        "Range-Unit": "items",
+        "Range": "0-0"
+      }
+    });
+    if (!res.ok) return;
+    var cr = res.headers.get("content-range") || "";
+    var total = parseInt(cr.split("/")[1] || "0", 10);
+    if (!total) return;
+    var fmt = total.toLocaleString();
+    var ids = ["db-txn-count-topbar","db-txn-count-hero","db-txn-count-search"];
+    ids.forEach(function(id){
+      var el = document.getElementById(id);
+      if (!el) return;
+      // Topbar label uses "X txns"; hero/search use bare number.
+      el.textContent = (id === "db-txn-count-topbar") ? (fmt + " txns") : fmt;
+    });
+  } catch(e) {
+    // Silent fail — leave hardcoded fallback in place
+    console.warn("loadDbTotals failed:", e);
+  }
+}
+document.addEventListener('DOMContentLoaded', loadDbTotals);
 </script>
 
 <script>
