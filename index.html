@@ -647,11 +647,14 @@ html,body{background:var(--bg);color:var(--txt);font-family:'DM Sans',sans-serif
           </div>
           <div style="display:flex;align-items:center;justify-content:flex-end;gap:6px;margin-bottom:6px">
             <div style="display:flex;background:var(--srf2);border:1px solid var(--bdr);border-radius:6px;overflow:hidden">
-              <button id="btn-inv-excl" onclick="setInvSalesView(true)" title="Exclude investment sales" style="display:flex;align-items:center;gap:5px;padding:4px 10px;border:none;border-right:1px solid var(--bdr);background:var(--g1);color:#fff;font-size:10px;font-weight:600;cursor:pointer;font-family:'DM Sans',sans-serif;letter-spacing:.02em">
+              <button id="btn-inv-excl" onclick="setInvSalesView('exclude')" title="Exclude investment sales" style="display:flex;align-items:center;gap:5px;padding:4px 10px;border:none;border-right:1px solid var(--bdr);background:var(--g1);color:#fff;font-size:10px;font-weight:600;cursor:pointer;font-family:'DM Sans',sans-serif;letter-spacing:.02em">
                 Ex. Inv. Sales
               </button>
-              <button id="btn-inv-incl" onclick="setInvSalesView(false)" title="Include investment sales" style="display:flex;align-items:center;gap:5px;padding:4px 10px;border:none;background:transparent;color:var(--mut);font-size:10px;font-weight:600;cursor:pointer;font-family:'DM Sans',sans-serif;letter-spacing:.02em">
+              <button id="btn-inv-incl" onclick="setInvSalesView('all')" title="Include investment sales" style="display:flex;align-items:center;gap:5px;padding:4px 10px;border:none;border-right:1px solid var(--bdr);background:transparent;color:var(--mut);font-size:10px;font-weight:600;cursor:pointer;font-family:'DM Sans',sans-serif;letter-spacing:.02em">
                 All Txns
+              </button>
+              <button id="btn-inv-only" onclick="setInvSalesView('only')" title="Show only investment sales" style="display:flex;align-items:center;gap:5px;padding:4px 10px;border:none;background:transparent;color:var(--mut);font-size:10px;font-weight:600;cursor:pointer;font-family:'DM Sans',sans-serif;letter-spacing:.02em">
+                Inv. Only
               </button>
             </div>
             <div style="display:flex;background:var(--srf2);border:1px solid var(--bdr);border-radius:6px;overflow:hidden">
@@ -12056,7 +12059,7 @@ var activeRange="L12";
 var chartYoY=false;
 var chartQoQ=false;
 var stackedView=true; // true=stacked, false=side-by-side
-var excludeInvSales=true; // true=exclude investment sales from chart
+var invSalesMode='exclude'; // 'exclude' | 'all' | 'only' — applies to chart AND Recent Transactions
 var chartMoM=true;   // MoM on by default
 var sliderMonths=12;  // window size in months
 var sliderStartMonth=360; // left handle (0=Jan1995, 371=Mar2026). Default: L12 = pos 360
@@ -12102,7 +12105,9 @@ async function fetchMonthlyData(months, startDate, endDate){
     var allRows=[],page=0,pageSize=1000;
     while(true){
       var lo=page*pageSize,hi=lo+pageSize-1;
-      var invFilter=excludeInvSales?"&or=(investment_sales.is.null,investment_sales.neq.y)":"";
+      var invFilter = invSalesMode==='exclude' ? "&or=(investment_sales.is.null,investment_sales.neq.y)"
+                    : invSalesMode==='only'    ? "&investment_sales=eq.y"
+                    : ""; // 'all' = no filter
       var url=SB_URL+"/rest/v1/transactions?select=sale_date,property_type,transacted_price,unit_price_psf,tenure,is_aborted&sale_date=gte."+from+"&sale_date=lte."+until+invFilter+"&is_aborted=neq.true&order=sale_date.asc";
       var r=await fetch(url,{headers:{
         "apikey":SB_KEY,"Authorization":"Bearer "+SB_KEY,
@@ -13076,13 +13081,27 @@ function setStackView(v){
   loadAndRenderChart();
 }
 
-function setInvSalesView(excl){
-  excludeInvSales=excl;
-  var be=document.getElementById("btn-inv-excl"), bi=document.getElementById("btn-inv-incl");
-  if(be){ be.style.background=excl?"var(--g1)":"transparent"; be.style.color=excl?"#fff":"var(--mut)"; }
-  if(bi){ bi.style.background=excl?"transparent":"var(--g1)"; bi.style.color=excl?"var(--mut)":"#fff"; }
-  MONTHLY_CACHE=null; // force refetch since filter changed
+function setInvSalesView(mode){
+  // Backwards-compat: accept boolean (true=exclude, false=all)
+  if(mode===true) mode='exclude';
+  if(mode===false) mode='all';
+  if(mode!=='exclude' && mode!=='all' && mode!=='only') mode='exclude';
+  invSalesMode=mode;
+
+  // Update 3-button visual state
+  var btns={'exclude':'btn-inv-excl','all':'btn-inv-incl','only':'btn-inv-only'};
+  Object.keys(btns).forEach(function(k){
+    var b=document.getElementById(btns[k]);
+    if(!b) return;
+    var on=(k===mode);
+    b.style.background=on?'var(--g1)':'transparent';
+    b.style.color=on?'#fff':'var(--mut)';
+  });
+
+  MONTHLY_CACHE=null; // force chart refetch since filter changed
   loadAndRenderChart();
+  // Also refresh Recent Transactions table so toggle visibly affects the row count
+  if(typeof loadDefaultTransactions==='function') loadDefaultTransactions(0);
 }
 
 var TLABEL_EXTRA={avgPSF:"Avg PSF",STI:"STI Index"};
@@ -15234,8 +15253,13 @@ async function loadDefaultTransactions(page){
   if(activeRange==="10Y") fetchLimit=1000;
   if(activeRange==="ALL") fetchLimit=2000;
 
-  var url = SB_URL + "/rest/v1/transactions?select=id,project_name,address,property_type,transacted_price,area_sqft,unit_price_psf,sale_date,tenure,planning_region,postal_district,type_of_sale,type_of_area,is_aborted&"
-    + dateFilter + typeFilter + "&order=sale_date.desc&limit="+fetchLimit+"&offset=0";
+  // Investment sales filter — keeps Recent Transactions in sync with the chart toggle
+  var invFilter = invSalesMode==='exclude' ? "&or=(investment_sales.is.null,investment_sales.neq.y)"
+                : invSalesMode==='only'    ? "&investment_sales=eq.y"
+                : ""; // 'all' = no filter
+
+  var url = SB_URL + "/rest/v1/transactions?select=id,project_name,address,property_type,transacted_price,area_sqft,unit_price_psf,sale_date,tenure,planning_region,postal_district,type_of_sale,type_of_area,is_aborted,investment_sales&"
+    + dateFilter + typeFilter + invFilter + "&order=sale_date.desc&limit="+fetchLimit+"&offset=0";
   var res = await fetch(url, {
     headers:{"apikey":SB_KEY,"Authorization":"Bearer "+SB_KEY,"Prefer":"count=exact"}
   });
