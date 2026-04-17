@@ -1342,9 +1342,15 @@ html,body{background:var(--bg);color:var(--txt);font-family:'DM Sans',sans-serif
         <div class="newsroom-title">Newsroom</div>
         <div class="nr-count" id="nr-count"></div>
       </div>
-      <div class="newsroom-search">
-        <span class="srch-icon">🔍</span>
-        <input type="text" id="nr-search" placeholder="Search articles…" oninput="renderNewsroom()">
+      <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap">
+        <div class="newsroom-search">
+          <span class="srch-icon">🔍</span>
+          <input type="text" id="nr-search" placeholder="Search articles…" oninput="renderNewsroom()">
+        </div>
+        <button id="nl-subscribe-btn" onclick="nlSubOpen('newsroom')" class="nl-subscribe-btn" title="Subscribe to the PropertyAtlas newsroom">
+          <span style="font-size:13px;line-height:1">✉</span>
+          <span>Subscribe</span>
+        </button>
       </div>
     </div>
     <div class="nr-cats" id="nr-cats"></div>
@@ -21313,6 +21319,650 @@ function enqEmailRow(label, value) {
        + '<td style="padding:5px 0;color:#1e293b">' + value + '</td></tr>';
 }
 </script>
+
+<!-- ═══════════════════════════════════════════════════════════
+     NEWSLETTER MAILING LIST — Subscribe / Confirm / Unsubscribe
+     Double opt-in · categories (collected, not filtered v1) · cadence pref
+     Supabase: newsletter_subscribers + newsletter_sends
+     Edge Functions: newsletter-subscribe / newsletter-confirm / newsletter-send
+═══════════════════════════════════════════════════════════ -->
+
+<style>
+/* Subscribe button in newsroom header */
+.nl-subscribe-btn{
+  display:inline-flex;align-items:center;gap:6px;height:32px;padding:0 14px;
+  background:var(--g1);color:#fff;border:none;border-radius:6px;
+  font-size:12px;font-weight:700;font-family:inherit;letter-spacing:.01em;
+  cursor:pointer;transition:background .15s,transform .08s;white-space:nowrap;
+}
+.nl-subscribe-btn:hover{background:var(--g2)}
+.nl-subscribe-btn:active{transform:translateY(1px)}
+
+/* Modal overlay + card (mirrors enq-modal pattern) */
+.nl-overlay{display:none;position:fixed;inset:0;background:rgba(13,31,60,.55);z-index:1000;backdrop-filter:blur(2px)}
+.nl-modal{display:none;position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);z-index:1001;
+  width:min(540px,94vw);max-height:92vh;overflow-y:auto;background:var(--srf);border-radius:14px;
+  box-shadow:0 8px 48px rgba(13,31,60,.28)}
+.nl-modal-header{background:var(--hdr, var(--g1));padding:20px 24px 18px;color:#fff;position:relative}
+.nl-modal-title{font-size:16px;font-weight:700;line-height:1.3;margin-bottom:4px}
+.nl-modal-sub{font-size:11px;color:rgba(255,255,255,.65);line-height:1.45}
+.nl-modal-close{position:absolute;top:14px;right:14px;background:rgba(255,255,255,.14);color:#fff;
+  border:none;width:26px;height:26px;border-radius:6px;cursor:pointer;font-size:16px;line-height:1;
+  display:flex;align-items:center;justify-content:center}
+.nl-modal-close:hover{background:rgba(255,255,255,.24)}
+.nl-modal-body{padding:22px 24px 24px}
+.nl-field{margin-bottom:14px}
+.nl-field label{display:block;font-size:11px;font-weight:700;color:var(--txt2);margin-bottom:6px;letter-spacing:.02em;text-transform:uppercase}
+.nl-field input[type="email"],.nl-field input[type="text"]{
+  width:100%;height:38px;padding:0 12px;border:1px solid var(--bdr);border-radius:7px;
+  background:var(--srf);color:var(--txt);font-size:13px;font-family:inherit;outline:none;box-sizing:border-box;transition:border-color .15s
+}
+.nl-field input:focus{border-color:var(--g2)}
+.nl-section-label{font-size:11px;font-weight:700;color:var(--txt2);margin:14px 0 8px;letter-spacing:.02em;text-transform:uppercase}
+.nl-cats{display:flex;flex-wrap:wrap;gap:6px}
+.nl-cat-chip{display:inline-flex;align-items:center;gap:5px;padding:6px 11px;border:1px solid var(--bdr);
+  border-radius:20px;font-size:11px;color:var(--mut);cursor:pointer;user-select:none;transition:all .12s;background:var(--srf)}
+.nl-cat-chip:hover{border-color:var(--g2)}
+.nl-cat-chip.active{background:var(--g1);color:#fff;border-color:var(--g1)}
+.nl-cat-chip input{display:none}
+.nl-cadence{display:flex;gap:8px;margin-top:4px}
+.nl-cadence-opt{flex:1;padding:11px 12px;border:1px solid var(--bdr);border-radius:8px;cursor:pointer;transition:all .12s;background:var(--srf)}
+.nl-cadence-opt:hover{border-color:var(--g2)}
+.nl-cadence-opt.active{border-color:var(--g1);background:var(--glt)}
+.nl-cadence-opt input{display:none}
+.nl-cadence-opt .nl-cad-label{font-size:12px;font-weight:700;color:var(--txt);margin-bottom:2px}
+.nl-cadence-opt.active .nl-cad-label{color:var(--g1)}
+.nl-cadence-opt .nl-cad-desc{font-size:10px;color:var(--mut);line-height:1.4}
+.nl-submit-row{display:flex;gap:10px;margin-top:18px}
+.nl-submit-btn{flex:1;height:42px;background:var(--g1);color:#fff;border:none;border-radius:8px;
+  font-size:13px;font-weight:700;font-family:inherit;cursor:pointer;transition:background .15s}
+.nl-submit-btn:hover:not(:disabled){background:var(--g2)}
+.nl-submit-btn:disabled{opacity:.6;cursor:not-allowed}
+.nl-cancel-btn{height:42px;padding:0 18px;background:transparent;color:var(--mut);border:1px solid var(--bdr);
+  border-radius:8px;font-size:13px;font-family:inherit;cursor:pointer}
+.nl-error{display:none;background:#fef2f2;border:1px solid #fecaca;border-radius:7px;padding:10px 12px;font-size:12px;color:#b91c1c;margin-bottom:14px;line-height:1.5}
+.nl-privacy{margin-top:14px;font-size:10px;color:var(--mut2);line-height:1.5;text-align:center}
+.nl-success{text-align:center;padding:16px 0 4px}
+.nl-success-icon{font-size:40px;margin-bottom:12px}
+.nl-success-title{font-size:16px;font-weight:700;color:var(--txt);margin-bottom:8px}
+.nl-success-msg{font-size:13px;color:var(--mut);line-height:1.65;margin-bottom:20px;max-width:380px;margin-left:auto;margin-right:auto}
+
+/* Banner notifications (for confirm/unsubscribe result after page load) */
+.nl-banner{display:none;margin:0 0 16px;padding:12px 16px;border-radius:8px;font-size:13px;line-height:1.55;
+  display:flex;align-items:center;gap:10px}
+.nl-banner.success{background:#ecfdf5;border:1px solid #a7f3d0;color:#047857}
+.nl-banner.error{background:#fef2f2;border:1px solid #fecaca;color:#b91c1c}
+.nl-banner-close{margin-left:auto;background:transparent;border:none;color:inherit;cursor:pointer;font-size:16px;line-height:1;padding:0 4px;opacity:.6}
+.nl-banner-close:hover{opacity:1}
+</style>
+
+<!-- Subscribe Modal -->
+<div id="nl-overlay" class="nl-overlay" onclick="nlSubClose()"></div>
+<div id="nl-modal" class="nl-modal">
+  <div class="nl-modal-header">
+    <div class="nl-modal-title">Subscribe to PropertyAtlas Newsroom</div>
+    <div class="nl-modal-sub">Structured coverage of Singapore's listed property & REIT sector · No spam · Unsubscribe any time</div>
+    <button class="nl-modal-close" onclick="nlSubClose()" aria-label="Close">×</button>
+  </div>
+
+  <!-- Form state -->
+  <div id="nl-form-wrap" class="nl-modal-body">
+    <div id="nl-error" class="nl-error"></div>
+
+    <div class="nl-field">
+      <label for="nl-email">Email address *</label>
+      <input type="email" id="nl-email" autocomplete="email" placeholder="you@company.com">
+    </div>
+
+    <div class="nl-field">
+      <label for="nl-name">Name (optional)</label>
+      <input type="text" id="nl-name" autocomplete="name" placeholder="First name or full name">
+    </div>
+
+    <div class="nl-section-label">Content categories (all selected by default)</div>
+    <div class="nl-cats" id="nl-cats-wrap">
+      <!-- populated by JS so we don't duplicate the category source of truth -->
+    </div>
+
+    <div class="nl-section-label" style="margin-top:16px">Delivery cadence</div>
+    <div class="nl-cadence">
+      <label class="nl-cadence-opt active" data-cadence="daily">
+        <input type="radio" name="nl-cadence" value="daily" checked>
+        <div class="nl-cad-label">Daily</div>
+        <div class="nl-cad-desc">One email per new post · 7:30 AM SGT</div>
+      </label>
+      <label class="nl-cadence-opt" data-cadence="weekly">
+        <input type="radio" name="nl-cadence" value="weekly">
+        <div class="nl-cad-label">Weekly digest</div>
+        <div class="nl-cad-desc">Monday 7:30 AM SGT · past week's posts</div>
+      </label>
+    </div>
+
+    <div class="nl-submit-row">
+      <button id="nl-submit-btn" class="nl-submit-btn" onclick="nlSubSubmit()">Subscribe</button>
+      <button class="nl-cancel-btn" onclick="nlSubClose()">Cancel</button>
+    </div>
+
+    <div class="nl-privacy">
+      We'll send a confirmation email — you're not subscribed until you click the link.<br>
+      Your email is used only to deliver newsroom posts you've opted in to.
+    </div>
+  </div>
+
+  <!-- Success state -->
+  <div id="nl-success" class="nl-modal-body" style="display:none">
+    <div class="nl-success">
+      <div class="nl-success-icon">📬</div>
+      <div class="nl-success-title">Check your inbox</div>
+      <div class="nl-success-msg">
+        We've sent a confirmation email to <strong id="nl-success-email"></strong>. Click the button inside to activate your subscription.
+      </div>
+      <div style="font-size:11px;color:var(--mut2);line-height:1.6;max-width:380px;margin:0 auto 20px">
+        Didn't get it? Check spam/promotions. If still nothing in 5 minutes, try again with a different address.
+      </div>
+      <button class="nl-submit-btn" style="max-width:180px;margin:0 auto;display:block" onclick="nlSubClose()">Done</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// ═══════════════════════════════════════════════════════════════════════
+// NEWSLETTER — client-side controller
+// ═══════════════════════════════════════════════════════════════════════
+(function(){
+  // Newsroom categories — source of truth for the modal chips.
+  // 'All' is treated as a meta-selector: selecting it clears specifics; selecting a
+  // specific clears 'All'. Empty selection defaults to ['All'] on submit.
+  var NL_CATEGORIES = ['All','Commercial','Industrial','Policy','Market Insight','Residential'];
+  var NL_SELECTED = new Set(['All']);
+
+  // Endpoints (uses existing PROJ_SUPABASE_URL/KEY from lead-capture block)
+  function nlEndpoint(fn){ return (window.PROJ_SUPABASE_URL || '') + '/functions/v1/' + fn; }
+  function nlAuthHeader(){ return 'Bearer ' + (window.PROJ_SUPABASE_KEY || ''); }
+
+  function nlRenderChips(){
+    var wrap = document.getElementById('nl-cats-wrap');
+    if(!wrap) return;
+    wrap.innerHTML = NL_CATEGORIES.map(function(cat){
+      var active = NL_SELECTED.has(cat) ? ' active' : '';
+      return '<label class="nl-cat-chip'+active+'" data-cat="'+cat+'">'+
+             '<input type="checkbox" '+(NL_SELECTED.has(cat)?'checked':'')+'>'+cat+'</label>';
+    }).join('');
+    // Attach handlers
+    wrap.querySelectorAll('.nl-cat-chip').forEach(function(chip){
+      chip.addEventListener('click', function(e){
+        e.preventDefault();
+        var cat = chip.dataset.cat;
+        if(cat === 'All'){
+          NL_SELECTED.clear();
+          NL_SELECTED.add('All');
+        } else {
+          NL_SELECTED.delete('All');
+          if(NL_SELECTED.has(cat)) NL_SELECTED.delete(cat); else NL_SELECTED.add(cat);
+          if(NL_SELECTED.size === 0) NL_SELECTED.add('All');
+        }
+        nlRenderChips();
+      });
+    });
+  }
+
+  // Cadence radio handler
+  document.addEventListener('click', function(e){
+    var opt = e.target.closest('.nl-cadence-opt');
+    if(!opt || !document.getElementById('nl-modal')) return;
+    document.querySelectorAll('.nl-cadence-opt').forEach(function(o){ o.classList.remove('active'); });
+    opt.classList.add('active');
+    var radio = opt.querySelector('input[type="radio"]');
+    if(radio) radio.checked = true;
+  });
+
+  // Open / close
+  window.nlSubOpen = function(sourcePage){
+    window.__nlSource = sourcePage || 'newsroom';
+    NL_SELECTED = new Set(['All']);
+    nlRenderChips();
+    document.getElementById('nl-email').value = '';
+    document.getElementById('nl-name').value  = '';
+    document.getElementById('nl-error').style.display = 'none';
+    document.getElementById('nl-form-wrap').style.display = 'block';
+    document.getElementById('nl-success').style.display = 'none';
+    document.getElementById('nl-submit-btn').disabled = false;
+    document.getElementById('nl-submit-btn').textContent = 'Subscribe';
+    // Default cadence = daily
+    document.querySelectorAll('.nl-cadence-opt').forEach(function(o){ o.classList.remove('active'); });
+    var daily = document.querySelector('.nl-cadence-opt[data-cadence="daily"]');
+    if(daily){ daily.classList.add('active'); daily.querySelector('input').checked = true; }
+
+    document.getElementById('nl-overlay').style.display = 'block';
+    document.getElementById('nl-modal').style.display = 'block';
+    setTimeout(function(){ document.getElementById('nl-email').focus(); }, 80);
+  };
+
+  window.nlSubClose = function(){
+    document.getElementById('nl-overlay').style.display = 'none';
+    document.getElementById('nl-modal').style.display = 'none';
+  };
+
+  // Submit
+  window.nlSubSubmit = async function(){
+    var email = document.getElementById('nl-email').value.trim();
+    var name  = document.getElementById('nl-name').value.trim();
+    var cadence = (document.querySelector('input[name="nl-cadence"]:checked') || {value:'daily'}).value;
+    var errEl = document.getElementById('nl-error');
+
+    // Validate
+    if(!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)){
+      errEl.textContent = 'Please enter a valid email address.';
+      errEl.style.display = 'block'; return;
+    }
+    errEl.style.display = 'none';
+
+    var btn = document.getElementById('nl-submit-btn');
+    btn.disabled = true; btn.textContent = 'Sending…';
+
+    var cats = Array.from(NL_SELECTED);
+    if(cats.length === 0) cats = ['All'];
+
+    var payload = {
+      email: email,
+      name: name || null,
+      categories: cats,
+      cadence: cadence,
+      source_page: window.__nlSource || 'newsroom'
+    };
+
+    try {
+      var res = await fetch(nlEndpoint('newsletter-subscribe'), {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'Authorization': nlAuthHeader() },
+        body: JSON.stringify(payload)
+      });
+      var data = await res.json().catch(function(){ return {}; });
+
+      if(!res.ok){
+        btn.disabled = false; btn.textContent = 'Subscribe';
+        errEl.textContent = (data && data.error) ? data.error : 'Something went wrong. Please try again.';
+        errEl.style.display = 'block';
+        return;
+      }
+
+      // Success — show confirmation-pending state
+      document.getElementById('nl-success-email').textContent = email;
+      document.getElementById('nl-form-wrap').style.display = 'none';
+      document.getElementById('nl-success').style.display = 'block';
+
+    } catch(e){
+      console.error('Subscribe error:', e);
+      btn.disabled = false; btn.textContent = 'Subscribe';
+      errEl.textContent = 'Could not reach server. Please check your connection and try again.';
+      errEl.style.display = 'block';
+    }
+  };
+
+  // ═══════════════════════════════════════════════════════════════════
+  // URL-param handlers — confirm / unsubscribe links land on the site
+  // with ?confirm=TOKEN or ?unsubscribe=TOKEN. We call the confirm endpoint
+  // and show a banner in the newsroom, then clean the URL.
+  // ═══════════════════════════════════════════════════════════════════
+
+  function nlShowBanner(kind, msg){
+    // Inject banner just above the newsroom header if on newsroom tab; else body top
+    var host = document.querySelector('#tab-news .newsroom-header');
+    if(!host){
+      host = document.body;
+    }
+    var banner = document.createElement('div');
+    banner.className = 'nl-banner ' + (kind === 'success' ? 'success' : 'error');
+    banner.style.display = 'flex';
+    banner.innerHTML = '<span>'+(kind==='success'?'✅':'⚠️')+'</span>'
+      + '<span>'+msg+'</span>'
+      + '<button class="nl-banner-close" aria-label="Dismiss">×</button>';
+    banner.querySelector('.nl-banner-close').addEventListener('click', function(){ banner.remove(); });
+    host.parentNode.insertBefore(banner, host);
+    // Auto-dismiss success banners after 8s
+    if(kind === 'success') setTimeout(function(){ if(banner.parentNode) banner.remove(); }, 8000);
+  }
+
+  async function nlHandleTokenActions(){
+    var qs = new URLSearchParams(window.location.search);
+    var confirmTok = qs.get('confirm');
+    var unsubTok   = qs.get('unsubscribe');
+    if(!confirmTok && !unsubTok) return;
+
+    var action = confirmTok ? 'confirm' : 'unsubscribe';
+    var token  = confirmTok || unsubTok;
+
+    // Clean the URL immediately so a refresh doesn't re-trigger
+    var cleanUrl = window.location.pathname + (window.location.hash || '');
+    history.replaceState(null, '', cleanUrl);
+
+    try {
+      var res = await fetch(nlEndpoint('newsletter-confirm'), {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'Authorization': nlAuthHeader() },
+        body: JSON.stringify({ action: action, token: token })
+      });
+      var data = await res.json().catch(function(){ return {}; });
+
+      if(res.ok){
+        if(action === 'confirm'){
+          nlShowBanner('success', data.already
+            ? 'Your subscription was already confirmed — you\'re all set.'
+            : 'Subscription confirmed. Welcome to the PropertyAtlas newsroom.');
+        } else {
+          nlShowBanner('success', data.already
+            ? 'You were already unsubscribed.'
+            : 'You\'ve been unsubscribed. We\'re sorry to see you go.');
+        }
+      } else {
+        nlShowBanner('error', (data && data.error) ? data.error : 'Link invalid or expired.');
+      }
+    } catch(e){
+      console.error('Token action error:', e);
+      nlShowBanner('error', 'Could not reach server. Please try the link again later.');
+    }
+  }
+
+  // Run on DOMContentLoaded (or immediately if already loaded)
+  if(document.readyState === 'loading'){
+    document.addEventListener('DOMContentLoaded', nlHandleTokenActions);
+  } else {
+    nlHandleTokenActions();
+  }
+
+  // Close modal on Escape
+  document.addEventListener('keydown', function(e){
+    if(e.key === 'Escape' && document.getElementById('nl-modal').style.display === 'block'){
+      window.nlSubClose();
+    }
+  });
+})();
+</script>
+
+<!-- ═══════════════════════════════════════════════════════════
+     NEWSLETTER ADMIN CONSOLE — accessed via #admin/newsletter
+     Requires admin token (sessionStorage or prompt) to trigger sends.
+     Shows subscriber counts, recent post send-status, manual trigger UI.
+═══════════════════════════════════════════════════════════ -->
+
+<style>
+.nl-admin{display:none;position:fixed;inset:0;z-index:999;background:var(--bg);overflow-y:auto}
+.nl-admin.open{display:block}
+.nl-admin-wrap{max-width:860px;margin:0 auto;padding:28px 20px 60px}
+.nl-admin-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:22px;padding-bottom:16px;border-bottom:1px solid var(--bdr)}
+.nl-admin-title{font-size:20px;font-weight:800;color:var(--txt);letter-spacing:-.01em}
+.nl-admin-sub{font-size:11px;color:var(--mut);margin-top:3px}
+.nl-admin-close{background:var(--srf);border:1px solid var(--bdr);color:var(--mut);padding:7px 14px;border-radius:6px;font-size:12px;font-weight:600;cursor:pointer;font-family:inherit}
+.nl-admin-close:hover{color:var(--txt);border-color:var(--bdr2)}
+.nl-admin-card{background:var(--srf);border:1px solid var(--bdr);border-radius:10px;padding:20px 22px;margin-bottom:16px}
+.nl-admin-card h3{font-size:13px;font-weight:700;color:var(--txt2);letter-spacing:.02em;text-transform:uppercase;margin:0 0 14px}
+.nl-stat-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:14px}
+.nl-stat{padding:12px 14px;background:var(--srf2);border-radius:8px}
+.nl-stat-n{font-size:22px;font-weight:800;color:var(--g1);letter-spacing:-.01em;line-height:1.1}
+.nl-stat-l{font-size:10px;color:var(--mut);text-transform:uppercase;letter-spacing:.06em;margin-top:4px;font-weight:600}
+.nl-admin-field{margin-bottom:12px}
+.nl-admin-field label{display:block;font-size:11px;font-weight:700;color:var(--txt2);margin-bottom:5px;letter-spacing:.02em;text-transform:uppercase}
+.nl-admin-field input,.nl-admin-field select{width:100%;height:36px;padding:0 10px;border:1px solid var(--bdr);border-radius:6px;background:var(--srf);font-size:12px;font-family:inherit;outline:none;box-sizing:border-box}
+.nl-admin-field input:focus,.nl-admin-field select:focus{border-color:var(--g2)}
+.nl-admin-actions{display:flex;gap:10px;margin-top:14px;flex-wrap:wrap}
+.nl-admin-btn{height:38px;padding:0 18px;border:none;border-radius:7px;font-size:12px;font-weight:700;font-family:inherit;cursor:pointer;transition:background .15s}
+.nl-admin-btn.primary{background:var(--g1);color:#fff}
+.nl-admin-btn.primary:hover:not(:disabled){background:var(--g2)}
+.nl-admin-btn.ghost{background:var(--srf2);color:var(--txt);border:1px solid var(--bdr)}
+.nl-admin-btn.ghost:hover{border-color:var(--bdr2)}
+.nl-admin-btn:disabled{opacity:.55;cursor:not-allowed}
+.nl-admin-log{font-family:'SF Mono',Consolas,monospace;font-size:11px;line-height:1.6;background:#0d1f3c;color:#cfe1ff;border-radius:8px;padding:14px 16px;max-height:280px;overflow-y:auto;white-space:pre-wrap;word-break:break-word;margin-top:10px}
+.nl-admin-log:empty{display:none}
+.nl-admin-locked{text-align:center;padding:40px 20px}
+.nl-admin-locked .nl-lock-icon{font-size:42px;margin-bottom:12px}
+.nl-admin-locked h3{font-size:16px;font-weight:700;color:var(--txt);margin:0 0 8px}
+.nl-admin-locked p{font-size:12px;color:var(--mut);line-height:1.6;max-width:360px;margin:0 auto 16px}
+</style>
+
+<div id="nl-admin" class="nl-admin">
+  <div class="nl-admin-wrap">
+    <div class="nl-admin-header">
+      <div>
+        <div class="nl-admin-title">Newsletter Admin Console</div>
+        <div class="nl-admin-sub">Manual send trigger · subscriber stats · delivery log</div>
+      </div>
+      <button class="nl-admin-close" onclick="nlAdminClose()">Close</button>
+    </div>
+
+    <!-- Locked state (no token yet) -->
+    <div id="nl-admin-locked" class="nl-admin-card nl-admin-locked">
+      <div class="nl-lock-icon">🔒</div>
+      <h3>Admin token required</h3>
+      <p>Enter the admin token to access newsletter controls. The token is the value of the <code>ADMIN_TOKEN</code> secret set on the Supabase Edge Function.</p>
+      <div style="max-width:360px;margin:0 auto">
+        <input type="password" id="nl-admin-token-input" placeholder="Paste admin token" style="width:100%;height:38px;padding:0 12px;border:1px solid var(--bdr);border-radius:7px;font-family:inherit;font-size:12px;box-sizing:border-box;margin-bottom:10px">
+        <button class="nl-admin-btn primary" style="width:100%" onclick="nlAdminUnlock()">Unlock</button>
+      </div>
+    </div>
+
+    <!-- Unlocked state -->
+    <div id="nl-admin-unlocked" style="display:none">
+
+      <div class="nl-admin-card">
+        <h3>Subscriber stats</h3>
+        <div class="nl-stat-grid" id="nl-admin-stats">
+          <div class="nl-stat"><div class="nl-stat-n">—</div><div class="nl-stat-l">Loading</div></div>
+        </div>
+        <button class="nl-admin-btn ghost" style="margin-top:14px" onclick="nlAdminRefreshStats()">Refresh</button>
+      </div>
+
+      <div class="nl-admin-card">
+        <h3>Send a newsroom post</h3>
+        <div class="nl-admin-field">
+          <label for="nl-admin-post-id">Newsroom post (by ID)</label>
+          <select id="nl-admin-post-id"></select>
+        </div>
+        <div class="nl-admin-field">
+          <label for="nl-admin-cadence">Cadence filter</label>
+          <select id="nl-admin-cadence">
+            <option value="daily">Daily subscribers only</option>
+            <option value="weekly">Weekly subscribers only</option>
+            <option value="all">All confirmed subscribers</option>
+          </select>
+        </div>
+        <div class="nl-admin-actions">
+          <button class="nl-admin-btn ghost" onclick="nlAdminSend(true)">Dry run (count only)</button>
+          <button class="nl-admin-btn primary" onclick="nlAdminSend(false)">Send now</button>
+          <button class="nl-admin-btn ghost" onclick="nlAdminForget()" style="margin-left:auto">Forget token</button>
+        </div>
+        <div id="nl-admin-log" class="nl-admin-log"></div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<script>
+// ═══════════════════════════════════════════════════════════════════════
+// NEWSLETTER ADMIN — #admin/newsletter route
+// ═══════════════════════════════════════════════════════════════════════
+(function(){
+  var TOKEN_KEY = 'nl_admin_token';
+
+  function nlAdminLog(msg, kind){
+    var el = document.getElementById('nl-admin-log');
+    if(!el) return;
+    var ts = new Date().toISOString().slice(11,19);
+    var prefix = kind === 'err' ? '✗ ' : (kind === 'ok' ? '✓ ' : '→ ');
+    el.textContent = (el.textContent ? el.textContent + '\n' : '') + '[' + ts + '] ' + prefix + msg;
+    el.scrollTop = el.scrollHeight;
+  }
+
+  window.nlAdminOpen = function(){
+    var panel = document.getElementById('nl-admin');
+    panel.classList.add('open');
+    document.body.style.overflow = 'hidden';
+    // Check for existing token
+    var tok = sessionStorage.getItem(TOKEN_KEY);
+    if(tok){
+      document.getElementById('nl-admin-locked').style.display = 'none';
+      document.getElementById('nl-admin-unlocked').style.display = 'block';
+      nlAdminPopulatePosts();
+      nlAdminRefreshStats();
+    } else {
+      document.getElementById('nl-admin-locked').style.display = 'block';
+      document.getElementById('nl-admin-unlocked').style.display = 'none';
+      setTimeout(function(){
+        var inp = document.getElementById('nl-admin-token-input');
+        if(inp) inp.focus();
+      }, 100);
+    }
+  };
+
+  window.nlAdminClose = function(){
+    document.getElementById('nl-admin').classList.remove('open');
+    document.body.style.overflow = '';
+    if(window.location.hash === '#admin/newsletter'){
+      history.replaceState(null, '', window.location.pathname);
+    }
+  };
+
+  window.nlAdminUnlock = function(){
+    var inp = document.getElementById('nl-admin-token-input');
+    var tok = (inp.value || '').trim();
+    if(!tok){ inp.focus(); return; }
+    sessionStorage.setItem(TOKEN_KEY, tok);
+    document.getElementById('nl-admin-locked').style.display = 'none';
+    document.getElementById('nl-admin-unlocked').style.display = 'block';
+    inp.value = '';
+    nlAdminPopulatePosts();
+    nlAdminRefreshStats();
+  };
+
+  window.nlAdminForget = function(){
+    sessionStorage.removeItem(TOKEN_KEY);
+    document.getElementById('nl-admin-locked').style.display = 'block';
+    document.getElementById('nl-admin-unlocked').style.display = 'none';
+  };
+
+  function nlAdminPopulatePosts(){
+    var sel = document.getElementById('nl-admin-post-id');
+    if(!sel || typeof NEWS === 'undefined') return;
+    // Most recent posts first; showing id + date + title
+    var sorted = NEWS.slice().sort(function(a,b){ return b.id - a.id; });
+    sel.innerHTML = sorted.slice(0, 30).map(function(n){
+      var title = (n.title || '').slice(0, 90);
+      return '<option value="'+n.id+'">#'+n.id+' · '+n.date+' · '+title+'</option>';
+    }).join('');
+  }
+
+  window.nlAdminRefreshStats = async function(){
+    var tok = sessionStorage.getItem(TOKEN_KEY);
+    if(!tok) return;
+    var wrap = document.getElementById('nl-admin-stats');
+    wrap.innerHTML = '<div class="nl-stat"><div class="nl-stat-n">…</div><div class="nl-stat-l">Loading</div></div>';
+
+    try {
+      // We don't expose a dedicated stats endpoint (YAGNI for v1); piggyback on
+      // dry-run send with a synthetic id to count matching confirmed subs per cadence.
+      var cadences = ['daily','weekly'];
+      var results = {};
+      for(var i = 0; i < cadences.length; i++){
+        var c = cadences[i];
+        var res = await fetch((window.PROJ_SUPABASE_URL || '') + '/functions/v1/newsletter-send', {
+          method: 'POST',
+          headers: { 'Content-Type':'application/json', 'Authorization': 'Bearer ' + (window.PROJ_SUPABASE_KEY || '') },
+          body: JSON.stringify({
+            admin_token: tok,
+            cadence: c,
+            dry_run: true,
+            post: { id: -1, title: 'STATS_PROBE', summary: 'stats probe' }
+          })
+        });
+        var d = await res.json().catch(function(){ return {}; });
+        if(!res.ok){
+          wrap.innerHTML = '<div class="nl-stat"><div class="nl-stat-n" style="color:#b91c1c">—</div><div class="nl-stat-l">'+(d.error||'Auth failed')+'</div></div>';
+          return;
+        }
+        results[c] = d.total_matching || 0;
+      }
+      wrap.innerHTML =
+        '<div class="nl-stat"><div class="nl-stat-n">'+results.daily+'</div><div class="nl-stat-l">Daily subscribers</div></div>'+
+        '<div class="nl-stat"><div class="nl-stat-n">'+results.weekly+'</div><div class="nl-stat-l">Weekly subscribers</div></div>'+
+        '<div class="nl-stat"><div class="nl-stat-n">'+(results.daily + results.weekly)+'</div><div class="nl-stat-l">Confirmed total</div></div>';
+    } catch(e){
+      wrap.innerHTML = '<div class="nl-stat"><div class="nl-stat-n" style="color:#b91c1c">—</div><div class="nl-stat-l">Could not load</div></div>';
+    }
+  };
+
+  window.nlAdminSend = async function(dryRun){
+    var tok = sessionStorage.getItem(TOKEN_KEY);
+    if(!tok){ nlAdminLog('No admin token — unlock first.', 'err'); return; }
+    if(typeof NEWS === 'undefined'){ nlAdminLog('NEWS array not loaded yet.', 'err'); return; }
+
+    var postId = parseInt(document.getElementById('nl-admin-post-id').value, 10);
+    var cadence = document.getElementById('nl-admin-cadence').value;
+    var post = NEWS.find(function(n){ return n.id === postId; });
+    if(!post){ nlAdminLog('Post #'+postId+' not found.', 'err'); return; }
+
+    if(!dryRun){
+      var confirmMsg = 'Send "'+(post.title || '').slice(0,60)+'…" to '+cadence+' subscribers?\n\nThis cannot be undone.';
+      if(!window.confirm(confirmMsg)) return;
+    }
+
+    nlAdminLog((dryRun?'[DRY RUN] ':'')+'Send #'+postId+' → '+cadence+' …');
+    try {
+      var res = await fetch((window.PROJ_SUPABASE_URL || '') + '/functions/v1/newsletter-send', {
+        method: 'POST',
+        headers: { 'Content-Type':'application/json', 'Authorization':'Bearer ' + (window.PROJ_SUPABASE_KEY || '') },
+        body: JSON.stringify({
+          admin_token: tok,
+          cadence: cadence,
+          dry_run: !!dryRun,
+          post: {
+            id: post.id, title: post.title, date: post.date,
+            category: post.category, tag: post.tag, source: post.source,
+            sentiment: post.sentiment, summary: post.summary
+          }
+        })
+      });
+      var d = await res.json().catch(function(){ return {}; });
+      if(!res.ok){
+        nlAdminLog('Failed: ' + (d.error || ('HTTP '+res.status)), 'err');
+        return;
+      }
+      if(dryRun){
+        nlAdminLog('Dry run: would send to '+d.would_send+' · matching '+d.total_matching+' · already sent '+d.already_sent, 'ok');
+      } else {
+        nlAdminLog('Done. Sent '+d.sent+' · failed '+d.failed+' · skipped (already sent) '+d.skipped, 'ok');
+        if(d.failures && d.failures.length){
+          d.failures.forEach(function(f){ nlAdminLog('  fail: '+f.email+' — '+f.error, 'err'); });
+        }
+      }
+    } catch(e){
+      nlAdminLog('Request error: ' + (e && e.message ? e.message : e), 'err');
+    }
+  };
+
+  // Route handler — open on #admin/newsletter
+  function nlAdminCheckHash(){
+    if(window.location.hash === '#admin/newsletter'){
+      window.nlAdminOpen();
+    } else if(document.getElementById('nl-admin').classList.contains('open')){
+      window.nlAdminClose();
+    }
+  }
+  window.addEventListener('hashchange', nlAdminCheckHash);
+  if(document.readyState === 'loading'){
+    document.addEventListener('DOMContentLoaded', nlAdminCheckHash);
+  } else {
+    nlAdminCheckHash();
+  }
+
+  // Enter key submits token
+  document.addEventListener('keydown', function(e){
+    if(e.key === 'Enter' && document.activeElement && document.activeElement.id === 'nl-admin-token-input'){
+      window.nlAdminUnlock();
+    }
+  });
+})();
+</script>
+
 
 </body>
 </html>
