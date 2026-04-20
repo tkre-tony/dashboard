@@ -9,15 +9,22 @@
 *{box-sizing:border-box;margin:0;padding:0}
 :root{
   --g1:#1a4f9c;--g2:#2563bc;--g3:#3b82d4;--glt:#eaf1fb;--gmd:#b8d4f0;
-  --bg:#f5f7fa;--srf:#ffffff;--srf2:#f0f4f9;--srf3:#edf2f8;
-  --bdr:#d4e0ee;--bdr2:#b8cfe8;
-  --txt:#111827;--txt2:#1e3a5f;--mut:#5a7499;--mut2:#8aa3c0;
+  --bg:#FAF7F0;--srf:#FFFCF5;--srf2:#F5EFE0;--srf3:#F0E8D2;
+  --bdr:#E8DFC8;--bdr2:#D4C9A8;
+  --bronze:#A67C3A;--bronze-lt:#C99B5A;
+  --txt:#111827;--txt2:#1e3a5f;--mut:#6B5B3E;--mut2:#8a7a5a;
   --red:#c8364a;--amber:#c97c1a;--blue:#1a4f9c;
   --hdr:#0d1f3c;--hdr2:#132848;--hdr3:#1a3358;
-  --shadow:0 1px 4px rgba(13,31,60,.08),0 4px 16px rgba(13,31,60,.06);
-  --shadow-sm:0 1px 3px rgba(13,31,60,.07);
-  --shadow-lg:0 4px 24px rgba(13,31,60,.13);
+  --shadow:0 1px 4px rgba(60,45,20,.08),0 4px 16px rgba(60,45,20,.06);
+  --shadow-sm:0 1px 3px rgba(60,45,20,.07);
+  --shadow-lg:0 4px 24px rgba(60,45,20,.13);
 }
+/* ── v48.8 cream palette: editorial typography overrides ── */
+.card-title,.kpi-label,#chart-title{font-family:Georgia,'Times New Roman',serif;font-weight:600;letter-spacing:-.005em}
+.kpi-label{font-style:italic;text-transform:none;letter-spacing:0;font-size:11px;color:var(--mut)}
+.card-title{font-size:14px;color:var(--txt2)}
+.card-title-dot{background:var(--bronze)!important}
+th{font-family:Georgia,'Times New Roman',serif;font-style:italic;font-weight:600;letter-spacing:0!important}
 html,body{background:var(--bg);color:var(--txt);font-family:'DM Sans',sans-serif;font-size:14px;min-height:100vh;-webkit-font-smoothing:antialiased}
 
 /* ── TOPBAR ── */
