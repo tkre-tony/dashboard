@@ -1928,6 +1928,7 @@ html,body{background:var(--bg);color:var(--txt);font-family:'DM Sans',sans-serif
                 <th style="padding:7px 10px;text-align:left;color:var(--mut);font-size:10px;text-transform:uppercase;letter-spacing:.04em;border-bottom:1px solid var(--bdr);white-space:nowrap">Fit-out</th>
                 <th style="padding:7px 10px;text-align:right;color:var(--mut);font-size:10px;text-transform:uppercase;letter-spacing:.04em;border-bottom:1px solid var(--bdr);white-space:nowrap">PSF/mth</th>
                 <th style="padding:7px 10px;text-align:left;color:var(--mut);font-size:10px;text-transform:uppercase;letter-spacing:.04em;border-bottom:1px solid var(--bdr)">Remarks</th>
+                <th style="padding:7px 10px;text-align:center;color:var(--mut);font-size:10px;text-transform:uppercase;letter-spacing:.04em;border-bottom:1px solid var(--bdr);white-space:nowrap">Enquire</th>
               </tr>
             </thead>
             <tbody id="rdet-vac-active-tbody"></tbody>
@@ -1946,6 +1947,7 @@ html,body{background:var(--bg);color:var(--txt);font-family:'DM Sans',sans-serif
                   <th style="padding:7px 10px;text-align:left;color:#c47d00;font-size:10px;text-transform:uppercase;letter-spacing:.04em;border-bottom:1px solid #c47d0030;white-space:nowrap">Avail</th>
                   <th style="padding:7px 10px;text-align:right;color:#c47d00;font-size:10px;text-transform:uppercase;letter-spacing:.04em;border-bottom:1px solid #c47d0030;white-space:nowrap">PSF/mth</th>
                   <th style="padding:7px 10px;text-align:left;color:#c47d00;font-size:10px;text-transform:uppercase;letter-spacing:.04em;border-bottom:1px solid #c47d0030">Remarks</th>
+                  <th style="padding:7px 10px;text-align:center;color:#c47d00;font-size:10px;text-transform:uppercase;letter-spacing:.04em;border-bottom:1px solid #c47d0030;white-space:nowrap">Enquire</th>
                 </tr>
               </thead>
               <tbody id="rdet-vac-new-tbody"></tbody>
@@ -1976,8 +1978,8 @@ html,body{background:var(--bg);color:var(--txt);font-family:'DM Sans',sans-serif
 
         <!-- Enquire CTA -->
         <div id="rdet-vac-enq-cta" style="display:none;margin-top:14px">
-          <button id="rdet-vac-enq-btn" onclick="rdetEnqOpen()" style="width:100%;height:40px;background:var(--g1);color:#fff;border:none;border-radius:8px;font-size:13px;font-weight:700;font-family:'DM Sans',sans-serif;cursor:pointer;letter-spacing:.01em;transition:background .15s" onmouseover="this.style.background='var(--g2)'" onmouseout="this.style.background='var(--g1)'">📩 Enquire About Available Space</button>
-          <div style="font-size:10px;color:var(--mut2);text-align:center;margin-top:6px">Interested in one or more units? Send us an enquiry and we'll be in touch.</div>
+          <button id="rdet-vac-enq-btn" onclick="rdetEnqOpen()" style="width:100%;height:40px;background:var(--srf2);color:var(--txt);border:1px solid var(--bdr);border-radius:8px;font-size:13px;font-weight:600;font-family:'DM Sans',sans-serif;cursor:pointer;letter-spacing:.01em;transition:background .15s" onmouseover="this.style.background='var(--srf3)'" onmouseout="this.style.background='var(--srf2)'">📩 General enquiry about this asset</button>
+          <div style="font-size:10px;color:var(--mut2);text-align:center;margin-top:6px">Interested in multiple units or exploring options? Use the per-unit 📩 button above for specific listings.</div>
         </div>
       </div>
     </div><!-- /adir-properties-panel -->
@@ -17967,6 +17969,7 @@ function rdetLoadVacancy(p) {
   }
   document.getElementById('rdet-vac-active-tbody').innerHTML = active.map(function(v){
     var isNew = v.status === 'New';
+    var enqAttrs = 'data-reit="' + encodeURIComponent(v.reit || '') + '" data-addr="' + encodeURIComponent(v.addrFull || v.addr || '') + '" data-unit="' + encodeURIComponent(v.unit || '') + '"';
     return '<tr style="border-bottom:1px solid var(--bdr);' + (isNew ? 'background:#c47d0008' : '') + '">'
       + '<td style="padding:7px 10px;font-weight:600;white-space:nowrap">' + v.unit
         + (isNew ? ' <span style="background:#c47d00;color:#fff;font-size:9px;font-weight:700;padding:1px 6px;border-radius:4px;margin-left:4px">NEW</span>' : '')
@@ -17977,20 +17980,23 @@ function rdetLoadVacancy(p) {
       + '<td style="padding:7px 10px;color:var(--mut);font-size:11px">' + (v.fit || '—') + '</td>'
       + '<td style="padding:7px 10px;text-align:right;font-weight:600;white-space:nowrap">' + (v.rent && v.rent !== 'null' ? v.rent : '—') + '</td>'
       + '<td style="padding:7px 10px;font-size:11px;color:var(--mut);max-width:220px">' + (v.remarks || '') + '</td>'
+      + '<td style="padding:7px 10px;text-align:center;white-space:nowrap"><button class="enq-btn" ' + enqAttrs + ' title="Enquire about ' + (v.unit || 'this unit').replace(/"/g,'&quot;') + '" style="background:var(--g1);color:#fff;border:none;border-radius:5px;padding:4px 9px;font-size:11px;font-weight:600;font-family:\'DM Sans\',sans-serif;cursor:pointer;letter-spacing:.01em;transition:background .15s" onmouseover="this.style.background=\'var(--g2)\'" onmouseout="this.style.background=\'var(--g1)\'">📩</button></td>'
       + '</tr>';
-  }).join('') || '<tr><td colspan="7" style="padding:14px;text-align:center;color:var(--mut);font-size:12px">No active listings</td></tr>';
+  }).join('') || '<tr><td colspan="8" style="padding:14px;text-align:center;color:var(--mut);font-size:12px">No active listings</td></tr>';
 
   // New listings section
   var newSec = document.getElementById('rdet-vac-new-section');
   if (newList.length) {
     newSec.style.display = 'block';
     document.getElementById('rdet-vac-new-tbody').innerHTML = newList.map(function(v){
+      var enqAttrs = 'data-reit="' + encodeURIComponent(v.reit || '') + '" data-addr="' + encodeURIComponent(v.addrFull || v.addr || '') + '" data-unit="' + encodeURIComponent(v.unit || '') + '"';
       return '<tr style="border-bottom:1px solid #c47d0020">'
         + '<td style="padding:7px 10px;font-weight:600">' + v.unit + '</td>'
         + '<td style="padding:7px 10px;text-align:right;font-family:monospace">' + v.sqft.toLocaleString() + '</td>'
         + '<td style="padding:7px 10px">' + availBadge(v.avail) + '</td>'
         + '<td style="padding:7px 10px;text-align:right;font-weight:600">' + (v.rent && v.rent !== 'null' ? v.rent : '—') + '</td>'
         + '<td style="padding:7px 10px;font-size:11px;color:#7d4a00">' + (v.remarks || '') + '</td>'
+        + '<td style="padding:7px 10px;text-align:center;white-space:nowrap"><button class="enq-btn" ' + enqAttrs + ' title="Enquire about ' + (v.unit || 'this unit').replace(/"/g,'&quot;') + '" style="background:#c47d00;color:#fff;border:none;border-radius:5px;padding:4px 9px;font-size:11px;font-weight:600;font-family:\'DM Sans\',sans-serif;cursor:pointer" onmouseover="this.style.background=\'#a86a00\'" onmouseout="this.style.background=\'#c47d00\'">📩</button></td>'
         + '</tr>';
     }).join('');
   } else { newSec.style.display = 'none'; }
