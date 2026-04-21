@@ -293,6 +293,23 @@ html,body{background:var(--bg);color:var(--txt);font-family:'DM Sans',sans-serif
 .g2{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px}
 .g3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;margin-bottom:14px}
 
+/* ── OVERVIEW CHART + BREAKDOWN GRID (v48.10) ── */
+.ov-chart-grid{display:grid;grid-template-columns:minmax(0,1fr) 320px;gap:14px;margin-bottom:14px}
+@media(max-width:1100px){
+  .ov-chart-grid{grid-template-columns:1fr}
+  #type-breakdown-card{max-width:none}
+}
+
+/* ── NEWS PREVIEW GRID (v48.10 — 4-card layout on Overview) ── */
+.news-preview-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px}
+.np-card{display:flex;flex-direction:column;padding:12px 13px;background:var(--srf);border:1px solid var(--bdr);border-left:3px solid var(--g2);border-radius:6px;cursor:pointer;transition:transform .12s ease,border-color .12s ease,box-shadow .12s ease;min-height:140px}
+.np-card:hover{transform:translateY(-2px);border-color:var(--g2);box-shadow:0 4px 12px rgba(26,79,156,.10)}
+.np-card-meta{display:flex;gap:6px;align-items:center;margin-bottom:8px;flex-wrap:wrap}
+.np-card-title{font-size:12.5px;line-height:1.4;font-weight:600;color:var(--txt);font-family:Georgia,'Times New Roman',serif;letter-spacing:-.005em;display:-webkit-box;-webkit-line-clamp:4;-webkit-box-orient:vertical;overflow:hidden}
+.np-card-read{margin-top:auto;padding-top:8px;font-size:10px;font-weight:700;color:var(--g1);letter-spacing:.04em;text-transform:uppercase}
+@media(max-width:1200px){.news-preview-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:600px){.news-preview-grid{grid-template-columns:1fr}}
+
 /* ── SECTION HEADER ── */
 .section-hdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;flex-wrap:wrap;gap:8px}
 .section-title{font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--mut);display:flex;align-items:center;gap:7px}
@@ -593,8 +610,11 @@ html,body{background:var(--bg);color:var(--txt);font-family:'DM Sans',sans-serif
       </div>
     </div>
 
+    <!-- Chart + By-Property-Type breakdown side-by-side grid (v48.10) -->
+    <div class="ov-chart-grid" style="display:grid;grid-template-columns:minmax(0,1fr) 320px;gap:14px;margin-bottom:14px">
+
     <!-- Chart — 2-col: filters left, chart right -->
-    <div class="card" style="margin-bottom:14px;padding:0;overflow:hidden">
+    <div class="card" style="padding:0;overflow:hidden">
       <div style="display:flex;align-items:stretch;min-height:320px">
 
         <!-- LEFT: Filters panel -->
@@ -708,7 +728,20 @@ html,body{background:var(--bg);color:var(--txt);font-family:'DM Sans',sans-serif
       </div>
     </div>
 
+    <!-- By Property Type breakdown — right rail (v48.10) -->
+    <div class="card" id="type-breakdown-card" style="padding:16px 18px;display:flex;flex-direction:column">
+      <div class="card-hdr" style="margin-bottom:10px">
+        <div class="card-title"><span class="card-title-dot"></span>By Property Type</div>
+        <div style="display:flex;gap:0;border:1px solid var(--bdr);border-radius:5px;overflow:hidden;background:var(--srf2)">
+          <button class="mbtn on" id="bd-val" onclick="setBreakdownMode('val',this)">Value</button>
+          <button class="mbtn" id="bd-cnt" onclick="setBreakdownMode('cnt',this)">Deals</button>
+        </div>
+      </div>
+      <div style="font-size:10px;color:var(--mut);margin-bottom:10px;font-family:'DM Mono',monospace">Tracks chart range above</div>
+      <div id="type-breakdown" style="flex:1"></div>
+    </div>
 
+    </div><!-- /.ov-chart-grid -->
 
     <!-- Overview Transaction Results -->
     <div class="card" id="ov-tx-card" style="margin-bottom:14px">
@@ -836,26 +869,17 @@ html,body{background:var(--bg);color:var(--txt);font-family:'DM Sans',sans-serif
       <div id="ov-tx-pagination" style="display:flex;gap:8px;align-items:center;margin-top:12px;justify-content:center"></div>
     </div>
 
-    <!-- Bottom grid: Type breakdown + News -->
-    <div class="g2">
-      <div class="card">
-        <div class="card-hdr">
-          <div class="card-title"><span class="card-title-dot"></span>By Property Type — Selected Period</div>
-          <div style="display:flex;gap:0;border:1px solid var(--bdr);border-radius:5px;overflow:hidden;background:var(--srf2)">
-            <button class="mbtn on" id="bd-val" onclick="setBreakdownMode('val',this)">Value</button>
-            <button class="mbtn" id="bd-cnt" onclick="setBreakdownMode('cnt',this)">Deals</button>
-          </div>
-        </div>
-        <div id="type-breakdown"></div>
-      </div>
-      <div class="card">
-        <div class="card-hdr">
+    <!-- Full-width Latest News (v48.10) -->
+    <div class="card">
+      <div class="card-hdr">
+        <div>
           <div class="card-title"><span class="card-title-dot"></span>Latest News</div>
-          <a href="#" onclick="document.querySelector('[data-tab=news]').click();return false"
-            style="font-size:11px;color:var(--g1);text-decoration:none;font-weight:600">View all →</a>
+          <div class="card-subtitle">PropertyAtlas editorial · Click a card to read in the Newsroom</div>
         </div>
-        <div id="news-preview"></div>
+        <a href="#" onclick="document.querySelector('[data-tab=news]').click();return false"
+          style="font-size:11px;color:var(--g1);text-decoration:none;font-weight:600">View all →</a>
       </div>
+      <div id="news-preview" class="news-preview-grid"></div>
     </div>
 
   </div>
@@ -12250,11 +12274,13 @@ function onDualSlider(side, v){
   // For annual modes re-render instantly (no fetch); for monthly, debounce load
   if(!isMonthlyMode() || chartYoY){
     renderBarChart();
+    renderTypeBreakdown();  // v48.10: keep breakdown in sync with slider window
     return;
   }
   clearTimeout(window._sliderTimer);
   window._sliderTimer = setTimeout(function(){
     loadAndRenderChart();
+    renderTypeBreakdown();  // v48.10: keep breakdown in sync with slider window
     var _sq2 = document.getElementById("ov-search").value.trim();
     if(!_sq2){
       ovFilteredCache=null;
@@ -13264,20 +13290,48 @@ function renderTypeBreakdown(){
   }).join('');
 }
 
-// NEWS PREVIEW (home panel widget — keep compact)
+// NEWS PREVIEW (home panel widget — 4-card grid, v48.10)
 function renderNewsPreview(){
-  var sorted=NEWS.slice().sort(function(a,b){return b.date.localeCompare(a.date);}).slice(0,6);
+  var sorted=NEWS.slice().sort(function(a,b){return b.date.localeCompare(a.date);}).slice(0,4);
   var borderCol={positive:'var(--g2)',negative:'var(--red)',neutral:'var(--bdr2)'};
   document.getElementById("news-preview").innerHTML=sorted.map(function(n){
     var pc=n.sentiment==="positive"?"p-pos":n.sentiment==="negative"?"p-neg":"p-neu";
     var bc=borderCol[n.sentiment]||'var(--bdr2)';
-    return'<div style="padding:9px 10px 9px 13px;border-bottom:1px solid var(--srf3);border-left:3px solid '+bc+';margin-bottom:0;transition:background .12s;cursor:default" onmouseenter="this.style.background=\'var(--glt)\'" onmouseleave="this.style.background=\'\'">'
-      +'<div style="display:flex;gap:6px;align-items:center;margin-bottom:4px;flex-wrap:wrap">'
+    var titleEsc=(n.title||'').replace(/"/g,'&quot;');
+    return'<div class="np-card" style="border-left-color:'+bc+'" onclick="gotoNewsPost('+n.id+')" title="'+titleEsc+'">'
+      +'<div class="np-card-meta">'
       +'<span class="pill '+pc+'">'+n.sentiment+'</span>'
       +'<span style="font-size:10px;color:var(--mut);font-family:\'DM Mono\',monospace">'+n.date+'</span>'
-      +'<span class="pill p-tag">'+n.tag+'</span></div>'
-      +'<div style="font-size:12px;line-height:1.45;font-weight:600;color:var(--txt)">'+n.title+'</div></div>';
+      +'</div>'
+      +'<div style="margin-bottom:6px"><span class="pill p-tag" style="font-size:9.5px">'+n.tag+'</span></div>'
+      +'<div class="np-card-title">'+n.title+'</div>'
+      +'<div class="np-card-read">Read in Newsroom →</div>'
+      +'</div>';
   }).join('');
+}
+
+// Navigate to a specific newsroom post from the Overview preview (v48.10).
+// Switches to the Newsroom tab, expands all posts (to ensure the target is visible
+// since the newsroom uses a single expand-all state), then smoothly scrolls the
+// anchored post into view.
+function gotoNewsPost(id){
+  var navBtn = document.querySelector('.navtab[data-tab="news"]');
+  if(navBtn) navBtn.click();
+  // Wait a tick for tab panel to show, then expand + scroll
+  setTimeout(function(){
+    if(typeof NR_EXPANDED !== 'undefined' && !NR_EXPANDED){
+      if(typeof nrToggleAll === 'function') nrToggleAll();
+    }
+    var anchor = document.getElementById('news-post-'+id);
+    if(anchor){
+      anchor.scrollIntoView({behavior:'smooth', block:'start'});
+      // Brief highlight flash so the user sees which one they landed on
+      var origBg = anchor.style.background;
+      anchor.style.transition = 'background .6s ease';
+      anchor.style.background = 'rgba(26,79,156,.08)';
+      setTimeout(function(){ anchor.style.background = origBg || ''; }, 1200);
+    }
+  }, 80);
 }
 
 // NEWSROOM — full tab
@@ -13398,7 +13452,7 @@ function renderNewsroom(){
   var heroImg=hero.image?'<img src="'+hero.image+'" style="width:100%;max-width:520px;border-radius:6px;margin:12px 0 4px;display:block;cursor:zoom-in" onclick="event.stopPropagation();this.style.maxWidth=this.style.maxWidth===\'100%\'?\'520px\':\'100%\'" >':'';
   var heroSrc=hero.sourceLabel?'<div class="nr-source-credit">Source: '+hero.sourceLabel+'</div>':'';
   var heroLink=hero.articleUrl?'<a href="'+hero.articleUrl+'" target="_blank" rel="noopener" onclick="event.stopPropagation()" class="nr-read-more">Read full article ↗</a>':'';
-  heroWrap.innerHTML='<div class="nr-hero '+cc+'" onclick="nrToggleAll()">'
+  heroWrap.innerHTML='<div class="nr-hero '+cc+'" id="news-post-'+hero.id+'" onclick="nrToggleAll()">'
     +'<div class="nr-hero-badge">Latest · '+hero.category+'</div>'
     +'<div class="nr-hero-title">'+hero.title+'</div>'
     +'<div class="nr-hero-meta">'
@@ -13415,7 +13469,7 @@ function renderNewsroom(){
 
   gridEl.innerHTML=rest.map(function(n){
     var cc2=nrCatClass(n.category);
-    return'<div class="nr-card '+cc2+'" onclick="nrToggleAll()">'
+    return'<div class="nr-card '+cc2+'" id="news-post-'+n.id+'" onclick="nrToggleAll()">'
       +'<div class="nr-card-meta">'
       +nrSentDot(n.sentiment)
       +'<span style="font-size:10px;color:var(--mut);font-family:\'DM Mono\',monospace">'+n.date+'</span>'
