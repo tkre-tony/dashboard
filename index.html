@@ -12622,12 +12622,12 @@ function atlasRenderSubscribeStub(panelEl, tabName) {
       'The ' + prettyName + ' module is part of the PropertyAtlas subscriber tier. ' +
       'It includes deep-dive analytics, contact directories, and asset-level data ' +
       'not available on the public tier.</p>' +
-      '<button onclick="atlasOpenLoginModal && atlasOpenLoginModal()" ' +
+      '<button onclick="if(window.atlasOpenLoginModal){window.atlasOpenLoginModal();}else{console.error(\'[ATLAS] atlasOpenLoginModal not loaded\');}" ' +
       'style="padding:11px 28px;background:#1A4F9C;color:#F7F3EB;border:none;' +
       'border-radius:6px;font-family:Georgia,serif;font-size:14px;font-weight:600;' +
       'cursor:pointer;letter-spacing:.02em">Subscribe to access</button>' +
       '<div style="margin-top:18px;font-size:12px;color:#666">' +
-      'Already a subscriber? <a href="#" onclick="atlasOpenLoginModal && atlasOpenLoginModal(); return false" ' +
+      'Already a subscriber? <a href="#" onclick="if(window.atlasOpenLoginModal){window.atlasOpenLoginModal();}return false" ' +
       'style="color:#1A4F9C;text-decoration:underline">Sign in</a></div>' +
     '</div>';
 }
@@ -20067,6 +20067,22 @@ function atlasOnbVerifyCEA() {
   atlasHideOnboardingModal();
   // Phase 2c will: tier='salesperson', is_salesperson=true, cea_reg_no=raw
 }
+
+// ─── Explicit window exports (defensive — ensures inline onclick handlers find them) ───
+window.atlasOpenLoginModal     = atlasOpenLoginModal;
+window.atlasCloseLoginModal    = atlasCloseLoginModal;
+window.atlasAuthSwitchMode     = atlasAuthSwitchMode;
+window.atlasAuthSwitchMethod   = atlasAuthSwitchMethod;
+window.atlasAuthSubmit         = atlasAuthSubmit;
+window.atlasAuthForgotPassword = atlasAuthForgotPassword;
+window.atlasAuthGoogle         = atlasAuthGoogle;
+window.atlasShowOnboardingModal = atlasShowOnboardingModal;
+window.atlasHideOnboardingModal = atlasHideOnboardingModal;
+window.atlasOnbAnswer          = atlasOnbAnswer;
+window.atlasOnbBackToQuestion  = atlasOnbBackToQuestion;
+window.atlasOnbSkip            = atlasOnbSkip;
+window.atlasOnbVerifyCEA       = atlasOnbVerifyCEA;
+console.log('[ATLAS] Phase 2b login modal loaded.');
 </script>
 
 <script>
