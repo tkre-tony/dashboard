@@ -12591,8 +12591,10 @@ function maskAddress(addr) {
   // Rule 1: unit pattern — mask the trailing numeric/alphanumeric block after the dash
   var unitRe = /(#[A-Za-z0-9]+-)([A-Za-z0-9]+)/;
   if(unitRe.test(addr)) return addr.replace(unitRe, '$1**');
-  // Rule 2: leading street number — mask one or more leading digits (optionally with letter suffix like 12A)
-  var leadRe = /^(\d+[A-Za-z]?)(\s)/;
+  // Rule 2: leading street number — mask one or more leading digits (optionally with letter
+  // suffix like 12A), including compound forms: "472,472A", "123/125", "123-125", "123, 125"
+  // (comma/slash/hyphen separators with optional whitespace around them).
+  var leadRe = /^(\d+[A-Za-z]?(?:\s*[,/-]\s*\d+[A-Za-z]?)*)(\s)/;
   if(leadRe.test(addr)) return addr.replace(leadRe, '***$2');
   return addr;
 }
