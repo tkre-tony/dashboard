@@ -12525,6 +12525,78 @@ var ATLAS_TAB_MAP = {
   "pulse":        "tab-pulse"
 };
 
+// ─── TIER ACCESS MODEL (v48.10 Phase 1 — scaffold, pre-Supabase) ─────────────
+// Three tiers: 'public' (no login), 'free' (logged in, email verified), 'subscriber' (paid).
+// Phase 1 hardcodes tier to 'public'. Phase 2 wires Supabase Auth session -> tier.
+// Flip at runtime for testing: window.currentUserTier = 'subscriber'; atlasShowTab('directory');
+window.currentUserTier = window.currentUserTier || 'public';
+
+// Gated tabs: require 'subscriber'. Non-subscribers see a subscribe-to-access stub.
+// Public tabs (overview, transactions, analytics, news) are always visible; addresses
+// within them may be masked via maskAddress() below.
+var ATLAS_GATED_TABS = {
+  "directory": true,
+  "pipeline":  true,
+  "assetdir":  true,
+  "talent":    true,
+  "forsale":   true,
+  "pulse":     true
+};
+
+// Render a subscribe-to-access stub into a panel. Called from atlasShowTab when a
+// non-subscriber requests a gated tab. The stub replaces the panel's innerHTML; the
+// original content is NOT re-fetched — instead, on tier upgrade, a full page reload
+// repopulates the panel cleanly (Phase 2 will handle this on auth state change).
+function atlasRenderSubscribeStub(panelEl, tabName) {
+  if(!panelEl) return;
+  var prettyName = ({
+    directory: 'Directory', pipeline: 'Pipeline', assetdir: 'Asset Directory',
+    talent: 'Human Capital', forsale: 'Stock', pulse: 'Market Pulse'
+  })[tabName] || tabName;
+  panelEl.innerHTML =
+    '<div style="max-width:560px;margin:80px auto;padding:40px 36px;' +
+    'background:#F7F3EB;border:1px solid rgba(26,79,156,.18);border-radius:12px;' +
+    'text-align:center;font-family:Georgia,\'Times New Roman\',serif">' +
+      '<div style="font-size:13px;letter-spacing:.14em;text-transform:uppercase;' +
+      'color:#A67C3A;font-weight:600;margin-bottom:14px">Subscriber Access</div>' +
+      '<h2 style="font-size:26px;color:#1A4F9C;margin:0 0 14px;font-weight:700">' +
+      prettyName + '</h2>' +
+      '<p style="font-size:14px;color:#333;line-height:1.6;margin:0 0 24px">' +
+      'The ' + prettyName + ' module is part of the PropertyAtlas subscriber tier. ' +
+      'It includes deep-dive analytics, contact directories, and asset-level data ' +
+      'not available on the public tier.</p>' +
+      '<button onclick="atlasOpenLoginModal && atlasOpenLoginModal()" ' +
+      'style="padding:11px 28px;background:#1A4F9C;color:#F7F3EB;border:none;' +
+      'border-radius:6px;font-family:Georgia,serif;font-size:14px;font-weight:600;' +
+      'cursor:pointer;letter-spacing:.02em">Subscribe to access</button>' +
+      '<div style="margin-top:18px;font-size:12px;color:#666">' +
+      'Already a subscriber? <a href="#" onclick="atlasOpenLoginModal && atlasOpenLoginModal(); return false" ' +
+      'style="color:#1A4F9C;text-decoration:underline">Sign in</a></div>' +
+    '</div>';
+}
+
+// Cosmetic address masking. Applied at render time in searchTransactions() and other
+// address-displaying surfaces. Raw data in memory is NEVER modified — only the
+// display string. Phase 2 replaces this with server-side masking via Supabase RLS.
+//
+// Rules (per v48.10 scope, 21 Apr 2026):
+//   1. If address contains unit pattern #XX-NN or #XX-NNNN -> mask the digits after the dash
+//      e.g. "3 Coleman Street #B1-12" -> "3 Coleman Street #B1-**"
+//   2. Otherwise, if address starts with street number(s) -> mask the leading number(s)
+//      e.g. "123 Syed Alwi Road" -> "*** Syed Alwi Road"
+//   3. If neither pattern matches, return unchanged (no-op for company names, etc).
+function maskAddress(addr) {
+  if(!addr || typeof addr !== 'string') return addr || '-';
+  if(window.currentUserTier === 'free' || window.currentUserTier === 'subscriber') return addr;
+  // Rule 1: unit pattern — mask the trailing numeric/alphanumeric block after the dash
+  var unitRe = /(#[A-Za-z0-9]+-)([A-Za-z0-9]+)/;
+  if(unitRe.test(addr)) return addr.replace(unitRe, '$1**');
+  // Rule 2: leading street number — mask one or more leading digits (optionally with letter suffix like 12A)
+  var leadRe = /^(\d+[A-Za-z]?)(\s)/;
+  if(leadRe.test(addr)) return addr.replace(leadRe, '***$2');
+  return addr;
+}
+
 function atlasShowTab(tab) {
   // 1. Update nav highlights
   document.querySelectorAll(".navtab").forEach(function(x){ x.classList.remove("on"); });
@@ -12541,6 +12613,15 @@ function atlasShowTab(tab) {
   var targetId = ATLAS_TAB_MAP[tab];
   var target = targetId ? document.getElementById(targetId) : null;
   if(target) target.style.display = "block";
+
+  // 3b. TIER GATE — if tab is gated AND user is not a subscriber, render the
+  // subscribe-to-access stub and short-circuit (skip the tab's init/load).
+  // Note: the stub replaces innerHTML; upgrading tier requires a page reload
+  // to repopulate the panel cleanly. Phase 2 hooks this to auth state change.
+  if(ATLAS_GATED_TABS[tab] && window.currentUserTier !== 'subscriber') {
+    atlasRenderSubscribeStub(target, tab);
+    return;
+  }
 
   // 4. Tab-specific init/load
   if(tab === "assetdir"){ reitSearch(0); loadARTracker(); }
@@ -13876,7 +13957,7 @@ function pnlExportCSV(){
       esc(r.sell_date),
       esc(r.buy_date),
       esc(r.project_name),
-      esc(r.address),
+      esc(maskAddress(r.address)),
       esc(r.property_type),
       esc(r.postal_district ? 'D'+r.postal_district : ''),
       esc(r.planning_region),
@@ -14019,7 +14100,7 @@ function txRender(){
         +'<td style="font-size:11px;font-weight:600;color:var(--txt);white-space:normal;line-height:1.3">'
           +'<span style="font-size:10px;color:var(--mut);margin-right:3px">'+(i+1)+'.</span>'+(r.project_name||'—')
         +'</td>'
-        +'<td style="font-size:10px;color:var(--mut)">'+(r.address||'—')+'</td>'
+        +'<td style="font-size:10px;color:var(--mut)">'+(maskAddress(r.address)||'—')+'</td>'
         +'<td style="font-size:10px;color:var(--mut);white-space:nowrap">'+tShort(r.property_type)+'</td>'
         +'<td class="mono" style="text-align:right;font-size:10px;color:var(--mut)">'+fmtDt(r.sell_date)+'</td>'
         +'<td class="mono" style="text-align:right;font-size:11px">'+fmtPrice(r.buy_price)+'</td>'
@@ -14334,7 +14415,7 @@ function pnlRenderTable(sec, rows, page){
       +'</td>'
       +'<td style="vertical-align:top;max-width:180px">'
         +'<div style="font-weight:600;font-size:12px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis" title="'+(r.project_name||'')+'">'+( r.project_name||'—')+'</div>'
-        +'<div style="font-size:10px;color:var(--mut);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-top:2px" title="'+(r.address||'')+'">'+( r.address||'—')+'</div>'
+        +'<div style="font-size:10px;color:var(--mut);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-top:2px" title="'+(maskAddress(r.address)||'')+'">'+(maskAddress(r.address)||'—')+'</div>'
       +'</td>'
       +'<td style="vertical-align:top"><span class="pill p-neu" style="font-size:9px;white-space:nowrap">'+fmtPropType(r.property_type||'—')+'</span></td>'
       // Buy→Sell: sell price (current, bold) on top; buy price (muted) below
@@ -14370,7 +14451,7 @@ function pnlRenderAbort(rows, page){
     var fmtPsf   = function(v){ return v ? 'S$'+Math.round(v).toLocaleString() : '—'; };
     return '<tr>'
       +'<td style="font-weight:600;font-size:12px;max-width:150px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis" title="'+(r.project_name||'')+'">'+( r.project_name||'—')+'</td>'
-      +'<td style="font-size:11px;color:var(--mut);max-width:150px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis" title="'+(r.address||'')+'">'+( r.address||'—')+'</td>'
+      +'<td style="font-size:11px;color:var(--mut);max-width:150px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis" title="'+(maskAddress(r.address)||'')+'">'+(maskAddress(r.address)||'—')+'</td>'
       +'<td><span class="pill p-neu" style="font-size:9px">'+fmtPropType(r.property_type||'—')+'</span></td>'
       +'<td class="mono" style="white-space:nowrap">'+r.first_date+'</td>'
       +'<td class="mono">'+fmtFull(r.first_price)+'</td>'
@@ -14654,7 +14735,7 @@ async function loadDetTx(name,page){
     var priceFmt=isAb?"<span style=\"color:#c62828;text-decoration:line-through\">"+priceStr+"</span>":priceStr;
     return "<tr"+abStyle+">"
       +"<td style='white-space:nowrap;font-family:\"DM Mono\",monospace;font-size:11px'>"+(r.sale_date||"—")+"</td>"
-      +"<td style='font-size:12px;color:var(--txt);min-width:160px'>"+(r.address||"—")+abBadge+"</td>"
+      +"<td style='font-size:12px;color:var(--txt);min-width:160px'>"+(maskAddress(r.address)||"—")+abBadge+"</td>"
       +"<td style='font-family:\"DM Mono\",monospace;font-size:12px;font-weight:600'>"+priceFmt+"</td>"
       +"<td style='font-family:\"DM Mono\",monospace;font-size:12px'>"+(r.area_sqft?parseFloat(r.area_sqft).toFixed(0):"—")+"</td>"
       +"<td style='font-family:\"DM Mono\",monospace;font-size:12px'>"+(r.unit_price_psf?"S$"+Math.round(r.unit_price_psf).toLocaleString():"—")+"</td>"
@@ -14772,7 +14853,7 @@ function renderTxTable(rows){
     var tenure = r.tenure ? r.tenure.substring(0,20) : "-";
     var region = (r.planning_region||"-").replace(" Region","");
     var proj  = r.project_name || "-";
-    var addr  = r.address || "-";
+    var addr  = maskAddress(r.address) || "-";
     var abortedBadge = isAborted ? "<span style=\"margin-left:6px;font-size:9px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;background:#c62828;color:#fff;padding:1px 5px;border-radius:3px;vertical-align:middle\">Aborted</span>" : "";
     var rowStyle = isAborted ? " style=\"background:rgba(198,40,40,.10) !important;outline:1px solid rgba(198,40,40,.15);opacity:.85\"" : "";
     var priceStyle = isAborted ? "text-align:right;color:#c62828;text-decoration:line-through" : "text-align:right";
@@ -15249,7 +15330,7 @@ function renderOvTable(rows){
       +"<td class='mono' style='white-space:nowrap;vertical-align:top;font-size:10.5px'>"+dateCell+"</td>"
       +"<td class='mono' style='font-size:10.5px;white-space:nowrap;vertical-align:top'>"+dist+"</td>"
       +"<td style='font-weight:600;font-size:10.5px;vertical-align:top;word-break:break-word'>"+(r.project_name||"-")+abortedBadge+"</td>"
-      +"<td style='font-size:12px;color:var(--txt);vertical-align:top;word-break:normal;overflow-wrap:anywhere'>"+((r.address||"-").replace(/(#\S+)/g,"<wbr>$1"))+"</td>"
+      +"<td style='font-size:12px;color:var(--txt);vertical-align:top;word-break:normal;overflow-wrap:anywhere'>"+((maskAddress(r.address)||"-").replace(/(#\S+)/g,"<wbr>$1"))+"</td>"
       +"<td style='vertical-align:top;text-align:center'><span class='pill p-tag' style='white-space:nowrap;font-size:9.5px;padding:2px 5px'>"+fmtPropType(r.property_type||"-")+"</span></td>"
       +"<td style='font-size:10px;color:var(--mut);vertical-align:top'>"+tos+(r.buy_tos ? boughtLabel+"<div style='"+mutStyle+"'>"+r.buy_tos+"</div>" : "")+"</td>"
       +"<td style='font-size:10px;color:var(--mut);vertical-align:top'>"+(r.type_of_area||"-")+"</td>"
