@@ -13283,12 +13283,31 @@ function setBreakdownMode(m,btn){
   renderTypeBreakdown();
 }
 function renderTypeBreakdown(){
+  var bdEl = document.getElementById("type-breakdown");
+  if(!bdEl) return;
+
+  // When the chart is in a project-filtered state (CHART_OVERRIDE set by a search),
+  // a property-type breakdown is misleading — a single project is typically a single
+  // type, so the panel either shows 100%-of-one-type (redundant with the chart) or
+  // stale all-market numbers that look like they belong to the filtered view.
+  // Show an honest short-circuit instead. Data correctness over visual completeness.
+  if(typeof CHART_OVERRIDE !== 'undefined' && CHART_OVERRIDE){
+    bdEl.innerHTML =
+      '<div style="padding:24px 12px;text-align:center;color:var(--mut);font-size:12px;line-height:1.5;font-family:Georgia,serif">'
+      +'<div style="font-size:22px;color:var(--bdr2);margin-bottom:10px">◎</div>'
+      +'<div style="color:var(--txt);font-weight:600;margin-bottom:6px">Filtered view</div>'
+      +'<div style="font-size:11.5px">Breakdown pauses when a specific project is selected. '
+      +'Clear the Quick Search to see the market-wide mix.</div>'
+      +'</div>';
+    return;
+  }
+
   var idxs=getIdxs();
   var arr=bdMode==='val'?VAL_ARR:CNT_ARR;
   var sums={},total=0;
   TYPES.forEach(function(t,ti){sums[t]=idxs.reduce(function(s,i){return s+(arr[i][ti]||0);},0); total+=sums[t];});
   var mx=Math.max.apply(null,TYPES.map(function(t){return sums[t];}));
-  document.getElementById("type-breakdown").innerHTML=TYPES.filter(function(t){return activeTypes[t];}).map(function(t){
+  bdEl.innerHTML=TYPES.filter(function(t){return activeTypes[t];}).map(function(t){
     var p=mx>0?(sums[t]/mx*100).toFixed(1):0;
     var pct=total>0?(sums[t]/total*100).toFixed(0)+'%':'—';
     var valStr=bdMode==='val'?fmtV(sums[t]):fmtC(sums[t])+' deals';
@@ -15131,6 +15150,7 @@ function updateChartFromSearch(rows, q){
   }
 
   renderBarChart();
+  renderTypeBreakdown();  // v48.10: switch breakdown to "filtered view" message
 }
 
 // ── OV TABLE SORT / FILTER ENGINE ─────────────────────────────────────
