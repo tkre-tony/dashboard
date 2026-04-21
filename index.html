@@ -12563,11 +12563,30 @@ var ATLAS_TAB_MAP = {
   "pulse":        "tab-pulse"
 };
 
-// ─── TIER ACCESS MODEL (v48.10 Phase 1 — scaffold, pre-Supabase) ─────────────
-// Three tiers: 'public' (no login), 'free' (logged in, email verified), 'subscriber' (paid).
-// Phase 1 hardcodes tier to 'public'. Phase 2 wires Supabase Auth session -> tier.
-// Flip at runtime for testing: window.currentUserTier = 'subscriber'; atlasShowTab('directory');
+// ─── TIER ACCESS MODEL (v48.11 Phase 2 — 4-tier, scaffold pre-Supabase Auth) ─
+// Four tiers (in ascending privilege):
+//   'public'       — no login. Public tabs only. Addresses masked.
+//   'free'         — logged in, email verified, NOT a registered real estate professional.
+//   'salesperson'  — logged in, CEA-registered (validated against cea_salespersons table).
+//                    UI label: "Real Estate Professional". Same access as free for now;
+//                    salesperson-only tools land in v48.12+.
+//   'subscriber'   — paid. Full access to all 10 tabs.
+// Phase 2a hardcodes tier to 'public' on initial load; the URL-flag dev switcher
+// (?devmode=atlas) lets us cycle tiers in staging. Phase 2c wires Supabase Auth.
+// Flip at runtime: window.currentUserTier = 'subscriber'; atlasShowTab('directory');
 window.currentUserTier = window.currentUserTier || 'public';
+
+// Canonical list of valid tier values. Used by the dev switcher and any future
+// tier-validation logic. ORDER MATTERS — this is also the cycle order for the pill.
+window.ATLAS_TIERS = ['public', 'free', 'salesperson', 'subscriber'];
+
+// Display labels for each tier (UI-facing text, separate from internal enum).
+window.ATLAS_TIER_LABELS = {
+  'public':      'Public',
+  'free':        'Free',
+  'salesperson': 'Real Estate Professional',
+  'subscriber':  'Subscriber'
+};
 
 // Gated tabs: require 'subscriber'. Non-subscribers see a subscribe-to-access stub.
 // Public tabs (overview, transactions, analytics, news) are always visible; addresses
@@ -12625,7 +12644,10 @@ function atlasRenderSubscribeStub(panelEl, tabName) {
 //   3. If neither pattern matches, return unchanged (no-op for company names, etc).
 function maskAddress(addr) {
   if(!addr || typeof addr !== 'string') return addr || '-';
-  if(window.currentUserTier === 'free' || window.currentUserTier === 'subscriber') return addr;
+  // Unmask for any logged-in tier. Public (logged-out) sees masked addresses only.
+  if(window.currentUserTier === 'free' ||
+     window.currentUserTier === 'salesperson' ||
+     window.currentUserTier === 'subscriber') return addr;
   // Rule 1: unit pattern — mask the trailing numeric/alphanumeric block after the dash
   var unitRe = /(#[A-Za-z0-9]+-)([A-Za-z0-9]+)/;
   if(unitRe.test(addr)) return addr.replace(unitRe, '$1**');
@@ -18973,6 +18995,108 @@ function sophiaRenderTxnList(data) {
     "<th style=\"text-align:right\">PSF</th>" +
     "</tr></thead><tbody>" + rows + "</tbody></table>";
 }
+
+// ─── PHASE 2a — DEV TIER SWITCHER (URL-flag gated, v48.11) ───────────────────
+// Floating pill, bottom-left, visible ONLY when URL contains ?devmode=atlas.
+// Click cycles tier in window.ATLAS_TIERS order, persists in localStorage,
+// re-fires atlasShowTab() on the active tab so the change is immediately visible.
+// Production users without the URL flag never see this.
+(function atlasDevTierSwitcher() {
+  // 1. URL-flag check. Only proceed if ?devmode=atlas is present in the query string.
+  try {
+    var params = new URLSearchParams(window.location.search || '');
+    if(params.get('devmode') !== 'atlas') return;
+  } catch(e) { return; } // ancient browsers without URLSearchParams — silently skip
+
+  var LS_KEY = 'atlas_dev_tier'; // localStorage key, scoped to the dev flag
+
+  // 2. Restore persisted tier on load (if any). Validate against canonical list to
+  // guard against stale localStorage values from earlier tier schemas.
+  try {
+    var saved = localStorage.getItem(LS_KEY);
+    if(saved && window.ATLAS_TIERS.indexOf(saved) !== -1) {
+      window.currentUserTier = saved;
+    }
+  } catch(e) {} // localStorage may be blocked (private mode, sandboxed iframe) — non-fatal
+
+  // 3. Build the floating pill DOM. Inline styles so no CSS file dependency.
+  var pill = document.createElement('div');
+  pill.id = 'atlas-dev-tier-pill';
+  pill.style.cssText = [
+    'position:fixed', 'bottom:18px', 'left:18px', 'z-index:99999',
+    'background:#1A4F9C', 'color:#FAF7F0',
+    'border:1.5px solid #A67C3A', 'border-radius:999px',
+    'padding:8px 14px 8px 12px',
+    'font-family:Georgia,"Times New Roman",serif', 'font-size:12px',
+    'font-weight:600', 'letter-spacing:.02em',
+    'box-shadow:0 4px 12px rgba(0,0,0,.18)',
+    'cursor:pointer', 'user-select:none',
+    'display:flex', 'align-items:center', 'gap:8px',
+    'transition:transform .12s ease, box-shadow .12s ease'
+  ].join(';');
+  pill.title = 'Click to cycle: Public → Free → Real Estate Professional → Subscriber';
+
+  // Hover affordance: subtle lift + bronze-shadow
+  pill.addEventListener('mouseenter', function(){
+    pill.style.transform = 'translateY(-1px)';
+    pill.style.boxShadow = '0 6px 16px rgba(166,124,58,.32)';
+  });
+  pill.addEventListener('mouseleave', function(){
+    pill.style.transform = '';
+    pill.style.boxShadow = '0 4px 12px rgba(0,0,0,.18)';
+  });
+
+  // Eyebrow + tier label render helper. Called on init and after every cycle.
+  function renderPillContent() {
+    pill.innerHTML =
+      '<span style="display:inline-block;width:8px;height:8px;border-radius:50%;' +
+        'background:#A67C3A;flex-shrink:0"></span>' +
+      '<span style="font-size:9px;letter-spacing:.16em;text-transform:uppercase;' +
+        'opacity:.72;font-weight:700">Dev tier</span>' +
+      '<span style="opacity:.4">·</span>' +
+      '<span style="font-weight:700">' +
+        (window.ATLAS_TIER_LABELS[window.currentUserTier] || window.currentUserTier) +
+      '</span>';
+  }
+  renderPillContent();
+
+  // 4. Click handler — cycle to next tier, persist, re-fire active tab.
+  pill.addEventListener('click', function() {
+    var idx = window.ATLAS_TIERS.indexOf(window.currentUserTier);
+    var next = window.ATLAS_TIERS[(idx + 1) % window.ATLAS_TIERS.length];
+    window.currentUserTier = next;
+    try { localStorage.setItem(LS_KEY, next); } catch(e) {}
+    renderPillContent();
+
+    // Re-fire current tab so masking + gates re-evaluate. Find the active tab via
+    // .navtab.on; fall back to 'overview' if none found (defensive).
+    var activeNav = document.querySelector('.navtab.on');
+    var activeTab = activeNav ? activeNav.dataset.tab : 'overview';
+    if(typeof atlasShowTab === 'function') {
+      atlasShowTab(activeTab);
+    }
+
+    // Brief flash on the pill itself so the click feels tactile.
+    pill.style.background = '#A67C3A';
+    setTimeout(function(){ pill.style.background = '#1A4F9C'; }, 140);
+  });
+
+  // 5. Mount. document.body always exists by the time this script runs (we're at end
+  // of the main script block, well after <body> opens). But guard anyway for safety.
+  function mount() {
+    if(document.body) document.body.appendChild(pill);
+  }
+  if(document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', mount);
+  } else {
+    mount();
+  }
+
+  // 6. Console breadcrumb so the dev knows the switcher is live.
+  console.log('%c[ATLAS] Dev tier switcher active. Current tier: ' + window.currentUserTier,
+              'color:#A67C3A;font-weight:bold');
+})();
+// ─── END PHASE 2a ─────────────────────────────────────────────────────────────
 
 </script>
 
