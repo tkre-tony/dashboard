@@ -19540,6 +19540,535 @@ function sophiaRenderTxnList(data) {
 })();
 </script>
 
+<!-- ── PHASE 2b — LOGIN MODAL (v48.11) ───────────────────────────────────────
+     Self-contained: CSS + DOM + JS for the auth modal. No external dependencies.
+     Phase 2c will plumb form submissions into Supabase Auth. Currently the
+     submit handlers log intent and show a "coming soon" message.
+     Activated by atlasOpenLoginModal() — already called by the v48.10 subscribe
+     stubs and the (v48.11+) "Sign in" link in the topbar.
+─────────────────────────────────────────────────────────────────────────────-->
+
+<style>
+/* ─── Login modal scaffold ─────────────────────────────────────────────── */
+#atlas-auth-overlay{
+  position:fixed; inset:0; z-index:100000;
+  background:rgba(15,28,52,.62); backdrop-filter:blur(3px);
+  display:none; align-items:center; justify-content:center;
+  padding:20px; box-sizing:border-box;
+  animation:atlasAuthFadeIn .18s ease-out;
+}
+#atlas-auth-overlay.open{display:flex;}
+@keyframes atlasAuthFadeIn{from{opacity:0}to{opacity:1}}
+
+#atlas-auth-modal{
+  width:100%; max-width:440px;
+  background:#FAF7F0; border:1.5px solid #A67C3A;
+  border-radius:14px;
+  font-family:Georgia,'Times New Roman',serif;
+  box-shadow:0 24px 64px rgba(0,0,0,.32);
+  position:relative; overflow:hidden;
+  animation:atlasAuthSlideIn .22s ease-out;
+}
+@keyframes atlasAuthSlideIn{from{transform:translateY(12px);opacity:0}to{transform:none;opacity:1}}
+
+/* Header */
+.atlas-auth-header{
+  background:#1A4F9C; color:#FAF7F0;
+  padding:20px 24px 18px;
+  border-bottom:2px solid #A67C3A;
+  position:relative;
+}
+.atlas-auth-header h2{
+  margin:0; font-size:20px; font-weight:700; letter-spacing:.005em;
+}
+.atlas-auth-header .atlas-auth-sub{
+  margin:4px 0 0; font-size:12px; opacity:.78; letter-spacing:.02em;
+}
+.atlas-auth-close{
+  position:absolute; top:14px; right:14px;
+  width:28px; height:28px; border:none; background:transparent;
+  color:#FAF7F0; opacity:.7; cursor:pointer;
+  font-size:20px; line-height:1; padding:0;
+  border-radius:6px; transition:opacity .12s, background .12s;
+  display:flex; align-items:center; justify-content:center;
+}
+.atlas-auth-close:hover{opacity:1; background:rgba(255,255,255,.12);}
+
+/* Mode tabs (Sign in vs Create account) */
+.atlas-auth-tabs{
+  display:flex; background:#F0EAD8; border-bottom:1px solid rgba(166,124,58,.22);
+}
+.atlas-auth-tab{
+  flex:1; padding:13px 0; background:none; border:none;
+  font-family:Georgia,serif; font-size:13px; font-weight:600;
+  color:#666; cursor:pointer; transition:color .12s, background .12s;
+  border-bottom:2.5px solid transparent;
+  letter-spacing:.04em; text-transform:uppercase;
+}
+.atlas-auth-tab:hover{color:#1A4F9C;}
+.atlas-auth-tab.on{color:#1A4F9C; background:#FAF7F0; border-bottom-color:#A67C3A;}
+
+/* Body */
+.atlas-auth-body{padding:22px 24px 24px;}
+
+/* Method toggle (Password vs Magic Link) */
+.atlas-auth-method-toggle{
+  display:flex; gap:0; margin:0 0 18px;
+  border:1px solid rgba(26,79,156,.22); border-radius:7px; overflow:hidden;
+  background:#fff;
+}
+.atlas-auth-method{
+  flex:1; padding:9px 0; background:none; border:none;
+  font-family:Georgia,serif; font-size:12px; font-weight:600;
+  color:#666; cursor:pointer; transition:all .12s;
+}
+.atlas-auth-method:hover{color:#1A4F9C; background:#F7F3EB;}
+.atlas-auth-method.on{background:#1A4F9C; color:#FAF7F0;}
+
+/* Form fields */
+.atlas-auth-field{margin:0 0 14px;}
+.atlas-auth-field label{
+  display:block; font-size:11px; font-weight:600;
+  color:#1A4F9C; letter-spacing:.08em; text-transform:uppercase;
+  margin:0 0 6px;
+}
+.atlas-auth-field input{
+  width:100%; box-sizing:border-box;
+  padding:10px 12px; font-family:Georgia,serif; font-size:14px;
+  background:#fff; color:#222;
+  border:1.5px solid rgba(26,79,156,.22); border-radius:6px;
+  transition:border-color .12s, box-shadow .12s;
+}
+.atlas-auth-field input:focus{
+  outline:none; border-color:#1A4F9C;
+  box-shadow:0 0 0 3px rgba(26,79,156,.14);
+}
+
+/* Forgot password link (only shown in password mode) */
+.atlas-auth-forgot{
+  text-align:right; margin:-8px 0 14px;
+}
+.atlas-auth-forgot a{
+  font-size:11px; color:#A67C3A; text-decoration:none;
+  font-style:italic;
+}
+.atlas-auth-forgot a:hover{text-decoration:underline; color:#1A4F9C;}
+
+/* Submit button */
+.atlas-auth-submit{
+  width:100%; padding:12px 0; margin:6px 0 0;
+  background:#1A4F9C; color:#FAF7F0;
+  border:none; border-radius:7px;
+  font-family:Georgia,serif; font-size:14px; font-weight:700;
+  letter-spacing:.04em; cursor:pointer;
+  transition:background .12s, transform .08s;
+}
+.atlas-auth-submit:hover{background:#143F7C;}
+.atlas-auth-submit:active{transform:scale(.99);}
+.atlas-auth-submit:disabled{background:#888; cursor:not-allowed; transform:none;}
+
+/* OAuth divider + button */
+.atlas-auth-divider{
+  display:flex; align-items:center; gap:10px;
+  margin:18px 0 14px; color:#999; font-size:11px;
+  letter-spacing:.16em; text-transform:uppercase;
+}
+.atlas-auth-divider::before,
+.atlas-auth-divider::after{
+  content:''; flex:1; height:1px; background:rgba(0,0,0,.12);
+}
+.atlas-auth-google{
+  width:100%; padding:10px 0;
+  background:#fff; color:#444;
+  border:1.5px solid rgba(0,0,0,.18); border-radius:7px;
+  font-family:Georgia,serif; font-size:13px; font-weight:600;
+  cursor:not-allowed; opacity:.65;
+  display:flex; align-items:center; justify-content:center; gap:8px;
+}
+.atlas-auth-google .google-soon{
+  font-size:10px; background:rgba(0,0,0,.06); padding:2px 7px;
+  border-radius:10px; letter-spacing:.04em; color:#666;
+}
+
+/* Status / message area (info, success, error) */
+.atlas-auth-msg{
+  margin:14px 0 0; padding:10px 12px;
+  border-radius:6px; font-size:12.5px; line-height:1.5;
+  display:none;
+}
+.atlas-auth-msg.show{display:block;}
+.atlas-auth-msg.info{background:#EAF1FA; color:#1A4F9C; border:1px solid rgba(26,79,156,.2);}
+.atlas-auth-msg.success{background:#E8F5E8; color:#2D6A2D; border:1px solid rgba(45,106,45,.25);}
+.atlas-auth-msg.error{background:#FAEBEB; color:#A03030; border:1px solid rgba(160,48,48,.25);}
+
+/* Footer */
+.atlas-auth-footer{
+  text-align:center; margin:14px 0 0;
+  font-size:11.5px; color:#666; line-height:1.5;
+}
+.atlas-auth-footer a{color:#1A4F9C; text-decoration:underline;}
+
+/* ─── Onboarding modal (post-signup salesperson question) ────────────── */
+#atlas-onboarding-overlay{
+  position:fixed; inset:0; z-index:100001;
+  background:rgba(15,28,52,.62); backdrop-filter:blur(3px);
+  display:none; align-items:center; justify-content:center;
+  padding:20px; box-sizing:border-box;
+}
+#atlas-onboarding-overlay.open{display:flex;}
+#atlas-onboarding-modal{
+  width:100%; max-width:480px;
+  background:#FAF7F0; border:1.5px solid #A67C3A; border-radius:14px;
+  font-family:Georgia,serif; box-shadow:0 24px 64px rgba(0,0,0,.32);
+  overflow:hidden;
+}
+.atlas-onb-header{
+  background:#1A4F9C; color:#FAF7F0; padding:20px 24px;
+  border-bottom:2px solid #A67C3A;
+}
+.atlas-onb-header h2{margin:0; font-size:20px; font-weight:700;}
+.atlas-onb-header .eyebrow{
+  font-size:11px; letter-spacing:.16em; text-transform:uppercase;
+  color:#E5C28A; margin-bottom:6px; font-weight:600;
+}
+.atlas-onb-body{padding:24px;}
+.atlas-onb-body p{margin:0 0 18px; font-size:14px; line-height:1.6; color:#333;}
+.atlas-onb-yesno{display:flex; gap:10px; margin:18px 0 8px;}
+.atlas-onb-btn{
+  flex:1; padding:14px 0; font-family:Georgia,serif;
+  font-size:14px; font-weight:700; letter-spacing:.04em;
+  border:1.5px solid #1A4F9C; border-radius:8px; cursor:pointer;
+  transition:all .12s;
+}
+.atlas-onb-btn.no{background:#FAF7F0; color:#1A4F9C;}
+.atlas-onb-btn.no:hover{background:#F0EAD8;}
+.atlas-onb-btn.yes{background:#1A4F9C; color:#FAF7F0;}
+.atlas-onb-btn.yes:hover{background:#143F7C;}
+.atlas-onb-skip{
+  text-align:center; margin:16px 0 0; font-size:12px;
+}
+.atlas-onb-skip a{color:#888; text-decoration:underline; cursor:pointer;}
+.atlas-onb-skip a:hover{color:#1A4F9C;}
+
+/* CEA reg-no entry sub-step (revealed after Yes) */
+#atlas-onb-cea-step{display:none;}
+#atlas-onb-cea-step.show{display:block;}
+.atlas-onb-cea-input{
+  width:100%; box-sizing:border-box; padding:11px 14px;
+  font-family:'DM Mono',monospace; font-size:15px; letter-spacing:.08em;
+  background:#fff; color:#1A4F9C; text-align:center; text-transform:uppercase;
+  border:1.5px solid #A67C3A; border-radius:7px; margin:6px 0 0;
+}
+.atlas-onb-cea-input:focus{outline:none; box-shadow:0 0 0 3px rgba(166,124,58,.22);}
+.atlas-onb-cea-hint{
+  font-size:11px; color:#888; text-align:center;
+  margin:6px 0 14px; font-style:italic;
+}
+.atlas-onb-cea-fallback{
+  margin:14px 0 0; padding:12px; background:#F7F3EB; border-radius:6px;
+  font-size:12px; line-height:1.55; color:#555; display:none;
+}
+.atlas-onb-cea-fallback.show{display:block;}
+.atlas-onb-cea-fallback a{color:#1A4F9C;}
+</style>
+
+<div id="atlas-auth-overlay" role="dialog" aria-modal="true" aria-labelledby="atlas-auth-title">
+  <div id="atlas-auth-modal">
+    <div class="atlas-auth-header">
+      <button class="atlas-auth-close" onclick="atlasCloseLoginModal()" aria-label="Close">&times;</button>
+      <h2 id="atlas-auth-title">Welcome to PropertyAtlas</h2>
+      <p class="atlas-auth-sub">Singapore commercial &amp; industrial market intelligence</p>
+    </div>
+    <div class="atlas-auth-tabs">
+      <button class="atlas-auth-tab on" data-mode="signin" onclick="atlasAuthSwitchMode('signin')">Sign in</button>
+      <button class="atlas-auth-tab" data-mode="signup" onclick="atlasAuthSwitchMode('signup')">Create account</button>
+    </div>
+    <div class="atlas-auth-body">
+      <div class="atlas-auth-method-toggle">
+        <button class="atlas-auth-method on" data-method="password" onclick="atlasAuthSwitchMethod('password')">Password</button>
+        <button class="atlas-auth-method" data-method="magic" onclick="atlasAuthSwitchMethod('magic')">Magic link</button>
+      </div>
+      <form id="atlas-auth-form" onsubmit="atlasAuthSubmit(event); return false;">
+        <div class="atlas-auth-field">
+          <label for="atlas-auth-email">Email</label>
+          <input type="email" id="atlas-auth-email" required autocomplete="email" placeholder="you@example.com">
+        </div>
+        <div class="atlas-auth-field" id="atlas-auth-password-field">
+          <label for="atlas-auth-password">Password</label>
+          <input type="password" id="atlas-auth-password" autocomplete="current-password" placeholder="••••••••">
+        </div>
+        <div class="atlas-auth-forgot" id="atlas-auth-forgot-row">
+          <a href="#" onclick="atlasAuthForgotPassword(); return false;">Forgot password?</a>
+        </div>
+        <button type="submit" class="atlas-auth-submit" id="atlas-auth-submit-btn">Sign in</button>
+        <div class="atlas-auth-msg" id="atlas-auth-msg"></div>
+      </form>
+      <div class="atlas-auth-divider">or continue with</div>
+      <button class="atlas-auth-google" onclick="atlasAuthGoogle()" disabled>
+        <span>Sign in with Google</span>
+        <span class="google-soon">Coming soon</span>
+      </button>
+      <div class="atlas-auth-footer">
+        By continuing, you agree to PropertyAtlas's terms of use. Your email is used only for authentication and editorial updates.
+      </div>
+    </div>
+  </div>
+</div>
+
+<div id="atlas-onboarding-overlay" role="dialog" aria-modal="true" aria-labelledby="atlas-onb-title">
+  <div id="atlas-onboarding-modal">
+    <div class="atlas-onb-header">
+      <div class="eyebrow">One quick question</div>
+      <h2 id="atlas-onb-title">Welcome to PropertyAtlas</h2>
+    </div>
+    <div class="atlas-onb-body">
+      <div id="atlas-onb-question-step">
+        <p>Are you a CEA-registered <strong>Real Estate Professional</strong> in Singapore?</p>
+        <p style="font-size:12.5px; color:#666;">If yes, we'll share agent-specific tools as we build them.</p>
+        <div class="atlas-onb-yesno">
+          <button class="atlas-onb-btn no" onclick="atlasOnbAnswer(false)">No, I'm not</button>
+          <button class="atlas-onb-btn yes" onclick="atlasOnbAnswer(true)">Yes, I am</button>
+        </div>
+        <div class="atlas-onb-skip">
+          <a onclick="atlasOnbSkip()">Skip for now &mdash; you can update this later</a>
+        </div>
+      </div>
+      <div id="atlas-onb-cea-step">
+        <p>Please enter your <strong>CEA Registration Number</strong>:</p>
+        <input type="text" class="atlas-onb-cea-input" id="atlas-onb-cea-input"
+               placeholder="R012345A" maxlength="8" autocomplete="off">
+        <div class="atlas-onb-cea-hint">Format: R followed by 6 digits and a letter</div>
+        <div class="atlas-onb-yesno">
+          <button class="atlas-onb-btn no" onclick="atlasOnbBackToQuestion()">Back</button>
+          <button class="atlas-onb-btn yes" onclick="atlasOnbVerifyCEA()">Verify</button>
+        </div>
+        <div class="atlas-onb-cea-fallback" id="atlas-onb-cea-fallback">
+          We couldn't find this registration number in the current CEA register
+          (which we sync daily from data.gov.sg). If you've registered recently
+          and aren't yet listed, please email
+          <a href="mailto:hello@propertyatlas.sg?subject=CEA%20verification">hello@propertyatlas.sg</a>
+          and we'll verify manually within one business day.
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+// ─── Phase 2b login modal logic ──────────────────────────────────────────────
+// State variables for the modal. Mode: 'signin' | 'signup'. Method: 'password' | 'magic'.
+window.atlasAuthState = window.atlasAuthState || { mode: 'signin', method: 'password' };
+
+function atlasOpenLoginModal() {
+  var overlay = document.getElementById('atlas-auth-overlay');
+  if(!overlay) return;
+  // Reset to defaults each open: sign-in mode, password method, blank fields, no msg
+  atlasAuthSwitchMode('signin', true);
+  atlasAuthSwitchMethod('password', true);
+  var emailEl = document.getElementById('atlas-auth-email');
+  var passEl  = document.getElementById('atlas-auth-password');
+  if(emailEl) emailEl.value = '';
+  if(passEl)  passEl.value  = '';
+  atlasAuthShowMsg('', '');
+  overlay.classList.add('open');
+  // Focus the email field for keyboard users
+  setTimeout(function(){ if(emailEl) emailEl.focus(); }, 80);
+}
+
+function atlasCloseLoginModal() {
+  var overlay = document.getElementById('atlas-auth-overlay');
+  if(overlay) overlay.classList.remove('open');
+}
+
+// Click outside the modal closes it; clicking inside does not
+document.addEventListener('click', function(e) {
+  var overlay = document.getElementById('atlas-auth-overlay');
+  if(overlay && e.target === overlay) atlasCloseLoginModal();
+  var onbOverlay = document.getElementById('atlas-onboarding-overlay');
+  if(onbOverlay && e.target === onbOverlay) {
+    // Onboarding overlay click-outside is intentionally NO-OP — user must answer or skip
+  }
+});
+
+// Escape key closes the login modal (but not the onboarding modal — answer required)
+document.addEventListener('keydown', function(e) {
+  if(e.key === 'Escape') {
+    var overlay = document.getElementById('atlas-auth-overlay');
+    if(overlay && overlay.classList.contains('open')) atlasCloseLoginModal();
+  }
+});
+
+function atlasAuthSwitchMode(mode, silent) {
+  // mode: 'signin' or 'signup'
+  window.atlasAuthState.mode = mode;
+  document.querySelectorAll('.atlas-auth-tab').forEach(function(t){
+    t.classList.toggle('on', t.dataset.mode === mode);
+  });
+  // Update submit button label + autocomplete hint on password field
+  var btn = document.getElementById('atlas-auth-submit-btn');
+  var pwEl = document.getElementById('atlas-auth-password');
+  var forgotRow = document.getElementById('atlas-auth-forgot-row');
+  if(mode === 'signup') {
+    if(btn)  btn.textContent = (window.atlasAuthState.method === 'magic') ? 'Send sign-up link' : 'Create account';
+    if(pwEl) pwEl.setAttribute('autocomplete', 'new-password');
+    // Hide forgot-password on signup (irrelevant)
+    if(forgotRow) forgotRow.style.display = 'none';
+  } else {
+    if(btn)  btn.textContent = (window.atlasAuthState.method === 'magic') ? 'Send sign-in link' : 'Sign in';
+    if(pwEl) pwEl.setAttribute('autocomplete', 'current-password');
+    if(forgotRow) forgotRow.style.display = (window.atlasAuthState.method === 'password') ? 'block' : 'none';
+  }
+  if(!silent) atlasAuthShowMsg('', '');
+}
+
+function atlasAuthSwitchMethod(method, silent) {
+  // method: 'password' or 'magic'
+  window.atlasAuthState.method = method;
+  document.querySelectorAll('.atlas-auth-method').forEach(function(t){
+    t.classList.toggle('on', t.dataset.method === method);
+  });
+  var pwField = document.getElementById('atlas-auth-password-field');
+  var pwEl    = document.getElementById('atlas-auth-password');
+  var forgotRow = document.getElementById('atlas-auth-forgot-row');
+  if(method === 'magic') {
+    if(pwField) pwField.style.display = 'none';
+    if(pwEl)    pwEl.removeAttribute('required');
+    if(forgotRow) forgotRow.style.display = 'none';
+  } else {
+    if(pwField) pwField.style.display = 'block';
+    if(pwEl)    pwEl.setAttribute('required', 'required');
+    if(forgotRow) forgotRow.style.display = (window.atlasAuthState.mode === 'signin') ? 'block' : 'none';
+  }
+  // Refresh submit button label given new method
+  atlasAuthSwitchMode(window.atlasAuthState.mode, true);
+  if(!silent) atlasAuthShowMsg('', '');
+}
+
+function atlasAuthShowMsg(type, text) {
+  var msg = document.getElementById('atlas-auth-msg');
+  if(!msg) return;
+  msg.className = 'atlas-auth-msg' + (type ? ' show ' + type : '');
+  msg.textContent = text || '';
+}
+
+function atlasAuthSubmit(e) {
+  if(e && e.preventDefault) e.preventDefault();
+  var emailEl = document.getElementById('atlas-auth-email');
+  var passEl  = document.getElementById('atlas-auth-password');
+  var email = (emailEl && emailEl.value || '').trim();
+  var password = (passEl && passEl.value || '');
+  var mode = window.atlasAuthState.mode;
+  var method = window.atlasAuthState.method;
+
+  if(!email) { atlasAuthShowMsg('error', 'Please enter your email.'); return; }
+  if(method === 'password' && !password) { atlasAuthShowMsg('error', 'Please enter your password.'); return; }
+
+  // PHASE 2c will replace this stub with real Supabase calls.
+  // For Phase 2b, show a clear "coming soon" message and log intent to console
+  // so we can verify the modal is wired up correctly end-to-end.
+  console.log('[ATLAS Auth] Intent:', { mode: mode, method: method, email: email, hasPassword: !!password });
+  atlasAuthShowMsg('info',
+    'Authentication backend (Supabase) will be wired in Phase 2c. ' +
+    'Form submission detected — see console for the captured intent.');
+}
+
+function atlasAuthForgotPassword() {
+  // Phase 2c will call supabase.auth.resetPasswordForEmail()
+  var emailEl = document.getElementById('atlas-auth-email');
+  var email = (emailEl && emailEl.value || '').trim();
+  if(!email) {
+    atlasAuthShowMsg('info', 'Enter your email above first, then click "Forgot password?" again.');
+    if(emailEl) emailEl.focus();
+    return;
+  }
+  console.log('[ATLAS Auth] Password reset requested for:', email);
+  atlasAuthShowMsg('info',
+    'Password reset email will be wired in Phase 2c. ' +
+    'For now, we logged your reset request to console.');
+}
+
+function atlasAuthGoogle() {
+  // Stub — Phase 2d activates when Google Cloud Console OAuth is configured
+  atlasAuthShowMsg('info', 'Google sign-in arrives in v48.12 once OAuth is configured.');
+}
+
+// ─── Onboarding modal logic (salesperson question, post-first-login) ────────
+// Phase 2c will trigger this on first-login via supabase.auth.onAuthStateChange.
+// For Phase 2b, expose atlasShowOnboardingModal() callable from console for testing.
+function atlasShowOnboardingModal() {
+  var overlay = document.getElementById('atlas-onboarding-overlay');
+  if(!overlay) return;
+  // Reset to question step
+  document.getElementById('atlas-onb-question-step').style.display = 'block';
+  document.getElementById('atlas-onb-cea-step').classList.remove('show');
+  document.getElementById('atlas-onb-cea-fallback').classList.remove('show');
+  var ceaInput = document.getElementById('atlas-onb-cea-input');
+  if(ceaInput) ceaInput.value = '';
+  overlay.classList.add('open');
+}
+
+function atlasHideOnboardingModal() {
+  var overlay = document.getElementById('atlas-onboarding-overlay');
+  if(overlay) overlay.classList.remove('open');
+}
+
+function atlasOnbAnswer(isProfessional) {
+  if(isProfessional) {
+    // Reveal CEA reg no input
+    document.getElementById('atlas-onb-question-step').style.display = 'none';
+    document.getElementById('atlas-onb-cea-step').classList.add('show');
+    setTimeout(function(){
+      var inp = document.getElementById('atlas-onb-cea-input');
+      if(inp) inp.focus();
+    }, 60);
+  } else {
+    // Save tier=free, close modal
+    console.log('[ATLAS Onboarding] User declared: not a real estate professional → tier=free');
+    // Phase 2c: write profiles.user_tier='free', profiles.is_salesperson=false
+    atlasHideOnboardingModal();
+  }
+}
+
+function atlasOnbBackToQuestion() {
+  document.getElementById('atlas-onb-cea-step').classList.remove('show');
+  document.getElementById('atlas-onb-cea-fallback').classList.remove('show');
+  document.getElementById('atlas-onb-question-step').style.display = 'block';
+}
+
+function atlasOnbSkip() {
+  console.log('[ATLAS Onboarding] User skipped — tier defaults to free, can update later');
+  // Phase 2c: write profiles.user_tier='free', profiles.salesperson_asked=false (so we can re-prompt)
+  atlasHideOnboardingModal();
+}
+
+function atlasOnbVerifyCEA() {
+  var inp = document.getElementById('atlas-onb-cea-input');
+  var raw = (inp && inp.value || '').trim().toUpperCase();
+  // Validate format: letter + 6 digits + letter (e.g. R012345A)
+  var ceaRe = /^[A-Z]\d{6}[A-Z]$/;
+  var fallback = document.getElementById('atlas-onb-cea-fallback');
+  if(!ceaRe.test(raw)) {
+    fallback.classList.remove('show');
+    if(inp) {
+      inp.style.borderColor = '#A03030';
+      inp.style.boxShadow = '0 0 0 3px rgba(160,48,48,.15)';
+      setTimeout(function(){
+        inp.style.borderColor = '';
+        inp.style.boxShadow = '';
+      }, 1400);
+    }
+    return;
+  }
+  // Phase 2c: query supabase.from('cea_salespersons').select().eq('reg_num', raw)
+  // For Phase 2b stub: log intent and show success placeholder
+  console.log('[ATLAS Onboarding] CEA verification stub — would query Supabase for:', raw);
+  // Stub: pretend it found the registration
+  fallback.classList.remove('show');
+  atlasHideOnboardingModal();
+  // Phase 2c will: tier='salesperson', is_salesperson=true, cea_reg_no=raw
+}
+</script>
+
 <script>
 // ═══════════════════════════════════════════════════
 // VACANCY INVENTORY DATA
