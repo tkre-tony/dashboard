@@ -129,6 +129,18 @@ html,body{background:var(--bg);color:var(--txt);font-family:'DM Sans',sans-serif
 .mbtn:hover{background:var(--glt);color:var(--g1)}
 .mbtn.on{background:var(--g1);color:#fff;font-weight:600}
 
+/* ── CHART TOOLBAR (v48.10 — replaces 220px left rail) ── */
+.chart-toolbar{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:12px;padding:8px 10px;background:var(--srf2);border:1px solid var(--bdr);border-radius:7px}
+.chart-toolbar-group{display:flex;align-items:center;gap:6px}
+.chart-toolbar-lbl{font-size:9.5px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--mut);white-space:nowrap;margin-right:2px}
+.chart-toolbar-divider{width:1px;align-self:stretch;background:var(--bdr);margin:0 2px}
+.chart-toolbar-chk{display:flex;align-items:center;gap:5px;font-size:11.5px;color:var(--txt);cursor:pointer;padding:2px 4px;white-space:nowrap;font-family:'DM Sans',sans-serif;font-weight:500}
+.chart-toolbar-chk:hover{color:var(--g1)}
+@media(max-width:900px){
+  .chart-toolbar{gap:8px;padding:7px 8px}
+  .chart-toolbar-divider{display:none}
+}
+
 /* ── DUAL RANGE SLIDER THUMBS ── */
 #slider-left::-webkit-slider-thumb,#slider-right::-webkit-slider-thumb{
   -webkit-appearance:none;appearance:none;width:16px;height:16px;
@@ -613,115 +625,115 @@ html,body{background:var(--bg);color:var(--txt);font-family:'DM Sans',sans-serif
     <!-- Chart + By-Property-Type breakdown side-by-side grid (v48.10) -->
     <div class="ov-chart-grid" style="display:grid;grid-template-columns:minmax(0,1fr) 320px;gap:14px;margin-bottom:14px">
 
-    <!-- Chart — 2-col: filters left, chart right -->
+    <!-- Chart — single column, horizontal toolbar above (v48.10) -->
     <div class="card" style="padding:0;overflow:hidden">
-      <div style="display:flex;align-items:stretch;min-height:320px">
+      <div style="display:flex;flex-direction:column;min-height:320px;padding:14px 20px">
 
-        <!-- LEFT: Filters panel -->
-        <div style="width:220px;flex-shrink:0;padding:16px 18px;border-right:1px solid var(--bdr);background:var(--srf2);display:flex;flex-direction:column;gap:18px">
-
-          <!-- Title -->
-          <div>
-            <div class="card-title" style="margin-bottom:4px"><span class="card-title-dot"></span><span id="chart-title">Transaction Volume</span></div>
-            <div class="card-subtitle">C&amp;I · URA REALIS · S$ Millions</div>
-          </div>
-
-          <!-- Display mode -->
-          <div>
-            <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:var(--mut);margin-bottom:7px">Display</div>
-            <div class="mode-row" style="flex-direction:column;gap:4px;border:none;background:none;padding:0">
-              <button class="mbtn on" id="m-val" style="width:100%;justify-content:center;border-radius:5px;border:1px solid var(--bdr)">S$ Value</button>
-              <button class="mbtn" id="m-cnt" style="width:100%;justify-content:center;border-radius:5px;border:1px solid var(--bdr)">Deal Count</button>
-              <div style="display:flex;gap:4px">
-                <button class="mbtn" id="m-yoy" style="flex:1;justify-content:center;border-radius:5px;border:1px solid var(--bdr);font-size:10.5px;padding:5px 2px" title="Year-on-Year">YoY</button>
-                <button class="mbtn" id="m-qoq" style="flex:1;justify-content:center;border-radius:5px;border:1px solid var(--bdr);font-size:10.5px;padding:5px 2px" title="Quarter-on-Quarter">QoQ</button>
-                <button class="mbtn" id="m-mom" style="flex:1;justify-content:center;border-radius:5px;border:1px solid var(--bdr);font-size:10.5px;padding:5px 2px" title="Month-on-Month">MoM</button>
-              </div>
-            </div>
-          </div>
-
-          <!-- Period -->
-          <div>
-            <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:var(--mut);margin-bottom:7px">Period</div>
-            <div class="range-sel" id="range-btns" style="display:flex;flex-direction:column;border-radius:6px;overflow:hidden;width:100%">
-              <button class="rbtn on" data-range="L12" style="border-radius:0;border-bottom:1px solid var(--bdr)">Last 12 Months</button>
-              <button class="rbtn" data-range="L18" style="border-radius:0;border-bottom:1px solid var(--bdr)">Last 18 Months</button>
-              <button class="rbtn" data-range="5Y" style="border-radius:0;border-bottom:1px solid var(--bdr)">5 Years</button>
-              <button class="rbtn" data-range="10Y" style="border-radius:0;border-bottom:1px solid var(--bdr)">10 Years</button>
-              <button class="rbtn" data-range="ALL" style="border-radius:0">All Time</button>
-            </div>
-          </div>
-
-          <!-- Overlay -->
-          <div>
-            <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:var(--mut);margin-bottom:7px">Overlay</div>
-            <label style="display:flex;align-items:center;gap:7px;font-size:12px;color:var(--txt);cursor:pointer;padding:4px 0">
-              <input type="checkbox" id="ov-avgpsf" checked style="accent-color:var(--g1);cursor:pointer;width:13px;height:13px">
-              Avg PSF
-            </label>
-            <label style="display:flex;align-items:center;gap:7px;font-size:12px;color:var(--txt);cursor:pointer;padding:4px 0">
-              <input type="checkbox" id="ov-sti" style="accent-color:#f59e0b;cursor:pointer;width:13px;height:13px">
-              STI Index
-            </label>
-          </div>
-
+        <!-- Title + subtitle -->
+        <div style="margin-bottom:10px">
+          <div class="card-title" style="margin-bottom:2px"><span class="card-title-dot"></span><span id="chart-title">Transaction Volume</span></div>
+          <div class="card-subtitle">C&amp;I · URA REALIS · S$ Millions</div>
         </div>
 
-        <!-- RIGHT: Chart + legend + slider -->
-        <div style="flex:1;padding:16px 20px;display:flex;flex-direction:column;min-width:0">
-          <div style="display:flex;align-items:center;gap:7px;flex-wrap:wrap;margin-bottom:6px;padding-bottom:6px;border-bottom:1px solid var(--srf3)">
-            <span style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:var(--mut);white-space:nowrap;min-width:90px">Property Type</span>
-            <div id="type-chips" style="display:flex;flex-wrap:wrap;gap:5px;flex:1;align-items:center"></div>
-          </div>
-          <div style="display:flex;align-items:center;gap:7px;flex-wrap:wrap;margin-bottom:8px;padding-bottom:8px;border-bottom:1px solid var(--srf3)">
-            <span style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:var(--mut);white-space:nowrap;min-width:90px">Tenure</span>
-            <div id="tenure-chips" style="display:flex;flex-wrap:wrap;gap:5px;flex:1;align-items:center"></div>
-          </div>
-          <div style="display:flex;align-items:center;justify-content:flex-end;gap:6px;margin-bottom:6px">
-            <div style="display:flex;background:var(--srf2);border:1px solid var(--bdr);border-radius:6px;overflow:hidden">
-              <button id="btn-inv-excl" onclick="setInvSalesView('exclude')" title="Exclude investment sales" style="display:flex;align-items:center;gap:5px;padding:4px 10px;border:none;border-right:1px solid var(--bdr);background:var(--g1);color:#fff;font-size:10px;font-weight:600;cursor:pointer;font-family:'DM Sans',sans-serif;letter-spacing:.02em">
-                Ex. Inv. Sales
-              </button>
-              <button id="btn-inv-incl" onclick="setInvSalesView('all')" title="Include investment sales" style="display:flex;align-items:center;gap:5px;padding:4px 10px;border:none;border-right:1px solid var(--bdr);background:transparent;color:var(--mut);font-size:10px;font-weight:600;cursor:pointer;font-family:'DM Sans',sans-serif;letter-spacing:.02em">
-                All Txns
-              </button>
-              <button id="btn-inv-only" onclick="setInvSalesView('only')" title="Show only investment sales" style="display:flex;align-items:center;gap:5px;padding:4px 10px;border:none;background:transparent;color:var(--mut);font-size:10px;font-weight:600;cursor:pointer;font-family:'DM Sans',sans-serif;letter-spacing:.02em">
-                Inv. Only
-              </button>
+        <!-- Horizontal toolbar: Display · Period · Overlay -->
+        <div class="chart-toolbar">
+          <div class="chart-toolbar-group">
+            <span class="chart-toolbar-lbl">Display</span>
+            <div class="mode-row">
+              <button class="mbtn on" id="m-val" title="Show transaction value in S$">$ Value</button>
+              <button class="mbtn" id="m-cnt" title="Show deal count"># Deals</button>
             </div>
-            <div style="display:flex;background:var(--srf2);border:1px solid var(--bdr);border-radius:6px;overflow:hidden">
-              <button id="btn-stacked" onclick="setStackView(true)" title="Stacked bars" style="display:flex;align-items:center;gap:5px;padding:4px 10px;border:none;border-right:1px solid var(--bdr);background:var(--g1);color:#fff;font-size:10px;font-weight:600;cursor:pointer;font-family:'DM Sans',sans-serif;letter-spacing:.02em">
-                <svg width="13" height="11" viewBox="0 0 13 11" fill="none"><rect x="1" y="5" width="11" height="3" rx="1" fill="currentColor" opacity=".55"/><rect x="1" y="1" width="11" height="3" rx="1" fill="currentColor"/></svg>Stacked
-              </button>
-              <button id="btn-sideby" onclick="setStackView(false)" title="Side-by-side bars" style="display:flex;align-items:center;gap:5px;padding:4px 10px;border:none;background:transparent;color:var(--mut);font-size:10px;font-weight:600;cursor:pointer;font-family:'DM Sans',sans-serif;letter-spacing:.02em">
-                <svg width="13" height="11" viewBox="0 0 13 11" fill="none"><rect x="1" y="1" width="3" height="9" rx="1" fill="currentColor"/><rect x="5" y="3" width="3" height="7" rx="1" fill="currentColor" opacity=".7"/><rect x="9" y="5" width="3" height="5" rx="1" fill="currentColor" opacity=".45"/></svg>Side by Side
-              </button>
+            <div class="mode-row">
+              <button class="mbtn" id="m-yoy" title="Year-on-Year">YoY</button>
+              <button class="mbtn" id="m-qoq" title="Quarter-on-Quarter">QoQ</button>
+              <button class="mbtn" id="m-mom" title="Month-on-Month">MoM</button>
             </div>
           </div>
-          <div id="bar-wrap" style="flex:1;width:100%;min-height:260px"></div>
-          <div style="display:flex;flex-wrap:wrap;gap:10px;margin-top:10px;padding-top:10px;border-top:1px solid var(--srf3)" id="legend"></div>
-          <!-- Dual-handle range slider — always visible, spans full history 1995–2026 -->
-          <div id="slider-row" style="margin-top:10px;padding-top:10px;border-top:1px solid var(--srf3)">
-            <div style="display:flex;align-items:center;gap:8px;margin-bottom:6px">
-              <span style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:var(--mut);white-space:nowrap">Range</span>
-              <span id="slider-start-lbl" style="font-size:10px;color:var(--g1);font-family:'DM Mono',monospace;font-weight:600;white-space:nowrap">Mar 2025</span>
-              <span style="font-size:10px;color:var(--mut)">–</span>
-              <span id="slider-end-lbl" style="font-size:10px;color:var(--g1);font-family:'DM Mono',monospace;font-weight:600;white-space:nowrap">Apr 2026</span>
+          <div class="chart-toolbar-divider"></div>
+          <div class="chart-toolbar-group">
+            <span class="chart-toolbar-lbl">Period</span>
+            <div class="range-sel" id="range-btns">
+              <button class="rbtn on" data-range="L12" title="Last 12 months">12M</button>
+              <button class="rbtn" data-range="L18" title="Last 18 months">18M</button>
+              <button class="rbtn" data-range="5Y" title="Last 5 years">5Y</button>
+              <button class="rbtn" data-range="10Y" title="Last 10 years">10Y</button>
+              <button class="rbtn" data-range="ALL" title="All time (1995-present)">All</button>
             </div>
-            <div style="position:relative;height:24px;display:flex;align-items:center">
-              <div style="position:absolute;left:0;right:0;height:4px;background:var(--srf2);border-radius:2px"></div>
-              <div id="slider-track-fill" style="position:absolute;height:4px;background:var(--g1);border-radius:2px;left:0%;right:0%"></div>
-              <input type="range" id="slider-left" min="0" max="375" value="362"
-                style="position:absolute;width:100%;height:4px;appearance:none;-webkit-appearance:none;background:transparent;pointer-events:none;z-index:3;margin:0"
-                oninput="onDualSlider('left',this.value)">
-              <input type="range" id="slider-right" min="0" max="375" value="375"
-                style="position:absolute;width:100%;height:4px;appearance:none;-webkit-appearance:none;background:transparent;pointer-events:none;z-index:4;margin:0"
-                oninput="onDualSlider('right',this.value)">
-            </div>
-            <div style="display:flex;justify-content:space-between;margin-top:4px">
-              <span style="font-size:9px;color:var(--mut2)">Jan 1995</span>
-              <span style="font-size:9px;color:var(--mut2)">Apr 2026</span>
-            </div>
+          </div>
+          <div class="chart-toolbar-divider"></div>
+          <div class="chart-toolbar-group">
+            <span class="chart-toolbar-lbl">Overlay</span>
+            <label class="chart-toolbar-chk">
+              <input type="checkbox" id="ov-avgpsf" checked style="accent-color:var(--g1);cursor:pointer;width:13px;height:13px">
+              PSF
+            </label>
+            <label class="chart-toolbar-chk">
+              <input type="checkbox" id="ov-sti" style="accent-color:#f59e0b;cursor:pointer;width:13px;height:13px">
+              STI
+            </label>
+          </div>
+        </div>
+
+        <!-- Property Type chips -->
+        <div style="display:flex;align-items:center;gap:7px;flex-wrap:wrap;margin-bottom:6px;padding-bottom:6px;border-bottom:1px solid var(--srf3)">
+          <span style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:var(--mut);white-space:nowrap;min-width:90px">Property Type</span>
+          <div id="type-chips" style="display:flex;flex-wrap:wrap;gap:5px;flex:1;align-items:center"></div>
+        </div>
+        <!-- Tenure chips -->
+        <div style="display:flex;align-items:center;gap:7px;flex-wrap:wrap;margin-bottom:8px;padding-bottom:8px;border-bottom:1px solid var(--srf3)">
+          <span style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:var(--mut);white-space:nowrap;min-width:90px">Tenure</span>
+          <div id="tenure-chips" style="display:flex;flex-wrap:wrap;gap:5px;flex:1;align-items:center"></div>
+        </div>
+
+        <!-- Inv-sales filter + Stacked/Side toggles -->
+        <div style="display:flex;align-items:center;justify-content:flex-end;gap:6px;margin-bottom:6px">
+          <div style="display:flex;background:var(--srf2);border:1px solid var(--bdr);border-radius:6px;overflow:hidden">
+            <button id="btn-inv-excl" onclick="setInvSalesView('exclude')" title="Exclude investment sales" style="display:flex;align-items:center;gap:5px;padding:4px 10px;border:none;border-right:1px solid var(--bdr);background:var(--g1);color:#fff;font-size:10px;font-weight:600;cursor:pointer;font-family:'DM Sans',sans-serif;letter-spacing:.02em">
+              Ex. Inv. Sales
+            </button>
+            <button id="btn-inv-incl" onclick="setInvSalesView('all')" title="Include investment sales" style="display:flex;align-items:center;gap:5px;padding:4px 10px;border:none;border-right:1px solid var(--bdr);background:transparent;color:var(--mut);font-size:10px;font-weight:600;cursor:pointer;font-family:'DM Sans',sans-serif;letter-spacing:.02em">
+              All Txns
+            </button>
+            <button id="btn-inv-only" onclick="setInvSalesView('only')" title="Show only investment sales" style="display:flex;align-items:center;gap:5px;padding:4px 10px;border:none;background:transparent;color:var(--mut);font-size:10px;font-weight:600;cursor:pointer;font-family:'DM Sans',sans-serif;letter-spacing:.02em">
+              Inv. Only
+            </button>
+          </div>
+          <div style="display:flex;background:var(--srf2);border:1px solid var(--bdr);border-radius:6px;overflow:hidden">
+            <button id="btn-stacked" onclick="setStackView(true)" title="Stacked bars" style="display:flex;align-items:center;gap:5px;padding:4px 10px;border:none;border-right:1px solid var(--bdr);background:var(--g1);color:#fff;font-size:10px;font-weight:600;cursor:pointer;font-family:'DM Sans',sans-serif;letter-spacing:.02em">
+              <svg width="13" height="11" viewBox="0 0 13 11" fill="none"><rect x="1" y="5" width="11" height="3" rx="1" fill="currentColor" opacity=".55"/><rect x="1" y="1" width="11" height="3" rx="1" fill="currentColor"/></svg>Stacked
+            </button>
+            <button id="btn-sideby" onclick="setStackView(false)" title="Side-by-side bars" style="display:flex;align-items:center;gap:5px;padding:4px 10px;border:none;background:transparent;color:var(--mut);font-size:10px;font-weight:600;cursor:pointer;font-family:'DM Sans',sans-serif;letter-spacing:.02em">
+              <svg width="13" height="11" viewBox="0 0 13 11" fill="none"><rect x="1" y="1" width="3" height="9" rx="1" fill="currentColor"/><rect x="5" y="3" width="3" height="7" rx="1" fill="currentColor" opacity=".7"/><rect x="9" y="5" width="3" height="5" rx="1" fill="currentColor" opacity=".45"/></svg>Side by Side
+            </button>
+          </div>
+        </div>
+
+        <!-- Chart bars -->
+        <div id="bar-wrap" style="flex:1;width:100%;min-height:260px"></div>
+        <!-- Legend -->
+        <div style="display:flex;flex-wrap:wrap;gap:10px;margin-top:10px;padding-top:10px;border-top:1px solid var(--srf3)" id="legend"></div>
+
+        <!-- Dual-handle range slider — always visible, spans full history 1995–2026 -->
+        <div id="slider-row" style="margin-top:10px;padding-top:10px;border-top:1px solid var(--srf3)">
+          <div style="display:flex;align-items:center;gap:8px;margin-bottom:6px">
+            <span style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:var(--mut);white-space:nowrap">Range</span>
+            <span id="slider-start-lbl" style="font-size:10px;color:var(--g1);font-family:'DM Mono',monospace;font-weight:600;white-space:nowrap">Mar 2025</span>
+            <span style="font-size:10px;color:var(--mut)">–</span>
+            <span id="slider-end-lbl" style="font-size:10px;color:var(--g1);font-family:'DM Mono',monospace;font-weight:600;white-space:nowrap">Apr 2026</span>
+          </div>
+          <div style="position:relative;height:24px;display:flex;align-items:center">
+            <div style="position:absolute;left:0;right:0;height:4px;background:var(--srf2);border-radius:2px"></div>
+            <div id="slider-track-fill" style="position:absolute;height:4px;background:var(--g1);border-radius:2px;left:0%;right:0%"></div>
+            <input type="range" id="slider-left" min="0" max="375" value="362"
+              style="position:absolute;width:100%;height:4px;appearance:none;-webkit-appearance:none;background:transparent;pointer-events:none;z-index:3;margin:0"
+              oninput="onDualSlider('left',this.value)">
+            <input type="range" id="slider-right" min="0" max="375" value="375"
+              style="position:absolute;width:100%;height:4px;appearance:none;-webkit-appearance:none;background:transparent;pointer-events:none;z-index:4;margin:0"
+              oninput="onDualSlider('right',this.value)">
+          </div>
+          <div style="display:flex;justify-content:space-between;margin-top:4px">
+            <span style="font-size:9px;color:var(--mut2)">Jan 1995</span>
+            <span style="font-size:9px;color:var(--mut2)">Apr 2026</span>
           </div>
         </div>
 
