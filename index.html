@@ -17443,9 +17443,10 @@ function reitRenderTable(data){
   data.forEach(function(p){
     var rc=ENTITY_COLORS[p.entity]||'#1a4f9c';
     var isDivested=p.status&&p.status.indexOf('DIVESTED')>=0;
-    var isPending=(p.status&&p.status.indexOf('DISPOSAL')>=0)||(p.notes&&p.notes.indexOf('PENDING DISPOSAL')>=0);
-    var isNewAcq=p.notes&&p.notes.indexOf('NEW ACQUISITION')>=0;
-    var rowBg=isDivested?'background:rgba(127,29,29,.06)':isPending?'background:rgba(120,53,15,.06)':isNewAcq?'background:rgba(20,83,45,.06)':'';
+    var isPending=(p.status&&(p.status.indexOf('DISPOSAL')>=0||p.status.indexOf('PENDING DIVESTMENT')>=0))||(p.notes&&(p.notes.indexOf('PENDING DISPOSAL')>=0||p.notes.indexOf('PENDING DIVESTMENT')>=0));
+    var isPendingAcq=(p.status&&p.status.indexOf('PENDING ACQUISITION')>=0)||(p.notes&&p.notes.indexOf('PENDING ACQUISITION')>=0);
+    var isNewAcq=!isPendingAcq&&p.notes&&p.notes.indexOf('NEW ACQUISITION')>=0;
+    var rowBg=isDivested?'background:rgba(127,29,29,.06)':isPendingAcq?'background:rgba(166,124,58,.07)':isPending?'background:rgba(120,53,15,.06)':isNewAcq?'background:rgba(20,83,45,.06)':'';
 
     // YoY (hidden by default, available via column toggle)
     var yoyBits=[];
@@ -17457,7 +17458,8 @@ function reitRenderTable(data){
     // Status badge
     var statusCell='';
     if(isDivested){statusCell='<span style="background:#7f1d1d20;color:#7f1d1d;padding:2px 5px;border-radius:3px;font-size:9px;font-weight:700">DIVESTED</span>';}
-    else if(isPending){statusCell='<span style="background:#78350f20;color:#78350f;padding:2px 5px;border-radius:3px;font-size:9px;font-weight:700">PENDING</span>';}
+    else if(isPendingAcq){statusCell='<span style="background:#A67C3A22;color:#A67C3A;padding:2px 5px;border-radius:3px;font-size:9px;font-weight:700">PEND. ACQ</span>';}
+    else if(isPending){statusCell='<span style="background:#78350f20;color:#78350f;padding:2px 5px;border-radius:3px;font-size:9px;font-weight:700">PEND. DIV</span>';}
     else if(isNewAcq){statusCell='<span style="background:#14532d20;color:#14532d;padding:2px 5px;border-radius:3px;font-size:9px;font-weight:700">NEW</span>';}
     else if(p.status){statusCell='<span style="color:var(--mut);font-size:10px">'+p.status.split(' — ')[0].substring(0,28)+'</span>';}
 
@@ -17693,10 +17695,11 @@ function reitSearch(page){
       : (p.area ? p.area+', '+p.country : p.country);
     var entBadge = '<span style="font-size:9px;font-weight:700;background:rgba(255,255,255,.22);color:#fff;border-radius:3px;padding:1px 5px;letter-spacing:.04em">'+(isDev?'DEV':'REIT')+'</span>';
     // Status detection for callout banners
-    var isDivested = p.status && p.status.indexOf('DIVESTED') >= 0;
-    var isPending  = (p.status && p.status.indexOf('DISPOSAL') >= 0) || (p.notes && p.notes.indexOf('PENDING DISPOSAL') >= 0);
-    var isNewAcq   = p.notes && (p.notes.indexOf('NEW ACQUISITION') >= 0 || p.notes.indexOf('Acquired 2025') >= 0);
-    var statusBadge = (isDev && p.status && !isDivested && !isPending) ? '<span style="padding:2px 7px;border-radius:4px;font-size:9px;font-weight:600;background:#fff3cd;color:#7d5200;border:1px solid #f0c040">'+p.status.split(' — ').pop()+'</span>' : '';
+    var isDivested    = p.status && p.status.indexOf('DIVESTED') >= 0;
+    var isPending     = (p.status && (p.status.indexOf('DISPOSAL') >= 0 || p.status.indexOf('PENDING DIVESTMENT') >= 0)) || (p.notes && (p.notes.indexOf('PENDING DISPOSAL') >= 0 || p.notes.indexOf('PENDING DIVESTMENT') >= 0));
+    var isPendingAcq  = (p.status && p.status.indexOf('PENDING ACQUISITION') >= 0) || (p.notes && p.notes.indexOf('PENDING ACQUISITION') >= 0);
+    var isNewAcq      = !isPendingAcq && p.notes && (p.notes.indexOf('NEW ACQUISITION') >= 0 || p.notes.indexOf('Acquired 2025') >= 0);
+    var statusBadge = (isDev && p.status && !isDivested && !isPending && !isPendingAcq) ? '<span style="padding:2px 7px;border-radius:4px;font-size:9px;font-weight:600;background:#fff3cd;color:#7d5200;border:1px solid #f0c040">'+p.status.split(' — ').pop()+'</span>' : '';
     var countryFlag = p.country!=='Singapore' ? ' \uD83C\uDF10 '+p.country : '';
     // YoY delta badges
     var yoyVal = yoyBadge(p.val, p.prev_val, false);
@@ -17705,19 +17708,31 @@ function reitSearch(page){
       ? '<span style="font-size:8px;font-weight:700;color:#7c3aed;margin-left:2px">AEI</span>' : '';
     // Header NEW badge
     var newTag = isNewAcq
-      ? '<span style="font-size:8px;font-weight:700;background:#16a34a20;color:#16a34a;border:1px solid #16a34a40;border-radius:3px;padding:1px 5px;margin-left:4px">NEW</span>' : '';
+      ? '<span style="font-size:8px;font-weight:700;background:#16a34a20;color:#16a34a;border:1px solid #16a34a40;border-radius:3px;padding:1px 5px;margin-left:4px">NEW</span>'
+      : isPendingAcq
+        ? '<span style="font-size:8px;font-weight:700;background:#A67C3A22;color:#A67C3A;border:1px solid #A67C3A55;border-radius:3px;padding:1px 5px;margin-left:4px">PEND. ACQ</span>'
+        : isPending
+          ? '<span style="font-size:8px;font-weight:700;background:#78350f22;color:#78350f;border:1px solid #78350f55;border-radius:3px;padding:1px 5px;margin-left:4px">PEND. DIV</span>'
+          : '';
     // Full-width callout banner at top of card
     var calloutBanner = '';
+    var priceMatch, priceStr;
     if(isDivested){
-      var priceMatch = (p.status||''). match(/S\$[\d,.]+[MBK]?/);
-      var priceStr = priceMatch ? ' · '+priceMatch[0] : '';
+      priceMatch = (p.status||'').match(/S\$[\d,.]+[MBK]?/);
+      priceStr = priceMatch ? ' · '+priceMatch[0] : '';
       calloutBanner = '<div style="background:#7f1d1d;color:#fca5a5;font-size:10px;font-weight:700;text-align:center;padding:5px 10px;letter-spacing:.06em;text-transform:uppercase">⚓ Divested'+priceStr+'</div>';
+    } else if(isPendingAcq){
+      priceMatch = (p.status||'').match(/S\$[\d,.]+[MBK]?/);
+      priceStr = priceMatch ? ' · '+priceMatch[0] : '';
+      calloutBanner = '<div style="background:#A67C3A;color:#fef3c7;font-size:10px;font-weight:700;text-align:center;padding:5px 10px;letter-spacing:.06em;text-transform:uppercase">◎ Pending Acquisition'+priceStr+'</div>';
     } else if(isPending){
-      calloutBanner = '<div style="background:#78350f;color:#fcd34d;font-size:10px;font-weight:700;text-align:center;padding:5px 10px;letter-spacing:.06em;text-transform:uppercase">⏳ Pending Disposal</div>';
+      priceMatch = (p.status||'').match(/S\$[\d,.]+[MBK]?/);
+      priceStr = priceMatch ? ' · '+priceMatch[0] : '';
+      calloutBanner = '<div style="background:#78350f;color:#fcd34d;font-size:10px;font-weight:700;text-align:center;padding:5px 10px;letter-spacing:.06em;text-transform:uppercase">⏳ Pending Divestment'+priceStr+'</div>';
     } else if(isNewAcq){
       calloutBanner = '<div style="background:#14532d;color:#86efac;font-size:10px;font-weight:700;text-align:center;padding:5px 10px;letter-spacing:.06em;text-transform:uppercase">✴ Newly Acquired FY2025</div>';
     }
-    var borderCol = isDivested ? '#7f1d1d' : isPending ? '#78350f' : isNewAcq ? '#14532d' : 'var(--bdr)';
+    var borderCol = isDivested ? '#7f1d1d' : isPendingAcq ? '#A67C3A' : isPending ? '#78350f' : isNewAcq ? '#14532d' : 'var(--bdr)';
     html += '<div data-reitkey="'+assetKey+'" style="background:var(--srf);border:1px solid '+borderCol+';border-radius:11px;padding:0;cursor:pointer;transition:box-shadow .15s,transform .15s;overflow:hidden;display:flex;flex-direction:column">'
       +calloutBanner
       +'<div style="background:'+rc+';padding:10px 14px 9px;display:flex;justify-content:space-between;align-items:flex-start">'
