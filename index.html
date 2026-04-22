@@ -507,6 +507,9 @@ html,body{background:var(--bg);color:var(--txt);font-family:'DM Sans',sans-serif
 .talent-sum-lbl{font-size:9px;color:var(--mut2);text-transform:uppercase;letter-spacing:.06em;margin-top:3px}
 .talent-sum-sub{font-size:10px;color:var(--mut);margin-top:2px}
 </style>
+<!-- v48.12 Phase 2c step 1: Supabase JS SDK for Auth flows. Loads globally as `supabase`. -->
+<!-- Existing SB_URL/SB_KEY REST pattern (transactions, one-sophia) continues unchanged. -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
 <body>
 <div class="topbar">
@@ -14889,6 +14892,51 @@ document.addEventListener("keydown",function(e){ if(e.key==="Enter"&&document.ac
 // ─── SUPABASE ─────────────────────────────────────────────────────────
 var SB_URL = "https://xywgocvjuygudzrduvwr.supabase.co";
 var SB_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inh5d2dvY3ZqdXlndWR6cmR1dndyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzI5MTE5OTgsImV4cCI6MjA4ODQ4Nzk5OH0.lGQ0utJV1E00ug-Sf0ZXh9lEYfhGHSONQpPkBblDLTM";
+
+// ─── SUPABASE AUTH CLIENT (v48.12 Phase 2c step 1) ────────────────────
+// Separate credential path for Auth SDK usage (signIn, signUp, onAuthStateChange).
+// Intentionally distinct from SB_KEY (which stays JWT-anon for existing REST fetches).
+// Both are safe to expose — publishable key has no elevated privileges vs RLS.
+var SB_AUTH_KEY = "sb_publishable__dbG46EcFPVozKOHIfJkLg_V4_1rgim";
+window.atlasSb = null;  // populated by atlasInitSupabase() on first access
+
+function atlasInitSupabase(){
+  if(window.atlasSb) return window.atlasSb;  // idempotent — return cached client
+  if(typeof supabase === "undefined" || !supabase.createClient){
+    console.warn("[ATLAS] Supabase SDK not loaded — auth features disabled.");
+    return null;
+  }
+  try {
+    window.atlasSb = supabase.createClient(SB_URL, SB_AUTH_KEY, {
+      auth: {
+        persistSession: true,           // keep session across page reloads
+        autoRefreshToken: true,         // refresh JWT before expiry
+        detectSessionInUrl: true        // handle magic-link / OAuth return URLs
+      }
+    });
+    return window.atlasSb;
+  } catch(e){
+    console.error("[ATLAS] Supabase client init failed:", e);
+    return null;
+  }
+}
+
+// Initialise eagerly on script parse so downstream auth code can assume readiness.
+atlasInitSupabase();
+
+// Dev-mode sanity check — only fires with ?devmode=atlas in URL. Silent otherwise.
+(function atlasSupabaseDevCheck(){
+  try {
+    var params = new URLSearchParams(window.location.search || '');
+    if(params.get('devmode') !== 'atlas') return;
+  } catch(e){ return; }
+  if(window.atlasSb){
+    console.log("[ATLAS] Supabase client ready · project xywgocvjuygudzrduvwr");
+  } else {
+    console.warn("[ATLAS] Supabase client NOT ready — check SDK CDN load + key.");
+  }
+})();
+
 var TX_PAGE = 0;
 var TX_PAGE_SIZE = 50;
 var TX_TOTAL = 0;
