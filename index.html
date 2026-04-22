@@ -545,6 +545,11 @@ html,body{background:var(--bg);color:var(--txt);font-family:'DM Sans',sans-serif
     </div>
   </div>
   <div class="topbar-r">
+    <button id="atlas-signout-btn" onclick="atlasSignOut()"
+            style="display:none;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.14);color:rgba(255,255,255,.75);padding:5px 11px;border-radius:5px;font-size:11px;font-family:inherit;cursor:pointer;letter-spacing:.02em;transition:background .15s,color .15s"
+            onmouseover="this.style.background='rgba(255,255,255,.12)';this.style.color='#fff'"
+            onmouseout="this.style.background='rgba(255,255,255,.06)';this.style.color='rgba(255,255,255,.75)'"
+            title="Sign out"><span id="atlas-signout-label">Sign out</span></button>
     <div class="topbar-dot"></div>
     <div class="topbar-badge">Apr 2026</div>
   </div>
@@ -20009,7 +20014,34 @@ function atlasAuthShowMsg(type, text) {
   msg.textContent = text || '';
 }
 
-function atlasAuthSubmit(e) {
+// ─── Auth helpers (v48.12 Phase 2c step 2) ──────────────────────────────────
+// Return the URL Supabase should bounce the user back to after email link click.
+// Uses current origin+pathname so magic/signup/reset flows return here, regardless
+// of which deploy target is being used (prod PropertyAtlas.sg, staging GH Pages,
+// localhost). The origin must be whitelisted in Supabase → Auth → URL Configuration.
+function atlasAuthRedirectUrl() {
+  try {
+    return window.location.origin + window.location.pathname;
+  } catch(e) {
+    return 'https://propertyatlas.sg/';
+  }
+}
+
+// Toggle submit button disabled state + label during async calls.
+function atlasAuthSetBusy(busy, labelOverride) {
+  var btn = document.getElementById('atlas-auth-submit-btn');
+  if(!btn) return;
+  if(busy) {
+    btn.dataset.origLabel = btn.dataset.origLabel || btn.textContent;
+    btn.disabled = true;
+    btn.textContent = labelOverride || 'Please wait…';
+  } else {
+    btn.disabled = false;
+    btn.textContent = btn.dataset.origLabel || 'Submit';
+  }
+}
+
+async function atlasAuthSubmit(e) {
   if(e && e.preventDefault) e.preventDefault();
   var emailEl = document.getElementById('atlas-auth-email');
   var passEl  = document.getElementById('atlas-auth-password');
@@ -20021,17 +20053,66 @@ function atlasAuthSubmit(e) {
   if(!email) { atlasAuthShowMsg('error', 'Please enter your email.'); return; }
   if(method === 'password' && !password) { atlasAuthShowMsg('error', 'Please enter your password.'); return; }
 
-  // PHASE 2c will replace this stub with real Supabase calls.
-  // For Phase 2b, show a clear "coming soon" message and log intent to console
-  // so we can verify the modal is wired up correctly end-to-end.
-  console.log('[ATLAS Auth] Intent:', { mode: mode, method: method, email: email, hasPassword: !!password });
-  atlasAuthShowMsg('info',
-    'Authentication backend (Supabase) will be wired in Phase 2c. ' +
-    'Form submission detected — see console for the captured intent.');
+  // Guard: SDK must be initialised. atlasInitSupabase() is idempotent.
+  var sb = window.atlasSb || atlasInitSupabase();
+  if(!sb) {
+    atlasAuthShowMsg('error', 'Authentication service not available. Please refresh the page and try again.');
+    return;
+  }
+
+  atlasAuthSetBusy(true);
+  atlasAuthShowMsg('info', 'Please wait…');
+
+  try {
+    var result;
+    if(method === 'password' && mode === 'signin') {
+      // Sign in with email + password
+      result = await sb.auth.signInWithPassword({ email: email, password: password });
+      if(result.error) throw result.error;
+      atlasAuthShowMsg('success', 'Signed in. Refreshing…');
+      console.log('[ATLAS Auth] Sign-in success:', result.data.user && result.data.user.email);
+      // Step 3 adds onAuthStateChange handling; for step 2 we reload so the
+      // page re-inits with the new session and the user sees their new tier.
+      setTimeout(function(){ window.location.reload(); }, 600);
+      return;
+    }
+    if(method === 'password' && mode === 'signup') {
+      // Sign up with email + password. Supabase sends a confirmation email.
+      result = await sb.auth.signUp({
+        email: email,
+        password: password,
+        options: { emailRedirectTo: atlasAuthRedirectUrl() }
+      });
+      if(result.error) throw result.error;
+      atlasAuthShowMsg('success', 'Account created. Check your email for a confirmation link before signing in.');
+      console.log('[ATLAS Auth] Sign-up success — confirmation email sent to:', email);
+      atlasAuthSetBusy(false);
+      return;
+    }
+    if(method === 'magic') {
+      // Magic link works for both signin and signup modes. shouldCreateUser=true (default)
+      // means a new profile is created if the email doesn't exist yet. That's fine because
+      // the handle_new_user trigger creates a free-tier profile either way.
+      result = await sb.auth.signInWithOtp({
+        email: email,
+        options: { emailRedirectTo: atlasAuthRedirectUrl() }
+      });
+      if(result.error) throw result.error;
+      atlasAuthShowMsg('success', 'Check your email for a sign-in link.');
+      console.log('[ATLAS Auth] Magic link sent to:', email);
+      atlasAuthSetBusy(false);
+      return;
+    }
+    // Unrecognised combination — shouldn't happen with the current UI.
+    throw new Error('Unsupported mode/method combination: ' + mode + '/' + method);
+  } catch(err) {
+    console.error('[ATLAS Auth] Submit failed:', err);
+    atlasAuthShowMsg('error', (err && err.message) || 'Something went wrong. Please try again.');
+    atlasAuthSetBusy(false);
+  }
 }
 
-function atlasAuthForgotPassword() {
-  // Phase 2c will call supabase.auth.resetPasswordForEmail()
+async function atlasAuthForgotPassword() {
   var emailEl = document.getElementById('atlas-auth-email');
   var email = (emailEl && emailEl.value || '').trim();
   if(!email) {
@@ -20039,16 +20120,178 @@ function atlasAuthForgotPassword() {
     if(emailEl) emailEl.focus();
     return;
   }
-  console.log('[ATLAS Auth] Password reset requested for:', email);
-  atlasAuthShowMsg('info',
-    'Password reset email will be wired in Phase 2c. ' +
-    'For now, we logged your reset request to console.');
+  var sb = window.atlasSb || atlasInitSupabase();
+  if(!sb) {
+    atlasAuthShowMsg('error', 'Authentication service not available. Please refresh the page and try again.');
+    return;
+  }
+  atlasAuthShowMsg('info', 'Please wait…');
+  try {
+    var result = await sb.auth.resetPasswordForEmail(email, { redirectTo: atlasAuthRedirectUrl() });
+    if(result.error) throw result.error;
+    atlasAuthShowMsg('success', 'Password reset email sent. Check your inbox.');
+    console.log('[ATLAS Auth] Password reset email sent to:', email);
+  } catch(err) {
+    console.error('[ATLAS Auth] Password reset failed:', err);
+    atlasAuthShowMsg('error', (err && err.message) || 'Could not send reset email. Please try again.');
+  }
 }
 
 function atlasAuthGoogle() {
   // Stub — Phase 2d activates when Google Cloud Console OAuth is configured
   atlasAuthShowMsg('info', 'Google sign-in arrives in v48.12 once OAuth is configured.');
 }
+
+// ─── AUTH STATE LISTENER (v48.12 Phase 2c step 3) ───────────────────────────
+// Keeps window.currentUserTier + window.atlasCurrentUser in sync with Supabase
+// session state. Fires on INITIAL_SESSION (page load), SIGNED_IN (post-submit
+// or magic-link return), SIGNED_OUT (sign-out click). Re-fires atlasShowTab so
+// tier-gated content re-renders immediately. Devmode tier switcher overrides
+// this when ?devmode=atlas is present — signed-in devs can still force-tier.
+
+window.atlasCurrentUser = null;  // populated on SIGNED_IN, cleared on SIGNED_OUT
+
+// Fetch the caller's own profile row. RLS allows SELECT only for auth.uid() = id.
+// Retries once with 500ms delay because the handle_new_user trigger is async and
+// a freshly-signed-up user may hit this before the row lands.
+async function atlasFetchOwnProfile() {
+  var sb = window.atlasSb;
+  if(!sb) return null;
+  try {
+    var r1 = await sb.from('profiles').select('*').maybeSingle();
+    if(r1.data) return r1.data;
+    // Retry once for post-signup race with handle_new_user trigger
+    await new Promise(function(res){ setTimeout(res, 500); });
+    var r2 = await sb.from('profiles').select('*').maybeSingle();
+    if(r2.data) return r2.data;
+    console.warn('[ATLAS Auth] Profile row not found after retry; defaulting to free tier.');
+    return null;
+  } catch(e) {
+    console.error('[ATLAS Auth] Profile fetch failed:', e);
+    return null;
+  }
+}
+
+// True when dev tier switcher is actively overriding. In that case the listener
+// should NOT touch window.currentUserTier (the dev set it explicitly for a reason).
+function atlasDevTierOverrideActive() {
+  try {
+    var params = new URLSearchParams(window.location.search || '');
+    if(params.get('devmode') !== 'atlas') return false;
+    var saved = localStorage.getItem('atlas_dev_tier');
+    return !!(saved && window.ATLAS_TIERS && window.ATLAS_TIERS.indexOf(saved) !== -1);
+  } catch(e) { return false; }
+}
+
+// Get the currently-active tab id so we can re-fire atlasShowTab() after tier change.
+function atlasCurrentTabId() {
+  try {
+    var onBtn = document.querySelector('.tab.on, .tab[aria-selected="true"]');
+    if(onBtn && onBtn.dataset && onBtn.dataset.tab) return onBtn.dataset.tab;
+  } catch(e) {}
+  return 'overview'; // safe default
+}
+
+async function atlasHandleSignedIn(session) {
+  if(!session || !session.user) return;
+  var profile = await atlasFetchOwnProfile();
+  var tier = (profile && profile.user_tier) || 'free';
+  window.atlasCurrentUser = {
+    id: session.user.id,
+    email: session.user.email,
+    tier: tier,
+    is_salesperson: !!(profile && profile.is_salesperson),
+    cea_reg_no: profile && profile.cea_reg_no || null,
+    salesperson_asked: !!(profile && profile.salesperson_asked),
+    organisation_id: profile && profile.organisation_id || null,
+    org_role: profile && profile.org_role || null
+  };
+  // Don't clobber a dev-set tier override
+  if(!atlasDevTierOverrideActive()) {
+    window.currentUserTier = tier;
+  }
+  // Close login modal if it's open (user just successfully signed in)
+  try {
+    var overlay = document.getElementById('atlas-auth-overlay');
+    if(overlay && overlay.classList.contains('open')) overlay.classList.remove('open');
+  } catch(e) {}
+  // Step 6: reveal sign-out button with user's email as title
+  try {
+    var btn = document.getElementById('atlas-signout-btn');
+    if(btn) {
+      btn.style.display = 'inline-block';
+      btn.title = 'Sign out · ' + session.user.email;
+    }
+  } catch(e) {}
+  // Re-render the active tab with the new tier
+  try { if(typeof atlasShowTab === 'function') atlasShowTab(atlasCurrentTabId()); } catch(e) {}
+  console.log('[ATLAS Auth] Signed in:', session.user.email, '· tier:', tier);
+  // Step 4 hook: prompt for salesperson onboarding on first login
+  if(profile && profile.salesperson_asked === false) {
+    try { if(typeof atlasShowOnboardingModal === 'function') atlasShowOnboardingModal(); } catch(e) {}
+  }
+}
+
+function atlasHandleSignedOut() {
+  window.atlasCurrentUser = null;
+  if(!atlasDevTierOverrideActive()) {
+    window.currentUserTier = 'public';
+  }
+  // Step 6: hide sign-out button
+  try {
+    var btn = document.getElementById('atlas-signout-btn');
+    if(btn) btn.style.display = 'none';
+  } catch(e) {}
+  try { if(typeof atlasShowTab === 'function') atlasShowTab(atlasCurrentTabId()); } catch(e) {}
+  console.log('[ATLAS Auth] Signed out — tier reset to public.');
+}
+
+// ─── SIGN-OUT ACTION (v48.12 Phase 2c step 6) ──────────────────────────────
+// Clicked from the topbar sign-out button. Calls sb.auth.signOut which fires
+// SIGNED_OUT event → listener handles tier reset + UI re-render + button hide.
+async function atlasSignOut() {
+  var btn = document.getElementById('atlas-signout-btn');
+  var label = document.getElementById('atlas-signout-label');
+  if(btn) btn.disabled = true;
+  if(label) label.textContent = 'Signing out…';
+  var sb = window.atlasSb;
+  try {
+    if(sb) {
+      var r = await sb.auth.signOut();
+      if(r && r.error) throw r.error;
+    }
+  } catch(e) {
+    console.error('[ATLAS Auth] Sign-out failed:', e);
+  } finally {
+    if(label) label.textContent = 'Sign out';
+    if(btn) btn.disabled = false;
+  }
+}
+
+// Wire the listener. Runs as soon as the SDK is ready. The INITIAL_SESSION event
+// fires automatically on listener attach, so this also handles page-load session
+// restoration. Guarded against double-wiring with a module-level flag.
+(function atlasWireAuthListener(){
+  if(window.atlasAuthListenerWired) return;
+  var sb = window.atlasSb || (typeof atlasInitSupabase === 'function' ? atlasInitSupabase() : null);
+  if(!sb) {
+    console.warn('[ATLAS Auth] Listener not wired — Supabase client not available.');
+    return;
+  }
+  try {
+    sb.auth.onAuthStateChange(function(event, session){
+      if(event === 'SIGNED_IN' || event === 'INITIAL_SESSION') {
+        if(session) { atlasHandleSignedIn(session); }
+      } else if(event === 'SIGNED_OUT') {
+        atlasHandleSignedOut();
+      }
+      // TOKEN_REFRESHED, USER_UPDATED, PASSWORD_RECOVERY: ignored for now
+    });
+    window.atlasAuthListenerWired = true;
+  } catch(e) {
+    console.error('[ATLAS Auth] Listener attach failed:', e);
+  }
+})();
 
 // ─── Onboarding modal logic (salesperson question, post-first-login) ────────
 // Phase 2c will trigger this on first-login via supabase.auth.onAuthStateChange.
@@ -20070,21 +20313,40 @@ function atlasHideOnboardingModal() {
   if(overlay) overlay.classList.remove('open');
 }
 
-function atlasOnbAnswer(isProfessional) {
+async function atlasOnbAnswer(isProfessional) {
   if(isProfessional) {
-    // Reveal CEA reg no input
+    // Reveal CEA reg no input (handled by step 5 atlasOnbVerifyCEA)
     document.getElementById('atlas-onb-question-step').style.display = 'none';
     document.getElementById('atlas-onb-cea-step').classList.add('show');
     setTimeout(function(){
       var inp = document.getElementById('atlas-onb-cea-input');
       if(inp) inp.focus();
     }, 60);
-  } else {
-    // Save tier=free, close modal
-    console.log('[ATLAS Onboarding] User declared: not a real estate professional → tier=free');
-    // Phase 2c: write profiles.user_tier='free', profiles.is_salesperson=false
-    atlasHideOnboardingModal();
+    return;
   }
+  // User answered "No, not a real estate professional" → tier=free, mark asked
+  console.log('[ATLAS Onboarding] User declared: not a real estate professional → tier=free');
+  var sb = window.atlasSb;
+  var u = window.atlasCurrentUser;
+  if(sb && u && u.id) {
+    try {
+      var r = await sb.from('profiles').update({
+        user_tier: 'free',
+        is_salesperson: false,
+        salesperson_asked: true
+      }).eq('id', u.id);
+      if(r.error) throw r.error;
+      // Local state mirrors the DB write so UI reflects change without a refetch
+      u.tier = 'free';
+      u.is_salesperson = false;
+      u.salesperson_asked = true;
+      if(!atlasDevTierOverrideActive()) window.currentUserTier = 'free';
+      try { if(typeof atlasShowTab === 'function') atlasShowTab(atlasCurrentTabId()); } catch(e) {}
+    } catch(e) {
+      console.error('[ATLAS Onboarding] Failed to save "not professional" answer:', e);
+    }
+  }
+  atlasHideOnboardingModal();
 }
 
 function atlasOnbBackToQuestion() {
@@ -20093,20 +20355,35 @@ function atlasOnbBackToQuestion() {
   document.getElementById('atlas-onb-question-step').style.display = 'block';
 }
 
-function atlasOnbSkip() {
-  console.log('[ATLAS Onboarding] User skipped — tier defaults to free, can update later');
-  // Phase 2c: write profiles.user_tier='free', profiles.salesperson_asked=false (so we can re-prompt)
+async function atlasOnbSkip() {
+  // Skip = don't declare tier, but don't re-prompt either. Mark asked=true so the
+  // modal stays dismissed; user can adjust via a settings panel later.
+  console.log('[ATLAS Onboarding] User skipped — suppressing further prompts this login.');
+  var sb = window.atlasSb;
+  var u = window.atlasCurrentUser;
+  if(sb && u && u.id) {
+    try {
+      var r = await sb.from('profiles').update({
+        salesperson_asked: true
+      }).eq('id', u.id);
+      if(r.error) throw r.error;
+      u.salesperson_asked = true;
+    } catch(e) {
+      console.error('[ATLAS Onboarding] Failed to save skip state:', e);
+    }
+  }
   atlasHideOnboardingModal();
 }
 
-function atlasOnbVerifyCEA() {
+async function atlasOnbVerifyCEA() {
   var inp = document.getElementById('atlas-onb-cea-input');
   var raw = (inp && inp.value || '').trim().toUpperCase();
   // Validate format: letter + 6 digits + letter (e.g. R012345A)
   var ceaRe = /^[A-Z]\d{6}[A-Z]$/;
   var fallback = document.getElementById('atlas-onb-cea-fallback');
+  var verifyBtn = document.querySelector('#atlas-onb-cea-step .atlas-onb-btn.yes');
   if(!ceaRe.test(raw)) {
-    fallback.classList.remove('show');
+    if(fallback) fallback.classList.remove('show');
     if(inp) {
       inp.style.borderColor = '#A03030';
       inp.style.boxShadow = '0 0 0 3px rgba(160,48,48,.15)';
@@ -20117,13 +20394,52 @@ function atlasOnbVerifyCEA() {
     }
     return;
   }
-  // Phase 2c: query supabase.from('cea_salespersons').select().eq('reg_num', raw)
-  // For Phase 2b stub: log intent and show success placeholder
-  console.log('[ATLAS Onboarding] CEA verification stub — would query Supabase for:', raw);
-  // Stub: pretend it found the registration
-  fallback.classList.remove('show');
-  atlasHideOnboardingModal();
-  // Phase 2c will: tier='salesperson', is_salesperson=true, cea_reg_no=raw
+
+  var sb = window.atlasSb;
+  var u = window.atlasCurrentUser;
+  if(!sb || !u || !u.id) {
+    console.error('[ATLAS Onboarding] Cannot verify CEA — not signed in or SDK missing.');
+    if(fallback) fallback.classList.add('show');
+    return;
+  }
+
+  if(verifyBtn) { verifyBtn.disabled = true; verifyBtn.textContent = 'Verifying…'; }
+  if(fallback) fallback.classList.remove('show');
+
+  try {
+    // Call the safe lookup RPC defined in Phase 2c SQL. Returns 0 or 1 row.
+    var rpc = await sb.rpc('verify_cea_reg', { p_reg_num: raw });
+    if(rpc.error) throw rpc.error;
+    var match = Array.isArray(rpc.data) && rpc.data.length > 0 ? rpc.data[0] : null;
+    if(!match) {
+      // Not in the CEA mirror — show fallback email path
+      console.log('[ATLAS Onboarding] CEA reg not found in mirror:', raw);
+      if(fallback) fallback.classList.add('show');
+      if(verifyBtn) { verifyBtn.disabled = false; verifyBtn.textContent = 'Verify'; }
+      return;
+    }
+    // Match found — upgrade profile to salesperson tier
+    var upd = await sb.from('profiles').update({
+      user_tier: 'salesperson',
+      is_salesperson: true,
+      cea_reg_no: raw,
+      salesperson_asked: true
+    }).eq('id', u.id);
+    if(upd.error) throw upd.error;
+    // Mirror to local state
+    u.tier = 'salesperson';
+    u.is_salesperson = true;
+    u.cea_reg_no = raw;
+    u.salesperson_asked = true;
+    if(!atlasDevTierOverrideActive()) window.currentUserTier = 'salesperson';
+    console.log('[ATLAS Onboarding] CEA verified:', match.name, '·', match.agency_name, '→ tier=salesperson');
+    try { if(typeof atlasShowTab === 'function') atlasShowTab(atlasCurrentTabId()); } catch(e) {}
+    atlasHideOnboardingModal();
+  } catch(e) {
+    console.error('[ATLAS Onboarding] CEA verification failed:', e);
+    if(fallback) fallback.classList.add('show');
+    if(verifyBtn) { verifyBtn.disabled = false; verifyBtn.textContent = 'Verify'; }
+  }
 }
 
 // ─── Explicit window exports (defensive — ensures inline onclick handlers find them) ───
@@ -20140,6 +20456,7 @@ window.atlasOnbAnswer          = atlasOnbAnswer;
 window.atlasOnbBackToQuestion  = atlasOnbBackToQuestion;
 window.atlasOnbSkip            = atlasOnbSkip;
 window.atlasOnbVerifyCEA       = atlasOnbVerifyCEA;
+window.atlasSignOut            = atlasSignOut;
 console.log('[ATLAS] Phase 2b login modal loaded.');
 </script>
 
