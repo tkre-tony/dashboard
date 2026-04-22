@@ -13448,9 +13448,9 @@ function formatNewsSummary(text){
       html += '<div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:var(--g2);margin:14px 0 6px;border-bottom:1px solid var(--bdr);padding-bottom:4px">'+para+'</div>';
       return;
     }
-    // Numbered insight headline (e.g. "1. THE QUALITY OF THE DPU GROWTH:", "3. KDC SGP 1 — THE NEXT OPPORTUNITY:")
-    // Must start with digit+dot+space, be all uppercase thereafter (allowing common punctuation), end with colon
-    if(/^\d+\.\s+[A-Z][A-Z0-9\s\:\-\/&—,'%\.]+:$/.test(para) && para.length < 120){
+    // Numbered insight headline (e.g. "1. THE QUALITY OF THE DPU GROWTH:", "3. KDC SGP 1 — THE NEXT OPPORTUNITY:", "2. COST-OF-DEBT — 4.2% → 3.7%:", "4. 180 GEORGE STREET IS THE TEMPLATE:")
+    // Must start with digit+dot+space, be all uppercase thereafter (allowing common punctuation, arrows, plus signs, and leading digits), end with colon
+    if(/^\d+\.\s+[A-Z0-9][A-Z0-9\s\:\-\/&—,'%\.\+→]+:$/.test(para) && para.length < 120){
       html += '<div style="font-size:11.5px;font-weight:700;color:#1e3a5f;letter-spacing:.02em;margin:12px 0 4px">'+para.replace(/:$/,'')+'</div>';
       return;
     }
