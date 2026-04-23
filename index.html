@@ -19843,6 +19843,59 @@ function sophiaRenderTxnList(data) {
 }
 .atlas-onb-cea-fallback.show{display:block;}
 .atlas-onb-cea-fallback a{color:#1A4F9C;}
+
+/* v48.13: Salesperson onboarding verify step (CEA details confirmation) */
+#atlas-onb-verify-step{display:none;}
+#atlas-onb-verify-step.show{display:block;}
+.atlas-onb-verify-intro{
+  font-size:13px; line-height:1.55; color:#333; margin:0 0 14px;
+}
+.atlas-onb-verify-grid{
+  display:grid; grid-template-columns:auto 1fr; gap:8px 12px;
+  margin:0 0 14px; font-size:12.5px;
+}
+.atlas-onb-verify-grid .label{
+  color:#666; font-weight:600; align-self:center;
+}
+.atlas-onb-verify-grid .value{
+  color:#1A4F9C; font-weight:600; word-break:break-word; align-self:center;
+}
+.atlas-onb-verify-grid .value.ro{
+  background:#F7F3EB; padding:6px 10px; border-radius:5px;
+  border:1px solid #E8DFC8;
+}
+.atlas-onb-verify-field{
+  display:flex; flex-direction:column; gap:3px; margin:0 0 10px;
+}
+.atlas-onb-verify-field label{
+  font-size:11.5px; font-weight:600; color:#666; text-transform:uppercase;
+  letter-spacing:.04em;
+}
+.atlas-onb-verify-field label .req{color:#A03030; margin-left:3px;}
+.atlas-onb-verify-field input{
+  padding:9px 12px; font-family:'DM Mono',monospace; font-size:13px;
+  background:#fff; color:#1A4F9C; border:1.5px solid #A67C3A;
+  border-radius:6px; box-sizing:border-box;
+}
+.atlas-onb-verify-field input:focus{
+  outline:none; box-shadow:0 0 0 3px rgba(166,124,58,.22);
+}
+.atlas-onb-verify-field input.invalid{
+  border-color:#A03030; box-shadow:0 0 0 3px rgba(160,48,48,.15);
+}
+.atlas-onb-verify-field .hint{
+  font-size:10.5px; color:#888; font-style:italic;
+}
+.atlas-onb-verify-field .override-warn{
+  font-size:10.5px; color:#A67C3A; margin-top:2px; display:none;
+}
+.atlas-onb-verify-field .override-warn.show{display:block;}
+.atlas-onb-verify-msg{
+  margin:10px 0 0; padding:10px 12px; border-radius:6px;
+  font-size:12px; line-height:1.5; display:none;
+}
+.atlas-onb-verify-msg.show{display:block;}
+.atlas-onb-verify-msg.err{background:#FBECEC; color:#A03030;}
 </style>
 
 <div id="atlas-auth-overlay" role="dialog" aria-modal="true" aria-labelledby="atlas-auth-title">
@@ -19921,6 +19974,46 @@ function sophiaRenderTxnList(data) {
           and aren't yet listed, please email
           <a href="mailto:hello@propertyatlas.sg?subject=CEA%20verification">hello@propertyatlas.sg</a>
           and we'll verify manually within one business day.
+        </div>
+      </div>
+      <div id="atlas-onb-verify-step">
+        <p class="atlas-onb-verify-intro">
+          We found you in the CEA register. Please confirm these details and
+          add a contact email &amp; mobile so we can reach you about
+          agent-specific tools.
+        </p>
+        <div class="atlas-onb-verify-grid">
+          <div class="label">Name</div>
+          <div class="value ro" id="atlas-onb-v-name">&mdash;</div>
+          <div class="label">Estate Agent</div>
+          <div class="value ro" id="atlas-onb-v-agency">&mdash;</div>
+          <div class="label">Agent Licence</div>
+          <div class="value ro" id="atlas-onb-v-license">&mdash;</div>
+          <div class="label">Registered Since</div>
+          <div class="value ro" id="atlas-onb-v-regstart">&mdash;</div>
+        </div>
+        <div class="atlas-onb-verify-field">
+          <label for="atlas-onb-v-email">Contact email<span class="req">*</span></label>
+          <input type="email" id="atlas-onb-v-email" autocomplete="email"
+                 placeholder="you@example.com">
+          <div class="hint" id="atlas-onb-v-email-hint">From CEA register &mdash; edit if you prefer a different address.</div>
+          <div class="override-warn" id="atlas-onb-v-email-override">
+            &#9888; This differs from the CEA registered email. We'll save your preferred value.
+          </div>
+        </div>
+        <div class="atlas-onb-verify-field">
+          <label for="atlas-onb-v-mobile">Contact mobile<span class="req">*</span></label>
+          <input type="tel" id="atlas-onb-v-mobile" autocomplete="tel"
+                 placeholder="+65 9123 4567">
+          <div class="hint" id="atlas-onb-v-mobile-hint">From CEA register &mdash; edit if you prefer a different number.</div>
+          <div class="override-warn" id="atlas-onb-v-mobile-override">
+            &#9888; This differs from the CEA registered mobile. We'll save your preferred value.
+          </div>
+        </div>
+        <div class="atlas-onb-verify-msg err" id="atlas-onb-verify-msg"></div>
+        <div class="atlas-onb-yesno">
+          <button class="atlas-onb-btn no" onclick="atlasOnbVerifyBack()">Back</button>
+          <button class="atlas-onb-btn yes" onclick="atlasOnbConfirmSalesperson()">Confirm</button>
         </div>
       </div>
     </div>
@@ -20313,6 +20406,11 @@ function atlasShowOnboardingModal() {
   document.getElementById('atlas-onb-question-step').style.display = 'block';
   document.getElementById('atlas-onb-cea-step').classList.remove('show');
   document.getElementById('atlas-onb-cea-fallback').classList.remove('show');
+  // v48.13: also reset verify-step
+  var vStep = document.getElementById('atlas-onb-verify-step');
+  if(vStep) vStep.classList.remove('show');
+  var vMsg = document.getElementById('atlas-onb-verify-msg');
+  if(vMsg) { vMsg.classList.remove('show'); vMsg.textContent = ''; }
   var ceaInput = document.getElementById('atlas-onb-cea-input');
   if(ceaInput) ceaInput.value = '';
   overlay.classList.add('open');
@@ -20417,8 +20515,9 @@ async function atlasOnbVerifyCEA() {
   if(fallback) fallback.classList.remove('show');
 
   try {
-    // Call the safe lookup RPC defined in Phase 2c SQL. Returns 0 or 1 row.
-    var rpc = await sb.rpc('verify_cea_reg', { p_reg_num: raw });
+    // v48.13: call verify_cea_reg_detailed (SECURITY DEFINER) to get full
+    // row including email/mobile. Existing verify_cea_reg kept as fallback.
+    var rpc = await sb.rpc('verify_cea_reg_detailed', { p_reg_num: raw });
     if(rpc.error) throw rpc.error;
     var match = Array.isArray(rpc.data) && rpc.data.length > 0 ? rpc.data[0] : null;
     if(!match) {
@@ -20428,27 +20527,183 @@ async function atlasOnbVerifyCEA() {
       if(verifyBtn) { verifyBtn.disabled = false; verifyBtn.textContent = 'Verify'; }
       return;
     }
-    // Match found — upgrade profile to salesperson tier
-    var upd = await sb.from('profiles').update({
-      user_tier: 'salesperson',
-      is_salesperson: true,
-      cea_reg_no: raw,
-      salesperson_asked: true
-    }).eq('id', u.id);
-    if(upd.error) throw upd.error;
-    // Mirror to local state
-    u.tier = 'salesperson';
-    u.is_salesperson = true;
-    u.cea_reg_no = raw;
-    u.salesperson_asked = true;
-    if(!atlasDevTierOverrideActive()) window.currentUserTier = 'salesperson';
-    console.log('[ATLAS Onboarding] CEA verified:', match.name, '·', match.agency_name, '→ tier=salesperson');
-    try { if(typeof atlasShowTab === 'function') atlasShowTab(atlasCurrentTabId()); } catch(e) {}
-    atlasHideOnboardingModal();
+    // Stash the CEA row for the confirm step (to detect overrides)
+    window.atlasOnbCEAMatch = {
+      reg_num: raw,
+      name: match.name || '',
+      agency_name: match.agency_name || '',
+      agency_license: match.agency_license || '',
+      registration_start: match.registration_start || '',
+      email: match.email || '',
+      mobile: match.mobile || ''
+    };
+    // Populate verify-step display fields
+    var setText = function(id, v) {
+      var el = document.getElementById(id);
+      if(el) el.textContent = v && String(v).length ? v : '—';
+    };
+    setText('atlas-onb-v-name',     match.name);
+    setText('atlas-onb-v-agency',   match.agency_name);
+    setText('atlas-onb-v-license',  match.agency_license);
+    setText('atlas-onb-v-regstart', match.registration_start);
+    // Populate contact fields (pre-fill if CEA has value; leave blank otherwise)
+    var emailInp  = document.getElementById('atlas-onb-v-email');
+    var mobileInp = document.getElementById('atlas-onb-v-mobile');
+    var emailHint  = document.getElementById('atlas-onb-v-email-hint');
+    var mobileHint = document.getElementById('atlas-onb-v-mobile-hint');
+    if(emailInp)  emailInp.value  = match.email  || '';
+    if(mobileInp) mobileInp.value = match.mobile || '';
+    if(emailHint) {
+      emailHint.textContent = match.email
+        ? "From CEA register — edit if you prefer a different address."
+        : "Not on file at CEA — please provide a contact email.";
+    }
+    if(mobileHint) {
+      mobileHint.textContent = match.mobile
+        ? "From CEA register — edit if you prefer a different number."
+        : "Not on file at CEA — please provide a contact mobile.";
+    }
+    // Clear any previous invalid/override state
+    if(emailInp)  emailInp.classList.remove('invalid');
+    if(mobileInp) mobileInp.classList.remove('invalid');
+    var eOver = document.getElementById('atlas-onb-v-email-override');
+    var mOver = document.getElementById('atlas-onb-v-mobile-override');
+    if(eOver) eOver.classList.remove('show');
+    if(mOver) mOver.classList.remove('show');
+    var vMsg = document.getElementById('atlas-onb-verify-msg');
+    if(vMsg) { vMsg.classList.remove('show'); vMsg.textContent = ''; }
+    // Wire live override warnings (only when CEA had a value to begin with)
+    if(emailInp && match.email) {
+      emailInp.oninput = function(){
+        if(eOver) eOver.classList.toggle('show', emailInp.value.trim() !== match.email);
+      };
+    } else if(emailInp) {
+      emailInp.oninput = null;
+    }
+    if(mobileInp && match.mobile) {
+      mobileInp.oninput = function(){
+        if(mOver) mOver.classList.toggle('show', mobileInp.value.trim() !== match.mobile);
+      };
+    } else if(mobileInp) {
+      mobileInp.oninput = null;
+    }
+    // Swap: hide cea-step, show verify-step
+    document.getElementById('atlas-onb-cea-step').classList.remove('show');
+    document.getElementById('atlas-onb-verify-step').classList.add('show');
+    if(verifyBtn) { verifyBtn.disabled = false; verifyBtn.textContent = 'Verify'; }
+    console.log('[ATLAS Onboarding] CEA match, verify-step shown:', match.name, '·', match.agency_name);
   } catch(e) {
     console.error('[ATLAS Onboarding] CEA verification failed:', e);
     if(fallback) fallback.classList.add('show');
     if(verifyBtn) { verifyBtn.disabled = false; verifyBtn.textContent = 'Verify'; }
+  }
+}
+
+// v48.13: Return from verify-step to cea-step without committing anything.
+function atlasOnbVerifyBack() {
+  var vStep = document.getElementById('atlas-onb-verify-step');
+  var cStep = document.getElementById('atlas-onb-cea-step');
+  if(vStep) vStep.classList.remove('show');
+  if(cStep) cStep.classList.add('show');
+  var vMsg = document.getElementById('atlas-onb-verify-msg');
+  if(vMsg) { vMsg.classList.remove('show'); vMsg.textContent = ''; }
+  // Re-focus the reg-num input for quick correction
+  setTimeout(function(){
+    var inp = document.getElementById('atlas-onb-cea-input');
+    if(inp) inp.focus();
+  }, 60);
+}
+
+// v48.13: Confirm salesperson status. Validates contact fields, detects overrides,
+// writes profile update, closes modal.
+async function atlasOnbConfirmSalesperson() {
+  var match = window.atlasOnbCEAMatch;
+  var emailInp  = document.getElementById('atlas-onb-v-email');
+  var mobileInp = document.getElementById('atlas-onb-v-mobile');
+  var vMsg = document.getElementById('atlas-onb-verify-msg');
+  var confirmBtn = document.querySelector('#atlas-onb-verify-step .atlas-onb-btn.yes');
+
+  var showErr = function(txt) {
+    if(vMsg) { vMsg.textContent = txt; vMsg.classList.add('show'); }
+  };
+  var clearErr = function() {
+    if(vMsg) { vMsg.textContent = ''; vMsg.classList.remove('show'); }
+  };
+  clearErr();
+
+  if(!match) {
+    showErr('Something went wrong — please go back and re-verify your CEA number.');
+    return;
+  }
+
+  var emailVal  = (emailInp  && emailInp.value  || '').trim();
+  var mobileVal = (mobileInp && mobileInp.value || '').trim();
+
+  // Validate email (basic shape; real validation happens at Supabase)
+  var emailOk = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(emailVal);
+  // Validate mobile (permissive: digits, +, spaces, dashes; require at least 6 digits)
+  var mobileDigits = (mobileVal.match(/\d/g) || []).length;
+  var mobileOk = mobileVal.length > 0 && mobileDigits >= 6;
+
+  if(emailInp) emailInp.classList.toggle('invalid', !emailOk);
+  if(mobileInp) mobileInp.classList.toggle('invalid', !mobileOk);
+
+  if(!emailOk && !mobileOk) {
+    showErr('Please provide a valid email and mobile number.');
+    return;
+  }
+  if(!emailOk)  { showErr('Please provide a valid contact email.'); return; }
+  if(!mobileOk) { showErr('Please provide a valid contact mobile number.'); return; }
+
+  var sb = window.atlasSb;
+  var u = window.atlasCurrentUser;
+  if(!sb || !u || !u.id) {
+    showErr('Sign-in state lost — please refresh and try again.');
+    return;
+  }
+
+  // Override flags: true only when CEA had a value AND user's value differs.
+  var emailOverride  = !!(match.email  && emailVal  !== match.email);
+  var mobileOverride = !!(match.mobile && mobileVal !== match.mobile);
+
+  if(confirmBtn) { confirmBtn.disabled = true; confirmBtn.textContent = 'Saving…'; }
+
+  try {
+    var upd = await sb.from('profiles').update({
+      user_tier: 'salesperson',
+      is_salesperson: true,
+      cea_reg_no: match.reg_num,
+      salesperson_asked: true,
+      contact_email: emailVal,
+      contact_mobile: mobileVal,
+      contact_email_overrides_cea: emailOverride,
+      contact_mobile_overrides_cea: mobileOverride
+    }).eq('id', u.id);
+    if(upd.error) throw upd.error;
+
+    // Mirror to local state
+    u.tier = 'salesperson';
+    u.is_salesperson = true;
+    u.cea_reg_no = match.reg_num;
+    u.salesperson_asked = true;
+    u.contact_email = emailVal;
+    u.contact_mobile = mobileVal;
+    u.contact_email_overrides_cea = emailOverride;
+    u.contact_mobile_overrides_cea = mobileOverride;
+    if(!atlasDevTierOverrideActive()) window.currentUserTier = 'salesperson';
+
+    console.log('[ATLAS Onboarding] Salesperson confirmed:',
+      match.name, '·', match.agency_name,
+      '· email_override=' + emailOverride,
+      '· mobile_override=' + mobileOverride);
+
+    try { if(typeof atlasShowTab === 'function') atlasShowTab(atlasCurrentTabId()); } catch(e) {}
+    atlasHideOnboardingModal();
+    if(confirmBtn) { confirmBtn.disabled = false; confirmBtn.textContent = 'Confirm'; }
+  } catch(e) {
+    console.error('[ATLAS Onboarding] Salesperson confirm failed:', e);
+    showErr('Could not save — ' + (e && e.message ? e.message : 'please try again.'));
+    if(confirmBtn) { confirmBtn.disabled = false; confirmBtn.textContent = 'Confirm'; }
   }
 }
 
@@ -20466,6 +20721,8 @@ window.atlasOnbAnswer          = atlasOnbAnswer;
 window.atlasOnbBackToQuestion  = atlasOnbBackToQuestion;
 window.atlasOnbSkip            = atlasOnbSkip;
 window.atlasOnbVerifyCEA       = atlasOnbVerifyCEA;
+window.atlasOnbVerifyBack         = atlasOnbVerifyBack;
+window.atlasOnbConfirmSalesperson = atlasOnbConfirmSalesperson;
 window.atlasSignOut            = atlasSignOut;
 console.log('[ATLAS] Phase 2b login modal loaded.');
 </script>
