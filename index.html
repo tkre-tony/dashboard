@@ -19949,7 +19949,7 @@ function sophiaRenderTxnList(data) {
     </div>
     <div class="atlas-onb-body">
       <div id="atlas-onb-question-step">
-        <p>Are you a CEA-registered <strong>Real Estate Professional</strong> in Singapore?</p>
+        <p>Are you a CEA-registered <strong>Salesperson</strong> in Singapore?</p>
         <p style="font-size:12.5px; color:#666;">If yes, we'll share agent-specific tools as we build them.</p>
         <div class="atlas-onb-yesno">
           <button class="atlas-onb-btn no" onclick="atlasOnbAnswer(false)">No, I'm not</button>
@@ -20432,8 +20432,8 @@ async function atlasOnbAnswer(isProfessional) {
     }, 60);
     return;
   }
-  // User answered "No, not a real estate professional" → tier=free, mark asked
-  console.log('[ATLAS Onboarding] User declared: not a real estate professional → tier=free');
+  // User answered "No, not a CEA-registered Salesperson" → tier=free, mark asked
+  console.log('[ATLAS Onboarding] User declared: not a CEA-registered salesperson → tier=free');
   var sb = window.atlasSb;
   var u = window.atlasCurrentUser;
   if(sb && u && u.id) {
