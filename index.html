@@ -20004,7 +20004,7 @@ function sophiaRenderTxnList(data) {
         <div class="atlas-onb-verify-field">
           <label for="atlas-onb-v-mobile">Contact mobile<span class="req">*</span></label>
           <input type="tel" id="atlas-onb-v-mobile" autocomplete="tel"
-                 placeholder="+65 9123 4567">
+                 placeholder="+65 91234567">
           <div class="hint" id="atlas-onb-v-mobile-hint">From CEA register &mdash; edit if you prefer a different number.</div>
           <div class="override-warn" id="atlas-onb-v-mobile-override">
             &#9888; This differs from the CEA registered mobile. We'll save your preferred value.
@@ -20527,6 +20527,18 @@ async function atlasOnbVerifyCEA() {
       if(verifyBtn) { verifyBtn.disabled = false; verifyBtn.textContent = 'Verify'; }
       return;
     }
+    // v48.13a: Normalise CEA mobile (stored as bare 8 digits) into SG format
+    // "+65 83883001". This is what we display AND what we stash for override
+    // detection, so a user who doesn't edit doesn't trigger a false override.
+    var atlasFormatSGMobile = function(raw) {
+      if(!raw) return '';
+      var digits = String(raw).replace(/\D/g, '');
+      // Drop a leading '65' country code if present (e.g. "6583883001" → "83883001")
+      if(digits.length === 10 && digits.indexOf('65') === 0) digits = digits.slice(2);
+      if(!digits) return '';
+      return '+65 ' + digits;
+    };
+    var ceaMobileFormatted = atlasFormatSGMobile(match.mobile);
     // Stash the CEA row for the confirm step (to detect overrides)
     window.atlasOnbCEAMatch = {
       reg_num: raw,
@@ -20535,7 +20547,7 @@ async function atlasOnbVerifyCEA() {
       agency_license: match.agency_license || '',
       registration_start: match.registration_start || '',
       email: match.email || '',
-      mobile: match.mobile || ''
+      mobile: ceaMobileFormatted
     };
     // Populate verify-step display fields
     var setText = function(id, v) {
@@ -20546,13 +20558,14 @@ async function atlasOnbVerifyCEA() {
     setText('atlas-onb-v-agency',   match.agency_name);
     setText('atlas-onb-v-license',  match.agency_license);
     setText('atlas-onb-v-regstart', match.registration_start);
-    // Populate contact fields (pre-fill if CEA has value; leave blank otherwise)
+    // Populate contact fields (pre-fill if CEA has value; otherwise prefill
+    // mobile with "+65 " prefix only so user just types 8 digits)
     var emailInp  = document.getElementById('atlas-onb-v-email');
     var mobileInp = document.getElementById('atlas-onb-v-mobile');
     var emailHint  = document.getElementById('atlas-onb-v-email-hint');
     var mobileHint = document.getElementById('atlas-onb-v-mobile-hint');
     if(emailInp)  emailInp.value  = match.email  || '';
-    if(mobileInp) mobileInp.value = match.mobile || '';
+    if(mobileInp) mobileInp.value = ceaMobileFormatted || '+65 ';
     if(emailHint) {
       emailHint.textContent = match.email
         ? "From CEA register — edit if you prefer a different address."
@@ -20572,17 +20585,23 @@ async function atlasOnbVerifyCEA() {
     if(mOver) mOver.classList.remove('show');
     var vMsg = document.getElementById('atlas-onb-verify-msg');
     if(vMsg) { vMsg.classList.remove('show'); vMsg.textContent = ''; }
-    // Wire live override warnings (only when CEA had a value to begin with)
+    // Wire live override warnings (only when CEA had a value to begin with).
+    // Compare against the normalised CEA value so trivial whitespace/format
+    // differences don't trigger false overrides.
+    var normaliseMobile = function(v){ return String(v || '').replace(/\D/g, ''); };
+    var normaliseEmail  = function(v){ return String(v || '').trim().toLowerCase(); };
     if(emailInp && match.email) {
       emailInp.oninput = function(){
-        if(eOver) eOver.classList.toggle('show', emailInp.value.trim() !== match.email);
+        if(eOver) eOver.classList.toggle('show',
+          normaliseEmail(emailInp.value) !== normaliseEmail(match.email));
       };
     } else if(emailInp) {
       emailInp.oninput = null;
     }
-    if(mobileInp && match.mobile) {
+    if(mobileInp && ceaMobileFormatted) {
       mobileInp.oninput = function(){
-        if(mOver) mOver.classList.toggle('show', mobileInp.value.trim() !== match.mobile);
+        if(mOver) mOver.classList.toggle('show',
+          normaliseMobile(mobileInp.value) !== normaliseMobile(ceaMobileFormatted));
       };
     } else if(mobileInp) {
       mobileInp.oninput = null;
@@ -20641,19 +20660,22 @@ async function atlasOnbConfirmSalesperson() {
 
   // Validate email (basic shape; real validation happens at Supabase)
   var emailOk = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(emailVal);
-  // Validate mobile (permissive: digits, +, spaces, dashes; require at least 6 digits)
-  var mobileDigits = (mobileVal.match(/\d/g) || []).length;
-  var mobileOk = mobileVal.length > 0 && mobileDigits >= 6;
+  // v48.13a: Validate mobile as SG-format — strip non-digits, drop leading
+  // '65' if present, then require exactly 8 digits. Handles user input like
+  // "+65 9123 4567", "91234567", "+6591234567", "9123-4567" consistently.
+  var mDigits = mobileVal.replace(/\D/g, '');
+  if(mDigits.length === 10 && mDigits.indexOf('65') === 0) mDigits = mDigits.slice(2);
+  var mobileOk = /^\d{8}$/.test(mDigits);
 
   if(emailInp) emailInp.classList.toggle('invalid', !emailOk);
   if(mobileInp) mobileInp.classList.toggle('invalid', !mobileOk);
 
   if(!emailOk && !mobileOk) {
-    showErr('Please provide a valid email and mobile number.');
+    showErr('Please provide a valid email and an 8-digit Singapore mobile number.');
     return;
   }
   if(!emailOk)  { showErr('Please provide a valid contact email.'); return; }
-  if(!mobileOk) { showErr('Please provide a valid contact mobile number.'); return; }
+  if(!mobileOk) { showErr('Please provide a valid 8-digit Singapore mobile number.'); return; }
 
   var sb = window.atlasSb;
   var u = window.atlasCurrentUser;
@@ -20662,9 +20684,23 @@ async function atlasOnbConfirmSalesperson() {
     return;
   }
 
-  // Override flags: true only when CEA had a value AND user's value differs.
-  var emailOverride  = !!(match.email  && emailVal  !== match.email);
-  var mobileOverride = !!(match.mobile && mobileVal !== match.mobile);
+  // v48.13a: Canonicalise mobile for storage — strip all non-digit chars,
+  // drop leading '65' country code if present, re-prefix with "+65 ".
+  // Results in consistent stored format regardless of user input spacing.
+  var canonicaliseSGMobile = function(v) {
+    var d = String(v || '').replace(/\D/g, '');
+    if(d.length === 10 && d.indexOf('65') === 0) d = d.slice(2);
+    return d ? '+65 ' + d : '';
+  };
+  var emailToSave  = emailVal.trim();
+  var mobileToSave = canonicaliseSGMobile(mobileVal);
+
+  // Override flags: true only when CEA had a value AND user's value differs
+  // (compared on normalised form so trivial whitespace doesn't flag override).
+  var normMobile = function(v){ return String(v || '').replace(/\D/g, ''); };
+  var normEmail  = function(v){ return String(v || '').trim().toLowerCase(); };
+  var emailOverride  = !!(match.email  && normEmail(emailToSave)  !== normEmail(match.email));
+  var mobileOverride = !!(match.mobile && normMobile(mobileToSave) !== normMobile(match.mobile));
 
   if(confirmBtn) { confirmBtn.disabled = true; confirmBtn.textContent = 'Saving…'; }
 
@@ -20674,8 +20710,8 @@ async function atlasOnbConfirmSalesperson() {
       is_salesperson: true,
       cea_reg_no: match.reg_num,
       salesperson_asked: true,
-      contact_email: emailVal,
-      contact_mobile: mobileVal,
+      contact_email: emailToSave,
+      contact_mobile: mobileToSave,
       contact_email_overrides_cea: emailOverride,
       contact_mobile_overrides_cea: mobileOverride
     }).eq('id', u.id);
@@ -20686,8 +20722,8 @@ async function atlasOnbConfirmSalesperson() {
     u.is_salesperson = true;
     u.cea_reg_no = match.reg_num;
     u.salesperson_asked = true;
-    u.contact_email = emailVal;
-    u.contact_mobile = mobileVal;
+    u.contact_email = emailToSave;
+    u.contact_mobile = mobileToSave;
     u.contact_email_overrides_cea = emailOverride;
     u.contact_mobile_overrides_cea = mobileOverride;
     if(!atlasDevTierOverrideActive()) window.currentUserTier = 'salesperson';
