@@ -1,0 +1,526 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<meta name="description" content="PropertyAtlas — a Singapore commercial-property publication, built by TK Real Estate. Newsroom analysis of REIT earnings, transactions, and market signal." />
+<title>PropertyAtlas — Singapore commercial-property newsroom</title>
+
+<!-- ============================================================
+     PropertyAtlas Launch Page — v1 STRUCTURE BLOCK
+     Built per v48.13e locked spec (Section B desktop layout).
+     This block delivers: tokens · masthead · date strip · hero skeleton.
+     Subsequent blocks (next session): dashboard CTA strip · three-card row
+     · feed rows · footer · mobile pass.
+
+     Image strategy: hero uses an inline SVG placeholder at 16:9 with
+     monochrome navy overlay simulated. Real photo pipeline lands once
+     Supabase Storage bucket is set up (Priority 2 in handoff).
+     ============================================================ -->
+
+<style>
+  /* ---------- Design tokens (v48.13e locked) ---------- */
+  :root {
+    --navy:       #1A4F9C;
+    --navy-deep:  #0F3775;
+    --navy-ink:   #0B2B5C;
+    --bronze:     #A67C3A;
+    --bronze-lt:  #C9A264;
+    --cream:      #F7F3EB;
+    --cream-lt:   #FAF7F0;
+    --ink:        #1A1A1A;
+    --muted:      #6B6157;
+    --hairline:   rgba(11, 43, 92, 0.10);   /* navy-ink @ 10% */
+    --hairline-2: rgba(11, 43, 92, 0.18);   /* a touch heavier */
+    --shadow-card: 0 1px 2px rgba(11, 43, 92, 0.04),
+                   0 8px 24px rgba(11, 43, 92, 0.06);
+
+    --body-serif: Georgia, "Times New Roman", "DejaVu Serif", serif;
+
+    /* Type scale (v48.13e Section "Type scale for launch page") */
+    --t-hero-h:       26px;
+    --t-card-h:       15px;
+    --t-feed-h:       14px;
+    --t-body-hero:    14px;
+    --t-body-card:    12px;
+    --t-body-feed:    11.5px;
+    --t-tag:          10.5px;
+    --t-meta:         11px;
+    --t-eyebrow:      11px;
+
+    /* Layout */
+    --maxw:           1080px;
+    --gutter:         24px;
+  }
+
+  /* ---------- Reset / base ---------- */
+  *, *::before, *::after { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; }
+  body {
+    font-family: var(--body-serif);
+    color: var(--ink);
+    background: var(--cream);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    line-height: 1.5;
+  }
+  a { color: inherit; text-decoration: none; }
+  img, svg { display: block; max-width: 100%; }
+  button { font: inherit; cursor: pointer; border: 0; background: none; }
+
+  .wrap {
+    max-width: var(--maxw);
+    margin: 0 auto;
+    padding: 0 var(--gutter);
+  }
+
+  /* ============================================================
+     MASTHEAD
+     Thin bar · navy-on-cream · bronze underline on active tab
+     ============================================================ */
+  .masthead {
+    border-bottom: 1px solid var(--hairline-2);
+    background: var(--cream);
+  }
+  .masthead-inner {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: 64px;
+  }
+
+  /* Brand: PA mark + wordmark */
+  .brand {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    color: var(--navy-ink);
+  }
+  .brand-mark {
+    width: 28px;
+    height: 28px;
+    border-radius: 4px;
+    background: var(--navy-ink);
+    color: var(--bronze-lt);
+    display: grid;
+    place-items: center;
+    font-family: var(--body-serif);
+    font-weight: 700;
+    font-size: 14px;
+    letter-spacing: 0.02em;
+  }
+  .brand-word {
+    font-family: var(--body-serif);
+    font-weight: 700;
+    font-size: 18px;
+    letter-spacing: 0.005em;
+    color: var(--navy-ink);
+  }
+  .brand-word em {
+    font-style: italic;
+    font-weight: 700;
+    color: var(--bronze);
+  }
+
+  /* Nav links */
+  .nav {
+    display: flex;
+    align-items: center;
+    gap: 28px;
+  }
+  .nav a {
+    position: relative;
+    font-size: 13.5px;
+    font-weight: 600;
+    color: var(--navy-ink);
+    padding: 6px 0;
+    transition: color 120ms ease;
+  }
+  .nav a:hover { color: var(--navy); }
+  .nav a.is-active {
+    color: var(--navy-ink);
+  }
+  .nav a.is-active::after {
+    content: "";
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: -2px;
+    height: 2px;
+    background: var(--bronze);
+    border-radius: 1px;
+  }
+  .nav .signin {
+    color: var(--navy);
+  }
+
+  /* Hamburger (mobile only — hidden by default on desktop) */
+  .hamburger {
+    display: none;
+    width: 36px;
+    height: 36px;
+    border-radius: 4px;
+    align-items: center;
+    justify-content: center;
+    color: var(--navy-ink);
+  }
+  .hamburger:hover { background: rgba(11, 43, 92, 0.06); }
+  .hamburger svg { width: 20px; height: 20px; }
+
+  /* ============================================================
+     DATE STRIP
+     11px bronze caps · 11px grey italic · thin rules above & below
+     ============================================================ */
+  .datestrip {
+    border-bottom: 1px solid var(--hairline);
+    background: var(--cream);
+  }
+  .datestrip-inner {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: 36px;
+    gap: 16px;
+  }
+  .datestrip-left {
+    font-size: var(--t-meta);
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--bronze);
+    font-weight: 600;
+  }
+  .datestrip-right {
+    font-size: var(--t-meta);
+    color: var(--muted);
+    font-style: italic;
+  }
+
+  /* ============================================================
+     HERO ARTICLE
+     Desktop: 1.15 : 1 split (image | text)  · 16:9 image
+     ============================================================ */
+  .hero {
+    padding: 40px 0 48px;
+  }
+  .hero-grid {
+    display: grid;
+    grid-template-columns: 1.15fr 1fr;
+    gap: 36px;
+    align-items: start;
+  }
+
+  /* Hero image: 16:9. Flat navy placeholder during build; real photos
+     will swap into the same shell. Monochrome navy treatment for real
+     photos lands when Supabase pipeline is wired. */
+  .hero-image {
+    position: relative;
+    aspect-ratio: 16 / 9;
+    overflow: hidden;
+    background: var(--navy-ink);
+    box-shadow: var(--shadow-card);
+    border-radius: 2px;
+  }
+  .placeholder-flat {
+    position: absolute;
+    inset: 0;
+    display: grid;
+    place-items: center;
+    background:
+      linear-gradient(135deg,
+        var(--navy-deep) 0%,
+        var(--navy-ink) 100%);
+  }
+  .placeholder-label {
+    font-size: 11px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    font-style: italic;
+    color: rgba(247, 243, 235, 0.42);
+    font-weight: 400;
+  }
+
+  /* Hero text column */
+  .hero-text {
+    padding-top: 4px;
+  }
+  .hero-eyebrow {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 14px;
+    flex-wrap: wrap;
+  }
+  .pill {
+    display: inline-flex;
+    align-items: center;
+    height: 20px;
+    padding: 0 9px;
+    background: var(--bronze);
+    color: var(--cream-lt);
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    border-radius: 2px;
+  }
+  .cat-tag {
+    font-size: var(--t-tag);
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--bronze);
+    font-weight: 600;
+  }
+  .cat-tag + .cat-tag::before {
+    content: "·";
+    margin: 0 6px 0 4px;
+    color: var(--muted);
+  }
+
+  .hero-headline {
+    font-family: var(--body-serif);
+    font-size: var(--t-hero-h);
+    line-height: 1.25;
+    font-weight: 700;
+    color: var(--navy-ink);
+    margin: 0 0 14px;
+    letter-spacing: -0.005em;
+  }
+  .hero-headline a:hover { color: var(--navy); }
+
+  .hero-teaser {
+    font-size: var(--t-body-hero);
+    line-height: 1.6;
+    color: var(--ink);
+    margin: 0 0 18px;
+  }
+
+  .hero-meta {
+    font-size: var(--t-meta);
+    color: var(--muted);
+    margin-bottom: 20px;
+  }
+  .hero-meta .sep {
+    margin: 0 6px;
+    color: var(--hairline-2);
+  }
+
+  /* Primary CTA — navy button, bronze hover */
+  .btn-primary {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    height: 38px;
+    padding: 0 16px;
+    background: var(--navy-ink);
+    color: var(--cream-lt);
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing: 0.02em;
+    border-radius: 2px;
+    transition: background 140ms ease, transform 140ms ease;
+  }
+  .btn-primary:hover {
+    background: var(--navy-deep);
+    transform: translateY(-1px);
+  }
+  .btn-primary .arrow {
+    transition: transform 160ms ease;
+  }
+  .btn-primary:hover .arrow {
+    transform: translateX(3px);
+  }
+
+  /* ============================================================
+     PLACEHOLDER FOR LATER SECTIONS (built next checkpoint)
+     ============================================================ */
+  .build-marker {
+    border-top: 1px dashed var(--hairline-2);
+    margin-top: 8px;
+    padding: 18px 0 60px;
+    text-align: center;
+    font-size: 11px;
+    color: var(--muted);
+    font-style: italic;
+    letter-spacing: 0.06em;
+  }
+
+  /* ============================================================
+     RESPONSIVE — desktop > tablet > mobile (340px target)
+     ============================================================ */
+  @media (max-width: 880px) {
+    .hero-grid {
+      grid-template-columns: 1fr;
+      gap: 22px;
+    }
+    .hero { padding: 28px 0 36px; }
+    .hero-headline { font-size: 22px; }
+  }
+
+  @media (max-width: 640px) {
+    :root { --gutter: 18px; }
+
+    /* Mobile masthead: hide nav links, show hamburger */
+    .nav { display: none; }
+    .hamburger { display: inline-flex; }
+
+    .masthead-inner { height: 56px; }
+    .brand-word { font-size: 16px; }
+
+    /* Date strip compresses to single line */
+    .datestrip-inner { height: 32px; }
+    .datestrip-left { font-size: 10px; letter-spacing: 0.10em; }
+    .datestrip-right { display: none; } /* tagline drops on narrowest */
+
+    .hero-headline { font-size: 20px; line-height: 1.28; }
+    .hero-teaser { font-size: 13.5px; }
+
+    .btn-primary { width: 100%; justify-content: center; height: 42px; }
+  }
+
+  @media (max-width: 380px) {
+    .hero-headline { font-size: 19px; }
+  }
+
+  /* Reduce motion */
+  @media (prefers-reduced-motion: reduce) {
+    * { transition: none !important; animation: none !important; }
+  }
+</style>
+</head>
+<body>
+
+<!-- =========================================================
+     MASTHEAD
+     ========================================================= -->
+<header class="masthead" role="banner">
+  <div class="wrap masthead-inner">
+    <a class="brand" href="/" aria-label="PropertyAtlas — home">
+      <span class="brand-mark" aria-hidden="true">PA</span>
+      <span class="brand-word">Property<em>Atlas</em></span>
+    </a>
+
+    <nav class="nav" aria-label="Primary">
+      <a href="#newsroom" class="is-active">Newsroom</a>
+      <a href="/dashboard/">Dashboard</a>
+      <a href="/dashboard/?signin=1" class="signin">Sign in</a>
+    </nav>
+
+    <button class="hamburger" aria-label="Open menu" aria-expanded="false">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"
+           stroke-width="1.8" stroke-linecap="round">
+        <path d="M4 7h16M4 12h16M4 17h16"/>
+      </svg>
+    </button>
+  </div>
+</header>
+
+<!-- =========================================================
+     DATE STRIP
+     Renders the publish date of the latest article (NEWS hero).
+     Edit data-pub-date when a newer article is shipped, OR set to
+     "today" to fall back to today's local SGT date.
+     ========================================================= -->
+<div class="datestrip" role="presentation" data-pub-date="2026-04-24">
+  <div class="wrap datestrip-inner">
+    <div class="datestrip-left" id="datestrip-left">— · — · Singapore</div>
+    <div class="datestrip-right">A Singapore commercial-property publication, built by TK Real Estate.</div>
+  </div>
+</div>
+
+<script>
+(function () {
+  // Render publish date in "Friday · 24 April 2026 · Singapore" form.
+  // Source: data-pub-date attribute on .datestrip (ISO yyyy-mm-dd) or "today".
+  var strip = document.querySelector('.datestrip');
+  var raw = strip && strip.getAttribute('data-pub-date');
+  var d;
+  if (!raw || raw === 'today') {
+    d = new Date();
+  } else {
+    // Parse as a calendar date (no timezone shift surprise)
+    var parts = raw.split('-');
+    d = new Date(+parts[0], +parts[1] - 1, +parts[2]);
+  }
+  if (!d || isNaN(d.getTime())) return;
+  var days = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
+  var months = ['January','February','March','April','May','June',
+                'July','August','September','October','November','December'];
+  var s = days[d.getDay()] + ' · ' + d.getDate() + ' ' + months[d.getMonth()] +
+          ' ' + d.getFullYear() + ' · Singapore';
+  var el = document.getElementById('datestrip-left');
+  if (el) el.textContent = s;
+})();
+</script>
+
+<!-- =========================================================
+     HERO ARTICLE
+     Seeded with NEWS id 71 — CICT 1Q 2026
+     ========================================================= -->
+<main id="newsroom">
+<section class="hero" aria-labelledby="hero-h">
+  <div class="wrap hero-grid">
+
+    <!-- Image — flat navy placeholder until Supabase pipeline is live.
+         Real path will be:
+         https://[project].supabase.co/storage/v1/render/image/public/newsroom-images/news_71_cict_paragon.jpg?width=1600&height=900&resize=cover
+    -->
+    <a class="hero-image" href="/dashboard/?news=71" aria-label="Read the full entry: CICT 1Q 2026 portfolio swap analysis">
+      <div class="placeholder-flat" aria-hidden="true">
+        <span class="placeholder-label">Image · 1600 × 900</span>
+      </div>
+    </a>
+
+    <!-- Text column -->
+    <div class="hero-text">
+      <div class="hero-eyebrow">
+        <span class="pill">Latest</span>
+        <span class="cat-tag">Commercial</span>
+        <span class="cat-tag">Earnings · REIT Update</span>
+      </div>
+
+      <h1 id="hero-h" class="hero-headline">
+        <a href="/dashboard/?news=71">
+          CICT 1Q 2026: Operating NPI +7.9% YoY Is The Backdrop;
+          The Story Is The S$6.4B Portfolio Swap — Paragon Acquired
+          Freehold At S$3.9B, AST2 Divested At 9.9% Premium,
+          S$750M Placement Closed
+        </a>
+      </h1>
+
+      <p class="hero-teaser">
+        CICT delivered a solid operating quarter — Gross Revenue S$426.7M
+        (+8.0% YoY), NPI S$314.4M (+7.9% YoY) — but the 1Q numbers are
+        not where the story sits. Four days before the interim update,
+        CICT announced a freehold acquisition of Paragon at S$3.9B, an
+        AST2 divestment at a 9.9% premium to December valuation, and
+        closed a S$750M private placement. Six insights beyond the headline.
+      </p>
+
+      <div class="hero-meta">
+        <span>24 April 2026</span>
+        <span class="sep">·</span>
+        <span>16,859 words</span>
+        <span class="sep">·</span>
+        <span>12 min read</span>
+      </div>
+
+      <a class="btn-primary" href="/dashboard/?news=71">
+        Read the full entry
+        <span class="arrow" aria-hidden="true">→</span>
+      </a>
+    </div>
+
+  </div>
+</section>
+
+<!-- =========================================================
+     BUILD MARKER — sections below land in next checkpoint
+     ========================================================= -->
+<div class="wrap build-marker">
+  Mid-session checkpoint · Dashboard CTA strip · 3-card row · feed · footer build next.
+</div>
+
+</main>
+
+</body>
+</html>
