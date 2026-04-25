@@ -205,6 +205,93 @@
   }
 
   /* ============================================================
+     CATEGORY CHIPS — editorial filter strip
+     Sits below date strip, above hero. Filters cards + feed rows
+     in place via JS. Editorial categories only (not entity search,
+     which is reserved as a dashboard feature per signup gating).
+     ============================================================ */
+  .chips {
+    background: var(--cream);
+    border-bottom: 1px solid var(--hairline);
+  }
+  .chips-inner {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: wrap;
+    padding: 14px 0;
+  }
+  .chip {
+    display: inline-flex;
+    align-items: center;
+    height: 28px;
+    padding: 0 13px;
+    background: transparent;
+    border: 1px solid var(--hairline-2);
+    border-radius: 999px;
+    font-family: var(--body-serif);
+    font-size: 11.5px;
+    font-weight: 600;
+    letter-spacing: 0.10em;
+    text-transform: uppercase;
+    color: var(--navy-ink);
+    cursor: pointer;
+    transition: background 140ms ease, border-color 140ms ease, color 140ms ease;
+  }
+  .chip:hover {
+    border-color: var(--bronze);
+    color: var(--bronze);
+  }
+  .chip.is-active {
+    background: var(--navy-ink);
+    border-color: var(--navy-ink);
+    color: var(--cream-lt);
+  }
+  .chip.is-active:hover {
+    background: var(--navy-deep);
+    border-color: var(--navy-deep);
+    color: var(--cream-lt);
+  }
+  .chip-count {
+    margin-left: 6px;
+    font-size: 10px;
+    color: var(--muted);
+    letter-spacing: 0.05em;
+    font-weight: 400;
+    text-transform: none;
+  }
+  .chip.is-active .chip-count {
+    color: rgba(247, 243, 235, 0.55);
+  }
+
+  /* Filtered-out cards/rows fade and shrink rather than hard-disappear
+     to keep page rhythm during transitions */
+  .card.is-hidden,
+  .feed-row.is-hidden,
+  .hero.is-hidden,
+  .week.is-hidden,
+  .feed.is-hidden {
+    display: none;
+  }
+
+  /* Empty-state for when filter returns 0 results in a section */
+  .filter-empty {
+    grid-column: 1 / -1;
+    padding: 32px 0;
+    text-align: center;
+    font-size: 13px;
+    color: var(--muted);
+    font-style: italic;
+  }
+  .filter-empty.is-hidden { display: none; }
+
+  @media (max-width: 640px) {
+    .chips-inner { padding: 10px 0; gap: 6px; overflow-x: auto; flex-wrap: nowrap; -webkit-overflow-scrolling: touch; }
+    .chip { font-size: 10.5px; height: 26px; padding: 0 11px; flex-shrink: 0; }
+    .chips-inner::-webkit-scrollbar { display: none; }
+  }
+
+  /* ============================================================
      HERO ARTICLE
      Desktop: 1.15 : 1 split (image | text)  · 16:9 image
      ============================================================ */
@@ -815,11 +902,27 @@
 </script>
 
 <!-- =========================================================
+     CATEGORY CHIPS
+     Editorial filter strip. ALL is default-active.
+     Counts populated by JS on page load.
+     ========================================================= -->
+<nav class="chips" aria-label="Filter by category">
+  <div class="wrap chips-inner" role="tablist">
+    <button class="chip is-active" data-cat="all" role="tab" aria-selected="true">All <span class="chip-count" data-count-for="all"></span></button>
+    <button class="chip" data-cat="commercial" role="tab" aria-selected="false">Commercial <span class="chip-count" data-count-for="commercial"></span></button>
+    <button class="chip" data-cat="industrial" role="tab" aria-selected="false">Industrial <span class="chip-count" data-count-for="industrial"></span></button>
+    <button class="chip" data-cat="healthcare" role="tab" aria-selected="false">Healthcare <span class="chip-count" data-count-for="healthcare"></span></button>
+    <button class="chip" data-cat="retail" role="tab" aria-selected="false">Retail <span class="chip-count" data-count-for="retail"></span></button>
+    <button class="chip" data-cat="developers" role="tab" aria-selected="false">Developers <span class="chip-count" data-count-for="developers"></span></button>
+  </div>
+</nav>
+
+<!-- =========================================================
      HERO ARTICLE
      Seeded with NEWS id 71 — CICT 1Q 2026
      ========================================================= -->
 <main id="newsroom">
-<section class="hero" aria-labelledby="hero-h">
+<section class="hero" data-cat="commercial" aria-labelledby="hero-h">
   <div class="wrap hero-grid">
 
     <!-- Image — flat navy placeholder until Supabase pipeline is live.
@@ -881,12 +984,17 @@
        - 52 REITs and developers
      Update when dashboard counters tick over. Future enhancement:
      read these from the same data source as the dashboard hero.
+
+     Copy promotes entity search as a dashboard-only feature
+     (the keyword "filter by entity" is a deliberate signal that
+     entity-level search is not available on the public landing
+     page — reserved as a signup-conversion lever).
      ========================================================= -->
 <aside class="cta-strip" aria-label="Dashboard upgrade">
   <div class="wrap cta-strip-inner">
     <div class="cta-text">
       <p class="cta-eyebrow">The Dashboard</p>
-      <p class="cta-body">Beyond the newsroom: <strong>81,946 transactions · 922 properties · 52 REITs and developers</strong> — searchable, filterable, free with signup.</p>
+      <p class="cta-body">Beyond the newsroom: search <strong>81,946 transactions</strong> across <strong>922 properties</strong> and <strong>52 REITs and developers</strong> — filter by entity, date, segment. Free with signup.</p>
     </div>
     <a class="btn-bronze" href="/dashboard/?signin=1">
       Sign up free
@@ -915,8 +1023,11 @@
 
     <div class="cards">
 
+      <!-- Empty-state shown when filter returns 0 cards in this section -->
+      <div class="filter-empty is-hidden" data-empty-for="cards">No entries in this category this week. <a href="/dashboard/" style="color: var(--bronze); border-bottom: 1px solid var(--hairline-2); padding-bottom: 1px;">Search the dashboard →</a></div>
+
       <!-- Card 1 — id 70 ESR-REIT -->
-      <a class="card" href="/dashboard/?news=70">
+      <a class="card" data-cat="industrial" href="/dashboard/?news=70">
         <div class="card-image">
           <div class="placeholder-flat" aria-hidden="true">
             <span class="placeholder-label">Image · 1600 × 900</span>
@@ -933,7 +1044,7 @@
       </a>
 
       <!-- Card 2 — id 69 First REIT -->
-      <a class="card" href="/dashboard/?news=69">
+      <a class="card" data-cat="healthcare" href="/dashboard/?news=69">
         <div class="card-image">
           <div class="placeholder-flat" aria-hidden="true">
             <span class="placeholder-label">Image · 1600 × 900</span>
@@ -950,7 +1061,7 @@
       </a>
 
       <!-- Card 3 — id 68 CapitaLand China Trust -->
-      <a class="card" href="/dashboard/?news=68">
+      <a class="card" data-cat="commercial" href="/dashboard/?news=68">
         <div class="card-image">
           <div class="placeholder-flat" aria-hidden="true">
             <span class="placeholder-label">Image · 1600 × 900</span>
@@ -987,8 +1098,11 @@
 
     <div class="feed-list">
 
+      <!-- Empty-state shown when filter returns 0 feed rows in this section -->
+      <div class="filter-empty is-hidden" data-empty-for="feed">No earlier entries in this category. <a href="/dashboard/" style="color: var(--bronze); border-bottom: 1px solid var(--hairline-2); padding-bottom: 1px;">Search the dashboard →</a></div>
+
       <!-- Row id 67 — Digital Core REIT -->
-      <a class="feed-row" href="/dashboard/?news=67">
+      <a class="feed-row" data-cat="commercial" href="/dashboard/?news=67">
         <div class="feed-row-image">
           <div class="placeholder-flat" aria-hidden="true">
             <span class="placeholder-label">Image</span>
@@ -1007,7 +1121,7 @@
       </a>
 
       <!-- Row id 66 — OUE REIT -->
-      <a class="feed-row" href="/dashboard/?news=66">
+      <a class="feed-row" data-cat="commercial" href="/dashboard/?news=66">
         <div class="feed-row-image">
           <div class="placeholder-flat" aria-hidden="true">
             <span class="placeholder-label">Image</span>
@@ -1026,7 +1140,7 @@
       </a>
 
       <!-- Row id 65 — Keppel REIT -->
-      <a class="feed-row" href="/dashboard/?news=65">
+      <a class="feed-row" data-cat="commercial" href="/dashboard/?news=65">
         <div class="feed-row-image">
           <div class="placeholder-flat" aria-hidden="true">
             <span class="placeholder-label">Image</span>
@@ -1045,7 +1159,7 @@
       </a>
 
       <!-- Row id 64 — CICT Paragon / AST2 swap pre-announcement coverage -->
-      <a class="feed-row" href="/dashboard/?news=64">
+      <a class="feed-row" data-cat="retail" href="/dashboard/?news=64">
         <div class="feed-row-image">
           <div class="placeholder-flat" aria-hidden="true">
             <span class="placeholder-label">Image</span>
@@ -1064,7 +1178,7 @@
       </a>
 
       <!-- Row id 63 — Alpha Integrated REIT -->
-      <a class="feed-row" href="/dashboard/?news=63">
+      <a class="feed-row" data-cat="industrial" href="/dashboard/?news=63">
         <div class="feed-row-image">
           <div class="placeholder-flat" aria-hidden="true">
             <span class="placeholder-label">Image</span>
@@ -1114,6 +1228,94 @@
     </ul>
   </div>
 </footer>
+
+<script>
+/* ================================================================
+   CATEGORY CHIP FILTER
+   - Reads data-cat from hero, cards, feed rows.
+   - Click a chip → adds .is-hidden to non-matching items.
+   - Updates section visibility (week + feed hide if all rows filtered).
+   - Empty-states surface inside week/feed when section retains items
+     in other parts but this category has none in that section.
+   - "Developers" chip is wired up in markup but the current archive
+     has 0 developer-tagged entries — chip will show "(0)" and an
+     empty state when clicked. Functional for when developer entries land.
+   ================================================================ */
+(function () {
+  var chips = document.querySelectorAll('.chip');
+  var hero = document.querySelector('.hero');
+  var weekSection = document.querySelector('.week');
+  var feedSection = document.querySelector('.feed');
+  var cards = document.querySelectorAll('.card');
+  var rows = document.querySelectorAll('.feed-row');
+  var emptyCards = document.querySelector('[data-empty-for="cards"]');
+  var emptyFeed = document.querySelector('[data-empty-for="feed"]');
+
+  // Helper — count entries by category across hero+cards+rows
+  function countByCat(cat) {
+    var n = 0;
+    if (hero && (cat === 'all' || hero.dataset.cat === cat)) n++;
+    cards.forEach(function (c) { if (cat === 'all' || c.dataset.cat === cat) n++; });
+    rows.forEach(function (r) { if (cat === 'all' || r.dataset.cat === cat) n++; });
+    return n;
+  }
+
+  // Populate chip counts on load
+  document.querySelectorAll('[data-count-for]').forEach(function (el) {
+    var cat = el.getAttribute('data-count-for');
+    var n = countByCat(cat);
+    el.textContent = '(' + n + ')';
+  });
+
+  // Apply filter to a target category
+  function applyFilter(cat) {
+    // Hero
+    if (hero) {
+      hero.classList.toggle('is-hidden', cat !== 'all' && hero.dataset.cat !== cat);
+    }
+    // Cards
+    var visibleCards = 0;
+    cards.forEach(function (c) {
+      var match = (cat === 'all' || c.dataset.cat === cat);
+      c.classList.toggle('is-hidden', !match);
+      if (match) visibleCards++;
+    });
+    // Feed rows
+    var visibleRows = 0;
+    rows.forEach(function (r) {
+      var match = (cat === 'all' || r.dataset.cat === cat);
+      r.classList.toggle('is-hidden', !match);
+      if (match) visibleRows++;
+    });
+    // Section-level empty states (only show when filter is not 'all')
+    if (emptyCards) emptyCards.classList.toggle('is-hidden', !(cat !== 'all' && visibleCards === 0));
+    if (emptyFeed) emptyFeed.classList.toggle('is-hidden', !(cat !== 'all' && visibleRows === 0));
+
+    // Smooth scroll to top of newsroom on chip change so user sees the new state
+    var nr = document.getElementById('newsroom');
+    if (nr && cat !== 'all') {
+      // Only scroll if user is below newsroom anchor — avoid jarring scroll-up on click
+      var rect = nr.getBoundingClientRect();
+      if (rect.top < -40) nr.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+  }
+
+  // Wire chip clicks
+  chips.forEach(function (chip) {
+    chip.addEventListener('click', function () {
+      // Update active state
+      chips.forEach(function (c) {
+        c.classList.remove('is-active');
+        c.setAttribute('aria-selected', 'false');
+      });
+      chip.classList.add('is-active');
+      chip.setAttribute('aria-selected', 'true');
+      // Apply filter
+      applyFilter(chip.dataset.cat);
+    });
+  });
+})();
+</script>
 
 </body>
 </html>
