@@ -526,17 +526,184 @@
   }
 
   /* ============================================================
-     PLACEHOLDER FOR LATER SECTIONS (built next checkpoint)
+     "EARLIER THIS MONTH" — feed rows
+     Compact rows: 160px-wide thumbnail + headline + teaser + date.
+     Mobile uses 80px thumbnail per v48.13e Section B.
      ============================================================ */
-  .build-marker {
-    border-top: 1px dashed var(--hairline-2);
-    margin-top: 8px;
-    padding: 18px 0 60px;
-    text-align: center;
+  .feed {
+    padding: 56px 0 32px;
+  }
+  .feed-head {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 16px;
+    margin-bottom: 18px;
+    border-bottom: 1px solid var(--hairline);
+    padding-bottom: 12px;
+  }
+  .feed-title {
+    font-family: var(--body-serif);
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--bronze);
+    margin: 0;
+  }
+  .feed-meta {
     font-size: 11px;
     color: var(--muted);
     font-style: italic;
-    letter-spacing: 0.06em;
+  }
+
+  .feed-list {
+    display: flex;
+    flex-direction: column;
+  }
+  .feed-row {
+    display: grid;
+    grid-template-columns: 160px 1fr;
+    gap: 22px;
+    align-items: start;
+    padding: 18px 0;
+    border-bottom: 1px solid var(--hairline);
+    transition: background 140ms ease;
+  }
+  .feed-row:last-child { border-bottom: 0; }
+  .feed-row:hover .feed-row-headline { color: var(--navy); }
+
+  .feed-row-image {
+    position: relative;
+    aspect-ratio: 16 / 9;
+    overflow: hidden;
+    background: var(--navy-ink);
+    border-radius: 2px;
+  }
+  /* feed images reuse the .placeholder-flat / .placeholder-label styles
+     defined in the hero section — no new CSS needed here. */
+
+  .feed-row-text { padding-top: 1px; }
+  .feed-row-cat {
+    font-size: var(--t-tag);
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--bronze);
+    font-weight: 600;
+    margin: 0 0 6px;
+  }
+  .feed-row-headline {
+    font-family: var(--body-serif);
+    font-size: var(--t-feed-h);
+    line-height: 1.4;
+    font-weight: 700;
+    color: var(--navy-ink);
+    margin: 0 0 6px;
+    transition: color 140ms ease;
+  }
+  .feed-row-teaser {
+    font-size: var(--t-body-feed);
+    line-height: 1.55;
+    color: var(--ink);
+    margin: 0 0 8px;
+  }
+  .feed-row-meta {
+    font-size: var(--t-meta);
+    color: var(--muted);
+    margin: 0;
+  }
+  .feed-row-meta .sep { margin: 0 5px; color: var(--hairline-2); }
+
+  /* "See all 69 entries" centered link */
+  .see-all {
+    text-align: center;
+    padding: 18px 0 64px;
+  }
+  .see-all a {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 13.5px;
+    font-weight: 600;
+    color: var(--navy);
+    border-bottom: 1px solid var(--hairline-2);
+    padding: 4px 2px;
+    transition: color 140ms ease, border-color 140ms ease;
+  }
+  .see-all a:hover {
+    color: var(--navy-ink);
+    border-color: var(--bronze);
+  }
+  .see-all .arrow { transition: transform 160ms ease; }
+  .see-all a:hover .arrow { transform: translateX(3px); }
+
+  /* Mobile pass for feed */
+  @media (max-width: 640px) {
+    .feed { padding: 36px 0 24px; }
+    .feed-row {
+      grid-template-columns: 80px 1fr;
+      gap: 14px;
+      padding: 14px 0;
+    }
+    .feed-row-headline { font-size: 13.5px; line-height: 1.35; }
+    .feed-row-teaser { font-size: 11.5px; }
+    .feed-title { font-size: 11.5px; letter-spacing: 0.14em; }
+  }
+
+  /* ============================================================
+     FOOTER
+     Deep navy bg · TKRE attribution left · links right · bronze accents
+     ============================================================ */
+  .site-foot {
+    background: var(--navy-ink);
+    color: var(--cream-lt);
+    padding: 28px 0;
+    margin-top: 0;
+  }
+  .site-foot-inner {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 24px;
+    flex-wrap: wrap;
+  }
+  .foot-attr {
+    font-size: 12px;
+    color: rgba(247, 243, 235, 0.72);
+    margin: 0;
+  }
+  .foot-attr strong {
+    color: var(--bronze-lt);
+    font-weight: 700;
+  }
+  .foot-links {
+    display: flex;
+    gap: 22px;
+    align-items: center;
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+  .foot-links a {
+    font-size: 12px;
+    color: var(--bronze-lt);
+    transition: color 140ms ease;
+    border-bottom: 1px solid transparent;
+    padding-bottom: 1px;
+  }
+  .foot-links a:hover {
+    color: var(--cream-lt);
+    border-color: var(--bronze);
+  }
+
+  @media (max-width: 640px) {
+    .site-foot { padding: 22px 0 26px; }
+    .site-foot-inner {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 14px;
+    }
+    .foot-links { gap: 16px; flex-wrap: wrap; }
   }
 
   /* ============================================================
@@ -804,13 +971,149 @@
 </section>
 
 <!-- =========================================================
-     BUILD MARKER — sections below land in next checkpoint
+     EARLIER THIS MONTH — feed rows
+     Seeded with NEWS ids 67-63. v48.13e Section B locked.
+     Compact rows: 160px thumbnail (desktop), 80px (mobile).
+
+     Future enhancement: group rows by week or month sub-header
+     once archive grows. Per v48.13e Section B "groupable by month".
      ========================================================= -->
-<div class="wrap build-marker">
-  Mid-session checkpoint · feed · footer build next.
-</div>
+<section class="feed" aria-labelledby="feed-h">
+  <div class="wrap">
+    <div class="feed-head">
+      <h2 id="feed-h" class="feed-title">Earlier this month</h2>
+      <div class="feed-meta">April 2026</div>
+    </div>
+
+    <div class="feed-list">
+
+      <!-- Row id 67 — Digital Core REIT -->
+      <a class="feed-row" href="/dashboard/?news=67">
+        <div class="feed-row-image">
+          <div class="placeholder-flat" aria-hidden="true">
+            <span class="placeholder-label">Image</span>
+          </div>
+        </div>
+        <div class="feed-row-text">
+          <p class="feed-row-cat">Commercial</p>
+          <h3 class="feed-row-headline">Digital Core REIT 1Q 2026: Flat DPI Masks Compositional Shift</h3>
+          <p class="feed-row-teaser">Linton Hall now a redevelopment with +35% rent uplift; Osaka minority stakes +95% YoY; NTT DC joins peer set.</p>
+          <p class="feed-row-meta">
+            <span>22 April 2026</span>
+            <span class="sep">·</span>
+            <span>11 min read</span>
+          </p>
+        </div>
+      </a>
+
+      <!-- Row id 66 — OUE REIT -->
+      <a class="feed-row" href="/dashboard/?news=66">
+        <div class="feed-row-image">
+          <div class="placeholder-flat" aria-hidden="true">
+            <span class="placeholder-label">Image</span>
+          </div>
+        </div>
+        <div class="feed-row-text">
+          <p class="feed-row-cat">Commercial</p>
+          <h3 class="feed-row-headline">OUE REIT 1Q 2026: Phase 3 In Execution</h3>
+          <p class="feed-row-teaser">Sydney acquisition done, One Raffles Place market-sounding live, Bayfront Level 17 approved.</p>
+          <p class="feed-row-meta">
+            <span>22 April 2026</span>
+            <span class="sep">·</span>
+            <span>10 min read</span>
+          </p>
+        </div>
+      </a>
+
+      <!-- Row id 65 — Keppel REIT -->
+      <a class="feed-row" href="/dashboard/?news=65">
+        <div class="feed-row-image">
+          <div class="placeholder-flat" aria-hidden="true">
+            <span class="placeholder-label">Image</span>
+          </div>
+        </div>
+        <div class="feed-row-text">
+          <p class="feed-row-cat">Commercial</p>
+          <h3 class="feed-row-headline">Keppel REIT 1Q 2026: Distributable Income +19.7% YoY</h3>
+          <p class="feed-row-teaser">Cost of debt drops to 3.16%, rental reversion accelerates to +17.2% — operating leverage in motion.</p>
+          <p class="feed-row-meta">
+            <span>22 April 2026</span>
+            <span class="sep">·</span>
+            <span>10 min read</span>
+          </p>
+        </div>
+      </a>
+
+      <!-- Row id 64 — CICT Paragon / AST2 swap pre-announcement coverage -->
+      <a class="feed-row" href="/dashboard/?news=64">
+        <div class="feed-row-image">
+          <div class="placeholder-flat" aria-hidden="true">
+            <span class="placeholder-label">Image</span>
+          </div>
+        </div>
+        <div class="feed-row-text">
+          <p class="feed-row-cat">Retail</p>
+          <h3 class="feed-row-headline">CICT's S$3.9B Paragon Acquisition + S$2.5B AST2 Divestment</h3>
+          <p class="feed-row-teaser">A tactical portfolio swap from leasehold office to freehold Orchard retail-medical, 90bps yield pick-up.</p>
+          <p class="feed-row-meta">
+            <span>21 April 2026</span>
+            <span class="sep">·</span>
+            <span>14 min read</span>
+          </p>
+        </div>
+      </a>
+
+      <!-- Row id 63 — Alpha Integrated REIT -->
+      <a class="feed-row" href="/dashboard/?news=63">
+        <div class="feed-row-image">
+          <div class="placeholder-flat" aria-hidden="true">
+            <span class="placeholder-label">Image</span>
+          </div>
+        </div>
+        <div class="feed-row-text">
+          <p class="feed-row-cat">Industrial</p>
+          <h3 class="feed-row-headline">Alpha Integrated REIT 1Q 2026: Internalisation Dividend</h3>
+          <p class="feed-row-teaser">Occupancy 91.4%, ICR 4.0x, financing cost 3.85% — clean step-up across every metric that matters.</p>
+          <p class="feed-row-meta">
+            <span>20 April 2026</span>
+            <span class="sep">·</span>
+            <span>11 min read</span>
+          </p>
+        </div>
+      </a>
+
+    </div>
+
+    <!-- See all link (centered) -->
+    <div class="see-all">
+      <a href="/dashboard/#newsroom-archive">
+        See all 69 entries
+        <span class="arrow" aria-hidden="true">→</span>
+      </a>
+    </div>
+
+  </div>
+</section>
 
 </main>
+
+<!-- =========================================================
+     FOOTER
+     Deep navy · TKRE attribution left · links right
+     ========================================================= -->
+<footer class="site-foot" role="contentinfo">
+  <div class="wrap site-foot-inner">
+    <p class="foot-attr">
+      A <strong>TK Real Estate</strong> publication · © 2026 TK Real Estate Pte Ltd. All rights reserved.
+    </p>
+    <ul class="foot-links">
+      <li><a href="/privacy">Privacy</a></li>
+      <li><a href="/terms">Terms</a></li>
+      <li><a href="mailto:hello@propertyatlas.sg">Contact</a></li>
+      <li><a href="https://www.linkedin.com/company/propertyatlas-sg" target="_blank" rel="noopener">LinkedIn</a></li>
+    </ul>
+  </div>
+</footer>
 
 </body>
 </html>
