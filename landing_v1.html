@@ -352,9 +352,6 @@
     border-top: 1px solid rgba(166, 124, 58, 0.20);
     border-bottom: 1px solid rgba(166, 124, 58, 0.20);
   }
-  .cta-strip + .cta-strip {
-    border-top: 0; /* prevent double-rule when stacking variants for review */
-  }
   .cta-strip-inner {
     display: flex;
     align-items: center;
@@ -405,22 +402,6 @@
   .btn-bronze .arrow { transition: transform 160ms ease; }
   .btn-bronze:hover .arrow { transform: translateX(3px); }
 
-  /* Internal label for review-only — strips a/b/c variants identifier.
-     Will be stripped before final build. */
-  .variant-label {
-    position: absolute;
-    top: 6px;
-    left: 8px;
-    font-size: 9px;
-    letter-spacing: 0.16em;
-    text-transform: uppercase;
-    color: var(--bronze-lt);
-    opacity: 0.55;
-    font-style: italic;
-    font-weight: 400;
-  }
-  .cta-strip { position: relative; }
-
   /* Mobile pass for CTA strip */
   @media (max-width: 640px) {
     .cta-strip { padding: 22px 0; }
@@ -431,6 +412,117 @@
     }
     .cta-body { font-size: 14.5px; }
     .btn-bronze { width: 100%; justify-content: center; height: 44px; }
+  }
+
+  /* ============================================================
+     "MORE FROM THIS WEEK" — 3-card row
+     Equal-width cards, 16:9 image · category tag · headline ·
+     teaser · date · read-time. v48.13e Section B locked.
+     ============================================================ */
+  .week {
+    padding: 56px 0 16px;
+  }
+  .week-head {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 16px;
+    margin-bottom: 22px;
+    border-bottom: 1px solid var(--hairline);
+    padding-bottom: 12px;
+  }
+  .week-title {
+    font-family: var(--body-serif);
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--bronze);
+    margin: 0;
+  }
+  .week-meta {
+    font-size: 11px;
+    color: var(--muted);
+    font-style: italic;
+  }
+
+  .cards {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 28px;
+  }
+  .card {
+    display: flex;
+    flex-direction: column;
+    background: transparent;
+  }
+  .card:hover .card-headline { color: var(--navy); }
+
+  .card-image {
+    position: relative;
+    aspect-ratio: 16 / 9;
+    overflow: hidden;
+    background: var(--navy-ink);
+    border-radius: 2px;
+    box-shadow: var(--shadow-card);
+    margin-bottom: 14px;
+  }
+  .card-image .placeholder-flat {
+    /* reuses the same flat-block pattern as the hero */
+    position: absolute; inset: 0;
+    display: grid;
+    place-items: center;
+    background: linear-gradient(135deg, var(--navy-deep) 0%, var(--navy-ink) 100%);
+  }
+  .card-image .placeholder-label {
+    font-size: 9.5px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    font-style: italic;
+    color: rgba(247, 243, 235, 0.36);
+    font-weight: 400;
+  }
+
+  .card-cat {
+    font-size: var(--t-tag);
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--bronze);
+    font-weight: 600;
+    margin: 0 0 8px;
+  }
+  .card-headline {
+    font-family: var(--body-serif);
+    font-size: var(--t-card-h);
+    line-height: 1.35;
+    font-weight: 700;
+    color: var(--navy-ink);
+    margin: 0 0 10px;
+    transition: color 140ms ease;
+  }
+  .card-teaser {
+    font-size: var(--t-body-card);
+    line-height: 1.55;
+    color: var(--ink);
+    margin: 0 0 14px;
+    flex-grow: 1; /* push metadata to bottom for vertical alignment across cards */
+  }
+  .card-meta {
+    font-size: var(--t-meta);
+    color: var(--muted);
+    margin: 0;
+  }
+  .card-meta .sep { margin: 0 5px; color: var(--hairline-2); }
+
+  /* Mobile stacking for cards */
+  @media (max-width: 880px) {
+    .cards { grid-template-columns: 1fr 1fr; gap: 24px; }
+    .week { padding: 36px 0 12px; }
+  }
+  @media (max-width: 640px) {
+    .cards { grid-template-columns: 1fr; gap: 28px; }
+    .week-head { margin-bottom: 18px; }
+    .week-title { font-size: 11.5px; letter-spacing: 0.14em; }
   }
 
   /* ============================================================
@@ -612,28 +704,18 @@
 </section>
 
 <!-- =========================================================
-     DASHBOARD CTA STRIP — three variants stacked for review.
-     Pick one; the other two get deleted before next build.
+     DASHBOARD CTA STRIP
+     Sits between hero and "More from this week" 3-card row.
+     v48.13e Section B locked placement.
+
+     Numbers in the body copy are CURRENT-STATE (24 Apr 2026):
+       - 81,946 transactions
+       - 922 properties tracked
+       - 52 REITs and developers
+     Update when dashboard counters tick over. Future enhancement:
+     read these from the same data source as the dashboard hero.
      ========================================================= -->
-
-<!-- Variant A — Functional / list-led -->
 <aside class="cta-strip" aria-label="Dashboard upgrade">
-  <span class="variant-label">Variant A · functional</span>
-  <div class="wrap cta-strip-inner">
-    <div class="cta-text">
-      <p class="cta-eyebrow">The Dashboard</p>
-      <p class="cta-body">Singapore commercial-property data, organised. <strong>Directory · Pipeline · Asset Directory · Talent · Market Pulse</strong> — free with signup.</p>
-    </div>
-    <a class="btn-bronze" href="/dashboard/?signin=1">
-      Sign up free
-      <span class="arrow" aria-hidden="true">→</span>
-    </a>
-  </div>
-</aside>
-
-<!-- Variant B — Promise-led / numbers-forward -->
-<aside class="cta-strip" aria-label="Dashboard upgrade">
-  <span class="variant-label">Variant B · promise-led</span>
   <div class="wrap cta-strip-inner">
     <div class="cta-text">
       <p class="cta-eyebrow">The Dashboard</p>
@@ -646,26 +728,86 @@
   </div>
 </aside>
 
-<!-- Variant C — Editorial / "the writers' tool" -->
-<aside class="cta-strip" aria-label="Dashboard upgrade">
-  <span class="variant-label">Variant C · editorial</span>
-  <div class="wrap cta-strip-inner">
-    <div class="cta-text">
-      <p class="cta-eyebrow">The Dashboard</p>
-      <p class="cta-body">The dashboard our writers use. <strong>Singapore C&I market intelligence</strong>, free with signup.</p>
+<!-- =========================================================
+     MORE FROM THIS WEEK — 3-card row
+     Cards seeded with NEWS ids 70, 69, 68 (next 3 after CICT).
+     display_title and display_teaser are short variants for
+     landing-page rendering; full title preserved in NEWS array
+     for article-page H1. Per v48.13e schema convention.
+
+     Read-time placeholders ("12 min read" etc.) are ESTIMATES.
+     Retrofit with real values when wordCount/minRead are added
+     to NEWS schema for these entries.
+     ========================================================= -->
+<section class="week" aria-labelledby="week-h">
+  <div class="wrap">
+    <div class="week-head">
+      <h2 id="week-h" class="week-title">More from this week</h2>
+      <div class="week-meta">Updated 24 April 2026</div>
     </div>
-    <a class="btn-bronze" href="/dashboard/?signin=1">
-      Sign up free
-      <span class="arrow" aria-hidden="true">→</span>
-    </a>
+
+    <div class="cards">
+
+      <!-- Card 1 — id 70 ESR-REIT -->
+      <a class="card" href="/dashboard/?news=70">
+        <div class="card-image">
+          <div class="placeholder-flat" aria-hidden="true">
+            <span class="placeholder-label">Image · 1600 × 900</span>
+          </div>
+        </div>
+        <p class="card-cat">Industrial</p>
+        <h3 class="card-headline">ESR-REIT 1Q 2026: A Flat Headline Hides A Balance Sheet Reset</h3>
+        <p class="card-teaser">Revenue −0.4% YoY reads quiet, but beneath the print: S$439.1M divested, Fitch BBB stable, pro-forma gearing 39.5%.</p>
+        <p class="card-meta">
+          <span>24 April 2026</span>
+          <span class="sep">·</span>
+          <span>13 min read</span>
+        </p>
+      </a>
+
+      <!-- Card 2 — id 69 First REIT -->
+      <a class="card" href="/dashboard/?news=69">
+        <div class="card-image">
+          <div class="placeholder-flat" aria-hidden="true">
+            <span class="placeholder-label">Image · 1600 × 900</span>
+          </div>
+        </div>
+        <p class="card-cat">Healthcare</p>
+        <h3 class="card-headline">First REIT 1Q 2026: DPU −13.8%, But The Story Is The Indonesia Exit</h3>
+        <p class="card-teaser">Eight hospitals sold to Siloam, three non-core divested, put option on the remaining six — the country exit, in motion.</p>
+        <p class="card-meta">
+          <span>23 April 2026</span>
+          <span class="sep">·</span>
+          <span>12 min read</span>
+        </p>
+      </a>
+
+      <!-- Card 3 — id 68 CapitaLand China Trust -->
+      <a class="card" href="/dashboard/?news=68">
+        <div class="card-image">
+          <div class="placeholder-flat" aria-hidden="true">
+            <span class="placeholder-label">Image · 1600 × 900</span>
+          </div>
+        </div>
+        <p class="card-cat">Commercial</p>
+        <h3 class="card-headline">CapitaLand China Trust 1Q 2026: −3.5% Headline, +1.3% Same-Store</h3>
+        <p class="card-teaser">Logistics reversion swings −24.5% to −1.4%; cost of debt at 3.10% cycle low; retail traffic, sales, and occupancy cost all improving.</p>
+        <p class="card-meta">
+          <span>23 April 2026</span>
+          <span class="sep">·</span>
+          <span>11 min read</span>
+        </p>
+      </a>
+
+    </div>
   </div>
-</aside>
+</section>
 
 <!-- =========================================================
      BUILD MARKER — sections below land in next checkpoint
      ========================================================= -->
 <div class="wrap build-marker">
-  Mid-session checkpoint · Three CTA variants above · 3-card row · feed · footer build next.
+  Mid-session checkpoint · feed · footer build next.
 </div>
 
 </main>
