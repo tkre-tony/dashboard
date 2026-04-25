@@ -16,6 +16,15 @@
      Image strategy: hero uses an inline SVG placeholder at 16:9 with
      monochrome navy overlay simulated. Real photo pipeline lands once
      Supabase Storage bucket is set up (Priority 2 in handoff).
+
+     NEWS schema convention (v1):
+       title          : full long-form article title (preserved as
+                        article-page H1; SEO entity-rich)
+       display_title  : OPTIONAL short headline for landing-page hero/cards.
+                        ~60-90 chars, max 2 lines at 26px desktop.
+                        Renderer falls back to `title` if absent.
+       image_key      : OPTIONAL Supabase Storage filename (per handoff)
+       image_alt      : OPTIONAL alt text
      ============================================================ -->
 
 <style>
@@ -479,12 +488,7 @@
       </div>
 
       <h1 id="hero-h" class="hero-headline">
-        <a href="/dashboard/?news=71">
-          CICT 1Q 2026: Operating NPI +7.9% YoY Is The Backdrop;
-          The Story Is The S$6.4B Portfolio Swap — Paragon Acquired
-          Freehold At S$3.9B, AST2 Divested At 9.9% Premium,
-          S$750M Placement Closed
-        </a>
+        <a href="/dashboard/?news=71">CICT 1Q 2026: The S$6.4B Portfolio Swap Behind A +7.9% NPI Quarter</a>
       </h1>
 
       <p class="hero-teaser">
