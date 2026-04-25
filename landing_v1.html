@@ -340,6 +340,100 @@
   }
 
   /* ============================================================
+     DASHBOARD CTA STRIP
+     Deep-navy bar between hero and three-card row.
+     Bronze eyebrow · cream body copy · bronze pill button.
+     v48.13e Section B locked placement.
+     ============================================================ */
+  .cta-strip {
+    background: var(--navy-ink);
+    color: var(--cream-lt);
+    padding: 28px 0;
+    border-top: 1px solid rgba(166, 124, 58, 0.20);
+    border-bottom: 1px solid rgba(166, 124, 58, 0.20);
+  }
+  .cta-strip + .cta-strip {
+    border-top: 0; /* prevent double-rule when stacking variants for review */
+  }
+  .cta-strip-inner {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 32px;
+  }
+  .cta-text { flex: 1; min-width: 0; }
+  .cta-eyebrow {
+    font-size: var(--t-eyebrow);
+    font-weight: 600;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--bronze-lt);
+    margin: 0 0 6px;
+  }
+  .cta-body {
+    font-size: 15.5px;
+    line-height: 1.45;
+    color: var(--cream-lt);
+    margin: 0;
+  }
+  .cta-body strong {
+    color: var(--bronze-lt);
+    font-weight: 700;
+  }
+
+  /* Bronze pill button — sits on navy-ink, distinct from primary navy CTA */
+  .btn-bronze {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    height: 40px;
+    padding: 0 18px;
+    background: var(--bronze-lt);
+    color: var(--navy-ink);
+    font-size: 13.5px;
+    font-weight: 700;
+    letter-spacing: 0.02em;
+    border-radius: 999px;
+    transition: background 140ms ease, transform 140ms ease;
+    flex-shrink: 0;
+  }
+  .btn-bronze:hover {
+    background: var(--bronze);
+    color: var(--cream-lt);
+    transform: translateY(-1px);
+  }
+  .btn-bronze .arrow { transition: transform 160ms ease; }
+  .btn-bronze:hover .arrow { transform: translateX(3px); }
+
+  /* Internal label for review-only — strips a/b/c variants identifier.
+     Will be stripped before final build. */
+  .variant-label {
+    position: absolute;
+    top: 6px;
+    left: 8px;
+    font-size: 9px;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--bronze-lt);
+    opacity: 0.55;
+    font-style: italic;
+    font-weight: 400;
+  }
+  .cta-strip { position: relative; }
+
+  /* Mobile pass for CTA strip */
+  @media (max-width: 640px) {
+    .cta-strip { padding: 22px 0; }
+    .cta-strip-inner {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 16px;
+    }
+    .cta-body { font-size: 14.5px; }
+    .btn-bronze { width: 100%; justify-content: center; height: 44px; }
+  }
+
+  /* ============================================================
      PLACEHOLDER FOR LATER SECTIONS (built next checkpoint)
      ============================================================ */
   .build-marker {
@@ -518,10 +612,60 @@
 </section>
 
 <!-- =========================================================
+     DASHBOARD CTA STRIP — three variants stacked for review.
+     Pick one; the other two get deleted before next build.
+     ========================================================= -->
+
+<!-- Variant A — Functional / list-led -->
+<aside class="cta-strip" aria-label="Dashboard upgrade">
+  <span class="variant-label">Variant A · functional</span>
+  <div class="wrap cta-strip-inner">
+    <div class="cta-text">
+      <p class="cta-eyebrow">The Dashboard</p>
+      <p class="cta-body">Singapore commercial-property data, organised. <strong>Directory · Pipeline · Asset Directory · Talent · Market Pulse</strong> — free with signup.</p>
+    </div>
+    <a class="btn-bronze" href="/dashboard/?signin=1">
+      Sign up free
+      <span class="arrow" aria-hidden="true">→</span>
+    </a>
+  </div>
+</aside>
+
+<!-- Variant B — Promise-led / numbers-forward -->
+<aside class="cta-strip" aria-label="Dashboard upgrade">
+  <span class="variant-label">Variant B · promise-led</span>
+  <div class="wrap cta-strip-inner">
+    <div class="cta-text">
+      <p class="cta-eyebrow">The Dashboard</p>
+      <p class="cta-body">Beyond the newsroom: <strong>81,946 transactions · 922 properties · 52 REITs and developers</strong> — searchable, filterable, free with signup.</p>
+    </div>
+    <a class="btn-bronze" href="/dashboard/?signin=1">
+      Sign up free
+      <span class="arrow" aria-hidden="true">→</span>
+    </a>
+  </div>
+</aside>
+
+<!-- Variant C — Editorial / "the writers' tool" -->
+<aside class="cta-strip" aria-label="Dashboard upgrade">
+  <span class="variant-label">Variant C · editorial</span>
+  <div class="wrap cta-strip-inner">
+    <div class="cta-text">
+      <p class="cta-eyebrow">The Dashboard</p>
+      <p class="cta-body">The dashboard our writers use. <strong>Singapore C&I market intelligence</strong>, free with signup.</p>
+    </div>
+    <a class="btn-bronze" href="/dashboard/?signin=1">
+      Sign up free
+      <span class="arrow" aria-hidden="true">→</span>
+    </a>
+  </div>
+</aside>
+
+<!-- =========================================================
      BUILD MARKER — sections below land in next checkpoint
      ========================================================= -->
 <div class="wrap build-marker">
-  Mid-session checkpoint · Dashboard CTA strip · 3-card row · feed · footer build next.
+  Mid-session checkpoint · Three CTA variants above · 3-card row · feed · footer build next.
 </div>
 
 </main>
