@@ -13372,7 +13372,56 @@ function renderTypeBreakdown(){
   var sums={},total=0;
   TYPES.forEach(function(t,ti){sums[t]=idxs.reduce(function(s,i){return s+(arr[i][ti]||0);},0); total+=sums[t];});
   var mx=Math.max.apply(null,TYPES.map(function(t){return sums[t];}));
-  bdEl.innerHTML=TYPES.filter(function(t){return activeTypes[t];}).map(function(t){
+
+  // Build the donut SVG above the list.
+  // Donut geometry: circle of r=52, stroke-width 18 → outer 70, inner 34.
+  // viewBox 160x160, center 80,80. Stroke-dasharray maps proportion to arc length.
+  // Segments only included if sums[t] > 0 AND the type is active in the filter chips.
+  // The donut renormalises to the *visible* types (visTotal) so segments fill the
+  // whole ring with no gray gap — matches the chart above which also only renders
+  // active types. The list below continues to show percentages of grand total so
+  // both views remain internally consistent against their own scope.
+  var visTypes = TYPES.filter(function(t){return activeTypes[t] && sums[t]>0;});
+  var visTotal = visTypes.reduce(function(s,t){return s+sums[t];}, 0);
+  var R = 52;
+  var C = 2 * Math.PI * R;
+  var donutSvg = '';
+  if(visTotal > 0 && visTypes.length > 0){
+    var offset = 0;
+    var segs = visTypes.map(function(t){
+      var prop = sums[t] / visTotal;
+      var len = prop * C;
+      var dasharray = len.toFixed(2) + ' ' + (C - len).toFixed(2);
+      var dashoffset = (-offset).toFixed(2);
+      offset += len;
+      var pct = (prop * 100).toFixed(1) + '%';
+      var valStr = bdMode==='val' ? fmtV(sums[t]) : (fmtC(sums[t]) + ' deals');
+      var titleAttr = TLABEL[t] + ' — ' + pct + ' (' + valStr + ')';
+      return '<circle cx="80" cy="80" r="'+R+'" fill="none" '
+        + 'stroke="'+TCOLOR[t]+'" stroke-width="18" '
+        + 'stroke-dasharray="'+dasharray+'" '
+        + 'stroke-dashoffset="'+dashoffset+'" '
+        + 'transform="rotate(-90 80 80)" '
+        + 'style="transition:opacity .15s ease;cursor:default">'
+        + '<title>'+titleAttr+'</title></circle>';
+    }).join('');
+    var totalLabel = bdMode==='val' ? fmtV(visTotal) : fmtC(visTotal);
+    var totalSubtitle = bdMode==='val' ? 'Total Value' : 'Total Deals';
+    donutSvg =
+      '<div style="display:flex;justify-content:center;align-items:center;margin-bottom:14px">'
+      +'<svg viewBox="0 0 160 160" style="width:160px;height:160px;display:block" aria-label="Property type breakdown donut chart">'
+      +'<circle cx="80" cy="80" r="'+R+'" fill="none" stroke="var(--srf3)" stroke-width="18" opacity=".5"></circle>'
+      + segs
+      +'<text x="80" y="76" text-anchor="middle" '
+      +'style="font-family:\'DM Mono\',monospace;font-size:18px;font-weight:700;fill:var(--txt)">'
+      + totalLabel + '</text>'
+      +'<text x="80" y="93" text-anchor="middle" '
+      +'style="font-family:\'DM Sans\',sans-serif;font-size:9px;font-weight:500;fill:var(--mut);letter-spacing:.04em;text-transform:uppercase">'
+      + totalSubtitle + '</text>'
+      +'</svg></div>';
+  }
+
+  var listHtml = TYPES.filter(function(t){return activeTypes[t];}).map(function(t){
     var p=mx>0?(sums[t]/mx*100).toFixed(1):0;
     var pct=total>0?(sums[t]/total*100).toFixed(0)+'%':'—';
     var valStr=bdMode==='val'?fmtV(sums[t]):fmtC(sums[t])+' deals';
@@ -13384,6 +13433,8 @@ function renderTypeBreakdown(){
       +'<div style="font-size:11px;color:var(--mut2);width:34px;text-align:right;flex-shrink:0;font-weight:600">'+pct+'</div>'
       +'<div class="tbar-val">'+valStr+'</div></div>';
   }).join('');
+
+  bdEl.innerHTML = donutSvg + listHtml;
 }
 
 // NEWS PREVIEW (home panel widget — 4-card grid, v48.10)
