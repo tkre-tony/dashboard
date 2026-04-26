@@ -238,6 +238,46 @@
         var(--navy-deep) 0%,
         var(--navy-ink) 100%);
   }
+  /* Branded placeholder content — echoes masthead wordmark.
+     Used as default "PropertyAtlas Newsroom" image until each entry
+     gets its own hero photo. v48.13M.3, 26 Apr 2026. */
+  .placeholder-brand {
+    text-align: center;
+    line-height: 1.1;
+    padding: 0 12px;
+  }
+  .placeholder-brand-word {
+    font-family: var(--body-serif);
+    font-weight: 700;
+    font-size: clamp(22px, 4vw, 38px);
+    letter-spacing: 0.005em;
+    color: var(--cream);
+    display: block;
+  }
+  .placeholder-brand-word em {
+    font-style: italic;
+    font-weight: 700;
+    color: var(--bronze-lt);
+  }
+  .placeholder-brand-divider {
+    display: block;
+    width: 32px;
+    height: 1px;
+    background: var(--bronze);
+    margin: 10px auto;
+    opacity: 0.6;
+  }
+  .placeholder-brand-tag {
+    display: block;
+    font-family: var(--body-serif);
+    font-size: clamp(9px, 1.2vw, 11px);
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    font-style: italic;
+    color: var(--bronze-lt);
+    opacity: 0.85;
+    font-weight: 400;
+  }
   .hero-image-photo {
     position: absolute;
     inset: 0;
@@ -254,14 +294,6 @@
     text-align: right;
     color: rgba(26, 43, 74, 0.55);
     letter-spacing: 0.02em;
-  }
-  .placeholder-label {
-    font-size: 11px;
-    letter-spacing: 0.18em;
-    text-transform: uppercase;
-    font-style: italic;
-    color: rgba(247, 243, 235, 0.42);
-    font-weight: 400;
   }
 
   /* Hero text column */
@@ -490,13 +522,17 @@
     place-items: center;
     background: linear-gradient(135deg, var(--navy-deep) 0%, var(--navy-ink) 100%);
   }
-  .card-image .placeholder-label {
-    font-size: 9.5px;
-    letter-spacing: 0.18em;
-    text-transform: uppercase;
-    font-style: italic;
-    color: rgba(247, 243, 235, 0.36);
-    font-weight: 400;
+  /* Card-sized branded placeholder — tighter scaling than hero default */
+  .card-image .placeholder-brand-word {
+    font-size: clamp(18px, 3vw, 26px);
+  }
+  .card-image .placeholder-brand-divider {
+    width: 24px;
+    margin: 7px auto;
+  }
+  .card-image .placeholder-brand-tag {
+    font-size: clamp(8px, 1vw, 9.5px);
+    letter-spacing: 0.2em;
   }
 
   .card-cat {
@@ -596,8 +632,8 @@
     background: var(--navy-ink);
     border-radius: 2px;
   }
-  /* feed images reuse the .placeholder-flat / .placeholder-label styles
-     defined in the hero section — no new CSS needed here. */
+  /* feed images reuse the .placeholder-flat / .placeholder-brand styles
+     defined in the hero/cards section — no new CSS needed here. */
 
   .feed-row-text { padding-top: 1px; }
   .feed-row-cat {
@@ -976,7 +1012,11 @@
       <a class="card" href="/dashboard/?news=72">
         <div class="card-image">
           <div class="placeholder-flat" aria-hidden="true">
-            <span class="placeholder-label">Image · 1600 × 900</span>
+            <div class="placeholder-brand">
+              <span class="placeholder-brand-word">Property<em>Atlas</em></span>
+              <span class="placeholder-brand-divider" aria-hidden="true"></span>
+              <span class="placeholder-brand-tag">Newsroom</span>
+            </div>
           </div>
         </div>
         <p class="card-cat">Commercial</p>
@@ -993,7 +1033,11 @@
       <a class="card" href="/dashboard/?news=71">
         <div class="card-image">
           <div class="placeholder-flat" aria-hidden="true">
-            <span class="placeholder-label">Image · 1600 × 900</span>
+            <div class="placeholder-brand">
+              <span class="placeholder-brand-word">Property<em>Atlas</em></span>
+              <span class="placeholder-brand-divider" aria-hidden="true"></span>
+              <span class="placeholder-brand-tag">Newsroom</span>
+            </div>
           </div>
         </div>
         <p class="card-cat">Commercial</p>
@@ -1010,7 +1054,11 @@
       <a class="card" href="/dashboard/?news=70">
         <div class="card-image">
           <div class="placeholder-flat" aria-hidden="true">
-            <span class="placeholder-label">Image · 1600 × 900</span>
+            <div class="placeholder-brand">
+              <span class="placeholder-brand-word">Property<em>Atlas</em></span>
+              <span class="placeholder-brand-divider" aria-hidden="true"></span>
+              <span class="placeholder-brand-tag">Newsroom</span>
+            </div>
           </div>
         </div>
         <p class="card-cat">Industrial</p>
@@ -1048,7 +1096,11 @@
       <a class="feed-row" href="/dashboard/?news=69">
         <div class="feed-row-image">
           <div class="placeholder-flat" aria-hidden="true">
-            <span class="placeholder-label">Image</span>
+            <div class="placeholder-brand">
+              <span class="placeholder-brand-word">Property<em>Atlas</em></span>
+              <span class="placeholder-brand-divider" aria-hidden="true"></span>
+              <span class="placeholder-brand-tag">Newsroom</span>
+            </div>
           </div>
         </div>
         <div class="feed-row-text">
@@ -1067,7 +1119,11 @@
       <a class="feed-row" href="/dashboard/?news=68">
         <div class="feed-row-image">
           <div class="placeholder-flat" aria-hidden="true">
-            <span class="placeholder-label">Image</span>
+            <div class="placeholder-brand">
+              <span class="placeholder-brand-word">Property<em>Atlas</em></span>
+              <span class="placeholder-brand-divider" aria-hidden="true"></span>
+              <span class="placeholder-brand-tag">Newsroom</span>
+            </div>
           </div>
         </div>
         <div class="feed-row-text">
@@ -1086,7 +1142,11 @@
       <a class="feed-row" href="/dashboard/?news=67">
         <div class="feed-row-image">
           <div class="placeholder-flat" aria-hidden="true">
-            <span class="placeholder-label">Image</span>
+            <div class="placeholder-brand">
+              <span class="placeholder-brand-word">Property<em>Atlas</em></span>
+              <span class="placeholder-brand-divider" aria-hidden="true"></span>
+              <span class="placeholder-brand-tag">Newsroom</span>
+            </div>
           </div>
         </div>
         <div class="feed-row-text">
@@ -1105,7 +1165,11 @@
       <a class="feed-row" href="/dashboard/?news=66">
         <div class="feed-row-image">
           <div class="placeholder-flat" aria-hidden="true">
-            <span class="placeholder-label">Image</span>
+            <div class="placeholder-brand">
+              <span class="placeholder-brand-word">Property<em>Atlas</em></span>
+              <span class="placeholder-brand-divider" aria-hidden="true"></span>
+              <span class="placeholder-brand-tag">Newsroom</span>
+            </div>
           </div>
         </div>
         <div class="feed-row-text">
@@ -1124,7 +1188,11 @@
       <a class="feed-row" href="/dashboard/?news=65">
         <div class="feed-row-image">
           <div class="placeholder-flat" aria-hidden="true">
-            <span class="placeholder-label">Image</span>
+            <div class="placeholder-brand">
+              <span class="placeholder-brand-word">Property<em>Atlas</em></span>
+              <span class="placeholder-brand-divider" aria-hidden="true"></span>
+              <span class="placeholder-brand-tag">Newsroom</span>
+            </div>
           </div>
         </div>
         <div class="feed-row-text">
