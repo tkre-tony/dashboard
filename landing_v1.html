@@ -234,6 +234,15 @@
         var(--navy-deep) 0%,
         var(--navy-ink) 100%);
   }
+  .hero-image-photo {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center;
+    display: block;
+  }
   .placeholder-label {
     font-size: 11px;
     letter-spacing: 0.18em;
@@ -837,14 +846,17 @@
 <section class="hero" aria-labelledby="hero-h">
   <div class="wrap hero-grid">
 
-    <!-- Image — flat navy placeholder until Supabase pipeline is live.
-         Real path will be:
+    <!-- Image — Phase 1 GitHub Pages photo pipeline (v48.13L, 26 Apr 2026).
+         Source: tkre-tony/dashboard/images/news_73_fct_1hfy26.jpg
+         Will migrate to Supabase Storage in Phase 3:
          https://[project].supabase.co/storage/v1/render/image/public/newsroom-images/news_73_fct_1hfy26.jpg?width=1600&height=900&resize=cover
     -->
     <a class="hero-image" href="/dashboard/?news=73" aria-label="Read the full entry: Frasers Centrepoint Trust 1HFY26 analysis">
-      <div class="placeholder-flat" aria-hidden="true">
-        <span class="placeholder-label">Image · 1600 × 900</span>
-      </div>
+      <img src="/dashboard/images/news_73_fct_1hfy26.jpg"
+           alt="Northpoint City exterior at blue hour — the dominant asset in FCT's 1HFY26 portfolio absorption story"
+           class="hero-image-photo"
+           loading="eager"
+           fetchpriority="high" />
     </a>
 
     <!-- Text column -->
