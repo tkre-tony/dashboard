@@ -212,12 +212,16 @@
     gap: 36px;
     align-items: start;
   }
+  .hero-image-col {
+    display: block;
+  }
 
   /* Hero image: 16:9. Flat navy placeholder during build; real photos
      will swap into the same shell. Monochrome navy treatment for real
      photos lands when Supabase pipeline is wired. */
   .hero-image {
     position: relative;
+    display: block;
     aspect-ratio: 16 / 9;
     overflow: hidden;
     background: var(--navy-ink);
@@ -859,20 +863,25 @@
          Will migrate to Supabase Storage in Phase 3:
          https://[project].supabase.co/storage/v1/render/image/public/newsroom-images/news_73_fct_1hfy26.jpg?width=1600&height=900&resize=cover
     -->
-    <a class="hero-image" href="/dashboard/?news=73" aria-label="Read the full entry: Frasers Centrepoint Trust 1HFY26 analysis">
-      <img src="/dashboard/images/news_73_fct_1hfy26.jpg"
-           alt="Northpoint City exterior at blue hour — the dominant asset in FCT's 1HFY26 portfolio absorption story"
-           class="hero-image-photo"
-           loading="eager"
-           fetchpriority="high" />
-    </a>
+    <!-- Image column: photo + credit live together as one grid cell.
+         Placing them as separate grid siblings caused credit to land in
+         column 2 row 2 (top-right of headline) — Lesson 128 captured. -->
+    <div class="hero-image-col">
+      <a class="hero-image" href="/dashboard/?news=73" aria-label="Read the full entry: Frasers Centrepoint Trust 1HFY26 analysis">
+        <img src="/dashboard/images/news_73_fct_1hfy26.jpg"
+             alt="Northpoint City exterior at blue hour — the dominant asset in FCT's 1HFY26 portfolio absorption story"
+             class="hero-image-photo"
+             loading="eager"
+             fetchpriority="high" />
+      </a>
 
-    <!-- Photo credit — staging attribution. Image source identified as
-         Frasers Property marketing/PR photography. Pre-W5 production cutover:
-         confirm licensing via Frasers Property IR / corporate comms, OR swap
-         for owned photography (user plans to shoot own asset photography over
-         time). Lesson 122 / W5 carry-forward. -->
-    <p class="hero-credit">Image: Frasers Property</p>
+      <!-- Photo credit — staging attribution. Image source identified as
+           Frasers Property marketing/PR photography. Pre-W5 production cutover:
+           confirm licensing via Frasers Property IR / corporate comms, OR swap
+           for owned photography (user plans to shoot own asset photography over
+           time). Lesson 122 / W5 carry-forward. -->
+      <p class="hero-credit">Image: Frasers Property</p>
+    </div>
 
     <!-- Text column -->
     <div class="hero-text">
