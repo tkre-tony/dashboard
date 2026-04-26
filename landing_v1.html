@@ -534,6 +534,20 @@
     font-size: clamp(8px, 1vw, 9.5px);
     letter-spacing: 0.2em;
   }
+  /* Feed-row-sized branded placeholder — tightest scaling, thumbnails
+     are only 160px wide so wordmark must fit comfortably under 140px. */
+  .feed-row-image .placeholder-brand-word {
+    font-size: 14px;
+  }
+  .feed-row-image .placeholder-brand-divider {
+    width: 18px;
+    height: 1px;
+    margin: 5px auto;
+  }
+  .feed-row-image .placeholder-brand-tag {
+    font-size: 7.5px;
+    letter-spacing: 0.18em;
+  }
 
   .card-cat {
     font-size: var(--t-tag);
