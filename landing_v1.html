@@ -692,7 +692,7 @@
   }
   .feed-row-meta .sep { margin: 0 5px; color: var(--hairline-2); }
 
-  /* "See all 72 entries" centered link */
+  /* "See all 73 entries" centered link */
   .see-all {
     text-align: center;
     padding: 18px 0 64px;
@@ -921,62 +921,60 @@
   <div class="wrap hero-grid">
 
     <!-- Image — Phase 1 GitHub Pages photo pipeline (v48.13L, 26 Apr 2026).
-         Source: tkre-tony/dashboard/images/news_73_fct_1hfy26.jpg
-         Will migrate to Supabase Storage in Phase 3:
-         https://[project].supabase.co/storage/v1/render/image/public/newsroom-images/news_73_fct_1hfy26.jpg?width=1600&height=900&resize=cover
+         id:75 CLAS hero uses branded placeholder for now. Photo flag deferred —
+         CLAS deck cover is a lyf Funan Singapore atrium shot (lifestyle/SR aesthetic);
+         alternative is the 1Q 2026 cover (Citadines Connect Sydney Airport-style space).
+         Either is licensable via CapitaLand Ascott Trust IR. Three-flag photo check
+         (provenance / aspect / palette) deferred to next session before any splice
+         (Lessons 122-125).
     -->
     <!-- Image column: photo + credit live together as one grid cell.
          Placing them as separate grid siblings caused credit to land in
          column 2 row 2 (top-right of headline) — Lesson 128 captured. -->
     <div class="hero-image-col">
-      <a class="hero-image" href="/dashboard/?news=74" aria-label="Read the full entry: Suntec REIT 1Q 2026 analysis">
-        <img src="/dashboard/images/news_74_suntec_city.jpg"
-             alt="Suntec City panoramic — five office towers and the Fountain of Wealth, the dominant assets in Suntec REIT's Singapore portfolio carrying the 1Q 2026 deleveraging recovery"
-             class="hero-image-photo"
-             loading="eager"
-             fetchpriority="high" />
+      <a class="hero-image" href="/dashboard/?news=75" aria-label="Read the full entry: CapitaLand Ascott Trust 1Q 2026 analysis">
+        <div class="placeholder-flat" aria-hidden="true">
+          <div class="placeholder-brand">
+            <span class="placeholder-brand-word">Property<em>Atlas</em></span>
+            <span class="placeholder-brand-divider" aria-hidden="true"></span>
+            <span class="placeholder-brand-tag">Newsroom</span>
+          </div>
+        </div>
       </a>
-
-      <!-- Photo credit — staging attribution. Image source identified as
-           Suntec REIT IR / annual report photography. Pre-W5 production cutover:
-           confirm licensing via Suntec REIT IR / corporate comms, OR swap
-           for owned photography (user plans to shoot own asset photography over
-           time). Lesson 122 / W5 carry-forward — same pattern as Frasers Property
-           attribution decision noted at v48.13M. -->
-      <p class="hero-credit">Image: Suntec REIT</p>
     </div>
 
     <!-- Text column -->
     <div class="hero-text">
       <div class="hero-eyebrow">
         <span class="pill">Latest</span>
-        <span class="cat-tag">Commercial</span>
+        <span class="cat-tag">Hospitality</span>
         <span class="cat-tag">Earnings · REIT Update</span>
       </div>
 
       <h1 id="hero-h" class="hero-headline">
-        <a href="/dashboard/?news=74">Suntec REIT 1Q26: DPU Recovery Is Structural, Singapore Retail Compounding, Debt Clock Pushed Out</a>
+        <a href="/dashboard/?news=75">CLAS 1Q26: Distribution Topped Up Through The AEI Tunnel, Same-Store Quietly Compounding, Living Sector Tilt Continues</a>
       </h1>
 
       <p class="hero-teaser">
-        DPU +23.9% YoY to 1.936 cents, Distributable Income +24.8% to
-        $57.3M, all-in financing cost compressed to 3.56% from 3.96% a
-        year ago. Strip the AUS withholding tax base effect ($2M / 0.068
-        cents) and underlying DPU growth is still ~21% — the recovery
-        is structural. Singapore retail at 99.0% occupancy, +14.3%
-        reversion, NPI +10.1%. Aggregate leverage down 180bps to 41.6%.
-        FY26 refi just $160M — the genuine cliff is FY27-28. Three moves.
+        Distribution income held stable YoY only because past divestment
+        gains were distributed to bridge The Cavendish London closure +
+        Madison Hamburg works + four concurrent AEIs. Strip the renovation
+        drag and same-store reads are positive across the portfolio: Japan
+        +3%, UK +1% ex-TCL, USA +7% ex-Sheraton Tribeca. Living Sector
+        17% → 18% of portfolio value, medium-term target 25-30%. Gearing
+        38.9% (down 100bps), borrowing cost 2.8% (down 10bps). Trough
+        quarter, by design. Three moves.
       </p>
 
       <div class="hero-meta">
         <span>27 April 2026</span>
         <span class="sep">·</span>
-        <span>1,612 words</span>
+        <span>2,025 words</span>
         <span class="sep">·</span>
-        <span>7 min read</span>
+        <span>9 min read</span>
       </div>
 
-      <a class="btn-primary" href="/dashboard/?news=74">
+      <a class="btn-primary" href="/dashboard/?news=75">
         Read the full entry
         <span class="arrow" aria-hidden="true">→</span>
       </a>
@@ -1035,7 +1033,25 @@
 
     <div class="cards">
 
-      <!-- Card 1 — id 73 FCT (HAS photo from prior hero; carries forward to card slot) -->
+      <!-- Card 1 — id 74 Suntec (HAS photo from prior hero; carries forward to card slot) -->
+      <a class="card" href="/dashboard/?news=74">
+        <div class="card-image">
+          <img src="/dashboard/images/news_74_suntec_city.jpg"
+               alt="Suntec City panoramic — Suntec REIT 1Q26 deleveraging recovery"
+               class="card-image-photo"
+               loading="lazy" />
+        </div>
+        <p class="card-cat">Commercial</p>
+        <h3 class="card-headline">Suntec REIT 1Q26: DPU Recovery Is Structural, Singapore Retail Compounding, Debt Clock Pushed Out</h3>
+        <p class="card-teaser">DPU +23.9% YoY to 1.936 cents, all-in financing cost down to 3.56% from 3.96%, aggregate leverage 180bps lower at 41.6%. Strip the AUS tax base effect and underlying DPU growth is still ~21%. FY26 refi just $160M — the cliff is FY27-28.</p>
+        <p class="card-meta">
+          <span>27 April 2026</span>
+          <span class="sep">·</span>
+          <span>7 min read</span>
+        </p>
+      </a>
+
+      <!-- Card 2 — id 73 FCT (photo carries forward to card 2 from previous card 1 slot) -->
       <a class="card" href="/dashboard/?news=73">
         <div class="card-image">
           <img src="/dashboard/images/news_73_fct_1hfy26.jpg"
@@ -1053,7 +1069,7 @@
         </p>
       </a>
 
-      <!-- Card 2 — id 72 Elite UK REIT -->
+      <!-- Card 3 — id 72 Elite UK REIT -->
       <a class="card" href="/dashboard/?news=72">
         <div class="card-image">
           <div class="placeholder-flat" aria-hidden="true">
@@ -1071,27 +1087,6 @@
           <span>24 April 2026</span>
           <span class="sep">·</span>
           <span>11 min read</span>
-        </p>
-      </a>
-
-      <!-- Card 3 — id 71 CICT -->
-      <a class="card" href="/dashboard/?news=71">
-        <div class="card-image">
-          <div class="placeholder-flat" aria-hidden="true">
-            <div class="placeholder-brand">
-              <span class="placeholder-brand-word">Property<em>Atlas</em></span>
-              <span class="placeholder-brand-divider" aria-hidden="true"></span>
-              <span class="placeholder-brand-tag">Newsroom</span>
-            </div>
-          </div>
-        </div>
-        <p class="card-cat">Commercial</p>
-        <h3 class="card-headline">CICT 1Q 2026: The S$6.4B Portfolio Swap Behind A +7.9% NPI Quarter</h3>
-        <p class="card-teaser">Paragon acquired freehold at S$3.9B, AST2 divested at 9.9% premium, S$750M placement closed — six-month portfolio recomposition.</p>
-        <p class="card-meta">
-          <span>24 April 2026</span>
-          <span class="sep">·</span>
-          <span>12 min read</span>
         </p>
       </a>
 
@@ -1116,7 +1111,30 @@
 
     <div class="feed-list">
 
-      <!-- Row id 70 — ESR-REIT (moved down from cards row) -->
+      <!-- Row id 71 — CICT (moved down from cards row) -->
+      <a class="feed-row" href="/dashboard/?news=71">
+        <div class="feed-row-image">
+          <div class="placeholder-flat" aria-hidden="true">
+            <div class="placeholder-brand">
+              <span class="placeholder-brand-word">Property<em>Atlas</em></span>
+              <span class="placeholder-brand-divider" aria-hidden="true"></span>
+              <span class="placeholder-brand-tag">Newsroom</span>
+            </div>
+          </div>
+        </div>
+        <div class="feed-row-text">
+          <p class="feed-row-cat">Commercial</p>
+          <h3 class="feed-row-headline">CICT 1Q 2026: The S$6.4B Portfolio Swap Behind A +7.9% NPI Quarter</h3>
+          <p class="feed-row-teaser">Paragon acquired freehold at S$3.9B, AST2 divested at 9.9% premium, S$750M placement closed — six-month portfolio recomposition.</p>
+          <p class="feed-row-meta">
+            <span>24 April 2026</span>
+            <span class="sep">·</span>
+            <span>12 min read</span>
+          </p>
+        </div>
+      </a>
+
+      <!-- Row id 70 — ESR-REIT (moved down from feed row 1) -->
       <a class="feed-row" href="/dashboard/?news=70">
         <div class="feed-row-image">
           <div class="placeholder-flat" aria-hidden="true">
@@ -1208,35 +1226,12 @@
         </div>
       </a>
 
-      <!-- Row id 66 — OUE REIT -->
-      <a class="feed-row" href="/dashboard/?news=66">
-        <div class="feed-row-image">
-          <div class="placeholder-flat" aria-hidden="true">
-            <div class="placeholder-brand">
-              <span class="placeholder-brand-word">Property<em>Atlas</em></span>
-              <span class="placeholder-brand-divider" aria-hidden="true"></span>
-              <span class="placeholder-brand-tag">Newsroom</span>
-            </div>
-          </div>
-        </div>
-        <div class="feed-row-text">
-          <p class="feed-row-cat">Commercial</p>
-          <h3 class="feed-row-headline">OUE REIT 1Q 2026: Phase 3 In Execution</h3>
-          <p class="feed-row-teaser">Sydney acquisition done, One Raffles Place market-sounding live, Bayfront Level 17 approved.</p>
-          <p class="feed-row-meta">
-            <span>22 April 2026</span>
-            <span class="sep">·</span>
-            <span>10 min read</span>
-          </p>
-        </div>
-      </a>
-
     </div>
 
     <!-- See all link (centered) -->
     <div class="see-all">
       <a href="/dashboard/#newsroom-archive">
-        See all 72 entries
+        See all 73 entries
         <span class="arrow" aria-hidden="true">→</span>
       </a>
     </div>
