@@ -23711,6 +23711,36 @@ function enqEmailRow(label, value) {
     }
   });
 })();
+
+// ── Newsroom deep-link routing ──────────────────────────────
+// Reads ?news=N from URL on page load and routes to that article view.
+// Used by landing page card clicks and any external deep-links.
+// gotoNewsPost(id) (defined earlier) handles tab switch + expand + scroll +
+// flash-highlight. This IIFE is the bridge from URL param to that function.
+// Lesson 136 (v48.13Q — close out Item 2 of Lesson 134 must-haves).
+(function atlasNewsroomDeepLink(){
+  function handleNewsParam(){
+    try {
+      var params = new URLSearchParams(window.location.search || '');
+      var newsIdRaw = params.get('news');
+      if(!newsIdRaw) return;
+      var newsId = parseInt(newsIdRaw, 10);
+      if(isNaN(newsId)) return;
+      // Verify id exists in NEWS array — silently no-op if not, so stale
+      // shared links degrade gracefully to dashboard root rather than
+      // throwing on a null anchor.
+      if(!Array.isArray(NEWS) || !NEWS.some(function(n){return n.id === newsId;})) return;
+      // Longer delay than gotoNewsPost's internal 80ms to allow newsroom
+      // to render after initial DOM mount + any async data hydration.
+      setTimeout(function(){ gotoNewsPost(newsId); }, 350);
+    } catch(e) { /* silently ignore — deep-link is UX enhancement, not critical path */ }
+  }
+  if(document.readyState === 'loading'){
+    document.addEventListener('DOMContentLoaded', handleNewsParam);
+  } else {
+    handleNewsParam();
+  }
+})();
 </script>
 
 
