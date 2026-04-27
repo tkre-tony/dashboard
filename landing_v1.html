@@ -546,6 +546,19 @@
     object-position: center;
     display: block;
   }
+  /* Card-sized photo credit — tighter than .hero-credit (10px vs 11px),
+     pulled up into the .card-image margin-bottom: 14px gap so it sits
+     just under the photo without disrupting the cat→headline→teaser→meta
+     rhythm. Lesson 135 (v48.13P+ extension of hero-only credit pattern
+     to all four photo slots). */
+  .card-credit {
+    margin: -10px 0 8px 0;
+    font-size: 10px;
+    font-style: italic;
+    text-align: right;
+    color: rgba(26, 43, 74, 0.45);
+    letter-spacing: 0.02em;
+  }
   /* Feed-row-sized branded placeholder — tightest scaling, thumbnails
      are only 160px wide so wordmark must fit comfortably under 140px. */
   .feed-row-image .placeholder-brand-word {
@@ -1047,6 +1060,7 @@
                class="card-image-photo"
                loading="lazy" />
         </div>
+        <p class="card-credit">Image: CapitaLand Ascott Trust</p>
         <p class="card-cat">Hospitality</p>
         <h3 class="card-headline">CLAS 1Q26: Distribution Topped Up Through The AEI Tunnel, Same-Store Quietly Compounding, Living Sector Tilt Continues</h3>
         <p class="card-teaser">Distribution income held stable YoY only because past divestment gains were distributed to bridge The Cavendish London closure + four concurrent AEIs. Strip the renovation drag and same-store reads positive: Japan +3%, UK +1% ex-TCL, USA +7% ex-Sheraton Tribeca. Living Sector 17% → 18%.</p>
@@ -1065,6 +1079,7 @@
                class="card-image-photo"
                loading="lazy" />
         </div>
+        <p class="card-credit">Image: Suntec REIT</p>
         <p class="card-cat">Commercial</p>
         <h3 class="card-headline">Suntec REIT 1Q26: DPU Recovery Is Structural, Singapore Retail Compounding, Debt Clock Pushed Out</h3>
         <p class="card-teaser">DPU +23.9% YoY to 1.936 cents, all-in financing cost down to 3.56% from 3.96%, aggregate leverage 180bps lower at 41.6%. Strip the AUS tax base effect and underlying DPU growth is still ~21%. FY26 refi just $160M — the cliff is FY27-28.</p>
@@ -1083,6 +1098,7 @@
                class="card-image-photo"
                loading="lazy" />
         </div>
+        <p class="card-credit">Image: Frasers Centrepoint Trust</p>
         <p class="card-cat">Commercial</p>
         <h3 class="card-headline">FCT 1HFY26: Northpoint Absorbed, Borrowing Costs Compressing, AEI Pipeline Loaded</h3>
         <p class="card-teaser">Revenue +20.3% YoY, NPI +20.2%, DPU +1.4%, NAV +$0.02 — the $1.17B Northpoint acquisition working through cleanly as cost of borrowing compresses 70bps and Hougang AEI hits 88% pre-commitment.</p>
