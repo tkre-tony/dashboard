@@ -534,6 +534,18 @@
     font-size: clamp(8px, 1vw, 9.5px);
     letter-spacing: 0.2em;
   }
+  /* Photo variant for cards — mirrors .hero-image-photo (Lesson 126/127):
+     absolute inset, object-fit: cover. loading="lazy" on cards/feed
+     (eager only for hero per Lesson 126). */
+  .card-image-photo {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center;
+    display: block;
+  }
   /* Feed-row-sized branded placeholder — tightest scaling, thumbnails
      are only 160px wide so wordmark must fit comfortably under 140px. */
   .feed-row-image .placeholder-brand-word {
@@ -680,7 +692,7 @@
   }
   .feed-row-meta .sep { margin: 0 5px; color: var(--hairline-2); }
 
-  /* "See all 71 entries" centered link */
+  /* "See all 72 entries" centered link */
   .see-all {
     text-align: center;
     padding: 18px 0 64px;
@@ -917,20 +929,21 @@
          Placing them as separate grid siblings caused credit to land in
          column 2 row 2 (top-right of headline) — Lesson 128 captured. -->
     <div class="hero-image-col">
-      <a class="hero-image" href="/dashboard/?news=73" aria-label="Read the full entry: Frasers Centrepoint Trust 1HFY26 analysis">
-        <img src="/dashboard/images/news_73_fct_1hfy26.jpg"
-             alt="Northpoint City exterior at blue hour — the dominant asset in FCT's 1HFY26 portfolio absorption story"
+      <a class="hero-image" href="/dashboard/?news=74" aria-label="Read the full entry: Suntec REIT 1Q 2026 analysis">
+        <img src="/dashboard/images/news_74_suntec_city.jpg"
+             alt="Suntec City panoramic — five office towers and the Fountain of Wealth, the dominant assets in Suntec REIT's Singapore portfolio carrying the 1Q 2026 deleveraging recovery"
              class="hero-image-photo"
              loading="eager"
              fetchpriority="high" />
       </a>
 
       <!-- Photo credit — staging attribution. Image source identified as
-           Frasers Property marketing/PR photography. Pre-W5 production cutover:
-           confirm licensing via Frasers Property IR / corporate comms, OR swap
+           Suntec REIT IR / annual report photography. Pre-W5 production cutover:
+           confirm licensing via Suntec REIT IR / corporate comms, OR swap
            for owned photography (user plans to shoot own asset photography over
-           time). Lesson 122 / W5 carry-forward. -->
-      <p class="hero-credit">Image: Frasers Property</p>
+           time). Lesson 122 / W5 carry-forward — same pattern as Frasers Property
+           attribution decision noted at v48.13M. -->
+      <p class="hero-credit">Image: Suntec REIT</p>
     </div>
 
     <!-- Text column -->
@@ -942,28 +955,28 @@
       </div>
 
       <h1 id="hero-h" class="hero-headline">
-        <a href="/dashboard/?news=73">FCT 1HFY26: Northpoint Absorbed, Borrowing Costs Compressing, AEI Pipeline Loaded</a>
+        <a href="/dashboard/?news=74">Suntec REIT 1Q26: DPU Recovery Is Structural, Singapore Retail Compounding, Debt Clock Pushed Out</a>
       </h1>
 
       <p class="hero-teaser">
-        Gross Revenue +20.3% YoY to $221.9M, NPI +20.2% to $160.8M, DPU
-        +1.4% to 6.136 cents, NAV/unit +$0.02 to $2.19. Steady DPU print
-        on the surface, structural reshape underneath: the $1.17B Northpoint
-        City South Wing acquisition contributing for the first full period,
-        cost of borrowing compressed to 3.2% from 3.9% a year earlier,
-        occupancy 99.8%, and Hougang AEI 88% pre-committed as NEX AEI
-        commences in May. Six insights.
+        DPU +23.9% YoY to 1.936 cents, Distributable Income +24.8% to
+        $57.3M, all-in financing cost compressed to 3.56% from 3.96% a
+        year ago. Strip the AUS withholding tax base effect ($2M / 0.068
+        cents) and underlying DPU growth is still ~21% — the recovery
+        is structural. Singapore retail at 99.0% occupancy, +14.3%
+        reversion, NPI +10.1%. Aggregate leverage down 180bps to 41.6%.
+        FY26 refi just $160M — the genuine cliff is FY27-28. Three moves.
       </p>
 
       <div class="hero-meta">
-        <span>24 April 2026</span>
+        <span>23 April 2026</span>
         <span class="sep">·</span>
-        <span>11,278 words</span>
+        <span>1,612 words</span>
         <span class="sep">·</span>
-        <span>9 min read</span>
+        <span>7 min read</span>
       </div>
 
-      <a class="btn-primary" href="/dashboard/?news=73">
+      <a class="btn-primary" href="/dashboard/?news=74">
         Read the full entry
         <span class="arrow" aria-hidden="true">→</span>
       </a>
@@ -1017,12 +1030,30 @@
   <div class="wrap">
     <div class="week-head">
       <h2 id="week-h" class="week-title">More from this week</h2>
-      <div class="week-meta">Updated 24 April 2026</div>
+      <div class="week-meta">Updated 27 April 2026</div>
     </div>
 
     <div class="cards">
 
-      <!-- Card 1 — id 72 Elite UK REIT -->
+      <!-- Card 1 — id 73 FCT (HAS photo from prior hero; carries forward to card slot) -->
+      <a class="card" href="/dashboard/?news=73">
+        <div class="card-image">
+          <img src="/dashboard/images/news_73_fct_1hfy26.jpg"
+               alt="Northpoint City exterior — FCT 1HFY26 absorption story"
+               class="card-image-photo"
+               loading="lazy" />
+        </div>
+        <p class="card-cat">Commercial</p>
+        <h3 class="card-headline">FCT 1HFY26: Northpoint Absorbed, Borrowing Costs Compressing, AEI Pipeline Loaded</h3>
+        <p class="card-teaser">Revenue +20.3% YoY, NPI +20.2%, DPU +1.4%, NAV +$0.02 — the $1.17B Northpoint acquisition working through cleanly as cost of borrowing compresses 70bps and Hougang AEI hits 88% pre-commitment.</p>
+        <p class="card-meta">
+          <span>24 April 2026</span>
+          <span class="sep">·</span>
+          <span>9 min read</span>
+        </p>
+      </a>
+
+      <!-- Card 2 — id 72 Elite UK REIT -->
       <a class="card" href="/dashboard/?news=72">
         <div class="card-image">
           <div class="placeholder-flat" aria-hidden="true">
@@ -1043,7 +1074,7 @@
         </p>
       </a>
 
-      <!-- Card 2 — id 71 CICT -->
+      <!-- Card 3 — id 71 CICT -->
       <a class="card" href="/dashboard/?news=71">
         <div class="card-image">
           <div class="placeholder-flat" aria-hidden="true">
@@ -1061,27 +1092,6 @@
           <span>24 April 2026</span>
           <span class="sep">·</span>
           <span>12 min read</span>
-        </p>
-      </a>
-
-      <!-- Card 3 — id 70 ESR-REIT -->
-      <a class="card" href="/dashboard/?news=70">
-        <div class="card-image">
-          <div class="placeholder-flat" aria-hidden="true">
-            <div class="placeholder-brand">
-              <span class="placeholder-brand-word">Property<em>Atlas</em></span>
-              <span class="placeholder-brand-divider" aria-hidden="true"></span>
-              <span class="placeholder-brand-tag">Newsroom</span>
-            </div>
-          </div>
-        </div>
-        <p class="card-cat">Industrial</p>
-        <h3 class="card-headline">ESR-REIT 1Q 2026: A Flat Headline Hides A Balance Sheet Reset</h3>
-        <p class="card-teaser">Revenue −0.4% YoY reads quiet, but beneath the print: S$439.1M divested, Fitch BBB stable, pro-forma gearing 39.5%.</p>
-        <p class="card-meta">
-          <span>24 April 2026</span>
-          <span class="sep">·</span>
-          <span>13 min read</span>
         </p>
       </a>
 
@@ -1105,6 +1115,29 @@
     </div>
 
     <div class="feed-list">
+
+      <!-- Row id 70 — ESR-REIT (moved down from cards row) -->
+      <a class="feed-row" href="/dashboard/?news=70">
+        <div class="feed-row-image">
+          <div class="placeholder-flat" aria-hidden="true">
+            <div class="placeholder-brand">
+              <span class="placeholder-brand-word">Property<em>Atlas</em></span>
+              <span class="placeholder-brand-divider" aria-hidden="true"></span>
+              <span class="placeholder-brand-tag">Newsroom</span>
+            </div>
+          </div>
+        </div>
+        <div class="feed-row-text">
+          <p class="feed-row-cat">Industrial</p>
+          <h3 class="feed-row-headline">ESR-REIT 1Q 2026: A Flat Headline Hides A Balance Sheet Reset</h3>
+          <p class="feed-row-teaser">Revenue −0.4% YoY reads quiet, but beneath the print: S$439.1M divested, Fitch BBB stable, pro-forma gearing 39.5%.</p>
+          <p class="feed-row-meta">
+            <span>24 April 2026</span>
+            <span class="sep">·</span>
+            <span>13 min read</span>
+          </p>
+        </div>
+      </a>
 
       <!-- Row id 69 — First REIT -->
       <a class="feed-row" href="/dashboard/?news=69">
@@ -1198,35 +1231,12 @@
         </div>
       </a>
 
-      <!-- Row id 65 — Keppel REIT -->
-      <a class="feed-row" href="/dashboard/?news=65">
-        <div class="feed-row-image">
-          <div class="placeholder-flat" aria-hidden="true">
-            <div class="placeholder-brand">
-              <span class="placeholder-brand-word">Property<em>Atlas</em></span>
-              <span class="placeholder-brand-divider" aria-hidden="true"></span>
-              <span class="placeholder-brand-tag">Newsroom</span>
-            </div>
-          </div>
-        </div>
-        <div class="feed-row-text">
-          <p class="feed-row-cat">Commercial</p>
-          <h3 class="feed-row-headline">Keppel REIT 1Q 2026: Distributable Income +19.7% YoY</h3>
-          <p class="feed-row-teaser">Cost of debt drops to 3.16%, rental reversion accelerates to +17.2% — operating leverage in motion.</p>
-          <p class="feed-row-meta">
-            <span>22 April 2026</span>
-            <span class="sep">·</span>
-            <span>10 min read</span>
-          </p>
-        </div>
-      </a>
-
     </div>
 
     <!-- See all link (centered) -->
     <div class="see-all">
       <a href="/dashboard/#newsroom-archive">
-        See all 71 entries
+        See all 72 entries
         <span class="arrow" aria-hidden="true">→</span>
       </a>
     </div>
