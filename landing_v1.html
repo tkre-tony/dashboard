@@ -684,6 +684,26 @@
     object-fit: cover;
     display: block;
   }
+  /* Image column wrapper for photo+credit pairing.
+     Used only when the row has a real photo (not the placeholder pattern).
+     The wrapper keeps the grid child count at 2 (image-col + text),
+     matching the placeholder-row structure (image + text). Per Lesson 128
+     — image and credit must live in the same grid cell, not as separate
+     grid siblings (which would land credit in column 2 row 2). */
+  .feed-row-image-col { min-width: 0; }
+  /* Credit attribution for feed-row photos — mirrors .card-credit pattern.
+     Sits below the photo within the .feed-row-image-col wrapper.
+     Only present when the row has a real photo; placeholder-flat rows
+     omit this element. Per Lesson 139 (per-photo credit, not per-page)
+     and Lesson 144 (feed-row photo retention). */
+  .feed-row-credit {
+    margin: 6px 0 0 0;
+    font-size: 9px;
+    font-style: italic;
+    text-align: right;
+    color: #888;
+    line-height: 1.3;
+  }
 
   .feed-row-text { padding-top: 1px; }
   .feed-row-cat {
@@ -969,7 +989,7 @@
            Image source: Mapletree Pan Asia Commercial Trust IR. Pre-W5
            production cutover: confirm licensing via MPACT IR / corporate
            comms, OR swap for owned photography. Lesson 122 / W5 carry-forward. -->
-      <p class="hero-credit">VivoCity, Singapore. Image: Mapletree Pan Asia Commercial Trust</p>
+      <p class="hero-credit">VivoCity, Singapore. Photo: Mapletree Pan Asia Commercial Trust</p>
     </div>
 
     <!-- Text column -->
@@ -1070,7 +1090,7 @@
                class="card-image-photo"
                loading="lazy" />
         </div>
-        <p class="card-credit">Image: CapitaLand Ascendas REIT</p>
+        <p class="card-credit">Photo: CapitaLand Ascendas REIT</p>
         <p class="card-cat">Industrial</p>
         <h3 class="card-headline">CLAR 1Q26: S$1.6B Acquisition Wave + S$903.5M EFR + Japan Debut At Tier III Hyperscale, Same-Store Quietly Softening</h3>
         <p class="card-teaser">Five acquisitions totalling S$1.65B across SG, US, Spain and Japan — anchored by a debut S$1.3B Tier III hyperscale data centre in Greater Osaka (49% stake, 14.2-year WALE). S$903.5M EFR brings pre-EFR gearing of 42.0% to pro forma 37.3%. Same-store softening across all four geographies.</p>
@@ -1089,7 +1109,7 @@
                class="card-image-photo"
                loading="lazy" />
         </div>
-        <p class="card-credit">Image: CapitaLand Ascott Trust</p>
+        <p class="card-credit">Photo: CapitaLand Ascott Trust</p>
         <p class="card-cat">Hospitality</p>
         <h3 class="card-headline">CLAS 1Q26: Distribution Topped Up Through The AEI Tunnel, Same-Store Quietly Compounding, Living Sector Tilt Continues</h3>
         <p class="card-teaser">Distribution income held stable YoY only because past divestment gains were distributed to bridge The Cavendish London closure + four concurrent AEIs. Strip the renovation drag and same-store reads positive: Japan +3%, UK +1% ex-TCL, USA +7% ex-Sheraton Tribeca. Living Sector 17% → 18%.</p>
@@ -1108,7 +1128,7 @@
                class="card-image-photo"
                loading="lazy" />
         </div>
-        <p class="card-credit">Image: Suntec REIT</p>
+        <p class="card-credit">Photo: Suntec REIT</p>
         <p class="card-cat">Commercial</p>
         <h3 class="card-headline">Suntec REIT 1Q26: DPU Recovery Is Structural, Singapore Retail Compounding, Debt Clock Pushed Out</h3>
         <p class="card-teaser">DPU +23.9% YoY to 1.936 cents, all-in financing cost down to 3.56% from 3.96%, aggregate leverage 180bps lower at 41.6%. Strip the AUS tax base effect and underlying DPU growth is still ~21%. FY26 refi just $160M — the cliff is FY27-28.</p>
@@ -1145,11 +1165,14 @@
            sourced and on GitHub, so feed-row preserves the photo rather than
            swapping in the PA placeholder. -->
       <a class="feed-row" href="/dashboard/?news=73">
-        <div class="feed-row-image">
-          <img src="/dashboard/images/news_73_fct_1hfy26.jpg"
-               alt="Northpoint City exterior — FCT 1HFY26 absorption story"
-               class="feed-row-image-photo"
-               loading="lazy" />
+        <div class="feed-row-image-col">
+          <div class="feed-row-image">
+            <img src="/dashboard/images/news_73_fct_1hfy26.jpg"
+                 alt="Northpoint City exterior — FCT 1HFY26 absorption story"
+                 class="feed-row-image-photo"
+                 loading="lazy" />
+          </div>
+          <p class="feed-row-credit">Northpoint City. Photo: Frasers Centrepoint Trust</p>
         </div>
         <div class="feed-row-text">
           <p class="feed-row-cat">Commercial</p>
