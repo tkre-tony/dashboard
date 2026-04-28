@@ -671,8 +671,19 @@
     background: var(--navy-ink);
     border-radius: 2px;
   }
-  /* feed images reuse the .placeholder-flat / .placeholder-brand styles
-     defined in the hero/cards section — no new CSS needed here. */
+  /* feed images can be either:
+     (a) .placeholder-flat / .placeholder-brand — for entries with no photo
+         (these styles are defined in the hero/cards section above), or
+     (b) .feed-row-image-photo — for entries that demoted from card-tier
+         and retain their photo through the cascade (Lesson 144).
+     The card photo (1344x756, 16:9) fits the feed thumbnail container
+     cleanly via object-fit: cover. */
+  .feed-row-image-photo {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+  }
 
   .feed-row-text { padding-top: 1px; }
   .feed-row-cat {
@@ -1129,16 +1140,16 @@
 
     <div class="feed-list">
 
-      <!-- Row id 73 — FCT (demoted from card 3 in v48.13R cascade for id:77 MPACT hero) -->
+      <!-- Row id 73 — FCT (demoted from card 3 in v48.13R cascade for id:77 MPACT hero)
+           Photo retained per Lesson 144 — entry has news_73_fct_1hfy26.jpg
+           sourced and on GitHub, so feed-row preserves the photo rather than
+           swapping in the PA placeholder. -->
       <a class="feed-row" href="/dashboard/?news=73">
         <div class="feed-row-image">
-          <div class="placeholder-flat" aria-hidden="true">
-            <div class="placeholder-brand">
-              <span class="placeholder-brand-word">Property<em>Atlas</em></span>
-              <span class="placeholder-brand-divider" aria-hidden="true"></span>
-              <span class="placeholder-brand-tag">Newsroom</span>
-            </div>
-          </div>
+          <img src="/dashboard/images/news_73_fct_1hfy26.jpg"
+               alt="Northpoint City exterior — FCT 1HFY26 absorption story"
+               class="feed-row-image-photo"
+               loading="lazy" />
         </div>
         <div class="feed-row-text">
           <p class="feed-row-cat">Commercial</p>
