@@ -12662,14 +12662,15 @@ window.currentUserTier = window.currentUserTier || 'public';
 
 // Canonical list of valid tier values. Used by the dev switcher and any future
 // tier-validation logic. ORDER MATTERS — this is also the cycle order for the pill.
-window.ATLAS_TIERS = ['public', 'free', 'salesperson', 'subscriber'];
+window.ATLAS_TIERS = ['public', 'free', 'salesperson', 'subscriber', 'master'];
 
 // Display labels for each tier (UI-facing text, separate from internal enum).
 window.ATLAS_TIER_LABELS = {
   'public':      'Public',
   'free':        'Free',
   'salesperson': 'Real Estate Professional',
-  'subscriber':  'Subscriber'
+  'subscriber':  'Subscriber',
+  'master':      'Master'
 };
 
 // Gated tabs: require 'subscriber'. Non-subscribers see a subscribe-to-access stub.
@@ -12731,7 +12732,8 @@ function maskAddress(addr) {
   // Unmask for any logged-in tier. Public (logged-out) sees masked addresses only.
   if(window.currentUserTier === 'free' ||
      window.currentUserTier === 'salesperson' ||
-     window.currentUserTier === 'subscriber') return addr;
+     window.currentUserTier === 'subscriber' ||
+     window.currentUserTier === 'master') return addr;
   // Rule 1: unit pattern — mask the trailing numeric/alphanumeric block after the dash
   var unitRe = /(#[A-Za-z0-9]+-)([A-Za-z0-9]+)/;
   if(unitRe.test(addr)) return addr.replace(unitRe, '$1**');
@@ -12764,7 +12766,7 @@ function atlasShowTab(tab) {
   // subscribe-to-access stub and short-circuit (skip the tab's init/load).
   // Note: the stub replaces innerHTML; upgrading tier requires a page reload
   // to repopulate the panel cleanly. Phase 2 hooks this to auth state change.
-  if(ATLAS_GATED_TABS[tab] && window.currentUserTier !== 'subscriber') {
+  if(ATLAS_GATED_TABS[tab] && window.currentUserTier !== 'subscriber' && window.currentUserTier !== 'master') {
     atlasRenderSubscribeStub(target, tab);
     return;
   }
@@ -18223,7 +18225,10 @@ function reitSearch(page){
           var dot = p.ar_year==='FY2025'?'<span style="color:#4ade80;font-size:9px">●</span> ':p.ar_year==='FY2024'?'<span style="color:#f59e0b;font-size:9px">●</span> ':'<span style="color:#6b7280;font-size:9px">●</span> ';
           var arRow = getARStatus(p.entity);
           var newBadge = (arRow && arRow.new_ar_flag) ? ' <span style="background:#2563bc;color:#fff;font-size:8px;font-weight:700;padding:1px 5px;border-radius:3px;vertical-align:middle">NEW AR</span>' : '';
-          return dot+'Figures from '+p.ar_year+' Annual Report'+newBadge;
+          var hasQ = p.q_period && p.q_notes;
+          var qBadge = hasQ ? ' <span title="Quarterly overlay: '+String(p.q_period).replace(/"/g,'&quot;')+(p.q_source?' · '+String(p.q_source).replace(/"/g,'&quot;'):'')+'" style="background:#7c3aed;color:#fff;font-size:8px;font-weight:700;padding:1px 5px;border-radius:3px;vertical-align:middle;cursor:help">Q</span>' : '';
+          var disclaimer = hasQ ? 'Figures from '+p.ar_year+' AR · Q overlay' : 'Figures from '+p.ar_year+' Annual Report';
+          return dot+disclaimer+qBadge+newBadge;
         }())
       +'</div>'
       +'</div>'
@@ -18366,17 +18371,18 @@ function reitOpenDetail(idx){
     +newsHtml
     +'<div style="background:#fffbf0;border:1px solid #f0e0a0;border-radius:8px;padding:12px">'
     +'<div style="font-size:10px;font-weight:600;color:#7d5200;margin-bottom:4px">\u26a0\ufe0f Data Disclaimer</div>'
-    +'<div style="font-size:10px;color:#7d5200">Figures sourced from '+p.source+'. Values as reported in the '+p.ar_year+' Annual Report and may not reflect current market conditions.</div></div>';
+    +'<div style="font-size:10px;color:#7d5200">Figures sourced from '+p.source+'. Values as reported in the '+p.ar_year+' Annual Report and may not reflect current market conditions.'+(p.q_period && p.q_notes ? ' Quarterly overlay ('+p.q_period+(p.q_source?' · '+p.q_source:'')+') available below.' : '')+'</div></div>';
 
   document.getElementById('rdet-source').innerHTML = (function(){
     var base = '\uD83D\uDCCB '+p.source+' \u00b7 Figures from '+p.ar_year+' AR';
+    var qBadge = (p.q_period && p.q_notes) ? ' <span title="Quarterly overlay: '+String(p.q_period).replace(/"/g,'&quot;')+(p.q_source?' \u00b7 '+String(p.q_source).replace(/"/g,'&quot;'):'')+'" style="background:#7c3aed;color:#fff;font-size:9px;font-weight:700;padding:2px 7px;border-radius:4px;vertical-align:middle;margin-left:4px;cursor:help">Q overlay</span>' : '';
     var arRow = getARStatus(p.entity);
-    if(!arRow) return base;
+    if(!arRow) return base+qBadge;
     var checkedStr = arRow.last_checked_at ? ' \u00b7 SGX checked '+arRow.last_checked_at.substring(0,10) : '';
     var newBadge = arRow.new_ar_flag
       ? ' <span style="background:#2563bc;color:#fff;font-size:9px;font-weight:700;padding:2px 7px;border-radius:4px;vertical-align:middle;margin-left:4px">NEW AR — '+arRow.last_ar_year+'</span>'
       : '';
-    return base + checkedStr + newBadge;
+    return base + checkedStr + qBadge + newBadge;
   }());
 
   // Load vacancy data for this asset
