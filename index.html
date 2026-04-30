@@ -23480,6 +23480,11 @@ function enqEmailRow(label, value) {
 .ed-hero-photo{width:100%;max-height:360px;object-fit:cover;border-radius:4px;margin:6px 0 4px;cursor:zoom-in;display:block}
 .ed-hero-photo.zoomed{max-height:none}
 .ed-photo-credit{font-family:var(--ed-body-serif);font-size:11px;font-style:italic;color:var(--ed-muted);text-align:right;margin:2px 0 8px}
+/* v48.19b — Grid-breakout: when a card in the .nr-grid is expanded, span
+   the full grid row so the body has full-width measure (matches hero).
+   Sibling cards auto-reflow into earlier rows. No effect on mobile (the
+   .nr-grid is already single-column at <=580px). */
+.nr-grid > .ed-card.open{grid-column:1 / -1}
 /* v48.19 — Float-left photo block for compact in-card mode (article page
    uses .ed-art-photo and is unaffected). Photo + figcaption wrap as a
    figure that floats left at ~50% width; body paragraphs flow on the right.
@@ -24202,6 +24207,46 @@ body.article-takeover .ed-article-page{display:block}
 // (href="?article=N"), browser navigates, this IIFE detects the param and
 // mounts the article view. Browser back returns to the source page.
 (function atlasArticlePage(){
+  // v48.19b — Capture the entry point on first mount so the back link
+  // can decide between history.back() (same-site referrer) and a fallback
+  // navigation to /. We capture once: on the very first article-page mount
+  // in this tab. Subsequent in-page navigations (e.g. clicking a related
+  // article) shouldn't overwrite the original entry.
+  var entryPoint = null; // 'same-site' | 'cold'
+  function captureEntryPointOnce(){
+    if(entryPoint !== null) return;
+    try {
+      var ref = document.referrer || '';
+      var hereOrigin = window.location.origin || '';
+      // Same-site if referrer shares our origin, OR if there's already a
+      // history entry behind us (means user navigated within the tab).
+      if(ref && hereOrigin && ref.indexOf(hereOrigin) === 0){
+        entryPoint = 'same-site';
+      } else if(window.history.length > 1 && ref){
+        entryPoint = 'same-site';
+      } else {
+        entryPoint = 'cold';
+      }
+    } catch(e){ entryPoint = 'cold'; }
+  }
+  // Smart-back handler exposed on window so the inlined onclick on the
+  // .ed-art-back link can call it. Returns false to prevent the href
+  // fallback when the JS path succeeds.
+  window.atlasArticleBack = function(ev){
+    try {
+      if(ev && ev.preventDefault) ev.preventDefault();
+      if(entryPoint === 'same-site' && window.history.length > 1){
+        window.history.back();
+      } else {
+        // Cold landing — go to the public landing page.
+        window.location.href = '/';
+      }
+    } catch(e){
+      // Defensive: fall through to the href so the link is never dead.
+      try { window.location.href = '/'; } catch(e2) {}
+    }
+    return false;
+  };
   function edFindRelated(currentId){
     if(!Array.isArray(NEWS)) return [];
     return NEWS
@@ -24261,7 +24306,7 @@ body.article-takeover .ed-article-page{display:block}
     }
     return ''
       +'<header class="ed-art-masthead">'
-        +'<a class="ed-art-back" href="/dashboard/#newsroom">← Back to Newsroom</a>'
+        +'<a class="ed-art-back" href="/" onclick="return atlasArticleBack(event)">← Back</a>'
         +'<div class="ed-art-brand">Property<em>Atlas</em></div>'
         +'<span class="ed-art-share">·</span>'
       +'</header>'
@@ -24289,6 +24334,9 @@ body.article-takeover .ed-article-page{display:block}
       if(!Array.isArray(NEWS)) return;
       var article = NEWS.find(function(n){return n.id === articleId;});
       if(!article) return;
+      // v48.19b — record entry point on first mount (no-op on subsequent
+      // mounts, since the original entry is what "back" should target).
+      captureEntryPointOnce();
       // Mount the takeover view
       document.body.classList.add('article-takeover');
       var mount = document.getElementById('ed-article-page');
