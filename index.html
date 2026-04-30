@@ -17,7 +17,7 @@
   --hdr:#0d1f3c;--hdr2:#132848;--hdr3:#1a3358;
   --shadow:0 1px 4px rgba(60,45,20,.08),0 4px 16px rgba(60,45,20,.06);
   --shadow-sm:0 1px 3px rgba(60,45,20,.07);
-  --shadow-lg:0 4px 24px rgba(60,45,20,.13);
+  --shadow-lg:0 4px 24px rgba(60,45,20,.13);--ed-navy:#1A4F9C;--ed-navy-deep:#0F3775;--ed-navy-ink:#0B2B5C;--ed-bronze:#A67C3A;--ed-bronze-lt:#C9A264;--ed-cream:#F7F3EB;--ed-cream-lt:#FAF7F0;--ed-ink:#1A1A1A;--ed-muted:#6B6157;--ed-hairline:rgba(11,43,92,0.10);--ed-hairline-2:rgba(11,43,92,0.18);--ed-shadow-card:0 1px 2px rgba(11,43,92,0.04),0 8px 24px rgba(11,43,92,0.06);--ed-body-serif:Georgia,"Times New Roman","DejaVu Serif",serif;--ed-pos:#2A7349;--ed-neg:#A33333;
 }
 /* ── v48.8 cream palette: editorial typography overrides ── */
 .card-title,.kpi-label,#chart-title{font-family:Georgia,'Times New Roman',serif;font-weight:600;letter-spacing:-.005em}
@@ -11942,7 +11942,7 @@ var TYPETOT={"office":57330.6,"retail":35459.5,"shophouse":23504.1,"multiUser":3
 var NEWS=[
   {id:78, date:"2026-04-28",
    title:"Mapletree Industrial Trust 4Q And FY25/26: Reported DPU 12.71¢ (-6.3%) On Absent Divestment-Gain Top-Up + North America Non-Renewals + USD/JPY Headwinds — But The Structural Read Is Singapore Operationally Strongest In Years (+6.2% Reversions, 93.4% Occ), North America At 86.1% Occ With Confirmed FY26/27 Non-Renewals, Up To S$600M More NA Divestments Telegraphed To Recycle Into Asia Pacific And A First Entry Into Europe — Three Moves Beyond The Headline",
-   display_title:"MIT FY25/26: SG Operationally Strongest In Years At +6.2% Reversions, NA Drag Confirmed, Up To S$600M More Divestments + First European Entry On The Cards",
+   display_title:"MIT FY25/26: SG Operationally Strongest In Years At +6.2% Reversions, NA Drag Confirmed, Up To S$600M More Divestments + First European Entry On The Cards", display_headline:"Singapore compounding quietly at +6.2% reversions, S$535.3M divestment lands +22.1% above cost — but North American data centre cracks are widening and two May 2026 non-renewals are on the cards", standfirst:"MIT reported FY25/26 DPU 12.71¢, down 6.3% on the absence of the prior-year divestment-gain top-up — the optical headline. The structural read is more interesting: Singapore is operationally the strongest it has been in years, while North America cracks confirm a S$500-600M divestment programme telegraphed for the next 1-2 years.", byline:"PropertyAtlas", read_time_min:11, word_count:2400, financial_headlines:[{label:"4Q Gross Revenue", value:"S$163.8M", change:"−7.9%", change_dir:"down"},{label:"4Q NPI", value:"S$119.9M", change:"−8.6%", change_dir:"down"},{label:"FY DPU", value:"12.71¢", change:"−6.3%", change_dir:"down"},{label:"FY DPU ex-gain", value:"12.71¢", change:"−3.2%", change_dir:"down"},{label:"SG occupancy", value:"93.4%", change:"+0.4pp", change_dir:"up"},{label:"SG reversion 4Q", value:"+6.2%", change_dir:"up"},{label:"NA occupancy", value:"86.1%", change:"−1.4pp", change_dir:"down"},{label:"Japan occupancy", value:"100.0%", change_dir:"flat"},{label:"Aggregate leverage", value:"34.0%", change_dir:"flat"},{label:"Avg borrowing cost", value:"3.2%", change:"+10bps", change_dir:"up"},{label:"NAV per unit", value:"S$1.63", change:"−4.7%", change_dir:"down"},{label:"Capital recycled FY", value:"S$550.6M", change_dir:"up"}],
    source:"PropertyAtlas.sg", category:"Industrial",
    tag:"Earnings · REIT Update · Annual + Quarterly · Industrial / Data Centre · Capital Recycling",
    sourceLabel:"PropertyAtlas.sg Analysis · Mapletree Industrial Trust 4Q and FY25/26 Financial Results dated 28 April 2026",
@@ -13573,6 +13573,75 @@ function nrCatClass(cat){
   var m={'Commercial':'nc-commercial','Industrial':'nc-industrial','Policy':'nc-policy','Market Insight':'nc-market'};
   return m[cat]||'nc-default';
 }
+// v48.18 editorial card-class mapping (parallel to nrCatClass for .ed-* classes)
+function edCatClass(cat){
+  var m={'Commercial':'ec-commercial','Industrial':'ec-industrial','Policy':'ec-policy','Market Insight':'ec-market','Residential':'ec-residential','Hospitality':'ec-hospitality','Healthcare':'ec-healthcare','Retail':'ec-retail'};
+  return m[cat]||'ec-default';
+}
+// v48.18 editorial schema fallback derivation
+// All five new fields fall back gracefully if absent so the 75 un-backfilled
+// articles still render cleanly.
+function edDeriveStandfirst(article){
+  if(article.standfirst) return article.standfirst;
+  if(!article.summary) return '';
+  // Take first sentence(s) up to ~200 chars, ending at a sentence boundary
+  var s = article.summary.split(/\n\n/)[0]; // first paragraph only
+  var firstSent = s.match(/^[^.!?]*[.!?]/);
+  if(!firstSent) return s.slice(0,180)+'…';
+  var out = firstSent[0].trim();
+  // If first sentence is short, try to grab one more
+  if(out.length < 80){
+    var rest = s.slice(out.length).match(/^\s*[^.!?]*[.!?]/);
+    if(rest) out += rest[0];
+  }
+  return out.slice(0,260);
+}
+function edDeriveDisplayHeadline(article){
+  return article.display_headline || article.display_title || article.title || '';
+}
+function edDeriveByline(article){
+  return article.byline || 'PropertyAtlas';
+}
+function edDeriveWordCount(article){
+  if(article.word_count) return article.word_count;
+  if(!article.summary) return 0;
+  return article.summary.split(/\s+/).filter(Boolean).length;
+}
+function edDeriveReadTime(article){
+  if(article.read_time_min) return article.read_time_min;
+  var wc = edDeriveWordCount(article);
+  if(!wc) return null;
+  return Math.max(1, Math.round(wc/220));
+}
+// Format a single financial_headlines row entry as HTML
+function edRenderFhRow(fh){
+  var dir = fh.change_dir || (fh.change ? (fh.change.indexOf('-')===0||fh.change.indexOf('−')===0?'down':fh.change.indexOf('+')===0?'up':'flat') : 'flat');
+  var deltaHtml = fh.change ? '<span class="ed-fh-delta '+dir+'">'+fh.change+'</span>' : '';
+  return '<div class="ed-fh-row"><span class="ed-fh-label">'+fh.label+'</span><span class="ed-fh-val">'+fh.value+deltaHtml+'</span></div>';
+}
+// Format a date string (yyyy-mm-dd) as "28 April 2026"
+function edFormatDate(dateStr){
+  if(!dateStr) return '';
+  var p = dateStr.split('-');
+  if(p.length!==3) return dateStr;
+  var months=['January','February','March','April','May','June','July','August','September','October','November','December'];
+  return parseInt(p[2],10)+' '+months[parseInt(p[1],10)-1]+' '+p[0];
+}
+// Build the eyebrow row: ★ LATEST · CATEGORY · TAG · TAG
+function edBuildEyebrow(article, isLatest){
+  var parts = [];
+  if(isLatest) parts.push('<span class="ed-latest-pill">Latest</span>');
+  if(article.category) parts.push('<span class="ed-cat-tag">'+article.category+'</span>');
+  // Split tag string on " · " or " — " or " - " to get individual tags
+  if(article.tag){
+    var tags = article.tag.split(/\s*[·•—–\-]\s*/).filter(function(t){return t && t.trim();});
+    tags.forEach(function(t){
+      parts.push('<span class="ed-cat-tag">'+t.trim()+'</span>');
+    });
+  }
+  return parts.join('<span class="ed-eyebrow-sep">·</span>');
+}
+
 function nrSentDot(s){
   return '<span class="sent-dot '+(s==="positive"?"sent-pos":s==="negative"?"sent-neg":"sent-neu")+'"></span>';
 }
@@ -13582,7 +13651,7 @@ function nrSentDot(s){
 var NR_EXPANDED = false;
 function nrToggleAll(){
   NR_EXPANDED = !NR_EXPANDED;
-  document.querySelectorAll('.nr-hero,.nr-card').forEach(function(el){
+  document.querySelectorAll('.nr-hero,.nr-card,.ed-hero,.ed-card').forEach(function(el){
     el.classList.toggle('open', NR_EXPANDED);
   });
   // Update hint text
@@ -13599,7 +13668,7 @@ function nrToggleAll(){
 }
 function nrCollapseAll(){
   NR_EXPANDED = false;
-  document.querySelectorAll('.nr-hero,.nr-card').forEach(function(el){
+  document.querySelectorAll('.nr-hero,.nr-card,.ed-hero,.ed-card').forEach(function(el){
     el.classList.remove('open');
   });
   var hint = document.querySelector('.nr-expand-hint');
@@ -13682,41 +13751,94 @@ function renderNewsroom(){
 
   var hero=list[0];
   var rest=list.slice(1);
-  var cc=nrCatClass(hero.category);
-  var heroImg=hero.image?'<img src="'+hero.image+'" style="width:100%;max-width:520px;border-radius:6px;margin:12px 0 4px;display:block;cursor:zoom-in" onclick="event.stopPropagation();this.style.maxWidth=this.style.maxWidth===\'100%\'?\'520px\':\'100%\'" >':'';
-  var heroSrc=hero.sourceLabel?'<div class="nr-source-credit">Source: '+hero.sourceLabel+'</div>':'';
-  var heroLink=hero.articleUrl?'<a href="'+hero.articleUrl+'" target="_blank" rel="noopener" onclick="event.stopPropagation()" class="nr-read-more">Read full article ↗</a>':'';
-  heroWrap.innerHTML='<div class="nr-hero '+cc+'" id="news-post-'+hero.id+'" onclick="nrToggleAll()">'
-    +'<div class="nr-hero-badge">Latest · '+hero.category+'</div>'
-    +'<div class="nr-hero-title">'+hero.title+'</div>'
-    +'<div class="nr-hero-meta">'
-    +nrSentDot(hero.sentiment)
-    +'<span style="font-size:10px;color:var(--mut);font-family:\'DM Mono\',monospace">'+hero.date+'</span>'
-    +'<span class="nr-src">'+hero.source+'</span>'
-    +'<span class="pill p-tag">'+hero.tag+'</span>'
+  var ecHero=edCatClass(hero.category);
+  var heroDisplayHL=edDeriveDisplayHeadline(hero);
+  var heroStandfirst=edDeriveStandfirst(hero);
+  var heroByline=edDeriveByline(hero);
+  var heroReadTime=edDeriveReadTime(hero);
+  var heroEyebrow=edBuildEyebrow(hero, true);
+  var heroDate=edFormatDate(hero.date);
+  var heroImg=hero.image
+    ? '<img src="'+hero.image+'" class="ed-hero-photo" alt="" onclick="event.stopPropagation();this.classList.toggle(\'zoomed\')" />'
+    +(hero.sourceLabel?'<div class="ed-photo-credit">Photo: '+(hero.imageCredit||hero.sourceLabel.split('·')[0].trim())+'</div>':'')
+    : '';
+  var heroFhPanel='';
+  if(hero.financial_headlines && hero.financial_headlines.length){
+    heroFhPanel='<div class="ed-section-eyebrow">Financial headlines</div>'
+      +'<div class="ed-fh-panel">'
+      +hero.financial_headlines.map(edRenderFhRow).join('')
+      +'</div>';
+  }
+  var heroSrc=hero.sourceLabel?'<div class="ed-source">Source: '+hero.sourceLabel+'</div>':'';
+  var heroFullArticleLink='<a href="?article='+hero.id+'" class="ed-read-full" onclick="event.stopPropagation()">Read full article<span class="arrow">→</span></a>';
+  var heroExtArticleLink=hero.articleUrl?'<a href="'+hero.articleUrl+'" target="_blank" rel="noopener" onclick="event.stopPropagation()" class="ed-read-full">Source article<span class="arrow">↗</span></a>':'';
+  var heroBylineParts=[
+    '<span class="ed-byline-by">By '+heroByline+'</span>',
+    '<span class="ed-byline-sep">·</span>',
+    '<span>'+heroDate+'</span>'
+  ];
+  if(heroReadTime){
+    heroBylineParts.push('<span class="ed-byline-sep">·</span>');
+    heroBylineParts.push('<span>'+heroReadTime+' min read</span>');
+  }
+  heroWrap.innerHTML=''
+    +'<div class="ed-hero '+ecHero+'" id="news-post-'+hero.id+'" onclick="nrToggleAll()">'
+    +'<div class="ed-eyebrow">'+heroEyebrow+'</div>'
+    +'<h2 class="ed-headline-hero">'+heroDisplayHL+'</h2>'
+    +(heroStandfirst?'<div class="ed-standfirst">'+heroStandfirst+'</div>':'')
+    +'<div class="ed-byline">'+heroBylineParts.join('')+'</div>'
+    +'<div class="nr-expand-hint" style="font-size:11px;color:var(--ed-muted);font-family:\'DM Sans\',sans-serif">Click to expand ↓</div>'
+    +'<div class="ed-body">'
+      +heroImg
+      +formatNewsSummary(hero.summary)
+      +heroFhPanel
+      +heroSrc
+      +'<div class="ed-cta-row">'+heroFullArticleLink+heroExtArticleLink+'</div>'
     +'</div>'
-    +'<div class="nr-expand-hint" style="font-size:11px;color:var(--mut)">Click to expand ↓</div>'
-    +'<div class="nr-hero-body">'+formatNewsSummary(hero.summary)+heroImg+heroSrc+heroLink+'</div>'
     +'</div>';
 
   if(divWrap) divWrap.innerHTML=rest.length?'<div class="nr-divider">Earlier coverage</div>':'';
 
   gridEl.innerHTML=rest.map(function(n){
-    var cc2=nrCatClass(n.category);
-    return'<div class="nr-card '+cc2+'" id="news-post-'+n.id+'" onclick="nrToggleAll()">'
-      +'<div class="nr-card-meta">'
-      +nrSentDot(n.sentiment)
-      +'<span style="font-size:10px;color:var(--mut);font-family:\'DM Mono\',monospace">'+n.date+'</span>'
-      +'<span class="nr-src">'+n.source+'</span>'
-      +'<span class="pill p-tag">'+n.tag+'</span>'
+    var ecCard=edCatClass(n.category);
+    var cardDisplayHL=edDeriveDisplayHeadline(n);
+    var cardStandfirst=edDeriveStandfirst(n);
+    var cardByline=edDeriveByline(n);
+    var cardReadTime=edDeriveReadTime(n);
+    var cardDate=edFormatDate(n.date);
+    var cardEyebrow=edBuildEyebrow(n, false);
+    var cardImg=n.image
+      ? '<img src="'+n.image+'" class="ed-hero-photo" style="max-height:280px" alt="" onclick="event.stopPropagation();this.classList.toggle(\'zoomed\')" />'
+      +(n.sourceLabel?'<div class="ed-photo-credit">Photo: '+(n.imageCredit||n.sourceLabel.split('·')[0].trim())+'</div>':'')
+      : '';
+    var cardFhPanel='';
+    if(n.financial_headlines && n.financial_headlines.length){
+      cardFhPanel='<div class="ed-section-eyebrow">Financial headlines</div>'
+        +'<div class="ed-fh-panel">'
+        +n.financial_headlines.map(edRenderFhRow).join('')
+        +'</div>';
+    }
+    var cardSrc=n.sourceLabel?'<div class="ed-source">Source: '+n.sourceLabel+'</div>':'';
+    var cardFullArticleLink='<a href="?article='+n.id+'" class="ed-read-full" onclick="event.stopPropagation()">Read full article<span class="arrow">→</span></a>';
+    var cardExtArticleLink=n.articleUrl?'<a href="'+n.articleUrl+'" target="_blank" rel="noopener" onclick="event.stopPropagation()" class="ed-read-full">Source article<span class="arrow">↗</span></a>':'';
+    var bylineParts=['<span>'+cardByline+'</span>','<span class="ed-byline-sep">·</span>','<span>'+cardDate+'</span>'];
+    if(cardReadTime){
+      bylineParts.push('<span class="ed-byline-sep">·</span>');
+      bylineParts.push('<span>'+cardReadTime+' min</span>');
+    }
+    return ''
+      +'<div class="ed-card '+ecCard+'" id="news-post-'+n.id+'" onclick="nrToggleAll()">'
+      +'<div class="ed-eyebrow">'+cardEyebrow+'</div>'
+      +'<h3 class="ed-headline-card">'+cardDisplayHL+'</h3>'
+      +(cardStandfirst?'<div class="ed-standfirst-card">'+cardStandfirst+'</div>':'')
+      +'<div class="ed-byline-card">'+bylineParts.join('')+'</div>'
+      +'<div class="ed-body">'
+        +cardImg
+        +formatNewsSummary(n.summary)
+        +cardFhPanel
+        +cardSrc
+        +'<div class="ed-cta-row">'+cardFullArticleLink+cardExtArticleLink+'</div>'
       +'</div>'
-      +'<div class="nr-card-title">'+n.title+'</div>'
-      +(function(nd){
-        var ci=nd.image?'<img src="'+nd.image+'" style="width:100%;border-radius:5px;margin:10px 0 4px;display:block;cursor:zoom-in" onclick="event.stopPropagation();this.style.width=this.style.width===\'60%\'?\'100%\':\'60%\'" >':'';
-        var cs=nd.sourceLabel?'<div class="nr-source-credit">Source: '+nd.sourceLabel+'</div>':'';
-        var cl=nd.articleUrl?'<a href="'+nd.articleUrl+'" target="_blank" rel="noopener" onclick="event.stopPropagation()" class="nr-read-more">Read full article ↗</a>':'';
-        return '<div class="nr-card-body">'+formatNewsSummary(nd.summary)+ci+cs+cl+'</div>';
-      })(n)
       +'</div>';
   }).join('');
 }
@@ -23293,6 +23415,69 @@ function enqEmailRow(label, value) {
 .nl-banner.error{background:#fef2f2;border:1px solid #fecaca;color:#b91c1c}
 .nl-banner-close{margin-left:auto;background:transparent;border:none;color:inherit;cursor:pointer;font-size:16px;line-height:1;padding:0 4px;opacity:.6}
 .nl-banner-close:hover{opacity:1}
+</style>
+
+<!-- ════════════════════════════════════════════════════════════
+     v48.18 NEWSROOM EDITORIAL v1 — relocated CSS block
+     Originally placed near the .nr-* CSS at top of file but
+     moved here per L162: keeping line offsets at 12665, 12668,
+     12736, 12769 stable. CSS load order is non-strict so this
+     position is functionally equivalent.
+     See ATLAS_newsroom_editorial_v1_spec.md for spec.
+     ════════════════════════════════════════════════════════════ -->
+<style>
+.ed-card,.ed-hero{background:var(--ed-cream-lt);border:1px solid var(--ed-hairline);border-radius:6px;padding:18px 22px;cursor:pointer;transition:all .15s;position:relative;overflow:hidden;display:flex;flex-direction:column;gap:8px;margin-bottom:14px}
+.ed-hero{padding:24px 28px}
+.ed-card::before,.ed-hero::before{content:'';position:absolute;left:0;top:0;bottom:0;width:3px;border-radius:6px 0 0 6px}
+.ed-hero::before{width:4px}
+.ed-card:hover,.ed-hero:hover{box-shadow:var(--ed-shadow-card);border-color:var(--ed-hairline-2)}
+.ed-card.ec-commercial::before,.ed-hero.ec-commercial::before{background:#5c6bc0}
+.ed-card.ec-industrial::before,.ed-hero.ec-industrial::before{background:#f57c00}
+.ed-card.ec-policy::before,.ed-hero.ec-policy::before{background:#00897b}
+.ed-card.ec-market::before,.ed-hero.ec-market::before{background:#6d4c41}
+.ed-card.ec-residential::before,.ed-hero.ec-residential::before{background:#7e57c2}
+.ed-card.ec-hospitality::before,.ed-hero.ec-hospitality::before{background:#ec407a}
+.ed-card.ec-healthcare::before,.ed-hero.ec-healthcare::before{background:#26a69a}
+.ed-card.ec-retail::before,.ed-hero.ec-retail::before{background:#d4a017}
+.ed-card.ec-default::before,.ed-hero.ec-default::before{background:var(--ed-bronze)}
+.ed-eyebrow{display:flex;align-items:center;gap:8px;flex-wrap:wrap;font-size:10.5px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--ed-bronze);margin-bottom:6px;font-family:'DM Sans',sans-serif}
+.ed-eyebrow .ed-latest-pill{background:var(--ed-bronze);color:var(--ed-cream-lt);padding:2px 8px;border-radius:2px;letter-spacing:.16em;font-size:9.5px}
+.ed-eyebrow .ed-eyebrow-sep{color:var(--ed-muted);opacity:.6;font-weight:400}
+.ed-eyebrow .ed-cat-tag{color:var(--ed-bronze)}
+.ed-headline-hero{font-family:var(--ed-body-serif);font-size:20px;line-height:1.22;font-weight:700;color:var(--ed-navy-ink);letter-spacing:-.01em;margin:0}
+.ed-headline-card{font-family:var(--ed-body-serif);font-size:15px;line-height:1.3;font-weight:700;color:var(--ed-navy-ink);letter-spacing:-.005em;margin:0;max-height:5.85em;overflow:hidden}
+.ed-standfirst{font-family:var(--ed-body-serif);font-size:13.5px;line-height:1.5;color:var(--ed-ink);font-style:italic;padding-left:12px;border-left:2px solid var(--ed-bronze-lt);margin:6px 0 4px}
+.ed-standfirst-card{font-family:var(--ed-body-serif);font-size:12px;line-height:1.5;color:var(--ed-muted);font-style:italic;margin:2px 0;display:-webkit-box;-webkit-line-clamp:2;line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.ed-byline{display:flex;gap:10px;align-items:center;flex-wrap:wrap;font-family:'DM Sans',sans-serif;font-size:11px;color:var(--ed-muted);padding:6px 0 10px;border-bottom:1px solid var(--ed-hairline);margin-bottom:14px}
+.ed-byline-by{color:var(--ed-navy-ink);font-weight:600}
+.ed-byline-sep{color:var(--ed-muted);opacity:.5}
+.ed-byline-card{font-family:'DM Sans',sans-serif;font-size:10.5px;color:var(--ed-muted);display:flex;gap:6px;align-items:center;flex-wrap:wrap;margin-top:auto}
+.ed-body{display:none;font-family:var(--ed-body-serif);font-size:15px;line-height:1.7;color:var(--ed-ink);margin-top:0}
+.ed-hero.open .ed-body,.ed-card.open .ed-body{display:block}
+.ed-body p{margin:0 0 14px}
+.ed-body p:first-of-type::first-letter{font-family:var(--ed-body-serif);font-size:48px;line-height:.85;font-weight:700;color:var(--ed-navy-ink);float:left;padding:6px 8px 0 0;margin-top:2px}
+@media(max-width:480px){.ed-body p:first-of-type::first-letter{font-size:1em;float:none;padding:0;margin:0;line-height:inherit;font-weight:inherit;color:inherit;font-family:inherit}}
+.ed-hero-photo{width:100%;max-height:360px;object-fit:cover;border-radius:4px;margin:6px 0 4px;cursor:zoom-in;display:block}
+.ed-hero-photo.zoomed{max-height:none}
+.ed-photo-credit{font-family:var(--ed-body-serif);font-size:11px;font-style:italic;color:var(--ed-muted);text-align:right;margin:2px 0 8px}
+.ed-section-eyebrow{font-family:'DM Sans',sans-serif;font-size:10.5px;font-weight:700;letter-spacing:.18em;text-transform:uppercase;color:var(--ed-bronze);margin:24px 0 10px;padding-top:14px;border-top:1px solid var(--ed-hairline)}
+.ed-section-eyebrow:first-of-type{margin-top:18px}
+.ed-fh-panel{display:grid;grid-template-columns:1fr 1fr;gap:6px 22px;margin:6px 0 10px;font-family:var(--ed-body-serif)}
+@media(max-width:580px){.ed-fh-panel{grid-template-columns:1fr}}
+.ed-fh-row{display:flex;justify-content:space-between;align-items:baseline;border-bottom:1px dotted var(--ed-bronze-lt);padding:5px 0;font-size:13px;gap:8px}
+.ed-fh-label{color:var(--ed-muted)}
+.ed-fh-val{color:var(--ed-ink);font-weight:700;text-align:right;white-space:nowrap}
+.ed-fh-delta{font-size:11px;font-weight:600;margin-left:6px;font-family:'DM Sans',sans-serif}
+.ed-fh-delta.up{color:var(--ed-pos)}
+.ed-fh-delta.down{color:var(--ed-neg)}
+.ed-fh-delta.flat{color:var(--ed-muted)}
+.ed-source{font-family:var(--ed-body-serif);font-size:11.5px;font-style:italic;color:var(--ed-muted);margin:14px 0 6px;padding-top:10px;border-top:1px solid var(--ed-hairline);letter-spacing:.01em}
+.ed-cta-row{display:flex;gap:14px;align-items:center;margin-top:10px;flex-wrap:wrap}
+.ed-read-full{font-family:'DM Sans',sans-serif;font-size:12px;font-weight:700;color:var(--ed-navy);letter-spacing:.02em;text-decoration:none;display:inline-flex;align-items:center;gap:5px;padding:6px 0}
+.ed-read-full:hover{text-decoration:underline}
+.ed-read-full .arrow{transition:transform .15s}
+.ed-read-full:hover .arrow{transform:translateX(3px)}
+@media(max-width:580px){.ed-hero{padding:18px 18px}.ed-card{padding:14px 16px}.ed-headline-hero{font-size:17px}.ed-headline-card{font-size:14px}.ed-standfirst{font-size:12.5px}.ed-body{font-size:14px}}
 </style>
 
 <!-- Subscribe Modal -->
