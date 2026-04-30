@@ -12685,10 +12685,30 @@ var ATLAS_GATED_TABS = {
   "pulse":     true
 };
 
+// L164 (v48.15) — Snapshot original innerHTML of each gated panel at page-load,
+// BEFORE any atlasShowTab call. atlasRenderSubscribeStub destroys panel innerHTML
+// when paywalling a non-subscriber; on tier upgrade the gate branch passes but the
+// renderer (reitSearch, dirSearch, etc) crashes on null DOM lookups because the
+// child inputs were stub-replaced. We restore from this snapshot in atlasShowTab
+// when a previously-stubbed panel transitions blocked → unblocked.
+// Run as IIFE so snapshot completes before any tab click can fire.
+window.ATLAS_PANEL_TEMPLATES = window.ATLAS_PANEL_TEMPLATES || {};
+(function atlasSnapshotGatedPanels(){
+  Object.keys(ATLAS_GATED_TABS).forEach(function(tab){
+    var panelId = (typeof ATLAS_TAB_MAP !== 'undefined' && ATLAS_TAB_MAP[tab]) ? ATLAS_TAB_MAP[tab] : ('tab-'+tab);
+    var el = document.getElementById(panelId);
+    if(el && !window.ATLAS_PANEL_TEMPLATES[tab]){
+      window.ATLAS_PANEL_TEMPLATES[tab] = el.innerHTML;
+    }
+  });
+}());
+
 // Render a subscribe-to-access stub into a panel. Called from atlasShowTab when a
-// non-subscriber requests a gated tab. The stub replaces the panel's innerHTML; the
-// original content is NOT re-fetched — instead, on tier upgrade, a full page reload
-// repopulates the panel cleanly (Phase 2 will handle this on auth state change).
+// non-subscriber requests a gated tab. The stub replaces the panel's innerHTML.
+// L164 (v48.15): the stub root carries data-atlas-stub="1" so atlasShowTab can
+// detect a previously-stubbed panel on tier upgrade and restore from
+// window.ATLAS_PANEL_TEMPLATES before running the tab's renderer. No page reload
+// required.
 function atlasRenderSubscribeStub(panelEl, tabName) {
   if(!panelEl) return;
   var prettyName = ({
@@ -12696,7 +12716,7 @@ function atlasRenderSubscribeStub(panelEl, tabName) {
     talent: 'Human Capital', forsale: 'Stock', pulse: 'Market Pulse'
   })[tabName] || tabName;
   panelEl.innerHTML =
-    '<div style="max-width:560px;margin:80px auto;padding:40px 36px;' +
+    '<div data-atlas-stub="1" style="max-width:560px;margin:80px auto;padding:40px 36px;' +
     'background:#F7F3EB;border:1px solid rgba(26,79,156,.18);border-radius:12px;' +
     'text-align:center;font-family:Georgia,\'Times New Roman\',serif">' +
       '<div style="font-size:13px;letter-spacing:.14em;text-transform:uppercase;' +
@@ -12762,13 +12782,28 @@ function atlasShowTab(tab) {
   var target = targetId ? document.getElementById(targetId) : null;
   if(target) target.style.display = "block";
 
-  // 3b. TIER GATE — if tab is gated AND user is not a subscriber, render the
-  // subscribe-to-access stub and short-circuit (skip the tab's init/load).
-  // Note: the stub replaces innerHTML; upgrading tier requires a page reload
-  // to repopulate the panel cleanly. Phase 2 hooks this to auth state change.
+  // 3b. TIER GATE — if tab is gated AND user is not a subscriber/master, render
+  // the subscribe-to-access stub and short-circuit (skip the tab's init/load).
+  // L164 (v48.15): the stub root carries data-atlas-stub="1"; the next time
+  // atlasShowTab fires for this tab with sufficient tier, the recovery block
+  // (3c) below restores the panel from window.ATLAS_PANEL_TEMPLATES so the
+  // renderer's expected DOM elements exist. No page reload required.
   if(ATLAS_GATED_TABS[tab] && window.currentUserTier !== 'subscriber' && window.currentUserTier !== 'master') {
     atlasRenderSubscribeStub(target, tab);
     return;
+  }
+
+  // 3c. L164 (v48.15) PANEL RECOVERY — if the panel was previously stubbed
+  // (data-atlas-stub="1" on first child) and we got past the gate above, the
+  // tier has just been upgraded. Restore from snapshot before tab init/load,
+  // otherwise the renderer will crash on null DOM lookups (e.g. reitSearch
+  // reading document.getElementById('reit-search').value).
+  // Idempotent: if no stub marker, this is a no-op.
+  if(ATLAS_GATED_TABS[tab] && target && target.firstElementChild &&
+     target.firstElementChild.getAttribute &&
+     target.firstElementChild.getAttribute('data-atlas-stub') === '1' &&
+     window.ATLAS_PANEL_TEMPLATES && window.ATLAS_PANEL_TEMPLATES[tab]){
+    target.innerHTML = window.ATLAS_PANEL_TEMPLATES[tab];
   }
 
   // 4. Tab-specific init/load
