@@ -13545,19 +13545,18 @@ function renderNewsPreview(){
 }
 
 // Navigate to a specific newsroom post from the Overview preview (v48.10).
-// Switches to the Newsroom tab, expands all posts (to ensure the target is visible
-// since the newsroom uses a single expand-all state), then smoothly scrolls the
-// anchored post into view.
+// Switches to the Newsroom tab, opens just the target card (v48.19 per-card
+// model, replacing the v48.18 expand-all), then smoothly scrolls it into view.
 function gotoNewsPost(id){
   var navBtn = document.querySelector('.navtab[data-tab="news"]');
   if(navBtn) navBtn.click();
-  // Wait a tick for tab panel to show, then expand + scroll
+  // Wait a tick for tab panel to show, then open the target + scroll
   setTimeout(function(){
-    if(typeof NR_EXPANDED !== 'undefined' && !NR_EXPANDED){
-      if(typeof nrToggleAll === 'function') nrToggleAll();
-    }
     var anchor = document.getElementById('news-post-'+id);
     if(anchor){
+      if(!anchor.classList.contains('open') && typeof nrToggleCard === 'function'){
+        nrToggleCard(anchor);
+      }
       anchor.scrollIntoView({behavior:'smooth', block:'start'});
       // Brief highlight flash so the user sees which one they landed on
       var origBg = anchor.style.background;
@@ -13647,32 +13646,48 @@ function nrSentDot(s){
 }
 // Converts plain-text summary (with \n\n sections and bullet-style lines) into readable HTML
 
-// ── Newsroom: expand/collapse all cards + browser back support ──────────
+// ── Newsroom: per-card expand/collapse (v48.19) ─────────────────────────
+// v48.18 used a single global expand-all toggle (`nrToggleAll`). This caused
+// every card to open together when any card was clicked, so users perceived
+// it as "every article opens MIT" because the hero scrolled into view.
+// v48.19 replaces it with per-card toggle: clicking a card toggles only
+// that card. Master expand/collapse and #newsroom-open hash are gone.
+// `NR_EXPANDED` retained as legacy flag for any external caller that still
+// references it; it now reflects "any card open" rather than "all cards open".
 var NR_EXPANDED = false;
-function nrToggleAll(){
-  NR_EXPANDED = !NR_EXPANDED;
-  document.querySelectorAll('.nr-hero,.nr-card,.ed-hero,.ed-card').forEach(function(el){
-    el.classList.toggle('open', NR_EXPANDED);
-  });
-  // Update hint text
-  var hint = document.querySelector('.nr-expand-hint');
-  if(hint) hint.textContent = NR_EXPANDED ? 'Click to collapse ↑' : 'Click to expand ↓';
-  // Push/pop state for browser back button
-  if(NR_EXPANDED){
-    history.pushState({nrExpanded:true},'',window.location.href.split('#')[0]+'#newsroom-open');
-  } else {
-    if(window.location.hash==='#newsroom-open'){
-      history.replaceState(null,'',window.location.href.replace('#newsroom-open',''));
+function nrToggleCard(el, ev){
+  if(!el) return;
+  if(ev && ev.stopPropagation) ev.stopPropagation();
+  // If the click originated on an interactive child (link, button, image),
+  // let the child's own handler run and don't toggle the card body.
+  if(ev && ev.target){
+    var t = ev.target;
+    while(t && t !== el){
+      var tag = (t.tagName||'').toLowerCase();
+      if(tag === 'a' || tag === 'button' || t.classList.contains('ed-hero-photo') || t.classList.contains('ed-photo-credit')) return;
+      t = t.parentNode;
     }
   }
+  var isOpen = el.classList.toggle('open');
+  // Update the in-card hint text if present (hero card only)
+  var hint = el.querySelector('.nr-expand-hint');
+  if(hint) hint.textContent = isOpen ? 'Click to collapse ↑' : 'Click to expand ↓';
+  // Reflect "any card open" in the legacy flag.
+  NR_EXPANDED = !!document.querySelector('.nr-hero.open,.nr-card.open,.ed-hero.open,.ed-card.open');
+}
+// Legacy alias — some older code paths (e.g. v48.10 gotoNewsPost) call
+// nrToggleAll. Rebind to a no-op style helper that opens the targeted card.
+function nrToggleAll(targetEl){
+  if(targetEl && targetEl.classList){ nrToggleCard(targetEl); return; }
+  // No target supplied — legacy "expand all" semantic intentionally dropped.
 }
 function nrCollapseAll(){
-  NR_EXPANDED = false;
   document.querySelectorAll('.nr-hero,.nr-card,.ed-hero,.ed-card').forEach(function(el){
     el.classList.remove('open');
+    var hint = el.querySelector('.nr-expand-hint');
+    if(hint) hint.textContent = 'Click to expand ↓';
   });
-  var hint = document.querySelector('.nr-expand-hint');
-  if(hint) hint.textContent = 'Click to expand ↓';
+  NR_EXPANDED = false;
 }
 
 function formatNewsSummary(text){
@@ -13759,8 +13774,10 @@ function renderNewsroom(){
   var heroEyebrow=edBuildEyebrow(hero, true);
   var heroDate=edFormatDate(hero.date);
   var heroImg=hero.image
-    ? '<img src="'+hero.image+'" class="ed-hero-photo" alt="" onclick="event.stopPropagation();this.classList.toggle(\'zoomed\')" />'
-    +(hero.sourceLabel?'<div class="ed-photo-credit">Photo: '+(hero.imageCredit||hero.sourceLabel.split('·')[0].trim())+'</div>':'')
+    ? '<figure class="ed-card-photo">'
+      + '<img src="'+hero.image+'" class="ed-hero-photo" alt="" onclick="event.stopPropagation();this.classList.toggle(\'zoomed\')" />'
+      + (hero.sourceLabel?'<figcaption class="ed-photo-credit">Photo: '+(hero.imageCredit||hero.sourceLabel.split('·')[0].trim())+'</figcaption>':'')
+      + '</figure>'
     : '';
   var heroFhPanel='';
   if(hero.financial_headlines && hero.financial_headlines.length){
@@ -13782,7 +13799,7 @@ function renderNewsroom(){
     heroBylineParts.push('<span>'+heroReadTime+' min read</span>');
   }
   heroWrap.innerHTML=''
-    +'<div class="ed-hero '+ecHero+'" id="news-post-'+hero.id+'" onclick="nrToggleAll()">'
+    +'<div class="ed-hero '+ecHero+'" id="news-post-'+hero.id+'" onclick="nrToggleCard(this, event)">'
     +'<div class="ed-eyebrow">'+heroEyebrow+'</div>'
     +'<h2 class="ed-headline-hero">'+heroDisplayHL+'</h2>'
     +(heroStandfirst?'<div class="ed-standfirst">'+heroStandfirst+'</div>':'')
@@ -13808,8 +13825,10 @@ function renderNewsroom(){
     var cardDate=edFormatDate(n.date);
     var cardEyebrow=edBuildEyebrow(n, false);
     var cardImg=n.image
-      ? '<img src="'+n.image+'" class="ed-hero-photo" style="max-height:280px" alt="" onclick="event.stopPropagation();this.classList.toggle(\'zoomed\')" />'
-      +(n.sourceLabel?'<div class="ed-photo-credit">Photo: '+(n.imageCredit||n.sourceLabel.split('·')[0].trim())+'</div>':'')
+      ? '<figure class="ed-card-photo">'
+        + '<img src="'+n.image+'" class="ed-hero-photo" style="max-height:280px" alt="" onclick="event.stopPropagation();this.classList.toggle(\'zoomed\')" />'
+        + (n.sourceLabel?'<figcaption class="ed-photo-credit">Photo: '+(n.imageCredit||n.sourceLabel.split('·')[0].trim())+'</figcaption>':'')
+        + '</figure>'
       : '';
     var cardFhPanel='';
     if(n.financial_headlines && n.financial_headlines.length){
@@ -13827,11 +13846,12 @@ function renderNewsroom(){
       bylineParts.push('<span>'+cardReadTime+' min</span>');
     }
     return ''
-      +'<div class="ed-card '+ecCard+'" id="news-post-'+n.id+'" onclick="nrToggleAll()">'
+      +'<div class="ed-card '+ecCard+'" id="news-post-'+n.id+'" onclick="nrToggleCard(this, event)">'
       +'<div class="ed-eyebrow">'+cardEyebrow+'</div>'
       +'<h3 class="ed-headline-card">'+cardDisplayHL+'</h3>'
       +(cardStandfirst?'<div class="ed-standfirst-card">'+cardStandfirst+'</div>':'')
       +'<div class="ed-byline-card">'+bylineParts.join('')+'</div>'
+      +'<div class="nr-expand-hint" style="font-size:11px;color:var(--ed-muted);font-family:\'DM Sans\',sans-serif;margin-top:6px">Click to expand ↓</div>'
       +'<div class="ed-body">'
         +cardImg
         +formatNewsSummary(n.summary)
@@ -18724,8 +18744,8 @@ function reitCloseDetail(){
 window.addEventListener('popstate',function(e){
   var det=document.getElementById('reit-detail');
   if(det&&det.style.display!=='none'){reitCloseDetail();}
-  // Newsroom: collapse all if user hits back from expanded state
-  if(window.location.hash!=='#newsroom-open' && NR_EXPANDED){nrCollapseAll();}
+  // v48.19: newsroom popstate clause removed (per-card toggle no longer
+  // pushes #newsroom-open to history, so there's nothing to roll back).
 });
 
 function reitClear(){
@@ -23460,6 +23480,24 @@ function enqEmailRow(label, value) {
 .ed-hero-photo{width:100%;max-height:360px;object-fit:cover;border-radius:4px;margin:6px 0 4px;cursor:zoom-in;display:block}
 .ed-hero-photo.zoomed{max-height:none}
 .ed-photo-credit{font-family:var(--ed-body-serif);font-size:11px;font-style:italic;color:var(--ed-muted);text-align:right;margin:2px 0 8px}
+/* v48.19 — Float-left photo block for compact in-card mode (article page
+   uses .ed-art-photo and is unaffected). Photo + figcaption wrap as a
+   figure that floats left at ~50% width; body paragraphs flow on the right.
+   Mobile (<=580px) falls back to stacked full-width to preserve readability. */
+.ed-card-photo{float:left;width:50%;max-width:380px;margin:4px 22px 12px 0;padding:0;display:block;shape-outside:margin-box}
+.ed-card-photo .ed-hero-photo{width:100%;max-height:none;margin:0;border-radius:4px}
+.ed-card-photo .ed-photo-credit{text-align:left;margin:4px 0 0;line-height:1.4}
+/* Suppress the drop-cap when a photo precedes the body — they collide
+   visually because both want to float left at the start of the body. */
+.ed-card-photo + p::first-letter,
+.ed-card-photo ~ p:first-of-type::first-letter{font-family:inherit;font-size:inherit;line-height:inherit;font-weight:inherit;color:inherit;float:none;padding:0;margin:0}
+/* Clear floats so subsequent panels (FH grid, source line, CTA row) sit
+   on their own line and don't ride up against the photo. */
+.ed-fh-panel,.ed-source,.ed-cta-row,.ed-section-eyebrow{clear:left}
+@media(max-width:580px){
+  .ed-card-photo{float:none;width:100%;max-width:none;margin:6px 0 10px}
+  .ed-card-photo .ed-photo-credit{text-align:right}
+}
 .ed-section-eyebrow{font-family:'DM Sans',sans-serif;font-size:10.5px;font-weight:700;letter-spacing:.18em;text-transform:uppercase;color:var(--ed-bronze);margin:24px 0 10px;padding-top:14px;border-top:1px solid var(--ed-hairline)}
 .ed-section-eyebrow:first-of-type{margin-top:18px}
 .ed-fh-panel{display:grid;grid-template-columns:1fr 1fr;gap:6px 22px;margin:6px 0 10px;font-family:var(--ed-body-serif)}
@@ -24139,6 +24177,24 @@ body.article-takeover .ed-article-page{display:block}
   }
 })();
 
+// v48.19: #newsroom hash handler — activates the Newsroom tab on load if
+// the URL hash is #newsroom. Used by the article-page "← Back to Newsroom"
+// link so users land on the right tab. No card-expansion side effect.
+(function atlasNewsroomHash(){
+  function handleNewsroomHash(){
+    try {
+      if(window.location.hash !== '#newsroom') return;
+      var navBtn = document.querySelector('.navtab[data-tab="news"]');
+      if(navBtn) navBtn.click();
+    } catch(e) { /* defensive */ }
+  }
+  if(document.readyState === 'loading'){
+    document.addEventListener('DOMContentLoaded', handleNewsroomHash);
+  } else {
+    handleNewsroomHash();
+  }
+})();
+
 // v48.18 Day 2: full-bleed article page (?article=N takeover)
 // Renders a dedicated editorial article view that hides the dashboard
 // chrome entirely. Reuses the NEWS array; CSS classes prefixed .ed-art-*.
@@ -24205,7 +24261,7 @@ body.article-takeover .ed-article-page{display:block}
     }
     return ''
       +'<header class="ed-art-masthead">'
-        +'<a class="ed-art-back" href="/dashboard/#newsroom-open">← Back to Newsroom</a>'
+        +'<a class="ed-art-back" href="/dashboard/#newsroom">← Back to Newsroom</a>'
         +'<div class="ed-art-brand">Property<em>Atlas</em></div>'
         +'<span class="ed-art-share">·</span>'
       +'</header>'
