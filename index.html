@@ -13787,7 +13787,7 @@ function renderNewsroom(){
       +'</div>';
   }
   var heroSrc=hero.sourceLabel?'<div class="ed-source">Source: '+hero.sourceLabel+'</div>':'';
-  var heroFullArticleLink='<a href="?article='+hero.id+'" class="ed-read-full" onclick="event.stopPropagation()">Read full article<span class="arrow">→</span></a>';
+  var heroFullArticleLink='<a href="?article='+hero.id+'&amp;from=dashboard" class="ed-read-full" onclick="event.stopPropagation()">Read full article<span class="arrow">→</span></a>';
   var heroExtArticleLink=hero.articleUrl?'<a href="'+hero.articleUrl+'" target="_blank" rel="noopener" onclick="event.stopPropagation()" class="ed-read-full">Source article<span class="arrow">↗</span></a>':'';
   var heroBylineParts=[
     '<span class="ed-byline-by">By '+heroByline+'</span>',
@@ -13838,7 +13838,7 @@ function renderNewsroom(){
         +'</div>';
     }
     var cardSrc=n.sourceLabel?'<div class="ed-source">Source: '+n.sourceLabel+'</div>':'';
-    var cardFullArticleLink='<a href="?article='+n.id+'" class="ed-read-full" onclick="event.stopPropagation()">Read full article<span class="arrow">→</span></a>';
+    var cardFullArticleLink='<a href="?article='+n.id+'&amp;from=dashboard" class="ed-read-full" onclick="event.stopPropagation()">Read full article<span class="arrow">→</span></a>';
     var cardExtArticleLink=n.articleUrl?'<a href="'+n.articleUrl+'" target="_blank" rel="noopener" onclick="event.stopPropagation()" class="ed-read-full">Source article<span class="arrow">↗</span></a>':'';
     var bylineParts=['<span>'+cardByline+'</span>','<span class="ed-byline-sep">·</span>','<span>'+cardDate+'</span>'];
     if(cardReadTime){
@@ -24207,20 +24207,34 @@ body.article-takeover .ed-article-page{display:block}
 // (href="?article=N"), browser navigates, this IIFE detects the param and
 // mounts the article view. Browser back returns to the source page.
 (function atlasArticlePage(){
-  // v48.19b — Capture the entry point on first mount so the back link
-  // can decide between history.back() (same-site referrer) and a fallback
-  // navigation to /. We capture once: on the very first article-page mount
-  // in this tab. Subsequent in-page navigations (e.g. clicking a related
-  // article) shouldn't overwrite the original entry.
-  var entryPoint = null; // 'same-site' | 'cold'
+  // v48.19c — Smart-back with explicit ?from= parameter support.
+  // Entry types:
+  //   'landing'   — clicked from public landing page (?from=landing)
+  //   'dashboard' — clicked from in-dashboard newsroom (?from=dashboard)
+  //   'same-site' — referrer is on our origin but no explicit from=
+  //   'cold'      — direct URL paste, external referrer, or no referrer
+  // Back action by entry:
+  //   'landing'   → navigate to /dashboard/landing_v1.html (explicit)
+  //   'dashboard' → history.back() (preserves scroll + tab state)
+  //   'same-site' → history.back() (best guess for in-app navigation)
+  //   'cold'      → navigate to /dashboard/landing_v1.html (treat as new visitor)
+  // We capture once on the very first article-page mount. In-page navigations
+  // (e.g. clicking a related article) shouldn't overwrite the original entry.
+  var entryPoint = null;
+  var LANDING_URL = '/dashboard/landing_v1.html';
   function captureEntryPointOnce(){
     if(entryPoint !== null) return;
     try {
+      var params = new URLSearchParams(window.location.search || '');
+      var fromParam = (params.get('from') || '').toLowerCase();
+      if(fromParam === 'landing'){ entryPoint = 'landing'; return; }
+      if(fromParam === 'dashboard'){ entryPoint = 'dashboard'; return; }
+      // No explicit from= — fall back to referrer-based detection.
       var ref = document.referrer || '';
       var hereOrigin = window.location.origin || '';
-      // Same-site if referrer shares our origin, OR if there's already a
-      // history entry behind us (means user navigated within the tab).
       if(ref && hereOrigin && ref.indexOf(hereOrigin) === 0){
+        // Same-origin referrer — try to be more specific based on path.
+        if(ref.indexOf('landing_v1.html') !== -1){ entryPoint = 'landing'; return; }
         entryPoint = 'same-site';
       } else if(window.history.length > 1 && ref){
         entryPoint = 'same-site';
@@ -24229,21 +24243,41 @@ body.article-takeover .ed-article-page{display:block}
       }
     } catch(e){ entryPoint = 'cold'; }
   }
+  // Returns the back-link label appropriate to the entry point. Called by
+  // edRenderArticlePage at render time. captureEntryPointOnce() must have
+  // run before this is called (it does — handleArticleParam runs it first).
+  function getBackLabel(){
+    switch(entryPoint){
+      case 'landing':   return '← Back to PropertyAtlas';
+      case 'dashboard': return '← Back to Newsroom';
+      case 'same-site': return '← Back';
+      default:          return '← PropertyAtlas';
+    }
+  }
   // Smart-back handler exposed on window so the inlined onclick on the
   // .ed-art-back link can call it. Returns false to prevent the href
   // fallback when the JS path succeeds.
   window.atlasArticleBack = function(ev){
     try {
       if(ev && ev.preventDefault) ev.preventDefault();
-      if(entryPoint === 'same-site' && window.history.length > 1){
+      if(entryPoint === 'dashboard' && window.history.length > 1){
         window.history.back();
+      } else if(entryPoint === 'same-site' && window.history.length > 1){
+        window.history.back();
+      } else if(entryPoint === 'landing'){
+        // Explicit landing return — bypass history because cross-page
+        // history.back() may not exist (e.g. opened article in new tab
+        // from a landing card with target=_blank-equivalent behaviour).
+        // If history.length > 1, history.back() is faster (preserves scroll);
+        // otherwise navigate explicitly.
+        if(window.history.length > 1){ window.history.back(); }
+        else { window.location.href = LANDING_URL; }
       } else {
-        // Cold landing — go to the public landing page.
-        window.location.href = '/';
+        // Cold landing — treat as new visitor, send to public landing page.
+        window.location.href = LANDING_URL;
       }
     } catch(e){
-      // Defensive: fall through to the href so the link is never dead.
-      try { window.location.href = '/'; } catch(e2) {}
+      try { window.location.href = LANDING_URL; } catch(e2) {}
     }
     return false;
   };
@@ -24306,7 +24340,7 @@ body.article-takeover .ed-article-page{display:block}
     }
     return ''
       +'<header class="ed-art-masthead">'
-        +'<a class="ed-art-back" href="/" onclick="return atlasArticleBack(event)">← Back</a>'
+        +'<a class="ed-art-back" href="'+LANDING_URL+'" onclick="return atlasArticleBack(event)">'+getBackLabel()+'</a>'
         +'<div class="ed-art-brand">Property<em>Atlas</em></div>'
         +'<span class="ed-art-share">·</span>'
       +'</header>'
