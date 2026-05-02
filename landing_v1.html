@@ -840,6 +840,15 @@
     .hero-headline { font-size: 22px; }
   }
 
+  /* v48.20f: tablet-range nav tightening. With 5 nav items (Newsroom ·
+     Overview · Transactions · Analytics · Sign in) at the 1080px max-width,
+     desktop has ~420px slack — but at narrower viewports the 28px gap can
+     crowd the brand block. Shrink gap + font slightly between 641-900px. */
+  @media (max-width: 900px) and (min-width: 641px) {
+    .nav { gap: 20px; }
+    .nav a { font-size: 13px; }
+  }
+
   @media (max-width: 640px) {
     :root { --gutter: 18px; }
 
@@ -884,7 +893,9 @@
 
     <nav class="nav" aria-label="Primary">
       <a href="#newsroom" class="is-active">Newsroom</a>
-      <a href="/dashboard/">Dashboard</a>
+      <a href="/dashboard/#overview">Overview</a>
+      <a href="/dashboard/#transactions">Transactions</a>
+      <a href="/dashboard/#analytics">Analytics</a>
       <a href="/dashboard/?signin=1" class="signin">Sign in</a>
     </nav>
 
