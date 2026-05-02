@@ -24224,6 +24224,40 @@ body.article-takeover .ed-article-page{display:block}
   }
 })();
 
+// v48.20f: Public-tab hash handlers — activates Overview / Transactions /
+// Analytics tabs on cold load when the URL hash is #overview / #transactions
+// / #analytics. Used by the public-facing top nav on landing + /news/ which
+// exposes 5 tabs (Newsroom · Overview · Transactions · Analytics · Sign in)
+// and links to the dashboard via these hashes for direct deep-link entry.
+//
+// Mirrors the atlasNewsroomHash pattern verbatim (tab map below covers the
+// three new aliases only — the existing #newsroom handler above stays
+// untouched, isolating risk from the still-pending Bug 2 diagnosis).
+//
+// The hash → data-tab mapping is identity for these three (unlike #newsroom
+// which maps to data-tab="news"). Adding more public aliases later only
+// requires extending the PUBLIC_TAB_HASHES map.
+(function atlasPublicTabHashes(){
+  var PUBLIC_TAB_HASHES = {
+    '#overview':     'overview',
+    '#transactions': 'transactions',
+    '#analytics':    'analytics'
+  };
+  function handlePublicTabHash(){
+    try {
+      var tab = PUBLIC_TAB_HASHES[window.location.hash];
+      if(!tab) return;
+      var navBtn = document.querySelector('.navtab[data-tab="' + tab + '"]');
+      if(navBtn) navBtn.click();
+    } catch(e) { /* defensive */ }
+  }
+  if(document.readyState === 'loading'){
+    document.addEventListener('DOMContentLoaded', handlePublicTabHash);
+  } else {
+    handlePublicTabHash();
+  }
+})();
+
 // v48.18 Day 2: full-bleed article page (?article=N takeover)
 // Renders a dedicated editorial article view that hides the dashboard
 // chrome entirely. Reuses the NEWS array; CSS classes prefixed .ed-art-*.
