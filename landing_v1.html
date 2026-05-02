@@ -892,7 +892,7 @@
     </a>
 
     <nav class="nav" aria-label="Primary">
-      <a href="#newsroom" class="is-active">Newsroom</a>
+      <a href="/news/" class="is-active">Newsroom</a>
       <a href="/dashboard/#overview">Overview</a>
       <a href="/dashboard/#transactions">Transactions</a>
       <a href="/dashboard/#analytics">Analytics</a>
@@ -1313,9 +1313,11 @@
 
     </div>
 
-    <!-- See all link (centered) -->
+    <!-- See all link (centered). Routes public visitors to the publication-
+         aesthetic /news/ archive (Sprint 2 v48.20f) rather than the dashboard's
+         internal newsroom tab — keeps the public newsroom UX consistent. -->
     <div class="see-all">
-      <a href="/dashboard/#newsroom">
+      <a href="/news/">
         See all 79 entries
         <span class="arrow" aria-hidden="true">→</span>
       </a>
