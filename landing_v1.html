@@ -892,7 +892,7 @@
     </a>
 
     <nav class="nav" aria-label="Primary">
-      <a href="/news/" class="is-active">Newsroom</a>
+      <a href="/dashboard/news/" class="is-active">Newsroom</a>
       <a href="/dashboard/#overview">Overview</a>
       <a href="/dashboard/#transactions">Transactions</a>
       <a href="/dashboard/#analytics">Analytics</a>
@@ -1314,10 +1314,14 @@
     </div>
 
     <!-- See all link (centered). Routes public visitors to the publication-
-         aesthetic /news/ archive (Sprint 2 v48.20f) rather than the dashboard's
-         internal newsroom tab — keeps the public newsroom UX consistent. -->
+         aesthetic /dashboard/news/ archive (Sprint 2 v48.20f) rather than the
+         dashboard's internal newsroom tab — keeps the public newsroom UX
+         consistent. NOTE: absolute path with /dashboard/ prefix matches the
+         current GitHub Pages topology (project-page deployment); when domain
+         flips to propertyatlas.sg, this and ~25 other /dashboard/... absolute
+         paths will need a sweep. Tracked as a pre-launch must-fix workstream. -->
     <div class="see-all">
-      <a href="/news/">
+      <a href="/dashboard/news/">
         See all 79 entries
         <span class="arrow" aria-hidden="true">→</span>
       </a>
