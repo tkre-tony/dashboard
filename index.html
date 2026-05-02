@@ -20700,9 +20700,17 @@ function atlasDevTierOverrideActive() {
 }
 
 // Get the currently-active tab id so we can re-fire atlasShowTab() after tier change.
+// v48.20f: selector fixed from `.tab.on` → `.navtab.on` (the actual class on
+// the active nav button per line 49: `.navtab.on{...}` and consistent with
+// the sibling code at line ~19559 which already uses `.navtab.on`). The old
+// selector matched nothing, so atlasCurrentTabId always returned the
+// 'overview' default — which caused every auth-state resolution on cold load
+// to snap the user back to Overview, overwriting any hash-driven tab pick
+// (the root cause of v48.20e Bug 2 and the broken #transactions / #analytics
+// deep-links surfaced when the v48.20f public top-nav shipped).
 function atlasCurrentTabId() {
   try {
-    var onBtn = document.querySelector('.tab.on, .tab[aria-selected="true"]');
+    var onBtn = document.querySelector('.navtab.on, .navtab[aria-selected="true"]');
     if(onBtn && onBtn.dataset && onBtn.dataset.tab) return onBtn.dataset.tab;
   } catch(e) {}
   return 'overview'; // safe default
