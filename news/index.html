@@ -625,6 +625,13 @@
       flex-wrap: wrap;
     }
     .rail-card { flex: 1 1 280px; }
+
+    /* v48.20f: tablet-range nav tightening with 5 nav items
+       (Newsroom · Overview · Transactions · Analytics · Sign in).
+       Hidden by the 640px rule below on mobile; this only bites
+       on tablet where all 5 items are visible. */
+    .nav { gap: 20px; }
+    .nav a { font-size: 13px; }
   }
 
   @media (max-width: 640px) {
@@ -690,7 +697,9 @@
 
     <nav class="nav" aria-label="Primary">
       <a href="/news/" class="is-active">Newsroom</a>
-      <a href="/dashboard/">Dashboard</a>
+      <a href="/dashboard/#overview">Overview</a>
+      <a href="/dashboard/#transactions">Transactions</a>
+      <a href="/dashboard/#analytics">Analytics</a>
       <a href="/dashboard/?signin=1" class="signin">Sign in</a>
     </nav>
 
