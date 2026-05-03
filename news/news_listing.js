@@ -1,5 +1,23 @@
 var NEWS_LISTING = [
-  {
+{
+    "id": 82,
+    "date": "2026-05-03",
+    "title": "Starhill Global REIT 3Q FY25/26: Master/Anchor Leases Now 54.3% Of Gross Rental Income With Toshin Renewed To 2043 (Next Review June 2028) — Reported NPI Flat At S$37.9M / 0.0% YoY Reads As Stagnation, But Stripping The 13-Strata-Unit Wisma Atria Office Divestment Lifts Underlying NPI To +1.2% YoY And Three Forward Catalysts (David Jones Perth Review August 2026 Into A +10% Rent-Effective Market, Wisma Atria Façade Reopening Mid-2026, Toshin Ngee Ann City Review June 2028) Anchor FY26/27-FY28/29 Income Visibility",
+    "display_title": "Starhill Global 3Q FY25/26: Master Lease Moat Now 54.3% Of GRI, Toshin Renewed To 2043 With June 2028 Rent Review — Reported NPI Flat But +1.2% Ex-Divestment, Three Step-Up Catalysts Through Mid-2028",
+    "display_headline": "The 0.0% NPI print is the master-lease structure working as designed — 54.3% of GRI on contracted step-ups means the trough between reviews looks flat, while three forward catalysts (David Jones Perth Aug 2026, Wisma Atria façade mid-2026, Toshin June 2028) anchor the FY26/27-FY28/29 income line",
+    "standfirst": "Starhill Global REIT reported 3Q FY25/26 (quarter ended 31 March 2026) on 29 April 2026 with gross revenue +0.7% to S$47.9m and net property income flat at S$37.9m (0.0% YoY) on portfolio committed occupancy of 96.4% — a headline that taken in isolation reads as stagnation, but is actually the structural design of the portfolio working as intended. 54.3% of gross rental income is locked into master and anchor leases with periodic step-ups built in: Toshin at Ngee Ann City (just renewed to 2043 with the next rent review falling June 2028), The Starhill Kuala Lumpur (2038), Lot 10 KL (2028), Myer Adelaide (2032 with annual reviews) and David Jones Perth (2032 with three-yearly upward-only reviews, next review August 2026). The 0.0% NPI is the trough between scheduled step-ups; strip the 13-strata-unit Wisma Atria Office divestment completed across 9M FY25/26 and underlying NPI grew 1.2% YoY. Three forward catalysts converge on FY26/27-FY28/29 income visibility — David Jones Perth review in August 2026 into CBRE's +10% Perth super-prime rent-effective market, the S$2.2m Wisma Atria façade reopening in mid-2026, and the Toshin Ngee Ann City review in June 2028 anchored on Orchard Road prime retail rent growth of +2.1% and the 17-18m IVA Singapore tourism trajectory.",
+    "byline": "PropertyAtlas",
+    "read_time_min": 11,
+    "word_count": 2500,
+    "image": "images/news_82_starhill_ngee_ann_city.jpg",
+    "imageCredit": "Starhill Global REIT",
+    "source": "PropertyAtlas.sg",
+    "category": "Commercial",
+    "tag": "Earnings · REIT Update · Quarterly · Retail · Office · Master Lease · Singapore · Australia · Malaysia",
+    "sourceLabel": "PropertyAtlas.sg Analysis · Starhill Global REIT 3Q FY 2025/26 Business Updates dated 29 April 2026",
+    "sentiment": "neutral"
+},  
+{
     "id": 81,
     "date": "2026-05-02",
     "title": "Landmark REIT 1Q 2026 (Formerly Lippo Malls Indonesia Retail Trust, Renamed 27 March 2026): Rental Revenue +13.6% IDR / +4.0% SGD On 87.5% Portfolio Occupancy (vs 78.4% Industry Average); Rights Issue Closed 26 January 2026 Lifted Units In Issue From 7,696.8M To 16,702.0M, Funded Full Redemption Of US$22.6M 2026 Notes In February 2026, Drove Gearing Down 332bps From 43.54% To 40.22% — But NAV/Unit Halved From 4.91¢ To 2.65¢ On Dilution, And Distributions Remain Suspended For Both Unitholders And Two Perpetual Tranches",
