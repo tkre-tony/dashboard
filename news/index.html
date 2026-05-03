@@ -22,7 +22,7 @@
      new entry pushed into NEWS_LISTING (Option A2 of v48.20e
      planning; future cleanup to extract into shared module).
 
-     Each row links to /dashboard/?article=N&from=news (mirroring
+     Each row links to ../?article=N&from=news (mirroring
      the Sprint 1 unified pattern).
      ============================================================ -->
 
@@ -696,11 +696,11 @@
     </a>
 
     <nav class="nav" aria-label="Primary">
-      <a href="/dashboard/news/" class="is-active">Newsroom</a>
-      <a href="/dashboard/#overview">Overview</a>
-      <a href="/dashboard/#transactions">Transactions</a>
-      <a href="/dashboard/#analytics">Analytics</a>
-      <a href="/dashboard/?signin=1" class="signin">Sign in</a>
+      <a href="../news/" class="is-active">Newsroom</a>
+      <a href="../#overview">Overview</a>
+      <a href="../#transactions">Transactions</a>
+      <a href="../#analytics">Analytics</a>
+      <a href="../?signin=1" class="signin">Sign in</a>
     </nav>
 
     <button class="hamburger" aria-label="Open menu" aria-expanded="false">
@@ -796,7 +796,7 @@
             transaction history, and editorial analysis — built for Singapore commercial
             property professionals.
           </p>
-          <a class="rail-cta" href="/dashboard/">
+          <a class="rail-cta" href="../">
             Open Dashboard
             <span class="arrow" aria-hidden="true">→</span>
           </a>
@@ -982,7 +982,7 @@
     if (e.image) {
       // The dashboard stores e.image as "images/news_NN_…jpg" — link via the
       // dashboard path so the image loads from there (single source of truth).
-      var imgUrl = '/dashboard/' + e.image;
+      var imgUrl = '../' + e.image;
       imageHtml =
         '<img class="archive-image-photo" src="' + esc(imgUrl) + '"' +
         ' alt="' + esc(e.imageCredit || headline) + '" loading="lazy" />';
@@ -998,7 +998,7 @@
     }
 
     return (
-      '<a class="archive-row" href="/dashboard/?article=' + encodeURIComponent(e.id) + '&from=news">' +
+      '<a class="archive-row" href="../?article=' + encodeURIComponent(e.id) + '&from=news">' +
         '<div class="archive-image">' + imageHtml + '</div>' +
         '<div class="archive-text">' +
           (e.category ? '<p class="archive-cat">' + esc(e.category) + '</p>' : '') +
@@ -1080,7 +1080,7 @@
       listEl.innerHTML =
         '<p class="no-results">No matches for <strong>&ldquo;' +
         esc(state.q) + '&rdquo;</strong>. Try a different keyword, or ' +
-        '<a href="/dashboard/news/" style="color:var(--navy);text-decoration:underline;">' +
+        '<a href="../news/" style="color:var(--navy);text-decoration:underline;">' +
         'browse the full archive</a>.</p>';
       pagEl.innerHTML = '';
       return;
