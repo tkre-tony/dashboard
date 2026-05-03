@@ -24335,6 +24335,7 @@ html.article-takeover .ed-article-page,body.article-takeover .ed-article-page{di
       var fromParam = (params.get('from') || '').toLowerCase();
       if(fromParam === 'landing'){ entryPoint = 'landing'; return; }
       if(fromParam === 'dashboard'){ entryPoint = 'dashboard'; return; }
+      if(fromParam === 'news'){ entryPoint = 'news'; return; }
       // No explicit from= — fall back to referrer-based detection.
       var ref = document.referrer || '';
       var hereOrigin = window.location.origin || '';
@@ -24356,6 +24357,7 @@ html.article-takeover .ed-article-page,body.article-takeover .ed-article-page{di
     switch(entryPoint){
       case 'landing':   return '← Back to PropertyAtlas';
       case 'dashboard': return '← Back to Newsroom';
+      case 'news':      return '← Newsroom';
       case 'same-site': return '← Back';
       default:          return '← PropertyAtlas';
     }
@@ -24368,6 +24370,10 @@ html.article-takeover .ed-article-page,body.article-takeover .ed-article-page{di
       if(ev && ev.preventDefault) ev.preventDefault();
       if(entryPoint === 'dashboard' && window.history.length > 1){
         window.history.back();
+      } else if(entryPoint === 'news' && window.history.length > 1){
+        window.history.back();
+      } else if(entryPoint === 'news'){
+        window.location.href = './news/';
       } else if(entryPoint === 'same-site' && window.history.length > 1){
         window.history.back();
       } else if(entryPoint === 'landing'){
