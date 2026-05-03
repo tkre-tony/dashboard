@@ -3,6 +3,24 @@
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<!-- v48.20g Bug 1 fix: synchronous FOUC pre-hide for ?article= entry.
+     Runs during HTML parse, before any chrome paints. Detects the article
+     param and stamps article-takeover onto <html> (since <body> doesn't
+     exist yet at this point). The CSS rule for html.article-takeover at
+     line ~23550 hides .topbar, .navtabs, .panel, footer, .nl-banner before
+     first paint. The atlasArticlePage IIFE at line ~24399 still adds
+     article-takeover to <body> on DOMContentLoaded as the canonical state;
+     this head-script just provides the earlier signal so chrome never
+     flashes. Fix is purely additive — no existing behavior changes. -->
+<script>
+  (function(){
+    try {
+      if (location.search && location.search.indexOf('article=') !== -1) {
+        document.documentElement.classList.add('article-takeover');
+      }
+    } catch(e) { /* defensive — degrade silently to existing IIFE behavior */ }
+  })();
+</script>
 <title>SG Market Intelligence | TKRE</title>
 <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
@@ -23555,10 +23573,13 @@ function enqEmailRow(label, value) {
 @media(max-width:580px){.ed-hero{padding:18px 18px}.ed-card{padding:14px 16px}.ed-headline-hero{font-size:17px}.ed-headline-card{font-size:14px}.ed-standfirst{font-size:12.5px}.ed-body{font-size:14px}}
 
 /* ── Day 2: full-bleed article page (.ed-art-*) ── */
-body.article-takeover .topbar,body.article-takeover .navtabs,body.article-takeover .panel,body.article-takeover footer,body.article-takeover .nl-banner{display:none!important}
-body.article-takeover{background:var(--ed-cream-lt);overflow-x:hidden}
+/* v48.20g Bug 1 fix: html.article-takeover mirrors body.article-takeover so
+   the head-script's pre-paint signal hides chrome before <body> parses.
+   The atlasArticlePage IIFE still upgrades to body.article-takeover on DOMContentLoaded. */
+html.article-takeover .topbar,html.article-takeover .navtabs,html.article-takeover .panel,html.article-takeover footer,html.article-takeover .nl-banner,body.article-takeover .topbar,body.article-takeover .navtabs,body.article-takeover .panel,body.article-takeover footer,body.article-takeover .nl-banner{display:none!important}
+html.article-takeover,body.article-takeover{background:var(--ed-cream-lt);overflow-x:hidden}
 .ed-article-page{display:none;font-family:var(--ed-body-serif);background:var(--ed-cream-lt);color:var(--ed-ink);min-height:100vh}
-body.article-takeover .ed-article-page{display:block}
+html.article-takeover .ed-article-page,body.article-takeover .ed-article-page{display:block}
 .ed-art-masthead{position:sticky;top:0;z-index:50;background:var(--ed-cream-lt);border-bottom:1px solid var(--ed-hairline);padding:14px 28px;display:flex;align-items:center;gap:18px}
 .ed-art-back{font-family:'DM Sans',sans-serif;font-size:12px;color:var(--ed-navy-ink);text-decoration:none;font-weight:600;letter-spacing:.02em;display:inline-flex;align-items:center;gap:6px;padding:6px 10px;border-radius:4px;transition:background .12s}
 .ed-art-back:hover{background:rgba(11,43,92,0.06)}
@@ -24437,7 +24458,11 @@ body.article-takeover .ed-article-page{display:block}
       // v48.19b — record entry point on first mount (no-op on subsequent
       // mounts, since the original entry is what "back" should target).
       captureEntryPointOnce();
-      // Mount the takeover view
+// Mount the takeover view
+      // v48.20g Bug 1 fix: keep <html> in sync with <body>. Head-script may
+      // have already added it on cold load; this ensures in-app forward nav
+      // (popstate into ?article=) also stamps <html> to match.
+      document.documentElement.classList.add('article-takeover');
       document.body.classList.add('article-takeover');
       var mount = document.getElementById('ed-article-page');
       if(!mount) return;
@@ -24460,7 +24485,9 @@ body.article-takeover .ed-article-page{display:block}
     if(params.get('article')){
       handleArticleParam();
     } else {
-      // Leaving the article view — restore dashboard chrome
+       // Leaving the article view — restore dashboard chrome
+      // v48.20g Bug 1 fix: remove from both <html> and <body> to keep them in sync.
+      document.documentElement.classList.remove('article-takeover');
       document.body.classList.remove('article-takeover');
       var mount = document.getElementById('ed-article-page');
       if(mount) mount.innerHTML = '';
