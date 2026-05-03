@@ -21,6 +21,18 @@
     } catch(e) { /* defensive — degrade silently to existing IIFE behavior */ }
   })();
 </script>
+<style>
+/* v48.20g Bug 1 follow-up: critical pre-paint hide rules.
+   Same selectors as the deep CSS at line ~23576 but placed at top of <head>
+   so they load before any body content paints. The deep rules remain as
+   redundant fallback. */
+html.article-takeover .topbar,
+html.article-takeover .navtabs,
+html.article-takeover .panel,
+html.article-takeover footer,
+html.article-takeover .nl-banner{display:none!important}
+html.article-takeover{background:#FAF7F0}
+</style>
 <title>SG Market Intelligence | TKRE</title>
 <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
