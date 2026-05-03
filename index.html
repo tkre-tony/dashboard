@@ -24320,14 +24320,14 @@ html.article-takeover .ed-article-page,body.article-takeover .ed-article-page{di
   //   'same-site' — referrer is on our origin but no explicit from=
   //   'cold'      — direct URL paste, external referrer, or no referrer
   // Back action by entry:
-  //   'landing'   → navigate to /dashboard/landing_v1.html (explicit)
+  //   'landing'   → navigate to ./landing_v1.html (explicit)
   //   'dashboard' → history.back() (preserves scroll + tab state)
   //   'same-site' → history.back() (best guess for in-app navigation)
-  //   'cold'      → navigate to /dashboard/landing_v1.html (treat as new visitor)
+  //   'cold'      → navigate to ./landing_v1.html (treat as new visitor)
   // We capture once on the very first article-page mount. In-page navigations
   // (e.g. clicking a related article) shouldn't overwrite the original entry.
   var entryPoint = null;
-  var LANDING_URL = '/dashboard/landing_v1.html';
+  var LANDING_URL = './landing_v1.html';
   function captureEntryPointOnce(){
     if(entryPoint !== null) return;
     try {
@@ -24462,7 +24462,7 @@ html.article-takeover .ed-article-page,body.article-takeover .ed-article-page{di
         +sourceLine
       +'</article>'
       +relatedHtml
-      +'<footer class="ed-art-footer">© 2026 PropertyAtlas · TK Real Estate · <a href="/dashboard/">Back to Dashboard</a></footer>';
+      +'<footer class="ed-art-footer">© 2026 PropertyAtlas · TK Real Estate · <a href="./">Back to Dashboard</a></footer>';
   }
   function handleArticleParam(){
     try {
