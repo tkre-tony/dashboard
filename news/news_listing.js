@@ -1,5 +1,27 @@
 var NEWS_LISTING = [
 {
+    "id": 83,
+    "date": "2026-05-04",
+    "title": "CDL Hospitality Trusts 1Q 2026: Reported Revenue +5.9% To S$67.1M And NPI +10.4% To S$33.1M, Singapore Hotels NPI +5.9% On Airshow-Driven RevPAR +6.6% To S$184, Maldives NPI -26.3% And Japan NPI -10.3% On Independent Geopolitical Drags, UK Living Assets NPI +68.8% Doing The Stability Work, Capital Stack Re-Rated To 2.8% Cost Of Debt And 35.3% Gearing — Five Moves Beyond The Headline",
+    "slug": "cdlht-1q-2026-singapore-strength-geographic-drag",
+    "meta_description": "CDL Hospitality Trusts 1Q 2026: NPI +10.4% to S$33.1M as Singapore Hotels deliver +6.6% RevPAR while Maldives -26.3% and Japan -10.3% on geopolitical drag.",
+    "og_image": "https://propertyatlas.sg/dashboard/images/news_83_cdlht_w_sentosa.jpg",
+    "keywords": "CDL Hospitality Trusts, CDLHT, hospitality REIT, Singapore REIT, W Singapore Sentosa Cove, Moxy Singapore Clarke Quay, Grand Millennium Auckland, The Castings Manchester, Benson Yard Liverpool, Singapore Airshow 2026, Maldives tourism, Middle East conflict, perpetual securities, gearing, capital management, REIT earnings 1Q 2026",
+    "display_title": "CDLHT 1Q 2026: Singapore Strength Funds The Geographic Drag, Capital Stack Re-Rated To 2.8% / 35.3% Gearing — But Maldives And Japan Mark The Real Geopolitical Exposure",
+    "display_headline": "Singapore portfolio compounding +5.9% NPI on Airshow tailwind, capital stack re-rated to 2.8% cost of debt and 35.3% gearing — but Maldives -26.3% and Japan -10.3% mark where the real geopolitical risk has landed",
+    "standfirst": "CDL Hospitality Trusts reported 1Q 2026 NPI of S$33.1M (+10.4% YoY) on revenue of S$67.1M (+5.9%), with Singapore Hotels delivering NPI of S$17.1M (+5.9%) on Airshow-driven RevPAR of S$184 (+6.6%) — the optical headline. The structural read is that Singapore strength is funding visible geopolitical drag in Maldives (-26.3%) and Japan (-10.3%), while a S$250M perpetual-securities issuance retired GBP/USD debt at 5.6% to drop weighted-average cost of debt to 2.8% and gearing to 35.3% — building balance-sheet capacity for the Moxy Singapore Clarke Quay completion in 1H 2027.",
+    "byline": "PropertyAtlas",
+    "read_time_min": 11,
+    "word_count": 2300,
+    "image": "../images/news_83_cdlht_w_sentosa.jpg",
+    "imageCredit": "CDL Hospitality Trusts",
+    "source": "PropertyAtlas.sg",
+    "category": "Hospitality",
+    "tag": "Earnings · REIT Update · Quarterly · Hospitality · Multi-Geography · Capital Recycling",
+    "sourceLabel": "PropertyAtlas.sg Analysis · CDL Hospitality Trusts 1Q 2026 Operational Update dated 30 April 2026",
+    "sentiment": "neutral"
+},
+{
     "id": 82,
     "date": "2026-05-03",
     "title": "Starhill Global REIT 3Q FY25/26: Master/Anchor Leases Now 54.3% Of Gross Rental Income With Toshin Renewed To 2043 (Next Review June 2028) — Reported NPI Flat At S$37.9M / 0.0% YoY Reads As Stagnation, But Stripping The 13-Strata-Unit Wisma Atria Office Divestment Lifts Underlying NPI To +1.2% YoY And Three Forward Catalysts (David Jones Perth Review August 2026 Into A +10% Rent-Effective Market, Wisma Atria Façade Reopening Mid-2026, Toshin Ngee Ann City Review June 2028) Anchor FY26/27-FY28/29 Income Visibility",
