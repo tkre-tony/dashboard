@@ -1610,10 +1610,11 @@ body.article-takeover .ed-foot{display:none!important}
      Asset Directory, Human Capital, Stock, Corporate Watch).
      Bookmark: https://propertyatlas.sg/#dev (or .../dashboard/#dev) -->
 <style>
-  /* Hide the 6 deeper tools by default — public visitors see only Newsroom + 3 public tools */
-  .navtab.navtab-hidden { display: none; }
+  /* v48.20s-fix1: Hide the 6 deeper tools by default. !important required to override
+     inline style="display:flex" on Asset Directory / Human Capital / Stock / Corporate Watch. */
+  .navtab.navtab-hidden { display: none !important; }
   /* Reveal hidden tools when dev-mode unlock active */
-  body.dev-mode .navtab.navtab-hidden { display: flex; align-items: center; gap: 6px; }
+  body.dev-mode .navtab.navtab-hidden { display: flex !important; align-items: center; gap: 6px; }
 </style>
 </head>
 <body>
@@ -2922,7 +2923,7 @@ body.article-takeover .ed-foot{display:none!important}
 
     <!-- Browse the archive link (centered) -->
     <div class="see-all">
-      <a href="./#newsroom">
+      <a href="./news/">
         Browse the archive
         <span class="arrow" aria-hidden="true">→</span>
       </a>
