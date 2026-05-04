@@ -11,25 +11,12 @@
      first paint. The atlasArticlePage IIFE at line ~24399 still adds
      article-takeover to <body> on DOMContentLoaded as the canonical state;
      this head-script just provides the earlier signal so chrome never
-     flashes. Fix is purely additive — no existing behavior changes.
-
-     v48.20o: extended to also detect #newsroom hash for editorial-mode
-     (the "Browse the archive" entry from landing). Same FOUC-fix pattern.
-     A hashchange listener later in the script section keeps the class in
-     sync as the user navigates between #newsroom and other tabs. -->
+     flashes. Fix is purely additive — no existing behavior changes. -->
 <script>
   (function(){
     try {
       if (location.search && location.search.indexOf('article=') !== -1) {
         document.documentElement.classList.add('article-takeover');
-      }
-      if (location.hash === '#newsroom') {
-        document.documentElement.classList.add('editorial-mode');
-        // Title swap deferred to DOMContentLoaded since <title> doesn't exist
-        // yet at this point in the parse. The deep-set fires on first paint.
-        document.addEventListener('DOMContentLoaded', function(){
-          try { document.title = 'Newsroom — PropertyAtlas'; } catch(e){}
-        });
       }
     } catch(e) { /* defensive — degrade silently to existing IIFE behavior */ }
   })();
@@ -45,21 +32,6 @@ html.article-takeover .panel,
 html.article-takeover footer,
 html.article-takeover .nl-banner{display:none!important}
 html.article-takeover{background:#FAF7F0}
-
-/* v48.20o editorial-mode: critical pre-paint hide rules for #newsroom URL.
-   When user arrives at /dashboard/#newsroom (e.g. via "Browse the archive"
-   from landing), hide the dashboard chrome before first paint to prevent
-   FOUC of the Market Pulse panel. Show the slim editorial header instead.
-   Mirrors the article-takeover pattern verbatim — synchronous detection in
-   the script block above, CSS rules applied before paint. The deep CSS for
-   .ed-mode-* elements is co-located with other editorial-mode rules below. */
-html.editorial-mode .topbar,
-html.editorial-mode .navtabs,
-html.editorial-mode .panel:not(#tab-news),
-html.editorial-mode #atlas-chat-bubble,
-html.editorial-mode #atlas-chat-panel{display:none!important}
-html.editorial-mode #tab-news{display:block!important}
-html.editorial-mode{background:#F7F3EB}
 </style>
 <title>SG Market Intelligence | TKRE</title>
 <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
@@ -566,25 +538,20 @@ html,body{background:var(--bg);color:var(--txt);font-family:'DM Sans',sans-serif
 .talent-sum-sub{font-size:10px;color:var(--mut);margin-top:2px}
 
 /* ============================================================
-   v48.20o EDITORIAL MODE — chrome replacement when URL hash = #newsroom.
-   Hides dashboard topbar/navtabs (via pre-paint CSS in head) and shows
-   a slim editorial header + footer mirroring the landing page so that
-   "Browse the archive" feels like a continuation of the publication.
-   .ed-mode-* elements are hidden by default; revealed only when
-   html.editorial-mode is set on the root.
+   v48.20p PERMANENT EDITORIAL MASTHEAD — replaces dashboard topbar.
+   Cream background, navy/bronze accent, mirrors landing-page chrome
+   so the dashboard reads as a continuation of the publication.
+   Always visible across all tabs.
    ============================================================ */
-.ed-mode-header,
-.ed-mode-footer{display:none}
-html.editorial-mode .ed-mode-header{
-  display:block;
+.ed-mast{
   background:#F7F3EB;
   border-bottom:1px solid rgba(11,43,92,0.10);
   position:sticky;
   top:0;
   z-index:200;
 }
-html.editorial-mode .ed-mode-header-inner{
-  max-width:1200px;
+.ed-mast-inner{
+  max-width:1400px;
   margin:0 auto;
   padding:0 24px;
   height:64px;
@@ -593,14 +560,15 @@ html.editorial-mode .ed-mode-header-inner{
   justify-content:space-between;
   gap:16px;
 }
-html.editorial-mode .ed-mode-brand{
+.ed-mast-brand{
   display:flex;
   align-items:center;
   gap:12px;
   text-decoration:none;
   color:#0B2B5C;
+  flex-shrink:0;
 }
-html.editorial-mode .ed-mode-brand-mark{
+.ed-mast-brand-mark{
   width:32px;
   height:32px;
   background:#0B2B5C;
@@ -615,24 +583,26 @@ html.editorial-mode .ed-mode-brand-mark{
   justify-content:center;
   border-bottom:2px solid #C99B5A;
 }
-html.editorial-mode .ed-mode-brand-word{
+.ed-mast-brand-word{
   font-family:Georgia,'Times New Roman',serif;
   font-size:18px;
   font-weight:700;
   letter-spacing:-0.01em;
   color:#0B2B5C;
 }
-html.editorial-mode .ed-mode-brand-word em{
+.ed-mast-brand-word em{
   font-style:italic;
   color:#A67C3A;
   font-weight:700;
 }
-html.editorial-mode .ed-mode-nav{
+.ed-mast-nav{
   display:flex;
   align-items:center;
   gap:28px;
 }
-html.editorial-mode .ed-mode-nav a{
+.ed-mast-nav-link,
+.ed-mast-nav-signin,
+.ed-mast-nav-signout{
   font-family:'DM Sans',sans-serif;
   font-size:14px;
   font-weight:600;
@@ -640,25 +610,36 @@ html.editorial-mode .ed-mode-nav a{
   text-decoration:none;
   padding:6px 0;
   border-bottom:2px solid transparent;
-  transition:color 140ms ease, border-color 140ms ease;
+  transition:color 140ms ease,border-color 140ms ease;
+  cursor:pointer;
 }
-html.editorial-mode .ed-mode-nav a:hover{color:#1A4F9C}
-html.editorial-mode .ed-mode-nav a.ed-mode-nav-active{
-  border-bottom-color:#A67C3A;
+.ed-mast-nav-link:hover{color:#1A4F9C}
+.ed-mast-nav-link.is-active{border-bottom-color:#A67C3A}
+.ed-mast-nav-signin{color:#1A4F9C;font-weight:700}
+.ed-mast-nav-signin:hover{color:#0B2B5C}
+.ed-mast-nav-signout{color:#A33333;font-weight:600}
+.ed-mast-nav-signout:hover{color:#7a2222}
+
+/* Mobile pass for editorial masthead */
+@media (max-width:760px){
+  .ed-mast-inner{height:56px;padding:0 16px}
+  .ed-mast-brand-word{font-size:16px}
+  .ed-mast-nav{gap:14px}
+  .ed-mast-nav-link,.ed-mast-nav-signin,.ed-mast-nav-signout{font-size:12px}
 }
-html.editorial-mode .ed-mode-nav a.ed-mode-nav-signin{
-  color:#1A4F9C;
-  font-weight:700;
-}
-html.editorial-mode .ed-mode-footer{
-  display:block;
+
+/* ============================================================
+   v48.20p PERMANENT EDITORIAL FOOTER — bookends the publication.
+   Always visible across all tabs.
+   ============================================================ */
+.ed-foot{
   background:#0B2B5C;
   color:#FAF7F0;
   padding:28px 0;
   margin-top:48px;
 }
-html.editorial-mode .ed-mode-footer-inner{
-  max-width:1200px;
+.ed-foot-inner{
+  max-width:1400px;
   margin:0 auto;
   padding:0 24px;
   display:flex;
@@ -667,37 +648,40 @@ html.editorial-mode .ed-mode-footer-inner{
   gap:24px;
   flex-wrap:wrap;
 }
-html.editorial-mode .ed-mode-footer-attr{
+.ed-foot-attr{
   font-family:'DM Sans',sans-serif;
   font-size:12px;
   color:rgba(250,247,240,0.70);
   margin:0;
 }
-html.editorial-mode .ed-mode-footer-attr strong{color:#FAF7F0}
-html.editorial-mode .ed-mode-footer-links{
+.ed-foot-attr strong{color:#FAF7F0}
+.ed-foot-links{
   list-style:none;
   display:flex;
   gap:20px;
   margin:0;
   padding:0;
 }
-html.editorial-mode .ed-mode-footer-links a{
+.ed-foot-links a{
   font-family:'DM Sans',sans-serif;
   font-size:12px;
   color:rgba(250,247,240,0.70);
   text-decoration:none;
   transition:color 140ms ease;
 }
-html.editorial-mode .ed-mode-footer-links a:hover{color:#C99B5A}
-/* Mobile pass for editorial header */
+.ed-foot-links a:hover{color:#C99B5A}
 @media (max-width:760px){
-  html.editorial-mode .ed-mode-header-inner{height:56px;padding:0 16px}
-  html.editorial-mode .ed-mode-brand-word{font-size:16px}
-  html.editorial-mode .ed-mode-nav{gap:14px}
-  html.editorial-mode .ed-mode-nav a{font-size:12px}
-  html.editorial-mode .ed-mode-footer-inner{flex-direction:column;align-items:flex-start;gap:14px}
-  html.editorial-mode .ed-mode-footer-links{flex-wrap:wrap;gap:14px}
+  .ed-foot-inner{flex-direction:column;align-items:flex-start;gap:14px}
+  .ed-foot-links{flex-wrap:wrap;gap:14px}
 }
+
+/* v48.20p Hide article-takeover for the new masthead/footer too — when
+   reading a single article, the article view paints its own chrome and
+   the dashboard masthead shouldn't appear. */
+html.article-takeover .ed-mast,
+html.article-takeover .ed-foot,
+body.article-takeover .ed-mast,
+body.article-takeover .ed-foot{display:none!important}
 </style>
 <!-- v48.12 Phase 2c step 1: Supabase JS SDK for Auth flows. Loads globally as `supabase`. -->
 <!-- Existing SB_URL/SB_KEY REST pattern (transactions, one-sophia) continues unchanged. -->
@@ -705,69 +689,36 @@ html.editorial-mode .ed-mode-footer-links a:hover{color:#C99B5A}
 </head>
 <body>
 
-<!-- v48.20o editorial-mode header: shown only when html.editorial-mode is set
-     (URL hash = #newsroom). Mirrors the landing page masthead so that
-     "Browse the archive" feels like a continuation of the publication, not
-     a jump into the analyst tool. CSS at .ed-mode-* selectors below.
-     Hidden by default; revealed by html.editorial-mode rule. -->
-<header class="ed-mode-header" role="banner">
-  <div class="ed-mode-header-inner">
-    <a class="ed-mode-brand" href="./" aria-label="PropertyAtlas — home">
-      <span class="ed-mode-brand-mark" aria-hidden="true">PA</span>
-      <span class="ed-mode-brand-word">Property<em>Atlas</em></span>
+<!-- v48.20p Permanent editorial masthead. Replaces the v48.x dashboard topbar
+     entirely. Always visible across all tabs. Provides:
+       - PA wordmark (clickable home link)
+       - 5-link primary nav: Newsroom · Market Pulse · Analytics · Transactions · Sign in/out
+     The Sign in / Sign out anchors share IDs with the legacy topbar elements
+     (atlas-signout-btn, atlas-signin-link) so the existing auth handlers
+     (atlasHandleSignedIn / atlasHandleSignedOut at line ~21000) toggle them
+     unchanged. Stats from the old topbar (txn count, coverage range, properties,
+     entities) and the date pill are dropped — they were decorative not
+     functional. The chat widget (#atlas-chat-bubble) remains visible. -->
+<header class="ed-mast" role="banner">
+  <div class="ed-mast-inner">
+    <a class="ed-mast-brand" href="./" aria-label="PropertyAtlas — home">
+      <span class="ed-mast-brand-mark" aria-hidden="true">PA</span>
+      <span class="ed-mast-brand-word">Property<em>Atlas</em></span>
     </a>
-    <nav class="ed-mode-nav" aria-label="Primary">
-      <a href="./#newsroom" class="ed-mode-nav-active">Newsroom</a>
-      <a href="./#overview">Market Pulse</a>
-      <a href="./#analytics">Analytics</a>
-      <a href="./#transactions">Transactions</a>
-      <a href="./?signin=1" class="ed-mode-nav-signin">Sign in</a>
+    <nav class="ed-mast-nav" aria-label="Primary">
+      <a href="./#newsroom" class="ed-mast-nav-link" data-ed-tab="news">Newsroom</a>
+      <a href="./#overview" class="ed-mast-nav-link" data-ed-tab="overview">Market Pulse</a>
+      <a href="./#analytics" class="ed-mast-nav-link" data-ed-tab="analytics">Analytics</a>
+      <a href="./#transactions" class="ed-mast-nav-link" data-ed-tab="transactions">Transactions</a>
+      <a href="javascript:void(0)" id="atlas-signin-link" class="ed-mast-nav-signin"
+         onclick="if(window.atlasOpenLoginModal){window.atlasOpenLoginModal();}return false;">Sign in</a>
+      <a href="javascript:void(0)" id="atlas-signout-btn" class="ed-mast-nav-signout"
+         onclick="atlasSignOut();return false;" style="display:none"
+         title="Sign out"><span id="atlas-signout-label">Sign out</span></a>
     </nav>
   </div>
 </header>
 
-<div class="topbar">
-  <div class="topbar-brand" onclick="atlasShowTab('overview')" style="cursor:pointer" title="Back to Market Pulse">
-    <div class="logo" style="background:#1A4F9C;padding:0">
-      <svg width="30" height="30" viewBox="0 0 100 100" aria-label="PropertyAtlas" style="display:block">
-        <text x="50" y="62" text-anchor="middle" font-family="Georgia,'Times New Roman',serif" font-size="52" font-weight="700" fill="#F7F3EB" letter-spacing="-3">PA</text>
-        <line x1="28" y1="74" x2="72" y2="74" stroke="#C99B5A" stroke-width="2"/>
-      </svg>
-    </div>
-    <div>
-      <h1>PropertyAtlas.sg</h1>
-      <p>Market Intelligence</p>
-    </div>
-  </div>
-  <div class="topbar-center">
-    <div class="topbar-stat">
-      <div class="topbar-stat-lbl">Database (URA Realis)</div>
-      <div class="topbar-stat-val" id="db-txn-count-topbar">81,929 txns</div>
-      <div style="font-size:9px;color:rgba(255,255,255,.4);margin-top:1px;font-family:'DM Mono',monospace">incl. 399 inv. sales</div>
-    </div>
-    <div class="topbar-stat">
-      <div class="topbar-stat-lbl">Coverage</div>
-      <div class="topbar-stat-val">1995–2026</div>
-    </div>
-    <div class="topbar-stat">
-      <div class="topbar-stat-lbl">Properties</div>
-      <div class="topbar-stat-val">922 tracked</div>
-    </div>
-    <div class="topbar-stat">
-      <div class="topbar-stat-lbl">Entities</div>
-      <div class="topbar-stat-val">52 REITs/Devs</div>
-    </div>
-  </div>
-  <div class="topbar-r">
-    <button id="atlas-signout-btn" onclick="atlasSignOut()"
-            style="display:none;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.14);color:rgba(255,255,255,.75);padding:5px 11px;border-radius:5px;font-size:11px;font-family:inherit;cursor:pointer;letter-spacing:.02em;transition:background .15s,color .15s"
-            onmouseover="this.style.background='rgba(255,255,255,.12)';this.style.color='#fff'"
-            onmouseout="this.style.background='rgba(255,255,255,.06)';this.style.color='rgba(255,255,255,.75)'"
-            title="Sign out"><span id="atlas-signout-label">Sign out</span></button>
-    <div class="topbar-dot"></div>
-    <div class="topbar-badge">Apr 2026</div>
-  </div>
-</div>
 <div class="navtabs">
   <div class="navtab on" data-tab="overview"><span class="navtab-icon">📊</span>Market Pulse</div>
   <div class="navtab" data-tab="transactions"><span class="navtab-icon">💹</span>Transactions</div>
@@ -14077,25 +14028,16 @@ function renderNewsroom(){
     heroBylineParts.push('<span class="ed-byline-sep">·</span>');
     heroBylineParts.push('<span>'+heroReadTime+' min read</span>');
   }
-  heroWrap.innerHTML=''
-    +'<div class="ed-hero '+ecHero+'" id="news-post-'+hero.id+'" onclick="nrToggleCard(this, event)">'
-    +'<div class="ed-eyebrow">'+heroEyebrow+'</div>'
-    +'<h2 class="ed-headline-hero">'+heroDisplayHL+'</h2>'
-    +(heroStandfirst?'<div class="ed-standfirst">'+heroStandfirst+'</div>':'')
-    +'<div class="ed-byline">'+heroBylineParts.join('')+'</div>'
-    +'<div class="nr-expand-hint" style="font-size:11px;color:var(--ed-muted);font-family:\'DM Sans\',sans-serif">Click to expand ↓</div>'
-    +'<div class="ed-body">'
-      +heroImg
-      +formatNewsSummary(hero.summary)
-      +heroFhPanel
-      +heroSrc
-      +'<div class="ed-cta-row">'+heroFullArticleLink+heroExtArticleLink+'</div>'
-    +'</div>'
-    +'</div>';
+  // v48.20p: Hero card rendering disabled — archive view shows uniform 3-up
+  // grid of cards from top, with latest article rendered as just the first
+  // card (in the .map below, list.map instead of rest.map). Hero computations
+  // above are kept inert (used to build heroWrap.innerHTML which is now empty)
+  // — could be removed in a future cleanup. heroWrap and divWrap cleared so
+  // any prior render state is wiped.
+  heroWrap.innerHTML='';
+  if(divWrap) divWrap.innerHTML='';
 
-  if(divWrap) divWrap.innerHTML=rest.length?'<div class="nr-divider">Earlier coverage</div>':'';
-
-  gridEl.innerHTML=rest.map(function(n){
+  gridEl.innerHTML=list.map(function(n){
     var ecCard=edCatClass(n.category);
     var cardDisplayHL=edDeriveDisplayHeadline(n);
     var cardStandfirst=edDeriveStandfirst(n);
@@ -21001,6 +20943,9 @@ async function atlasHandleSignedIn(session) {
       btn.style.display = 'inline-block';
       btn.title = 'Sign out · ' + session.user.email;
     }
+    // v48.20p: editorial masthead sign-in link is the inverse — hide on sign-in
+    var signinLink = document.getElementById('atlas-signin-link');
+    if(signinLink) signinLink.style.display = 'none';
   } catch(e) {}
   // Re-render the active tab with the new tier
   try { if(typeof atlasShowTab === 'function') atlasShowTab(atlasCurrentTabId()); } catch(e) {}
@@ -21020,6 +20965,9 @@ function atlasHandleSignedOut() {
   try {
     var btn = document.getElementById('atlas-signout-btn');
     if(btn) btn.style.display = 'none';
+    // v48.20p: editorial masthead sign-in link is the inverse — show on sign-out
+    var signinLink = document.getElementById('atlas-signin-link');
+    if(signinLink) signinLink.style.display = '';
   } catch(e) {}
   try { if(typeof atlasShowTab === 'function') atlasShowTab(atlasCurrentTabId()); } catch(e) {}
   console.log('[ATLAS Auth] Signed out — tier reset to public.');
@@ -24490,44 +24438,6 @@ html.article-takeover .ed-article-page,body.article-takeover .ed-article-page{di
   }
 })();
 
-// v48.20o editorial-mode hashchange sync — keeps html.editorial-mode in
-// step as the user navigates AND drives tab activation when the user
-// clicks editorial-header nav links (e.g. from #newsroom to #overview).
-// The pre-paint script in <head> handles the initial cold-load class set;
-// atlasNewsroomHash + atlasPublicTabHashes IIFEs handle initial tab
-// activation on DOMContentLoaded. This listener handles all *subsequent*
-// in-page navigations from the editorial header so the dashboard chrome
-// reappears (and the right panel becomes visible) without a full reload.
-(function atlasEditorialModeSync(){
-  var HASH_TO_TAB = {
-    '#newsroom':     'news',
-    '#overview':     'overview',
-    '#transactions': 'transactions',
-    '#analytics':    'analytics'
-  };
-  function syncOnHashChange(){
-    try {
-      var root = document.documentElement;
-      var hash = window.location.hash;
-      // Toggle editorial-mode class + browser tab title
-      if(hash === '#newsroom'){
-        root.classList.add('editorial-mode');
-        document.title = 'Newsroom — PropertyAtlas';
-      } else {
-        root.classList.remove('editorial-mode');
-        document.title = 'SG Market Intelligence | TKRE';
-      }
-      // Activate the corresponding tab
-      var tab = HASH_TO_TAB[hash];
-      if(tab){
-        var navBtn = document.querySelector('.navtab[data-tab="' + tab + '"]');
-        if(navBtn) navBtn.click();
-      }
-    } catch(e) { /* defensive */ }
-  }
-  window.addEventListener('hashchange', syncOnHashChange);
-})();
-
 // v48.20f: Public-tab hash handlers — activates Overview / Transactions /
 // Analytics tabs on cold load when the URL hash is #overview / #transactions
 // / #analytics. Used by the public-facing top nav on landing + /news/ which
@@ -24560,6 +24470,44 @@ html.article-takeover .ed-article-page,body.article-takeover .ed-article-page{di
   } else {
     handlePublicTabHash();
   }
+})();
+
+// v48.20p Editorial-masthead active-state sync.
+// The 5 nav links in the editorial masthead each carry data-ed-tab matching
+// the dashboard navtab data-tab they correspond to. This IIFE keeps the
+// underlined "active" treatment in sync with the currently-active dashboard
+// tab, by listening to clicks on the dashboard navtabs and re-deriving the
+// active link on every tab switch. Also runs once on DOMContentLoaded so the
+// initial state is correct (Market Pulse active by default).
+(function atlasEditorialMastheadActive(){
+  function syncActive(){
+    try {
+      var activeNav = document.querySelector('.navtab.on');
+      var activeTab = activeNav ? activeNav.dataset.tab : 'overview';
+      document.querySelectorAll('.ed-mast-nav-link').forEach(function(a){
+        if(a.dataset.edTab === activeTab){
+          a.classList.add('is-active');
+        } else {
+          a.classList.remove('is-active');
+        }
+      });
+    } catch(e) { /* defensive */ }
+  }
+  // Run on initial load
+  if(document.readyState === 'loading'){
+    document.addEventListener('DOMContentLoaded', syncActive);
+  } else {
+    syncActive();
+  }
+  // Run on every dashboard navtab click (after the click handler updates .on)
+  document.addEventListener('click', function(ev){
+    var nav = ev.target.closest && ev.target.closest('.navtab');
+    if(!nav) return;
+    // Defer one tick so atlasShowTab's own handler runs first
+    setTimeout(syncActive, 0);
+  }, true);
+  // Run on hash change (covers nav from editorial masthead links)
+  window.addEventListener('hashchange', function(){ setTimeout(syncActive, 0); });
 })();
 
 // v48.18 Day 2: full-bleed article page (?article=N takeover)
@@ -24778,15 +24726,14 @@ html.article-takeover .ed-article-page,body.article-takeover .ed-article-page{di
 </script>
 
 
-<!-- v48.20o editorial-mode footer: shown only when html.editorial-mode is set
-     (URL hash = #newsroom). Mirrors the landing page footer for visual
-     continuity. Hidden by default; revealed by html.editorial-mode rule. -->
-<footer class="ed-mode-footer" role="contentinfo">
-  <div class="ed-mode-footer-inner">
-    <p class="ed-mode-footer-attr">
+<!-- v48.20p Permanent editorial footer — bookends the publication, always visible.
+     Hidden during article-takeover via CSS rule above. -->
+<footer class="ed-foot" role="contentinfo">
+  <div class="ed-foot-inner">
+    <p class="ed-foot-attr">
       © 2026 <strong>PropertyAtlas</strong>. All rights reserved.
     </p>
-    <ul class="ed-mode-footer-links">
+    <ul class="ed-foot-links">
       <li><a href="/privacy">Privacy</a></li>
       <li><a href="/terms">Terms</a></li>
       <li><a href="mailto:hello@propertyatlas.sg">Contact</a></li>
