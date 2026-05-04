@@ -11,12 +11,25 @@
      first paint. The atlasArticlePage IIFE at line ~24399 still adds
      article-takeover to <body> on DOMContentLoaded as the canonical state;
      this head-script just provides the earlier signal so chrome never
-     flashes. Fix is purely additive — no existing behavior changes. -->
+     flashes. Fix is purely additive — no existing behavior changes.
+
+     v48.20o: extended to also detect #newsroom hash for editorial-mode
+     (the "Browse the archive" entry from landing). Same FOUC-fix pattern.
+     A hashchange listener later in the script section keeps the class in
+     sync as the user navigates between #newsroom and other tabs. -->
 <script>
   (function(){
     try {
       if (location.search && location.search.indexOf('article=') !== -1) {
         document.documentElement.classList.add('article-takeover');
+      }
+      if (location.hash === '#newsroom') {
+        document.documentElement.classList.add('editorial-mode');
+        // Title swap deferred to DOMContentLoaded since <title> doesn't exist
+        // yet at this point in the parse. The deep-set fires on first paint.
+        document.addEventListener('DOMContentLoaded', function(){
+          try { document.title = 'Newsroom — PropertyAtlas'; } catch(e){}
+        });
       }
     } catch(e) { /* defensive — degrade silently to existing IIFE behavior */ }
   })();
@@ -32,6 +45,21 @@ html.article-takeover .panel,
 html.article-takeover footer,
 html.article-takeover .nl-banner{display:none!important}
 html.article-takeover{background:#FAF7F0}
+
+/* v48.20o editorial-mode: critical pre-paint hide rules for #newsroom URL.
+   When user arrives at /dashboard/#newsroom (e.g. via "Browse the archive"
+   from landing), hide the dashboard chrome before first paint to prevent
+   FOUC of the Market Pulse panel. Show the slim editorial header instead.
+   Mirrors the article-takeover pattern verbatim — synchronous detection in
+   the script block above, CSS rules applied before paint. The deep CSS for
+   .ed-mode-* elements is co-located with other editorial-mode rules below. */
+html.editorial-mode .topbar,
+html.editorial-mode .navtabs,
+html.editorial-mode .panel:not(#tab-news),
+html.editorial-mode #atlas-chat-bubble,
+html.editorial-mode #atlas-chat-panel{display:none!important}
+html.editorial-mode #tab-news{display:block!important}
+html.editorial-mode{background:#F7F3EB}
 </style>
 <title>SG Market Intelligence | TKRE</title>
 <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
@@ -536,12 +564,168 @@ html,body{background:var(--bg);color:var(--txt);font-family:'DM Sans',sans-serif
 .talent-sum-val{font-family:'DM Mono',monospace;font-size:20px;font-weight:700;color:var(--txt);line-height:1}
 .talent-sum-lbl{font-size:9px;color:var(--mut2);text-transform:uppercase;letter-spacing:.06em;margin-top:3px}
 .talent-sum-sub{font-size:10px;color:var(--mut);margin-top:2px}
+
+/* ============================================================
+   v48.20o EDITORIAL MODE — chrome replacement when URL hash = #newsroom.
+   Hides dashboard topbar/navtabs (via pre-paint CSS in head) and shows
+   a slim editorial header + footer mirroring the landing page so that
+   "Browse the archive" feels like a continuation of the publication.
+   .ed-mode-* elements are hidden by default; revealed only when
+   html.editorial-mode is set on the root.
+   ============================================================ */
+.ed-mode-header,
+.ed-mode-footer{display:none}
+html.editorial-mode .ed-mode-header{
+  display:block;
+  background:#F7F3EB;
+  border-bottom:1px solid rgba(11,43,92,0.10);
+  position:sticky;
+  top:0;
+  z-index:200;
+}
+html.editorial-mode .ed-mode-header-inner{
+  max-width:1200px;
+  margin:0 auto;
+  padding:0 24px;
+  height:64px;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:16px;
+}
+html.editorial-mode .ed-mode-brand{
+  display:flex;
+  align-items:center;
+  gap:12px;
+  text-decoration:none;
+  color:#0B2B5C;
+}
+html.editorial-mode .ed-mode-brand-mark{
+  width:32px;
+  height:32px;
+  background:#0B2B5C;
+  color:#F7F3EB;
+  border-radius:4px;
+  font-family:Georgia,'Times New Roman',serif;
+  font-weight:700;
+  font-size:14px;
+  letter-spacing:-0.04em;
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  border-bottom:2px solid #C99B5A;
+}
+html.editorial-mode .ed-mode-brand-word{
+  font-family:Georgia,'Times New Roman',serif;
+  font-size:18px;
+  font-weight:700;
+  letter-spacing:-0.01em;
+  color:#0B2B5C;
+}
+html.editorial-mode .ed-mode-brand-word em{
+  font-style:italic;
+  color:#A67C3A;
+  font-weight:700;
+}
+html.editorial-mode .ed-mode-nav{
+  display:flex;
+  align-items:center;
+  gap:28px;
+}
+html.editorial-mode .ed-mode-nav a{
+  font-family:'DM Sans',sans-serif;
+  font-size:14px;
+  font-weight:600;
+  color:#0B2B5C;
+  text-decoration:none;
+  padding:6px 0;
+  border-bottom:2px solid transparent;
+  transition:color 140ms ease, border-color 140ms ease;
+}
+html.editorial-mode .ed-mode-nav a:hover{color:#1A4F9C}
+html.editorial-mode .ed-mode-nav a.ed-mode-nav-active{
+  border-bottom-color:#A67C3A;
+}
+html.editorial-mode .ed-mode-nav a.ed-mode-nav-signin{
+  color:#1A4F9C;
+  font-weight:700;
+}
+html.editorial-mode .ed-mode-footer{
+  display:block;
+  background:#0B2B5C;
+  color:#FAF7F0;
+  padding:28px 0;
+  margin-top:48px;
+}
+html.editorial-mode .ed-mode-footer-inner{
+  max-width:1200px;
+  margin:0 auto;
+  padding:0 24px;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:24px;
+  flex-wrap:wrap;
+}
+html.editorial-mode .ed-mode-footer-attr{
+  font-family:'DM Sans',sans-serif;
+  font-size:12px;
+  color:rgba(250,247,240,0.70);
+  margin:0;
+}
+html.editorial-mode .ed-mode-footer-attr strong{color:#FAF7F0}
+html.editorial-mode .ed-mode-footer-links{
+  list-style:none;
+  display:flex;
+  gap:20px;
+  margin:0;
+  padding:0;
+}
+html.editorial-mode .ed-mode-footer-links a{
+  font-family:'DM Sans',sans-serif;
+  font-size:12px;
+  color:rgba(250,247,240,0.70);
+  text-decoration:none;
+  transition:color 140ms ease;
+}
+html.editorial-mode .ed-mode-footer-links a:hover{color:#C99B5A}
+/* Mobile pass for editorial header */
+@media (max-width:760px){
+  html.editorial-mode .ed-mode-header-inner{height:56px;padding:0 16px}
+  html.editorial-mode .ed-mode-brand-word{font-size:16px}
+  html.editorial-mode .ed-mode-nav{gap:14px}
+  html.editorial-mode .ed-mode-nav a{font-size:12px}
+  html.editorial-mode .ed-mode-footer-inner{flex-direction:column;align-items:flex-start;gap:14px}
+  html.editorial-mode .ed-mode-footer-links{flex-wrap:wrap;gap:14px}
+}
 </style>
 <!-- v48.12 Phase 2c step 1: Supabase JS SDK for Auth flows. Loads globally as `supabase`. -->
 <!-- Existing SB_URL/SB_KEY REST pattern (transactions, one-sophia) continues unchanged. -->
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
 <body>
+
+<!-- v48.20o editorial-mode header: shown only when html.editorial-mode is set
+     (URL hash = #newsroom). Mirrors the landing page masthead so that
+     "Browse the archive" feels like a continuation of the publication, not
+     a jump into the analyst tool. CSS at .ed-mode-* selectors below.
+     Hidden by default; revealed by html.editorial-mode rule. -->
+<header class="ed-mode-header" role="banner">
+  <div class="ed-mode-header-inner">
+    <a class="ed-mode-brand" href="./" aria-label="PropertyAtlas — home">
+      <span class="ed-mode-brand-mark" aria-hidden="true">PA</span>
+      <span class="ed-mode-brand-word">Property<em>Atlas</em></span>
+    </a>
+    <nav class="ed-mode-nav" aria-label="Primary">
+      <a href="./#newsroom" class="ed-mode-nav-active">Newsroom</a>
+      <a href="./#overview">Market Pulse</a>
+      <a href="./#analytics">Analytics</a>
+      <a href="./#transactions">Transactions</a>
+      <a href="./?signin=1" class="ed-mode-nav-signin">Sign in</a>
+    </nav>
+  </div>
+</header>
+
 <div class="topbar">
   <div class="topbar-brand" onclick="atlasShowTab('overview')" style="cursor:pointer" title="Back to Market Pulse">
     <div class="logo" style="background:#1A4F9C;padding:0">
@@ -24306,6 +24490,44 @@ html.article-takeover .ed-article-page,body.article-takeover .ed-article-page{di
   }
 })();
 
+// v48.20o editorial-mode hashchange sync — keeps html.editorial-mode in
+// step as the user navigates AND drives tab activation when the user
+// clicks editorial-header nav links (e.g. from #newsroom to #overview).
+// The pre-paint script in <head> handles the initial cold-load class set;
+// atlasNewsroomHash + atlasPublicTabHashes IIFEs handle initial tab
+// activation on DOMContentLoaded. This listener handles all *subsequent*
+// in-page navigations from the editorial header so the dashboard chrome
+// reappears (and the right panel becomes visible) without a full reload.
+(function atlasEditorialModeSync(){
+  var HASH_TO_TAB = {
+    '#newsroom':     'news',
+    '#overview':     'overview',
+    '#transactions': 'transactions',
+    '#analytics':    'analytics'
+  };
+  function syncOnHashChange(){
+    try {
+      var root = document.documentElement;
+      var hash = window.location.hash;
+      // Toggle editorial-mode class + browser tab title
+      if(hash === '#newsroom'){
+        root.classList.add('editorial-mode');
+        document.title = 'Newsroom — PropertyAtlas';
+      } else {
+        root.classList.remove('editorial-mode');
+        document.title = 'SG Market Intelligence | TKRE';
+      }
+      // Activate the corresponding tab
+      var tab = HASH_TO_TAB[hash];
+      if(tab){
+        var navBtn = document.querySelector('.navtab[data-tab="' + tab + '"]');
+        if(navBtn) navBtn.click();
+      }
+    } catch(e) { /* defensive */ }
+  }
+  window.addEventListener('hashchange', syncOnHashChange);
+})();
+
 // v48.20f: Public-tab hash handlers — activates Overview / Transactions /
 // Analytics tabs on cold load when the URL hash is #overview / #transactions
 // / #analytics. Used by the public-facing top nav on landing + /news/ which
@@ -24555,6 +24777,23 @@ html.article-takeover .ed-article-page,body.article-takeover .ed-article-page{di
 })();
 </script>
 
+
+<!-- v48.20o editorial-mode footer: shown only when html.editorial-mode is set
+     (URL hash = #newsroom). Mirrors the landing page footer for visual
+     continuity. Hidden by default; revealed by html.editorial-mode rule. -->
+<footer class="ed-mode-footer" role="contentinfo">
+  <div class="ed-mode-footer-inner">
+    <p class="ed-mode-footer-attr">
+      © 2026 <strong>PropertyAtlas</strong>. All rights reserved.
+    </p>
+    <ul class="ed-mode-footer-links">
+      <li><a href="/privacy">Privacy</a></li>
+      <li><a href="/terms">Terms</a></li>
+      <li><a href="mailto:hello@propertyatlas.sg">Contact</a></li>
+      <li><a href="https://www.linkedin.com/company/propertyatlas-sg" target="_blank" rel="noopener">LinkedIn</a></li>
+    </ul>
+  </div>
+</footer>
 
 </body>
 </html>
