@@ -701,13 +701,13 @@ body.article-takeover .ed-foot{display:none!important}
      functional. The chat widget (#atlas-chat-bubble) remains visible. -->
 <header class="ed-mast" role="banner">
   <div class="ed-mast-inner">
-    <a class="ed-mast-brand" href="./" aria-label="PropertyAtlas — home">
+    <a class="ed-mast-brand" href="./landing_v1.html" aria-label="PropertyAtlas — Newsroom">
       <span class="ed-mast-brand-mark" aria-hidden="true">PA</span>
       <span class="ed-mast-brand-word">Property<em>Atlas</em></span>
     </a>
     <nav class="ed-mast-nav" aria-label="Primary">
-      <a href="./#newsroom" class="ed-mast-nav-link" data-ed-tab="news">Newsroom</a>
-      <a href="./#overview" class="ed-mast-nav-link" data-ed-tab="overview">Market Pulse</a>
+      <a href="./landing_v1.html" class="ed-mast-nav-link">Newsroom</a>
+      <a href="./" class="ed-mast-nav-link" data-ed-tab="overview">Market Pulse</a>
       <a href="./#analytics" class="ed-mast-nav-link" data-ed-tab="analytics">Analytics</a>
       <a href="./#transactions" class="ed-mast-nav-link" data-ed-tab="transactions">Transactions</a>
       <a href="javascript:void(0)" id="atlas-signin-link" class="ed-mast-nav-signin"
@@ -724,7 +724,6 @@ body.article-takeover .ed-foot{display:none!important}
   <div class="navtab" data-tab="transactions"><span class="navtab-icon">💹</span>Transactions</div>
   <div class="navtab" data-tab="analytics"><span class="navtab-icon">📈</span>Analytics</div>
   <div class="navtab" data-tab="directory"><span class="navtab-icon">🏢</span>Directory</div>
-  <div class="navtab" data-tab="news"><span class="navtab-icon">📰</span>Newsroom</div>
   <div class="navtab" data-tab="pipeline"><span class="navtab-icon">🔭</span>Pipeline</div>
   <div class="navtab" data-tab="assetdir" style="display:flex;align-items:center;gap:6px">
     <span class="navtab-icon">🗂</span>Asset Directory
@@ -13774,27 +13773,17 @@ function renderNewsPreview(){
   }).join('');
 }
 
-// Navigate to a specific newsroom post from the Overview preview (v48.10).
-// Switches to the Newsroom tab, opens just the target card (v48.19 per-card
-// model, replacing the v48.18 expand-all), then smoothly scrolls it into view.
+// v48.20q: Newsroom is no longer a tab inside the dashboard — it's a sister
+// surface (landing_v1.html). Clicks on Overview news preview cards now
+// open the article directly via ?article=N URL. The article-takeover
+// machinery (atlasArticlePage IIFE) handles rendering. Back-button from
+// the article returns the user to the dashboard with from=dashboard
+// behaviour (history.back), or to landing_v1.html if the article was
+// reached cold.
 function gotoNewsPost(id){
-  var navBtn = document.querySelector('.navtab[data-tab="news"]');
-  if(navBtn) navBtn.click();
-  // Wait a tick for tab panel to show, then open the target + scroll
-  setTimeout(function(){
-    var anchor = document.getElementById('news-post-'+id);
-    if(anchor){
-      if(!anchor.classList.contains('open') && typeof nrToggleCard === 'function'){
-        nrToggleCard(anchor);
-      }
-      anchor.scrollIntoView({behavior:'smooth', block:'start'});
-      // Brief highlight flash so the user sees which one they landed on
-      var origBg = anchor.style.background;
-      anchor.style.transition = 'background .6s ease';
-      anchor.style.background = 'rgba(26,79,156,.08)';
-      setTimeout(function(){ anchor.style.background = origBg || ''; }, 1200);
-    }
-  }, 80);
+  try {
+    window.location.href = '?article=' + encodeURIComponent(id) + '&from=dashboard';
+  } catch(e) { /* defensive */ }
 }
 
 // NEWSROOM — full tab
@@ -14028,16 +14017,25 @@ function renderNewsroom(){
     heroBylineParts.push('<span class="ed-byline-sep">·</span>');
     heroBylineParts.push('<span>'+heroReadTime+' min read</span>');
   }
-  // v48.20p: Hero card rendering disabled — archive view shows uniform 3-up
-  // grid of cards from top, with latest article rendered as just the first
-  // card (in the .map below, list.map instead of rest.map). Hero computations
-  // above are kept inert (used to build heroWrap.innerHTML which is now empty)
-  // — could be removed in a future cleanup. heroWrap and divWrap cleared so
-  // any prior render state is wiped.
-  heroWrap.innerHTML='';
-  if(divWrap) divWrap.innerHTML='';
+  heroWrap.innerHTML=''
+    +'<div class="ed-hero '+ecHero+'" id="news-post-'+hero.id+'" onclick="nrToggleCard(this, event)">'
+    +'<div class="ed-eyebrow">'+heroEyebrow+'</div>'
+    +'<h2 class="ed-headline-hero">'+heroDisplayHL+'</h2>'
+    +(heroStandfirst?'<div class="ed-standfirst">'+heroStandfirst+'</div>':'')
+    +'<div class="ed-byline">'+heroBylineParts.join('')+'</div>'
+    +'<div class="nr-expand-hint" style="font-size:11px;color:var(--ed-muted);font-family:\'DM Sans\',sans-serif">Click to expand ↓</div>'
+    +'<div class="ed-body">'
+      +heroImg
+      +formatNewsSummary(hero.summary)
+      +heroFhPanel
+      +heroSrc
+      +'<div class="ed-cta-row">'+heroFullArticleLink+heroExtArticleLink+'</div>'
+    +'</div>'
+    +'</div>';
 
-  gridEl.innerHTML=list.map(function(n){
+  if(divWrap) divWrap.innerHTML=rest.length?'<div class="nr-divider">Earlier coverage</div>':'';
+
+  gridEl.innerHTML=rest.map(function(n){
     var ecCard=edCatClass(n.category);
     var cardDisplayHL=edDeriveDisplayHeadline(n);
     var cardStandfirst=edDeriveStandfirst(n);
@@ -24420,15 +24418,16 @@ html.article-takeover .ed-article-page,body.article-takeover .ed-article-page{di
   }
 })();
 
-// v48.19: #newsroom hash handler — activates the Newsroom tab on load if
-// the URL hash is #newsroom. Used by the article-page "← Back to Newsroom"
-// link so users land on the right tab. No card-expansion side effect.
+// v48.20q: #newsroom hash is now a redirect to landing_v1.html.
+// Newsroom is no longer a tab inside the dashboard — it's a sister surface
+// at /dashboard/landing_v1.html (the publication front). Old links (e.g.
+// from emails, LinkedIn, the article-detail page's "Back to Newsroom"
+// button) using /dashboard/#newsroom continue to work via this redirect.
 (function atlasNewsroomHash(){
   function handleNewsroomHash(){
     try {
       if(window.location.hash !== '#newsroom') return;
-      var navBtn = document.querySelector('.navtab[data-tab="news"]');
-      if(navBtn) navBtn.click();
+      window.location.replace('./landing_v1.html');
     } catch(e) { /* defensive */ }
   }
   if(document.readyState === 'loading'){
@@ -24470,44 +24469,6 @@ html.article-takeover .ed-article-page,body.article-takeover .ed-article-page{di
   } else {
     handlePublicTabHash();
   }
-})();
-
-// v48.20p Editorial-masthead active-state sync.
-// The 5 nav links in the editorial masthead each carry data-ed-tab matching
-// the dashboard navtab data-tab they correspond to. This IIFE keeps the
-// underlined "active" treatment in sync with the currently-active dashboard
-// tab, by listening to clicks on the dashboard navtabs and re-deriving the
-// active link on every tab switch. Also runs once on DOMContentLoaded so the
-// initial state is correct (Market Pulse active by default).
-(function atlasEditorialMastheadActive(){
-  function syncActive(){
-    try {
-      var activeNav = document.querySelector('.navtab.on');
-      var activeTab = activeNav ? activeNav.dataset.tab : 'overview';
-      document.querySelectorAll('.ed-mast-nav-link').forEach(function(a){
-        if(a.dataset.edTab === activeTab){
-          a.classList.add('is-active');
-        } else {
-          a.classList.remove('is-active');
-        }
-      });
-    } catch(e) { /* defensive */ }
-  }
-  // Run on initial load
-  if(document.readyState === 'loading'){
-    document.addEventListener('DOMContentLoaded', syncActive);
-  } else {
-    syncActive();
-  }
-  // Run on every dashboard navtab click (after the click handler updates .on)
-  document.addEventListener('click', function(ev){
-    var nav = ev.target.closest && ev.target.closest('.navtab');
-    if(!nav) return;
-    // Defer one tick so atlasShowTab's own handler runs first
-    setTimeout(syncActive, 0);
-  }, true);
-  // Run on hash change (covers nav from editorial masthead links)
-  window.addEventListener('hashchange', function(){ setTimeout(syncActive, 0); });
 })();
 
 // v48.18 Day 2: full-bleed article page (?article=N takeover)
