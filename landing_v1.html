@@ -648,6 +648,25 @@
     font-style: italic;
   }
 
+  /* Month sub-eyebrow inside feed list — groups feed rows by publication month.
+     Lighter weight + smaller size than .feed-title so it reads as a
+     sub-divider, not a peer of "Recent coverage". No bottom border because
+     the feed-row above already supplies the hairline rule. */
+  .feed-month {
+    font-family: var(--body-serif);
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--bronze);
+    padding: 22px 0 6px;
+    margin: 0;
+  }
+  /* First .feed-month in the list — sits just under .feed-head so reduce top padding */
+  .feed-list > .feed-month:first-child {
+    padding-top: 4px;
+  }
+
   .feed-list {
     display: flex;
     flex-direction: column;
@@ -736,7 +755,7 @@
   }
   .feed-row-meta .sep { margin: 0 5px; color: var(--hairline-2); }
 
-  /* "See all 82 entries" centered link */
+  /* "Browse the archive" centered link */
   .see-all {
     text-align: center;
     padding: 18px 0 64px;
@@ -770,6 +789,7 @@
     .feed-row-headline { font-size: 13.5px; line-height: 1.35; }
     .feed-row-teaser { font-size: 11.5px; }
     .feed-title { font-size: 11.5px; letter-spacing: 0.14em; }
+    .feed-month { font-size: 10px; letter-spacing: 0.16em; padding: 16px 0 8px; }
   }
 
   /* ============================================================
@@ -1172,10 +1192,11 @@
   <div class="wrap">
     <div class="feed-head">
       <h2 id="feed-h" class="feed-title">Recent coverage</h2>
-      <div class="feed-meta">April 2026</div>
     </div>
 
     <div class="feed-list">
+
+      <div class="feed-month">May 2026</div>
 
       <!-- Row id 80 — SERT (cascaded from card 3 in v48.20l FEHT cascade).
            Photo retained per L144 — entry has news_80_stoneweg_kingsland.jpg on GitHub. -->
@@ -1224,6 +1245,8 @@
           </p>
         </div>
       </a>
+
+      <div class="feed-month">April 2026</div>
 
       <!-- Row id 78 — MIT (cascaded from feed row 2 in v48.20l FEHT cascade).
            Photo retained per L144 — entry has news_78_mit_toa_payoh_north_1.jpg on GitHub. -->
@@ -1301,10 +1324,10 @@
 
     </div>
 
-    <!-- See all link (centered) -->
+    <!-- Browse the archive link (centered) -->
     <div class="see-all">
       <a href="./#newsroom">
-        See all 82 entries
+        Browse the archive
         <span class="arrow" aria-hidden="true">→</span>
       </a>
     </div>
