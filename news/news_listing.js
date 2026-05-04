@@ -13,7 +13,7 @@ var NEWS_LISTING = [
     "byline": "PropertyAtlas",
     "read_time_min": 11,
     "word_count": 2300,
-    "image": "../images/news_83_cdlht_w_sentosa.jpg",
+    "image": "images/news_83_cdlht_w_sentosa.jpg",
     "imageCredit": "CDL Hospitality Trusts",
     "source": "PropertyAtlas.sg",
     "category": "Hospitality",
