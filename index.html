@@ -686,8 +686,962 @@ body.article-takeover .ed-foot{display:none!important}
 <!-- v48.12 Phase 2c step 1: Supabase JS SDK for Auth flows. Loads globally as `supabase`. -->
 <!-- Existing SB_URL/SB_KEY REST pattern (transactions, one-sophia) continues unchanged. -->
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+<!-- ═══════════════════════════════════════════════════════════════════
+     v48.20s — LANDING CSS PORTED INTO DASHBOARD
+     The following <style> block is lifted verbatim from landing_v1.html.
+     It styles the editorial publication front rendered inside #tab-news.
+     No selector prefixing applied — fix collisions surgically if any
+     visually break during smoke test.
+     ═══════════════════════════════════════════════════════════════════ -->
+<style>
+  /* ---------- Design tokens (v48.13e locked) ---------- */
+  :root {
+    --navy:       #1A4F9C;
+    --navy-deep:  #0F3775;
+    --navy-ink:   #0B2B5C;
+    --bronze:     #A67C3A;
+    --bronze-lt:  #C9A264;
+    --cream:      #F7F3EB;
+    --cream-lt:   #FAF7F0;
+    --ink:        #1A1A1A;
+    --muted:      #6B6157;
+    --hairline:   rgba(11, 43, 92, 0.10);   /* navy-ink @ 10% */
+    --hairline-2: rgba(11, 43, 92, 0.18);   /* a touch heavier */
+    --shadow-card: 0 1px 2px rgba(11, 43, 92, 0.04),
+                   0 8px 24px rgba(11, 43, 92, 0.06);
+
+    --body-serif: Georgia, "Times New Roman", "DejaVu Serif", serif;
+
+    /* Type scale (v48.13e Section "Type scale for launch page") */
+    --t-hero-h:       26px;
+    --t-card-h:       15px;
+    --t-feed-h:       14px;
+    --t-body-hero:    14px;
+    --t-body-card:    12px;
+    --t-body-feed:    11.5px;
+    --t-tag:          10.5px;
+    --t-meta:         11px;
+    --t-eyebrow:      11px;
+
+    /* Layout */
+    --maxw:           1080px;
+    --gutter:         24px;
+  }
+
+  /* ---------- Reset / base ---------- */
+  *, *::before, *::after { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; }
+  body {
+    font-family: var(--body-serif);
+    color: var(--ink);
+    background: var(--cream);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    line-height: 1.5;
+  }
+  a { color: inherit; text-decoration: none; }
+  img, svg { display: block; max-width: 100%; }
+  button { font: inherit; cursor: pointer; border: 0; background: none; }
+
+  .wrap {
+    max-width: var(--maxw);
+    margin: 0 auto;
+    padding: 0 var(--gutter);
+  }
+
+  /* ============================================================
+     MASTHEAD
+     Thin bar · navy-on-cream · bronze underline on active tab
+     ============================================================ */
+  .masthead {
+    border-bottom: 1px solid var(--hairline-2);
+    background: var(--cream);
+  }
+  .masthead-inner {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: 64px;
+  }
+
+  /* Brand: PA mark + wordmark */
+  .brand {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    color: var(--navy-ink);
+  }
+  .brand-mark {
+    width: 28px;
+    height: 28px;
+    border-radius: 4px;
+    background: var(--navy-ink);
+    color: var(--bronze-lt);
+    display: grid;
+    place-items: center;
+    font-family: var(--body-serif);
+    font-weight: 700;
+    font-size: 14px;
+    letter-spacing: 0.02em;
+  }
+  .brand-word {
+    font-family: var(--body-serif);
+    font-weight: 700;
+    font-size: 18px;
+    letter-spacing: 0.005em;
+    color: var(--navy-ink);
+  }
+  .brand-word em {
+    font-style: italic;
+    font-weight: 700;
+    color: var(--bronze);
+  }
+
+  /* Nav links */
+  .nav {
+    display: flex;
+    align-items: center;
+    gap: 28px;
+  }
+  .nav a {
+    position: relative;
+    font-size: 13.5px;
+    font-weight: 600;
+    color: var(--navy-ink);
+    padding: 6px 0;
+    transition: color 120ms ease;
+  }
+  .nav a:hover { color: var(--navy); }
+  .nav a.is-active {
+    color: var(--navy-ink);
+  }
+  .nav a.is-active::after {
+    content: "";
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: -2px;
+    height: 2px;
+    background: var(--bronze);
+    border-radius: 1px;
+  }
+  .nav .signin {
+    color: var(--navy);
+  }
+
+  /* Hamburger (mobile only — hidden by default on desktop) */
+  .hamburger {
+    display: none;
+    width: 36px;
+    height: 36px;
+    border-radius: 4px;
+    align-items: center;
+    justify-content: center;
+    color: var(--navy-ink);
+  }
+  .hamburger:hover { background: rgba(11, 43, 92, 0.06); }
+  .hamburger svg { width: 20px; height: 20px; }
+
+  /* ============================================================
+     DATE STRIP
+     11px bronze caps · 11px grey italic · thin rules above & below
+     ============================================================ */
+  .datestrip {
+    border-bottom: 1px solid var(--hairline);
+    background: var(--cream);
+  }
+  .datestrip-inner {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: 36px;
+    gap: 16px;
+  }
+  .datestrip-left {
+    font-size: var(--t-meta);
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--bronze);
+    font-weight: 600;
+  }
+
+  /* ============================================================
+     DASHBOARD TAB STRIP — v48.20q
+     Visual mirror of the dashboard's .navtabs (in dashboard/index.html
+     line ~76). Same bg colour, same tab styling, same hover/active
+     treatment. Tabs are deep-links into the dashboard; the dashboard's
+     atlasPublicTabHashes IIFE picks up the hash on load and activates
+     the corresponding panel.
+     ============================================================ */
+  .dash-tabstrip {
+    display: flex;
+    background: #132848;
+    padding: 0 20px;
+    border-bottom: 2px solid rgba(255,255,255,.06);
+    gap: 0;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+  .dash-tab {
+    padding: 10px 15px;
+    font-size: 12px;
+    font-weight: 500;
+    color: rgba(255,255,255,.45);
+    cursor: pointer;
+    border-bottom: 2px solid transparent;
+    margin-bottom: -2px;
+    transition: all .15s;
+    letter-spacing: .01em;
+    white-space: nowrap;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    text-decoration: none;
+  }
+  .dash-tab:hover {
+    color: rgba(255,255,255,.8);
+    background: rgba(255,255,255,.04);
+  }
+  .dash-tab-icon {
+    font-size: 13px;
+    opacity: .7;
+  }
+  /* Mobile pass for dash-tabstrip */
+  @media (max-width: 760px) {
+    .dash-tabstrip { padding: 0 12px; }
+    .dash-tab { padding: 8px 11px; font-size: 11px; }
+  }
+
+  /* ============================================================
+     HERO ARTICLE
+     Desktop: 1.15 : 1 split (image | text)  · 16:9 image
+     ============================================================ */
+  .hero {
+    padding: 40px 0 48px;
+  }
+  .hero-grid {
+    display: grid;
+    grid-template-columns: 1.15fr 1fr;
+    gap: 36px;
+    align-items: start;
+  }
+  .hero-image-col {
+    display: block;
+  }
+
+  /* Hero image: 16:9. Flat navy placeholder during build; real photos
+     will swap into the same shell. Monochrome navy treatment for real
+     photos lands when Supabase pipeline is wired. */
+  .hero-image {
+    position: relative;
+    display: block;
+    aspect-ratio: 16 / 9;
+    overflow: hidden;
+    background: var(--navy-ink);
+    box-shadow: var(--shadow-card);
+    border-radius: 2px;
+  }
+  .placeholder-flat {
+    position: absolute;
+    inset: 0;
+    display: grid;
+    place-items: center;
+    background:
+      linear-gradient(135deg,
+        var(--navy-deep) 0%,
+        var(--navy-ink) 100%);
+  }
+  /* Branded placeholder content — echoes masthead wordmark.
+     Used as default "PropertyAtlas Newsroom" image until each entry
+     gets its own hero photo. v48.13M.3, 26 Apr 2026. */
+  .placeholder-brand {
+    text-align: center;
+    line-height: 1.1;
+    padding: 0 12px;
+  }
+  .placeholder-brand-word {
+    font-family: var(--body-serif);
+    font-weight: 700;
+    font-size: clamp(22px, 4vw, 38px);
+    letter-spacing: 0.005em;
+    color: var(--cream);
+    display: block;
+  }
+  .placeholder-brand-word em {
+    font-style: italic;
+    font-weight: 700;
+    color: var(--bronze-lt);
+  }
+  .placeholder-brand-divider {
+    display: block;
+    width: 32px;
+    height: 1px;
+    background: var(--bronze);
+    margin: 10px auto;
+    opacity: 0.6;
+  }
+  .placeholder-brand-tag {
+    display: block;
+    font-family: var(--body-serif);
+    font-size: clamp(9px, 1.2vw, 11px);
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    font-style: italic;
+    color: var(--bronze-lt);
+    opacity: 0.85;
+    font-weight: 400;
+  }
+  .hero-image-photo {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center;
+    display: block;
+  }
+  .hero-credit {
+    margin: 8px 0 0 0;
+    font-size: 11px;
+    font-style: italic;
+    text-align: right;
+    color: rgba(26, 43, 74, 0.55);
+    letter-spacing: 0.02em;
+  }
+
+  /* Hero text column */
+  .hero-text {
+    padding-top: 4px;
+  }
+  .hero-eyebrow {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 14px;
+    flex-wrap: wrap;
+  }
+  .pill {
+    display: inline-flex;
+    align-items: center;
+    height: 20px;
+    padding: 0 9px;
+    background: var(--bronze);
+    color: var(--cream-lt);
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    border-radius: 2px;
+  }
+  .cat-tag {
+    font-size: var(--t-tag);
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--bronze);
+    font-weight: 600;
+  }
+  .cat-tag + .cat-tag::before {
+    content: "·";
+    margin: 0 6px 0 4px;
+    color: var(--muted);
+  }
+
+  .hero-headline {
+    font-family: var(--body-serif);
+    font-size: var(--t-hero-h);
+    line-height: 1.25;
+    font-weight: 700;
+    color: var(--navy-ink);
+    margin: 0 0 14px;
+    letter-spacing: -0.005em;
+  }
+  .hero-headline a:hover { color: var(--navy); }
+
+  .hero-teaser {
+    font-size: var(--t-body-hero);
+    line-height: 1.6;
+    color: var(--ink);
+    margin: 0 0 18px;
+  }
+
+  .hero-meta {
+    font-size: var(--t-meta);
+    color: var(--muted);
+    margin-bottom: 20px;
+  }
+  .hero-meta .sep {
+    margin: 0 6px;
+    color: var(--hairline-2);
+  }
+
+  /* Primary CTA — navy button, bronze hover */
+  .btn-primary {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    height: 38px;
+    padding: 0 16px;
+    background: var(--navy-ink);
+    color: var(--cream-lt);
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing: 0.02em;
+    border-radius: 2px;
+    transition: background 140ms ease, transform 140ms ease;
+  }
+  .btn-primary:hover {
+    background: var(--navy-deep);
+    transform: translateY(-1px);
+  }
+  .btn-primary .arrow {
+    transition: transform 160ms ease;
+  }
+  .btn-primary:hover .arrow {
+    transform: translateX(3px);
+  }
+
+  /* ============================================================
+     DASHBOARD CTA STRIP
+     Deep-navy bar between hero and three-card row.
+     Bronze eyebrow · cream body copy · bronze pill button.
+     v48.13e Section B locked placement.
+     ============================================================ */
+  .cta-strip {
+    background: var(--navy-ink);
+    color: var(--cream-lt);
+    padding: 28px 0;
+    border-top: 1px solid rgba(166, 124, 58, 0.20);
+    border-bottom: 1px solid rgba(166, 124, 58, 0.20);
+  }
+  .cta-strip-inner {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 32px;
+  }
+  .cta-text { flex: 1; min-width: 0; }
+  .cta-eyebrow {
+    font-size: var(--t-eyebrow);
+    font-weight: 600;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--bronze-lt);
+    margin: 0 0 6px;
+  }
+  .cta-body {
+    font-size: 15.5px;
+    line-height: 1.45;
+    color: var(--cream-lt);
+    margin: 0;
+  }
+  .cta-body strong {
+    color: var(--bronze-lt);
+    font-weight: 700;
+  }
+
+  /* Bronze pill button — sits on navy-ink, distinct from primary navy CTA */
+  .btn-bronze {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    height: 40px;
+    padding: 0 18px;
+    background: var(--bronze-lt);
+    color: var(--navy-ink);
+    font-size: 13.5px;
+    font-weight: 700;
+    letter-spacing: 0.02em;
+    border-radius: 999px;
+    transition: background 140ms ease, transform 140ms ease;
+    flex-shrink: 0;
+  }
+  .btn-bronze:hover {
+    background: var(--bronze);
+    color: var(--cream-lt);
+    transform: translateY(-1px);
+  }
+  .btn-bronze .arrow { transition: transform 160ms ease; }
+  .btn-bronze:hover .arrow { transform: translateX(3px); }
+
+  /* Mobile pass for CTA strip */
+  @media (max-width: 640px) {
+    .cta-strip { padding: 22px 0; }
+    .cta-strip-inner {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 16px;
+    }
+    .cta-body { font-size: 14.5px; }
+    .btn-bronze { width: 100%; justify-content: center; height: 44px; }
+  }
+
+  /* ============================================================
+     "MORE FROM THIS WEEK" — 3-card row
+     Equal-width cards, 16:9 image · category tag · headline ·
+     teaser · date · read-time. v48.13e Section B locked.
+     ============================================================ */
+  .week {
+    padding: 56px 0 16px;
+  }
+  .week-head {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 16px;
+    margin-bottom: 22px;
+    border-bottom: 1px solid var(--hairline);
+    padding-bottom: 12px;
+  }
+  .week-title {
+    font-family: var(--body-serif);
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--bronze);
+    margin: 0;
+  }
+  .week-meta {
+    font-size: 11px;
+    color: var(--muted);
+    font-style: italic;
+  }
+
+  .cards {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 28px;
+  }
+  .card {
+    display: flex;
+    flex-direction: column;
+    background: transparent;
+  }
+  .card:hover .card-headline { color: var(--navy); }
+
+  .card-image {
+    position: relative;
+    aspect-ratio: 16 / 9;
+    overflow: hidden;
+    background: var(--navy-ink);
+    border-radius: 2px;
+    box-shadow: var(--shadow-card);
+    margin-bottom: 14px;
+  }
+  .card-image .placeholder-flat {
+    /* reuses the same flat-block pattern as the hero */
+    position: absolute; inset: 0;
+    display: grid;
+    place-items: center;
+    background: linear-gradient(135deg, var(--navy-deep) 0%, var(--navy-ink) 100%);
+  }
+  /* Card-sized branded placeholder — tighter scaling than hero default */
+  .card-image .placeholder-brand-word {
+    font-size: clamp(18px, 3vw, 26px);
+  }
+  .card-image .placeholder-brand-divider {
+    width: 24px;
+    margin: 7px auto;
+  }
+  .card-image .placeholder-brand-tag {
+    font-size: clamp(8px, 1vw, 9.5px);
+    letter-spacing: 0.2em;
+  }
+  /* Photo variant for cards — mirrors .hero-image-photo (Lesson 126/127):
+     absolute inset, object-fit: cover. loading="lazy" on cards/feed
+     (eager only for hero per Lesson 126). */
+  .card-image-photo {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center;
+    display: block;
+  }
+  /* Card-sized photo credit — tighter than .hero-credit (10px vs 11px),
+     pulled up into the .card-image margin-bottom: 14px gap so it sits
+     just under the photo without disrupting the cat→headline→teaser→meta
+     rhythm. Lesson 135 (v48.13P+ extension of hero-only credit pattern
+     to all four photo slots). */
+  .card-credit {
+    margin: -10px 0 8px 0;
+    font-size: 10px;
+    font-style: italic;
+    text-align: right;
+    color: rgba(26, 43, 74, 0.45);
+    letter-spacing: 0.02em;
+  }
+  /* Feed-row-sized branded placeholder — tightest scaling, thumbnails
+     are only 160px wide so wordmark must fit comfortably under 140px. */
+  .feed-row-image .placeholder-brand-word {
+    font-size: 14px;
+  }
+  .feed-row-image .placeholder-brand-divider {
+    width: 18px;
+    height: 1px;
+    margin: 5px auto;
+  }
+  .feed-row-image .placeholder-brand-tag {
+    font-size: 7.5px;
+    letter-spacing: 0.18em;
+  }
+
+  .card-cat {
+    font-size: var(--t-tag);
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--bronze);
+    font-weight: 600;
+    margin: 0 0 8px;
+  }
+  .card-headline {
+    font-family: var(--body-serif);
+    font-size: var(--t-card-h);
+    line-height: 1.35;
+    font-weight: 700;
+    color: var(--navy-ink);
+    margin: 0 0 10px;
+    transition: color 140ms ease;
+  }
+  .card-teaser {
+    font-size: var(--t-body-card);
+    line-height: 1.55;
+    color: var(--ink);
+    margin: 0 0 14px;
+    flex-grow: 1; /* push metadata to bottom for vertical alignment across cards */
+  }
+  .card-meta {
+    font-size: var(--t-meta);
+    color: var(--muted);
+    margin: 0;
+  }
+  .card-meta .sep { margin: 0 5px; color: var(--hairline-2); }
+
+  /* Mobile stacking for cards */
+  @media (max-width: 880px) {
+    .cards { grid-template-columns: 1fr 1fr; gap: 24px; }
+    .week { padding: 36px 0 12px; }
+  }
+  @media (max-width: 640px) {
+    .cards { grid-template-columns: 1fr; gap: 28px; }
+    .week-head { margin-bottom: 18px; }
+    .week-title { font-size: 11.5px; letter-spacing: 0.14em; }
+  }
+
+  /* ============================================================
+     "EARLIER THIS MONTH" — feed rows
+     Compact rows: 160px-wide thumbnail + headline + teaser + date.
+     Mobile uses 80px thumbnail per v48.13e Section B.
+     ============================================================ */
+  .feed {
+    padding: 56px 0 32px;
+  }
+  .feed-head {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 16px;
+    margin-bottom: 18px;
+    border-bottom: 1px solid var(--hairline);
+    padding-bottom: 12px;
+  }
+  .feed-title {
+    font-family: var(--body-serif);
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--bronze);
+    margin: 0;
+  }
+  .feed-meta {
+    font-size: 11px;
+    color: var(--muted);
+    font-style: italic;
+  }
+
+  /* Month sub-eyebrow inside feed list — groups feed rows by publication month.
+     Lighter weight + smaller size than .feed-title so it reads as a
+     sub-divider, not a peer of "Recent coverage". No bottom border because
+     the feed-row above already supplies the hairline rule. */
+  .feed-month {
+    font-family: var(--body-serif);
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--bronze);
+    padding: 22px 0 6px;
+    margin: 0;
+  }
+  /* First .feed-month in the list — sits just under .feed-head so reduce top padding */
+  .feed-list > .feed-month:first-child {
+    padding-top: 4px;
+  }
+
+  .feed-list {
+    display: flex;
+    flex-direction: column;
+  }
+  .feed-row {
+    display: grid;
+    grid-template-columns: 160px 1fr;
+    gap: 22px;
+    align-items: start;
+    padding: 18px 0;
+    border-bottom: 1px solid var(--hairline);
+    transition: background 140ms ease;
+  }
+  .feed-row:last-child { border-bottom: 0; }
+  .feed-row:hover .feed-row-headline { color: var(--navy); }
+
+  .feed-row-image {
+    position: relative;
+    aspect-ratio: 16 / 9;
+    overflow: hidden;
+    background: var(--navy-ink);
+    border-radius: 2px;
+  }
+  /* feed images can be either:
+     (a) .placeholder-flat / .placeholder-brand — for entries with no photo
+         (these styles are defined in the hero/cards section above), or
+     (b) .feed-row-image-photo — for entries that demoted from card-tier
+         and retain their photo through the cascade (Lesson 144).
+     The card photo (1344x756, 16:9) fits the feed thumbnail container
+     cleanly via object-fit: cover. */
+  .feed-row-image-photo {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+  /* Image column wrapper for photo+credit pairing.
+     Used only when the row has a real photo (not the placeholder pattern).
+     The wrapper keeps the grid child count at 2 (image-col + text),
+     matching the placeholder-row structure (image + text). Per Lesson 128
+     — image and credit must live in the same grid cell, not as separate
+     grid siblings (which would land credit in column 2 row 2). */
+  .feed-row-image-col { min-width: 0; }
+  /* Credit attribution for feed-row photos — mirrors .card-credit pattern.
+     Sits below the photo within the .feed-row-image-col wrapper.
+     Only present when the row has a real photo; placeholder-flat rows
+     omit this element. Per Lesson 139 (per-photo credit, not per-page)
+     and Lesson 144 (feed-row photo retention). */
+  .feed-row-credit {
+    margin: 6px 0 0 0;
+    font-size: 9px;
+    font-style: italic;
+    text-align: right;
+    color: #888;
+    line-height: 1.3;
+  }
+
+  .feed-row-text { padding-top: 1px; }
+  .feed-row-cat {
+    font-size: var(--t-tag);
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--bronze);
+    font-weight: 600;
+    margin: 0 0 6px;
+  }
+  .feed-row-headline {
+    font-family: var(--body-serif);
+    font-size: var(--t-feed-h);
+    line-height: 1.4;
+    font-weight: 700;
+    color: var(--navy-ink);
+    margin: 0 0 6px;
+    transition: color 140ms ease;
+  }
+  .feed-row-teaser {
+    font-size: var(--t-body-feed);
+    line-height: 1.55;
+    color: var(--ink);
+    margin: 0 0 8px;
+  }
+  .feed-row-meta {
+    font-size: var(--t-meta);
+    color: var(--muted);
+    margin: 0;
+  }
+  .feed-row-meta .sep { margin: 0 5px; color: var(--hairline-2); }
+
+  /* "Browse the archive" centered link */
+  .see-all {
+    text-align: center;
+    padding: 18px 0 64px;
+  }
+  .see-all a {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 13.5px;
+    font-weight: 600;
+    color: var(--navy);
+    border-bottom: 1px solid var(--hairline-2);
+    padding: 4px 2px;
+    transition: color 140ms ease, border-color 140ms ease;
+  }
+  .see-all a:hover {
+    color: var(--navy-ink);
+    border-color: var(--bronze);
+  }
+  .see-all .arrow { transition: transform 160ms ease; }
+  .see-all a:hover .arrow { transform: translateX(3px); }
+
+  /* Mobile pass for feed */
+  @media (max-width: 640px) {
+    .feed { padding: 36px 0 24px; }
+    .feed-row {
+      grid-template-columns: 80px 1fr;
+      gap: 14px;
+      padding: 14px 0;
+    }
+    .feed-row-headline { font-size: 13.5px; line-height: 1.35; }
+    .feed-row-teaser { font-size: 11.5px; }
+    .feed-title { font-size: 11.5px; letter-spacing: 0.14em; }
+    .feed-month { font-size: 10px; letter-spacing: 0.16em; padding: 16px 0 8px; }
+  }
+
+  /* ============================================================
+     FOOTER
+     Deep navy bg · TKRE attribution left · links right · bronze accents
+     ============================================================ */
+  .site-foot {
+    background: var(--navy-ink);
+    color: var(--cream-lt);
+    padding: 28px 0;
+    margin-top: 0;
+  }
+  .site-foot-inner {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 24px;
+    flex-wrap: wrap;
+  }
+  .foot-attr {
+    font-size: 12px;
+    color: rgba(247, 243, 235, 0.72);
+    margin: 0;
+  }
+  .foot-attr strong {
+    color: var(--bronze-lt);
+    font-weight: 700;
+  }
+  .foot-links {
+    display: flex;
+    gap: 22px;
+    align-items: center;
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+  .foot-links a {
+    font-size: 12px;
+    color: var(--bronze-lt);
+    transition: color 140ms ease;
+    border-bottom: 1px solid transparent;
+    padding-bottom: 1px;
+  }
+  .foot-links a:hover {
+    color: var(--cream-lt);
+    border-color: var(--bronze);
+  }
+
+  @media (max-width: 640px) {
+    .site-foot { padding: 22px 0 26px; }
+    .site-foot-inner {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 14px;
+    }
+    .foot-links { gap: 16px; flex-wrap: wrap; }
+  }
+
+  /* ============================================================
+     RESPONSIVE — desktop > tablet > mobile (340px target)
+     ============================================================ */
+  @media (max-width: 880px) {
+    .hero-grid {
+      grid-template-columns: 1fr;
+      gap: 22px;
+    }
+    .hero { padding: 28px 0 36px; }
+    .hero-headline { font-size: 22px; }
+  }
+
+  @media (max-width: 640px) {
+    :root { --gutter: 18px; }
+
+    /* Mobile masthead: hide nav links, show hamburger */
+    .nav { display: none; }
+    .hamburger { display: inline-flex; }
+
+    .masthead-inner { height: 56px; }
+    .brand-word { font-size: 16px; }
+
+    /* Date strip compresses to single line */
+    .datestrip-inner { height: 32px; }
+    .datestrip-left { font-size: 10px; letter-spacing: 0.10em; }
+
+    .hero-headline { font-size: 20px; line-height: 1.28; }
+    .hero-teaser { font-size: 13.5px; }
+
+    .btn-primary { width: 100%; justify-content: center; height: 42px; }
+  }
+
+  @media (max-width: 380px) {
+    .hero-headline { font-size: 19px; }
+  }
+
+  /* Reduce motion */
+  @media (prefers-reduced-motion: reduce) {
+    * { transition: none !important; animation: none !important; }
+  }
+</style>
+<!-- v48.20s — DEV-MODE UNLOCK FOR HIDDEN 6 TOOLS
+     Public visitors see 4 tabs: Newsroom, Market Pulse, Analytics, Transactions
+     (tier-login & masking applies inside Market Pulse / Analytics / Transactions).
+     Adding /#dev to the URL reveals the other 6 tools (Directory, Pipeline,
+     Asset Directory, Human Capital, Stock, Corporate Watch).
+     Bookmark: https://propertyatlas.sg/#dev (or .../dashboard/#dev) -->
+<style>
+  /* Hide the 6 deeper tools by default — public visitors see only Newsroom + 3 public tools */
+  .navtab.navtab-hidden { display: none; }
+  /* Reveal hidden tools when dev-mode unlock active */
+  body.dev-mode .navtab.navtab-hidden { display: flex; align-items: center; gap: 6px; }
+</style>
 </head>
 <body>
+<script>
+/* v48.20s — Dev-mode unlock for the 6 hidden dashboard tools.
+   Reveals Directory, Pipeline, Asset Directory, Human Capital, Stock, Corporate Watch.
+   Public visitors see 4 tabs only (Newsroom + 3 public tools with tier-login masking).
+   Visit /#dev or /#unlock once → sticky via localStorage. Visit /#lock to re-hide. */
+(function(){
+  function applyDevMode(){
+    var h = (window.location.hash || "").toLowerCase();
+    if(h === "#dev" || h === "#unlock"){
+      document.body.classList.add("dev-mode");
+      try { localStorage.setItem("atlas_dev_mode","1"); } catch(e){}
+    } else if(h === "#lock"){
+      document.body.classList.remove("dev-mode");
+      try { localStorage.removeItem("atlas_dev_mode"); } catch(e){}
+    } else {
+      try { if(localStorage.getItem("atlas_dev_mode") === "1"){
+        document.body.classList.add("dev-mode");
+      } } catch(e){}
+    }
+  }
+  if(document.body){ applyDevMode(); }
+  else { document.addEventListener("DOMContentLoaded", applyDevMode); }
+  window.addEventListener("hashchange", applyDevMode);
+})();
+</script>
 
 <!-- v48.20p Permanent editorial masthead. Replaces the v48.x dashboard topbar
      entirely. Always visible across all tabs. Provides:
@@ -701,12 +1655,12 @@ body.article-takeover .ed-foot{display:none!important}
      functional. The chat widget (#atlas-chat-bubble) remains visible. -->
 <header class="ed-mast" role="banner">
   <div class="ed-mast-inner">
-    <a class="ed-mast-brand" href="./landing_v1.html" aria-label="PropertyAtlas — Newsroom">
+    <a class="ed-mast-brand" href="./" aria-label="PropertyAtlas — Newsroom">
       <span class="ed-mast-brand-mark" aria-hidden="true">PA</span>
       <span class="ed-mast-brand-word">Property<em>Atlas</em></span>
     </a>
     <nav class="ed-mast-nav" aria-label="Primary">
-      <a href="./landing_v1.html" class="ed-mast-nav-link">Newsroom</a>
+      <a href="./" class="ed-mast-nav-link">Newsroom</a>
       <a href="./" class="ed-mast-nav-link" data-ed-tab="overview">Market Pulse</a>
       <a href="./#analytics" class="ed-mast-nav-link" data-ed-tab="analytics">Analytics</a>
       <a href="./#transactions" class="ed-mast-nav-link" data-ed-tab="transactions">Transactions</a>
@@ -720,21 +1674,24 @@ body.article-takeover .ed-foot{display:none!important}
 </header>
 
 <div class="navtabs">
-  <div class="navtab on" data-tab="overview"><span class="navtab-icon">📊</span>Market Pulse</div>
+  <!-- v48.20s: PUBLIC tabs (always visible to all visitors). Tier-login & masking applies inside each tool. -->
+  <div class="navtab on" data-tab="news"><span class="navtab-icon">📰</span>Newsroom</div>
+  <div class="navtab" data-tab="overview"><span class="navtab-icon">📊</span>Market Pulse</div>
   <div class="navtab" data-tab="transactions"><span class="navtab-icon">💹</span>Transactions</div>
   <div class="navtab" data-tab="analytics"><span class="navtab-icon">📈</span>Analytics</div>
-  <div class="navtab" data-tab="directory"><span class="navtab-icon">🏢</span>Directory</div>
-  <div class="navtab" data-tab="pipeline"><span class="navtab-icon">🔭</span>Pipeline</div>
-  <div class="navtab" data-tab="assetdir" style="display:flex;align-items:center;gap:6px">
+  <!-- v48.20s: HIDDEN tabs (visible only when body.dev-mode active — visit /#dev to unlock). -->
+  <div class="navtab navtab-hidden" data-tab="directory"><span class="navtab-icon">🏢</span>Directory</div>
+  <div class="navtab navtab-hidden" data-tab="pipeline"><span class="navtab-icon">🔭</span>Pipeline</div>
+  <div class="navtab navtab-hidden" data-tab="assetdir" style="display:flex;align-items:center;gap:6px">
     <span class="navtab-icon">🗂</span>Asset Directory
   </div>
-  <div class="navtab" data-tab="talent" style="display:flex;align-items:center;gap:6px">
+  <div class="navtab navtab-hidden" data-tab="talent" style="display:flex;align-items:center;gap:6px">
     <span class="navtab-icon">👤</span>Human Capital
   </div>
-  <div class="navtab" data-tab="forsale" style="display:flex;align-items:center;gap:6px">
+  <div class="navtab navtab-hidden" data-tab="forsale" style="display:flex;align-items:center;gap:6px">
     <span class="navtab-icon">🏗</span>Stock
   </div>
-  <div class="navtab" data-tab="pulse" style="display:flex;align-items:center;gap:6px">
+  <div class="navtab navtab-hidden" data-tab="pulse" style="display:flex;align-items:center;gap:6px">
     <span class="navtab-icon">📡</span>Corporate Watch
   </div>
 </div>
@@ -1557,27 +2514,425 @@ body.article-takeover .ed-foot{display:none!important}
   </div>
 
     <div class="panel" id="tab-news">
-    <div class="newsroom-header">
-      <div>
-        <div class="newsroom-title">Newsroom</div>
-        <div class="nr-count" id="nr-count"></div>
-      </div>
-      <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap">
-        <div class="newsroom-search">
-          <span class="srch-icon">🔍</span>
-          <input type="text" id="nr-search" placeholder="Search articles…" oninput="renderNewsroom()">
-        </div>
-        <button id="nl-subscribe-btn" onclick="nlSubOpen('newsroom')" class="nl-subscribe-btn" title="Subscribe to the PropertyAtlas newsroom">
-          <span style="font-size:13px;line-height:1">✉</span>
-          <span>Subscribe</span>
-        </button>
-      </div>
+    <!-- v48.20s: Editorial publication front ported from landing_v1.html -->
+<!-- =========================================================
+     DATE STRIP
+     Renders the publish date of the latest article (NEWS hero).
+     Edit data-pub-date when a newer article is shipped, OR set to
+     "today" to fall back to today's local SGT date.
+     ========================================================= -->
+<div class="datestrip" role="presentation" data-pub-date="2026-05-04">
+  <div class="wrap datestrip-inner">
+    <div class="datestrip-left" id="datestrip-left">— · — · Singapore</div>
+  </div>
+</div>
+
+<script>
+(function () {
+  // Render publish date in "Friday · 24 April 2026 · Singapore" form.
+  // Source: data-pub-date attribute on .datestrip (ISO yyyy-mm-dd) or "today".
+  var strip = document.querySelector('.datestrip');
+  var raw = strip && strip.getAttribute('data-pub-date');
+  var d;
+  if (!raw || raw === 'today') {
+    d = new Date();
+  } else {
+    // Parse as a calendar date (no timezone shift surprise)
+    var parts = raw.split('-');
+    d = new Date(+parts[0], +parts[1] - 1, +parts[2]);
+  }
+  if (!d || isNaN(d.getTime())) return;
+  var days = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
+  var months = ['January','February','March','April','May','June',
+                'July','August','September','October','November','December'];
+  var s = days[d.getDay()] + ' · ' + d.getDate() + ' ' + months[d.getMonth()] +
+          ' ' + d.getFullYear() + ' · Singapore';
+  var el = document.getElementById('datestrip-left');
+  if (el) el.textContent = s;
+})();
+</script>
+
+<!-- =========================================================
+     CATEGORY CHIP FILTER — DEFERRED TO W2
+     Built and removed during v48.13e weekend session.
+     Reason: at 69 entries, NEWS data distribution is too lopsided
+     for category-level navigation to add value (45 Commercial of
+     63 categorised, 1 Healthcare, 1 Retail, 0 Digital, 0 Developers).
+     A chip filter where most chips return 0-1 results is worse than
+     no filter. Reactivate when archive reaches ~200+ entries with
+     more even category spread.
+
+     When reactivated, the multi-tag schema is:
+       data-tags="commercial,retail"  ← space- or comma-separated
+     on hero / .card / .feed-row elements. JS does membership
+     testing not equality. Empty-states use data-empty-for="cards"
+     or data-empty-for="feed". Implementation lives in commit history
+     of this file (between v48.13e session and W2 reactivation).
+
+     Entity-level search (CICT, ESR, etc.) is reserved as a
+     dashboard-only feature per v48.13e signup-conversion strategy.
+     Do NOT add entity search to the landing page.
+     ========================================================= -->
+
+<!-- =========================================================
+     HERO ARTICLE
+     Promoted from cascade: NEWS id 84 — Far East Hospitality Trust 1Q
+     2026 Business Update (PropertyAtlas publication date 4 May 2026,
+     deck dated 30 April 2026). v48.20l cascade: id 83 CDLHT demoted
+     from hero to card 1, id 82 Starhill to card 2, id 81 Landmark to
+     card 3, id 80 SERT promoted from card 3 to feed top, id 75 CLAS
+     drops off bottom of feed per L166 three-tier cascade.
+
+     Publication date convention (L171, 4 May 2026): the date displayed
+     here and in the article meta is the PropertyAtlas publish date,
+     not the underlying source-deck release date.
+     ========================================================= -->
+<main id="newsroom">
+<section class="hero" aria-labelledby="hero-h">
+  <div class="wrap hero-grid">
+
+    <!-- Image — Phase 1 GitHub Pages photo pipeline.
+         id:84 FEHT hero — Oasia Hotel Downtown, the green-clad façade
+         at 100 Peck Seah Street, Tanjong Pagar. Award-winning
+         design hotel anchoring FEHT's Singapore Upscale segment;
+         314 keys, leasehold to 2082. The Singapore portfolio
+         delivered occupancy +5.2pp to 84.2% on Airshow + Hari Raya
+         tailwinds, but ADR -3.9% to S$165 — the rate-vs-occupancy
+         trade-off is the cleanest read in the quarter. -->
+    <!-- Image column: photo + credit live together as one grid cell.
+         Placing them as separate grid siblings caused credit to land in
+         column 2 row 2 (top-right of headline) — Lesson 128 captured. -->
+    <div class="hero-image-col">
+      <a class="hero-image" href="./?article=84&amp;from=landing" aria-label="Read the full entry: Far East Hospitality Trust 1Q 2026 analysis">
+        <img src="./images/news_84_feht_oasia_hotel_downtown.jpg"
+             alt="Oasia Hotel Downtown, Singapore — Far East Hospitality Trust 1Q 2026 hero asset, the green-clad façade at Tanjong Pagar anchoring the Singapore Upscale segment"
+             class="hero-image-photo"
+             loading="eager"
+             fetchpriority="high" />
+      </a>
+
+      <p class="hero-credit">Oasia Hotel Downtown, Singapore. Photo: Far East Hospitality Trust</p>
     </div>
-    <div class="nr-cats" id="nr-cats"></div>
-    <div id="nr-hero-wrap"></div>
-    <div id="nr-divider-wrap"></div>
-    <div class="nr-grid" id="nr-grid"></div>
-    <div id="nr-pending-wrap"></div>
+
+    <!-- Text column -->
+    <div class="hero-text">
+      <div class="hero-eyebrow">
+        <span class="pill">Latest</span>
+        <span class="cat-tag">Hospitality</span>
+        <span class="cat-tag">Earnings · REIT Update · Quarterly · Hospitality · Multi-Geography · Capital Management</span>
+      </div>
+
+      <h1 id="hero-h" class="hero-headline">
+        <a href="./?article=84&amp;from=landing">Far East H-Trust 1Q 2026: 84.2% Occupancy, but ADR -3.9% Underneath — Japan FPN +26.6% GOP, WACD Drops to 2.3%</a>
+      </h1>
+
+      <p class="hero-teaser">
+        Far East Hospitality Trust 1Q 2026 (quarter ended 31 March
+        2026, reported 30 April 2026) printed gross revenue +11.3%
+        to S$28.1M and income available for distribution +12.2% to
+        S$17.9M — but the operational picture is more nuanced than
+        the headlines suggest. Singapore hotel occupancy jumped 5.2
+        percentage points to 84.2% on the back of the biennial
+        Singapore Airshow and an earlier Hari Raya, yet ADR fell
+        3.9% to S$165 — RevPAR grew just 2.5%, with the trade-off
+        between occupancy and rate the cleanest read in the
+        quarter. The Japan FPN acquisition delivered its first full
+        comparable quarter with RevPAR +10.8% and GOP +26.6%,
+        validating the diversification thesis flagged in the FY2025
+        update. Average cost of debt compressed a further 80bps
+        from year-end to 2.3% — doing most of the heavy lifting on
+        the +12.2% distribution growth.
+      </p>
+
+      <div class="hero-meta">
+        <span>4 May 2026</span>
+        <span class="sep">·</span>
+        <span>1,888 words</span>
+        <span class="sep">·</span>
+        <span>9 min read</span>
+      </div>
+
+      <a class="btn-primary" href="./?article=84&amp;from=landing">
+        Read the full entry
+        <span class="arrow" aria-hidden="true">→</span>
+      </a>
+    </div>
+
+  </div>
+</section>
+
+<!-- =========================================================
+     DASHBOARD CTA STRIP
+     Sits between hero and "More from this week" 3-card row.
+     v48.13e Section B locked placement.
+
+     Numbers in the body copy are CURRENT-STATE (24 Apr 2026):
+       - 81,946 transactions
+       - 922 properties tracked
+       - 52 REITs and developers
+     Update when dashboard counters tick over. Future enhancement:
+     read these from the same data source as the dashboard hero.
+
+     Copy promotes entity search as a dashboard-only feature
+     (the keyword "filter by entity" is a deliberate signal that
+     entity-level search is not available on the public landing
+     page — reserved as a signup-conversion lever).
+     ========================================================= -->
+<aside class="cta-strip" aria-label="Dashboard upgrade">
+  <div class="wrap cta-strip-inner">
+    <div class="cta-text">
+      <p class="cta-eyebrow">The Dashboard</p>
+      <p class="cta-body">Beyond the newsroom: search <strong>81,946 transactions</strong> across <strong>922 properties</strong> and <strong>52 REITs and developers</strong> — filter by entity, date, segment. Free with signup.</p>
+    </div>
+    <a class="btn-bronze" href="./?signin=1">
+      Sign up free
+      <span class="arrow" aria-hidden="true">→</span>
+    </a>
+  </div>
+</aside>
+
+<!-- =========================================================
+     MORE FROM THIS WEEK — 3-card row
+     Cards seeded with NEWS ids 80, 79, 78 — cascaded one slot down
+     after Starhill (id 82) promoted to hero in v48.20h cascade.
+     MIT id 78 drops to feed top; FCT (id 73) drops off bottom
+     of feed.
+     display_title and display_teaser are short variants for
+     landing-page rendering; full title preserved in NEWS array
+     for article-page H1. Per v48.13e schema convention.
+
+     Read-time placeholders are sourced from each entry's wordCount/
+     minRead fields where available.
+     ========================================================= -->
+<section class="week" aria-labelledby="week-h">
+  <div class="wrap">
+    <div class="week-head">
+      <h2 id="week-h" class="week-title">More from this week</h2>
+      <div class="week-meta">Updated 4 May 2026</div>
+    </div>
+
+    <div class="cards">
+
+      <!-- Card 1 — id 83 CDLHT (cascaded from hero in v48.20l FEHT cascade) -->
+      <a class="card" href="./?article=83&amp;from=landing">
+        <div class="card-image">
+          <img src="./images/news_83_cdlht_w_sentosa.jpg"
+               alt="W Singapore – Sentosa Cove pool deck and façade — CDL Hospitality Trusts 1Q 2026 hero asset, Singapore Hotels portfolio anchor"
+               class="card-image-photo"
+               loading="lazy" />
+        </div>
+        <p class="card-credit">W Singapore – Sentosa Cove. Photo: CDL Hospitality Trusts</p>
+        <p class="card-cat">Hospitality</p>
+        <h3 class="card-headline">CDLHT 1Q 2026: Singapore Strength Funds The Geographic Drag, Capital Stack Re-Rated To 2.8% / 35.3% Gearing — But Maldives And Japan Mark The Real Geopolitical Exposure</h3>
+        <p class="card-teaser">Singapore Hotels delivered NPI +5.9% on Airshow-driven RevPAR S$184 (+6.6%) — the optical headline. The structural read is two independent geopolitical drags: Maldives NPI −26.3%, Japan NPI −10.3%. UK Living Assets NPI +68.8% doing stability work; S$250M perpetual issuance dropped WACD to 2.8% / gearing to 35.3%.</p>
+        <p class="card-meta">
+          <span>4 May 2026</span>
+          <span class="sep">·</span>
+          <span>11 min read</span>
+        </p>
+      </a>
+
+      <!-- Card 2 — id 82 Starhill (cascaded from card 1 in v48.20l FEHT cascade) -->
+      <a class="card" href="./?article=82&amp;from=landing">
+        <div class="card-image">
+          <img src="./images/news_82_starhill_ngee_ann_city.jpg"
+               alt="Ngee Ann City, Singapore — Starhill Global REIT 3Q FY25/26 flagship asset, home of the Toshin master lease (2043 expiry, June 2028 next rent review)"
+               class="card-image-photo"
+               loading="lazy" />
+        </div>
+        <p class="card-credit">Ngee Ann City, Singapore. Photo: Starhill Global REIT</p>
+        <p class="card-cat">Commercial</p>
+        <h3 class="card-headline">Starhill Global 3Q FY25/26: Master Lease Moat Now 54.3% Of GRI, Toshin Renewed To 2043 With June 2028 Rent Review — Reported NPI Flat But +1.2% Ex-Divestment, Three Step-Up Catalysts Through Mid-2028</h3>
+        <p class="card-teaser">The 0.0% NPI print is the master-lease structure working as designed — 54.3% of GRI on contracted step-ups means the trough between reviews looks flat, while three forward catalysts (David Jones Perth Aug 2026, Wisma Atria façade mid-2026, Toshin June 2028) anchor the FY26/27-FY28/29 income line.</p>
+        <p class="card-meta">
+          <span>3 May 2026</span>
+          <span class="sep">·</span>
+          <span>11 min read</span>
+        </p>
+      </a>
+
+      <!-- Card 3 — id 81 Landmark (cascaded from card 2 in v48.20l FEHT cascade) -->
+      <a class="card" href="./?article=81&amp;from=landing">
+        <div class="card-image">
+          <img src="./images/news_81_landmark_sun_plaza.jpg"
+               alt="Sun Plaza, Medan, North Sumatera — Landmark REIT 1Q 2026 flagship asset (Rp2,944.4bn, 98.6% occupancy)"
+               class="card-image-photo"
+               loading="lazy" />
+        </div>
+        <p class="card-credit">Sun Plaza, Medan, North Sumatera. Photo: Landmark REIT (formerly Lippo Malls Indonesia Retail Trust)</p>
+        <p class="card-cat">Commercial</p>
+        <h3 class="card-headline">Landmark REIT 1Q 2026: Rebrand From LMIRT Lands With +13.6% IDR Rental Growth, 87.5% Occupancy, Gearing Down To 40.22% — But Distribution Suspension Continues For 7th Consecutive Cessation On 2016 Perpetuals</h3>
+        <p class="card-teaser">Operating recovery is real (NPI +15.6% IDR, occupancy 9pp above industry, 70% of malls above 85%), the rights issue cleaned the balance sheet (gearing −332bps to 40.22%, US$22.6m 2026 Notes redeemed) — but distributions stay suspended for Unitholders and both perpetual tranches pending further cashflow improvement.</p>
+        <p class="card-meta">
+          <span>2 May 2026</span>
+          <span class="sep">·</span>
+          <span>11 min read</span>
+        </p>
+      </a>
+
+    </div>
+  </div>
+</section>
+
+<!-- =========================================================
+     EARLIER THIS MONTH — feed rows
+     Currently rows id 78-74 after v48.20h Starhill cascade: MIT (id 78)
+     demoted from card 3 with Starhill (id 82) hero promotion;
+     FCT (id 73) drops off the bottom.
+     Compact rows: 160px thumbnail (desktop), 80px (mobile).
+
+     Future enhancement: group rows by week or month sub-header
+     once archive grows. Per v48.13e Section B "groupable by month".
+     ========================================================= -->
+<section class="feed" aria-labelledby="feed-h">
+  <div class="wrap">
+    <div class="feed-head">
+      <h2 id="feed-h" class="feed-title">Recent coverage</h2>
+    </div>
+
+    <div class="feed-list">
+
+      <div class="feed-month">May 2026</div>
+
+      <!-- Row id 80 — SERT (cascaded from card 3 in v48.20l FEHT cascade).
+           Photo retained per L144 — entry has news_80_stoneweg_kingsland.jpg on GitHub. -->
+      <a class="feed-row" href="./?article=80&amp;from=landing">
+        <div class="feed-row-image-col">
+          <div class="feed-row-image">
+            <img src="./images/news_80_stoneweg_kingsland.jpg"
+                 alt="Kingsland 21, Spennymoor, UK — SERT 1Q 2026 logistics / light industrial portfolio anchor"
+                 class="feed-row-image-photo"
+                 loading="lazy" />
+          </div>
+          <p class="feed-row-credit">Kingsland 21, Spennymoor, UK. Photo: Stoneweg Europe Stapled Trust</p>
+        </div>
+        <div class="feed-row-text">
+          <p class="feed-row-cat">Industrial</p>
+          <h3 class="feed-row-headline">SERT 1Q 2026: +1.5% DPS Growth, +41% AiOnX Revaluation, €85M Redeployed In One Quarter, 15%-25% Data Centre Allocation Target By FY2028 — At 0.78x P/NAV And 8.6% Yield</h3>
+          <p class="feed-row-teaser">Reported NPI down 1.3% on completed 2025 divestments — but like-for-like NPI is up 2.3%, the original €50m AiOnX equity stake has been written up 41% inside twelve months, €85m was redeployed in 1Q at a 6.7% blended yield, and the data centre allocation target has been hardened to 15%–25% by FY2028.</p>
+          <p class="feed-row-meta">
+            <span>2 May 2026</span>
+            <span class="sep">·</span>
+            <span>11 min read</span>
+          </p>
+        </div>
+      </a>
+
+      <!-- Row id 79 — IREIT (cascaded from feed row 1 in v48.20l FEHT cascade).
+           Photo retained per L144 — entry has news_79_ireit_berlin_campus.jpg on GitHub. -->
+      <a class="feed-row" href="./?article=79&amp;from=landing">
+        <div class="feed-row-image-col">
+          <div class="feed-row-image">
+            <img src="./images/news_79_ireit_berlin_campus.jpg"
+                 alt="Berlin Campus, Germany — IREIT 1Q2026 repositioning + German refi cost step"
+                 class="feed-row-image-photo"
+                 loading="lazy" />
+          </div>
+          <p class="feed-row-credit">Berlin Campus, Germany. Photo: IREIT Global</p>
+        </div>
+        <div class="feed-row-text">
+          <p class="feed-row-cat">Commercial</p>
+          <h3 class="feed-row-headline">IREIT 1Q2026: Darmstadt Letting Traction Lands, German Refi Cost Hits 4.1%, Berlin Phase 2 Anchor Decision By 3Q2026</h3>
+          <p class="feed-row-teaser">Portfolio committed occupancy lifts to 92.2% ex-Berlin on three new Darmstadt leases (c.9,070 sqm, 8.3-year WAULT) — operationally the cleanest quarter the German book has had in years. Weighted average interest rate stepped from 2.8% to 4.1% on the Oct-2025 German refi swaps, ICR dropped to 2.3x, Berlin Phase 2 anchor decision targeted by 3Q2026.</p>
+          <p class="feed-row-meta">
+            <span>1 May 2026</span>
+            <span class="sep">·</span>
+            <span>9 min read</span>
+          </p>
+        </div>
+      </a>
+
+      <div class="feed-month">April 2026</div>
+
+      <!-- Row id 78 — MIT (cascaded from feed row 2 in v48.20l FEHT cascade).
+           Photo retained per L144 — entry has news_78_mit_toa_payoh_north_1.jpg on GitHub. -->
+      <a class="feed-row" href="./?article=78&amp;from=landing">
+        <div class="feed-row-image-col">
+          <div class="feed-row-image">
+            <img src="./images/news_78_mit_toa_payoh_north_1.jpg"
+                 alt="Toa Payoh North 1, Singapore — MIT 4Q & FY25/26 SG portfolio compounding through divestment + DC softness"
+                 class="feed-row-image-photo"
+                 loading="lazy" />
+          </div>
+          <p class="feed-row-credit">Toa Payoh North 1, Singapore. Photo: Mapletree Industrial Trust</p>
+        </div>
+        <div class="feed-row-text">
+          <p class="feed-row-cat">Industrial</p>
+          <h3 class="feed-row-headline">MIT 4Q & FY25/26: Singapore Compounding Quietly At +6.2% Reversions, S$535.3M Divestment Lands +22.1% Above Cost — But North American Data Centre Cracks Are Widening And Two May 2026 Non-Renewals Are On The Cards</h3>
+          <p class="feed-row-teaser">Three SG flatted-factory clusters divested 15 Aug 2025 at +22.1% above original cost. Singapore retained book compounding cleanly: 93.4% occupancy, +6.2% rental reversion, 84.7% tenant retention. North America DC occupancy 86.1% (down from 87.5%), AT&amp;T San Diego and Global Colocation Hawthorne flagged for May 2026 non-renewal.</p>
+          <p class="feed-row-meta">
+            <span>28 April 2026</span>
+            <span class="sep">·</span>
+            <span>11 min read</span>
+          </p>
+        </div>
+      </a>
+
+      <!-- Row id 77 — MPACT (cascaded from feed row 3 in v48.20l FEHT cascade).
+           Photo retained per L144 — entry has news_77_mpact_vivocity.jpg on GitHub. -->
+      <a class="feed-row" href="./?article=77&amp;from=landing">
+        <div class="feed-row-image-col">
+          <div class="feed-row-image">
+            <img src="./images/news_77_mpact_vivocity.jpg"
+                 alt="VivoCity Singapore — MPACT FY25/26 reshaping toward Singapore anchor"
+                 class="feed-row-image-photo"
+                 loading="lazy" />
+          </div>
+          <p class="feed-row-credit">VivoCity, Singapore. Photo: Mapletree Pan Asia Commercial Trust</p>
+        </div>
+        <div class="feed-row-text">
+          <p class="feed-row-cat">Commercial</p>
+          <h3 class="feed-row-headline">MPACT FY25/26: VivoCity Compounding +5.0% Reversions, S$1.05B Office Disposals, Hong Kong Reshaping Quietly Into Singapore Anchor — But North America DC Cracks Are The Open Risk</h3>
+          <p class="feed-row-teaser">VivoCity rental reversion +5.0%, FY25/26 occupancy 99.5%; Hong Kong fell from 41% of revenue to 27% post-disposal; pro-forma gearing 36.4% versus 39.6% reported. The portfolio is reshaping cleanly toward Singapore — and the question becomes whether that pivot can absorb FY27 retail supply.</p>
+          <p class="feed-row-meta">
+            <span>28 April 2026</span>
+            <span class="sep">·</span>
+            <span>10 min read</span>
+          </p>
+        </div>
+      </a>
+
+      <!-- Row id 76 — CLAR (cascaded from feed row 4 in v48.20l FEHT cascade).
+           Photo retained per L144 — entry has news_76_clar_changi.jpg on GitHub. -->
+      <a class="feed-row" href="./?article=76&amp;from=landing">
+        <div class="feed-row-image-col">
+          <div class="feed-row-image">
+            <img src="./images/news_76_clar_changi.jpg"
+                 alt="Changi Logistics Centre, Singapore — CLAR 1Q 2026 logistics + business space portfolio"
+                 class="feed-row-image-photo"
+                 loading="lazy" />
+          </div>
+          <p class="feed-row-credit">Changi Logistics Centre, Singapore. Photo: CapitaLand Ascendas REIT</p>
+        </div>
+        <div class="feed-row-text">
+          <p class="feed-row-cat">Industrial</p>
+          <h3 class="feed-row-headline">CLAR 1Q 2026: Reversions +14.6% Headline Mask The Singapore +12.3% / US -3.5% Geographic Bifurcation; Welwyn Garden City Acquisition + S$220M Aperia Redevelopment Lock In Forward Pipeline</h3>
+          <p class="feed-row-teaser">Headline rental reversion +14.6% portfolio-wide masks a sharper geographic split: Singapore +12.3%, Australia +21.0%, UK/Europe +8.6%, US -3.5%. Aperia Singapore S$220M redevelopment + Welwyn Garden City UK acquisition lock the forward pipeline; +14.6% reversion + 92.6% occupancy + 38.0% gearing.</p>
+          <p class="feed-row-meta">
+            <span>27 April 2026</span>
+            <span class="sep">·</span>
+            <span>10 min read</span>
+          </p>
+        </div>
+      </a>
+
+      <!-- Row id 69 First REIT dropped off in v48.17 cascade; Row id 70 ESR-REIT dropped off in v48.20b cascade for id:79 IREIT hero; Row id 71 CICT dropped off in v48.20d cascade for id:80 Stoneweg hero; Row id 72 Elite UK dropped off in v48.20d second drop for id:81 Landmark hero; Row id 73 FCT dropped off in v48.20h cascade for id:82 Starhill hero; Row id 74 Suntec dropped off in v48.20k cascade for id:83 CDLHT hero; Row id 75 CLAS dropped off in v48.20l cascade for id:84 FEHT hero -->
+
+    </div>
+
+    <!-- Browse the archive link (centered) -->
+    <div class="see-all">
+      <a href="./#newsroom">
+        Browse the archive
+        <span class="arrow" aria-hidden="true">→</span>
+      </a>
+    </div>
+
+  </div>
+</section>
+
+</main>
+
   </div>
 
   <div class="panel" id="tab-transactions">
@@ -13084,15 +14439,15 @@ function atlasShowTab(tab) {
 // ─── INITIAL PANEL STATE ─────────────────────────────────────────────────────
 // Set display states explicitly so tab switching never depends on CSS class inheritance.
 (function initPanelDisplay(){
-  var initial = "overview";
+  var initial = "news";  /* v48.20s: Newsroom is now the default tab */
   Object.entries(ATLAS_TAB_MAP).forEach(function(entry){
     var tab = entry[0], id = entry[1];
     var el = document.getElementById(id);
     if(!el) return;
     el.style.display = (tab === initial) ? "block" : "none";
   });
-  // Mark overview nav tab as active
-  var navBtn = document.querySelector(".navtab[data-tab='overview']");
+  // v48.20s: Mark Newsroom (data-tab='news') as active by default
+  var navBtn = document.querySelector(".navtab[data-tab='news']");
   if(navBtn){
     document.querySelectorAll(".navtab").forEach(function(x){ x.classList.remove("on"); });
     navBtn.classList.add("on");
@@ -24418,16 +25773,15 @@ html.article-takeover .ed-article-page,body.article-takeover .ed-article-page{di
   }
 })();
 
-// v48.20q: #newsroom hash is now a redirect to landing_v1.html.
-// Newsroom is no longer a tab inside the dashboard — it's a sister surface
-// at /dashboard/landing_v1.html (the publication front). Old links (e.g.
-// from emails, LinkedIn, the article-detail page's "Back to Newsroom"
-// button) using /dashboard/#newsroom continue to work via this redirect.
+// v48.20s: #newsroom hash now activates the in-page Newsroom tab
+// (one-site model — Newsroom is the dashboard's first tab, not a sister surface).
+// Old deep-links from emails/LinkedIn/article-back continue to work.
 (function atlasNewsroomHash(){
   function handleNewsroomHash(){
     try {
       if(window.location.hash !== '#newsroom') return;
-      window.location.replace('./landing_v1.html');
+      var navBtn = document.querySelector('.navtab[data-tab="news"]');
+      if(navBtn) navBtn.click();
     } catch(e) { /* defensive */ }
   }
   if(document.readyState === 'loading'){
@@ -24492,7 +25846,7 @@ html.article-takeover .ed-article-page,body.article-takeover .ed-article-page{di
   // We capture once on the very first article-page mount. In-page navigations
   // (e.g. clicking a related article) shouldn't overwrite the original entry.
   var entryPoint = null;
-  var LANDING_URL = './landing_v1.html';
+  var LANDING_URL = './';  /* v48.20s: landing is now the dashboard root */
   function captureEntryPointOnce(){
     if(entryPoint !== null) return;
     try {
