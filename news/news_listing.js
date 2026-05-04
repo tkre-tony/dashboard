@@ -1,5 +1,27 @@
 var NEWS_LISTING = [
 {
+    "id": 84,
+    "date": "2026-05-04",
+    "title": "Far East Hospitality Trust 1Q 2026: Singapore Hotels Hit 84.2% Occupancy On Airshow + Hari Raya, But ADR Slips 3.9% As RevPAR Grows Just 2.5%; Japan FPN Delivers First Full Comparable Quarter With RevPAR +10.8% And GOP +26.6%; WACD Compresses Further To 2.3% Driving Distributable Income +12.2% Despite NPI Growth Of Just +3.4%",
+    "slug": "feht-1q-2026-occupancy-up-adr-down-japan-validates",
+    "meta_description": "Far East Hospitality Trust 1Q 2026: Singapore occupancy 84.2% on Airshow + Hari Raya but ADR -3.9%; Japan FPN +26.6% GOP; WACD 2.3% drives DPU +12.2%.",
+    "og_image": "https://propertyatlas.sg/dashboard/images/news_84_feht_oasia_hotel_downtown.jpg",
+    "keywords": "Far East Hospitality Trust, FEHT, Far East H-Trust, hospitality REIT, Singapore REIT, Oasia Hotel Downtown, Four Points by Sheraton Nagoya, FPN, Chubu International Airport, Singapore Airshow 2026, Hari Raya, Japan F1 Grand Prix, Orchard Rendezvous Hotel, Singapore Martini Club, Vibe Hotel Singapore Orchard, Rooh, Dario Knox, WACD compression, JPY loan, Far East Organization, REIT earnings 1Q 2026",
+    "display_title": "Far East H-Trust 1Q 2026: 84.2% Occupancy, but ADR -3.9% Underneath — Japan FPN +26.6% GOP, WACD Drops to 2.3%",
+    "display_headline": "Far East H-Trust 1Q 2026: Occupancy Climbs to 84.2% on Event-Driven Demand, but Singapore ADR -3.9% Underneath; Japan FPN's First Full Quarter Lifts Group RevPAR, While WACD Compression to 2.3% Drives DPU Income +12.2%",
+    "standfirst": "Gross revenue rose 11.3% YoY to S$28.1M and income available for distribution gained 12.2% to S$17.9M, but the operational picture is more nuanced than the headlines suggest. Singapore hotel occupancy jumped 5.2 percentage points to 84.2% on the back of the biennial Singapore Airshow and an earlier Hari Raya, yet ADR fell 3.9% to S$165 — RevPAR grew just 2.5%, with the trade-off between occupancy and rate the cleanest read in the quarter. The Japan FPN acquisition delivered its first full comparable quarter with RevPAR +10.8% and GOP +26.6%, validating the diversification thesis flagged in the FY2025 update, while average cost of debt compressed a further 80bps from year-end to 2.3% — doing most of the heavy lifting on the distribution growth.",
+    "byline": "PropertyAtlas",
+    "read_time_min": 9,
+    "word_count": 1888,
+    "image": "images/news_84_feht_oasia_hotel_downtown.jpg",
+    "imageCredit": "Far East Hospitality Trust",
+    "source": "PropertyAtlas.sg",
+    "category": "Hospitality",
+    "tag": "Earnings · REIT Update · Quarterly · Hospitality · Multi-Geography · Capital Management",
+    "sourceLabel": "PropertyAtlas.sg Analysis · Far East Hospitality Trust 1Q 2026 Business Update dated 30 April 2026",
+    "sentiment": "neutral"
+},
+{
     "id": 83,
     "date": "2026-05-04",
     "title": "CDL Hospitality Trusts 1Q 2026: Reported Revenue +5.9% To S$67.1M And NPI +10.4% To S$33.1M, Singapore Hotels NPI +5.9% On Airshow-Driven RevPAR +6.6% To S$184, Maldives NPI -26.3% And Japan NPI -10.3% On Independent Geopolitical Drags, UK Living Assets NPI +68.8% Doing The Stability Work, Capital Stack Re-Rated To 2.8% Cost Of Debt And 35.3% Gearing — Five Moves Beyond The Headline",
