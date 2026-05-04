@@ -200,6 +200,53 @@
   }
 
   /* ============================================================
+     DASHBOARD TAB STRIP — v48.20q
+     Visual mirror of the dashboard's .navtabs (in dashboard/index.html
+     line ~76). Same bg colour, same tab styling, same hover/active
+     treatment. Tabs are deep-links into the dashboard; the dashboard's
+     atlasPublicTabHashes IIFE picks up the hash on load and activates
+     the corresponding panel.
+     ============================================================ */
+  .dash-tabstrip {
+    display: flex;
+    background: #132848;
+    padding: 0 20px;
+    border-bottom: 2px solid rgba(255,255,255,.06);
+    gap: 0;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+  .dash-tab {
+    padding: 10px 15px;
+    font-size: 12px;
+    font-weight: 500;
+    color: rgba(255,255,255,.45);
+    cursor: pointer;
+    border-bottom: 2px solid transparent;
+    margin-bottom: -2px;
+    transition: all .15s;
+    letter-spacing: .01em;
+    white-space: nowrap;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    text-decoration: none;
+  }
+  .dash-tab:hover {
+    color: rgba(255,255,255,.8);
+    background: rgba(255,255,255,.04);
+  }
+  .dash-tab-icon {
+    font-size: 13px;
+    opacity: .7;
+  }
+  /* Mobile pass for dash-tabstrip */
+  @media (max-width: 760px) {
+    .dash-tabstrip { padding: 0 12px; }
+    .dash-tab { padding: 8px 11px; font-size: 11px; }
+  }
+
+  /* ============================================================
      HERO ARTICLE
      Desktop: 1.15 : 1 split (image | text)  · 16:9 image
      ============================================================ */
@@ -918,6 +965,27 @@
     </button>
   </div>
 </header>
+
+<!-- =========================================================
+     DASHBOARD TAB STRIP — v48.20q
+     Mirrors the 9-tab dashboard navtab strip (data-tab values
+     match dashboard/index.html). Each tab is a deep-link to
+     /dashboard/#[tab]; the dashboard's atlasPublicTabHashes
+     IIFE picks up the hash and activates the right panel.
+     Newsroom is NOT in this strip — it's a separate surface
+     (this page) reachable via the masthead.
+     ========================================================= -->
+<div class="dash-tabstrip" role="navigation" aria-label="Dashboard tools">
+  <a class="dash-tab" href="./#overview"><span class="dash-tab-icon">📊</span>Market Pulse</a>
+  <a class="dash-tab" href="./#transactions"><span class="dash-tab-icon">💹</span>Transactions</a>
+  <a class="dash-tab" href="./#analytics"><span class="dash-tab-icon">📈</span>Analytics</a>
+  <a class="dash-tab" href="./#directory"><span class="dash-tab-icon">🏢</span>Directory</a>
+  <a class="dash-tab" href="./#pipeline"><span class="dash-tab-icon">🔭</span>Pipeline</a>
+  <a class="dash-tab" href="./#assetdir"><span class="dash-tab-icon">🗂</span>Asset Directory</a>
+  <a class="dash-tab" href="./#talent"><span class="dash-tab-icon">👤</span>Human Capital</a>
+  <a class="dash-tab" href="./#forsale"><span class="dash-tab-icon">🏗</span>Stock</a>
+  <a class="dash-tab" href="./#pulse"><span class="dash-tab-icon">📡</span>Corporate Watch</a>
+</div>
 
 <!-- =========================================================
      DATE STRIP
