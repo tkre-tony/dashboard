@@ -25818,14 +25818,36 @@ html.article-takeover .ed-article-page,body.article-takeover .ed-article-page{di
 // which maps to data-tab="news"). Adding more public aliases later only
 // requires extending the PUBLIC_TAB_HASHES map.
 (function atlasPublicTabHashes(){
+  // PUBLIC: 3 always-visible tabs. Hash → data-tab activates on cold load.
   var PUBLIC_TAB_HASHES = {
     '#overview':     'overview',
     '#transactions': 'transactions',
     '#analytics':    'analytics'
   };
+  // HIDDEN: 6 dev-gated tabs. Hash → data-tab. Visiting one of these
+  // hashes also auto-applies sticky dev-mode (same effect as #dev), so
+  // the tab is both revealed and activated. Use #lock to re-hide.
+  var HIDDEN_TAB_HASHES = {
+    '#forsale':   'forsale',
+    '#directory': 'directory',
+    '#pipeline':  'pipeline',
+    '#assetdir':  'assetdir',
+    '#talent':    'talent',
+    '#pulse':     'pulse'
+  };
   function handlePublicTabHash(){
     try {
-      var tab = PUBLIC_TAB_HASHES[window.location.hash];
+      var h = window.location.hash;
+      var tab = PUBLIC_TAB_HASHES[h];
+      if(!tab){
+        tab = HIDDEN_TAB_HASHES[h];
+        if(tab){
+          // Hidden-tab deep-link: enable sticky dev-mode so the navtab
+          // is visible before .click() fires.
+          document.body.classList.add('dev-mode');
+          try { localStorage.setItem('atlas_dev_mode','1'); } catch(e){}
+        }
+      }
       if(!tab) return;
       var navBtn = document.querySelector('.navtab[data-tab="' + tab + '"]');
       if(navBtn) navBtn.click();
@@ -25836,6 +25858,9 @@ html.article-takeover .ed-article-page,body.article-takeover .ed-article-page{di
   } else {
     handlePublicTabHash();
   }
+  // Also handle hashchange so navigating from one tab-hash to another
+  // (e.g. user pastes a fresh URL or clicks an internal anchor) reruns.
+  window.addEventListener('hashchange', handlePublicTabHash);
 })();
 
 // v48.18 Day 2: full-bleed article page (?article=N takeover)
