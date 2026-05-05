@@ -3115,7 +3115,7 @@ body.article-takeover .ed-foot{display:none!important}
     <div style="background:linear-gradient(135deg,var(--hdr) 0%,var(--hdr3) 50%,#1a4a2e 100%);border-radius:8px;padding:20px 24px;margin-bottom:14px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;border:1px solid rgba(255,255,255,.06)">
       <div>
         <div style="color:#fff;font-size:16px;font-weight:700;letter-spacing:-.02em;margin-bottom:4px">🏢 Singapore REIT &amp; Developer Property Directory</div>
-        <div style="color:rgba(255,255,255,.5);font-size:11px;letter-spacing:.02em">AR-sourced · 49 entities · 1,345 entries · First-of-its-kind in Singapore</div>
+        <div id="reit-kpi-subline" style="color:rgba(255,255,255,.5);font-size:11px;letter-spacing:.02em">AR-sourced · First-of-its-kind in Singapore</div>
       </div>
       <div style="display:flex;gap:10px;flex-wrap:wrap">
         <div style="background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.2);border-radius:8px;padding:10px 16px;text-align:center">
@@ -3123,12 +3123,40 @@ body.article-takeover .ed-foot{display:none!important}
           <div style="font-size:10px;color:rgba(255,255,255,.6);text-transform:uppercase;letter-spacing:.06em;margin-top:2px">Properties</div>
         </div>
         <div style="background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.2);border-radius:8px;padding:10px 16px;text-align:center">
-          <div id="reit-kpi-reits" style="font-size:20px;font-weight:700;color:#fff;font-family:'DM Mono',monospace">10</div>
+          <div id="reit-kpi-reits" style="font-size:20px;font-weight:700;color:#fff;font-family:'DM Mono',monospace">—</div>
           <div style="font-size:10px;color:rgba(255,255,255,.6);text-transform:uppercase;letter-spacing:.06em;margin-top:2px">REITs</div>
         </div>
         <div style="background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.2);border-radius:8px;padding:10px 16px;text-align:center">
           <div style="font-size:20px;font-weight:700;color:#fff;font-family:'DM Mono',monospace">S$60B+</div>
           <div style="font-size:10px;color:rgba(255,255,255,.6);text-transform:uppercase;letter-spacing:.06em;margin-top:2px">Portfolio Value</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Entity Summary Panel — visible only when single entity selected via chip -->
+    <div id="reit-entity-summary" style="display:none;background:linear-gradient(135deg,#1e293b 0%,#1a2435 50%,#0f172a 100%);border:1px solid rgba(167,139,250,.25);border-radius:8px;padding:14px 18px;margin-bottom:14px;color:#e2e8f0">
+      <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:14px;flex-wrap:wrap">
+        <div style="flex:1;min-width:240px">
+          <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap">
+            <div id="res-name" style="font-size:15px;font-weight:700;color:#fff;letter-spacing:-.01em">—</div>
+            <span id="res-type-badge" style="font-size:9px;font-weight:700;background:rgba(167,139,250,.18);color:#c4b5fd;border:1px solid rgba(167,139,250,.35);border-radius:3px;padding:2px 7px;letter-spacing:.04em;text-transform:uppercase"></span>
+            <span id="res-fy-badge" style="font-size:9px;font-weight:700;background:rgba(74,222,128,.12);color:#4ade80;border:1px solid rgba(74,222,128,.3);border-radius:3px;padding:2px 7px;letter-spacing:.04em"></span>
+          </div>
+          <div id="res-overview-link" style="margin-top:6px;font-size:11px"></div>
+        </div>
+        <div style="display:flex;gap:10px;flex-wrap:wrap">
+          <div style="background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.12);border-radius:6px;padding:8px 12px;text-align:center;min-width:80px">
+            <div id="res-asset-count" style="font-size:18px;font-weight:700;color:#fff;font-family:'DM Mono',monospace">—</div>
+            <div style="font-size:9px;color:rgba(255,255,255,.55);text-transform:uppercase;letter-spacing:.06em;margin-top:2px">Assets</div>
+          </div>
+          <div style="background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.12);border-radius:6px;padding:8px 12px;text-align:center;min-width:120px">
+            <div id="res-val-sg" style="font-size:14px;font-weight:700;color:#fff;font-family:'DM Mono',monospace">—</div>
+            <div style="font-size:9px;color:rgba(255,255,255,.55);text-transform:uppercase;letter-spacing:.06em;margin-top:2px">🇸🇬 SG Portfolio</div>
+          </div>
+          <div style="background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.12);border-radius:6px;padding:8px 12px;text-align:center;min-width:120px">
+            <div id="res-val-ov" style="font-size:14px;font-weight:700;color:#fff;font-family:'DM Mono',monospace">—</div>
+            <div style="font-size:9px;color:rgba(255,255,255,.55);text-transform:uppercase;letter-spacing:.06em;margin-top:2px">🌏 Overseas</div>
+          </div>
         </div>
       </div>
     </div>
@@ -13377,7 +13405,7 @@ var TALENT_DATA = [
     rem_exact:null, rem_fixed:null, rem_bonus:null, rem_other:null,
     rem_note:'Private holding co — remuneration not disclosed in AR. New management appointment in FY2025.',
     rem_band:null, rem_pct_fixed:null, rem_pct_bonus:null, rem_pct_other:null,
-    rem_history:[],
+    rem_history:[],A
     edu:'Master of Science in Real Estate Development, Massachusetts Institute of Technology (USA); Bachelor of Engineering (First Class Honours), National University of Singapore',
     bio:'Head, Investment, Asset & Development Mgmt SG & Regional (excl. China) at Perennial Holdings (new appointment FY2025); responsible for investment, asset and development management of Perennial Holdings\' portfolio in Singapore and overseas markets (excl. China). Over 15 years experience in real estate across international markets and diverse sectors; led cross-border transactions and portfolio management covering US$10 billion in cumulative investments. Prior to Perennial Holdings, was Head of Investment and concurrently Head of Strategic Planning at Frasers Property Group\'s hospitality business — led implementation of investment strategies for North Asia, drove growth strategies into China and Japan premium rental apartments, divested non-core assets across Singapore/Australia/UK.',
     prev_roles:[
@@ -20499,6 +20527,80 @@ function reitSearch(page){
 
   document.getElementById('reit-kpi-props').textContent = filtered.length;
   document.getElementById('reit-count').textContent = filtered.length + ' properties';
+
+  // ── Subtitle: canonical brand stat (total entries × distinct entities, both unfiltered)
+  var sublineEl = document.getElementById('reit-kpi-subline');
+  if(sublineEl){
+    var totalEntries = REIT_DATA.length;
+    var totalEntities = REIT_DATA.map(function(r){return r.entity;})
+      .filter(function(v,i,a){return a.indexOf(v)===i;}).length;
+    sublineEl.textContent = 'AR-sourced · '+totalEntities+' entities · '+totalEntries.toLocaleString()+' entries · First-of-its-kind in Singapore';
+  }
+
+  // ── REITs counter: distinct REIT-type entities in current filtered set
+  var reitsKpi = document.getElementById('reit-kpi-reits');
+  if(reitsKpi){
+    var reitEnts = filtered
+      .filter(function(r){var et=r.entity_type||''; return et==='REIT' || et==='Stapled REIT + Business Trust';})
+      .map(function(r){return r.entity;})
+      .filter(function(v,i,a){return a.indexOf(v)===i;});
+    reitsKpi.textContent = reitEnts.length;
+  }
+
+  // ── Entity summary panel: visible only when single entity is filter-selected
+  var resEl = document.getElementById('reit-entity-summary');
+  if(resEl){
+    var selectedEntity = reitActiveEntity || reitActiveDev || tblEntity || '';
+    if(selectedEntity){
+      // Compute against ALL rows for this entity (not just current filtered, which may be sliced by geo/asset)
+      var entRows = REIT_DATA.filter(function(r){return r.entity===selectedEntity;});
+      if(entRows.length){
+        var sgRows = entRows.filter(function(r){return r.country==='Singapore';});
+        var ovRows = entRows.filter(function(r){return r.country!=='Singapore';});
+        var sumVal = function(rows){
+          var s=0; var has=false;
+          rows.forEach(function(r){if(typeof r.val==='number'){s+=r.val;has=true;}});
+          return has ? s : null;
+        };
+        var sgVal = sumVal(sgRows);
+        var ovVal = sumVal(ovRows);
+        var fmt = function(v){return v==null?'—':'S$'+(v>=1000?(v/1000).toFixed(2)+'B':Math.round(v).toLocaleString()+'M');};
+        // Entity_type label (handle all casings)
+        var etRaw = (entRows[0].entity_type||'');
+        var etLabel = (etRaw==='DEV'||etRaw==='Dev'||etRaw==='Developer') ? 'Developer'
+                    : (etRaw==='REIT' ? 'REIT'
+                    : (etRaw==='Stapled REIT + Business Trust' ? 'Stapled Trust' : etRaw));
+        // Latest FY across rows
+        var fyYears = entRows.map(function(r){return r.ar_year||'';}).filter(function(v){return v;});
+        var latestFY = fyYears.sort().reverse()[0]||'';
+        // Group/Portfolio Overview row link if exists
+        var overviewRow = entRows.find(function(r){
+          return r.name && (r.name.indexOf('— GROUP OVERVIEW')>=0 || r.name.indexOf('— PORTFOLIO OVERVIEW')>=0 || r.name.indexOf('— PORTFOLIO')>=0);
+        });
+
+        document.getElementById('res-name').textContent = selectedEntity;
+        document.getElementById('res-type-badge').textContent = etLabel;
+        document.getElementById('res-fy-badge').textContent = latestFY;
+        document.getElementById('res-asset-count').textContent = entRows.length;
+        document.getElementById('res-val-sg').textContent = fmt(sgVal);
+        document.getElementById('res-val-ov').textContent = fmt(ovVal);
+
+        var ovLinkEl = document.getElementById('res-overview-link');
+        if(overviewRow){
+          var ovIdx = REIT_DATA.indexOf(overviewRow);
+          ovLinkEl.innerHTML = '<a href="javascript:void(0)" onclick="reitOpenDetail('+ovIdx+')" style="color:#a78bfa;text-decoration:none;font-weight:600">📋 View Group/Portfolio Overview &rarr;</a>';
+        } else {
+          ovLinkEl.innerHTML = '<span style="color:rgba(255,255,255,.4)">No portfolio overview row available for this entity</span>';
+        }
+        resEl.style.display = 'block';
+      } else {
+        resEl.style.display = 'none';
+      }
+    } else {
+      resEl.style.display = 'none';
+    }
+  }
+
   document.getElementById('reit-loading').style.display='none';
 
   var start = page * reitPageSize;
@@ -20529,7 +20631,8 @@ function reitSearch(page){
     var occ = p.occ ? p.occ.toFixed(1)+'%' : '\u2014';
     var val = p.val ? 'S$'+p.val.toLocaleString()+'M' : '\u2014';
     var assetKey = p.name.replace(/'/g,"\\'");
-    var isDev = p.entity_type==='DEV';
+    var et = (p.entity_type||'');
+    var isDev = (et==='DEV' || et==='Dev' || et==='Developer');
     var locLine = p.country==='Singapore'
       ? (p.addr+(p.area?' \u00b7 '+p.area:''))
       : (p.area ? p.area+', '+p.country : p.country);
