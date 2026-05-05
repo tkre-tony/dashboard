@@ -22800,12 +22800,18 @@ function invFillReitLatestSpans(){
     }
   } catch(e) { /* defensive */ }
 }
+// Belt-and-braces chip auto-fill: run on DOMContentLoaded AND on
+// short delays. The auth/onboarding flow can rewrite parts of the
+// inventory panel asynchronously, so a single registration is
+// insufficient. invFillReitLatestSpans is idempotent — safe to
+// call multiple times. invRender also calls it at the end of every
+// render as a final safety net.
 if(document.readyState === 'loading'){
   document.addEventListener('DOMContentLoaded', invFillReitLatestSpans);
-} else {
-  // Defer one tick so VACANCY_DATA / CLIFTON_VAC merge runs first.
-  setTimeout(invFillReitLatestSpans, 0);
 }
+setTimeout(invFillReitLatestSpans, 0);
+setTimeout(invFillReitLatestSpans, 100);
+setTimeout(invFillReitLatestSpans, 500);
 
 // ═══════════════════════════════════════════════════
 // VACANCY INVENTORY DATA
@@ -23353,12 +23359,16 @@ function cliftonRenderSale() {
 }
 
 function invRender() {
-  var q = (document.getElementById('inv-search').value||'').toLowerCase();
-  var zf = document.getElementById('inv-zone').value;
-  var cf = document.getElementById('inv-cluster').value;
-  var af = document.getElementById('inv-avail').value;
-  var sf = document.getElementById('inv-size').value;
-  var ff = document.getElementById('inv-fit').value;
+  // Filter reads — null-guarded. Any of these elements may be null if
+  // invRender is called before the inventory sub-view is fully rendered
+  // (e.g. from a hidden-tab deep-link landing during the auth flow).
+  function _v(id){ var el = document.getElementById(id); return el ? (el.value || '') : ''; }
+  var q  = _v('inv-search').toLowerCase();
+  var zf = _v('inv-zone');
+  var cf = _v('inv-cluster');
+  var af = _v('inv-avail');
+  var sf = _v('inv-size');
+  var ff = _v('inv-fit');
 
   var filtered = VACANCY_DATA.filter(function(d) {
     if(INV_REIT !== 'all' && d.reit !== INV_REIT) return false;
@@ -23514,6 +23524,10 @@ function invRender() {
       '</tr>';
     }).join('');
   }
+  // Re-fill REIT month chips every render. Idempotent and cheap;
+  // protects against panel rewrites or auth-flow timing that may
+  // overwrite chip text after our initial DOMContentLoaded run.
+  if(typeof invFillReitLatestSpans === 'function') invFillReitLatestSpans();
 }
 
 // Init on tab switch
