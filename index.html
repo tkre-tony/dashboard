@@ -3124,7 +3124,7 @@ body.article-takeover .ed-foot{display:none!important}
         </div>
         <div style="background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.2);border-radius:8px;padding:10px 16px;text-align:center">
           <div id="reit-kpi-reits" style="font-size:20px;font-weight:700;color:#fff;font-family:'DM Mono',monospace">—</div>
-          <div style="font-size:10px;color:rgba(255,255,255,.6);text-transform:uppercase;letter-spacing:.06em;margin-top:2px">REITs</div>
+          <div id="reit-kpi-reits-label" style="font-size:10px;color:rgba(255,255,255,.6);text-transform:uppercase;letter-spacing:.06em;margin-top:2px">REITs</div>
         </div>
         <div style="background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.2);border-radius:8px;padding:10px 16px;text-align:center">
           <div style="font-size:20px;font-weight:700;color:#fff;font-family:'DM Mono',monospace">S$60B+</div>
@@ -3237,57 +3237,18 @@ body.article-takeover .ed-foot{display:none!important}
       </div>
 
       <!-- Row 2: Entity chips (REITs + Developers combined, shown/hidden by entity toggle) -->
+      <!-- v48.21d-redo: chip rows are now data-driven from REIT_DATA via reitBuildChipRows().
+           Future entity additions auto-appear without HTML edits. The All button stays hardcoded
+           (it doesn't come from data); dynamic chips append to the span placeholder below. -->
       <div id="chip-reit-row" style="display:none;gap:6px;flex-wrap:wrap;align-items:center;margin-bottom:9px">
         <span class="fbar-label">REIT</span>
         <button class="dir-tbtn on" data-reitf="" onclick="reitSetFilter(this,'reit','')">All</button>
-        <button class="dir-tbtn" data-reitf="Acrophyte Hospitality Trust" onclick="reitSetFilter(this,'reit','Acrophyte Hospitality Trust')">Acrophyte HT <span style="color:#4ade80;font-size:8px">●</span></button>
-        <button class="dir-tbtn" data-reitf="AIMS APAC REIT" onclick="reitSetFilter(this,'reit','AIMS APAC REIT')">AIMS APAC <span style="color:#4ade80;font-size:8px">●</span></button>
-        <button class="dir-tbtn" data-reitf="Alpha Integrated REIT (former Sabana)" onclick="reitSetFilter(this,'reit','Alpha Integrated REIT (former Sabana)')">AI REIT <span style="color:#f59e0b;font-size:8px">●</span></button>
-        <button class="dir-tbtn" data-reitf="CapitaLand China Trust" onclick="reitSetFilter(this,'reit','CapitaLand China Trust')">CLCT <span style="color:#4ade80;font-size:8px">●</span></button>
-        <button class="dir-tbtn" data-reitf="CapitaLand Ascott Trust (CLAS)" onclick="reitSetFilter(this,'reit','CapitaLand Ascott Trust (CLAS)')">CLAS <span style="color:#4ade80;font-size:8px">●</span></button>
-        <button class="dir-tbtn" data-reitf="CapitaLand Ascendas REIT (CLAR)" onclick="reitSetFilter(this,'reit','CapitaLand Ascendas REIT (CLAR)')">CLAR <span style="color:#4ade80;font-size:8px">●</span></button>
-        <button class="dir-tbtn" data-reitf="CDL Hospitality Trusts" onclick="reitSetFilter(this,'reit','CDL Hospitality Trusts')">CDL Hosp <span style="color:#4ade80;font-size:8px">●</span></button>
-        <button class="dir-tbtn" data-reitf="CapitaLand Integrated Commercial Trust" onclick="reitSetFilter(this,'reit','CapitaLand Integrated Commercial Trust')">CICT <span style="color:#4ade80;font-size:8px">●</span></button>
-        <button class="dir-tbtn" data-reitf="Digital Core REIT" onclick="reitSetFilter(this,'reit','Digital Core REIT')">Digital Core <span style="color:#4ade80;font-size:8px">●</span></button>
-        <button class="dir-tbtn" data-reitf="ESR-REIT" onclick="reitSetFilter(this,'reit','ESR-REIT')">ESR-REIT <span style="color:#4ade80;font-size:8px">●</span></button>
-        <button class="dir-tbtn" data-reitf="Frasers Centrepoint Trust" onclick="reitSetFilter(this,'reit','Frasers Centrepoint Trust')">FCT <span style="color:#4ade80;font-size:8px">●</span></button>
-        <button class="dir-tbtn" data-reitf="Far East Hospitality Trust" onclick="reitSetFilter(this,'reit','Far East Hospitality Trust')">FE H-Trust <span style="color:#4ade80;font-size:8px">●</span></button>
-        <button class="dir-tbtn" data-reitf="First REIT" onclick="reitSetFilter(this,'reit','First REIT')">First REIT <span style="color:#4ade80;font-size:8px">●</span></button>
-        <button class="dir-tbtn" data-reitf="Frasers Logistics & Commercial Trust" onclick="reitSetFilter(this,'reit','Frasers Logistics & Commercial Trust')">FLCT <span style="color:#4ade80;font-size:8px">●</span></button>
-        <button class="dir-tbtn" data-reitf="IREIT Global" onclick="reitSetFilter(this,'reit','IREIT Global')">iREIT Global <span style="color:#4ade80;font-size:8px">●</span></button>
-        <button class="dir-tbtn" data-reitf="Keppel DC REIT" onclick="reitSetFilter(this,'reit','Keppel DC REIT')">Keppel DC <span style="color:#f59e0b;font-size:8px">●</span></button>
-        <button class="dir-tbtn" data-reitf="Keppel REIT" onclick="reitSetFilter(this,'reit','Keppel REIT')">Keppel REIT <span style="color:#4ade80;font-size:8px">●</span></button>
-        <button class="dir-tbtn" data-reitf="Lendlease Global Commercial REIT" onclick="reitSetFilter(this,'reit','Lendlease Global Commercial REIT')">Lendlease <span style="color:#4ade80;font-size:8px">●</span></button>
-        <button class="dir-tbtn" data-reitf="Mapletree Industrial Trust" onclick="reitSetFilter(this,'reit','Mapletree Industrial Trust')">MIT <span style="color:#4ade80;font-size:8px">●</span></button>
-        <button class="dir-tbtn" data-reitf="Mapletree Logistics Trust" onclick="reitSetFilter(this,'reit','Mapletree Logistics Trust')">MLT <span style="color:#4ade80;font-size:8px">●</span></button>
-        <button class="dir-tbtn" data-reitf="MPACT" onclick="reitSetFilter(this,'reit','MPACT')">MPACT <span style="color:#4ade80;font-size:8px">●</span></button>
-        <button class="dir-tbtn" data-reitf="OUE REIT" onclick="reitSetFilter(this,'reit','OUE REIT')">OUE REIT <span style="color:#4ade80;font-size:8px">●</span></button>
-        <button class="dir-tbtn" data-reitf="Paragon REIT (Delisted)" onclick="reitSetFilter(this,'reit','Paragon REIT (Delisted)')">Paragon ⚫</button>
-        <button class="dir-tbtn" data-reitf="Parkway Life REIT" onclick="reitSetFilter(this,'reit','Parkway Life REIT')">PLife REIT <span style="color:#4ade80;font-size:8px">●</span></button>
-        <button class="dir-tbtn" data-reitf="Stoneweg Europe Stapled Trust" onclick="reitSetFilter(this,'reit','Stoneweg Europe Stapled Trust')">SERT <span style="color:#4ade80;font-size:8px">●</span></button>
-        <button class="dir-tbtn" data-reitf="Starhill Global REIT" onclick="reitSetFilter(this,'reit','Starhill Global REIT')">Starhill Global <span style="color:#4ade80;font-size:8px">●</span></button>
-        <button class="dir-tbtn" data-reitf="Suntec REIT" onclick="reitSetFilter(this,'reit','Suntec REIT')">Suntec REIT <span style="color:#4ade80;font-size:8px">●</span></button>
+        <span id="chip-reit-dynamic" style="display:contents"></span>
       </div>
       <div id="chip-dev-row" style="display:none;gap:6px;flex-wrap:wrap;align-items:center;margin-bottom:9px">
         <span class="fbar-label">Developer</span>
         <button class="dir-tbtn on" data-devf="" onclick="reitSetFilter(this,'dev','')">All</button>
-        <button class="dir-tbtn" data-devf="Bukit Sembawang Estates" onclick="reitSetFilter(this,'dev','Bukit Sembawang Estates')">Bukit Sembawang <span style="color:#4ade80;font-size:8px">●</span></button>
-        <button class="dir-tbtn" data-devf="CDL" onclick="reitSetFilter(this,'dev','CDL')">CDL <span style="color:#4ade80;font-size:8px">●</span></button>
-        <button class="dir-tbtn" data-devf="CapitaLand Investment Limited" onclick="reitSetFilter(this,'dev','CapitaLand Investment Limited')">CLI <span style="color:#4ade80;font-size:8px">●</span></button>
-        <button class="dir-tbtn" data-devf="Far East Orchard" onclick="reitSetFilter(this,'dev','Far East Orchard')">FE Orchard <span style="color:#4ade80;font-size:8px">●</span></button>
-        <button class="dir-tbtn" data-devf="Frasers Property Limited" onclick="reitSetFilter(this,'dev','Frasers Property Limited')">Frasers Property <span style="color:#4ade80;font-size:8px">●</span></button>
-        <button class="dir-tbtn" data-devf="GuocoLand" onclick="reitSetFilter(this,'dev','GuocoLand')">GuocoLand <span style="color:#4ade80;font-size:8px">●</span></button>
-        <button class="dir-tbtn" data-devf="Ho Bee Land" onclick="reitSetFilter(this,'dev','Ho Bee Land')">Ho Bee Land <span style="color:#f59e0b;font-size:8px">●</span></button>
-        <button class="dir-tbtn" data-devf="Hong Fok Corporation" onclick="reitSetFilter(this,'dev','Hong Fok Corporation')">Hong Fok <span style="color:#f59e0b;font-size:8px">●</span></button>
-        <button class="dir-tbtn" data-devf="Oxley Holdings" onclick="reitSetFilter(this,'dev','Oxley Holdings')">Oxley Holdings <span style="color:#4ade80;font-size:8px">●</span></button>
-        <button class="dir-tbtn" data-devf="Perennial Holdings" onclick="reitSetFilter(this,'dev','Perennial Holdings')">Perennial Holdings <span style="color:#4ade80;font-size:8px">●</span></button>
-        <button class="dir-tbtn" data-devf="SingLand" onclick="reitSetFilter(this,'dev','SingLand')">SingLand <span style="color:#f59e0b;font-size:8px">●</span></button>
-        <button class="dir-tbtn" data-devf="SLB Development (Delisted)" onclick="reitSetFilter(this,'dev','SLB Development (Delisted)')">SLB Dev ⚫</button>
-        <button class="dir-tbtn" data-devf="Sing Holdings Limited" onclick="reitSetFilter(this,'dev','Sing Holdings Limited')">Sing Holdings <span style="color:#4ade80;font-size:8px">●</span></button>
-        <button class="dir-tbtn" data-devf="UOL Group" onclick="reitSetFilter(this,'dev','UOL Group')">UOL Group <span style="color:#4ade80;font-size:8px">●</span></button>
-        <button class="dir-tbtn" data-devf="Wee Hur Holdings" onclick="reitSetFilter(this,'dev','Wee Hur Holdings')">Wee Hur <span style="color:#f59e0b;font-size:8px">●</span></button>
-        <button class="dir-tbtn" data-devf="Wing Tai Holdings" onclick="reitSetFilter(this,'dev','Wing Tai Holdings')">Wing Tai <span style="color:#4ade80;font-size:8px">●</span></button>
-        <button class="dir-tbtn" data-devf="Tuan Sing Holdings" onclick="reitSetFilter(this,'dev','Tuan Sing Holdings')">Tuan Sing <span style="color:#4ade80;font-size:8px">●</span></button>
+        <span id="chip-dev-dynamic" style="display:contents"></span>
       </div>
 
       <!-- Row 3: Asset type chips -->
@@ -13405,7 +13366,7 @@ var TALENT_DATA = [
     rem_exact:null, rem_fixed:null, rem_bonus:null, rem_other:null,
     rem_note:'Private holding co — remuneration not disclosed in AR. New management appointment in FY2025.',
     rem_band:null, rem_pct_fixed:null, rem_pct_bonus:null, rem_pct_other:null,
-    rem_history:[],A
+    rem_history:[],
     edu:'Master of Science in Real Estate Development, Massachusetts Institute of Technology (USA); Bachelor of Engineering (First Class Honours), National University of Singapore',
     bio:'Head, Investment, Asset & Development Mgmt SG & Regional (excl. China) at Perennial Holdings (new appointment FY2025); responsible for investment, asset and development management of Perennial Holdings\' portfolio in Singapore and overseas markets (excl. China). Over 15 years experience in real estate across international markets and diverse sectors; led cross-border transactions and portfolio management covering US$10 billion in cumulative investments. Prior to Perennial Holdings, was Head of Investment and concurrently Head of Strategic Planning at Frasers Property Group\'s hospitality business — led implementation of investment strategies for North Asia, drove growth strategies into China and Japan premium rental apartments, divested non-core assets across Singapore/Australia/UK.',
     prev_roles:[
@@ -20469,7 +20430,156 @@ function reitSetFilter(btn, kind, val){
   reitSearch(0);
 }
 
+// ─────────────────────────────────────────────────────────────────
+// v48.21d-redo: Data-driven entity chip rows
+// Future entity additions auto-appear in chip rows without HTML edits.
+// Eliminates the orphan-chip / missing-chip class of bugs entirely.
+// ─────────────────────────────────────────────────────────────────
+var REIT_CHIP_LABELS = {
+  // REIT short labels — long entity name → display label
+  'Acrophyte Hospitality Trust': 'Acrophyte HT',
+  'AIMS APAC REIT': 'AIMS APAC',
+  'Alpha Integrated REIT (former Sabana)': 'AI REIT',
+  'CapitaLand China Trust': 'CLCT',
+  'CapitaLand Ascott Trust': 'CLAS',
+  'CapitaLand Ascott Trust (CLAS)': 'CLAS',
+  'CapitaLand Ascendas REIT': 'CLAR',
+  'CapitaLand Ascendas REIT (CLAR)': 'CLAR',
+  'CapitaLand Integrated Commercial Trust': 'CICT',
+  'CapitaLand Investment Limited': 'CLI',
+  'CDL Hospitality Trusts': 'CDL Hosp',
+  'Daiwa House Logistics Trust': 'Daiwa House',
+  'Digital Core REIT': 'Digital Core',
+  'EC World REIT': 'EC World',
+  'Elite UK REIT': 'Elite UK',
+  'ESR-REIT': 'ESR-REIT',
+  'Far East Hospitality Trust': 'FE H-Trust',
+  'First REIT': 'First REIT',
+  'Frasers Centrepoint Trust': 'FCT',
+  'Frasers Logistics & Commercial Trust': 'FLCT',
+  'IREIT Global': 'iREIT Global',
+  'Keppel DC REIT': 'Keppel DC',
+  'Keppel REIT': 'Keppel REIT',
+  'Lendlease Global Commercial REIT': 'Lendlease',
+  'Manulife US REIT': 'Manulife US',
+  'Mapletree Industrial Trust': 'MIT',
+  'Mapletree Logistics Trust': 'MLT',
+  'Mapletree Pan Asia Commercial Trust': 'MPACT',
+  'MPACT': 'MPACT',
+  'OUE REIT': 'OUE REIT',
+  'Paragon REIT (Delisted)': 'Paragon',
+  'Parkway Life REIT': 'PLife REIT',
+  'Stoneweg Europe Stapled Trust': 'SERT',
+  'Starhill Global REIT': 'Starhill Global',
+  'Suntec REIT': 'Suntec REIT',
+  // Developer short labels
+  'Bukit Sembawang Estates': 'Bukit Sembawang',
+  'CDL': 'CDL',
+  'City Developments Limited': 'CDL',
+  'Far East Orchard': 'FE Orchard',
+  'Frasers Property Limited': 'Frasers Property',
+  'GuocoLand': 'GuocoLand',
+  'Heeton Holdings': 'Heeton',
+  'Heeton Holdings Limited': 'Heeton',
+  'Hiap Hoe Limited': 'Hiap Hoe',
+  'Ho Bee Land': 'Ho Bee Land',
+  'Hong Fok Corporation': 'Hong Fok',
+  'Oxley Holdings': 'Oxley Holdings',
+  'Perennial Holdings': 'Perennial Holdings',
+  'SingLand': 'SingLand',
+  'SLB Development (Delisted)': 'SLB Dev',
+  'Sing Holdings Limited': 'Sing Holdings',
+  'Tuan Sing Holdings': 'Tuan Sing',
+  'UOL Group': 'UOL Group',
+  'Wee Hur Holdings': 'Wee Hur',
+  'Wing Tai Holdings': 'Wing Tai'
+};
+
+var _reitChipsBuilt = false;
+function reitBuildChipRows(){
+  if(_reitChipsBuilt) return;          // idempotent guard — runs once per page-load
+  if(typeof REIT_DATA==='undefined' || !REIT_DATA.length) return;
+
+  // Group rows by entity, capture entity_type + AR-year freshness
+  var entMap = {};
+  REIT_DATA.forEach(function(r){
+    var ent = r.entity; if(!ent) return;
+    var et  = r.entity_type || '';
+    if(!entMap[ent]) entMap[ent] = {entity:ent, et:et, fyMax:'', isDelisted:false, isReit:false, isDev:false};
+    var bucket = entMap[ent];
+    // Track newest FY across all rows of this entity
+    var fy = r.ar_year || '';
+    if(fy > bucket.fyMax) bucket.fyMax = fy;
+    // Detect delisted by entity name suffix
+    if(/\(Delisted\)/i.test(ent)) bucket.isDelisted = true;
+    // Bucket the entity into REIT-side or Dev-side
+    if(et==='REIT' || et==='Stapled REIT + Business Trust') bucket.isReit = true;
+    if(et==='DEV' || et==='Developer' || et==='Dev')        bucket.isDev  = true;
+  });
+
+  // Freshness color per handoff: FY25/26 or FY2025 or Pending=green, FY2024/25 or FY24/25=amber, older or delisted=gray
+  function freshnessColor(fy, isDelisted){
+    if(isDelisted) return null;                              // gray dot ⚫
+    if(/^FY25\/26|^FY2025|^Pending/i.test(fy)) return '#4ade80';  // green
+    if(/FY24\/25|FY2024\/25/i.test(fy))        return '#f59e0b';  // amber
+    if(/^FY2024/i.test(fy))                    return '#f59e0b';  // amber
+    return '#6b7280';                                        // gray
+  }
+
+  function buildButton(entity, kind){
+    var bucket = entMap[entity];
+    var label = REIT_CHIP_LABELS[entity] || entity;
+    var dotColor = freshnessColor(bucket.fyMax, bucket.isDelisted);
+    var dotHtml = bucket.isDelisted ? ' \u26AB' : (dotColor ? ' <span style="color:'+dotColor+';font-size:8px">\u25CF</span>' : '');
+    // Escape entity for safe inline use in onclick attr
+    var safeEnt = entity.replace(/'/g, "\\'");
+    return '<button class="dir-tbtn" data-'+kind+'f="'+entity.replace(/"/g,'&quot;')+'" '
+         + 'onclick="reitSetFilter(this,\''+kind+'\',\''+safeEnt+'\')">'
+         + label + dotHtml + '</button>';
+  }
+
+  // Sort: alphabetical by display label, with delisted at the END
+  function chipSort(a, b){
+    var aD = entMap[a].isDelisted, bD = entMap[b].isDelisted;
+    if(aD && !bD) return  1;
+    if(!aD && bD) return -1;
+    var la = (REIT_CHIP_LABELS[a]||a).toLowerCase();
+    var lb = (REIT_CHIP_LABELS[b]||b).toLowerCase();
+    return la.localeCompare(lb);
+  }
+
+  // v48.21d-redo: dedupe by display label — when two entity strings produce the same
+  // chip label (e.g. 'CapitaLand Ascendas REIT' and 'CapitaLand Ascendas REIT (CLAR)'
+  // both → 'CLAR'), keep ONLY the entity with the most rows. This is a UX guardrail
+  // pending the deferred-backlog data hygiene cleanup item. Without this, two
+  // identically-labelled chips render side-by-side which confuses users.
+  function dedupeByLabel(entities){
+    var bestForLabel = {};
+    entities.forEach(function(e){
+      var lbl = REIT_CHIP_LABELS[e] || e;
+      var rowCount = REIT_DATA.filter(function(r){return r.entity===e;}).length;
+      if(!bestForLabel[lbl] || rowCount > bestForLabel[lbl].rowCount){
+        bestForLabel[lbl] = {entity:e, rowCount:rowCount};
+      }
+    });
+    return Object.values(bestForLabel).map(function(o){return o.entity;});
+  }
+
+  // Build REIT chip row
+  var reitEnts = dedupeByLabel(Object.keys(entMap).filter(function(e){return entMap[e].isReit;})).sort(chipSort);
+  var reitTarget = document.getElementById('chip-reit-dynamic');
+  if(reitTarget) reitTarget.innerHTML = reitEnts.map(function(e){return buildButton(e,'reit');}).join('');
+
+  // Build Developer chip row
+  var devEnts = dedupeByLabel(Object.keys(entMap).filter(function(e){return entMap[e].isDev;})).sort(chipSort);
+  var devTarget = document.getElementById('chip-dev-dynamic');
+  if(devTarget) devTarget.innerHTML = devEnts.map(function(e){return buildButton(e,'dev');}).join('');
+
+  _reitChipsBuilt = true;
+}
+
 function reitSearch(page){
+  reitBuildChipRows();                  // v48.21d-redo: ensure chips exist before first filter pass
   page = page||0; reitPage = page;
   var q = (document.getElementById('reit-search').value||'').trim().toLowerCase();
   var region = (document.getElementById('reit-region')||{}).value||'';
@@ -20486,8 +20596,10 @@ function reitSearch(page){
     var isSG = (p.country==='Singapore');
     if(reitActiveGeo==='SG' && !isSG) return false;
     if(reitActiveGeo==='OV' && isSG) return false;
-    if(reitActiveEntType==='REIT' && p.entity_type!=='REIT') return false;
-    if(reitActiveEntType==='DEV' && p.entity_type!=='DEV' && p.entity_type!=='Developer') return false;
+    // v48.21d-redo: REIT filter must include Stapled REIT + Business Trust (CLAS 35 rows, Stoneweg 14 rows)
+    if(reitActiveEntType==='REIT' && p.entity_type!=='REIT' && p.entity_type!=='Stapled REIT + Business Trust') return false;
+    // v48.21d-redo: DEV filter must include all three casings: 'DEV' (legacy upper), 'Developer' (modern), 'Dev' (mixed — GuocoLand)
+    if(reitActiveEntType==='DEV' && p.entity_type!=='DEV' && p.entity_type!=='Developer' && p.entity_type!=='Dev') return false;
     if(reitActiveEntity && p.entity !== reitActiveEntity) return false;
     if(reitActiveDev && p.entity !== reitActiveDev) return false;
     if(reitActiveAsset){
@@ -20537,14 +20649,44 @@ function reitSearch(page){
     sublineEl.textContent = 'AR-sourced · '+totalEntities+' entities · '+totalEntries.toLocaleString()+' entries · First-of-its-kind in Singapore';
   }
 
-  // ── REITs counter: distinct REIT-type entities in current filtered set
-  var reitsKpi = document.getElementById('reit-kpi-reits');
+  // ── Middle tile: reactive label + value (v48.21e-redo)
+  // Behaviour:
+  //   - Specific entity selected via chip → label "ASSETS"      , value = filtered row count
+  //   - REITs entity-type, no chip       → label "REITS"        , value = distinct REIT/Stapled entities in geo
+  //   - Developers entity-type, no chip  → label "DEVELOPERS"   , value = distinct Dev entities in geo
+  //   - Both / no entity-type, no chip   → label "ENTITIES"     , value = distinct entities in geo
+  // Geo scope obeys reitActiveGeo (SG/OV/All) so the middle tile is always coherent with what's shown.
+  var reitsKpi   = document.getElementById('reit-kpi-reits');
+  var reitsLabel = document.getElementById('reit-kpi-reits-label');
   if(reitsKpi){
-    var reitEnts = filtered
-      .filter(function(r){var et=r.entity_type||''; return et==='REIT' || et==='Stapled REIT + Business Trust';})
-      .map(function(r){return r.entity;})
-      .filter(function(v,i,a){return a.indexOf(v)===i;});
-    reitsKpi.textContent = reitEnts.length;
+    var entityChipActive = !!(reitActiveEntity || reitActiveDev || tblEntity);
+    // Geo-scoped row pool (ignoring entity filters but respecting geo)
+    var geoPool = REIT_DATA.filter(function(r){
+      var isSG = (r.country==='Singapore');
+      if(reitActiveGeo==='SG' && !isSG) return false;
+      if(reitActiveGeo==='OV' && isSG)  return false;
+      return true;
+    });
+    var distinct = function(rows){
+      return rows.map(function(r){return r.entity;})
+        .filter(function(v,i,a){return a.indexOf(v)===i;}).length;
+    };
+
+    if(entityChipActive){
+      reitsKpi.textContent   = filtered.length;
+      if(reitsLabel) reitsLabel.textContent = 'Assets';
+    } else if(reitActiveEntType==='REIT'){
+      var reitRows = geoPool.filter(function(r){var et=r.entity_type||''; return et==='REIT' || et==='Stapled REIT + Business Trust';});
+      reitsKpi.textContent   = distinct(reitRows);
+      if(reitsLabel) reitsLabel.textContent = 'REITs';
+    } else if(reitActiveEntType==='DEV'){
+      var devRows = geoPool.filter(function(r){var et=r.entity_type||''; return et==='DEV' || et==='Developer' || et==='Dev';});
+      reitsKpi.textContent   = distinct(devRows);
+      if(reitsLabel) reitsLabel.textContent = 'Developers';
+    } else {
+      reitsKpi.textContent   = distinct(geoPool);
+      if(reitsLabel) reitsLabel.textContent = 'Entities';
+    }
   }
 
   // ── Entity summary panel: visible only when single entity is filter-selected
