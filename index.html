@@ -2521,8 +2521,17 @@ body.article-takeover .ed-foot{display:none!important}
      Renders the publish date of the latest article (NEWS hero).
      Edit data-pub-date when a newer article is shipped, OR set to
      "today" to fall back to today's local SGT date.
+
+     Convention (L171): mirrors the hero entry's publish date, NOT
+     the underlying source-deck date. Update this attribute whenever
+     a new hero is cascaded — it is part of the cascade checklist
+     alongside the hero href / image / headline / teaser / meta.
+
+     Ops note: if not redeploying within 24 hours, consider switching
+     to data-pub-date="today" so the dateline never reads stale to
+     visitors arriving on a later day.
      ========================================================= -->
-<div class="datestrip" role="presentation" data-pub-date="2026-05-04">
+<div class="datestrip" role="presentation" data-pub-date="2026-05-06">
   <div class="wrap datestrip-inner">
     <div class="datestrip-left" id="datestrip-left">— · — · Singapore</div>
   </div>
