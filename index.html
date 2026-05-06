@@ -13958,18 +13958,101 @@ function talentInitSummary(){
   document.getElementById('thc-entities').textContent = entities;
   document.getElementById('thc-ceos').textContent = ceos;
 
-  // Summary cards
-  var ceoRem = TALENT_DATA.filter(function(p){return p.rem_exact&&p.role_type==='CEO';})
-    .map(function(p){return p.rem_exact;});
-  var boardRem = TALENT_DATA.filter(function(p){return p.rem_exact&&p.role_type==='Board';})
-    .map(function(p){return p.rem_exact;});
+  // ── Hero summary cards: data-driven (v48.22e-talent-cards-dynamic) ──
+  // All four cards auto-recompute on every render so they self-update when new TALENT_DATA rows are spliced.
+  function fmtRem(v){
+    if(v==null) return '—';
+    if(v>=1000000) return 'S$'+(v/1000000).toFixed(2)+'M';
+    return 'S$'+Math.round(v/1000)+'K';
+  }
+  function entityShort(name){
+    // Short labels for hero card sub-line (avoid overflow)
+    var map = {
+      'City Developments Limited':'CDL',
+      'CapitaLand Investment Limited':'CLI',
+      'CapitaLand Integrated Commercial Trust':'CICT',
+      'CapitaLand Ascendas REIT':'CLAR',
+      'CapitaLand Ascendas REIT (CLAR)':'CLAR',
+      'CapitaLand Ascott Trust':'CLAS',
+      'CapitaLand China Trust':'CLCT',
+      'CDL Hospitality Trusts':'CDLHT',
+      'Frasers Centrepoint Trust':'FCT',
+      'Frasers Logistics & Commercial Trust':'FLCT',
+      'Frasers Property Limited':'Frasers Property',
+      'Mapletree Industrial Trust':'MIT',
+      'Mapletree Logistics Trust':'MLT',
+      'Mapletree Pan Asia Commercial Trust':'MPACT',
+      'Sing Holdings Limited':'Sing Holdings',
+      'Hiap Hoe Limited':'Hiap Hoe',
+      'Heeton Holdings Limited':'Heeton',
+      'Alpha Integrated REIT (former Sabana)':'AI-REIT',
+      'Sabana REIT (now AI-REIT)':'Sabana',
+      'Stoneweg Europe Stapled Trust':'SERT',
+      'Lendlease Global Commercial REIT':'Lendlease REIT',
+      'Far East Hospitality Trust':'Far East H-Trust',
+      'Tuan Sing Holdings':'Tuan Sing',
+      'Wee Hur Holdings':'Wee Hur',
+      'Wing Tai Holdings':'Wing Tai'
+    };
+    return map[name] || name;
+  }
 
-  var sumCards = [
-    {val:'S$4.48M', lbl:'Highest confirmed pay', sub:'Liam Wee Sin · UOL Group GCE FY2025'},
-    {val:'S$2.18M', lbl:'Highest REIT CEO pay', sub:'Chong Kee Hiong · Suntec REIT FY2025'},
-    {val:'S$677K', lbl:'Highest internalised REIT', sub:'Donald Han · Sabana REIT FY2024'},
-    {val:'+55%', lbl:'Largest YoY pay jump', sub:'UOL GCE · S$2.9M → S$4.5M'},
-  ];
+  // Card 1: Highest confirmed pay (any role, any entity, any year)
+  var c1pool = TALENT_DATA.filter(function(p){return typeof p.rem_exact==='number' && p.rem_exact>0;});
+  var c1top = c1pool.reduce(function(a,b){return (b.rem_exact > (a?a.rem_exact:0)) ? b : a;}, null);
+  var c1 = c1top
+    ? {val:fmtRem(c1top.rem_exact), lbl:'Highest confirmed pay', sub:c1top.name+' · '+entityShort(c1top.entity)+' '+(c1top.role_type==='CEO'?'CEO':(c1top.role_type==='Board'?'Chairman':''))+' '+c1top.ar_year}
+    : {val:'—', lbl:'Highest confirmed pay', sub:''};
+
+  // Card 2: Highest REIT CEO pay — cross-ref REIT_DATA entity_type
+  var reitEntities = {};
+  if(typeof REIT_DATA !== 'undefined'){
+    REIT_DATA.forEach(function(r){
+      var et = (r.entity_type||'').toLowerCase();
+      if(et==='reit' || et.indexOf('stapled')>=0) reitEntities[r.entity] = true;
+    });
+  }
+  var c2pool = TALENT_DATA.filter(function(p){
+    return typeof p.rem_exact==='number' && p.rem_exact>0 && p.role_type==='CEO' && reitEntities[p.entity];
+  });
+  var c2top = c2pool.reduce(function(a,b){return (b.rem_exact > (a?a.rem_exact:0)) ? b : a;}, null);
+  var c2 = c2top
+    ? {val:fmtRem(c2top.rem_exact), lbl:'Highest REIT CEO pay', sub:c2top.name+' · '+entityShort(c2top.entity)+' '+c2top.ar_year}
+    : {val:'—', lbl:'Highest REIT CEO pay', sub:''};
+
+  // Card 3: Highest internalised REIT pay — currently only AI-REIT/Sabana qualifies as internalised
+  var INTERNALISED_REITS = ['Alpha Integrated REIT (former Sabana)', 'Sabana REIT (now AI-REIT)', 'AI-REIT'];
+  var c3pool = TALENT_DATA.filter(function(p){
+    if(typeof p.rem_exact!=='number' || p.rem_exact<=0) return false;
+    return INTERNALISED_REITS.indexOf(p.entity)>=0;
+  });
+  var c3top = c3pool.reduce(function(a,b){return (b.rem_exact > (a?a.rem_exact:0)) ? b : a;}, null);
+  var c3 = c3top
+    ? {val:fmtRem(c3top.rem_exact), lbl:'Highest internalised REIT', sub:c3top.name+' · '+entityShort(c3top.entity)+' '+c3top.ar_year}
+    : {val:'—', lbl:'Highest internalised REIT', sub:''};
+
+  // Card 4: Largest YoY pay jump — walk rem_history; require prev_val ≥ S$1M to avoid noise from small-base rounding
+  var c4candidates = [];
+  TALENT_DATA.forEach(function(p){
+    if(!Array.isArray(p.rem_history) || p.rem_history.length<2) return;
+    var sorted = p.rem_history.slice().sort(function(a,b){return (b.year||'') > (a.year||'') ? 1 : -1;});
+    for(var k=0; k<sorted.length-1; k++){
+      var cur = sorted[k], prev = sorted[k+1];
+      var cv = cur && typeof cur.total==='number' ? cur.total : null;
+      var pv = prev && typeof prev.total==='number' ? prev.total : null;
+      if(cv && pv && pv>=1000000){
+        var pct = (cv - pv) / pv * 100;
+        c4candidates.push({name:p.name, entity:p.entity, role_type:p.role_type, prev:pv, cur:cv, pct:pct, prevYr:prev.year, curYr:cur.year});
+      }
+    }
+  });
+  c4candidates.sort(function(a,b){return b.pct-a.pct;});
+  var c4top = c4candidates[0] || null;
+  var c4 = c4top
+    ? {val:(c4top.pct>=0?'+':'')+c4top.pct.toFixed(0)+'%', lbl:'Largest YoY pay jump', sub:c4top.name+' · '+entityShort(c4top.entity)+' · '+fmtRem(c4top.prev)+' → '+fmtRem(c4top.cur)}
+    : {val:'—', lbl:'Largest YoY pay jump', sub:''};
+
+  var sumCards = [c1, c2, c3, c4];
   document.getElementById('talent-sum-row').innerHTML = sumCards.map(function(c){
     return '<div class="talent-sum-card"><div class="talent-sum-val">'+c.val+'</div><div class="talent-sum-lbl">'+c.lbl+'</div><div class="talent-sum-sub">'+c.sub+'</div></div>';
   }).join('');
