@@ -3127,8 +3127,8 @@ body.article-takeover .ed-foot{display:none!important}
           <div id="reit-kpi-reits-label" style="font-size:10px;color:rgba(255,255,255,.6);text-transform:uppercase;letter-spacing:.06em;margin-top:2px">REITs</div>
         </div>
         <div style="background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.2);border-radius:8px;padding:10px 16px;text-align:center">
-          <div style="font-size:20px;font-weight:700;color:#fff;font-family:'DM Mono',monospace">S$60B+</div>
-          <div style="font-size:10px;color:rgba(255,255,255,.6);text-transform:uppercase;letter-spacing:.06em;margin-top:2px">Portfolio Value</div>
+          <div id="reit-kpi-portval" style="font-size:20px;font-weight:700;color:#fff;font-family:'DM Mono',monospace">S$200B+</div>
+          <div id="reit-kpi-portval-label" style="font-size:10px;color:rgba(255,255,255,.6);text-transform:uppercase;letter-spacing:.06em;margin-top:2px">Portfolio Value</div>
         </div>
       </div>
     </div>
@@ -13607,7 +13607,10 @@ function talentRenderTable(data){
     // Remuneration cell
     var remCell;
     if(p.rem_exact){
-      remCell = '<span style="font-family:\'DM Mono\',monospace;font-size:12px;font-weight:700">S$'+Math.round(p.rem_exact/1000).toLocaleString()+'K</span>';
+      var remTxt = (p.rem_exact>=1000000)
+        ? 'S$'+(p.rem_exact/1000000).toFixed(2)+'M'
+        : 'S$'+Math.round(p.rem_exact/1000).toLocaleString()+'K';
+      remCell = '<span style="font-family:\'DM Mono\',monospace;font-size:12px;font-weight:700">'+remTxt+'</span>';
     } else if(p.rem_band){
       remCell = '<span style="font-size:11px;color:var(--mut)">'+p.rem_band+'</span>';
     } else {
@@ -13686,7 +13689,10 @@ function talentSetFilter(btn, type, val){
 }
 
 function talentRemLabel(p){
-  if(p.rem_exact){ return 'S$'+Math.round(p.rem_exact/1000)+'K'; }
+  if(p.rem_exact){
+    if(p.rem_exact>=1000000) return 'S$'+(p.rem_exact/1000000).toFixed(2)+'M';
+    return 'S$'+Math.round(p.rem_exact/1000)+'K';
+  }
   if(p.rem_band){ return p.rem_band; }
   return '—';
 }
@@ -13713,9 +13719,9 @@ function talentFilter(){
   return TALENT_DATA.filter(function(p){
     var roleOk = talentRoleFilter==='all' || p.role_type===talentRoleFilter;
     var entityOk = !entityF || p.entity===entityF;
-    var qOk = !q || p.name.toLowerCase().indexOf(q)>=0
-      || p.entity.toLowerCase().indexOf(q)>=0
-      || p.role.toLowerCase().indexOf(q)>=0
+    var qOk = !q || (p.name||'').toLowerCase().indexOf(q)>=0
+      || (p.entity||'').toLowerCase().indexOf(q)>=0
+      || (p.role||'').toLowerCase().indexOf(q)>=0
       || (p.tags||[]).join(' ').toLowerCase().indexOf(q)>=0;
     return roleOk && entityOk && qOk;
   });
@@ -20889,6 +20895,45 @@ function reitSearch(page){
     } else {
       reitsKpi.textContent   = distinct(geoPool);
       if(reitsLabel) reitsLabel.textContent = 'Entities';
+    }
+  }
+
+  // ── Right tile (Portfolio Value): reactive to chip selection (v48.22a-portval-fix)
+  // Behaviour:
+  //   - Specific entity selected via chip:
+  //       a) If entity has a GROUP OVERVIEW / PORTFOLIO OVERVIEW row with val → use that aggregate
+  //       b) Else sum per-asset vals (SG + Overseas) for entity
+  //       c) If no rows have val → show "—"
+  //   - No chip selected → static "S$200B+" aggregate placeholder
+  var portValEl   = document.getElementById('reit-kpi-portval');
+  var portValLabel= document.getElementById('reit-kpi-portval-label');
+  if(portValEl){
+    var pvSelectedEntity = reitActiveEntity || reitActiveDev || tblEntity || '';
+    var fmtPortVal = function(v){
+      if(v==null) return '—';
+      if(v>=1000) return 'S$'+(v/1000).toFixed(2)+'B';
+      return 'S$'+Math.round(v).toLocaleString()+'M';
+    };
+    if(pvSelectedEntity){
+      var pvRows = REIT_DATA.filter(function(r){return r.entity===pvSelectedEntity;});
+      var pvOverviewRow = pvRows.find(function(r){
+        return r.name && (r.name.indexOf('— GROUP OVERVIEW')>=0 || r.name.indexOf('— PORTFOLIO OVERVIEW')>=0 || r.name.indexOf('— PORTFOLIO')>=0);
+      });
+      var pvTotal = null;
+      if(pvOverviewRow && typeof pvOverviewRow.val==='number'){
+        // Use group-level aggregate fair value (e.g. CDL S$13.0B from Note 5(f))
+        pvTotal = pvOverviewRow.val;
+      } else {
+        // Sum per-asset vals
+        var pvSum = 0; var pvHas = false;
+        pvRows.forEach(function(r){if(typeof r.val==='number'){pvSum+=r.val;pvHas=true;}});
+        if(pvHas) pvTotal = pvSum;
+      }
+      portValEl.textContent = fmtPortVal(pvTotal);
+      if(portValLabel) portValLabel.textContent = 'Portfolio Value';
+    } else {
+      portValEl.textContent = 'S$200B+';
+      if(portValLabel) portValLabel.textContent = 'Portfolio Value';
     }
   }
 
