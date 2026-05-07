@@ -1603,14 +1603,14 @@ body.article-takeover .ed-foot{display:none!important}
     * { transition: none !important; animation: none !important; }
   }
 </style>
-<!-- v48.20s — DEV-MODE UNLOCK FOR HIDDEN 6 TOOLS
+<!-- v48.20s — DEV-MODE UNLOCK FOR HIDDEN 5 TOOLS (v48.25: Pipeline removed)
      Public visitors see 4 tabs: Newsroom, Market Pulse, Analytics, Transactions
      (tier-login & masking applies inside Market Pulse / Analytics / Transactions).
-     Adding /#dev to the URL reveals the other 6 tools (Directory, Pipeline,
+     Adding /#dev to the URL reveals the other 5 tools (Directory,
      Asset Directory, Human Capital, Stock, Corporate Watch).
      Bookmark: https://propertyatlas.sg/#dev (or .../dashboard/#dev) -->
 <style>
-  /* v48.20s-fix1: Hide the 6 deeper tools by default. !important required to override
+  /* v48.20s-fix1: Hide the 5 deeper tools by default. !important required to override
      inline style="display:flex" on Asset Directory / Human Capital / Stock / Corporate Watch. */
   .navtab.navtab-hidden { display: none !important; }
   /* Reveal hidden tools when dev-mode unlock active */
@@ -1619,8 +1619,8 @@ body.article-takeover .ed-foot{display:none!important}
 </head>
 <body>
 <script>
-/* v48.20s — Dev-mode unlock for the 6 hidden dashboard tools.
-   Reveals Directory, Pipeline, Asset Directory, Human Capital, Stock, Corporate Watch.
+/* v48.20s — Dev-mode unlock for the 5 hidden dashboard tools (v48.25: Pipeline removed).
+   Reveals Directory, Asset Directory, Human Capital, Stock, Corporate Watch.
    Public visitors see 4 tabs only (Newsroom + 3 public tools with tier-login masking).
    Visit /#dev or /#unlock once → sticky via localStorage. Visit /#lock to re-hide. */
 (function(){
@@ -1682,7 +1682,7 @@ body.article-takeover .ed-foot{display:none!important}
   <div class="navtab" data-tab="analytics"><span class="navtab-icon">📈</span>Analytics</div>
   <!-- v48.20s: HIDDEN tabs (visible only when body.dev-mode active — visit /#dev to unlock). -->
   <div class="navtab navtab-hidden" data-tab="directory"><span class="navtab-icon">🏢</span>Directory</div>
-  <div class="navtab navtab-hidden" data-tab="pipeline"><span class="navtab-icon">🔭</span>Pipeline</div>
+  <!-- v48.25: Pipeline tab removed entirely (deferred until use case clear). -->
   <div class="navtab navtab-hidden" data-tab="assetdir" style="display:flex;align-items:center;gap:6px">
     <span class="navtab-icon">🗂</span>Asset Directory
   </div>
@@ -1701,40 +1701,8 @@ body.article-takeover .ed-foot{display:none!important}
 
   <div class="panel on" id="tab-overview">
 
-    <!-- Market Context Banner -->
-    <div style="background:linear-gradient(135deg,var(--hdr) 0%,var(--hdr3) 100%);border-radius:8px;padding:14px 20px;margin-bottom:14px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;border:1px solid rgba(255,255,255,.05)">
-      <div style="display:flex;align-items:center;gap:10px">
-        <div style="width:36px;height:36px;background:rgba(255,255,255,.08);border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:18px;border:1px solid rgba(255,255,255,.1)">🇸🇬</div>
-        <div>
-          <div style="color:#fff;font-size:14px;font-weight:700;letter-spacing:-.01em">Singapore C&amp;I Market Intelligence</div>
-          <div style="color:rgba(255,255,255,.45);font-size:11px;margin-top:1px"><span id="db-txn-count-hero">81,929</span> transactions · 1995–2026 · URA REALIS · Commercial &amp; Industrial · <span style="color:rgba(255,255,255,.3)">incl. 399 inv. sales</span></div>
-        </div>
-      </div>
-      <div style="display:flex;gap:5px;flex-wrap:wrap">
-        <div style="background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.1);border-radius:6px;padding:7px 13px;text-align:center;min-width:92px">
-          <div style="font-size:15px;font-weight:700;color:#fff;font-family:'DM Mono',monospace" id="k-y26val">—</div>
-          <div style="font-size:9px;color:rgba(255,255,255,.45);text-transform:uppercase;letter-spacing:.06em;margin-top:2px">2026 YTD Value</div>
-          <div style="font-size:9px;color:rgba(255,255,255,.28);margin-top:1px"><span id="k-y26cnt">—</span> txns</div>
-        </div>
-        <div style="background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.1);border-radius:6px;padding:7px 13px;text-align:center;min-width:84px">
-          <div style="font-size:15px;font-weight:700;color:#fff;font-family:'DM Mono',monospace" id="k-y26txn">—</div>
-          <div style="font-size:9px;color:rgba(255,255,255,.45);text-transform:uppercase;letter-spacing:.06em;margin-top:2px">2026 YTD Deals</div>
-        </div>
-        <div style="background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.1);border-radius:6px;padding:7px 13px;text-align:center;min-width:92px">
-          <div style="font-size:15px;font-weight:700;color:#fff;font-family:'DM Mono',monospace" id="k-y25val">—</div>
-          <div style="font-size:9px;color:rgba(255,255,255,.45);text-transform:uppercase;letter-spacing:.06em;margin-top:2px">2025 FY Value</div>
-          <div style="font-size:9px;color:rgba(255,255,255,.28);margin-top:1px"><span id="k-y25cnt">—</span> deals</div>
-        </div>
-        <div style="background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.1);border-radius:6px;padding:7px 13px;text-align:center;min-width:84px">
-          <div style="font-size:15px;font-weight:700;color:#fff;font-family:'DM Mono',monospace" id="k-y25txn">—</div>
-          <div style="font-size:9px;color:rgba(255,255,255,.45);text-transform:uppercase;letter-spacing:.06em;margin-top:2px">2025 Total Deals</div>
-        </div>
-        <div style="background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.15);border-radius:6px;padding:7px 13px;text-align:center;min-width:72px">
-          <div style="font-size:15px;font-weight:700;color:#3b82d4;font-family:'DM Mono',monospace" id="banner-yoy">—</div>
-          <div style="font-size:9px;color:rgba(255,255,255,.45);text-transform:uppercase;letter-spacing:.06em;margin-top:2px">YoY Chg</div>
-        </div>
-      </div>
-    </div>
+    <!-- v48.25: Market Context Banner moved into right rail above By Property Type
+         (was full-width here). Lifts chart+filters above the fold on initial load. -->
 
 
     <!-- Smart Search -->
@@ -1870,6 +1838,47 @@ body.article-takeover .ed-foot{display:none!important}
       </div>
     </div>
 
+    <!-- v48.25: Right rail = Market Context Banner (compact, restacked) ABOVE By Property Type breakdown -->
+    <div style="display:flex;flex-direction:column;gap:14px;min-width:0">
+
+    <!-- Market Context Banner (compact, right-rail v48.25) -->
+    <div style="background:linear-gradient(135deg,var(--hdr) 0%,var(--hdr3) 100%);border-radius:8px;padding:14px 16px;border:1px solid rgba(255,255,255,.05)">
+      <!-- Title row -->
+      <div style="display:flex;align-items:center;gap:10px;margin-bottom:12px">
+        <div style="width:32px;height:32px;background:rgba(255,255,255,.08);border-radius:7px;display:flex;align-items:center;justify-content:center;font-size:16px;border:1px solid rgba(255,255,255,.1);flex-shrink:0">🇸🇬</div>
+        <div style="min-width:0">
+          <div style="color:#fff;font-size:13px;font-weight:700;letter-spacing:-.01em;line-height:1.25">Singapore C&amp;I Market Intelligence</div>
+          <div style="color:rgba(255,255,255,.45);font-size:10px;margin-top:2px;line-height:1.35"><span id="db-txn-count-hero">81,929</span> txns · URA REALIS · 1995–2026</div>
+        </div>
+      </div>
+      <!-- KPI grid: 2 columns -->
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px">
+        <div style="background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.1);border-radius:6px;padding:7px 10px;text-align:center">
+          <div style="font-size:13px;font-weight:700;color:#fff;font-family:'DM Mono',monospace" id="k-y26val">—</div>
+          <div style="font-size:8.5px;color:rgba(255,255,255,.45);text-transform:uppercase;letter-spacing:.05em;margin-top:2px">2026 YTD Value</div>
+          <div style="font-size:8.5px;color:rgba(255,255,255,.28);margin-top:1px"><span id="k-y26cnt">—</span> txns</div>
+        </div>
+        <div style="background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.1);border-radius:6px;padding:7px 10px;text-align:center">
+          <div style="font-size:13px;font-weight:700;color:#fff;font-family:'DM Mono',monospace" id="k-y26txn">—</div>
+          <div style="font-size:8.5px;color:rgba(255,255,255,.45);text-transform:uppercase;letter-spacing:.05em;margin-top:2px">2026 YTD Deals</div>
+        </div>
+        <div style="background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.1);border-radius:6px;padding:7px 10px;text-align:center">
+          <div style="font-size:13px;font-weight:700;color:#fff;font-family:'DM Mono',monospace" id="k-y25val">—</div>
+          <div style="font-size:8.5px;color:rgba(255,255,255,.45);text-transform:uppercase;letter-spacing:.05em;margin-top:2px">2025 FY Value</div>
+          <div style="font-size:8.5px;color:rgba(255,255,255,.28);margin-top:1px"><span id="k-y25cnt">—</span> deals</div>
+        </div>
+        <div style="background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.1);border-radius:6px;padding:7px 10px;text-align:center">
+          <div style="font-size:13px;font-weight:700;color:#fff;font-family:'DM Mono',monospace" id="k-y25txn">—</div>
+          <div style="font-size:8.5px;color:rgba(255,255,255,.45);text-transform:uppercase;letter-spacing:.05em;margin-top:2px">2025 Total Deals</div>
+        </div>
+        <!-- YoY tile spans both columns -->
+        <div style="grid-column:1 / -1;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.15);border-radius:6px;padding:7px 10px;text-align:center">
+          <div style="font-size:13px;font-weight:700;color:#3b82d4;font-family:'DM Mono',monospace" id="banner-yoy">—</div>
+          <div style="font-size:8.5px;color:rgba(255,255,255,.45);text-transform:uppercase;letter-spacing:.05em;margin-top:2px">YoY Change</div>
+        </div>
+      </div>
+    </div>
+
     <!-- By Property Type breakdown — right rail (v48.10) -->
     <div class="card" id="type-breakdown-card" style="padding:16px 18px;display:flex;flex-direction:column">
       <div class="card-hdr" style="margin-bottom:10px">
@@ -1882,6 +1891,8 @@ body.article-takeover .ed-foot{display:none!important}
       <div style="font-size:10px;color:var(--mut);margin-bottom:10px;font-family:'DM Mono',monospace">Tracks chart range above</div>
       <div id="type-breakdown" style="flex:1"></div>
     </div>
+
+    </div><!-- /right-rail flex column (v48.25) -->
 
     </div><!-- /.ov-chart-grid -->
 
@@ -3043,9 +3054,7 @@ body.article-takeover .ed-foot{display:none!important}
     </div>
   </div>
 
-  <div class="panel" id="tab-pipeline">
-    <div class="card"><div class="card-hdr"><div class="card-title">Active Deal Pipeline</div></div><table class="ptable" id="ptable"></table></div>
-  </div>
+  <!-- v48.25: Pipeline panel removed entirely (was id="tab-pipeline"). -->
 
   <!-- REIT DIRECTORY TAB -->
   <div class="panel" id="tab-reit">
@@ -14933,7 +14942,6 @@ var ATLAS_TAB_MAP = {
   "directory":    "tab-directory",
   "transactions": "tab-transactions",
   "news":         "tab-news",
-  "pipeline":     "tab-pipeline",
   "assetdir":     "tab-reit",
   "talent":       "tab-talent",
   "forsale":      "tab-forsale",
@@ -14971,7 +14979,6 @@ window.ATLAS_TIER_LABELS = {
 // within them may be masked via maskAddress() below.
 var ATLAS_GATED_TABS = {
   "directory": true,
-  "pipeline":  true,
   "assetdir":  true,
   "talent":    true,
   "forsale":   true,
@@ -15005,7 +15012,7 @@ window.ATLAS_PANEL_TEMPLATES = window.ATLAS_PANEL_TEMPLATES || {};
 function atlasRenderSubscribeStub(panelEl, tabName) {
   if(!panelEl) return;
   var prettyName = ({
-    directory: 'Directory', pipeline: 'Pipeline', assetdir: 'Asset Directory',
+    directory: 'Directory', assetdir: 'Asset Directory',
     talent: 'Human Capital', forsale: 'Stock', pulse: 'Corporate Watch'
   })[tabName] || tabName;
   panelEl.innerHTML =
@@ -18427,7 +18434,7 @@ syncDualSliderUI();
 renderNewsroom();
 renderPendingDeals();
 matchPendingDeals();
-renderPipeline();
+// v48.25: renderPipeline() call removed (panel deleted; function definition orphaned but harmless).
 initAutocomplete();
 initOvAutocomplete();
 loadDefaultTransactions(0);
@@ -22335,6 +22342,12 @@ function sophiaRenderTxnList(data) {
 
 <!-- ── AI AGENT CHAT WIDGET ─────────────────────────────────────────── -->
 <style>
+/* v48.25: Chat widget is hidden for public (logged-out) users. The body.tier-authed
+   class is added in atlasHandleSignedIn and removed in atlasHandleSignedOut. This
+   prevents pre-login users from leaking unmasked addresses through the AI context
+   builder (gatherContext) which embeds raw r.address values into the LLM prompt. */
+body:not(.tier-authed) #atlas-chat-bubble,
+body:not(.tier-authed) #atlas-chat-panel { display: none !important; }
 #atlas-chat-bubble{
   position:fixed;bottom:24px;right:24px;z-index:9999;
   width:52px;height:52px;border-radius:50%;
@@ -23496,6 +23509,8 @@ async function atlasHandleSignedIn(session) {
     // v48.20p: editorial masthead sign-in link is the inverse — hide on sign-in
     var signinLink = document.getElementById('atlas-signin-link');
     if(signinLink) signinLink.style.display = 'none';
+    // v48.25: reveal AI chat widget for authenticated users (hidden by CSS for public).
+    document.body.classList.add('tier-authed');
   } catch(e) {}
   // Re-render the active tab with the new tier
   try { if(typeof atlasShowTab === 'function') atlasShowTab(atlasCurrentTabId()); } catch(e) {}
@@ -23518,6 +23533,8 @@ function atlasHandleSignedOut() {
     // v48.20p: editorial masthead sign-in link is the inverse — show on sign-out
     var signinLink = document.getElementById('atlas-signin-link');
     if(signinLink) signinLink.style.display = '';
+    // v48.25: hide AI chat widget on sign-out (public users see no chat bubble).
+    document.body.classList.remove('tier-authed');
   } catch(e) {}
   try { if(typeof atlasShowTab === 'function') atlasShowTab(atlasCurrentTabId()); } catch(e) {}
   console.log('[ATLAS Auth] Signed out — tier reset to public.');
@@ -27105,7 +27122,6 @@ html.article-takeover .ed-article-page,body.article-takeover .ed-article-page{di
   var HIDDEN_TAB_HASHES = {
     '#forsale':   'forsale',
     '#directory': 'directory',
-    '#pipeline':  'pipeline',
     '#assetdir':  'assetdir',
     '#talent':    'talent',
     '#pulse':     'pulse'
