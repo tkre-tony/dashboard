@@ -26443,7 +26443,10 @@ function enqEmailRow(label, value) {
    the head-script's pre-paint signal hides chrome before <body> parses.
    The atlasArticlePage IIFE still upgrades to body.article-takeover on DOMContentLoaded. */
 html.article-takeover .topbar,html.article-takeover .navtabs,html.article-takeover .panel,html.article-takeover footer,html.article-takeover .nl-banner,body.article-takeover .topbar,body.article-takeover .navtabs,body.article-takeover .panel,body.article-takeover footer,body.article-takeover .nl-banner{display:none!important}
-html.article-takeover,body.article-takeover{background:var(--ed-cream-lt);overflow-x:hidden}
+/* v48.29: overflow-x:clip not hidden — `hidden` creates a containing block
+   that kills position:sticky on .ed-art-masthead (the back-to-landing link).
+   `clip` prevents horizontal overflow without establishing a containing block. */
+html.article-takeover,body.article-takeover{background:var(--ed-cream-lt);overflow-x:clip}
 .ed-article-page{display:none;font-family:var(--ed-body-serif);background:var(--ed-cream-lt);color:var(--ed-ink);min-height:100vh}
 html.article-takeover .ed-article-page,body.article-takeover .ed-article-page{display:block}
 .ed-art-masthead{position:sticky;top:0;z-index:50;background:var(--ed-cream-lt);border-bottom:1px solid var(--ed-hairline);padding:14px 28px;display:flex;align-items:center;gap:18px}
