@@ -1610,11 +1610,15 @@ body.article-takeover .ed-foot{display:none!important}
      Asset Directory, Human Capital, Stock, Corporate Watch).
      Bookmark: https://propertyatlas.sg/#dev (or .../dashboard/#dev) -->
 <style>
-  /* v48.20s-fix1: Hide the 5 deeper tools by default. !important required to override
-     inline style="display:flex" on Asset Directory / Human Capital / Stock / Corporate Watch. */
-  .navtab.navtab-hidden { display: none !important; }
-  /* Reveal hidden tools when dev-mode unlock active */
-  body.dev-mode .navtab.navtab-hidden { display: flex !important; align-items: center; gap: 6px; }
+  /* v48.28: ALL nav tabs visible to all tiers (discovery surface). The 5 gated
+     tabs (Directory, Asset Directory, Human Capital, Stock, Corporate Watch)
+     remain CONTENT-gated via ATLAS_GATED_TABS in JS — click as non-subscriber
+     fires atlasRenderSubscribeStub. The .navtab-hidden class stays in HTML for
+     code references but is now a no-op visually.
+     Prior model (v48.20s-fix1 → v48.27): tabs hidden until dev-mode unlock.
+     Reverted because it diverged from product spec where tabs must be visible
+     as a discovery cue; gating happens at content layer not strip layer. */
+  .navtab.navtab-hidden { display: flex; align-items: center; gap: 6px; }
 </style>
 </head>
 <body>
