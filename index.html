@@ -15993,8 +15993,15 @@ function nrCollapseAll(){
   NR_EXPANDED = false;
 }
 
-function formatNewsSummary(text){
+// v48.30: optional `mode` arg — 'card' (default, all 3 existing card callers)
+// preserves the lead-keyword auto-bold pattern that's useful at small sizes for
+// scannable feed/hero cards. 'article' mode (article-page caller only) skips the
+// two lead-bolding regex replacements so body prose runs at uniform regular weight,
+// matching editorial-journalism convention (Reuters/FT/Mingtiandi). Section-header
+// and numbered-insight detection fire in BOTH modes because those are real headings.
+function formatNewsSummary(text, mode){
   if(!text) return '';
+  var isArticle = (mode === 'article');
   // Split into paragraphs on double newline
   var paras = text.split(/\n\n+/);
   var html = '';
@@ -16020,15 +16027,17 @@ function formatNewsSummary(text){
       lines.forEach(function(line){
         line = line.trim();
         if(!line) return;
-        // Bold the lead keyword up to first colon (e.g. "KINEX Divestment (Oct 2025):")
-        line = line.replace(/^([^:]{3,50}:)(\s)/, '<strong>$1</strong>$2');
+        // v48.30: skip lead-keyword auto-bold in article mode (body prose stays regular weight)
+        if(!isArticle){
+          line = line.replace(/^([^:]{3,50}:)(\s)/, '<strong>$1</strong>$2');
+        }
         html += '<li style="font-size:12px;line-height:1.65;color:var(--txt);margin-bottom:5px;padding-left:2px">'+
           '<span style="color:var(--g2);margin-right:6px;font-size:10px">▸</span>'+line+'</li>';
       });
       html += '</ul>';
     } else {
-      // Single paragraph — check if it has a bold-able lead
-      var line = para.replace(/^([^:]{3,60}:)(\s)/, '<strong>$1</strong>$2');
+      // Single paragraph — check if it has a bold-able lead (skipped in article mode)
+      var line = isArticle ? para : para.replace(/^([^:]{3,60}:)(\s)/, '<strong>$1</strong>$2');
       html += '<p style="font-size:12px;line-height:1.65;color:var(--txt);margin:0 0 8px">'+line+'</p>';
     }
   });
@@ -27337,7 +27346,7 @@ html.article-takeover .ed-article-page,body.article-takeover .ed-article-page{di
         +(standfirst?'<p class="ed-art-standfirst">'+standfirst+'</p>':'')
         +'<div class="ed-art-byline">'+bylineParts.join('')+'</div>'
         +photoBlock
-        +'<div class="ed-art-body">'+formatNewsSummary(article.summary)+'</div>'
+        +'<div class="ed-art-body">'+formatNewsSummary(article.summary, 'article')+'</div>'
         +fhPanel
         +sourceLine
       +'</article>'
