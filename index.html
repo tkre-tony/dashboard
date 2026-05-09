@@ -24662,8 +24662,14 @@ function invRender() {
 
   var filtered = VACANCY_DATA.filter(function(d) {
     if(INV_REIT !== 'all' && d.reit !== INV_REIT) return false;
-    // Hide absorbed unless toggle is on
-    if(d.status === 'Absorbed' && !INV_SHOW_ABSORBED) return false;
+    // Absorbed toggle = mutually exclusive view (per L227):
+    //   ON  → show ONLY absorbed records (active hidden)
+    //   OFF → show ONLY active records (absorbed hidden)
+    if(INV_SHOW_ABSORBED) {
+      if(d.status !== 'Absorbed') return false;
+    } else {
+      if(d.status === 'Absorbed') return false;
+    }
     if(q && !(d.addr.toLowerCase().includes(q)||d.unit.toLowerCase().includes(q)||(d.remarks||'').toLowerCase().includes(q)||(d.addrFull||'').toLowerCase().includes(q)||(d.cluster||'').toLowerCase().includes(q))) return false;
     if(zf && d.zone !== zf) return false;
     if(cf && d.cluster !== cf) return false;
