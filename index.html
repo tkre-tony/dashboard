@@ -24765,7 +24765,7 @@ function invRender() {
         (d.remarks ? '<div class="inv-remarks">'+d.remarks+'</div>' : '')+
         couNote+
         matterportBtn+
-        '<div class="inv-reit-tag" style="color:'+d.reit_color+'"><span class="inv-reit-dot" style="background:'+d.reit_color+'"></span>'+d.reit+' · '+(isAbsorbed ? 'Feb 2026' : d.month)+'</div>'+
+        '<div class="inv-reit-tag" style="color:'+d.reit_color+'"><span class="inv-reit-dot" style="background:'+d.reit_color+'"></span>'+d.reit+' · '+d.month+'</div>'+
         (!isAbsorbed ? '<div style="margin-top:10px"><button class="enq-btn" data-reit="'+encodeURIComponent(d.reit)+'" data-addr="'+encodeURIComponent(d.addr)+'" data-unit="'+encodeURIComponent(d.unit)+'" style="width:100%;height:32px;background:var(--g1);color:#fff;border:none;border-radius:6px;font-size:12px;font-weight:600;font-family:\'DM Sans\',sans-serif;cursor:pointer">📩 Enquire About This Space</button></div>' : '')+
       '</div>';
     }).join('');
