@@ -3684,10 +3684,10 @@ body.article-takeover .ed-foot{display:none!important}
   <div class="inv-stats-row">
     <div class="inv-stat"><div class="inv-stat-val" id="inv-s-listings">—</div><div class="inv-stat-lbl">Listings shown</div></div>
     <div class="inv-stat"><div class="inv-stat-val" id="inv-s-sqft">—</div><div class="inv-stat-lbl">Total sqft</div></div>
-    <div class="inv-stat"><div class="inv-stat-val" id="inv-s-imm">—</div><div class="inv-stat-lbl">Immediate</div></div>
+    <div class="inv-stat"><div class="inv-stat-val" id="inv-s-imm">—</div><div class="inv-stat-lbl" id="inv-s-imm-lbl">Immediate</div></div>
     <div class="inv-stat"><div class="inv-stat-val" id="inv-s-props">—</div><div class="inv-stat-lbl">Properties</div></div>
-    <div class="inv-stat"><div class="inv-stat-val" id="inv-s-lorent">—</div><div class="inv-stat-lbl">Lowest asking</div></div>
-    <div class="inv-stat"><div class="inv-stat-val" id="inv-s-hirent">—</div><div class="inv-stat-lbl">Highest asking</div></div>
+    <div class="inv-stat"><div class="inv-stat-val" id="inv-s-lorent">—</div><div class="inv-stat-lbl" id="inv-s-lorent-lbl">Lowest asking</div></div>
+    <div class="inv-stat"><div class="inv-stat-val" id="inv-s-hirent">—</div><div class="inv-stat-lbl" id="inv-s-hirent-lbl">Highest asking</div></div>
   </div>
 
   <!-- Card grid -->
@@ -24681,11 +24681,17 @@ function invRender() {
     return true;
   });
 
-  // Stats — exclude absorbed from active counts
-  var active = filtered.filter(function(d){ return d.status !== 'Absorbed'; });
-  var totalSqft = active.reduce(function(s,d){return s+d.sqft},0);
-  var props = [...new Set(active.map(function(d){return d.addr}))].length;
-  var imm = active.filter(function(d){return /immediate/i.test(d.avail)}).length;
+  // Stats — KPI band toggles with Absorbed view (per L226):
+  // • Absorbed toggle OFF: show active inventory KPIs (Listings/Sqft/Immediate/Properties/Lo/Hi rent)
+  // • Absorbed toggle ON:  show absorbed-tail KPIs (count/sqft/recently-leased/properties; rent tiles hidden)
+  var active   = filtered.filter(function(d){ return d.status !== 'Absorbed'; });
+  var absorbed = filtered.filter(function(d){ return d.status === 'Absorbed'; });
+  var statsSet = INV_SHOW_ABSORBED ? absorbed : active;
+  var totalSqft = statsSet.reduce(function(s,d){return s+d.sqft},0);
+  var props = [...new Set(statsSet.map(function(d){return d.addr}))].length;
+  var imm = INV_SHOW_ABSORBED
+    ? absorbed.length
+    : active.filter(function(d){return /immediate/i.test(d.avail)}).length;
   var rents = active.filter(function(d){return d.rent}).map(function(d){
     var raw = parseFloat(d.rent.replace(/[^0-9.]/g,''));
     // Clifton stores monthly rent — convert to psf/mo for comparison
@@ -24695,14 +24701,31 @@ function invRender() {
   var loRent = rents.length ? Math.min.apply(null,rents).toFixed(2) : null;
   var hiRent = rents.length ? Math.max.apply(null,rents).toFixed(2) : null;
 
-  document.getElementById('inv-s-listings').textContent = active.length;
+  document.getElementById('inv-s-listings').textContent = statsSet.length;
   document.getElementById('inv-s-sqft').textContent = totalSqft>0 ? (totalSqft/1000).toFixed(0)+'K' : '0';
   document.getElementById('inv-s-imm').textContent = imm;
   document.getElementById('inv-s-props').textContent = props;
+  // Flip labels and rent tiles based on toggle
+  var immLbl = document.getElementById('inv-s-imm-lbl');
+  if(immLbl) immLbl.textContent = INV_SHOW_ABSORBED ? 'Recently leased' : 'Immediate';
   var psfLabel = (INV_REIT === 'Clifton Partners') ? ' psf/mo' : ' psf';
-  document.getElementById('inv-s-lorent').textContent = loRent ? '$'+loRent+psfLabel : '—';
-  document.getElementById('inv-s-hirent').textContent = hiRent ? '$'+hiRent+psfLabel : '—';
-  document.getElementById('inv-total-units').textContent = active.length;
+  if(INV_SHOW_ABSORBED){
+    // Rent tiles not meaningful for absorbed view — hide values, dim labels
+    document.getElementById('inv-s-lorent').textContent = '—';
+    document.getElementById('inv-s-hirent').textContent = '—';
+    var loLbl = document.getElementById('inv-s-lorent-lbl');
+    var hiLbl = document.getElementById('inv-s-hirent-lbl');
+    if(loLbl) loLbl.textContent = 'Lowest asking';
+    if(hiLbl) hiLbl.textContent = 'Highest asking';
+  } else {
+    document.getElementById('inv-s-lorent').textContent = loRent ? '$'+loRent+psfLabel : '—';
+    document.getElementById('inv-s-hirent').textContent = hiRent ? '$'+hiRent+psfLabel : '—';
+    var loLbl2 = document.getElementById('inv-s-lorent-lbl');
+    var hiLbl2 = document.getElementById('inv-s-hirent-lbl');
+    if(loLbl2) loLbl2.textContent = 'Lowest asking';
+    if(hiLbl2) hiLbl2.textContent = 'Highest asking';
+  }
+  document.getElementById('inv-total-units').textContent = statsSet.length;
   document.getElementById('inv-total-sqft').textContent = totalSqft>0 ? (totalSqft/1000).toFixed(0)+'K' : '0';
   document.getElementById('inv-total-props').textContent = props;
 
