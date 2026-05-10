@@ -34,6 +34,24 @@ html.article-takeover .nl-banner{display:none!important}
 html.article-takeover{background:#FAF7F0}
 </style>
 <title>SG Market Intelligence | TKRE</title>
+<!-- v48.36 P12 fix Layer 1: static OG / Twitter Card defaults.
+     Renders for the landing page (shared as-is) AND serves as a fallback for
+     non-JS-executing social scrapers (LinkedIn especially) hitting any URL.
+     Layer 2 (atlasArticlePage IIFE near line 27272) overwrites these per-article
+     for JS-aware scrapers (Facebook) on ?article=N URLs.
+     TODO: replace og:image with a dedicated brand card once design is ready;
+     interim points at the AIMS APAC FY2026 hero photo (matches static landing hero). -->
+<meta name="description" content="PropertyAtlas — REIT-analyst-grade landlord intelligence on Singapore commercial &amp; industrial real estate. Newsroom coverage of S-REITs, vacancies, and market structure."/>
+<meta property="og:site_name" content="PropertyAtlas"/>
+<meta property="og:type" content="website"/>
+<meta property="og:title" content="PropertyAtlas · Singapore Real Estate Intelligence"/>
+<meta property="og:description" content="REIT-analyst-grade landlord intelligence on Singapore commercial &amp; industrial real estate. Newsroom coverage of S-REITs, vacancies, and market structure."/>
+<meta property="og:image" content="https://propertyatlas.sg/dashboard/images/news_87_aareit_10_changi_south_lane.jpg"/>
+<meta property="og:url" content="https://propertyatlas.sg/"/>
+<meta name="twitter:card" content="summary_large_image"/>
+<meta name="twitter:title" content="PropertyAtlas · Singapore Real Estate Intelligence"/>
+<meta name="twitter:description" content="REIT-analyst-grade landlord intelligence on Singapore commercial &amp; industrial real estate."/>
+<meta name="twitter:image" content="https://propertyatlas.sg/dashboard/images/news_87_aareit_10_changi_south_lane.jpg"/>
 <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
@@ -27451,10 +27469,113 @@ html.article-takeover .ed-article-page,body.article-takeover .ed-article-page{di
       mount.innerHTML = edRenderArticlePage(article);
       // Update browser title
       try { document.title = (article.display_headline || article.display_title || article.title || 'Article')+' · PropertyAtlas'; } catch(e) {}
+      // v48.36 P12 fix Layer 2: per-article OG / Twitter Card meta tag injection.
+      // Helps JS-aware social scrapers (Facebook in particular) generate per-article
+      // share previews. LinkedIn's scraper does NOT execute JS, so for LinkedIn the
+      // static block in <head> is what's seen — that's the universal fallback.
+      try { atlasUpdateOgTags(article); } catch(e) {}
       // Scroll to top so the user lands at the masthead
       try { window.scrollTo(0, 0); } catch(e) {}
     } catch(e) { /* silently ignore — broken deep-link should degrade to dashboard, not error */ }
   }
+  // ─── v48.36 P12 fix: OG / Twitter Card meta tag helpers ──────────────────────
+  // Snapshot the static defaults on first run so popstate-back can restore them.
+  // The static block in <head> (Layer 1) seeded these values; we mutate `content`
+  // per article on mount, then restore from this snapshot when leaving article view.
+  var ATLAS_OG_KEYS = [
+    {sel:'meta[property="og:title"]',       attr:'content'},
+    {sel:'meta[property="og:description"]', attr:'content'},
+    {sel:'meta[property="og:image"]',       attr:'content'},
+    {sel:'meta[property="og:url"]',         attr:'content'},
+    {sel:'meta[property="og:type"]',        attr:'content'},
+    {sel:'meta[name="twitter:title"]',      attr:'content'},
+    {sel:'meta[name="twitter:description"]',attr:'content'},
+    {sel:'meta[name="twitter:image"]',      attr:'content'},
+    {sel:'meta[name="description"]',        attr:'content'}
+  ];
+  var atlasOgDefaults = null;
+  function atlasSnapshotOgDefaults(){
+    if(atlasOgDefaults) return;
+    atlasOgDefaults = {};
+    try {
+      ATLAS_OG_KEYS.forEach(function(k){
+        var el = document.head.querySelector(k.sel);
+        atlasOgDefaults[k.sel] = el ? el.getAttribute(k.attr) : null;
+      });
+    } catch(e) { atlasOgDefaults = {}; }
+  }
+  // Set or create+set a meta tag in <head> by selector.
+  function atlasSetMeta(sel, attrName, value){
+    if(value == null) return;
+    try {
+      var el = document.head.querySelector(sel);
+      if(!el){
+        // Edge case: tag absent from static block. Build it from selector hints.
+        el = document.createElement('meta');
+        // Selector forms: meta[property="X"] or meta[name="X"]
+        var m = sel.match(/meta\[(property|name)="([^"]+)"\]/);
+        if(m){ el.setAttribute(m[1], m[2]); document.head.appendChild(el); }
+        else { return; }
+      }
+      el.setAttribute(attrName, value);
+    } catch(e) {}
+  }
+  // Build absolute URL for the article's image. Articles 83-87 have a fully-qualified
+  // og_image field. Older articles only have a relative `image` field — we resolve it
+  // against current origin + dashboard pathname. If neither exists, the static fallback
+  // image (from defaults) is preserved.
+  function atlasResolveOgImage(article){
+    if(article.og_image) return article.og_image;
+    if(article.image){
+      try {
+        // location.origin + pathname-up-to-last-slash gives the dashboard root
+        var basePath = window.location.pathname.replace(/[^/]*$/, '');
+        return window.location.origin + basePath + article.image;
+      } catch(e) { return null; }
+    }
+    return null;
+  }
+  // Truncate text to ~200 chars at a word boundary for og:description fallback.
+  function atlasTruncate(s, n){
+    if(!s) return '';
+    s = String(s).replace(/\s+/g,' ').trim();
+    if(s.length <= n) return s;
+    var cut = s.lastIndexOf(' ', n);
+    return (cut > 0 ? s.substring(0, cut) : s.substring(0, n)) + '…';
+  }
+  // Update <head> meta tags from an article object. Falls back gracefully across
+  // article generations: id 83-87 have og_image + meta_description; older articles
+  // have only standfirst + relative image; some have neither and inherit defaults.
+  function atlasUpdateOgTags(article){
+    if(!article) return;
+    atlasSnapshotOgDefaults();
+    var title = article.display_title || article.display_headline || article.title || atlasOgDefaults['meta[property="og:title"]'];
+    var desc  = article.meta_description || atlasTruncate(article.standfirst, 200) || atlasOgDefaults['meta[property="og:description"]'];
+    var img   = atlasResolveOgImage(article) || atlasOgDefaults['meta[property="og:image"]'];
+    var url   = (function(){ try { return window.location.href; } catch(e){ return atlasOgDefaults['meta[property="og:url"]']; } })();
+    atlasSetMeta('meta[property="og:title"]',       'content', title);
+    atlasSetMeta('meta[property="og:description"]', 'content', desc);
+    atlasSetMeta('meta[property="og:image"]',       'content', img);
+    atlasSetMeta('meta[property="og:url"]',         'content', url);
+    atlasSetMeta('meta[property="og:type"]',        'content', 'article');
+    atlasSetMeta('meta[name="twitter:title"]',      'content', title);
+    atlasSetMeta('meta[name="twitter:description"]','content', desc);
+    atlasSetMeta('meta[name="twitter:image"]',      'content', img);
+    atlasSetMeta('meta[name="description"]',        'content', desc);
+  }
+  // Restore the static landing-page OG defaults (called on popstate-back to non-article URL).
+  function atlasRestoreOgDefaults(){
+    if(!atlasOgDefaults) return;  // never snapshotted = nothing to restore
+    try {
+      ATLAS_OG_KEYS.forEach(function(k){
+        var v = atlasOgDefaults[k.sel];
+        if(v != null) atlasSetMeta(k.sel, k.attr, v);
+      });
+    } catch(e) {}
+    // og:type back to 'website' for landing
+    atlasSetMeta('meta[property="og:type"]', 'content', 'website');
+  }
+  // ─── end P12 helpers ─────────────────────────────────────────────────────────
   if(document.readyState === 'loading'){
     document.addEventListener('DOMContentLoaded', handleArticleParam);
   } else {
@@ -27473,6 +27594,9 @@ html.article-takeover .ed-article-page,body.article-takeover .ed-article-page{di
       document.body.classList.remove('article-takeover');
       var mount = document.getElementById('ed-article-page');
       if(mount) mount.innerHTML = '';
+      // v48.36 P12 fix: restore static OG defaults so a back-nav to landing
+      // doesn't leave article-specific share metadata behind.
+      try { atlasRestoreOgDefaults(); } catch(e) {}
     }
   });
 })();
