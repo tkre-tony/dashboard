@@ -923,8 +923,13 @@ body.article-takeover .ed-foot{display:none!important}
   .hero-grid {
     display: grid;
     grid-template-columns: 1.15fr 1fr;
-    gap: 36px;
+    column-gap: 36px;
+    row-gap: 24px;
     align-items: start;
+  }
+  .hero-body {
+    grid-column: 1 / -1;       /* span both columns under image + headline */
+    max-width: 75ch;            /* readable line-length cap for the teaser */
   }
   .hero-image-col {
     display: block;
@@ -2672,7 +2677,13 @@ body.article-takeover .ed-foot{display:none!important}
       <h1 id="hero-h" class="hero-headline">
         <a href="./?article=88&amp;from=landing">Frasers Property 1H FY26: Attributable Profit -37.8% To S$88.4m, But Strip One-Offs And Underlying Is +77% — PBIT +13.2% Into Rising Leverage, Centrepoint Collective Sale Opens Orchard Rejuvenation Path, No Interim Dividend Declared</a>
       </h1>
+    </div>
 
+    <!-- Body row — spans both columns under image + headline.
+         v48.39: hero-body break-out so teaser + meta + button stretch
+         under the image, eliminating the cream dead-zone that long
+         headlines caused. -->
+    <div class="hero-body">
       <p class="hero-teaser">
         Frasers Property 1H FY26 (half-year ended 31 March 2026,
         released 8 May 2026) prints headline attributable profit
