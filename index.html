@@ -73,7 +73,8 @@ html,body{background:var(--bg);color:var(--txt);font-family:'DM Sans',sans-serif
 .topbar-dot{width:6px;height:6px;border-radius:50%;background:#3da670;box-shadow:0 0 0 2px rgba(61,166,112,.25)}
 
 /* ── NAV TABS ── */
-.navtabs{display:flex;background:var(--hdr2);padding:0 20px;border-bottom:2px solid rgba(255,255,255,.06);gap:0}
+.navtabs{display:flex;background:var(--hdr2);padding:0 20px;border-bottom:2px solid rgba(255,255,255,.06);gap:0;position:sticky;top:64px;z-index:199}
+@media (max-width:760px){.navtabs{top:56px}}
 .navtab{padding:10px 15px;font-size:12px;font-weight:500;color:rgba(255,255,255,.45);cursor:pointer;border-bottom:2px solid transparent;margin-bottom:-2px;transition:all .15s;letter-spacing:.01em;white-space:nowrap;display:flex;align-items:center;gap:6px}
 .navtab:hover{color:rgba(255,255,255,.8);background:rgba(255,255,255,.04)}
 .navtab.on{color:#fff;border-bottom-color:var(--g3);font-weight:600}
