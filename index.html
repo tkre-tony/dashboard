@@ -34,24 +34,6 @@ html.article-takeover .nl-banner{display:none!important}
 html.article-takeover{background:#FAF7F0}
 </style>
 <title>SG Market Intelligence | TKRE</title>
-<!-- v48.36 P12 fix Layer 1: static OG / Twitter Card defaults.
-     Renders for the landing page (shared as-is) AND serves as a fallback for
-     non-JS-executing social scrapers (LinkedIn especially) hitting any URL.
-     Layer 2 (atlasArticlePage IIFE near line 27272) overwrites these per-article
-     for JS-aware scrapers (Facebook) on ?article=N URLs.
-     TODO: replace og:image with a dedicated brand card once design is ready;
-     interim points at the AIMS APAC FY2026 hero photo (matches static landing hero). -->
-<meta name="description" content="PropertyAtlas — REIT-analyst-grade landlord intelligence on Singapore commercial &amp; industrial real estate. Newsroom coverage of S-REITs, vacancies, and market structure."/>
-<meta property="og:site_name" content="PropertyAtlas"/>
-<meta property="og:type" content="website"/>
-<meta property="og:title" content="PropertyAtlas · Singapore Real Estate Intelligence"/>
-<meta property="og:description" content="REIT-analyst-grade landlord intelligence on Singapore commercial &amp; industrial real estate. Newsroom coverage of S-REITs, vacancies, and market structure."/>
-<meta property="og:image" content="https://propertyatlas.sg/dashboard/images/news_87_aareit_10_changi_south_lane.jpg"/>
-<meta property="og:url" content="https://propertyatlas.sg/"/>
-<meta name="twitter:card" content="summary_large_image"/>
-<meta name="twitter:title" content="PropertyAtlas · Singapore Real Estate Intelligence"/>
-<meta name="twitter:description" content="REIT-analyst-grade landlord intelligence on Singapore commercial &amp; industrial real estate."/>
-<meta name="twitter:image" content="https://propertyatlas.sg/dashboard/images/news_87_aareit_10_changi_south_lane.jpg"/>
 <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
@@ -2619,97 +2601,106 @@ body.article-takeover .ed-foot{display:none!important}
 
 <!-- =========================================================
      HERO ARTICLE
-     Promoted from cascade: NEWS id 87 — AIMS APAC REIT FY2026
-     Financial Results (PropertyAtlas publication date 7 May 2026,
-     results presentation + press release + portfolio valuation
-     announcement all dated 7 May 2026). v48.27 cascade: id 86 CAREIT
-     demoted from hero to card 1, id 85 FLCT to card 2, id 84 FEHT to
-     card 3, id 83 CDLHT promoted from card 3 to feed top, id 78 MIT
-     drops off bottom of feed per L166 three-tier cascade.
+     Promoted from cascade: NEWS id 88 — Frasers Property Limited
+     1H FY26 Financial Results (PropertyAtlas publication date
+     11 May 2026, results released 8 May 2026; PR + financial
+     deck + fact sheet all dated 8 May 2026). v48.38 cascade:
+     id 87 AAREIT demoted from hero to card 1, id 86 CAREIT to card 2,
+     id 85 FLCT to card 3, id 84 FEHT promoted from card 3 to feed top,
+     id 79 IREIT drops off bottom of feed per L166 three-tier cascade.
 
-     AIMS APAC context: this is the FY2026 full-year print covering
-     1 Apr 2025–31 Mar 2026, with results released 7 May 2026.
-     Editorial angle: DPU +2.6% to 9.850 SG cents and NAV S$1.23→ 1.28
-     are clean operational results, but the structural reads underneath
-     are (i) the S$250M perpetual pre-funding at 4.10% / 4.25% to
-     refinance the S$250M 5.375% Sep-26 redemption (∼121bps spread save),
-     (ii) the NSW Government Investment Delivery Authority's endorsement
-     of Macquarie Park and Bella Vista among 15 data centre sites worth
-     A$51.9B alongside Microsoft, NEXTDC, Goodman and Stockland, and
-     (iii) aggregate leverage stepping down 28.9% → 26.8% on a 5.9%
-     portfolio valuation uplift to S$2.25B.
+     Frasers Property context: this is the 1H FY26 half-year print
+     covering 1 Oct 2025–31 Mar 2026, with results released 8 May 2026.
+     Editorial angle: headline attributable profit -37.8% to S$88.4m
+     reads ugly on its face, but strip the one-off 1H FY25 tax provisions
+     reversal and underlying is +77% YoY. The structural reads underneath
+     are (i) PBIT +13.2% to S$678.7m with recurring income 76% of PBIT
+     as Singapore retail compounds under full-period Northpoint City
+     South Wing and Thailand ARAYA industrial estate land sales drive
+     segment PBIT +44.3%, (ii) a S$38.2m Thailand impairment booked in
+     exceptional items that masks the underlying lift, and (iii) net
+     debt/equity climbing 89.2% → 94.2% on the January 2026 perpetual
+     securities redemption — leverage now the single most informative
+     metric. The Centrepoint rear plot collective sale award (Feb 2026)
+     opens Orchard rejuvenation optionality; no interim dividend was
+     declared with the board citing "uncertain business environment";
+     shares closed -2.6% to S$1.11 on release day.
 
      Publication date convention (L171, 4 May 2026): the date displayed
-     here and in the article meta is the PropertyAtlas publish date,
-     not the underlying source-deck release date — in this case the
-     two coincide at 7 May 2026.
+     here and in the article meta is the PropertyAtlas publish date
+     (11 May 2026), not the underlying release date (8 May 2026).
+     Source date is preserved in the sourceLabel field of the NEWS entry.
      ========================================================= -->
 <main id="newsroom">
 <section class="hero" aria-labelledby="hero-h">
   <div class="wrap hero-grid">
 
     <!-- Image — Phase 1 GitHub Pages photo pipeline.
-         id:87 AIMS APAC REIT hero — 10 Changi South Lane, one of
-         AAREIT's 11 Singapore logistics & warehouse properties. The
-         FY2026 print covers the year ended 31 March 2026: gross
-         revenue S$190.7M (+2.2% YoY), NPI S$141.3M (+5.7% YoY),
-         distributions S$80.6M (+3.1%), DPU 9.850 SG cents (+2.6%).
-         Portfolio occupancy 93.6% (96.8% on a committed basis), with
-         rental reversions of +7.7% across 98 leases representing
-         27.4% of portfolio NLA. -->
+         id:88 Frasers Property hero — Frasers Tower, 182 Cecil Street,
+         the Group's Singapore Grade A office anchor (NLA 63.6K sqm,
+         val S$2,124M on 100% basis, occupancy 99.4%). The 1H FY26
+         print covers the half-year ended 31 March 2026: revenue
+         S$1,508.6m (-5.2% YoY on Sky Eden@Bedok TOP absence), PBIT
+         S$678.7m (+13.2% YoY), EBITDA S$719.6m (+12.7%), recurring
+         income 76% of PBIT, attributable profit S$88.4m (-37.8%
+         headline on a S$38.2m Thailand impairment; +77% YoY ex-1H FY25
+         one-off tax reversal). NAV S$2.40 (FY25: S$2.37); net debt/
+         equity 89.2% → 94.2%. -->
     <!-- Image column: photo + credit live together as one grid cell.
          Placing them as separate grid siblings caused credit to land in
          column 2 row 2 (top-right of headline) — Lesson 128 captured. -->
     <div class="hero-image-col">
-      <a class="hero-image" href="./?article=87&amp;from=landing" aria-label="Read the full entry: AIMS APAC REIT FY2026 results analysis">
-        <img src="./images/news_87_aareit_10_changi_south_lane.jpg"
-             alt="10 Changi South Lane, Singapore — AIMS APAC REIT FY2026 hero asset, one of 11 Singapore logistics & warehouse properties anchoring the S$2.25B portfolio"
+      <a class="hero-image" href="./?article=88&amp;from=landing" aria-label="Read the full entry: Frasers Property 1H FY26 results analysis">
+        <img src="./images/news_88_fpl_frasers_tower.jpg"
+             alt="Frasers Tower, 182 Cecil Street, Singapore — Frasers Property 1H FY26 hero asset, the Group's Grade A Singapore CBD office anchor (S$2.1B valuation, 99.4% occupied)"
              class="hero-image-photo"
              loading="eager"
              fetchpriority="high" />
       </a>
 
-      <p class="hero-credit">10 Changi South Lane, Singapore. Photo: AIMS APAC REIT</p>
+      <p class="hero-credit">Frasers Tower, 182 Cecil Street, Singapore. Photo: Frasers Property</p>
     </div>
 
     <!-- Text column -->
     <div class="hero-text">
       <div class="hero-eyebrow">
         <span class="pill">Latest</span>
-        <span class="cat-tag">Industrial</span>
-        <span class="cat-tag">Earnings · REIT Update · Full-Year · Industrial · Logistics · Multi-Geography · Capital Management · Data Centre Optionality</span>
+        <span class="cat-tag">Commercial</span>
+        <span class="cat-tag">Earnings · Developer · 1H Results · Multi-Geography · Capital Recycling · Singapore</span>
       </div>
 
       <h1 id="hero-h" class="hero-headline">
-        <a href="./?article=87&amp;from=landing">AIMS APAC REIT FY2026: DPU +2.6% to 9.850¢, NAV S$1.23→S$1.28 — Macquarie Park + Bella Vista Endorsed As Data Centre Sites, S$250M Perpetual Pre-Funded At 4.10% / 4.25%</a>
+        <a href="./?article=88&amp;from=landing">Frasers Property 1H FY26: Attributable Profit -37.8% To S$88.4m, But Strip One-Offs And Underlying Is +77% — PBIT +13.2% Into Rising Leverage, Centrepoint Collective Sale Opens Orchard Rejuvenation Path, No Interim Dividend Declared</a>
       </h1>
 
       <p class="hero-teaser">
-        AIMS APAC REIT FY2026 (year ended 31 March 2026, reported
-        7 May 2026) closed a year of disciplined execution with
-        DPU climbing 2.6% to 9.850 Singapore cents and NAV per unit
-        stepping S$1.23 → S$1.28. Gross revenue +2.2% to S$190.7M,
-        NPI +5.7% to S$141.3M (350bps margin spread on cost
-        discipline), distributions +3.1% to S$80.6M. Underneath: an
-        opportunistic S$250M perpetual pre-funding (S$150M @ 4.10%
-        + S$100M @ 4.25%) ahead of the US-Iran conflict to
-        refinance the S$250M 5.375% Sep-26 redemption — ∼121bps
-        spread save. NSW Government IDA endorsement of Macquarie
-        Park + Bella Vista among 15 data centre projects worth
-        A$51.9B alongside Microsoft, NEXTDC, Goodman, Stockland.
-        Aggregate leverage steps down 28.9% → 26.8% on 5.9%
-        portfolio valuation uplift to S$2.25B.
+        Frasers Property 1H FY26 (half-year ended 31 March 2026,
+        released 8 May 2026) prints headline attributable profit
+        -37.8% to S$88.4m on a S$38.2m Thailand impairment — but
+        strip the one-off 1H FY25 tax provisions reversal and
+        underlying is +77% YoY. PBIT +13.2% to S$678.7m, EBITDA
+        +12.7% to S$719.6m, recurring income 76% of PBIT, NAV per
+        share S$2.40. Underneath: Singapore retail PBIT +12.7% on
+        full-period Northpoint City South Wing, Thailand & Vietnam
+        +44.3% on ARAYA Eastern Gateway industrial estate land
+        sales, Australia swings to S$34.6m from S$7.5m on residential
+        settlements plus Discovery Point land. The Centrepoint rear
+        plot collective sale awarded February 2026 opens Orchard
+        rejuvenation optionality. Net debt/equity climbs 89.2% →
+        94.2% on January 2026 perpetual redemption — leverage now
+        the variable to watch. Shares -2.6% to S$1.11 on release;
+        no interim dividend declared.
       </p>
 
       <div class="hero-meta">
-        <span>7 May 2026</span>
+        <span>11 May 2026</span>
         <span class="sep">·</span>
-        <span>2,564 words</span>
+        <span>2,559 words</span>
         <span class="sep">·</span>
         <span>12 min read</span>
       </div>
 
-      <a class="btn-primary" href="./?article=87&amp;from=landing">
+      <a class="btn-primary" href="./?article=88&amp;from=landing">
         Read the full entry
         <span class="arrow" aria-hidden="true">→</span>
       </a>
@@ -2750,9 +2741,9 @@ body.article-takeover .ed-foot{display:none!important}
 
 <!-- =========================================================
      MORE FROM THIS WEEK — 3-card row
-     Cards seeded with NEWS ids 86, 85, 84 after v48.27 AIMS APAC
-     cascade. CDLHT (id 83) demoted from card 3 to feed top;
-     MIT (id 78) drops off bottom of feed.
+     Cards seeded with NEWS ids 87, 86, 85 after v48.38 FPL cascade.
+     FEHT (id 84) demoted from card 3 to feed top; IREIT (id 79)
+     drops off bottom of feed.
      display_title and display_teaser are short variants for
      landing-page rendering; full title preserved in NEWS array
      for article-page H1. Per v48.13e schema convention.
@@ -2769,7 +2760,26 @@ body.article-takeover .ed-foot{display:none!important}
 
     <div class="cards">
 
-      <!-- Card 1 — id 86 CAREIT (cascaded from hero in v48.27 AIMS APAC cascade) -->
+      <!-- Card 1 — id 87 AAREIT (cascaded from hero in v48.38 FPL cascade) -->
+      <a class="card" href="./?article=87&amp;from=landing">
+        <div class="card-image">
+          <img src="./images/news_87_aareit_10_changi_south_lane.jpg"
+               alt="10 Changi South Lane, Singapore — AIMS APAC REIT FY2026 hero asset, one of 11 Singapore logistics & warehouse properties anchoring the S$2.25B portfolio"
+               class="card-image-photo"
+               loading="lazy" />
+        </div>
+        <p class="card-credit">10 Changi South Lane, Singapore. Photo: AIMS APAC REIT</p>
+        <p class="card-cat">Industrial</p>
+        <h3 class="card-headline">AIMS APAC REIT FY2026: DPU +2.6% to 9.850¢, NAV S$1.23→S$1.28 — Macquarie Park + Bella Vista Endorsed As Data Centre Sites, S$250M Perpetual Pre-Funded At 4.10% / 4.25%</h3>
+        <p class="card-teaser">DPU +2.6% to 9.850 SG cents, NAV S$1.23→S$1.28, NPI +5.7% to S$141.3M (350bps margin spread on cost discipline). S$250M perpetual pre-funded at 4.10%/4.25% ahead of US-Iran conflict to refinance S$250M 5.375% Sep-26 redemption — ~121bps spread save. NSW Government IDA endorses Macquarie Park + Bella Vista among 15 data centre sites worth A$51.9B alongside Microsoft, NEXTDC, Goodman.</p>
+        <p class="card-meta">
+          <span>7 May 2026</span>
+          <span class="sep">·</span>
+          <span>12 min read</span>
+        </p>
+      </a>
+
+      <!-- Card 2 — id 86 CAREIT (cascaded from card 1 in v48.38 FPL cascade) -->
       <a class="card" href="./?article=86&amp;from=landing">
         <div class="card-image">
           <img src="./images/news_86_centurion_westlite_woodlands.jpg.png"
@@ -2788,7 +2798,7 @@ body.article-takeover .ed-foot{display:none!important}
         </p>
       </a>
 
-      <!-- Card 2 — id 85 FLCT (cascaded from card 1 in v48.27 AIMS APAC cascade) -->
+      <!-- Card 3 — id 85 FLCT (cascaded from card 2 in v48.38 FPL cascade) -->
       <a class="card" href="./?article=85&amp;from=landing">
         <div class="card-image">
           <img src="./images/news_85_flct_alexandra_technopark.jpg"
@@ -2807,35 +2817,16 @@ body.article-takeover .ed-foot{display:none!important}
         </p>
       </a>
 
-      <!-- Card 3 — id 84 FEHT (cascaded from card 2 in v48.27 AIMS APAC cascade) -->
-      <a class="card" href="./?article=84&amp;from=landing">
-        <div class="card-image">
-          <img src="./images/news_84_feht_oasia_hotel_downtown.jpg"
-               alt="Oasia Hotel Downtown, Singapore — Far East Hospitality Trust 1Q 2026 hero asset, the green-clad façade at Tanjong Pagar anchoring the Singapore Upscale segment"
-               class="card-image-photo"
-               loading="lazy" />
-        </div>
-        <p class="card-credit">Oasia Hotel Downtown, Singapore. Photo: Far East Hospitality Trust</p>
-        <p class="card-cat">Hospitality</p>
-        <h3 class="card-headline">Far East H-Trust 1Q 2026: 84.2% Occupancy, but ADR -3.9% Underneath — Japan FPN +26.6% GOP, WACD Drops to 2.3%</h3>
-        <p class="card-teaser">Singapore hotel occupancy jumped +5.2pp to 84.2% on Airshow + Hari Raya tailwinds, but ADR fell 3.9% to S$165 — RevPAR grew just 2.5%, the trade-off between occupancy and rate the cleanest read. Japan FPN delivered RevPAR +10.8% and GOP +26.6% on first full comparable; WACD compression to 2.3% drove +12.2% distributable income.</p>
-        <p class="card-meta">
-          <span>4 May 2026</span>
-          <span class="sep">·</span>
-          <span>9 min read</span>
-        </p>
-      </a>
-
     </div>
   </div>
 </section>
 
 <!-- =========================================================
      EARLIER THIS MONTH — feed rows
-     Currently rows id 83-79 after v48.27 AIMS APAC cascade: CDLHT (id 83)
-     promoted from card 3 to feed top; Starhill (id 82), Landmark (id 81),
-     SERT (id 80) each slot down one position; IREIT (id 79) sits below
-     the April month divider; MIT (id 78) drops off the bottom.
+     Currently rows id 84-80 after v48.38 FPL cascade: FEHT (id 84)
+     promoted from card 3 to feed top; CDLHT (id 83), Starhill (id 82),
+     Landmark (id 81), SERT (id 80) each slot down one position;
+     IREIT (id 79) drops off the bottom.
      Compact rows: 160px thumbnail (desktop), 80px (mobile).
 
      Future enhancement: group rows by week or month sub-header
@@ -2851,7 +2842,31 @@ body.article-takeover .ed-foot{display:none!important}
 
       <div class="feed-month">May 2026</div>
 
-      <!-- Row id 83 — CDLHT (cascaded from card 3 in v48.27 AIMS APAC cascade).
+      <!-- Row id 84 — FEHT (cascaded from card 3 in v48.38 FPL cascade).
+           Photo retained per L144 — entry has news_84_feht_oasia_hotel_downtown.jpg on GitHub. -->
+      <a class="feed-row" href="./?article=84&amp;from=landing">
+        <div class="feed-row-image-col">
+          <div class="feed-row-image">
+            <img src="./images/news_84_feht_oasia_hotel_downtown.jpg"
+                 alt="Oasia Hotel Downtown, Singapore — Far East Hospitality Trust 1Q 2026 hero asset, the green-clad façade at Tanjong Pagar anchoring the Singapore Upscale segment"
+                 class="feed-row-image-photo"
+                 loading="lazy" />
+          </div>
+          <p class="feed-row-credit">Oasia Hotel Downtown, Singapore. Photo: Far East Hospitality Trust</p>
+        </div>
+        <div class="feed-row-text">
+          <p class="feed-row-cat">Hospitality</p>
+          <h3 class="feed-row-headline">Far East H-Trust 1Q 2026: 84.2% Occupancy, but ADR -3.9% Underneath — Japan FPN +26.6% GOP, WACD Drops to 2.3%</h3>
+          <p class="feed-row-teaser">Singapore hotel occupancy jumped +5.2pp to 84.2% on Airshow + Hari Raya tailwinds, but ADR fell 3.9% to S$165 — RevPAR grew just 2.5%, the trade-off between occupancy and rate the cleanest read. Japan FPN delivered RevPAR +10.8% and GOP +26.6% on first full comparable; WACD compression to 2.3% drove +12.2% distributable income.</p>
+          <p class="feed-row-meta">
+            <span>4 May 2026</span>
+            <span class="sep">·</span>
+            <span>9 min read</span>
+          </p>
+        </div>
+      </a>
+
+      <!-- Row id 83 — CDLHT (cascaded from feed row 1 in v48.38 FPL cascade).
            Photo retained per L144 — entry has news_83_cdlht_w_sentosa.jpg on GitHub. -->
       <a class="feed-row" href="./?article=83&amp;from=landing">
         <div class="feed-row-image-col">
@@ -2875,7 +2890,7 @@ body.article-takeover .ed-foot{display:none!important}
         </div>
       </a>
 
-      <!-- Row id 82 — Starhill (cascaded from feed row 1 in v48.27 AIMS APAC cascade).
+      <!-- Row id 82 — Starhill (cascaded from feed row 2 in v48.38 FPL cascade).
            Photo retained per L144 — entry has news_82_starhill_ngee_ann_city.jpg on GitHub. -->
       <a class="feed-row" href="./?article=82&amp;from=landing">
         <div class="feed-row-image-col">
@@ -2899,7 +2914,7 @@ body.article-takeover .ed-foot{display:none!important}
         </div>
       </a>
 
-      <!-- Row id 81 — Landmark (cascaded from feed row 2 in v48.27 AIMS APAC cascade).
+      <!-- Row id 81 — Landmark (cascaded from feed row 3 in v48.38 FPL cascade).
            Photo retained per L144 — entry has news_81_landmark_sun_plaza.jpg on GitHub. -->
       <a class="feed-row" href="./?article=81&amp;from=landing">
         <div class="feed-row-image-col">
@@ -2923,8 +2938,9 @@ body.article-takeover .ed-foot{display:none!important}
         </div>
       </a>
 
-      <!-- Row id 80 — SERT (cascaded from feed row 3 in v48.27 AIMS APAC cascade).
-           Photo retained per L144 — entry has news_80_stoneweg_kingsland.jpg on GitHub. -->
+      <!-- Row id 80 — SERT (cascaded from feed row 4 in v48.38 FPL cascade).
+           Photo retained per L144 — entry has news_80_stoneweg_kingsland.jpg on GitHub.
+           All 5 visible feed rows now span 2-6 May 2026 after IREIT (1 May, id:79) drops off in v48.38 FPL cascade. -->
       <a class="feed-row" href="./?article=80&amp;from=landing">
         <div class="feed-row-image-col">
           <div class="feed-row-image">
@@ -2947,32 +2963,7 @@ body.article-takeover .ed-foot{display:none!important}
         </div>
       </a>
 
-      <!-- Row id 79 — IREIT (cascaded from feed row 4 in v48.27 AIMS APAC cascade).
-           Photo retained per L144 — entry has news_79_ireit_berlin_campus.jpg on GitHub.
-           April 2026 divider removed in v48.27 cascade since id:78 MIT (28 Apr) drops off; all 5 visible feed rows are now May 2026 dated. -->
-      <a class="feed-row" href="./?article=79&amp;from=landing">
-        <div class="feed-row-image-col">
-          <div class="feed-row-image">
-            <img src="./images/news_79_ireit_berlin_campus.jpg"
-                 alt="Berlin Campus, Germany — IREIT 1Q2026 repositioning + German refi cost step"
-                 class="feed-row-image-photo"
-                 loading="lazy" />
-          </div>
-          <p class="feed-row-credit">Berlin Campus, Germany. Photo: IREIT Global</p>
-        </div>
-        <div class="feed-row-text">
-          <p class="feed-row-cat">Commercial</p>
-          <h3 class="feed-row-headline">IREIT 1Q2026: Darmstadt Letting Traction Lands, German Refi Cost Hits 4.1%, Berlin Phase 2 Anchor Decision By 3Q2026</h3>
-          <p class="feed-row-teaser">Portfolio committed occupancy lifts to 92.2% ex-Berlin on three new Darmstadt leases (c.9,070 sqm, 8.3-year WAULT) — operationally the cleanest quarter the German book has shown. The 4.1% all-in German refi cost is the new floor; Berlin Phase 2 anchor decision lands 3Q 2026.</p>
-          <p class="feed-row-meta">
-            <span>1 May 2026</span>
-            <span class="sep">·</span>
-            <span>9 min read</span>
-          </p>
-        </div>
-      </a>
-
-      <!-- Row id 69 First REIT dropped off in v48.17 cascade; Row id 70 ESR-REIT dropped off in v48.20b cascade for id:79 IREIT hero; Row id 71 CICT dropped off in v48.20d cascade for id:80 Stoneweg hero; Row id 72 Elite UK dropped off in v48.20d second drop for id:81 Landmark hero; Row id 73 FCT dropped off in v48.20h cascade for id:82 Starhill hero; Row id 74 Suntec dropped off in v48.20k cascade for id:83 CDLHT hero; Row id 75 CLAS dropped off in v48.20l cascade for id:84 FEHT hero; Row id 76 CLAR dropped off in v48.23 cascade for id:85 FLCT hero; Row id 77 MPACT dropped off in v48.24 cascade for id:86 Centurion hero; Row id 78 MIT dropped off in v48.27 cascade for id:87 AIMS APAC hero -->
+      <!-- Row id 69 First REIT dropped off in v48.17 cascade; Row id 70 ESR-REIT dropped off in v48.20b cascade for id:79 IREIT hero; Row id 71 CICT dropped off in v48.20d cascade for id:80 Stoneweg hero; Row id 72 Elite UK dropped off in v48.20d second drop for id:81 Landmark hero; Row id 73 FCT dropped off in v48.20h cascade for id:82 Starhill hero; Row id 74 Suntec dropped off in v48.20k cascade for id:83 CDLHT hero; Row id 75 CLAS dropped off in v48.20l cascade for id:84 FEHT hero; Row id 76 CLAR dropped off in v48.23 cascade for id:85 FLCT hero; Row id 77 MPACT dropped off in v48.24 cascade for id:86 Centurion hero; Row id 78 MIT dropped off in v48.27 cascade for id:87 AIMS APAC hero; Row id 79 IREIT dropped off in v48.38 cascade for id:88 Frasers Property hero -->
 
     </div>
 
@@ -3702,10 +3693,10 @@ body.article-takeover .ed-foot{display:none!important}
   <div class="inv-stats-row">
     <div class="inv-stat"><div class="inv-stat-val" id="inv-s-listings">—</div><div class="inv-stat-lbl">Listings shown</div></div>
     <div class="inv-stat"><div class="inv-stat-val" id="inv-s-sqft">—</div><div class="inv-stat-lbl">Total sqft</div></div>
-    <div class="inv-stat"><div class="inv-stat-val" id="inv-s-imm">—</div><div class="inv-stat-lbl" id="inv-s-imm-lbl">Immediate</div></div>
+    <div class="inv-stat"><div class="inv-stat-val" id="inv-s-imm">—</div><div class="inv-stat-lbl">Immediate</div></div>
     <div class="inv-stat"><div class="inv-stat-val" id="inv-s-props">—</div><div class="inv-stat-lbl">Properties</div></div>
-    <div class="inv-stat"><div class="inv-stat-val" id="inv-s-lorent">—</div><div class="inv-stat-lbl" id="inv-s-lorent-lbl">Lowest asking</div></div>
-    <div class="inv-stat"><div class="inv-stat-val" id="inv-s-hirent">—</div><div class="inv-stat-lbl" id="inv-s-hirent-lbl">Highest asking</div></div>
+    <div class="inv-stat"><div class="inv-stat-val" id="inv-s-lorent">—</div><div class="inv-stat-lbl">Lowest asking</div></div>
+    <div class="inv-stat"><div class="inv-stat-val" id="inv-s-hirent">—</div><div class="inv-stat-lbl">Highest asking</div></div>
   </div>
 
   <!-- Card grid -->
@@ -14159,6 +14150,22 @@ var VAL_ARR=[[382.87,299.74,123.93,327.15,109.36,0,113.2],[1150.79,401.34,211.84
 var CNT_ARR=[[362,448,73,289,38,0,91],[424,509,99,463,59,0,212],[209,349,72,404,65,0,98],[127,269,60,149,97,0,34],[249,411,184,819,175,0,46],[209,362,162,596,192,0,98],[138,299,185,575,173,1,64],[200,433,203,982,192,2,66],[133,361,245,764,173,0,69],[284,414,224,674,191,0,59],[277,376,293,433,196,4,42],[468,418,332,750,294,4,56],[719,636,526,1768,318,0,86],[217,230,227,1411,204,3,69],[214,323,271,1705,204,0,88],[478,652,391,3071,307,1,272],[521,743,298,4174,279,4,392],[1153,1518,289,4341,244,1,407],[742,1305,205,2851,157,3,218],[518,510,106,1907,149,0,99],[242,248,104,1236,103,1,95],[286,242,109,927,89,2,58],[344,219,148,885,121,0,57],[337,256,170,939,96,1,64],[314,223,123,1070,103,0,65],[217,151,144,1090,101,2,70],[351,295,253,1748,140,2,123],[316,264,191,1874,131,0,114],[321,272,131,1483,124,0,129],[334,250,87,1622,96,0,162],[355,301,89,1509,163,0,149],[40,42,8,142,11,0,16]];
 var TYPETOT={"office":57330.6,"retail":35459.5,"shophouse":23504.1,"multiUser":39698.3,"singleUser":42601.2,"bizPark":4842.5,"warehouse":8626.0};
 var NEWS=[
+  {id:88, date:"2026-05-11",
+   title:"Frasers Property 1H FY26: Attributable Profit -37.8% to S$88.4m On A S$38.2m Thailand Impairment, But Strip One-Offs And Underlying Is +77% YoY — PBIT +13.2% To S$678.7m, Net Debt/Equity 89.2% → 94.2%, NAV S$2.37 → S$2.40, Recurring Income 76% Of PBIT, Singapore Retail PBIT +12.7% On Full-Period Northpoint City South Wing, Thailand ARAYA Industrial Estate Land Sales Drive +44.3% Segment PBIT, Centrepoint Rear Plot Collective Sale Awarded February 2026 Opens Orchard Rejuvenation Optionality, No Interim Dividend Declared, Shares -2.6% To S$1.11 On Release Day",
+   slug:"fpl-1h-fy26-attributable-profit-down-378pct-pbit-up-132pct-rising-leverage",
+   meta_description:"Frasers Property 1H FY26: attributable profit -37.8% to S$88.4m on S$38.2m Thailand impairment; underlying +77% YoY ex-1H FY25 tax reversal; PBIT +13.2% to S$678.7m, EBITDA +12.7% to S$719.6m, NAV S$2.40 (FY25: S$2.37); net debt/equity 89.2% → 94.2%; recurring income 76% of PBIT; The Centrepoint collective sale awarded Feb 2026; no interim dividend declared.",
+   og_image:"https://propertyatlas.sg/dashboard/images/news_88_fpl_frasers_tower.jpg",
+   keywords:"Frasers Property Limited, FPL, TQ5, Panote Sirivadhanabhakdi, Loo Choo Leong, 1H FY26, attributable profit S$88.4m, PBIT S$678.7m, EBITDA S$719.6m, recurring income 76 percent, Thailand impairment S$38.2m, ARAYA Eastern Gateway industrial estate land sales, Northpoint City South Wing, FCT, Sky Eden@Bedok TOP, The Orie, Dunearn House, Kallang Close GLS, The Centrepoint collective sale, MCST Plan 1304, Hougang Mall AEI, NEX AEI, Mambourin Retail, Brunswick & Co, Burwood Brickworks, Discovery Point, Chineham Park, One Bangkok, FPT, GELEX Infrastructure Vietnam, Frasers Tower, Alexandra Point, net debt to equity 94.2 percent, perpetual securities redemption January 2026, S$1.5b FY26 maturities, S$2.0b cash, no interim dividend, EC measures 10 year MOP, deferred payment scheme scrapped, FY25 tax provision reversal, capital recycling S$424m, FY26",
+   display_title:"Frasers Property 1H FY26: Attributable Profit -37.8% To S$88.4m, But Strip One-Offs And Underlying Is +77% — PBIT +13.2% Into Rising Leverage, Centrepoint Collective Sale Opens Orchard Rejuvenation Path, No Interim Dividend Declared",
+   display_headline:"Frasers Property's 1H FY26 Headline Attributable Profit Drops 37.8% To S$88.4m On A S$38.2m Thailand Impairment, But Stripping The One-Off 1H FY25 Tax Reversal Reveals A 77% YoY Underlying Lift — PBIT Accelerates +13.2% To S$678.7m As Singapore Retail Compounds Under Full-Period Northpoint City South Wing And Thailand ARAYA Industrial Estate Land Sales Drive Segment PBIT +44.3%, While Net Debt To Equity Climbs 89.2% → 94.2% On The January 2026 Perpetual Securities Redemption, The Centrepoint Rear Plot Collective Sale Award Opens Orchard Road Rejuvenation Optionality, And The Board Declines To Declare An Interim Dividend Citing The Uncertain Business Environment",
+   wordCount:2559, minRead:12,
+   image:"images/news_88_fpl_frasers_tower.jpg", imageCredit:"Frasers Property",
+   source:"PropertyAtlas.sg", category:"Commercial",
+   tag:"Earnings · Developer · 1H Results · Multi-Geography · Capital Recycling · Singapore",
+   sourceLabel:"PropertyAtlas.sg Analysis · Frasers Property Limited 1H FY26 Financial Results, Media Release and Fact Sheet dated 8 May 2026",
+   sentiment:"neutral",
+   summary:"<p class=\"lede\"><strong>Frasers Property Limited released 1H FY26 results on 8 May 2026, headlined by a S$88.4m attributable profit that printed 37.8% below the prior corresponding half</strong> — a number that on its face reads as a sharp deterioration, but which on closer reading tells almost the opposite story. Stripping the one-off reversal of tax provisions that flattered 1H FY25, underlying attributable profit was 77% higher year-on-year. PBIT rose 13.2% to S$678.7m, EBITDA +12.7% to S$719.6m, recurring income still accounted for 76% of PBIT, and net asset value per share ticked up to S$2.40 (FY25: S$2.37). But net debt to total equity climbed 5.0 percentage points to 94.2% and net debt to property assets to 45.5% — the highest leverage reading in the recent cycle. The board declined to declare an interim dividend, citing the \"uncertain business environment.\" Shares closed Friday at S$1.11, down 2.6% or S$0.03 on the release. The gap between the headline -37.8% and the underlying +77% is the entire story.</p><h2>What was reported</h2><p>Revenue fell 5.2% to S$1,508.6m, almost entirely on the absence of contribution from Sky Eden@Bedok following its temporary occupation permit in September 2025. EBITDA rose 12.7% to S$719.6m. PBIT rose 13.2% to S$678.7m. Attributable profit before fair value change and exceptional items (APBFE) edged up just 1.0% to S$138.1m — moderated by the 1H FY25 tax provision reversal benchmark. Net fair value movement was -S$8.1m (vs +S$6.4m), mainly reflecting fair value losses on I&L assets in Europe. Exceptional items came in at -S$41.6m versus -S$0.9m the prior half — almost entirely the Thailand impairment. Attributable profit landed at S$88.4m, down 37.8%, with basic earnings per share after fair value and exceptional items at 2.0 Singapore cents (1H FY25: 3.5 cents).</p><p>The PBIT line itself was driven by higher share of results from joint ventures and associates, residential settlements across Singapore, Australia and China, industrial estate land sales in Thailand, non-core land sales in Australia, and a higher retail contribution from Singapore reflecting the May 2025 step-up of FCT's interest in Northpoint City South Wing to 100%. Strip both the 1H FY25 tax reversal benchmark and the 1H FY26 Thailand impairment, and the underlying operating performance is meaningfully ahead of last year on every line.</p><h2>Singapore: retail compounding, development trough</h2><p>Singapore PBIT rose 3.0% to S$233.5m on retail strength. Retail PBIT lifted 12.7% to S$176.9m, with two distinct drivers. First, the full-period contribution from Northpoint City South Wing — FCT acquired the remaining 100% interest in May 2025, so 1H FY26 is the first half that captures the full economic uplift. Second, better operational performance across the broader suburban portfolio: occupancy improved, positive rental reversion was achieved against a 3.1% year-on-year tenant sales growth backdrop, and trade-mix enhancements at several malls supported footfall. The two ongoing asset enhancement initiatives are tracking — Hougang Mall is 88% committed and on schedule for September 2026 completion; NEX AEI commences May 2026 with 40% Phase 1 pre-leasing already secured.</p><p>Singapore commercial PBIT lifted 14.2% to S$18.5m on positive rental reversion across the portfolio. Singapore development PBIT, however, fell 40.6% to S$20.5m — almost entirely the Sky Eden@Bedok absence after its September 2025 TOP, partially offset by share-of-results from The Orie. The development trough is a feature of the cycle, not a defect: Dunearn House (380 units, target launch 2H 2026) and the newly-awarded Kallang Close GLS site (April 2026) are the next two pipeline anchors. Unrecognised Singapore residential revenue stands at S$0.4b across 942 contracts on hand. Group CEO Panote Sirivadhanabhakdi, speaking at the earnings briefing on Friday 9 May, said the group \"remains disciplined on land pricing\" and reiterated the view that Singapore residential prices \"can continue to grow in a measured way.\" Cooling measures, while a constraint, \"help protect the market from a real estate bubble.\"</p><h2>Industrial: lifted by land sales, anchored by leasing</h2><p>Industrial PBIT rose 14.0% to S$230.2m. The non-REIT line lifted 32.9% to S$65.4m on non-core land sales in Australia and contributions from newly completed properties in AU and the EU, partially offset by reduced contributions from assets partially divested into capital partnerships in April and October 2025. The REIT line lifted 6.0% to S$151.1m on higher occupancies, positive rental reversions and contracted escalations across I&L assets in AU and the EU, partially offset by the absence of 357 Collins Street post-September 2025 divestment. Fee income lifted 35.6% to S$13.7m on new capital partnerships.</p><p>Australia PBIT swung dramatically to S$34.6m from S$7.5m in 1H FY25 — nearly five times the prior base. The lift is residential settlements and the final land site sale at Discovery Point in NSW. Mambourin Retail in Victoria made its maiden contribution from a September 2025 completion, while Rhodes Quarter held steady through targeted leasing initiatives. The build-to-core pipeline across AU/EU/VN/TH totals approximately 1.07 million sqm, with about 33,000 sqm delivered in 1H FY26 and Vietnam alone carrying ~557,900 sqm of planned FY26-and-beyond completions.</p><h2>Thailand & Vietnam: land sales mask a S$38.2m impairment</h2><p>Thailand & Vietnam PBIT rose 44.3% to S$102.6m — the standout segmental line of the deck. The driver is almost entirely share-of-gains from industrial estate land sales at the ARAYA Eastern Gateway project, which more than offset lower residential settlements. Vietnam added S$5.3m on a full-period contribution from I&L facilities that commenced operations in FY25, supported by sustained FDI inflows and the government's continued transportation infrastructure investment.</p><p>But the headline drag on the entire FPL result was Thailand-sourced: a S$38.2m impairment on an unspecified investment, booked through exceptional items. The deck does not name the asset. Across the group, exceptional items totalled -S$41.6m in 1H FY26 (1H FY25: -S$0.9m) — almost entirely this impairment. Without it, attributable profit would have been ~S$127m, much closer to (and arguably above on an underlying basis) the prior half.</p><p>Operationally, Thailand is consolidating. FPT and One Bangkok teams have been operationally integrated into what FPL now describes as \"Thailand's largest multi-asset real estate player.\" The integration adds the One Bangkok premium commercial mixed-use portfolio alongside FPT's I&L scale (S$3.7b warehouse and factory AUM) and creates a single platform spanning industrial, commercial, retail and hospitality. The GELEX Infrastructure JV in Vietnam was deepened in 1H FY26 into a new investment vehicle targeting Vietnamese residential growth — a meaningful expansion of FPL's Vietnam optionality beyond the existing I&L pipeline.</p><h2>Others: China up, UK down on impairment</h2><p>China PBIT rose 1.9% to S$69.8m on higher residential settlements from JV project completions. The 1H FY26 contributors were Juyuan Upview (effective interest 34%) and Xuhang Upland (effective interest 34%); 1H FY25 had been carried by Upview Hongqiao (effective interest 25%). Fang Song, the premium 194-unit Shanghai development at 51% effective interest, sold 69% of its 159-unit second-batch launch on 29 January 2026 — supporting forward visibility despite a still-soft Tier 1 residential backdrop.</p><p>UK PBIT dropped 77.8% to S$5.7m. The drop reflects an impairment recognised on a UK commercial property plus lower contributions following the November 2025 divestment of Chineham Park in Basingstoke, sold for approximately £89.7m (S$154m). Active leasing on the remaining business park portfolio (~389,000 sqm across six assets serving 294 tenants) is offsetting, but only partially.</p><h2>The leverage line is the variable to watch</h2><p>The most material data point in the deck is not in the PBIT bridge. It is in the balance sheet metrics. Net debt to total equity (which includes non-controlling interests and perpetual securities) moved from 89.2% at FY25 close to 94.2% at 31 March 2026 — a 5.0 percentage point swing in six months. Net debt to property assets moved from 43.7% to 45.5%. The group attributes both moves primarily to the January 2026 redemption of perpetual securities (which mechanically lifts the net debt line versus equity) plus capital expenditure deployed in Australia, the EU and Thailand. Partially offset by the Chineham Park UK divestment and entry into Australian capital partnerships.</p><p>The supporting capital management metrics held up but moved in subtle directions: fixed-rate debt (including hedged) slipped to 69.4% from 75.0%, weighted average debt maturity held at 2.5 years, and blended cost of debt eased to 3.8% p.a. from 4.0%. Cash and deposits at S$2.0b sit against S$1.5b of FY26 debt maturities — manageable, with the group stating it is \"well-positioned to repay and/or refinance\" the near-dated stack.</p><p>The board's decision not to declare an interim dividend — explicitly attributed to the \"uncertain business environment\" — is the most direct signal of how management is reading the next two reporting periods. FPL does not historically pay interim dividends as a matter of policy (the first and final FY25 dividend was 4.5 Singapore cents, in line with FY24), so the non-declaration is consistent with pattern; but the board's explicit framing this half is a tonal signal. The wider context in the deck's risk-positioning slide explicitly flags the Iran war's energy disruptions and trade frictions, alongside interest rate and currency volatility as headline external pressures.</p><h2>Capital recycling pace is materially slower</h2><p>Total capital recycling in 1H FY26 was S$424m, broken down as S$245m via capital partnerships, S$161m via third-party sales, and S$18m via the group's listed REITs (the six I&L property divestment from FPT to FTREIT). The full-year FY25 number was S$1,378m. The full-year FY24 number was S$1,392m. On a run-rate basis, FY26 is tracking around S$850m — roughly 60% of the prior-year pace.</p><p>The composition is also revealing. Of the S$424m, only S$18m flowed via the group's listed REITs. Compare against FY25, where S$625m of S$1,378m moved through the REITs (FCT's S$567m Northpoint City South Wing acquisition being the dominant transaction). The strategic REIT platform — historically FPL's largest recycling channel — is essentially quiet in 1H FY26. The recycling load has shifted to capital partnerships and direct third-party sales.</p><p>For a balance sheet running net debt/equity above 94%, this matters. The Centrepoint collective sale award (tender awarded February 2026 to FPL for S$391.9m on the rear plot, 6.2% below the S$418m guide price, at an effective land rate of S$2,577 psf ppr after lease buy-back charge) is the most material near-term unlock event in the pipeline — and crucially, it is conditional on either an MCST Plan No. 1304 sale order being granted or all subsidiary proprietors consenting to the collective sale. That conditionality is the gating risk on the most concrete value-unlock in the deck. Asked at the briefing whether FPL has firm redevelopment plans, Panote said the group is \"still studying various options to rejuvenate The Centrepoint,\" with operations at the Orchard Road mall remaining unchanged for now.</p><p>Two completed Australian divestments in April 2026 — Brunswick & Co (the group's first built-to-rent development, in Queensland) and Burwood Brickworks Shopping Centre (Victoria) — sit outside the 1H FY26 reporting window but will book in 2H. Both are positive for the recycling line and for managing the leverage trajectory into year-end.</p><h2>The 9 May Singapore EC policy update — early to assess impact</h2><p>The Singapore Government on the morning of 9 May 2026 — the day after FPL's results release and the same day as the earnings briefing — announced a tightening of executive condominium (EC) rules. The minimum occupation period for ECs will be extended from five to 10 years before owners can sell their units. The deferred payment scheme for new EC projects will be scrapped. The required quota of new units reserved for first-time buyers will be raised from 70 to 90%, and the priority period for first-timers extended significantly from one month to two years.</p><p>Group Chief Financial Officer Loo Choo Leong, asked at the briefing whether the changes affect FPL's residential pipeline, said it was \"too early to assess their full impact.\" Loo added that FPL has \"no EC stock at this point in time,\" but that the group \"will monitor the broader market sentiment and study the impact of the measures.\" He also flagged that \"there remains a pricing gap between EC sites and government land sale sites\" — a structural feature of the EC segment that the new measures may recalibrate as developers reprice forward bids.</p><p>The direct read-across to FPL is minimal: no EC inventory, two private residential pipeline anchors (Dunearn House at Bukit Timah; Kallang Close GLS) both targeted at standard private residential rather than executive condominium product. The indirect read-across is on developer competitive intensity in forward GLS tenders, which the new EC measures may dampen.</p><h2>Forward signals</h2><p>The deck is most concrete on the value-unlock pipeline. Three Singapore residential pipeline anchors: <strong>Dunearn House</strong> — 380-unit development in the Bukit Timah Turf City masterplan corridor, target launch 2H 2026; <strong>Kallang Close GLS site</strong> — awarded April 2026, city-fringe waterfront location on the Kallang River; and <strong>The Centrepoint rear plot collective sale</strong> — leasehold rear plot acquired via collective sale tender (subject to MCST sale order), opens rejuvenation optionality on the broader Orchard asset.</p><p>Plus the secondary international pipeline: Round Mountain (Queensland, 2,000+ residential lots, launching May 2026); Goldina Ngamwongwan-Prachachuen (Thailand premium townhomes, target launch 2H 2026); Fang Song (Shanghai, 69% sold of latest tranche). Total residential unrecognised revenue: S$1.1b across approximately 2,770 contracts on hand. The build-to-core non-residential pipeline of ~1,000,000 sqm of development GFA and ~6,800,000 sqm of strategic land bank remains the longer-cycle anchor.</p><p>The Group Chief Operating Officer appointment effective 1 October 2026 — mentioned across multiple deck slides — is a structural signal: FPL is institutionalising execution depth at a moment when the operating platform is most complex (Thailand integration, GELEX JV, Singapore AEI cycle, value-unlock pipeline) and the capital structure has the least headroom it has had in the recent cycle.</p><h2>The Read</h2><p>Frasers Property's 1H FY26 result is the rare deck where the headline number and the underlying number tell almost opposite stories. The headline -37.8% attributable profit reflects a single S$38.2m Thailand impairment booked against a 1H FY25 base that was flattered by a one-off tax provision reversal. The underlying operating engine — measured by PBIT, EBITDA, recurring income share, and segmental momentum — is accelerating.</p><p>Five-asset-class diversification (industrial 36% of property AUM, retail 25%, commercial 17%, residential 12%, hospitality 10%) and four-geography concentration (Singapore 35%, Australia 28%, Europe 18%, Thailand 13%) are doing what they are designed to do: smoothing cyclical drags in any one segment against tailwinds elsewhere. Singapore retail is compounding under FCT, Australian industrial is monetising via land sales and capital partnerships, Thailand is consolidating its platform, Vietnam is ramping. The Centrepoint collective sale opens a redevelopment lane on a marquee Orchard asset, with Panote's \"still studying various options\" framing leaving optionality wide.</p><p>The leverage line, however, is the variable to watch. Net debt/equity above 94% with capex still flowing into Australia, the EU and Thailand, and with the strategic REIT recycling channel materially quieter than in FY24-25, places the entire capital-recycling burden on capital partnerships, third-party sales, and the conditional Centrepoint unlock. The board's explicit \"uncertain business environment\" framing on the no-interim-dividend call is the tonal signal that management is reading the same risk picture. The market's 2.6% share price drop on release day, to S$1.11, suggests investors are weighing the leverage trajectory more heavily than the underlying +77% lift. The discipline thesis lives or dies on that line.</p><p><strong>The investment case:</strong> an integrated investor-developer-operator whose operating engine is accelerating under one-off noise, with five-asset-class diversification compounding through capital recycling, and leverage now the single most informative metric.</p><p><strong>Watch the leverage line into 2H FY26</strong> — that's where the discipline thesis lives or dies.</p>"},
+
   {id:87, date:"2026-05-07",
    title:"AIMS APAC REIT FY2026: DPU +2.6% to 9.850¢ Closes Decade of Outperformance — NAV S$1.23→S$1.28, Macquarie Park + Bella Vista Endorsed By NSW Government Among 15 Data Centre Sites Worth A$51.9B Alongside Microsoft / NEXTDC / Goodman, Two Perpetual Securities Pre-Funded At 4.10% / 4.25% Ahead Of US-Iran Conflict To Refinance S$250M 5.375% Securities Due September 2026, Aggregate Leverage Steps Down 28.9% → 26.8% On 5.9% Portfolio Valuation Uplift To S$2.25B",
    slug:"aareit-fy2026-dpu-up-26pct-nav-128-data-centre-optionality-perpetual-prefunding",
@@ -24081,170 +24088,125 @@ setTimeout(invFillReitLatestSpans, 500);
 // Source: REIT monthly leasing availability sheets
 // ═══════════════════════════════════════════════════
 var VACANCY_DATA = [
-  // ── ESR-REIT — May 2026 ────────────────────────────────────────────────
-  // ── Business Park ────────────────────────────
-  // Changi 6 & 8 Business Park
-  {reit:'ESR-REIT',reit_color:'#6e2f7f',month:'May 2026',addr:'ESR BizPark @ Changi',addrFull:'6 & 8 Changi Business Park',unit:'#03-21 North Tower',sqft:24636.64,sqm:2289,rent:null,avail:'Immediate',zone:'Business Park',cluster:'Business Park',fit:'Bare',remarks:'Bare Condition'},
-  {reit:'ESR-REIT',reit_color:'#6e2f7f',month:'May 2026',addr:'ESR BizPark @ Changi',addrFull:'6 & 8 Changi Business Park',unit:'#04-21 & #04-51/52 North & South Tower',sqft:61696.02,sqm:5732,rent:null,avail:'Immediate',zone:'Business Park',cluster:'Business Park',fit:'Bare',remarks:'Whole floor plate. Exclusive use of Lobby & Toilets across both towers. Currently with subdivision wall but can be amalgamated for whole floor plate.'},
-  {reit:'ESR-REIT',reit_color:'#6e2f7f',month:'May 2026',addr:'ESR BizPark @ Changi',addrFull:'6 & 8 Changi Business Park',unit:'#05-21A North Tower',sqft:7292.65,sqm:678,rent:null,avail:'Immediate',zone:'Business Park',cluster:'Business Park',fit:'Bare',remarks:'Bare Condition'},
-  {reit:'ESR-REIT',reit_color:'#6e2f7f',month:'May 2026',addr:'ESR BizPark @ Changi',addrFull:'6 & 8 Changi Business Park',unit:'#05-53 South Tower',sqft:6931.95,sqm:644,rent:null,avail:'Immediate',zone:'Business Park',cluster:'Business Park',fit:'Bare',remarks:'Bare Condition'},
-  {reit:'ESR-REIT',reit_color:'#6e2f7f',month:'May 2026',addr:'ESR BizPark @ Changi',addrFull:'6 & 8 Changi Business Park',unit:'#07-52 South Tower',sqft:3326.94,sqm:309,rent:null,avail:'Under Negotiation',zone:'Business Park',cluster:'Business Park',fit:'Bare',remarks:'Bare Condition'},
-  {reit:'ESR-REIT',reit_color:'#6e2f7f',month:'May 2026',addr:'ESR BizPark @ Changi',addrFull:'6 & 8 Changi Business Park',unit:'#08-52 South Tower',sqft:6307.7,sqm:586,rent:null,avail:'Immediate',zone:'Business Park',cluster:'Business Park',fit:'Bare',remarks:'Bare condition. Provisional unit numbering subject to final survey area.'},
-  {reit:'ESR-REIT',reit_color:'#6e2f7f',month:'May 2026',addr:'ESR BizPark @ Changi',addrFull:'6 & 8 Changi Business Park',unit:'#08-21 North Tower',sqft:14625.26,sqm:1359,rent:null,avail:'Immediate',zone:'Business Park',cluster:'Business Park',fit:'Bare',remarks:'Bare Condition'},
-  {reit:'ESR-REIT',reit_color:'#6e2f7f',month:'May 2026',addr:'ESR BizPark @ Changi',addrFull:'6 & 8 Changi Business Park',unit:'#08-23 North Tower',sqft:2354.41,sqm:219,rent:null,avail:'Immediate',zone:'Business Park',cluster:'Business Park',fit:'Bare',remarks:'Bare Condition'},
-  // Chai Chee Block 750
-  {reit:'ESR-REIT',reit_color:'#6e2f7f',month:'May 2026',addr:'ESR BizPark @ Chai Chee Blk 750',addrFull:'750 Chai Chee Road',unit:'#02-06 to 08',sqft:27830.32,sqm:2586,rent:null,avail:'Immediate',zone:'Business Park',cluster:'Business Park',fit:'Bare',remarks:'Bare Condition'},
-  {reit:'ESR-REIT',reit_color:'#6e2f7f',month:'May 2026',addr:'ESR BizPark @ Chai Chee Blk 750',addrFull:'750 Chai Chee Road',unit:'#03-10/13',sqft:8209.92,sqm:763,rent:null,avail:'Immediate',zone:'Business Park',cluster:'Business Park',fit:'Bare',remarks:'Bare Condition'},
-  {reit:'ESR-REIT',reit_color:'#6e2f7f',month:'May 2026',addr:'ESR BizPark @ Chai Chee Blk 750',addrFull:'750 Chai Chee Road',unit:'#04-03',sqft:5155.91,sqm:479,rent:null,avail:'Immediate',zone:'Business Park',cluster:'Business Park',fit:'Bare',remarks:'Bare Condition'},
-  {reit:'ESR-REIT',reit_color:'#6e2f7f',month:'May 2026',addr:'ESR BizPark @ Chai Chee Blk 750',addrFull:'750 Chai Chee Road',unit:'#04-04',sqft:17932.66,sqm:1666,rent:null,avail:'Immediate',zone:'Business Park',cluster:'Business Park',fit:'Bare',remarks:'Bare Condition'},
-  // Chai Chee Block 750A
-  {reit:'ESR-REIT',reit_color:'#6e2f7f',month:'May 2026',addr:'ESR BizPark @ Chai Chee Blk 750A',addrFull:'750A Chai Chee Road',unit:'#04-01',sqft:11890.02,sqm:1105,rent:null,avail:'Immediate',zone:'Business Park',cluster:'Business Park',fit:'Bare',remarks:'Bare Condition'},
-  {reit:'ESR-REIT',reit_color:'#6e2f7f',month:'May 2026',addr:'ESR BizPark @ Chai Chee Blk 750A',addrFull:'750A Chai Chee Road',unit:'#06-01',sqft:17428.21,sqm:1619,rent:null,avail:'Immediate',zone:'Business Park',cluster:'Business Park',fit:'Bare',remarks:'Bare Condition'},
-  {reit:'ESR-REIT',reit_color:'#6e2f7f',month:'May 2026',addr:'ESR BizPark @ Chai Chee Blk 750A',addrFull:'750A Chai Chee Road',unit:'#06-02/03',sqft:20367.96,sqm:1892,rent:null,avail:'Immediate',zone:'Business Park',cluster:'Business Park',fit:'Partial',remarks:'Partially Fitted'},
-  {reit:'ESR-REIT',reit_color:'#6e2f7f',month:'May 2026',addr:'ESR BizPark @ Chai Chee Blk 750A',addrFull:'750A Chai Chee Road',unit:'#07-10',sqft:602.78,sqm:56,rent:null,avail:'Immediate',zone:'Business Park',cluster:'Business Park',fit:'Bare',remarks:'Bare Condition'},
-  {reit:'ESR-REIT',reit_color:'#6e2f7f',month:'May 2026',addr:'ESR BizPark @ Chai Chee Blk 750A',addrFull:'750A Chai Chee Road',unit:'#07-01A',sqft:1991.34,sqm:185,rent:null,avail:'Immediate',zone:'Business Park',cluster:'Business Park',fit:'Bare',remarks:'Bare Condition. Internal unit.'},
-  {reit:'ESR-REIT',reit_color:'#6e2f7f',month:'May 2026',addr:'ESR BizPark @ Chai Chee Blk 750A',addrFull:'750A Chai Chee Road',unit:'#07-01C',sqft:6695.1,sqm:622,rent:null,avail:'Immediate',zone:'Business Park',cluster:'Business Park',fit:'Bare',remarks:'Bare Condition. High power provision.'},
-  {reit:'ESR-REIT',reit_color:'#6e2f7f',month:'May 2026',addr:'ESR BizPark @ Chai Chee Blk 750A',addrFull:'750A Chai Chee Road',unit:'#07-17',sqft:796.54,sqm:74,rent:null,avail:'Immediate',zone:'Business Park',cluster:'Business Park',fit:'Partial',remarks:'Partial Fitted unit. Flooring (vinyl).'},
-  {reit:'ESR-REIT',reit_color:'#6e2f7f',month:'May 2026',addr:'ESR BizPark @ Chai Chee Blk 750A',addrFull:'750A Chai Chee Road',unit:'#07-18/20',sqft:1248.62,sqm:116,rent:null,avail:'Immediate',zone:'Business Park',cluster:'Business Park',fit:'Bare',remarks:'Bare Condition'},
-  {reit:'ESR-REIT',reit_color:'#6e2f7f',month:'May 2026',addr:'ESR BizPark @ Chai Chee Blk 750A',addrFull:'750A Chai Chee Road',unit:'#07-13',sqft:419.8,sqm:39,rent:null,avail:'Immediate',zone:'Business Park',cluster:'Business Park',fit:'Bare',remarks:'Bare condition'},
-  {reit:'ESR-REIT',reit_color:'#6e2f7f',month:'May 2026',addr:'ESR BizPark @ Chai Chee Blk 750A',addrFull:'750A Chai Chee Road',unit:'#07-14',sqft:570.49,sqm:53,rent:null,avail:'Immediate',zone:'Business Park',cluster:'Business Park',fit:'Bare',remarks:'Bare condition'},
-  {reit:'ESR-REIT',reit_color:'#6e2f7f',month:'May 2026',addr:'ESR BizPark @ Chai Chee Blk 750A',addrFull:'750A Chai Chee Road',unit:'#07-16',sqft:559.73,sqm:52,rent:null,avail:'Immediate',zone:'Business Park',cluster:'Business Park',fit:'Bare',remarks:'Bare condition'},
-  {reit:'ESR-REIT',reit_color:'#6e2f7f',month:'May 2026',addr:'ESR BizPark @ Chai Chee Blk 750A',addrFull:'750A Chai Chee Road',unit:'#08-01 to 03 Exclusive floorplate',sqft:6792.08,sqm:631,rent:null,avail:'Immediate',zone:'Business Park',cluster:'Business Park',fit:'Bare',remarks:'Bare Condition. Entire floor plate + exclusive lift lobby, roof terrace.'},
-  // Chai Chee Block 750D
-  {reit:'ESR-REIT',reit_color:'#6e2f7f',month:'May 2026',addr:'ESR BizPark @ Chai Chee Blk 750D',addrFull:'750D Chai Chee Road',unit:'#03-04',sqft:6976.79,sqm:648,rent:null,avail:'1 Jul 2026',zone:'Business Park',cluster:'Business Park',fit:'Bare',remarks:'Bare Condition',status:'New'},
-  {reit:'ESR-REIT',reit_color:'#6e2f7f',month:'May 2026',addr:'ESR BizPark @ Chai Chee Blk 750D',addrFull:'750D Chai Chee Road',unit:'#03-05',sqft:5442.49,sqm:506,rent:null,avail:'Immediate',zone:'Business Park',cluster:'Business Park',fit:'Bare',remarks:'Bare Condition'},
-  {reit:'ESR-REIT',reit_color:'#6e2f7f',month:'May 2026',addr:'ESR BizPark @ Chai Chee Blk 750D',addrFull:'750D Chai Chee Road',unit:'#03-06',sqft:4025.74,sqm:374,rent:null,avail:'Immediate',zone:'Business Park',cluster:'Business Park',fit:'Bare',remarks:'Bare Condition'},
-  {reit:'ESR-REIT',reit_color:'#6e2f7f',month:'May 2026',addr:'ESR BizPark @ Chai Chee Blk 750D',addrFull:'750D Chai Chee Road',unit:'#04-01/02',sqft:12489.25,sqm:1160,rent:null,avail:'Immediate',zone:'Business Park',cluster:'Business Park',fit:'Bare',remarks:'Bare condition. Greenery view level. Subject to final measurements.'},
-  {reit:'ESR-REIT',reit_color:'#6e2f7f',month:'May 2026',addr:'ESR BizPark @ Chai Chee Blk 750D',addrFull:'750D Chai Chee Road',unit:'#04-06',sqft:6996.49,sqm:650,rent:null,avail:'Immediate',zone:'Business Park',cluster:'Business Park',fit:'Bare',remarks:'Bare Condition'},
-  {reit:'ESR-REIT',reit_color:'#6e2f7f',month:'May 2026',addr:'ESR BizPark @ Chai Chee Blk 750D',addrFull:'750D Chai Chee Road',unit:'#05-01',sqft:7061.08,sqm:656,rent:null,avail:'Immediate',zone:'Business Park',cluster:'Business Park',fit:'Bare',remarks:'Bare Condition'},
-  {reit:'ESR-REIT',reit_color:'#6e2f7f',month:'May 2026',addr:'ESR BizPark @ Chai Chee Blk 750D',addrFull:'750D Chai Chee Road',unit:'#08-02/03',sqft:10422.78,sqm:968,rent:null,avail:'Immediate',zone:'Business Park',cluster:'Business Park',fit:'Bare',remarks:'Bare Condition. Top floor with good view.'},
-  // Chai Chee Block 750E
-  {reit:'ESR-REIT',reit_color:'#6e2f7f',month:'May 2026',addr:'ESR BizPark @ Chai Chee Blk 750E',addrFull:'750E Chai Chee Road',unit:'#01-01',sqft:6943.86,sqm:645,rent:null,avail:'Immediate',zone:'Business Park',cluster:'Business Park',fit:'Fitted',remarks:'Existing unit is fitted as Canteen. To be taken over as-is-where-is condition.'},
-  {reit:'ESR-REIT',reit_color:'#6e2f7f',month:'May 2026',addr:'ESR BizPark @ Chai Chee Blk 750E',addrFull:'750E Chai Chee Road',unit:'#03-01 to 04',sqft:24148.39,sqm:2243,rent:null,avail:'Immediate',zone:'Business Park',cluster:'Business Park',fit:'Partial',remarks:'Partially Fitted unit. With rooms and storage area.'},
-  {reit:'ESR-REIT',reit_color:'#6e2f7f',month:'May 2026',addr:'ESR BizPark @ Chai Chee Blk 750E',addrFull:'750E Chai Chee Road',unit:'#03-05 to 09',sqft:28405.01,sqm:2639,rent:null,avail:'Immediate',zone:'Business Park',cluster:'Business Park',fit:'Partial',remarks:'Partial Fitted unit. Meeting/Manager rooms with open concept area.'},
-  {reit:'ESR-REIT',reit_color:'#6e2f7f',month:'May 2026',addr:'ESR BizPark @ Chai Chee Blk 750E',addrFull:'750E Chai Chee Road',unit:'#04-01 to 04',sqft:18585.77,sqm:1727,rent:null,avail:'Immediate',zone:'Business Park',cluster:'Business Park',fit:'Partial',remarks:'Partial Fitted unit. Provisional unit numbering subject to final survey area.'},
-  {reit:'ESR-REIT',reit_color:'#6e2f7f',month:'May 2026',addr:'ESR BizPark @ Chai Chee Blk 750E',addrFull:'750E Chai Chee Road',unit:'#05-02A',sqft:2825.01,sqm:262,rent:null,avail:'Immediate',zone:'Business Park',cluster:'Business Park',fit:'Bare',remarks:'Bare Condition'},
-  {reit:'ESR-REIT',reit_color:'#6e2f7f',month:'May 2026',addr:'ESR BizPark @ Chai Chee Blk 750E',addrFull:'750E Chai Chee Road',unit:'#05-07/08',sqft:10527.08,sqm:978,rent:null,avail:'Immediate',zone:'Business Park',cluster:'Business Park',fit:'Bare',remarks:'Bare Condition'},
-  {reit:'ESR-REIT',reit_color:'#6e2f7f',month:'May 2026',addr:'ESR BizPark @ Chai Chee Blk 750E',addrFull:'750E Chai Chee Road',unit:'#07-01/02',sqft:14333.42,sqm:1332,rent:null,avail:'Immediate',zone:'Business Park',cluster:'Business Park',fit:'Partial',remarks:'Partial Fitted unit'},
-  {reit:'ESR-REIT',reit_color:'#6e2f7f',month:'May 2026',addr:'ESR BizPark @ Chai Chee Blk 750E',addrFull:'750E Chai Chee Road',unit:'#07-04',sqft:2835.02,sqm:263,rent:null,avail:'Immediate',zone:'Business Park',cluster:'Business Park',fit:'Partial',remarks:'Partial Fitted unit'},
-  {reit:'ESR-REIT',reit_color:'#6e2f7f',month:'May 2026',addr:'ESR BizPark @ Chai Chee Blk 750E',addrFull:'750E Chai Chee Road',unit:'#07-08',sqft:5274.36,sqm:490,rent:null,avail:'Under Negotiation',zone:'Business Park',cluster:'Business Park',fit:'Bare',remarks:'Bare Condition'},
-  // ── Commercial/Retail ────────────────────────────
-  // Changi Retail/F&B
-  {reit:'ESR-REIT',reit_color:'#6e2f7f',month:'May 2026',addr:'ESR BizPark @ Changi (Retail)',addrFull:'6 Changi Business Park',unit:'#01-05 (F&B Unit)',sqft:2377.55,sqm:221,rent:'$12.00',avail:'Immediate',zone:'Retail',cluster:'Business Park',fit:'Bare',remarks:'F&B approved.'},
-  {reit:'ESR-REIT',reit_color:'#6e2f7f',month:'May 2026',addr:'ESR BizPark @ Changi (Retail)',addrFull:'6 Changi Business Park',unit:'#01-31 (F&B Unit)',sqft:1389.63,sqm:129,rent:'$12.00',avail:'Immediate',zone:'Retail',cluster:'Business Park',fit:'Partial',remarks:'F&B approved. Partially Fitted unit.'},
-  {reit:'ESR-REIT',reit_color:'#6e2f7f',month:'May 2026',addr:'ESR BizPark @ Changi (Retail)',addrFull:'6 Changi Business Park',unit:'#01-24 (F&B Unit)',sqft:738.52,sqm:69,rent:'$12.00',avail:'Under Negotiation',zone:'Retail',cluster:'Business Park',fit:'Partial',remarks:'F&B approved. Partially Fitted unit.'},
-  {reit:'ESR-REIT',reit_color:'#6e2f7f',month:'May 2026',addr:'ESR BizPark @ Changi (Retail)',addrFull:'8 Changi Business Park',unit:'#01-54 (F&B Unit)',sqft:838.52,sqm:78,rent:'$12.00',avail:'Immediate',zone:'Retail',cluster:'Business Park',fit:'Bare',remarks:'F&B approved.'},
-  // ── Central East Cluster ────────────────────────────
-  // B1 — 130 Joo Seng Road
-  {reit:'ESR-REIT',reit_color:'#6e2f7f',month:'May 2026',addr:'130 Joo Seng Road',addrFull:'130 Joo Seng Road',unit:'#05-07',sqft:2303.5,sqm:214,rent:'$2.50',avail:'Under Negotiation',zone:'B1',cluster:'Central East',fit:'Bare',remarks:'Bare Condition'},
-  // B1 — 11 Lorong 3 Toa Payoh (Jackson Square)
-  {reit:'ESR-REIT',reit_color:'#6e2f7f',month:'May 2026',addr:'11 Lorong 3 Toa Payoh (Jackson Square)',addrFull:'11 Lorong 3 Toa Payoh',unit:'Blk B #02-11 to #02-15 & #02-26 to #02-28',sqft:27316.64,sqm:2538,rent:null,avail:'Immediate',zone:'B1',cluster:'Central East',fit:'Bare',remarks:'Bare condition. Anchor tenant sublet status required.'},
-  {reit:'ESR-REIT',reit_color:'#6e2f7f',month:'May 2026',addr:'11 Lorong 3 Toa Payoh (Jackson Square)',addrFull:'11 Lorong 3 Toa Payoh',unit:'Blk B #02-16 to #02-25',sqft:28504.96,sqm:2648,rent:null,avail:'Immediate',zone:'B1',cluster:'Central East',fit:'Fitted',remarks:'Fitted Unit. As is where is condition. Anchor tenant sublet status required.'},
-  {reit:'ESR-REIT',reit_color:'#6e2f7f',month:'May 2026',addr:'11 Lorong 3 Toa Payoh (Jackson Square)',addrFull:'11 Lorong 3 Toa Payoh',unit:'Blk B #03-16 to 19',sqft:9382.87,sqm:872,rent:null,avail:'Immediate',zone:'B1',cluster:'Central East',fit:'Bare',remarks:'Bare condition. Anchor tenant sublet status required.'},
-  {reit:'ESR-REIT',reit_color:'#6e2f7f',month:'May 2026',addr:'11 Lorong 3 Toa Payoh (Jackson Square)',addrFull:'11 Lorong 3 Toa Payoh',unit:'Blk B #03-22 to 24',sqft:10782.19,sqm:1002,rent:null,avail:'Immediate',zone:'B1',cluster:'Central East',fit:'Bare',remarks:'Bare condition. Anchor tenant sublet status required.'},
-  {reit:'ESR-REIT',reit_color:'#6e2f7f',month:'May 2026',addr:'11 Lorong 3 Toa Payoh (Jackson Square)',addrFull:'11 Lorong 3 Toa Payoh',unit:'Blk B #04-16 to #04-21',sqft:11409.84,sqm:1060,rent:null,avail:'Immediate',zone:'B1',cluster:'Central East',fit:'Bare',remarks:'Bare condition (with false ceiling). Anchor tenant sublet status required.'},
-  // B1 — 54 Serangoon North Ave 4
-  {reit:'ESR-REIT',reit_color:'#6e2f7f',month:'May 2026',addr:'54 Serangoon North Ave 4',addrFull:'54 Serangoon North Ave 4',unit:'#02-01',sqft:21054.17,sqm:1956,rent:'$2.50',avail:'Under Negotiation',zone:'B1',cluster:'Central East',fit:'Bare',remarks:'Bare condition. Anchor tenant sublet status required.'},
-  {reit:'ESR-REIT',reit_color:'#6e2f7f',month:'May 2026',addr:'54 Serangoon North Ave 4',addrFull:'54 Serangoon North Ave 4',unit:'#03-02',sqft:9784.48,sqm:909,rent:'$2.50',avail:'Immediate',zone:'B1',cluster:'Central East',fit:'Bare',remarks:'Bare condition. Anchor tenant sublet status required.'},
-  // B1 — 12 Ang Mo Kio Street 65
-  {reit:'ESR-REIT',reit_color:'#6e2f7f',month:'May 2026',addr:'12 Ang Mo Kio Street 65',addrFull:'12 Ang Mo Kio Street 65',unit:'#06-01',sqft:13744.66,sqm:1277,rent:'$1.90',avail:'Immediate',zone:'B1',cluster:'Central East',fit:'Bare',remarks:'As-is-where-is Condition'},
-  // B2 — 16 Tai Seng Street
-  {reit:'ESR-REIT',reit_color:'#6e2f7f',month:'May 2026',addr:'16 Tai Seng Street',addrFull:'16 Tai Seng Street',unit:'#03-01',sqft:18923.11,sqm:1758,rent:'$4.80',avail:'Immediate',zone:'B2',cluster:'Central East',fit:'Bare',remarks:'Bare Condition. Corporate look building with VRV Airconditioned. JTC Anchor sublet required.'},
-  {reit:'ESR-REIT',reit_color:'#6e2f7f',month:'May 2026',addr:'16 Tai Seng Street',addrFull:'16 Tai Seng Street',unit:'#05-04',sqft:3982.68,sqm:370,rent:'$5.20',avail:'Immediate',zone:'B2',cluster:'Central East',fit:'Bare',remarks:'Bare Condition. Corporate look building with VRV Airconditioned. JTC Anchor sublet required.'},
-  {reit:'ESR-REIT',reit_color:'#6e2f7f',month:'May 2026',addr:'16 Tai Seng Street',addrFull:'16 Tai Seng Street',unit:'#05-06',sqft:6275.41,sqm:583,rent:'$5.20',avail:'Immediate',zone:'B2',cluster:'Central East',fit:'Bare',remarks:'Bare Condition. Corporate look building with VRV Airconditioned. JTC Anchor sublet required.'},
-  {reit:'ESR-REIT',reit_color:'#6e2f7f',month:'May 2026',addr:'16 Tai Seng Street',addrFull:'16 Tai Seng Street',unit:'#06-01',sqft:16055.91,sqm:1492,rent:'$4.80',avail:'Under Offer',zone:'B2',cluster:'Central East',fit:'Bare',remarks:'Bare Condition. Corporate look building with VRV Airconditioned. JTC Anchor sublet required.'},
-  {reit:'ESR-REIT',reit_color:'#6e2f7f',month:'May 2026',addr:'16 Tai Seng Street',addrFull:'16 Tai Seng Street',unit:'#06-02',sqft:22548.97,sqm:2095,rent:'$4.80',avail:'Under Offer',zone:'B2',cluster:'Central East',fit:'Bare',remarks:'Bare Condition. Corporate look building with VRV Airconditioned. JTC Anchor sublet required.'},
-  {reit:'ESR-REIT',reit_color:'#6e2f7f',month:'May 2026',addr:'16 Tai Seng Street',addrFull:'16 Tai Seng Street',unit:'#07-01',sqft:19009.22,sqm:1766,rent:'$4.80',avail:'Under Offer',zone:'B2',cluster:'Central East',fit:'Bare',remarks:'Bare Condition. Corporate look building with VRV Airconditioned. JTC Anchor sublet required.'},
-  {reit:'ESR-REIT',reit_color:'#6e2f7f',month:'May 2026',addr:'16 Tai Seng Street',addrFull:'16 Tai Seng Street',unit:'#08-01',sqft:13659.52,sqm:1269,rent:'$4.80',avail:'Under Offer',zone:'B2',cluster:'Central East',fit:'Bare',remarks:'Bare Condition. Corporate look building with VRV Airconditioned. JTC Anchor sublet required.'},
-  // B2 — 29 Tai Seng Street
-  {reit:'ESR-REIT',reit_color:'#6e2f7f',month:'May 2026',addr:'29 Tai Seng Street',addrFull:'29 Tai Seng Street',unit:'#01-01',sqft:4219.49,sqm:392,rent:'$8.00',avail:'Under Offer, End of 2Q 2026',zone:'B2',cluster:'Central East',fit:'Fitted',remarks:'Ancillary Canteen. Building Undergoing AEI - Expected TOP 2Q 2026. Bare Condition. Corporate look with VRV Airconditioned. JTC Anchor sublet required for unit more than 1,000 sqm.'},
-  {reit:'ESR-REIT',reit_color:'#6e2f7f',month:'May 2026',addr:'29 Tai Seng Street',addrFull:'29 Tai Seng Street',unit:'#01-02',sqft:2658.71,sqm:247,rent:'$8.00',avail:'Under Offer, End of 2Q 2026',zone:'B2',cluster:'Central East',fit:'Bare',remarks:'Building Undergoing AEI - Expected TOP 2Q 2026. Bare Condition. Corporate look with VRV Airconditioned. JTC Anchor sublet required.'},
-  {reit:'ESR-REIT',reit_color:'#6e2f7f',month:'May 2026',addr:'29 Tai Seng Street',addrFull:'29 Tai Seng Street',unit:'#02-01',sqft:14832.79,sqm:1378,rent:'$4.80',avail:'Under Offer, End of 2Q 2026',zone:'B2',cluster:'Central East',fit:'Bare',remarks:'Building Undergoing AEI - Expected TOP 2Q 2026. Bare Condition. Corporate look with VRV Airconditioned. JTC Anchor sublet required for unit more than 1,000 sqm.'},
-  {reit:'ESR-REIT',reit_color:'#6e2f7f',month:'May 2026',addr:'29 Tai Seng Street',addrFull:'29 Tai Seng Street',unit:'#03-01',sqft:5123.66,sqm:476,rent:'$4.80',avail:'Under Offer, End of 2Q 2026',zone:'B2',cluster:'Central East',fit:'Bare',remarks:'Building Undergoing AEI - Expected TOP 2Q 2026. Bare Condition. Corporate look with VRV Airconditioned. JTC Anchor sublet required.'},
-  {reit:'ESR-REIT',reit_color:'#6e2f7f',month:'May 2026',addr:'29 Tai Seng Street',addrFull:'29 Tai Seng Street',unit:'#03-02',sqft:3304.55,sqm:307,rent:'$4.80',avail:'Under Offer, End of 2Q 2026',zone:'B2',cluster:'Central East',fit:'Bare',remarks:'Building Undergoing AEI - Expected TOP 2Q 2026. Bare Condition. Corporate look with VRV Airconditioned. JTC Anchor sublet required.'},
-  {reit:'ESR-REIT',reit_color:'#6e2f7f',month:'May 2026',addr:'29 Tai Seng Street',addrFull:'29 Tai Seng Street',unit:'#03-03',sqft:2174.33,sqm:202,rent:'$4.80',avail:'Under Offer, End of 2Q 2026',zone:'B2',cluster:'Central East',fit:'Bare',remarks:'Building Undergoing AEI - Expected TOP 2Q 2026. Bare Condition. Corporate look with VRV Airconditioned. JTC Anchor sublet required.'},
-  {reit:'ESR-REIT',reit_color:'#6e2f7f',month:'May 2026',addr:'29 Tai Seng Street',addrFull:'29 Tai Seng Street',unit:'#03-04',sqft:3907.33,sqm:363,rent:'$4.80',avail:'Under Offer, End of 2Q 2026',zone:'B2',cluster:'Central East',fit:'Bare',remarks:'Building Undergoing AEI - Expected TOP 2Q 2026. Bare Condition. Corporate look with VRV Airconditioned. JTC Anchor sublet required.'},
-  {reit:'ESR-REIT',reit_color:'#6e2f7f',month:'May 2026',addr:'29 Tai Seng Street',addrFull:'29 Tai Seng Street',unit:'#04-01',sqft:17039.41,sqm:1583,rent:'$4.80',avail:'Under Offer, End of 2Q 2026',zone:'B2',cluster:'Central East',fit:'Bare',remarks:'Building Undergoing AEI - Expected TOP 2Q 2026. Bare Condition. Corporate look with VRV Airconditioned. JTC Anchor sublet required for unit more than 1,000 sqm.'},
-  // ── Central Cluster ────────────────────────────
-  // B2 — 160 Kallang Way
-  {reit:'ESR-REIT',reit_color:'#6e2f7f',month:'May 2026',addr:'160 Kallang Way',addrFull:'160 Kallang Way',unit:'#02-01',sqft:12300.67,sqm:1143,rent:'$1.80',avail:'Immediate',zone:'B2',cluster:'Central',fit:'Bare',remarks:'Bare Condition. No loading bay.'},
-  {reit:'ESR-REIT',reit_color:'#6e2f7f',month:'May 2026',addr:'160 Kallang Way',addrFull:'160 Kallang Way',unit:'#03-01/02',sqft:71577.8,sqm:6650,rent:'$1.80',avail:'Immediate',zone:'B2',cluster:'Central',fit:'Bare',remarks:'Bare Condition. No loading bay.'},
-  {reit:'ESR-REIT',reit_color:'#6e2f7f',month:'May 2026',addr:'160 Kallang Way',addrFull:'160 Kallang Way',unit:'#04-01/02',sqft:71577.8,sqm:6650,rent:'$1.80',avail:'Immediate',zone:'B2',cluster:'Central',fit:'Bare',remarks:'Bare Condition. No loading bay.'},
-  // B2 — DistriCentre 1 @ 5 Changi South Lane
-  {reit:'ESR-REIT',reit_color:'#6e2f7f',month:'May 2026',addr:'DistriCentre 1 @ 5 Changi South Lane',addrFull:'5 Changi South Lane',unit:'#05-01',sqft:62595.03,sqm:5815,rent:'$2.40',avail:'Immediate',zone:'B2',cluster:'Central',fit:'Bare',remarks:'Bare Condition. Warehouse and ancillary office to be leased together.'},
-  {reit:'ESR-REIT',reit_color:'#6e2f7f',month:'May 2026',addr:'DistriCentre 1 @ 5 Changi South Lane',addrFull:'5 Changi South Lane',unit:'#05-06',sqft:2183.05,sqm:203,rent:'$2.40',avail:'Immediate',zone:'B2',cluster:'Central',fit:'Bare',remarks:'Bare Condition. Warehouse and ancillary office to be leased together.'},
-  {reit:'ESR-REIT',reit_color:'#6e2f7f',month:'May 2026',addr:'DistriCentre 1 @ 5 Changi South Lane',addrFull:'5 Changi South Lane',unit:'#02-06 (Ancillary Office)',sqft:2436,sqm:226,rent:null,avail:'Immediate',zone:'B2',cluster:'Central',fit:'Bare',remarks:'Bare condition'},
-  {reit:'ESR-REIT',reit_color:'#6e2f7f',month:'May 2026',addr:'DistriCentre 1 @ 5 Changi South Lane',addrFull:'5 Changi South Lane',unit:'Level 6 (Ancillary Office)',sqft:26334.77,sqm:2447,rent:null,avail:'Immediate (with 3 months notice)',zone:'B2',cluster:'Central',fit:'Bare',remarks:'As-is-where-is condition'},
-  // ── Central East Cluster ────────────────────────────
-  // B2 — 7000 Ang Mo Kio Ave 5
-  {reit:'ESR-REIT',reit_color:'#6e2f7f',month:'May 2026',addr:'7000 Ang Mo Kio Ave 5',addrFull:'7000 Ang Mo Kio Ave 5',unit:'Level 2 (Ancillary Office)',sqft:22597,sqm:2099,rent:'$3.30',avail:'Immediate',zone:'B2',cluster:'Central East',fit:'Bare',remarks:'Bare Condition. Industrial 60/40 usage applicable.'},
-  {reit:'ESR-REIT',reit_color:'#6e2f7f',month:'May 2026',addr:'7000 Ang Mo Kio Ave 5',addrFull:'7000 Ang Mo Kio Ave 5',unit:'Level 4 (Ancillary Office)',sqft:22890,sqm:2127,rent:'$3.30',avail:'Immediate',zone:'B2',cluster:'Central East',fit:'Bare',remarks:'Bare Condition. Industrial 60/40 usage applicable.'},
-  {reit:'ESR-REIT',reit_color:'#6e2f7f',month:'May 2026',addr:'7000 Ang Mo Kio Ave 5',addrFull:'7000 Ang Mo Kio Ave 5',unit:'Level 4 Production',sqft:23658.95,sqm:2198,rent:'$3.30',avail:'Immediate',zone:'B2',cluster:'Central East',fit:'Bare',remarks:'Bare Condition. Industrial 60/40 usage applicable.'},
-  {reit:'ESR-REIT',reit_color:'#6e2f7f',month:'May 2026',addr:'7000 Ang Mo Kio Ave 5',addrFull:'7000 Ang Mo Kio Ave 5',unit:'Level 5 production (From: 25,166.02 to 76,435.06 sqft)',sqft:76435.06,sqm:7101,rent:'$3.30',avail:'Immediate',zone:'B2',cluster:'Central East',fit:'Bare',remarks:'Bare Condition. Industrial 60/40 usage applicable. Range: 25,166.02 to 76,435.06 sqft (2,337.98 to 7,100.99 sqm).'},
-  // ── North Cluster ────────────────────────────
-  // B2 — 30 Marsiling Industrial Estate Road 8
-  {reit:'ESR-REIT',reit_color:'#6e2f7f',month:'May 2026',addr:'30 Marsiling Industrial Estate Road 8',addrFull:'30 Marsiling Industrial Estate Road 8',unit:'Level 3',sqft:39923.68,sqm:3709,rent:'$2.40',avail:'1 Oct 2026',zone:'B2',cluster:'North',fit:'Bare',remarks:'Bare condition. Anchor tenant sublet status required. Contiguous floor plate.'},
-  {reit:'ESR-REIT',reit_color:'#6e2f7f',month:'May 2026',addr:'30 Marsiling Industrial Estate Road 8',addrFull:'30 Marsiling Industrial Estate Road 8',unit:'Level 4',sqft:40192.78,sqm:3734,rent:'$2.40',avail:'1 Oct 2026',zone:'B2',cluster:'North',fit:'Bare',remarks:'Bare condition. Anchor tenant sublet status required. Contiguous floor plate.'},
-  {reit:'ESR-REIT',reit_color:'#6e2f7f',month:'May 2026',addr:'30 Marsiling Industrial Estate Road 8',addrFull:'30 Marsiling Industrial Estate Road 8',unit:'#05-01B',sqft:5812.56,sqm:540,rent:'$2.40',avail:'Immediate',zone:'B2',cluster:'North',fit:'Bare',remarks:'Bare condition'},
-  {reit:'ESR-REIT',reit_color:'#6e2f7f',month:'May 2026',addr:'30 Marsiling Industrial Estate Road 8',addrFull:'30 Marsiling Industrial Estate Road 8',unit:'Level 6',sqft:6932.02,sqm:644,rent:'$2.40',avail:'Immediate',zone:'B2',cluster:'North',fit:'Bare',remarks:'As-is-where-is condition'},
-  // B2 — 513 Yishun Industrial Park A
-  {reit:'ESR-REIT',reit_color:'#6e2f7f',month:'May 2026',addr:'513 Yishun Industrial Park A',addrFull:'513 Yishun Industrial Park A',unit:'Entire Building',sqft:50760.33,sqm:4716,rent:'$1.80',avail:'1 Jun 2026',zone:'B2',cluster:'North',fit:'Bare',remarks:'As-is-where-is condition. Anchor Tenant sublet status required.'},
-  // B2 — 511 Yishun Industrial Park A
-  {reit:'ESR-REIT',reit_color:'#6e2f7f',month:'May 2026',addr:'511 Yishun Industrial Park A',addrFull:'511 Yishun Industrial Park A',unit:'#02-01',sqft:9878.45,sqm:918,rent:'$1.80',avail:'1 Sep 2026',zone:'B2',cluster:'North',fit:'Bare',remarks:'Bare condition. Anchor Tenant sublet status required.',status:'New'},
-  {reit:'ESR-REIT',reit_color:'#6e2f7f',month:'May 2026',addr:'511 Yishun Industrial Park A',addrFull:'511 Yishun Industrial Park A',unit:'#05-01',sqft:33609.84,sqm:3122,rent:'$1.80',avail:'1 Jun 2026',zone:'B2',cluster:'North',fit:'Bare',remarks:'Bare condition. Anchor Tenant sublet status required.'},
-  // ── Central East Cluster ────────────────────────────
-  // B1 — 11 Chang Charn Road
-  {reit:'ESR-REIT',reit_color:'#6e2f7f',month:'May 2026',addr:'11 Chang Charn Road',addrFull:'11 Chang Charn Road',unit:'#04-01',sqft:4999.99,sqm:465,rent:'$2.70',avail:'Immediate',zone:'B1',cluster:'Central',fit:'Bare',remarks:'Bare condition'},
-  {reit:'ESR-REIT',reit_color:'#6e2f7f',month:'May 2026',addr:'11 Chang Charn Road',addrFull:'11 Chang Charn Road',unit:'#04-03A',sqft:3038.03,sqm:282,rent:'$2.70',avail:'Immediate',zone:'B1',cluster:'Central',fit:'Bare',remarks:'Bare condition',status:'New'},
-  {reit:'ESR-REIT',reit_color:'#6e2f7f',month:'May 2026',addr:'11 Chang Charn Road',addrFull:'11 Chang Charn Road',unit:'#05-01',sqft:5120,sqm:476,rent:'$2.70',avail:'Immediate',zone:'B1',cluster:'Central',fit:'Bare',remarks:'Bare condition. Anchor tenant sublet status required. Entire level 5 floor plate, approximately 1,500 sqm.'},
-  {reit:'ESR-REIT',reit_color:'#6e2f7f',month:'May 2026',addr:'11 Chang Charn Road',addrFull:'11 Chang Charn Road',unit:'#05-02/03',sqft:9148.97,sqm:850,rent:'$2.70',avail:'Immediate',zone:'B1',cluster:'Central',fit:'Bare',remarks:'Bare condition. Anchor tenant sublet status required. Entire level 5 floor plate, approximately 1,500 sqm.'},
-  // ── West Cluster ────────────────────────────
-  // B2 — 5 & 7 Gul Street 1
-  {reit:'ESR-REIT',reit_color:'#6e2f7f',month:'May 2026',addr:'5 & 7 Gul Street 1',addrFull:'5 & 7 Gul Street 1',unit:'#02-01 (Ancillary Office)',sqft:3194,sqm:297,rent:'$1.80',avail:'Immediate',zone:'B2',cluster:'West',fit:'Bare',remarks:'Bare Condition. All Ancillary office units. Industrial 60/40 usage applicable. #02-03/04 accessible via stairs.'},
-  {reit:'ESR-REIT',reit_color:'#6e2f7f',month:'May 2026',addr:'5 & 7 Gul Street 1',addrFull:'5 & 7 Gul Street 1',unit:'#02-02 (Ancillary Office)',sqft:4697.73,sqm:436,rent:'$1.80',avail:'Immediate',zone:'B2',cluster:'West',fit:'Bare',remarks:'Bare Condition. All Ancillary office units. Industrial 60/40 usage applicable.'},
-  {reit:'ESR-REIT',reit_color:'#6e2f7f',month:'May 2026',addr:'5 & 7 Gul Street 1',addrFull:'5 & 7 Gul Street 1',unit:'#02-03 (Ancillary Office)',sqft:6496.66,sqm:604,rent:'$1.80',avail:'Immediate',zone:'B2',cluster:'West',fit:'Bare',remarks:'Bare Condition. All Ancillary office units. Industrial 60/40 usage applicable. Accessible via stairs.'},
-  {reit:'ESR-REIT',reit_color:'#6e2f7f',month:'May 2026',addr:'5 & 7 Gul Street 1',addrFull:'5 & 7 Gul Street 1',unit:'#02-04 (Ancillary Office)',sqft:6496.66,sqm:604,rent:'$1.80',avail:'Immediate',zone:'B2',cluster:'West',fit:'Bare',remarks:'Bare Condition. All Ancillary office units. Industrial 60/40 usage applicable. Accessible via stairs.'},
-  {reit:'ESR-REIT',reit_color:'#6e2f7f',month:'May 2026',addr:'5 & 7 Gul Street 1',addrFull:'5 & 7 Gul Street 1',unit:'#03-01 (Ancillary Office)',sqft:3194.43,sqm:297,rent:'$1.80',avail:'Immediate',zone:'B2',cluster:'West',fit:'Bare',remarks:'Bare Condition. All Ancillary office units. Industrial 60/40 usage applicable.'},
-  {reit:'ESR-REIT',reit_color:'#6e2f7f',month:'May 2026',addr:'5 & 7 Gul Street 1',addrFull:'5 & 7 Gul Street 1',unit:'#03-02 (Ancillary Office)',sqft:4697.73,sqm:436,rent:'$1.80',avail:'Immediate',zone:'B2',cluster:'West',fit:'Bare',remarks:'Bare Condition. All Ancillary office units. Industrial 60/40 usage applicable.'},
-  {reit:'ESR-REIT',reit_color:'#6e2f7f',month:'May 2026',addr:'5 & 7 Gul Street 1',addrFull:'5 & 7 Gul Street 1',unit:'#04-01 (Ancillary Office)',sqft:3739.95,sqm:347,rent:'$1.80',avail:'Immediate',zone:'B2',cluster:'West',fit:'Bare',remarks:'Bare Condition. All Ancillary office units. Industrial 60/40 usage applicable.'},
-  {reit:'ESR-REIT',reit_color:'#6e2f7f',month:'May 2026',addr:'5 & 7 Gul Street 1',addrFull:'5 & 7 Gul Street 1',unit:'#04-02 (Ancillary Office)',sqft:4999.99,sqm:465,rent:'$1.80',avail:'1 Feb 2026',zone:'B2',cluster:'West',fit:'Bare',remarks:'Bare Condition. All Ancillary office units. Industrial 60/40 usage applicable.'},
-  // B2 — 160A Gul Circle
-  {reit:'ESR-REIT',reit_color:'#6e2f7f',month:'May 2026',addr:'160A Gul Circle',addrFull:'160A Gul Circle',unit:'#03-01',sqft:14566.6,sqm:1353,rent:'$1.80',avail:'Immediate',zone:'B2',cluster:'West',fit:'Bare',remarks:'Bare condition. #01-01/04 & #03-01 to be leased together. Anchor Tenant Sublet Status required.'},
-  // B2 — 24 Penjuru Road
-  {reit:'ESR-REIT',reit_color:'#6e2f7f',month:'May 2026',addr:'24 Penjuru Road',addrFull:'24 Penjuru Road',unit:'#01-03',sqft:100746.95,sqm:9360,rent:'$1.80',avail:'Under Negotiation',zone:'B2',cluster:'West',fit:'Bare',remarks:'Bare condition. Available for lease until 31 Dec 2027.'},
-  {reit:'ESR-REIT',reit_color:'#6e2f7f',month:'May 2026',addr:'24 Penjuru Road',addrFull:'24 Penjuru Road',unit:'#09-02',sqft:21280.86,sqm:1977,rent:'$2.00',avail:'1 Jul 2026',zone:'B2',cluster:'West',fit:'Partial',remarks:'Bare condition. Partially fitted with Air-con warehouse.'},
-  {reit:'ESR-REIT',reit_color:'#6e2f7f',month:'May 2026',addr:'24 Penjuru Road',addrFull:'24 Penjuru Road',unit:'#09-04',sqft:96359.97,sqm:8952,rent:'$1.80',avail:'Immediate',zone:'B2',cluster:'West',fit:'Bare',remarks:'Bare condition. Available for lease until 31 Dec 2027.'},
-  {reit:'ESR-REIT',reit_color:'#6e2f7f',month:'May 2026',addr:'24 Penjuru Road',addrFull:'24 Penjuru Road',unit:'#01-01 and #02-01 (Ancillary Office)',sqft:1747,sqm:162,rent:null,avail:'Immediate',zone:'B2',cluster:'West',fit:'Bare',remarks:'Bare condition. Ancillary Office unit. Industrial 60/40 usage applicable.'},
-  {reit:'ESR-REIT',reit_color:'#6e2f7f',month:'May 2026',addr:'24 Penjuru Road',addrFull:'24 Penjuru Road',unit:'#02-02 (Ancillary Office)',sqft:1224,sqm:114,rent:null,avail:'Immediate',zone:'B2',cluster:'West',fit:'Bare',remarks:'Bare condition. Ancillary Office unit. Industrial 60/40 usage applicable.'},
-  {reit:'ESR-REIT',reit_color:'#6e2f7f',month:'May 2026',addr:'24 Penjuru Road',addrFull:'24 Penjuru Road',unit:'#08-02 (Ancillary Office)',sqft:1988,sqm:185,rent:null,avail:'Immediate',zone:'B2',cluster:'West',fit:'Bare',remarks:'Bare condition. Ancillary Office unit. Industrial 60/40 usage applicable.'},
-  {reit:'ESR-REIT',reit_color:'#6e2f7f',month:'May 2026',addr:'24 Penjuru Road',addrFull:'24 Penjuru Road',unit:'#10-02 (Ancillary Office)',sqft:1188.02,sqm:110,rent:null,avail:'Immediate',zone:'B2',cluster:'West',fit:'Bare',remarks:'Bare condition. Ancillary Office unit. Industrial 60/40 usage applicable.'},
-  {reit:'ESR-REIT',reit_color:'#6e2f7f',month:'May 2026',addr:'24 Penjuru Road',addrFull:'24 Penjuru Road',unit:'#10-04 (Ancillary Office)',sqft:1856.04,sqm:172,rent:null,avail:'Immediate',zone:'B2',cluster:'West',fit:'Bare',remarks:'Bare condition. Ancillary Office unit. Industrial 60/40 usage applicable.'},
-  // B2 — 8 Tuas South Lane
-  {reit:'ESR-REIT',reit_color:'#6e2f7f',month:'May 2026',addr:'8 Tuas South Lane',addrFull:'8 Tuas South Lane',unit:'#02-01',sqft:50819,sqm:4721,rent:null,avail:'Under Negotiation',zone:'B2',cluster:'West',fit:'Bare',remarks:'Bare condition. Lighting and fan in warehouse.'},
-  {reit:'ESR-REIT',reit_color:'#6e2f7f',month:'May 2026',addr:'8 Tuas South Lane',addrFull:'8 Tuas South Lane',unit:'#08-01',sqft:49284.16,sqm:4579,rent:null,avail:'Immediate',zone:'B2',cluster:'West',fit:'Bare',remarks:'Bare condition. Lighting and fan in warehouse.'},
-  // B2 — 20A Tuas South Avenue 14
-  {reit:'ESR-REIT',reit_color:'#6e2f7f',month:'May 2026',addr:'20A Tuas South Avenue 14',addrFull:'20A Tuas South Avenue 14',unit:'#01-04',sqft:37479.93,sqm:3482,rent:null,avail:'Under Offer',zone:'B2',cluster:'West',fit:'Bare',remarks:'Bare condition. Direct loading with dock levelers. Warehouse installed with racking.'}
-
-  // ── ESR-REIT — Absorbed Apr → May 2026 (listed Apr, leased by May) ───────────
-  ,{reit:'ESR-REIT',reit_color:'#6e2f7f',month:'Apr 2026',addr:'ESR BizPark @ Changi (Retail)',addrFull:'2 & 4 Changi Business Park',unit:'#B1-11 (Retail Unit)',sqft:1011.82,sqm:94,rent:'$12.00',avail:'Immediate',zone:'Retail',cluster:'Business Park',fit:'Bare',remarks:'Retail shop',status:'Absorbed'}
-  ,{reit:'ESR-REIT',reit_color:'#6e2f7f',month:'Apr 2026',addr:'19 Tai Seng Ave',addrFull:'19 Tai Seng Ave',unit:'#02-01',sqft:6042.8,sqm:561,rent:'$4.40',avail:'Under Negotiation',zone:'B2',cluster:'Central East',fit:'Bare',remarks:'Bare Condition',status:'Absorbed'}
-  ,{reit:'ESR-REIT',reit_color:'#6e2f7f',month:'Apr 2026',addr:'21 Ubi Road 1',addrFull:'21 Ubi Road 1',unit:'#05-01',sqft:9526.14,sqm:885,rent:'$2.80',avail:'Immediate',zone:'B1',cluster:'Central East',fit:'Bare',remarks:'Bare condition. Central Aircon. Anchor Tenant sublet status required.',status:'Absorbed'}
-  ,{reit:'ESR-REIT',reit_color:'#6e2f7f',month:'Apr 2026',addr:'21 Ubi Road 1',addrFull:'21 Ubi Road 1',unit:'#04-04 (Provisional)',sqft:1862.17,sqm:173,rent:'$2.80',avail:'1 Jul 2026',zone:'B1',cluster:'Central East',fit:'Bare',remarks:'Bare condition. Central Aircon. Anchor Tenant sublet status required.',status:'Absorbed'}
-  ,{reit:'ESR-REIT',reit_color:'#6e2f7f',month:'Apr 2026',addr:'21 Ubi Road 1',addrFull:'21 Ubi Road 1',unit:'#04-03',sqft:3110.8,sqm:289,rent:'$2.80',avail:'Immediate',zone:'B1',cluster:'Central East',fit:'Bare',remarks:'As-is-where-is condition',status:'Absorbed'}
-  ,{reit:'ESR-REIT',reit_color:'#6e2f7f',month:'Apr 2026',addr:'120 Pioneer Road',addrFull:'120 Pioneer Road',unit:'#02-03 (Ancillary Office)',sqft:6113.95,sqm:568,rent:'$1.20',avail:'Immediate',zone:'B2',cluster:'West',fit:'Bare',remarks:'Bare Condition. Anchor Tenant Sublet Status required.',status:'Absorbed'}
-  ,{reit:'ESR-REIT',reit_color:'#6e2f7f',month:'Apr 2026',addr:'120 Pioneer Road',addrFull:'120 Pioneer Road',unit:'#04-01 (Ancillary Office)',sqft:11277.44,sqm:1048,rent:'$1.20',avail:'Immediate',zone:'B2',cluster:'West',fit:'Partial',remarks:'Partially fitted: With Aircon, Ceiling Board, Lightings. Access via passenger lift. Industrial 60/40 usage applicable. Anchor Tenant Sublet Status required.',status:'Absorbed'}
-  ,{reit:'ESR-REIT',reit_color:'#6e2f7f',month:'Apr 2026',addr:'120 Pioneer Road',addrFull:'120 Pioneer Road',unit:'#04-02 (Ancillary Office)',sqft:5743.67,sqm:534,rent:'$1.20',avail:'Immediate',zone:'B2',cluster:'West',fit:'Bare',remarks:'Bare Condition. Anchor Tenant Sublet Status required.',status:'Absorbed'}
-  ,{reit:'ESR-REIT',reit_color:'#6e2f7f',month:'Apr 2026',addr:'160A Gul Circle',addrFull:'160A Gul Circle',unit:'#01-01/04',sqft:37865.17,sqm:3518,rent:'$1.80',avail:'Under Offer',zone:'B2',cluster:'West',fit:'Bare',remarks:'Bare condition. #01-01/04 & #03-01 to be leased together. Anchor Tenant Sublet Status required.',status:'Absorbed'}
-  ,{reit:'ESR-REIT',reit_color:'#6e2f7f',month:'Apr 2026',addr:'24 Jurong Port Road',addrFull:'24 Jurong Port Road',unit:'#01-01 (Ancillary Office)',sqft:153.17,sqm:14,rent:'$1.30',avail:'Immediate',zone:'B2',cluster:'West',fit:'Bare',remarks:'Bare condition. Suitable for light storage, packing, distribution of products, etc.',status:'Absorbed'}
-  ,{reit:'ESR-REIT',reit_color:'#6e2f7f',month:'Apr 2026',addr:'24 Jurong Port Road',addrFull:'24 Jurong Port Road',unit:'#02-04 (Ancillary Office)',sqft:1669.71,sqm:155,rent:'$1.30',avail:'Immediate',zone:'B2',cluster:'West',fit:'Bare',remarks:'Bare condition. Suitable for light storage, packing, distribution of products, etc.',status:'Absorbed'}
-  ,{reit:'ESR-REIT',reit_color:'#6e2f7f',month:'Apr 2026',addr:'24 Jurong Port Road',addrFull:'24 Jurong Port Road',unit:'Part Level 3 WH (Middle)',sqft:32445.6,sqm:3014,rent:'$1.40',avail:'Immediate',zone:'B2',cluster:'West',fit:'Bare',remarks:'Bare Condition - Warehouse. Shared Cargo Lift access warehouse. Shared Loading Bay and Dock Leveler.',status:'Absorbed'}
-  ,{reit:'ESR-REIT',reit_color:'#6e2f7f',month:'Apr 2026',addr:'8 Tuas South Lane',addrFull:'8 Tuas South Lane',unit:'#05-01',sqft:51729.63,sqm:4806,rent:null,avail:'Under Negotiation',zone:'B2',cluster:'West',fit:'Bare',remarks:'Bare condition. Lighting and fan in warehouse.',status:'Absorbed'}
-  // ── ESR-REIT — Absorbed Mar → Apr 2026 (listed Mar, leased by Apr) ───────────
-  ,{reit:'ESR-REIT',reit_color:'#6e2f7f',month:'Mar 2026',addr:'ESR BizPark @ Chai Chee Blk 750',addrFull:'750 Chai Chee Road',unit:'#04-01',sqft:11890,sqm:1105,rent:null,avail:'Immediate',zone:'Business Park',cluster:'Business Park',fit:'Bare',remarks:'Bare condition',status:'Absorbed'}
-  ,{reit:'ESR-REIT',reit_color:'#6e2f7f',month:'Mar 2026',addr:'ESR BizPark @ Chai Chee Blk 750',addrFull:'750 Chai Chee Road',unit:'#06-01',sqft:17428,sqm:1619,rent:null,avail:'1 May 2026',zone:'Business Park',cluster:'Business Park',fit:'Bare',remarks:'Bare condition',status:'Absorbed'}
-  ,{reit:'ESR-REIT',reit_color:'#6e2f7f',month:'Mar 2026',addr:'ESR BizPark @ Chai Chee Blk 750',addrFull:'750 Chai Chee Road',unit:'#06-02/03',sqft:20368,sqm:1892,rent:null,avail:'Immediate',zone:'Business Park',cluster:'Business Park',fit:'Partial',remarks:'Partially fitted',status:'Absorbed'}
-  ,{reit:'ESR-REIT',reit_color:'#6e2f7f',month:'Mar 2026',addr:'ESR BizPark @ Chai Chee Blk 750',addrFull:'750 Chai Chee Road',unit:'#07-10',sqft:603,sqm:56,rent:null,avail:'Immediate',zone:'Business Park',cluster:'Business Park',fit:'Bare',remarks:'Bare condition',status:'Absorbed'}
-  ,{reit:'ESR-REIT',reit_color:'#6e2f7f',month:'Mar 2026',addr:'11 Chang Charn Road',addrFull:'11 Chang Charn Road',unit:'#04-01',sqft:5000,sqm:465,rent:'$2.70',avail:'Immediate',zone:'B1',cluster:'Central',fit:'Bare',remarks:'Bare condition. Anchor tenant sublet required.',status:'Absorbed'}
+  // ── ESR-REIT — March 2026 ──────────────────────────────────────────────
+  // Business Park — Changi
+  {reit:'ESR-REIT',reit_color:'#6e2f7f',month:'Mar 2026',addr:'ESR BizPark @ Changi',addrFull:'6 & 8 Changi Business Park',unit:'#03-21 North Tower',sqft:24637,sqm:2289,rent:null,avail:'1 Mar 2026',zone:'Business Park',cluster:'Business Park',fit:'Bare',remarks:'Bare condition'},
+  {reit:'ESR-REIT',reit_color:'#6e2f7f',month:'Mar 2026',addr:'ESR BizPark @ Changi',addrFull:'6 & 8 Changi Business Park',unit:'#04-21 & #04-51/52 North & South Tower',sqft:61696,sqm:5732,rent:null,avail:'Immediate',zone:'Business Park',cluster:'Business Park',fit:'Bare',remarks:'Whole floor plate. Exclusive lobby & toilets across both towers. Can be amalgamated for whole floor plate.'},
+  {reit:'ESR-REIT',reit_color:'#6e2f7f',month:'Mar 2026',addr:'ESR BizPark @ Changi',addrFull:'6 & 8 Changi Business Park',unit:'#05-21A North Tower',sqft:7293,sqm:678,rent:null,avail:'Mid Mar 2026',zone:'Business Park',cluster:'Business Park',fit:'Bare',remarks:'Bare condition'},
+  {reit:'ESR-REIT',reit_color:'#6e2f7f',month:'Mar 2026',addr:'ESR BizPark @ Changi',addrFull:'6 & 8 Changi Business Park',unit:'#05-53 South Tower',sqft:6932,sqm:644,rent:null,avail:'Immediate',zone:'Business Park',cluster:'Business Park',fit:'Bare',remarks:'Bare condition'},
+  {reit:'ESR-REIT',reit_color:'#6e2f7f',month:'Mar 2026',addr:'ESR BizPark @ Changi',addrFull:'6 & 8 Changi Business Park',unit:'#07-52 South Tower',sqft:3327,sqm:309,rent:null,avail:'Immediate',zone:'Business Park',cluster:'Business Park',fit:'Bare',remarks:'Bare condition'},
+  {reit:'ESR-REIT',reit_color:'#6e2f7f',month:'Mar 2026',addr:'ESR BizPark @ Changi',addrFull:'6 & 8 Changi Business Park',unit:'#08-52 South Tower',sqft:6308,sqm:586,rent:null,avail:'Under Negotiation',zone:'Business Park',cluster:'Business Park',fit:'Bare',remarks:'Bare condition. Provisional unit numbering subject to final survey.'},
+  {reit:'ESR-REIT',reit_color:'#6e2f7f',month:'Mar 2026',addr:'ESR BizPark @ Changi',addrFull:'6 & 8 Changi Business Park',unit:'#08-21 North Tower',sqft:14625,sqm:1359,rent:null,avail:'Immediate',zone:'Business Park',cluster:'Business Park',fit:'Bare',remarks:'Bare condition'},
+  {reit:'ESR-REIT',reit_color:'#6e2f7f',month:'Mar 2026',addr:'ESR BizPark @ Changi',addrFull:'6 & 8 Changi Business Park',unit:'#08-23 North Tower',sqft:2354,sqm:219,rent:null,avail:'Under Negotiation',zone:'Business Park',cluster:'Business Park',fit:'Bare',remarks:'Bare condition'},
+  // Business Park — Chai Chee 750
+  {reit:'ESR-REIT',reit_color:'#6e2f7f',month:'Mar 2026',addr:'ESR BizPark @ Chai Chee Blk 750',addrFull:'750 Chai Chee Road',unit:'#02-06 to 08',sqft:27830,sqm:2586,rent:null,avail:'Immediate',zone:'Business Park',cluster:'Business Park',fit:'Bare',remarks:'Bare condition'},
+  {reit:'ESR-REIT',reit_color:'#6e2f7f',month:'Mar 2026',addr:'ESR BizPark @ Chai Chee Blk 750',addrFull:'750 Chai Chee Road',unit:'#03-10/13',sqft:8210,sqm:763,rent:null,avail:'Immediate',zone:'Business Park',cluster:'Business Park',fit:'Bare',remarks:'Bare condition'},
+  {reit:'ESR-REIT',reit_color:'#6e2f7f',month:'Mar 2026',addr:'ESR BizPark @ Chai Chee Blk 750',addrFull:'750 Chai Chee Road',unit:'#04-03',sqft:5156,sqm:479,rent:null,avail:'Immediate',zone:'Business Park',cluster:'Business Park',fit:'Bare',remarks:'Bare condition'},
+  {reit:'ESR-REIT',reit_color:'#6e2f7f',month:'Mar 2026',addr:'ESR BizPark @ Chai Chee Blk 750',addrFull:'750 Chai Chee Road',unit:'#04-04',sqft:17933,sqm:1666,rent:null,avail:'Immediate',zone:'Business Park',cluster:'Business Park',fit:'Bare',remarks:'Bare condition'},
+  {reit:'ESR-REIT',reit_color:'#6e2f7f',month:'Mar 2026',addr:'ESR BizPark @ Chai Chee Blk 750',addrFull:'750 Chai Chee Road',unit:'#04-01',sqft:11890,sqm:1105,rent:null,avail:'Immediate',zone:'Business Park',cluster:'Business Park',fit:'Bare',remarks:'Bare condition'},
+  {reit:'ESR-REIT',reit_color:'#6e2f7f',month:'Mar 2026',addr:'ESR BizPark @ Chai Chee Blk 750',addrFull:'750 Chai Chee Road',unit:'#06-01',sqft:17428,sqm:1619,rent:null,avail:'1 May 2026',zone:'Business Park',cluster:'Business Park',fit:'Bare',remarks:'Bare condition'},
+  {reit:'ESR-REIT',reit_color:'#6e2f7f',month:'Mar 2026',addr:'ESR BizPark @ Chai Chee Blk 750',addrFull:'750 Chai Chee Road',unit:'#06-02/03',sqft:20368,sqm:1892,rent:null,avail:'Immediate',zone:'Business Park',cluster:'Business Park',fit:'Partial',remarks:'Partially fitted'},
+  {reit:'ESR-REIT',reit_color:'#6e2f7f',month:'Mar 2026',addr:'ESR BizPark @ Chai Chee Blk 750',addrFull:'750 Chai Chee Road',unit:'#07-10',sqft:603,sqm:56,rent:null,avail:'Immediate',zone:'Business Park',cluster:'Business Park',fit:'Bare',remarks:'Bare condition'},
+  // Business Park — Chai Chee 750A
+  {reit:'ESR-REIT',reit_color:'#6e2f7f',month:'Mar 2026',addr:'ESR BizPark @ Chai Chee Blk 750A',addrFull:'750A Chai Chee Road',unit:'#07-01A',sqft:1991,sqm:185,rent:null,avail:'Immediate',zone:'Business Park',cluster:'Business Park',fit:'Bare',remarks:'Bare condition. Internal unit.'},
+  {reit:'ESR-REIT',reit_color:'#6e2f7f',month:'Mar 2026',addr:'ESR BizPark @ Chai Chee Blk 750A',addrFull:'750A Chai Chee Road',unit:'#07-01C',sqft:6695,sqm:622,rent:null,avail:'Immediate',zone:'Business Park',cluster:'Business Park',fit:'Bare',remarks:'Bare condition. High power provision.'},
+  {reit:'ESR-REIT',reit_color:'#6e2f7f',month:'Mar 2026',addr:'ESR BizPark @ Chai Chee Blk 750A',addrFull:'750A Chai Chee Road',unit:'#07-17',sqft:797,sqm:74,rent:null,avail:'Immediate',zone:'Business Park',cluster:'Business Park',fit:'Partial',remarks:'Partial fitted — flooring (vinyl)'},
+  {reit:'ESR-REIT',reit_color:'#6e2f7f',month:'Mar 2026',addr:'ESR BizPark @ Chai Chee Blk 750A',addrFull:'750A Chai Chee Road',unit:'#07-18/20',sqft:1249,sqm:116,rent:null,avail:'Immediate',zone:'Business Park',cluster:'Business Park',fit:'Bare',remarks:'Bare condition'},
+  {reit:'ESR-REIT',reit_color:'#6e2f7f',month:'Mar 2026',addr:'ESR BizPark @ Chai Chee Blk 750A',addrFull:'750A Chai Chee Road',unit:'#07-13',sqft:420,sqm:39,rent:null,avail:'Immediate',zone:'Business Park',cluster:'Business Park',fit:'Bare',remarks:'Bare condition'},
+  {reit:'ESR-REIT',reit_color:'#6e2f7f',month:'Mar 2026',addr:'ESR BizPark @ Chai Chee Blk 750A',addrFull:'750A Chai Chee Road',unit:'#07-14',sqft:570,sqm:53,rent:null,avail:'Immediate',zone:'Business Park',cluster:'Business Park',fit:'Bare',remarks:'Bare condition'},
+  {reit:'ESR-REIT',reit_color:'#6e2f7f',month:'Mar 2026',addr:'ESR BizPark @ Chai Chee Blk 750A',addrFull:'750A Chai Chee Road',unit:'#07-16',sqft:560,sqm:52,rent:null,avail:'Immediate',zone:'Business Park',cluster:'Business Park',fit:'Bare',remarks:'Bare condition'},
+  {reit:'ESR-REIT',reit_color:'#6e2f7f',month:'Mar 2026',addr:'ESR BizPark @ Chai Chee Blk 750A',addrFull:'750A Chai Chee Road',unit:'#08-01 to 03 (Exclusive floorplate)',sqft:6792,sqm:631,rent:null,avail:'Immediate',zone:'Business Park',cluster:'Business Park',fit:'Bare',remarks:'Entire floor plate + exclusive lift lobby + roof terrace'},
+  // Business Park — Chai Chee 750D
+  {reit:'ESR-REIT',reit_color:'#6e2f7f',month:'Mar 2026',addr:'ESR BizPark @ Chai Chee Blk 750D',addrFull:'750D Chai Chee Road',unit:'#03-05',sqft:5442,sqm:506,rent:null,avail:'Immediate',zone:'Business Park',cluster:'Business Park',fit:'Bare',remarks:'Bare condition'},
+  {reit:'ESR-REIT',reit_color:'#6e2f7f',month:'Mar 2026',addr:'ESR BizPark @ Chai Chee Blk 750D',addrFull:'750D Chai Chee Road',unit:'#03-06',sqft:4026,sqm:374,rent:null,avail:'Immediate',zone:'Business Park',cluster:'Business Park',fit:'Bare',remarks:'Bare condition'},
+  {reit:'ESR-REIT',reit_color:'#6e2f7f',month:'Mar 2026',addr:'ESR BizPark @ Chai Chee Blk 750D',addrFull:'750D Chai Chee Road',unit:'#04-01/02',sqft:12489,sqm:1160,rent:null,avail:'Immediate',zone:'Business Park',cluster:'Business Park',fit:'Bare',remarks:'Bare condition. Greenery view level. Subject to final measurements.'},
+  {reit:'ESR-REIT',reit_color:'#6e2f7f',month:'Mar 2026',addr:'ESR BizPark @ Chai Chee Blk 750D',addrFull:'750D Chai Chee Road',unit:'#04-06',sqft:6996,sqm:650,rent:null,avail:'Immediate',zone:'Business Park',cluster:'Business Park',fit:'Bare',remarks:'Bare condition'},
+  {reit:'ESR-REIT',reit_color:'#6e2f7f',month:'Mar 2026',addr:'ESR BizPark @ Chai Chee Blk 750D',addrFull:'750D Chai Chee Road',unit:'#05-01',sqft:7061,sqm:656,rent:null,avail:'Immediate',zone:'Business Park',cluster:'Business Park',fit:'Bare',remarks:'Bare condition'},
+  {reit:'ESR-REIT',reit_color:'#6e2f7f',month:'Mar 2026',addr:'ESR BizPark @ Chai Chee Blk 750D',addrFull:'750D Chai Chee Road',unit:'#08-02/03',sqft:10423,sqm:968,rent:null,avail:'Immediate',zone:'Business Park',cluster:'Business Park',fit:'Bare',remarks:'Bare condition. Top floor with good view.'},
+  // Business Park — Chai Chee 750E
+  {reit:'ESR-REIT',reit_color:'#6e2f7f',month:'Mar 2026',addr:'ESR BizPark @ Chai Chee Blk 750E',addrFull:'750E Chai Chee Road',unit:'#01-01',sqft:6944,sqm:645,rent:null,avail:'Immediate',zone:'Business Park',cluster:'Business Park',fit:'Fitted',remarks:'Existing unit fitted as canteen. To be taken over as-is-where-is.'},
+  {reit:'ESR-REIT',reit_color:'#6e2f7f',month:'Mar 2026',addr:'ESR BizPark @ Chai Chee Blk 750E',addrFull:'750E Chai Chee Road',unit:'#03-01 to 04',sqft:24148,sqm:2243,rent:null,avail:'Immediate',zone:'Business Park',cluster:'Business Park',fit:'Partial',remarks:'Partially fitted. With rooms and storage area.'},
+  {reit:'ESR-REIT',reit_color:'#6e2f7f',month:'Mar 2026',addr:'ESR BizPark @ Chai Chee Blk 750E',addrFull:'750E Chai Chee Road',unit:'#03-05 to 09',sqft:28405,sqm:2639,rent:null,avail:'Immediate',zone:'Business Park',cluster:'Business Park',fit:'Partial',remarks:'Partial fitted. Meeting/manager rooms with open concept area.'},
+  {reit:'ESR-REIT',reit_color:'#6e2f7f',month:'Mar 2026',addr:'ESR BizPark @ Chai Chee Blk 750E',addrFull:'750E Chai Chee Road',unit:'#04-01 to 04',sqft:18586,sqm:1727,rent:null,avail:'Immediate',zone:'Business Park',cluster:'Business Park',fit:'Partial',remarks:'Partial fitted. Provisional unit numbering subject to final survey.'},
+  {reit:'ESR-REIT',reit_color:'#6e2f7f',month:'Mar 2026',addr:'ESR BizPark @ Chai Chee Blk 750E',addrFull:'750E Chai Chee Road',unit:'#05-02A',sqft:2825,sqm:262,rent:null,avail:'Immediate',zone:'Business Park',cluster:'Business Park',fit:'Bare',remarks:'Bare condition'},
+  {reit:'ESR-REIT',reit_color:'#6e2f7f',month:'Mar 2026',addr:'ESR BizPark @ Chai Chee Blk 750E',addrFull:'750E Chai Chee Road',unit:'#05-07/08',sqft:10527,sqm:978,rent:null,avail:'Immediate',zone:'Business Park',cluster:'Business Park',fit:'Bare',remarks:'Bare condition'},
+  {reit:'ESR-REIT',reit_color:'#6e2f7f',month:'Mar 2026',addr:'ESR BizPark @ Chai Chee Blk 750E',addrFull:'750E Chai Chee Road',unit:'#07-01/02',sqft:14333,sqm:1332,rent:null,avail:'Immediate',zone:'Business Park',cluster:'Business Park',fit:'Partial',remarks:'Partial fitted'},
+  {reit:'ESR-REIT',reit_color:'#6e2f7f',month:'Mar 2026',addr:'ESR BizPark @ Chai Chee Blk 750E',addrFull:'750E Chai Chee Road',unit:'#07-04',sqft:2835,sqm:263,rent:null,avail:'Immediate',zone:'Business Park',cluster:'Business Park',fit:'Partial',remarks:'Partial fitted'},
+  {reit:'ESR-REIT',reit_color:'#6e2f7f',month:'Mar 2026',addr:'ESR BizPark @ Chai Chee Blk 750E',addrFull:'750E Chai Chee Road',unit:'#07-08',sqft:5274,sqm:490,rent:null,avail:'Immediate',zone:'Business Park',cluster:'Business Park',fit:'Bare',remarks:'Bare condition'},
+  // Retail / F&B
+  {reit:'ESR-REIT',reit_color:'#6e2f7f',month:'Mar 2026',addr:'ESR BizPark @ Changi',addrFull:'2 & 4 Changi Business Park',unit:'#B1-11 (Retail)',sqft:1012,sqm:94,rent:'$12.00',avail:'Immediate',zone:'Retail',cluster:'Business Park',fit:'Bare',remarks:'Retail shop'},
+  {reit:'ESR-REIT',reit_color:'#6e2f7f',month:'Mar 2026',addr:'ESR BizPark @ Changi',addrFull:'2 & 4 Changi Business Park',unit:'#01-05 (F&B)',sqft:2378,sqm:221,rent:'$12.00',avail:'Immediate',zone:'Retail',cluster:'Business Park',fit:'Bare',remarks:'F&B approved'},
+  {reit:'ESR-REIT',reit_color:'#6e2f7f',month:'Mar 2026',addr:'ESR BizPark @ Changi',addrFull:'6 Changi Business Park',unit:'#01-31 (F&B)',sqft:1390,sqm:129,rent:'$12.00',avail:'Immediate',zone:'Retail',cluster:'Business Park',fit:'Partial',remarks:'F&B approved. Partially fitted.'},
+  {reit:'ESR-REIT',reit_color:'#6e2f7f',month:'Mar 2026',addr:'ESR BizPark @ Changi',addrFull:'6 Changi Business Park',unit:'#01-24 (F&B)',sqft:739,status:'New',sqm:69,rent:'$12.00',avail:'Mid Mar 2026',zone:'Retail',cluster:'Business Park',fit:'Partial',remarks:'F&B approved. Partially fitted.'},
+  {reit:'ESR-REIT',reit_color:'#6e2f7f',month:'Mar 2026',addr:'ESR BizPark @ Changi',addrFull:'8 Changi Business Park',unit:'#01-54 (F&B)',sqft:839,sqm:78,rent:'$12.00',avail:'Immediate',zone:'Retail',cluster:'Business Park',fit:'Bare',remarks:'F&B approved'},
+  // B1 — Central East
+  {reit:'ESR-REIT',reit_color:'#6e2f7f',month:'Mar 2026',addr:'130 Joo Seng Road',addrFull:'130 Joo Seng Road',unit:'#05-07',sqft:2304,sqm:214,rent:'$2.50',avail:'Immediate',zone:'B1',cluster:'Central East',fit:'Bare',remarks:'Bare condition'},
+  {reit:'ESR-REIT',reit_color:'#6e2f7f',month:'Mar 2026',addr:'11 Lorong 3 Toa Payoh (Jackson Sq)',addrFull:'11 Lorong 3 Toa Payoh',unit:'Blk B #02-11 to #02-15 & #02-26 to #02-28',sqft:27317,sqm:2538,rent:null,avail:'Immediate',zone:'B1',cluster:'Central East',fit:'Bare',remarks:'Bare condition. Anchor tenant sublet status required.'},
+  {reit:'ESR-REIT',reit_color:'#6e2f7f',month:'Mar 2026',addr:'11 Lorong 3 Toa Payoh (Jackson Sq)',addrFull:'11 Lorong 3 Toa Payoh',unit:'Blk B #02-16 to #02-25',sqft:28505,sqm:2648,rent:null,avail:'Immediate',zone:'B1',cluster:'Central East',fit:'Fitted',remarks:'Fitted unit. As-is-where-is. Anchor tenant sublet required.'},
+  {reit:'ESR-REIT',reit_color:'#6e2f7f',month:'Mar 2026',addr:'11 Lorong 3 Toa Payoh (Jackson Sq)',addrFull:'11 Lorong 3 Toa Payoh',unit:'Blk B #03-16 to 19',sqft:9383,sqm:872,rent:null,avail:'Immediate',zone:'B1',cluster:'Central East',fit:'Bare',remarks:'Bare condition. Anchor tenant sublet required.'},
+  {reit:'ESR-REIT',reit_color:'#6e2f7f',month:'Mar 2026',addr:'11 Lorong 3 Toa Payoh (Jackson Sq)',addrFull:'11 Lorong 3 Toa Payoh',unit:'Blk B #03-22 to 24',sqft:10782,sqm:1002,rent:null,avail:'Immediate',zone:'B1',cluster:'Central East',fit:'Bare',remarks:'Bare condition. Anchor tenant sublet required.'},
+  {reit:'ESR-REIT',reit_color:'#6e2f7f',month:'Mar 2026',addr:'11 Lorong 3 Toa Payoh (Jackson Sq)',addrFull:'11 Lorong 3 Toa Payoh',unit:'Blk B #04-16 to #04-21',sqft:11410,sqm:1060,rent:null,avail:'Immediate',zone:'B1',cluster:'Central East',fit:'Bare',remarks:'Bare condition (with false ceiling). Anchor tenant sublet required.'},
+  {reit:'ESR-REIT',reit_color:'#6e2f7f',month:'Mar 2026',addr:'54 Serangoon North Ave 4',addrFull:'54 Serangoon North Ave 4',unit:'#02-01',sqft:21054,status:'New',sqm:1956,rent:'$2.50',avail:'Under Negotiation',zone:'B1',cluster:'Central East',fit:'Bare',remarks:'Bare condition. Anchor tenant sublet required.'},
+  {reit:'ESR-REIT',reit_color:'#6e2f7f',month:'Mar 2026',addr:'54 Serangoon North Ave 4',addrFull:'54 Serangoon North Ave 4',unit:'#03-02',sqft:9784,sqm:909,rent:'$2.50',avail:'Immediate',zone:'B1',cluster:'Central East',fit:'Bare',remarks:'Bare condition. Anchor tenant sublet required.'},
+  {reit:'ESR-REIT',reit_color:'#6e2f7f',month:'Mar 2026',addr:'12 Ang Mo Kio Street 65',addrFull:'12 Ang Mo Kio Street 65',unit:'#06-01',sqft:13745,sqm:1277,rent:'$1.90',avail:'Immediate',zone:'B1',cluster:'Central East',fit:'Fitted',remarks:'As-is-where-is condition'},
+  // B2 — Central East
+  {reit:'ESR-REIT',reit_color:'#6e2f7f',month:'Mar 2026',addr:'16 Tai Seng Street',addrFull:'16 Tai Seng Street',unit:'#03-01',sqft:18923,sqm:1758,rent:'$4.80',avail:'15 Mar 2026',zone:'B2',cluster:'Central East',fit:'Bare',remarks:'Bare condition. Corporate look with VRV aircon. JTC anchor sublet required.'},
+  {reit:'ESR-REIT',reit_color:'#6e2f7f',month:'Mar 2026',addr:'16 Tai Seng Street',addrFull:'16 Tai Seng Street',unit:'#05-04',sqft:3983,sqm:370,rent:'$5.20',avail:'Immediate',zone:'B2',cluster:'Central East',fit:'Bare',remarks:'Bare condition. Corporate look.'},
+  {reit:'ESR-REIT',reit_color:'#6e2f7f',month:'Mar 2026',addr:'16 Tai Seng Street',addrFull:'16 Tai Seng Street',unit:'#05-06',sqft:6275,sqm:583,rent:'$5.20',avail:'Immediate',zone:'B2',cluster:'Central East',fit:'Bare',remarks:'Bare condition.'},
+  {reit:'ESR-REIT',reit_color:'#6e2f7f',month:'Mar 2026',addr:'16 Tai Seng Street',addrFull:'16 Tai Seng Street',unit:'#06-01',sqft:16057,sqm:1492,rent:'$4.80',avail:'15 Mar 2026',zone:'B2',cluster:'Central East',fit:'Bare',remarks:'Bare condition. VRV aircon. JTC anchor sublet required.'},
+  {reit:'ESR-REIT',reit_color:'#6e2f7f',month:'Mar 2026',addr:'16 Tai Seng Street',addrFull:'16 Tai Seng Street',unit:'#06-02',sqft:22236,sqm:2066,rent:'$4.80',avail:'15 Mar 2026',zone:'B2',cluster:'Central East',fit:'Bare',remarks:'Bare condition.'},
+  {reit:'ESR-REIT',reit_color:'#6e2f7f',month:'Mar 2026',addr:'16 Tai Seng Street',addrFull:'16 Tai Seng Street',unit:'#07-01',sqft:16587,sqm:1541,rent:'$4.80',avail:'Immediate',zone:'B2',cluster:'Central East',fit:'Bare',remarks:'Bare condition.'},
+  {reit:'ESR-REIT',reit_color:'#6e2f7f',month:'Mar 2026',addr:'16 Tai Seng Street',addrFull:'16 Tai Seng Street',unit:'#08-01',sqft:13660,sqm:1269,rent:'$4.80',avail:'Under Negotiation',zone:'B2',cluster:'Central East',fit:'Bare',remarks:'Bare condition.'},
+  {reit:'ESR-REIT',reit_color:'#6e2f7f',month:'Mar 2026',addr:'19 Tai Seng Ave',addrFull:'19 Tai Seng Ave',unit:'#02-01',sqft:6043,sqm:561,rent:'$4.40',avail:'Under Negotiation',zone:'B2',cluster:'Central East',fit:'Bare',remarks:'Bare condition'},
+  {reit:'ESR-REIT',reit_color:'#6e2f7f',month:'Mar 2026',addr:'29 Tai Seng Street',addrFull:'29 Tai Seng Street',unit:'#01-01',sqft:4219,sqm:392,rent:'$8.00',avail:'Under Negotiation',zone:'B2',cluster:'Central East',fit:'Fitted',remarks:'Ancillary canteen. Building undergoing AEI. TOP expected 2Q 2026.'},
+  {reit:'ESR-REIT',reit_color:'#6e2f7f',month:'Mar 2026',addr:'29 Tai Seng Street',addrFull:'29 Tai Seng Street',unit:'#01-02',sqft:2659,sqm:247,rent:'$8.00',avail:'Under Negotiation',zone:'B2',cluster:'Central East',fit:'Bare',remarks:'Building undergoing AEI. TOP 2Q 2026. Corporate look with VRV aircon.'},
+  {reit:'ESR-REIT',reit_color:'#6e2f7f',month:'Mar 2026',addr:'29 Tai Seng Street',addrFull:'29 Tai Seng Street',unit:'#02-01',sqft:14833,sqm:1378,rent:'$4.80',avail:'Under Negotiation',zone:'B2',cluster:'Central East',fit:'Bare',remarks:'Building undergoing AEI. TOP 2Q 2026. JTC anchor sublet required for >1,000 sqm.'},
+  {reit:'ESR-REIT',reit_color:'#6e2f7f',month:'Mar 2026',addr:'29 Tai Seng Street',addrFull:'29 Tai Seng Street',unit:'#03-01',sqft:5124,sqm:476,rent:'$4.80',avail:'Under Negotiation',zone:'B2',cluster:'Central East',fit:'Bare',remarks:'Building undergoing AEI. TOP 2Q 2026.'},
+  {reit:'ESR-REIT',reit_color:'#6e2f7f',month:'Mar 2026',addr:'29 Tai Seng Street',addrFull:'29 Tai Seng Street',unit:'#03-02',sqft:3305,sqm:307,rent:'$4.80',avail:'Under Negotiation',zone:'B2',cluster:'Central East',fit:'Bare',remarks:'Building undergoing AEI. TOP 2Q 2026.'},
+  {reit:'ESR-REIT',reit_color:'#6e2f7f',month:'Mar 2026',addr:'29 Tai Seng Street',addrFull:'29 Tai Seng Street',unit:'#03-03',sqft:2174,sqm:202,rent:'$4.80',avail:'Under Negotiation',zone:'B2',cluster:'Central East',fit:'Bare',remarks:'Building undergoing AEI. TOP 2Q 2026.'},
+  {reit:'ESR-REIT',reit_color:'#6e2f7f',month:'Mar 2026',addr:'29 Tai Seng Street',addrFull:'29 Tai Seng Street',unit:'#03-04',sqft:3907,sqm:363,rent:'$4.80',avail:'Under Negotiation',zone:'B2',cluster:'Central East',fit:'Bare',remarks:'Building undergoing AEI. TOP 2Q 2026.'},
+  {reit:'ESR-REIT',reit_color:'#6e2f7f',month:'Mar 2026',addr:'29 Tai Seng Street',addrFull:'29 Tai Seng Street',unit:'#04-01',sqft:17039,sqm:1583,rent:'$4.80',avail:'Under Negotiation',zone:'B2',cluster:'Central East',fit:'Bare',remarks:'Building undergoing AEI. TOP 2Q 2026.'},
+  // Central cluster
+  {reit:'ESR-REIT',reit_color:'#6e2f7f',month:'Mar 2026',addr:'21 Ubi Road 1',addrFull:'21 Ubi Road 1',unit:'#05-01',sqft:9526,sqm:885,rent:'$2.80',avail:'1 Feb 2026',zone:'B1',cluster:'Central',fit:'Bare',remarks:'Bare condition. Central aircon. Anchor tenant sublet required.'},
+  {reit:'ESR-REIT',reit_color:'#6e2f7f',month:'Mar 2026',addr:'21 Ubi Road 1',addrFull:'21 Ubi Road 1',unit:'#04-04 (Provisional)',sqft:1862,sqm:173,rent:'$2.80',avail:'1 Jul 2026',zone:'B1',cluster:'Central',fit:'Bare',remarks:'Anchor tenant sublet required.'},
+  {reit:'ESR-REIT',reit_color:'#6e2f7f',month:'Mar 2026',addr:'21 Ubi Road 1',addrFull:'21 Ubi Road 1',unit:'#04-03',sqft:3111,sqm:289,rent:'$2.80',avail:'Immediate',zone:'B1',cluster:'Central',fit:'Fitted',remarks:'As-is-where-is condition'},
+  {reit:'ESR-REIT',reit_color:'#6e2f7f',month:'Mar 2026',addr:'160 Kallang Way',addrFull:'160 Kallang Way',unit:'#02-01',sqft:12301,sqm:1143,rent:'$1.80',avail:'Immediate',zone:'B2',cluster:'Central',fit:'Bare',remarks:'Bare condition'},
+  {reit:'ESR-REIT',reit_color:'#6e2f7f',month:'Mar 2026',addr:'160 Kallang Way',addrFull:'160 Kallang Way',unit:'#03-01/02',sqft:71578,sqm:6650,rent:'$1.80',avail:'Immediate',zone:'B2',cluster:'Central',fit:'Bare',remarks:'Bare condition. No loading bay.'},
+  {reit:'ESR-REIT',reit_color:'#6e2f7f',month:'Mar 2026',addr:'160 Kallang Way',addrFull:'160 Kallang Way',unit:'#04-01/02',sqft:71578,sqm:6650,rent:'$1.80',avail:'Immediate',zone:'B2',cluster:'Central',fit:'Bare',remarks:'Bare condition.'},
+  {reit:'ESR-REIT',reit_color:'#6e2f7f',month:'Mar 2026',addr:'DistriCentre 1 @ 5 Changi South Lane',addrFull:'5 Changi South Lane',unit:'#05-01',sqft:62595,sqm:5815,rent:'$2.40',avail:'20 Apr 2026',zone:'B2',cluster:'Central',fit:'Bare',remarks:'Bare condition. Warehouse and ancillary office to be leased together.'},
+  {reit:'ESR-REIT',reit_color:'#6e2f7f',month:'Mar 2026',addr:'DistriCentre 1 @ 5 Changi South Lane',addrFull:'5 Changi South Lane',unit:'#05-06',sqft:2183,sqm:203,rent:'$2.40',avail:'20 Apr 2026',zone:'B2',cluster:'Central',fit:'Bare',remarks:'Bare condition.'},
+  {reit:'ESR-REIT',reit_color:'#6e2f7f',month:'Mar 2026',addr:'DistriCentre 1 @ 5 Changi South Lane',addrFull:'5 Changi South Lane',unit:'#02-06 (Ancillary Office)',sqft:2436,sqm:226,rent:null,avail:'Immediate',zone:'B2',cluster:'Central',fit:'Bare',remarks:'Bare condition'},
+  {reit:'ESR-REIT',reit_color:'#6e2f7f',month:'Mar 2026',addr:'DistriCentre 1 @ 5 Changi South Lane',addrFull:'5 Changi South Lane',unit:'Level 6 (Ancillary Office)',sqft:26335,sqm:2447,rent:null,avail:'Immediate (3 mths notice)',zone:'B2',cluster:'Central',fit:'Fitted',remarks:'As-is-where-is condition'},
+  {reit:'ESR-REIT',reit_color:'#6e2f7f',month:'Mar 2026',addr:'7000 Ang Mo Kio Ave 5',addrFull:'7000 Ang Mo Kio Ave 5',unit:'Level 2 (Ancillary Office)',sqft:22597,sqm:2099,rent:'$3.30',avail:'Immediate',zone:'B2',cluster:'Central',fit:'Bare',remarks:'Bare condition. Industrial 60/40 usage applicable.'},
+  {reit:'ESR-REIT',reit_color:'#6e2f7f',month:'Mar 2026',addr:'7000 Ang Mo Kio Ave 5',addrFull:'7000 Ang Mo Kio Ave 5',unit:'Level 4 (Ancillary Office)',sqft:22890,sqm:2127,rent:'$3.30',avail:'Immediate',zone:'B2',cluster:'Central',fit:'Bare',remarks:'Bare condition. Industrial 60/40 usage applicable.'},
+  {reit:'ESR-REIT',reit_color:'#6e2f7f',month:'Mar 2026',addr:'7000 Ang Mo Kio Ave 5',addrFull:'7000 Ang Mo Kio Ave 5',unit:'Level 4 Production',sqft:23659,sqm:2198,rent:'$3.30',avail:'Immediate',zone:'B2',cluster:'Central',fit:'Bare',remarks:'Bare condition. Industrial 60/40 usage applicable.'},
+  {reit:'ESR-REIT',reit_color:'#6e2f7f',month:'Mar 2026',addr:'7000 Ang Mo Kio Ave 5',addrFull:'7000 Ang Mo Kio Ave 5',unit:'Level 5 Production (approx 25,166–76,435 sqft)',sqft:50800,sqm:4719,rent:'$3.30',avail:'Immediate',zone:'B2',cluster:'Central',fit:'Bare',remarks:'Industrial 60/40. Entire level 5 floor plate.'},
+  {reit:'ESR-REIT',reit_color:'#6e2f7f',month:'Mar 2026',addr:'11 Chang Charn Road',addrFull:'11 Chang Charn Road',unit:'#04-01',sqft:5000,sqm:465,rent:'$2.70',avail:'Immediate',zone:'B1',cluster:'Central',fit:'Bare',remarks:'Bare condition. Anchor tenant sublet required.'},
+  {reit:'ESR-REIT',reit_color:'#6e2f7f',month:'Mar 2026',addr:'11 Chang Charn Road',addrFull:'11 Chang Charn Road',unit:'#05-01',sqft:5120,sqm:476,rent:'$2.70',avail:'Immediate',zone:'B1',cluster:'Central',fit:'Bare',remarks:'Bare condition. Anchor tenant sublet required. Entire level 5 floor plate ~1,500 sqm.'},
+  {reit:'ESR-REIT',reit_color:'#6e2f7f',month:'Mar 2026',addr:'11 Chang Charn Road',addrFull:'11 Chang Charn Road',unit:'#05-02/03',sqft:9149,sqm:850,rent:'$2.70',avail:'Immediate',zone:'B1',cluster:'Central',fit:'Bare',remarks:'Bare condition.'},
+  // North cluster
+  {reit:'ESR-REIT',reit_color:'#6e2f7f',month:'Mar 2026',addr:'30 Marsiling Industrial Estate Rd 8',addrFull:'30 Marsiling Industrial Estate Road 8',unit:'Level 3',sqft:39924,sqm:3709,rent:'$2.40',avail:'1 Apr 2026',zone:'B2',cluster:'North',fit:'Bare',remarks:'Bare condition. Anchor tenant sublet required. Contiguous floor plate.'},
+  {reit:'ESR-REIT',reit_color:'#6e2f7f',month:'Mar 2026',addr:'30 Marsiling Industrial Estate Rd 8',addrFull:'30 Marsiling Industrial Estate Road 8',unit:'Level 4',sqft:40193,sqm:3734,rent:'$2.40',avail:'1 Apr 2026',zone:'B2',cluster:'North',fit:'Bare',remarks:'Bare condition. Anchor tenant sublet required.'},
+  {reit:'ESR-REIT',reit_color:'#6e2f7f',month:'Mar 2026',addr:'30 Marsiling Industrial Estate Rd 8',addrFull:'30 Marsiling Industrial Estate Road 8',unit:'#05-01B',sqft:5813,sqm:540,rent:'$2.40',avail:'Immediate',zone:'B2',cluster:'North',fit:'Bare',remarks:'Bare condition'},
+  {reit:'ESR-REIT',reit_color:'#6e2f7f',month:'Mar 2026',addr:'30 Marsiling Industrial Estate Rd 8',addrFull:'30 Marsiling Industrial Estate Road 8',unit:'Level 6',sqft:6932,sqm:644,rent:'$2.40',avail:'Immediate',zone:'B2',cluster:'North',fit:'Fitted',remarks:'As-is-where-is condition'},
+  // West cluster
+  {reit:'ESR-REIT',reit_color:'#6e2f7f',month:'Mar 2026',addr:'120 Pioneer Road',addrFull:'120 Pioneer Road',unit:'#02-03 (Ancillary Office)',sqft:6114,sqm:568,rent:'$1.20',avail:'Immediate',zone:'B2',cluster:'West',fit:'Bare',remarks:'Bare condition. Anchor tenant sublet required.'},
+  {reit:'ESR-REIT',reit_color:'#6e2f7f',month:'Mar 2026',addr:'120 Pioneer Road',addrFull:'120 Pioneer Road',unit:'#04-01 (Ancillary Office)',sqft:11277,sqm:1048,rent:'$1.20',avail:'Immediate',zone:'B2',cluster:'West',fit:'Partial',remarks:'Partially fitted. Aircon, ceiling board, lightings. Industrial 60/40. Anchor sublet required.'},
+  {reit:'ESR-REIT',reit_color:'#6e2f7f',month:'Mar 2026',addr:'120 Pioneer Road',addrFull:'120 Pioneer Road',unit:'#04-02 (Ancillary Office)',sqft:5744,sqm:534,rent:'$1.20',avail:'Immediate',zone:'B2',cluster:'West',fit:'Bare',remarks:'Industrial 60/40. Anchor tenant sublet required.'},
+  {reit:'ESR-REIT',reit_color:'#6e2f7f',month:'Mar 2026',addr:'5 & 7 Gul Street 1',addrFull:'5 & 7 Gul Street 1',unit:'#02-01 to #02-04 + #03-01 + #03-02 + #04-01 + #04-02 (Ancillary Offices)',sqft:39717,status:'New',sqm:3688,rent:'$1.80',avail:'Immediate',zone:'B2',cluster:'West',fit:'Bare',remarks:'All ancillary office units. Industrial 60/40. #02-03/04 accessible via stairs. 8 units total. #04-02 available 1 Feb 2026.'},
+  {reit:'ESR-REIT',reit_color:'#6e2f7f',month:'Mar 2026',addr:'160A Gul Circle',addrFull:'160A Gul Circle',unit:'#01-01/04',sqft:37865,sqm:3518,rent:'$1.80',avail:'Under Offer',zone:'B2',cluster:'West',fit:'Bare',remarks:'Bare condition. #01-01/04 & #03-01 to be leased together. Anchor sublet required.'},
+  {reit:'ESR-REIT',reit_color:'#6e2f7f',month:'Mar 2026',addr:'160A Gul Circle',addrFull:'160A Gul Circle',unit:'#03-01',sqft:14567,sqm:1353,rent:'$1.80',avail:'Immediate',zone:'B2',cluster:'West',fit:'Bare',remarks:'Bare condition. Anchor tenant sublet required.'},
+  {reit:'ESR-REIT',reit_color:'#6e2f7f',month:'Mar 2026',addr:'24 Jurong Port Road',addrFull:'24 Jurong Port Road',unit:'#01-01 (Ancillary Office)',sqft:153,sqm:14,rent:'$1.30',avail:'Immediate',zone:'B2',cluster:'West',fit:'Bare',remarks:'Bare condition. Suitable for light storage, packing, distribution.'},
+  {reit:'ESR-REIT',reit_color:'#6e2f7f',month:'Mar 2026',addr:'24 Jurong Port Road',addrFull:'24 Jurong Port Road',unit:'#02-04 (Ancillary Office)',sqft:1670,sqm:155,rent:'$1.30',avail:'Immediate',zone:'B2',cluster:'West',fit:'Bare',remarks:'Bare condition. Suitable for light storage, packing, distribution.'},
+  {reit:'ESR-REIT',reit_color:'#6e2f7f',month:'Mar 2026',addr:'24 Jurong Port Road',addrFull:'24 Jurong Port Road',unit:'Part Level 3 WH (Middle)',sqft:32446,sqm:3014,rent:'$1.40',avail:'Immediate',zone:'B2',cluster:'West',fit:'Bare',remarks:'Bare condition warehouse. Shared cargo lift, loading bay and dock leveler.'},
+  {reit:'ESR-REIT',reit_color:'#6e2f7f',month:'Mar 2026',addr:'24 Penjuru Road',addrFull:'24 Penjuru Road',unit:'#01-03',sqft:100747,sqm:9360,rent:'$1.80',avail:'Immediate',zone:'B2',cluster:'West',fit:'Bare',remarks:'Bare condition. Available for lease until 31 Dec 2027.'},
+  {reit:'ESR-REIT',reit_color:'#6e2f7f',month:'Mar 2026',addr:'24 Penjuru Road',addrFull:'24 Penjuru Road',unit:'#09-02',sqft:21281,status:'New',sqm:1977,rent:'$1.80',avail:'1 Jul 2026',zone:'B2',cluster:'West',fit:'Bare',remarks:'Bare condition'},
+  {reit:'ESR-REIT',reit_color:'#6e2f7f',month:'Mar 2026',addr:'24 Penjuru Road',addrFull:'24 Penjuru Road',unit:'#09-04',sqft:96360,sqm:8952,rent:'$1.80',avail:'Under Negotiation',zone:'B2',cluster:'West',fit:'Bare',remarks:'Bare condition. Available for lease until 31 Dec 2027.'},
+  {reit:'ESR-REIT',reit_color:'#6e2f7f',month:'Mar 2026',addr:'24 Penjuru Road',addrFull:'24 Penjuru Road',unit:'Ancillary Offices (#01-01, #02-01, #02-02, #10-04)',sqft:5827,sqm:548,rent:null,avail:'Immediate',zone:'B2',cluster:'West',fit:'Bare',remarks:'Bare condition. Ancillary office units. Industrial 60/40 usage applicable.'},
+  {reit:'ESR-REIT',reit_color:'#6e2f7f',month:'Mar 2026',addr:'8 Tuas South Lane',addrFull:'8 Tuas South Lane',unit:'#02-01',sqft:50819,sqm:4721,rent:null,avail:'Immediate',zone:'B2',cluster:'West',fit:'Bare',remarks:'Bare condition. Lighting and fan in warehouse.'},
+  {reit:'ESR-REIT',reit_color:'#6e2f7f',month:'Mar 2026',addr:'8 Tuas South Lane',addrFull:'8 Tuas South Lane',unit:'#05-01',sqft:51730,sqm:4806,rent:null,avail:'Immediate',zone:'B2',cluster:'West',fit:'Bare',remarks:'Bare condition. Lighting and fan in warehouse.'},
+  {reit:'ESR-REIT',reit_color:'#6e2f7f',month:'Mar 2026',addr:'8 Tuas South Lane',addrFull:'8 Tuas South Lane',unit:'#08-01',sqft:49284,sqm:4579,rent:null,avail:'Immediate',zone:'B2',cluster:'West',fit:'Bare',remarks:'Bare condition. Lighting and fan in warehouse.'},
+  {reit:'ESR-REIT',reit_color:'#6e2f7f',month:'Mar 2026',addr:'20A Tuas South Avenue 14',addrFull:'20A Tuas South Avenue 14',unit:'#01-04',sqft:37480,sqm:3482,rent:null,avail:'Under Negotiation',zone:'B2',cluster:'West',fit:'Bare',remarks:'Bare condition. Direct loading with dock levelers. Warehouse installed with racking.'}
   // ── ESR-REIT — Absorbed Feb → Mar 2026 (listed Feb, gone by Mar) ───────────
   ,{reit:'ESR-REIT',reit_color:'#6e2f7f',month:'Feb 2026',addr:'ESR BizPark @ Changi',addrFull:'6 & 8 Changi Business Park',unit:'#06-21 North Tower',sqft:14760,sqm:1371,rent:null,avail:'Under Offer',zone:'Business Park',cluster:'Business Park',fit:'Partial',remarks:'Partially fitted. Server rooms, manager and meeting rooms.',status:'Absorbed'}
   ,{reit:'ESR-REIT',reit_color:'#6e2f7f',month:'Feb 2026',addr:'11 Ubi Road 1',addrFull:'11 Ubi Road 1',unit:'#01-01/02',sqft:17132,sqm:1592,rent:'$3.20',avail:'1 Mar 2026',zone:'B1',cluster:'Central East',fit:'Bare',remarks:'Bare condition. Direct loading access to loading bay. JTC anchor tenant required.',status:'Absorbed'}
@@ -24680,14 +24642,8 @@ function invRender() {
 
   var filtered = VACANCY_DATA.filter(function(d) {
     if(INV_REIT !== 'all' && d.reit !== INV_REIT) return false;
-    // Absorbed toggle = mutually exclusive view (per L227):
-    //   ON  → show ONLY absorbed records (active hidden)
-    //   OFF → show ONLY active records (absorbed hidden)
-    if(INV_SHOW_ABSORBED) {
-      if(d.status !== 'Absorbed') return false;
-    } else {
-      if(d.status === 'Absorbed') return false;
-    }
+    // Hide absorbed unless toggle is on
+    if(d.status === 'Absorbed' && !INV_SHOW_ABSORBED) return false;
     if(q && !(d.addr.toLowerCase().includes(q)||d.unit.toLowerCase().includes(q)||(d.remarks||'').toLowerCase().includes(q)||(d.addrFull||'').toLowerCase().includes(q)||(d.cluster||'').toLowerCase().includes(q))) return false;
     if(zf && d.zone !== zf) return false;
     if(cf && d.cluster !== cf) return false;
@@ -24705,17 +24661,11 @@ function invRender() {
     return true;
   });
 
-  // Stats — KPI band toggles with Absorbed view (per L226):
-  // • Absorbed toggle OFF: show active inventory KPIs (Listings/Sqft/Immediate/Properties/Lo/Hi rent)
-  // • Absorbed toggle ON:  show absorbed-tail KPIs (count/sqft/recently-leased/properties; rent tiles hidden)
-  var active   = filtered.filter(function(d){ return d.status !== 'Absorbed'; });
-  var absorbed = filtered.filter(function(d){ return d.status === 'Absorbed'; });
-  var statsSet = INV_SHOW_ABSORBED ? absorbed : active;
-  var totalSqft = statsSet.reduce(function(s,d){return s+d.sqft},0);
-  var props = [...new Set(statsSet.map(function(d){return d.addr}))].length;
-  var imm = INV_SHOW_ABSORBED
-    ? absorbed.length
-    : active.filter(function(d){return /immediate/i.test(d.avail)}).length;
+  // Stats — exclude absorbed from active counts
+  var active = filtered.filter(function(d){ return d.status !== 'Absorbed'; });
+  var totalSqft = active.reduce(function(s,d){return s+d.sqft},0);
+  var props = [...new Set(active.map(function(d){return d.addr}))].length;
+  var imm = active.filter(function(d){return /immediate/i.test(d.avail)}).length;
   var rents = active.filter(function(d){return d.rent}).map(function(d){
     var raw = parseFloat(d.rent.replace(/[^0-9.]/g,''));
     // Clifton stores monthly rent — convert to psf/mo for comparison
@@ -24725,31 +24675,14 @@ function invRender() {
   var loRent = rents.length ? Math.min.apply(null,rents).toFixed(2) : null;
   var hiRent = rents.length ? Math.max.apply(null,rents).toFixed(2) : null;
 
-  document.getElementById('inv-s-listings').textContent = statsSet.length;
+  document.getElementById('inv-s-listings').textContent = active.length;
   document.getElementById('inv-s-sqft').textContent = totalSqft>0 ? (totalSqft/1000).toFixed(0)+'K' : '0';
   document.getElementById('inv-s-imm').textContent = imm;
   document.getElementById('inv-s-props').textContent = props;
-  // Flip labels and rent tiles based on toggle
-  var immLbl = document.getElementById('inv-s-imm-lbl');
-  if(immLbl) immLbl.textContent = INV_SHOW_ABSORBED ? 'Recently leased' : 'Immediate';
   var psfLabel = (INV_REIT === 'Clifton Partners') ? ' psf/mo' : ' psf';
-  if(INV_SHOW_ABSORBED){
-    // Rent tiles not meaningful for absorbed view — hide values, dim labels
-    document.getElementById('inv-s-lorent').textContent = '—';
-    document.getElementById('inv-s-hirent').textContent = '—';
-    var loLbl = document.getElementById('inv-s-lorent-lbl');
-    var hiLbl = document.getElementById('inv-s-hirent-lbl');
-    if(loLbl) loLbl.textContent = 'Lowest asking';
-    if(hiLbl) hiLbl.textContent = 'Highest asking';
-  } else {
-    document.getElementById('inv-s-lorent').textContent = loRent ? '$'+loRent+psfLabel : '—';
-    document.getElementById('inv-s-hirent').textContent = hiRent ? '$'+hiRent+psfLabel : '—';
-    var loLbl2 = document.getElementById('inv-s-lorent-lbl');
-    var hiLbl2 = document.getElementById('inv-s-hirent-lbl');
-    if(loLbl2) loLbl2.textContent = 'Lowest asking';
-    if(hiLbl2) hiLbl2.textContent = 'Highest asking';
-  }
-  document.getElementById('inv-total-units').textContent = statsSet.length;
+  document.getElementById('inv-s-lorent').textContent = loRent ? '$'+loRent+psfLabel : '—';
+  document.getElementById('inv-s-hirent').textContent = hiRent ? '$'+hiRent+psfLabel : '—';
+  document.getElementById('inv-total-units').textContent = active.length;
   document.getElementById('inv-total-sqft').textContent = totalSqft>0 ? (totalSqft/1000).toFixed(0)+'K' : '0';
   document.getElementById('inv-total-props').textContent = props;
 
@@ -24813,7 +24746,7 @@ function invRender() {
         (d.remarks ? '<div class="inv-remarks">'+d.remarks+'</div>' : '')+
         couNote+
         matterportBtn+
-        '<div class="inv-reit-tag" style="color:'+d.reit_color+'"><span class="inv-reit-dot" style="background:'+d.reit_color+'"></span>'+d.reit+' · '+d.month+'</div>'+
+        '<div class="inv-reit-tag" style="color:'+d.reit_color+'"><span class="inv-reit-dot" style="background:'+d.reit_color+'"></span>'+d.reit+' · '+(isAbsorbed ? 'Feb 2026' : d.month)+'</div>'+
         (!isAbsorbed ? '<div style="margin-top:10px"><button class="enq-btn" data-reit="'+encodeURIComponent(d.reit)+'" data-addr="'+encodeURIComponent(d.addr)+'" data-unit="'+encodeURIComponent(d.unit)+'" style="width:100%;height:32px;background:var(--g1);color:#fff;border:none;border-radius:6px;font-size:12px;font-weight:600;font-family:\'DM Sans\',sans-serif;cursor:pointer">📩 Enquire About This Space</button></div>' : '')+
       '</div>';
     }).join('');
@@ -27469,113 +27402,10 @@ html.article-takeover .ed-article-page,body.article-takeover .ed-article-page{di
       mount.innerHTML = edRenderArticlePage(article);
       // Update browser title
       try { document.title = (article.display_headline || article.display_title || article.title || 'Article')+' · PropertyAtlas'; } catch(e) {}
-      // v48.36 P12 fix Layer 2: per-article OG / Twitter Card meta tag injection.
-      // Helps JS-aware social scrapers (Facebook in particular) generate per-article
-      // share previews. LinkedIn's scraper does NOT execute JS, so for LinkedIn the
-      // static block in <head> is what's seen — that's the universal fallback.
-      try { atlasUpdateOgTags(article); } catch(e) {}
       // Scroll to top so the user lands at the masthead
       try { window.scrollTo(0, 0); } catch(e) {}
     } catch(e) { /* silently ignore — broken deep-link should degrade to dashboard, not error */ }
   }
-  // ─── v48.36 P12 fix: OG / Twitter Card meta tag helpers ──────────────────────
-  // Snapshot the static defaults on first run so popstate-back can restore them.
-  // The static block in <head> (Layer 1) seeded these values; we mutate `content`
-  // per article on mount, then restore from this snapshot when leaving article view.
-  var ATLAS_OG_KEYS = [
-    {sel:'meta[property="og:title"]',       attr:'content'},
-    {sel:'meta[property="og:description"]', attr:'content'},
-    {sel:'meta[property="og:image"]',       attr:'content'},
-    {sel:'meta[property="og:url"]',         attr:'content'},
-    {sel:'meta[property="og:type"]',        attr:'content'},
-    {sel:'meta[name="twitter:title"]',      attr:'content'},
-    {sel:'meta[name="twitter:description"]',attr:'content'},
-    {sel:'meta[name="twitter:image"]',      attr:'content'},
-    {sel:'meta[name="description"]',        attr:'content'}
-  ];
-  var atlasOgDefaults = null;
-  function atlasSnapshotOgDefaults(){
-    if(atlasOgDefaults) return;
-    atlasOgDefaults = {};
-    try {
-      ATLAS_OG_KEYS.forEach(function(k){
-        var el = document.head.querySelector(k.sel);
-        atlasOgDefaults[k.sel] = el ? el.getAttribute(k.attr) : null;
-      });
-    } catch(e) { atlasOgDefaults = {}; }
-  }
-  // Set or create+set a meta tag in <head> by selector.
-  function atlasSetMeta(sel, attrName, value){
-    if(value == null) return;
-    try {
-      var el = document.head.querySelector(sel);
-      if(!el){
-        // Edge case: tag absent from static block. Build it from selector hints.
-        el = document.createElement('meta');
-        // Selector forms: meta[property="X"] or meta[name="X"]
-        var m = sel.match(/meta\[(property|name)="([^"]+)"\]/);
-        if(m){ el.setAttribute(m[1], m[2]); document.head.appendChild(el); }
-        else { return; }
-      }
-      el.setAttribute(attrName, value);
-    } catch(e) {}
-  }
-  // Build absolute URL for the article's image. Articles 83-87 have a fully-qualified
-  // og_image field. Older articles only have a relative `image` field — we resolve it
-  // against current origin + dashboard pathname. If neither exists, the static fallback
-  // image (from defaults) is preserved.
-  function atlasResolveOgImage(article){
-    if(article.og_image) return article.og_image;
-    if(article.image){
-      try {
-        // location.origin + pathname-up-to-last-slash gives the dashboard root
-        var basePath = window.location.pathname.replace(/[^/]*$/, '');
-        return window.location.origin + basePath + article.image;
-      } catch(e) { return null; }
-    }
-    return null;
-  }
-  // Truncate text to ~200 chars at a word boundary for og:description fallback.
-  function atlasTruncate(s, n){
-    if(!s) return '';
-    s = String(s).replace(/\s+/g,' ').trim();
-    if(s.length <= n) return s;
-    var cut = s.lastIndexOf(' ', n);
-    return (cut > 0 ? s.substring(0, cut) : s.substring(0, n)) + '…';
-  }
-  // Update <head> meta tags from an article object. Falls back gracefully across
-  // article generations: id 83-87 have og_image + meta_description; older articles
-  // have only standfirst + relative image; some have neither and inherit defaults.
-  function atlasUpdateOgTags(article){
-    if(!article) return;
-    atlasSnapshotOgDefaults();
-    var title = article.display_title || article.display_headline || article.title || atlasOgDefaults['meta[property="og:title"]'];
-    var desc  = article.meta_description || atlasTruncate(article.standfirst, 200) || atlasOgDefaults['meta[property="og:description"]'];
-    var img   = atlasResolveOgImage(article) || atlasOgDefaults['meta[property="og:image"]'];
-    var url   = (function(){ try { return window.location.href; } catch(e){ return atlasOgDefaults['meta[property="og:url"]']; } })();
-    atlasSetMeta('meta[property="og:title"]',       'content', title);
-    atlasSetMeta('meta[property="og:description"]', 'content', desc);
-    atlasSetMeta('meta[property="og:image"]',       'content', img);
-    atlasSetMeta('meta[property="og:url"]',         'content', url);
-    atlasSetMeta('meta[property="og:type"]',        'content', 'article');
-    atlasSetMeta('meta[name="twitter:title"]',      'content', title);
-    atlasSetMeta('meta[name="twitter:description"]','content', desc);
-    atlasSetMeta('meta[name="twitter:image"]',      'content', img);
-    atlasSetMeta('meta[name="description"]',        'content', desc);
-  }
-  // Restore the static landing-page OG defaults (called on popstate-back to non-article URL).
-  function atlasRestoreOgDefaults(){
-    if(!atlasOgDefaults) return;  // never snapshotted = nothing to restore
-    try {
-      ATLAS_OG_KEYS.forEach(function(k){
-        var v = atlasOgDefaults[k.sel];
-        if(v != null) atlasSetMeta(k.sel, k.attr, v);
-      });
-    } catch(e) {}
-    // og:type back to 'website' for landing
-    atlasSetMeta('meta[property="og:type"]', 'content', 'website');
-  }
-  // ─── end P12 helpers ─────────────────────────────────────────────────────────
   if(document.readyState === 'loading'){
     document.addEventListener('DOMContentLoaded', handleArticleParam);
   } else {
@@ -27594,9 +27424,6 @@ html.article-takeover .ed-article-page,body.article-takeover .ed-article-page{di
       document.body.classList.remove('article-takeover');
       var mount = document.getElementById('ed-article-page');
       if(mount) mount.innerHTML = '';
-      // v48.36 P12 fix: restore static OG defaults so a back-nav to landing
-      // doesn't leave article-specific share metadata behind.
-      try { atlasRestoreOgDefaults(); } catch(e) {}
     }
   });
 })();
