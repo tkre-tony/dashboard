@@ -11,7 +11,22 @@
      first paint. The atlasArticlePage IIFE at line ~24399 still adds
      article-takeover to <body> on DOMContentLoaded as the canonical state;
      this head-script just provides the earlier signal so chrome never
-     flashes. Fix is purely additive — no existing behavior changes. -->
+     flashes. Fix is purely additive — no existing behavior changes.
+     v48.42 (12 May 2026): P15 RESOLVED via Option A. The hide list at top
+     of <style> no longer hides .navtabs (keeps navy tab strip visible on
+     article-takeover), and .ed-mast is no longer hidden either (keeps cream
+     PropertyAtlas masthead anchored across surfaces). The legacy
+     .ed-art-masthead element is hidden; its back-link role moved inline
+     above .ed-art-eyebrow via .ed-art-back-inline. Navtab click handler
+     wraps to route ./?article=N → ./#<tab-hash> when in takeover. Result:
+     one-click surface switching from any article. Also: hero CTA + Overview
+     "Read full article" relabelled to "Read full story" globally. -->
+<!-- v48.41 (11 May 2026 ~10pm): VACANCY_DATA recovery deploy. Three earlier
+     chrome deploys today (v48.39/.39b/.40) were uploaded from a stale local
+     index.html that silently rolled VACANCY_DATA back to a pre-9-May state.
+     This file restores the May 12 morning snapshot (378 entries incl. 110
+     ESR May + 13 ESR Apr) and the L226/L227 inventory render fixes.
+     See ATLAS_lesson_L196_vacancy_data_regression.md for full RCA. -->
 <script>
   (function(){
     try {
@@ -25,9 +40,14 @@
 /* v48.20g Bug 1 follow-up: critical pre-paint hide rules.
    Same selectors as the deep CSS at line ~23576 but placed at top of <head>
    so they load before any body content paints. The deep rules remain as
-   redundant fallback. */
+   redundant fallback.
+   v48.42 P15-A: .navtabs removed from hide list. Navy tab strip stays
+   visible on article-takeover so users can switch surfaces in one click
+   (vs two clicks: back-to-landing → tab). The navtab click handler is
+   overridden in atlasNavtabArticleOverride() to navigate ./ + #<hash>
+   instead of calling atlasShowTab (which would be a no-op since panels
+   are CSS-hidden during takeover). */
 html.article-takeover .topbar,
-html.article-takeover .navtabs,
 html.article-takeover .panel,
 html.article-takeover footer,
 html.article-takeover .nl-banner{display:none!important}
@@ -678,10 +698,15 @@ html,body{background:var(--bg);color:var(--txt);font-family:'DM Sans',sans-serif
 
 /* v48.20p Hide article-takeover for the new masthead/footer too — when
    reading a single article, the article view paints its own chrome and
-   the dashboard masthead shouldn't appear. */
-html.article-takeover .ed-mast,
+   the dashboard masthead shouldn't appear.
+   v48.42 P15-A: .ed-mast now KEPT visible on article-takeover so the
+   cream PropertyAtlas wordmark + top-right nav stay anchored. Only the
+   footer remains hidden (article view has no need for the dashboard
+   footer). The ed-art-masthead's prior role is now redundant — its
+   "← Back to PropertyAtlas" affordance is relocated inline into the
+   article body (above the eyebrow chips) via JS, and the sticky cream
+   bar element itself is hidden via .ed-art-masthead{display:none}. */
 html.article-takeover .ed-foot,
-body.article-takeover .ed-mast,
 body.article-takeover .ed-foot{display:none!important}
 </style>
 <!-- v48.12 Phase 2c step 1: Supabase JS SDK for Auth flows. Loads globally as `supabase`. -->
@@ -2655,7 +2680,7 @@ body.article-takeover .ed-foot{display:none!important}
          Placing them as separate grid siblings caused credit to land in
          column 2 row 2 (top-right of headline) — Lesson 128 captured. -->
     <div class="hero-image-col">
-      <a class="hero-image" href="./?article=88&amp;from=landing" aria-label="Read the full entry: Frasers Property 1H FY26 results analysis">
+      <a class="hero-image" href="./?article=88&amp;from=landing" aria-label="Read full story: Frasers Property 1H FY26 results analysis">
         <img src="./images/news_88_fpl_frasers_tower.jpg"
              alt="Frasers Tower, 182 Cecil Street, Singapore — Frasers Property 1H FY26 hero asset, the Group's Grade A Singapore CBD office anchor (S$2.1B valuation, 99.4% occupied)"
              class="hero-image-photo"
@@ -2712,7 +2737,7 @@ body.article-takeover .ed-foot{display:none!important}
       </div>
 
       <a class="btn-primary" href="./?article=88&amp;from=landing">
-        Read the full entry
+        Read full story
         <span class="arrow" aria-hidden="true">→</span>
       </a>
     </div>
@@ -15220,8 +15245,48 @@ function atlasShowTab(tab) {
 })();
 
 // Attach click handlers using atlasShowTab
+// v48.42 P15-A: in article-takeover mode, panels are CSS-hidden so calling
+// atlasShowTab is a no-op. Instead, navigate to landing + hash so the
+// existing atlasNewsroomHash / atlasPublicTabHashes handlers activate the
+// target tab on the landing surface. Result: one-click surface switching
+// from any article page (vs prior two-click: back-to-landing → tab).
+//
+// Tab → hash map (mirrors atlasPublicTabHashes inversely):
+//   news        → #newsroom   (atlasNewsroomHash handles this)
+//   overview    → #overview
+//   transactions → #transactions
+//   analytics   → #analytics
+//   directory   → #directory   (auto-enables dev-mode per atlasPublicTabHashes)
+//   assetdir    → #assetdir    (auto-enables dev-mode)
+//   talent      → #talent      (auto-enables dev-mode)
+//   forsale     → #forsale     (auto-enables dev-mode)
+//   pulse       → #pulse       (auto-enables dev-mode)
+var ATLAS_NAVTAB_HASH_MAP = {
+  news: '#newsroom',
+  overview: '#overview',
+  transactions: '#transactions',
+  analytics: '#analytics',
+  directory: '#directory',
+  assetdir: '#assetdir',
+  talent: '#talent',
+  forsale: '#forsale',
+  pulse: '#pulse'
+};
 document.querySelectorAll(".navtab").forEach(function(t){
-  t.addEventListener("click", function(){ atlasShowTab(t.dataset.tab); });
+  t.addEventListener("click", function(){
+    // v48.42 P15-A: if we're inside an article view, navigate to landing+hash
+    // instead of trying to toggle panels (which are hidden).
+    var inArticle = document.documentElement.classList.contains('article-takeover')
+                 || document.body.classList.contains('article-takeover');
+    if(inArticle){
+      var targetHash = ATLAS_NAVTAB_HASH_MAP[t.dataset.tab] || '#newsroom';
+      // Strip ?article=... query, land on root + hash. The existing
+      // hash handlers (atlasNewsroomHash + atlasPublicTabHashes) pick it up.
+      window.location.href = './' + targetHash;
+      return;
+    }
+    atlasShowTab(t.dataset.tab);
+  });
 });
 
 // ─── PANEL NESTING VALIDATOR ──────────────────────────────────────────────────
@@ -16135,7 +16200,7 @@ function renderNewsroom(){
       +'</div>';
   }
   var heroSrc=hero.sourceLabel?'<div class="ed-source">Source: '+hero.sourceLabel+'</div>':'';
-  var heroFullArticleLink='<a href="?article='+hero.id+'&amp;from=dashboard" class="ed-read-full" onclick="event.stopPropagation()">Read full article<span class="arrow">→</span></a>';
+  var heroFullArticleLink='<a href="?article='+hero.id+'&amp;from=dashboard" class="ed-read-full" onclick="event.stopPropagation()">Read full story<span class="arrow">→</span></a>';
   var heroExtArticleLink=hero.articleUrl?'<a href="'+hero.articleUrl+'" target="_blank" rel="noopener" onclick="event.stopPropagation()" class="ed-read-full">Source article<span class="arrow">↗</span></a>':'';
   var heroBylineParts=[
     '<span class="ed-byline-by">By '+heroByline+'</span>',
@@ -16186,7 +16251,7 @@ function renderNewsroom(){
         +'</div>';
     }
     var cardSrc=n.sourceLabel?'<div class="ed-source">Source: '+n.sourceLabel+'</div>':'';
-    var cardFullArticleLink='<a href="?article='+n.id+'&amp;from=dashboard" class="ed-read-full" onclick="event.stopPropagation()">Read full article<span class="arrow">→</span></a>';
+    var cardFullArticleLink='<a href="?article='+n.id+'&amp;from=dashboard" class="ed-read-full" onclick="event.stopPropagation()">Read full story<span class="arrow">→</span></a>';
     var cardExtArticleLink=n.articleUrl?'<a href="'+n.articleUrl+'" target="_blank" rel="noopener" onclick="event.stopPropagation()" class="ed-read-full">Source article<span class="arrow">↗</span></a>':'';
     var bylineParts=['<span>'+cardByline+'</span>','<span class="ed-byline-sep">·</span>','<span>'+cardDate+'</span>'];
     if(cardReadTime){
@@ -26589,8 +26654,13 @@ function enqEmailRow(label, value) {
 /* ── Day 2: full-bleed article page (.ed-art-*) ── */
 /* v48.20g Bug 1 fix: html.article-takeover mirrors body.article-takeover so
    the head-script's pre-paint signal hides chrome before <body> parses.
-   The atlasArticlePage IIFE still upgrades to body.article-takeover on DOMContentLoaded. */
-html.article-takeover .topbar,html.article-takeover .navtabs,html.article-takeover .panel,html.article-takeover footer,html.article-takeover .nl-banner,body.article-takeover .topbar,body.article-takeover .navtabs,body.article-takeover .panel,body.article-takeover footer,body.article-takeover .nl-banner{display:none!important}
+   The atlasArticlePage IIFE still upgrades to body.article-takeover on DOMContentLoaded.
+   v48.42 P15-A: .navtabs removed from hide list — navy tab strip stays
+   visible on article-takeover for one-click surface switching. The legacy
+   .ed-art-masthead is hidden (its back-link role is relocated inline into
+   the article body via atlasArticleInlineBack()). */
+html.article-takeover .topbar,html.article-takeover .panel,html.article-takeover footer,html.article-takeover .nl-banner,body.article-takeover .topbar,body.article-takeover .panel,body.article-takeover footer,body.article-takeover .nl-banner{display:none!important}
+html.article-takeover .ed-art-masthead,body.article-takeover .ed-art-masthead{display:none!important}
 /* v48.29: overflow-x:clip not hidden — `hidden` creates a containing block
    that kills position:sticky on .ed-art-masthead (the back-to-landing link).
    `clip` prevents horizontal overflow without establishing a containing block. */
@@ -26600,6 +26670,11 @@ html.article-takeover .ed-article-page,body.article-takeover .ed-article-page{di
 .ed-art-masthead{position:sticky;top:0;z-index:50;background:var(--ed-cream-lt);border-bottom:1px solid var(--ed-hairline);padding:14px 28px;display:flex;align-items:center;gap:18px}
 .ed-art-back{font-family:'DM Sans',sans-serif;font-size:12px;color:var(--ed-navy-ink);text-decoration:none;font-weight:600;letter-spacing:.02em;display:inline-flex;align-items:center;gap:6px;padding:6px 10px;border-radius:4px;transition:background .12s}
 .ed-art-back:hover{background:rgba(11,43,92,0.06)}
+/* v48.42 P15-A: inline back-link rendered above eyebrow chips inside .ed-art-content.
+   Replaces the hidden .ed-art-masthead back-bar. Preserves L169 smart-back logic
+   (same onclick handler) while letting .ed-mast + .navtabs handle surface chrome. */
+.ed-art-back-inline{display:inline-flex;align-items:center;gap:6px;font-family:'DM Sans',sans-serif;font-size:12px;font-weight:600;color:var(--ed-navy-ink);text-decoration:none;letter-spacing:.02em;margin:0 0 20px -4px;padding:6px 8px;border-radius:4px;transition:background .12s}
+.ed-art-back-inline:hover{background:rgba(11,43,92,0.06);text-decoration:none}
 .ed-art-brand{font-family:var(--ed-body-serif);font-size:18px;font-weight:700;color:var(--ed-navy-ink);margin:0 auto;letter-spacing:.005em}
 .ed-art-brand em{font-style:italic;color:var(--ed-bronze)}
 .ed-art-share{font-family:'DM Sans',sans-serif;font-size:11px;color:var(--ed-muted);letter-spacing:.06em;text-transform:uppercase}
@@ -27331,7 +27406,7 @@ html.article-takeover .ed-article-page,body.article-takeover .ed-article-page{di
 // v48.18 Day 2: full-bleed article page (?article=N takeover)
 // Renders a dedicated editorial article view that hides the dashboard
 // chrome entirely. Reuses the NEWS array; CSS classes prefixed .ed-art-*.
-// Click flow: user clicks "Read full article →" on any newsroom card
+// Click flow: user clicks "Read full story →" on any newsroom card
 // (href="?article=N"), browser navigates, this IIFE detects the param and
 // mounts the article view. Browser back returns to the source page.
 (function atlasArticlePage(){
@@ -27480,6 +27555,11 @@ html.article-takeover .ed-article-page,body.article-takeover .ed-article-page{di
       +'</header>'
       +'<div class="ed-art-datestrip">'+dateStrip+'</div>'
       +'<article class="ed-art-content">'
+        /* v48.42 P15-A: inline back-link replaces the hidden .ed-art-masthead
+           back-bar. Lives above the eyebrow chips inside the article body so
+           the smart-back affordance (L169) is preserved while .ed-mast +
+           .navtabs handle surface-switching navigation overhead. */
+        +'<a class="ed-art-back-inline" href="'+LANDING_URL+'" onclick="return atlasArticleBack(event)">'+getBackLabel()+'</a>'
         +'<div class="ed-art-eyebrow">'+eyebrow+'</div>'
         +'<h1 class="ed-art-headline">'+displayHL+'</h1>'
         +(standfirst?'<p class="ed-art-standfirst">'+standfirst+'</p>':'')
