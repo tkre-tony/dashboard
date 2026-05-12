@@ -21,6 +21,17 @@
      wraps to route ./?article=N → ./#<tab-hash> when in takeover. Result:
      one-click surface switching from any article. Also: hero CTA + Overview
      "Read full article" relabelled to "Read full story" globally. -->
+<!-- v48.44 (12 May 2026): article body editorial typography — proper unification.
+     v48.43 went too small (12px tidy) on the article body; the actual
+     target is the Centurion id=86 reference: comfortable 17px serif at
+     line-height 1.7, large bold serif h2 in Title-Case (~22px), lede
+     paragraph with bold opening clause (<strong>) but no size bump,
+     small 36px dropcap on the first body paragraph AFTER the first h2
+     (not on the lede — avoids the doubly-emphasised first letter seen
+     on id=88 Frasers in v48.43 where bold + 64px dropcap stacked). All
+     5 HTML-summary articles (id 84-88) now render with identical
+     editorial typography. Plain-text path (id ≤ 83) untouched and
+     unchanged. No data touched. -->
 <!-- v48.43 (12 May 2026): article body typography fix. NEWS entries for
      id ≥ 84 ship `summary` as pre-formatted HTML (<p>, <p.lede>, <h2>,
      <strong>) while id ≤ 83 ship plain text with \n\n section breaks.
@@ -26721,23 +26732,33 @@ html.article-takeover .ed-article-page,body.article-takeover .ed-article-page{di
 .ed-art-body{font-family:var(--ed-body-serif);font-size:17px;line-height:1.7;color:var(--ed-ink)}
 @media(max-width:768px){.ed-art-body{font-size:16px;line-height:1.65}}
 .ed-art-body p{margin:0 0 18px}
-.ed-art-body p:first-of-type::first-letter{font-family:var(--ed-body-serif);font-size:64px;line-height:.85;font-weight:700;color:var(--ed-navy-ink);float:left;padding:6px 10px 0 0;margin-top:4px}
-@media(max-width:480px){.ed-art-body p:first-of-type::first-letter{font-size:1em;float:none;padding:0;margin:0;line-height:inherit;font-weight:inherit;color:inherit;font-family:inherit}}
-/* v48.43: pre-baked HTML passthrough typography. Matches the 12px scale
-   used by the plain-text formatter so id ≥ 84 articles (which ship summary
-   as pre-formatted HTML with <p>, <p.lede>, <h2>, <strong>) render at the
-   same visual density as the older plain-text id ≤ 83 articles. Without
-   these rules, <h2> falls back to browser default (~24px) and the article
-   body text appears oversized. The :first-of-type dropcap rule above is
-   intentionally kept for the editorial first-letter treatment. */
-.ed-art-body > p{font-size:12px;line-height:1.65;color:var(--txt);margin:0 0 8px}
-.ed-art-body > p.lede{font-size:13px;line-height:1.6;color:var(--ed-ink);margin:0 0 14px}
-.ed-art-body > p.lede strong{font-weight:700;color:var(--ed-navy-ink)}
-.ed-art-body > h2{font-size:10.5px;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:var(--ed-navy-ink);margin:18px 0 8px;padding-bottom:4px;border-bottom:1px solid var(--ed-hairline);font-family:'DM Sans',sans-serif}
-.ed-art-body > h3{font-size:11.5px;font-weight:700;color:var(--ed-navy-ink);letter-spacing:.02em;margin:14px 0 6px;font-family:'DM Sans',sans-serif}
-.ed-art-body > p strong{font-weight:700;color:var(--ed-navy-ink)}
-.ed-art-body > ul,.ed-art-body > ol{margin:0 0 12px;padding-left:18px}
-.ed-art-body > ul li,.ed-art-body > ol li{font-size:12px;line-height:1.65;color:var(--txt);margin-bottom:5px}
+/* v48.44: dropcap scoped to the first body paragraph AFTER the first <h2>
+   section header. NOT applied to the lede paragraph — the lede's <strong>
+   opening sentence is the "this is where the article starts" signal, and a
+   dropcap on top of that creates a doubly-emphasised first letter (as seen
+   on id=88 Frasers in v48.43 where the bold "F" rendered at 64px). The new
+   placement matches editorial publication convention: lede paragraph in
+   regular weight with a bold opening clause, then a section header, then
+   the body opens with a dropcap. Size reduced to 36px for a more restrained
+   "pro" look (was 64px). */
+.ed-art-body h2:first-of-type + p::first-letter{font-family:var(--ed-body-serif);font-size:36px;line-height:.9;font-weight:700;color:var(--ed-navy-ink);float:left;padding:4px 8px 0 0;margin-top:2px}
+@media(max-width:480px){.ed-art-body h2:first-of-type + p::first-letter{font-size:1em;float:none;padding:0;margin:0;line-height:inherit;font-weight:inherit;color:inherit;font-family:inherit}}
+/* v48.44: article body editorial typography. Replaces the v48.43 12px-tidy
+   override (which was the wrong target — the Centurion id=86 reference body
+   is comfortable 17px serif at line-height 1.7). The .ed-art-body rule
+   above sets the default; the rules below shape the lede, section headers,
+   inline strong, and lists. The > child combinator scopes everything to
+   direct children of the body container so nested elements layer normally. */
+.ed-art-body p.lede{font-family:var(--ed-body-serif);font-size:17px;line-height:1.7;color:var(--ed-ink);margin:0 0 24px}
+.ed-art-body p.lede strong{font-weight:700;color:var(--ed-navy-ink)}
+.ed-art-body strong{font-weight:700;color:var(--ed-navy-ink)}
+.ed-art-body h2{font-family:var(--ed-body-serif);font-size:22px;line-height:1.3;font-weight:700;color:var(--ed-navy-ink);letter-spacing:-.005em;margin:32px 0 14px}
+@media(max-width:768px){.ed-art-body h2{font-size:19px;line-height:1.3;margin:26px 0 12px}}
+.ed-art-body h3{font-family:var(--ed-body-serif);font-size:18px;line-height:1.35;font-weight:700;color:var(--ed-navy-ink);letter-spacing:-.005em;margin:24px 0 10px}
+@media(max-width:768px){.ed-art-body h3{font-size:16px}}
+.ed-art-body ul,.ed-art-body ol{margin:0 0 18px;padding-left:22px}
+.ed-art-body ul li,.ed-art-body ol li{font-family:var(--ed-body-serif);font-size:17px;line-height:1.7;color:var(--ed-ink);margin-bottom:6px}
+@media(max-width:768px){.ed-art-body ul li,.ed-art-body ol li{font-size:16px;line-height:1.65}}
 .ed-art-section-eyebrow{font-family:'DM Sans',sans-serif;font-size:11.5px;font-weight:700;letter-spacing:.2em;text-transform:uppercase;color:var(--ed-bronze);margin:36px 0 14px;padding-top:18px;border-top:1px solid var(--ed-hairline)}
 .ed-art-section-eyebrow:first-of-type{margin-top:24px}
 .ed-art-fh-panel{display:grid;grid-template-columns:1fr 1fr;gap:8px 28px;margin:8px 0 16px;font-family:var(--ed-body-serif)}
