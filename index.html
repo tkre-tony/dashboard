@@ -21,6 +21,24 @@
      wraps to route ./?article=N → ./#<tab-hash> when in takeover. Result:
      one-click surface switching from any article. Also: hero CTA + Overview
      "Read full article" relabelled to "Read full story" globally. -->
+<!-- v48.50 (12 May 2026): Landing-page HERO block regenerated for id=89 Prime US REIT.
+     DEFECT P17 (this session) — the landing <section class="hero"> at lines 2762-2843
+     is HARDCODED HTML, not data-driven from NEWS. When id=89 was inserted in v48.49 the
+     dynamic newsroom renders picked it up correctly (NEWS.length 87, id=89 sorted to head
+     by date desc), but the landing HERO continued to render id=88 (Frasers Property)
+     because the markup itself was hardcoded for id=88. Tony surfaced this immediately
+     on live verification post-v48.49 push.
+     This is the SECOND L200 instance — the first was the talent-entity-filter dropdown
+     surfaced session 10 (v48.48). Two-instance pattern confirms L200 is real: hardcoded
+     UI parallel to data-driven data is an unforgiving anti-pattern. Refactor to
+     data-drive the landing hero (read NEWS[0] after date-desc sort, populate template)
+     is the proper fix. v48.50 is the SURGICAL hotfix — we replace the block contents
+     so live state is correct, but the structural fix is L200 refactor proper.
+     Three sub-blocks regenerated: image-col (Tower 909, news_89 image URL, fresh alt),
+     text-col eyebrow+headline (Prime US REIT category + tag chips, display_headline
+     mirrored from NEWS row), and hero-body (fresh teaser drawn from the article lede,
+     12 May 2026 / 2,083 words / 10 min read meta). All article=88 references in the
+     block updated to article=89. No CSS / JS changes outside this block. -->
 <!-- v48.49 (12 May 2026): id=89 Prime US REIT 1Q2026 Key Business & Operational Updates summary.
      Article body: ~2,083 words / ~10 min read. HTML <p class="lede"> + 6 numbered <h2> sections
      + Strategic Pillars/CEO commentary + Key Takeaway. Source materials: Prime US REIT 1Q2026 deck
@@ -2763,29 +2781,30 @@ body.article-takeover .ed-foot{display:none!important}
   <div class="wrap hero-grid">
 
     <!-- Image — Phase 1 GitHub Pages photo pipeline.
-         id:88 Frasers Property hero — Frasers Tower, 182 Cecil Street,
-         the Group's Singapore Grade A office anchor (NLA 63.6K sqm,
-         val S$2,124M on 100% basis, occupancy 99.4%). The 1H FY26
-         print covers the half-year ended 31 March 2026: revenue
-         S$1,508.6m (-5.2% YoY on Sky Eden@Bedok TOP absence), PBIT
-         S$678.7m (+13.2% YoY), EBITDA S$719.6m (+12.7%), recurring
-         income 76% of PBIT, attributable profit S$88.4m (-37.8%
-         headline on a S$38.2m Thailand impairment; +77% YoY ex-1H FY25
-         one-off tax reversal). NAV S$2.40 (FY25: S$2.37); net debt/
-         equity 89.2% → 94.2%. -->
+         id:89 Prime US REIT hero — Tower 909, 909 Lake Carolyn Parkway,
+         Irving (Dallas Metroplex), Texas. 19-storey Class A multi-tenanted
+         office, Las Colinas Urban Center submarket. NLA 374K sf, val
+         US$104.9M (31 Dec 2025 audited; 7.5% of carrying value), committed
+         occupancy 93.5% at 31 Mar 2026 (FY25: 92.5%; +1.0pp on 13k sf signed
+         1Q2026 backfilling expiries), submarket occ 79.8% (per CoStar 7 Apr
+         2026). Anchor tenant Matheson Tri-Gas (138k sf, 4.0% portfolio CRI).
+         Sun Belt asset — Dallas is on JLL's office rental clock rising
+         phase. Selected as 1Q2026 hero because it is one of the portfolio's
+         clearest OUTperformer-versus-submarket assets and the visual frame
+         of the Las Colinas waterfront sits well in the hero grid. -->
     <!-- Image column: photo + credit live together as one grid cell.
          Placing them as separate grid siblings caused credit to land in
          column 2 row 2 (top-right of headline) — Lesson 128 captured. -->
     <div class="hero-image-col">
-      <a class="hero-image" href="./?article=88&amp;from=landing" aria-label="Read full story: Frasers Property 1H FY26 results analysis">
-        <img src="./images/news_88_fpl_frasers_tower.jpg"
-             alt="Frasers Tower, 182 Cecil Street, Singapore — Frasers Property 1H FY26 hero asset, the Group's Grade A Singapore CBD office anchor (S$2.1B valuation, 99.4% occupied)"
+      <a class="hero-image" href="./?article=89&amp;from=landing" aria-label="Read full story: Prime US REIT 1Q2026 results analysis">
+        <img src="./images/news_89_prime_us_reit_tower_909.jpg"
+             alt="Tower 909, Las Colinas Urban Center, Irving (Dallas Metroplex), Texas — Prime US REIT 1Q2026 hero asset, one of the 13 Class A freehold U.S. office properties anchoring the US$1.40B portfolio (374K sf NLA, 93.5% committed occupancy, anchor tenant Matheson Tri-Gas)"
              class="hero-image-photo"
              loading="eager"
              fetchpriority="high" />
       </a>
 
-      <p class="hero-credit">Frasers Tower, 182 Cecil Street, Singapore. Photo: Frasers Property</p>
+      <p class="hero-credit">Tower 909, Las Colinas, Irving (Dallas), Texas. Photo: Prime US REIT</p>
     </div>
 
     <!-- Text column -->
@@ -2793,11 +2812,11 @@ body.article-takeover .ed-foot{display:none!important}
       <div class="hero-eyebrow">
         <span class="pill">Latest</span>
         <span class="cat-tag">Commercial</span>
-        <span class="cat-tag">Earnings · Developer · 1H Results · Multi-Geography · Capital Recycling · Singapore</span>
+        <span class="cat-tag">Earnings · REIT Update · Quarterly · U.S. Office · Cashflow Ramp · Capital Management</span>
       </div>
 
       <h1 id="hero-h" class="hero-headline">
-        <a href="./?article=88&amp;from=landing">Frasers Property 1H FY26: Attributable Profit -37.8% To S$88.4m, But Strip One-Offs And Underlying Is +77% — PBIT +13.2% Into Rising Leverage, Centrepoint Collective Sale Opens Orchard Rejuvenation Path, No Interim Dividend Declared</a>
+        <a href="./?article=89&amp;from=landing">Prime US REIT 1Q2026: Occupancy 83.1% (4th Quarterly Gain), NPI +3.3% QoQ Ends 3-Quarter Descent — But The Real Story Is 463k sf Of Signed-But-Uncommenced Leases Ramping Rent From 3Q2026</a>
       </h1>
     </div>
 
@@ -2807,33 +2826,35 @@ body.article-takeover .ed-foot{display:none!important}
          headlines caused. -->
     <div class="hero-body">
       <p class="hero-teaser">
-        Frasers Property 1H FY26 (half-year ended 31 March 2026,
-        released 8 May 2026) prints headline attributable profit
-        -37.8% to S$88.4m on a S$38.2m Thailand impairment — but
-        strip the one-off 1H FY25 tax provisions reversal and
-        underlying is +77% YoY. PBIT +13.2% to S$678.7m, EBITDA
-        +12.7% to S$719.6m, recurring income 76% of PBIT, NAV per
-        share S$2.40. Underneath: Singapore retail PBIT +12.7% on
-        full-period Northpoint City South Wing, Thailand & Vietnam
-        +44.3% on ARAYA Eastern Gateway industrial estate land
-        sales, Australia swings to S$34.6m from S$7.5m on residential
-        settlements plus Discovery Point land. The Centrepoint rear
-        plot collective sale awarded February 2026 opens Orchard
-        rejuvenation optionality. Net debt/equity climbs 89.2% →
-        94.2% on January 2026 perpetual redemption — leverage now
-        the variable to watch. Shares -2.6% to S$1.11 on release;
-        no interim dividend declared.
+        Prime US REIT 1Q2026 (quarter ended 31 March 2026, released
+        12 May 2026) prints committed occupancy 83.1% — a fourth
+        consecutive quarterly gain from the 78.9% trough twelve
+        months ago. Net property income US$17.2M is +3.3% QoQ,
+        ending three quarters of sequential decline; 99k sf of
+        leasing signed at +4.0% rental reversion; WALE 5.6 years;
+        distributable income US$6.5M supports the 65% payout ratio
+        raised in 4Q2025. The structural read sits beneath the
+        headline: 633k sf of new leases were signed in 2025-2026
+        but only 170k sf is yet contributing rent. The remaining
+        463k sf — equivalent to ~11% of committed occupancy — begins
+        paying rent on a staggered basis from 3Q2026 onwards, after
+        standard 3-12 month rent-free and TI periods. This is the
+        contracted cashflow wedge that backed the manager's
+        decision to lift the payout ratio from 10% to 65%.
+        Aggregate leverage 45.2%, NAV/unit US$0.52 against US$0.171
+        unit price (67% discount), US$485M maturity wall in 2027 —
+        the refinancing window for the recovery to land in.
       </p>
 
       <div class="hero-meta">
-        <span>11 May 2026</span>
+        <span>12 May 2026</span>
         <span class="sep">·</span>
-        <span>2,559 words</span>
+        <span>2,083 words</span>
         <span class="sep">·</span>
-        <span>12 min read</span>
+        <span>10 min read</span>
       </div>
 
-      <a class="btn-primary" href="./?article=88&amp;from=landing">
+      <a class="btn-primary" href="./?article=89&amp;from=landing">
         Read full story
         <span class="arrow" aria-hidden="true">→</span>
       </a>
