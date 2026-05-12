@@ -1,5 +1,110 @@
 var NEWS_LISTING = [
 {
+    "id": 89,
+    "date": "2026-05-12",
+    "title": "Prime US REIT 1Q2026: Occupancy 83.1% (4th Quarterly Gain) And NPI +3.3% QoQ End Three Quarters Of Decline, But The Real Story Is 463,000 sq ft Of Signed-But-Uncommenced Leases Ramping Rent From 3Q2026 — Six Insights Beyond The Headline",
+    "slug": "prime-us-reit-1q2026-occupancy-83-1pct-npi-up-33pct-463k-sf-rent-ramp-from-3q2026",
+    "meta_description": "Prime US REIT 1Q2026: committed occupancy 83.1% (4th consecutive quarterly gain), NPI US$17.2M +3.3% QoQ ends 3-quarter descent, distributable income US$6.5M; 463k sf of committed leases (11.0% of occupancy) staggered to commence rent from 3Q2026 onwards — the contracted cashflow wedge backing the 10% → 65% payout-ratio normalisation. Aggregate leverage 45.2%, NAV/unit US$0.52 vs unit price US$0.171 (67% discount).",
+    "og_image": "./images/news_89_prime_us_reit_tower_909.jpg",
+    "keywords": "Prime US REIT, OXMU, 1Q2026, US Office, occupancy, NPI, distributable income, lease commencement, payout ratio, KBS Asia Partners, Keppel Capital, Cuscaden Peak, Tower 909, Village Center Station, S&P Global, JLL Office Market Dynamics",
+    "display_title": "Prime US REIT 1Q2026: Occupancy 83.1%, NPI +3.3% QoQ — 463k sf Of Signed Leases Ramping Rent From 3Q2026",
+    "display_headline": "Prime US REIT 1Q2026: Occupancy 83.1% (4th Quarterly Gain), NPI +3.3% QoQ Ends 3-Quarter Descent — But The Real Story Is 463k sf Of Signed-But-Uncommenced Leases Ramping Rent From 3Q2026",
+    "standfirst": "Prime US REIT released its 1Q2026 Key Business & Operational Updates on 12 May 2026 — a print that on the headlines reads as a steady operating quarter (occupancy +0.4pp, NPI +3.3% QoQ, leasing reversion +4.0%), and on closer reading is the most legible cashflow visibility statement the manager has put out since the payout-ratio normalisation was announced. The numbers that matter are not the ones in the headline.",
+    "read_time_min": 10,
+    "word_count": 2083,
+    "image": "./images/news_89_prime_us_reit_tower_909.jpg",
+    "imageCredit": "Prime US REIT",
+    "source": "PropertyAtlas.sg",
+    "category": "Commercial",
+    "tag": "Earnings · REIT Update · Quarterly · U.S. Office · Cashflow Ramp · Capital Management",
+    "sourceLabel": "PropertyAtlas.sg Analysis · Prime US REIT 1Q2026 Key Business & Operational Updates and Press Release dated 12 May 2026",
+    "sentiment": "positive"
+},
+{
+    "id": 88,
+    "date": "2026-05-11",
+    "title": "Frasers Property 1H FY26: Attributable Profit -37.8% to S$88.4m On A S$38.2m Thailand Impairment, But Strip One-Offs And Underlying Is +77% YoY — PBIT +13.2% To S$678.7m, Net Debt/Equity 89.2% → 94.2%, NAV S$2.37 → S$2.40, Recurring Income 76% Of PBIT, Singapore Retail PBIT +12.7% On Full-Period Northpoint City South Wing, Thailand ARAYA Industrial Estate Land Sales Drive +44.3% Segment PBIT, Centrepoint Rear Plot Collective Sale Awarded February 2026 Opens Orchard Rejuvenation Optionality, No Interim Dividend Declared, Shares -2.6% To S$1.11 On Release Day",
+    "slug": "fpl-1h-fy26-attributable-profit-down-378pct-pbit-up-132pct-rising-leverage",
+    "meta_description": "Frasers Property 1H FY26: attributable profit -37.8% to S$88.4m on S$38.2m Thailand impairment; underlying +77% YoY ex-1H FY25 tax reversal; PBIT +13.2% to S$678.7m, EBITDA +12.7% to S$719.6m, NAV S$2.40 (FY25: S$2.37); net debt/equity 89.2% → 94.2%; recurring income 76% of PBIT; The Centrepoint collective sale awarded Feb 2026; no interim dividend declared.",
+    "og_image": "https://propertyatlas.sg/dashboard/images/news_88_fpl_frasers_tower.jpg",
+    "keywords": "Frasers Property Limited, FPL, TQ5, Panote Sirivadhanabhakdi, Loo Choo Leong, 1H FY26, attributable profit S$88.4m, PBIT S$678.7m, EBITDA S$719.6m, recurring income 76 percent, Thailand impairment S$38.2m, ARAYA Eastern Gateway industrial estate land sales, Northpoint City South Wing, FCT, Sky Eden@Bedok TOP, The Orie, Dunearn House, Kallang Close GLS, The Centrepoint collective sale, MCST Plan 1304, Hougang Mall AEI, NEX AEI, Mambourin Retail, Brunswick & Co, Burwood Brickworks, Discovery Point, Chineham Park, One Bangkok, FPT, GELEX Infrastructure Vietnam, Frasers Tower, Alexandra Point, net debt to equity 94.2 percent, perpetual securities redemption January 2026, S$1.5b FY26 maturities, S$2.0b cash, no interim dividend, EC measures 10 year MOP, deferred payment scheme scrapped, FY25 tax provision reversal, capital recycling S$424m, FY26",
+    "display_title": "Frasers Property 1H FY26: Attributable Profit -37.8% To S$88.4m, But Strip One-Offs And Underlying Is +77% — PBIT +13.2% Into Rising Leverage, Centrepoint Collective Sale Opens Orchard Rejuvenation Path, No Interim Dividend Declared",
+    "display_headline": "Frasers Property 1H FY26: Attributable Profit Drops 37.8% To S$88.4m On A S$38.2m Thailand Impairment, But Stripping The 1H FY25 Tax Reversal Reveals 77% Underlying Growth As Leverage Climbs To 94.2%",
+    "standfirst": "Frasers Property Limited released 1H FY26 results on 8 May 2026, headlined by a S$88.4m attributable profit that printed 37.8% below the prior corresponding half — a number that on its face reads as a sharp deterioration, but which on closer reading tells almost the opposite story. Stripping the one-off reversal of tax provisions that flattered 1H FY25, underlying attributable profit was 77% higher year-on-year. PBIT rose 13.2% to S$678.7m, EBITDA +12.7% to S$719.6m, recurring income still accounted for 76% of PBIT, and net asset value per share ticked up to S$2.40 (FY25: S$2.37).",
+    "read_time_min": 12,
+    "word_count": 2559,
+    "image": "images/news_88_fpl_frasers_tower.jpg",
+    "imageCredit": "Frasers Property",
+    "source": "PropertyAtlas.sg",
+    "category": "Commercial",
+    "tag": "Earnings · Developer · 1H Results · Multi-Geography · Capital Recycling · Singapore",
+    "sourceLabel": "PropertyAtlas.sg Analysis · Frasers Property Limited 1H FY26 Financial Results, Media Release and Fact Sheet dated 8 May 2026",
+    "sentiment": "neutral"
+},
+{
+    "id": 87,
+    "date": "2026-05-07",
+    "title": "AIMS APAC REIT FY2026: DPU +2.6% to 9.850¢ Closes Decade of Outperformance — NAV S$1.23→S$1.28, Macquarie Park + Bella Vista Endorsed By NSW Government Among 15 Data Centre Sites Worth A$51.9B Alongside Microsoft / NEXTDC / Goodman, Two Perpetual Securities Pre-Funded At 4.10% / 4.25% Ahead Of US-Iran Conflict To Refinance S$250M 5.375% Securities Due September 2026, Aggregate Leverage Steps Down 28.9% → 26.8% On 5.9% Portfolio Valuation Uplift To S$2.25B",
+    "slug": "aareit-fy2026-dpu-up-26pct-nav-128-data-centre-optionality-perpetual-prefunding",
+    "meta_description": "AIMS APAC REIT FY2026: DPU 9.850¢ (+2.6%), NAV S$1.23→S$1.28, NPI +5.7% to S$141.3M, aggregate leverage 26.8%, portfolio S$2.25B (+5.9% YoY); Macquarie Park + Bella Vista among 15 NSW Government IDA-endorsed data centre sites worth A$51.9B; pre-funded S$150M 4.10% + S$100M 4.25% perpetual securities to refinance S$250M 5.375% Sep-26 redemption.",
+    "og_image": "https://propertyatlas.sg/dashboard/images/news_87_aareit_10_changi_south_lane.jpg",
+    "keywords": "AIMS APAC REIT, AA REIT, AAREIT, Russell Ng, George Wang, AIMS Financial Group, FY2026, DPU 9.850 cents, NAV per unit, 2 Aljunied Avenue 1, Framework Building, 3 Toh Tuck Link divestment, 8 Senoko South Road divestment, 15 Tai Seng Drive AEI, 7 Clementi Loop AEI, perpetual securities, 4.10% perpetual, 4.25% perpetual, S$250M redemption September 2026, NSW Government IDA, Investment Delivery Authority, Macquarie Park, Bella Vista, Optus Centre, Woolworths HQ, data centre endorsement, A$51.9 billion, Microsoft NEXTDC Goodman Stockland, Five Eyes data sovereignty, Distribution Reinvestment Plan, DRP, GRESB score, sustainability-linked loan, SBTi, 31% emissions reduction, solar 15.46 MWp, US-Iran conflict, MAS April 2026, RBA cash rate 4.35%, industrial REIT, logistics REIT, Singapore Australia portfolio",
+    "display_title": "AIMS APAC REIT FY2026: DPU +2.6% to 9.850¢, NAV S$1.23→S$1.28 — Macquarie Park + Bella Vista Endorsed As Data Centre Sites, S$250M Perpetual Pre-Funded At 4.10% / 4.25%",
+    "display_headline": "AIMS APAC REIT FY2026: DPU +2.6% To 9.850¢, NAV S$1.23 → S$1.28 — Macquarie Park And Bella Vista Endorsed Among NSW's 15 Data Centre Sites As Aggregate Leverage Steps Down 28.9% → 26.8%",
+    "standfirst": "AIMS APAC REIT closed FY2026 with distribution per unit climbing 2.6% to 9.850 Singapore cents and net asset value per unit stepping from S$1.23 to S$1.28, but the cleaner read on the manager's year is the geometry of the four moves underneath: an opportunistic pre-funding of S$250 million in perpetual securities at 4.10% and 4.25% ahead of the US-Iran conflict to refinance the S$250 million 5.375% perpetual due in September 2026; a portfolio rejuvenation cycle that crystallised AEI completions at 15 Tai Seng Drive and 7 Clementi Loop, the acquisition of 2 Aljunied Avenue 1 in November 2025, a…",
+    "read_time_min": 12,
+    "word_count": 2564,
+    "image": "images/news_87_aareit_10_changi_south_lane.jpg",
+    "imageCredit": "AIMS APAC REIT",
+    "source": "PropertyAtlas.sg",
+    "category": "Industrial",
+    "tag": "Earnings · REIT Update · Full-Year · Industrial · Logistics · Multi-Geography · Capital Management · Data Centre Optionality",
+    "sourceLabel": "PropertyAtlas.sg Analysis · AIMS APAC REIT FY2026 Financial Results Presentation, Press Release and Portfolio Valuation Announcement dated 7 May 2026",
+    "sentiment": "positive"
+},
+{
+    "id": 86,
+    "date": "2026-05-06",
+    "title": "Centurion Accommodation REIT 1Q 2026: Double Beat In Second Reporting Period — Revenue +2.7% / NPI +2.4% Above Prospectus, Leverage Walks 22.1% → 31.0% On A$345M Macquarie Park Acquisition, Hedge Ratio Rebuilt To 71.7%",
+    "slug": "careit-1q-2026-double-beat-leverage-step-up-hedge-rebuild",
+    "meta_description": "CAREIT 1Q 2026 second reporting period since SGX listing: revenue S$52.5M (+2.7% vs prospectus), NPI S$37.5M (+2.4%), all three geographies beat occupancy forecasts (PBWA SG 94.0%, PBSA UK 99.0%, PBSA AU 97.5%). Aggregate leverage 22.1% → 31.0% post EPIISOD Macquarie Park A$345M acquisition; hedge ratio walks 55.8% → 71.7% by 5 May 2026; WAFC 3.57% vs 4.11% prospectus.",
+    "og_image": "https://propertyatlas.sg/dashboard/images/news_86_centurion_westlite_woodlands.jpg.png",
+    "keywords": "Centurion Accommodation REIT, CAREIT, Tony Bin, Westlite Woodlands, Westlite Toh Guan, Westlite Mandai, Westlite Ubi, Westlite Juniper, EPIISOD Macquarie Park, Dwell Hotwells House, Herring Road Management, Centurion Corporation, PBWA, PBSA, FEDA, Foreign Employee Dormitories Act, Dormitory Transition Scheme, DTS, IDS, NDS, prospectus forecast, master lease, aggregate leverage, hedge ratio, WAFC, debt headroom, ROFR, Right of First Refusal, IPO prospectus, second reporting period",
+    "display_title": "CAREIT 1Q 2026: Second Reporting Period Double Beat (+2.7% Rev / +2.4% NPI), But Leverage Walks 22.1% → 31.0% On Macquarie Park",
+    "display_headline": "Centurion Accommodation REIT 1Q 2026: Two-Of-Two Prospectus Beat With Revenue +2.7% / NPI +2.4% / All Three Geographies Above Occupancy Forecast — But Aggregate Leverage Walked From 22.1% To 31.0% In Ninety Days On A$345M Sydney Acquisition, Hedge Ratio Rebuilt From 55.8% To 71.7% Across The Reporting Window",
+    "standfirst": "CAREIT's 1Q 2026 print, released 5 May 2026, marks the second reporting period since the REIT's 25 September 2025 SGX listing — and the second consecutive prospectus beat. Gross revenue of S$52.5M came 2.7% ahead of forecast, NPI of S$37.5M came 2.4% ahead, and all three operating geographies — PBWA Singapore (94.0% vs 93.1%), PBSA United Kingdom (99.0% vs 97.4%), PBSA Australia (97.5% vs 96.7%) — printed occupancy above their respective IPO projections. The structural read sits underneath. Aggregate leverage moved from 22.1% at 31 December 2025 to 31.0% at 31 March 2026 to fund the A$345M EPIISOD Macquarie Park acquisition completed 13 January 2026 — consuming roughly 43% of available debt headroom in a single transaction. Interest-rate hedge coverage was rebuilt from 55.8% to 71.7% (as at 5 May 2026), 54bps of WAFC undershoot versus prospectus (3.57% vs 4.11%) cushioning the larger debt base. The PBWA bed pipeline — Toh Guan New Block (1,764 beds, FEDA Dec 2025), Mandai New Block (3,696 beds, FEDA Mar 2026), TEC and MEC retained beds, and the 540-bed Westlite Ubi AEI under construction — sits mostly ahead of the P&L, with FY 2027 the read on what stabilised occupancy looks like.",
+    "read_time_min": 11,
+    "word_count": 2034,
+    "image": "images/news_86_centurion_westlite_woodlands.jpg.png",
+    "imageCredit": "Centurion Accommodation REIT",
+    "source": "PropertyAtlas.sg",
+    "category": "Residential",
+    "tag": "Earnings · REIT Update · Quarterly · Living Sector · PBWA · PBSA · Multi-Geography · Capital Management · Post-IPO",
+    "sourceLabel": "PropertyAtlas.sg Analysis · Centurion Accommodation REIT 1Q 2026 Business Updates Presentation and Press Release dated 5 May 2026",
+    "sentiment": "neutral"
+},
+{
+    "id": 85,
+    "date": "2026-05-06",
+    "title": "Frasers Logistics & Commercial Trust 1HFY26: Three Manager Choices Are Doing The Work — 75% Management-Fee-In-Units (vs 43.1% Prior), Capital Distribution Of Just 0.13 Cents (Down From 0.48 In 1HFY25 As Divestment Gains Exhaust), And ATP Ex-Google Backfill At 83% Committed With Full Commencement Mapped To January 2027 — Reported DPU 2.95 Cents (-1.7%) Masks +11.9% Organic Growth; Hapert NL Acquired At 3.3% Discount To JLL Valuation; AU NSW Single Lease Reverts +35.3% On Incoming-Vs-Outgoing",
+    "slug": "flct-1hfy26-three-manager-choices-doing-the-work",
+    "meta_description": "FLCT 1HFY26: DPU 2.95 cents (-1.7% reported / +11.9% organic), 96.1% occupancy, NSW lease reverts +35.3%, Hapert NL acquired at 3.3% discount, 75% mgmt fee in units lifts distributable income.",
+    "og_image": "https://propertyatlas.sg/dashboard/images/news_85_flct_alexandra_technopark.jpg",
+    "keywords": "Frasers Logistics & Commercial Trust, FLCT, Anthea Lee, Alexandra Technopark, ATP, ex-Google backfill, Hapert Netherlands, Diamantweg 26, DSV Air & Sea, 357 Collins Street, management fee scrip, capital distribution divestment gains, NSW Sydney rental reversion, Outer Central West, Australia industrial, Germany logistics, Netherlands logistics, Frasers Property, REIT 1HFY26, Singapore REIT, logistics REIT",
+    "display_title": "FLCT 1HFY26: 2.95-Cent DPU Hides 75% Mgmt-Fee Scrip Lift, Capital Distribution Halving — But +11.9% Organic And NSW Reversion +35.3%",
+    "display_headline": "Frasers Logistics & Commercial Trust 1HFY26: Reported DPU 2.95¢ (-1.7%) Masks +11.9% Organic Growth As 75% Of Management Fees Taken In Units Vs 43.1% Prior; Capital Distribution From Divestments Down To 0.13¢ With 357 Collins Residual Nearly Exhausted; ATP Ex-Google Backfill At 83% With Full Commencement By January 2027; AU NSW Single Lease Reverts +35.3% — Hapert NL €43M Acquired At 3.3% Discount To JLL Valuation",
+    "standfirst": "FLCT's 1HFY26 results, released 5 May 2026, read clean at the headline: revenue +2.8% YoY to S$238.9M, adjusted NPI +3.6% to S$167.0M, DPU of 2.95 Singapore cents at an annualised yield of 6.6%. Underneath, three deliberate manager choices are doing more of the work than the operational growth implies. The 75% management-fee-in-units election (vs 43.1% in 1HFY25) is mechanically lifting distributable income; the 0.13-cent capital distribution from divestment gains is at residual levels with the 357 Collins Street proceeds nearly exhausted; and the Alexandra Technopark ex-Google backfill is 83% committed but only 75.1% in-occupation, with full commencement mapping to January 2027. Strip out the manager choices and the underlying picture is +3.6% NPI growth and +11.9% organic DPU — operationally clean but not the +12.5% distributable-income headline. Hapert Netherlands acquired at 3.3% discount to JLL valuation.",
+    "read_time_min": 14,
+    "word_count": 2512,
+    "image": "images/news_85_flct_alexandra_technopark.jpg",
+    "imageCredit": "Frasers Logistics & Commercial Trust",
+    "source": "PropertyAtlas.sg",
+    "category": "Industrial",
+    "tag": "Earnings · REIT Update · Half-Year · Logistics · Multi-Geography · Capital Management",
+    "sourceLabel": "PropertyAtlas.sg Analysis · Frasers Logistics & Commercial Trust 1HFY26 Results Presentation and Press Release dated 5 May 2026",
+    "sentiment": "neutral"
+},
+{
     "id": 84,
     "date": "2026-05-04",
     "title": "Far East Hospitality Trust 1Q 2026: Singapore Hotels Hit 84.2% Occupancy On Airshow + Hari Raya, But ADR Slips 3.9% As RevPAR Grows Just 2.5%; Japan FPN Delivers First Full Comparable Quarter With RevPAR +10.8% And GOP +26.6%; WACD Compresses Further To 2.3% Driving Distributable Income +12.2% Despite NPI Growth Of Just +3.4%",
@@ -60,7 +165,7 @@ var NEWS_LISTING = [
     "tag": "Earnings · REIT Update · Quarterly · Retail · Office · Master Lease · Singapore · Australia · Malaysia",
     "sourceLabel": "PropertyAtlas.sg Analysis · Starhill Global REIT 3Q FY 2025/26 Business Updates dated 29 April 2026",
     "sentiment": "neutral"
-},  
+},
 {
     "id": 81,
     "date": "2026-05-02",
@@ -78,8 +183,8 @@ var NEWS_LISTING = [
     "tag": "Earnings · REIT Update · Quarterly · Retail · Indonesia · Rebrand · Rights Issue · Distribution Suspension",
     "sourceLabel": "PropertyAtlas.sg Analysis · Landmark REIT 1Q 2026 Results Presentation dated 29 April 2026",
     "sentiment": "neutral"
-  },
-  {
+},
+{
     "id": 80,
     "date": "2026-05-02",
     "title": "Stoneweg Europe Stapled Trust 1Q 2026: Like-For-Like NPI +2.3% (Logistics/Light Industrial +3.7%) Drives Indicative DPS Of 3.423 Euro Cents (+1.5% YoY) Despite Reported Gross Revenue And NPI Down 1.3% On 2025 Divestments — But The Structural Moves Are €85M Of Capital Redeployed In One Quarter (€50M AiOnX MCL At 7.25% Cash Coupon + €35M Waddinxveen Logistics Acquisition At 6.0% NOI Yield), A 41% Revaluation On The Original AiOnX Equity Stake Inside Twelve Months, And A Hardened 15%-25%-By-FY2028 Data Centre Allocation Target — At 0.78x P/NAV And 8.6% Distribution Yield",
@@ -96,8 +201,8 @@ var NEWS_LISTING = [
     "tag": "Earnings · REIT Update · Quarterly · Logistics / Light Industrial · Western Europe · Data Centre",
     "sourceLabel": "PropertyAtlas.sg Analysis · Stoneweg Europe Stapled Trust 1Q 2026 Business Update dated 28 April 2026",
     "sentiment": "positive"
-  },
-  {
+},
+{
     "id": 79,
     "date": "2026-05-01",
     "title": "IREIT Global 1Q2026: Portfolio Occupancy 92.2% Ex-Berlin On Darmstadt Letting Traction (43% → 71%) But All-In Cost Of Debt Steps From 2.8% To 4.1% As Oct-2025 German Refi Swaps Kick In, ICR Drops To 2.3x, Berlin Campus Repositioning Now Officially A Strategic-And-Funding Question — And Phase 2 Office Anchor Still Targeted By 3Q2026",
@@ -114,8 +219,8 @@ var NEWS_LISTING = [
     "tag": "Earnings · REIT Update · Quarterly · Office / Retail · Western Europe · Repositioning",
     "sourceLabel": "PropertyAtlas.sg Analysis · IREIT Global 1Q2026 Business Update dated 28 April 2026",
     "sentiment": "neutral"
-  },
-  {
+},
+{
     "id": 78,
     "date": "2026-04-28",
     "title": "Mapletree Industrial Trust 4Q And FY25/26: Reported DPU 12.71¢ (-6.3%) On Absent Divestment-Gain Top-Up + North America Non-Renewals + USD/JPY Headwinds — But The Structural Read Is Singapore Operationally Strongest In Years (+6.2% Reversions, 93.4% Occ), North America At 86.1% Occ With Confirmed FY26/27 Non-Renewals, Up To S$600M More NA Divestments Telegraphed To Recycle Into Asia Pacific And A First Entry Into Europe — Three Moves Beyond The Headline",
@@ -132,8 +237,8 @@ var NEWS_LISTING = [
     "tag": "Earnings · REIT Update · Annual + Quarterly · Industrial / Data Centre · Capital Recycling",
     "sourceLabel": "PropertyAtlas.sg Analysis · Mapletree Industrial Trust 4Q and FY25/26 Financial Results dated 28 April 2026",
     "sentiment": "neutral"
-  },
-  {
+},
+{
     "id": 77,
     "date": "2026-04-28",
     "title": "Mapletree Pan Asia Commercial Trust 4Q And FY25/26: Reported DPU 7.97¢ (-0.6%) On An S$8.3M Festival Walk Tower Divestment Tax Charge — But The Structural Read Is Bifurcation: Singapore NPI +4.1% Driving +S$278M Valuation Uplift, Overseas Reversions At -10.8% (Festival Walk) And -21.3% (China), Moody's One-Notch Downgrade To Baa2, And VivoCity Quietly Compounding At +7.6% NPI — Three Moves Beyond The Headline",
@@ -147,8 +252,8 @@ var NEWS_LISTING = [
     "tag": "Earnings · REIT Update · Annual + Quarterly · Pan-Asia · Reshaping",
     "sourceLabel": "PropertyAtlas.sg Analysis · MPACT 4Q and FY25/26 Financial Results dated 28 April 2026",
     "sentiment": "neutral"
-  },
-  {
+},
+{
     "id": 76,
     "date": "2026-04-27",
     "title": "CapitaLand Ascendas REIT 1Q 2026: S$1.6B Acquisition Wave + S$903.5M Equity Fund Raise In One Quarter, Aggregate Leverage 38.9% → 42.0% Pre-EFR (37.3% Pro Forma Post), Japan Debut At S$1.3B Tier III Hyperscale Data Centre (49% Stake) — But Same-Store Occupancy Quietly Softening Across All Four Markets, Singapore 91.7% → 90.4%, US 89.3% → 84.4%, Reversion Guidance Held At Mid-Single Digit Vs +10.6% 1Q Print — Three Moves Beyond The Headline",
@@ -158,8 +263,8 @@ var NEWS_LISTING = [
     "tag": "Earnings · REIT Update · M&A · Equity Fund Raise · Japan Debut · Quarterly",
     "sourceLabel": "PropertyAtlas.sg Analysis · CapitaLand Ascendas REIT 1Q 2026 Business Updates dated 27 April 2026",
     "sentiment": "neutral"
-  },
-  {
+},
+{
     "id": 75,
     "date": "2026-04-27",
     "title": "CapitaLand Ascott Trust 1Q 2026: 1Q Gross Profit Down YoY On TCL Closure + Madison Hamburg Works + AEI Cycle, Distribution Income Held Stable Only Via Past Divestment-Gain Top-Up — But Same-Store Operating Performance Is +3% Japan / +1% UK / +7% US Ex-Renovation, Living Sector 17% → 18% Of Portfolio Value, Gearing 39.9% → 38.9% In 12 Months — Three Moves Beyond The Headline",
@@ -169,8 +274,8 @@ var NEWS_LISTING = [
     "tag": "Earnings · REIT Update · AEI Cycle · Living Sector Pivot · Quarterly",
     "sourceLabel": "PropertyAtlas.sg Analysis · CapitaLand Ascott Trust 1Q 2026 Business Updates dated 27 April 2026",
     "sentiment": "neutral"
-  },
-  {
+},
+{
     "id": 74,
     "date": "2026-04-27",
     "title": "Suntec REIT 1Q 2026: DPU +23.9% YoY To 1.936 Cents, Distributable Income +24.8% To $57.3M, All-In Financing Cost Down To 3.56% From 3.96% A Year Ago — But The Story Is The Deleveraging Recovery Underneath The Optics: AUS Tax Overhang Resolved, Singapore Retail Compounding, Debt Clock Pushed Out To FY27-28 — Three Moves Beyond The Headline",
@@ -180,8 +285,8 @@ var NEWS_LISTING = [
     "tag": "Earnings · REIT Update · Deleveraging · Singapore Retail · Quarterly",
     "sourceLabel": "PropertyAtlas.sg Analysis · Suntec REIT 1Q 2026 Business Update dated 23 April 2026",
     "sentiment": "positive"
-  },
-  {
+},
+{
     "id": 73,
     "date": "2026-04-24",
     "title": "Frasers Centrepoint Trust 1HFY26: Revenue +20.3% YoY To $221.9M, NPI +20.2% To $160.8M, DPU +1.4% To 6.136 Cents — But The Story Is The Northpoint Absorption Working Through Cleanly, A 70-BPS Cost-Of-Borrowing Compression, And Two AEI Tracks Now Running In Parallel — Six Insights Beyond The Headline",
@@ -191,8 +296,8 @@ var NEWS_LISTING = [
     "tag": "Earnings · REIT Update · Acquisition Integration · AEI Pipeline · Quarterly",
     "sourceLabel": "PropertyAtlas.sg Analysis · Frasers Centrepoint Trust 1HFY26 Press Release dated 24 April 2026",
     "sentiment": "positive"
-  },
-  {
+},
+{
     "id": 72,
     "date": "2026-04-24",
     "title": "Elite UK REIT 1Q 2026: Distributable Income +9.8% YoY To £5.3M, NAV/Unit +12.5% To £0.45, Net Gearing 37.4% — But The Story Is The DWP Regear Landing, Peel Park Repricing To +82% Since 2023, And Sub-40% Gearing For The First Time Since The Cycle Peak — Six Insights Beyond The Headline",
@@ -202,8 +307,8 @@ var NEWS_LISTING = [
     "tag": "Earnings · REIT Update · Lease Regear · Repositioning · Quarterly",
     "sourceLabel": "PropertyAtlas.sg Analysis · Elite UK REIT 1Q 2026 Business Updates dated 24 April 2026",
     "sentiment": "positive"
-  },
-  {
+},
+{
     "id": 71,
     "date": "2026-04-24",
     "title": "CICT 1Q 2026: Operating NPI +7.9% YoY Is The Backdrop; The Story Is The S$6.4B Portfolio Swap — Paragon Acquired Freehold At S$3.9B, AST2 Divested At 9.9% Premium, S$750M Placement Closed, S$160M Plaza Singapura AEI Disclosed — Six Insights Beyond The Headline",
@@ -212,8 +317,8 @@ var NEWS_LISTING = [
     "tag": "Earnings · REIT Update · Acquisition · Divestment · IPT",
     "sourceLabel": "PropertyAtlas.sg Analysis · CICT 1Q 2026 Business Updates dated 24 April 2026, plus 20 April 2026 Paragon Acquisition and AST2 Divestment announcements",
     "sentiment": "neutral"
-  },
-  {
+},
+{
     "id": 70,
     "date": "2026-04-24",
     "title": "ESR-REIT 1Q 2026: Headline Revenue -0.4% YoY But Beneath The Flat Print, A Balance Sheet Reset — S$439.1M Divestments, Fitch BBB Stable, Pro-Forma Gearing 39.5% — Six Insights Beyond The Headline",
@@ -222,8 +327,8 @@ var NEWS_LISTING = [
     "tag": "Earnings · REIT Update · Balance Sheet · Divestment Programme",
     "sourceLabel": "PropertyAtlas.sg Analysis · ESR-REIT 1Q 2026 Interim Business Update dated 24 April 2026",
     "sentiment": "neutral"
-  },
-  {
+},
+{
     "id": 69,
     "date": "2026-04-23",
     "title": "First REIT 1Q 2026: DPU 0.50¢ -13.8% YoY, But The Story Is The Indonesia Exit — Eight Hospitals Sold To Siloam, Three Non-Core Divested, Put Option On The Remaining Six — Six Insights Beyond The Headline",
@@ -232,8 +337,8 @@ var NEWS_LISTING = [
     "tag": "Earnings · REIT Update · Strategic Review",
     "sourceLabel": "PropertyAtlas.sg Analysis · First REIT 1Q 2026 Business Update dated 23 April 2026",
     "sentiment": "neutral"
-  },
-  {
+},
+{
     "id": 68,
     "date": "2026-04-23",
     "title": "CapitaLand China Trust 1Q 2026: Same-Store NPI +1.3% YoY Despite -3.5% Headline; Logistics Reversion Swings -24.5% to -1.4%; Cost of Debt at 3.10% Cycle Low; Retail Traffic, Sales, Occupancy Cost All Improving",
@@ -242,8 +347,8 @@ var NEWS_LISTING = [
     "tag": "Earnings · REIT Update · Quarterly",
     "sourceLabel": "PropertyAtlas.sg Analysis · CapitaLand China Trust 1Q 2026 Business Updates dated 23 April 2026",
     "sentiment": "positive"
-  },
-  {
+},
+{
     "id": 67,
     "date": "2026-04-22",
     "title": "Digital Core REIT 1Q 2026: Flat DPI of US$11.7M Masks Compositional Shift; Linton Hall Now Redevelopment (+35% Rent Uplift Dec 2026); Osaka Minority Stakes +95% YoY; Peer Set Adds NTT DC REIT",
@@ -252,8 +357,8 @@ var NEWS_LISTING = [
     "tag": "Earnings · REIT Update · Quarterly",
     "sourceLabel": "PropertyAtlas.sg Analysis · Digital Core REIT 1Q 2026 Business & Operational Update dated 22 April 2026",
     "sentiment": "neutral"
-  },
-  {
+},
+{
     "id": 66,
     "date": "2026-04-22",
     "title": "OUE REIT 1Q 2026: Phase 3 In Execution — Sydney Acquisition Done, One Raffles Place Market-Sounding Live, Bayfront Level 17 Approved — Six Insights Beyond The Headline",
@@ -262,8 +367,8 @@ var NEWS_LISTING = [
     "tag": "Earnings · REIT Update · Quarterly",
     "sourceLabel": "PropertyAtlas.sg Analysis · OUE REIT 1Q 2026 Business Updates dated 21 April 2026",
     "sentiment": "positive"
-  },
-  {
+},
+{
     "id": 65,
     "date": "2026-04-22",
     "title": "Keppel REIT 1Q 2026: Distributable Income +19.7% to S$57.9M as Cost of Debt Drops to 3.16%, Rental Reversion Accelerates to +17.2% — Six Insights Beyond The Headline",
@@ -272,8 +377,8 @@ var NEWS_LISTING = [
     "tag": "REIT Update",
     "sourceLabel": "PropertyAtlas.sg Analysis · Keppel REIT 1Q 2026 Business Updates dated 21 April 2026",
     "sentiment": "positive"
-  },
-  {
+},
+{
     "id": 64,
     "date": "2026-04-21",
     "title": "CICT's S$3.9b Paragon Acquisition & S$2.5b Asia Square Tower 2 Divestment: A Tactical Portfolio Swap From Leasehold Office To Freehold Orchard Retail-Medical",
@@ -282,8 +387,8 @@ var NEWS_LISTING = [
     "tag": "Acquisition · Divestment · REIT Update",
     "sourceLabel": "PropertyAtlas.sg Analysis · CICT Media Release dated 20 April 2026",
     "sentiment": "positive"
-  },
-  {
+},
+{
     "id": 63,
     "date": "2026-04-20",
     "title": "Alpha Integrated REIT 1Q 2026: Internalisation Dividend — Occupancy to 91.4%, ICR to 4.0x, Financing Cost to 3.85% as NTP Phase 3 Returns to the Pipeline",
@@ -292,8 +397,8 @@ var NEWS_LISTING = [
     "tag": "Earnings · REIT Update · Quarterly",
     "sourceLabel": "PropertyAtlas.sg Analysis · AI-REIT 1Q 2026 Business Update",
     "sentiment": "positive"
-  },
-  {
+},
+{
     "id": 62,
     "date": "2026-04-17",
     "title": "Keppel DC REIT 1Q 2026: Record DPU 2.833¢ +13.2% on Tokyo DC 3 Contribution — Six Insights Beyond The Headline",
@@ -302,8 +407,8 @@ var NEWS_LISTING = [
     "tag": "Earnings · REIT Update · Quarterly",
     "sourceLabel": "PropertyAtlas.sg Analysis · KDC REIT 1Q 2026 Operational Update",
     "sentiment": "positive"
-  },
-  {
+},
+{
     "id": 61,
     "date": "2026-04-16",
     "title": "Suntec REIT Eyes Injection of 9 Penang Road from Sponsor Tang Organization — Eight-Storey Orchard/Dhoby Ghaut Commercial Asset a Potential Pipeline",
@@ -312,8 +417,8 @@ var NEWS_LISTING = [
     "tag": "REIT Update · Acquisition Pipeline",
     "sourceLabel": "The Business Times · 16 Apr 2026",
     "sentiment": "neutral"
-  },
-  {
+},
+{
     "id": 60,
     "date": "2026-04-14",
     "title": "Far East Organization Sells Four Tuas Warehouse Buildings for S$322M — S$110 psf ppr, Buyer JV Led by HPC Realty Plans Green Logistics Hub",
@@ -322,8 +427,8 @@ var NEWS_LISTING = [
     "tag": "Transaction · Asset Sale",
     "sourceLabel": "The Business Times · 14 Apr 2026",
     "sentiment": "positive"
-  },
-  {
+},
+{
     "id": 59,
     "date": "2026-04-14",
     "title": "Manulife US REIT FY2025: Revenue -32% to US$113.9M on Disposals, Same-Store Val Stabilises at US$913.8M, Growth & Value Up Plan Approved, 9 New Human Capital Profiles",
@@ -332,8 +437,8 @@ var NEWS_LISTING = [
     "tag": "Earnings · REIT Update",
     "sourceLabel": "PropertyAtlas.sg Analysis · Manulife US REIT AR 2025",
     "sentiment": "neutral"
-  },
-  {
+},
+{
     "id": 58,
     "date": "2026-04-14",
     "title": "Hiap Hoe Limited FY2025: Revenue +7.7% to S$135.0M, Net Profit 4.6x to S$30.4M, Orchard Towers Occ 53%→84%, 10 New Human Capital Profiles",
@@ -342,8 +447,8 @@ var NEWS_LISTING = [
     "tag": "Earnings · Developer Update",
     "sourceLabel": "PropertyAtlas.sg Analysis · Hiap Hoe Limited AR 2025",
     "sentiment": "positive"
-  },
-  {
+},
+{
     "id": 57,
     "date": "2026-04-14",
     "title": "Hong Fok Corporation FY2025: Revenue S$98.3M, Total Investment Properties S$3.52B, International Building Units Acquired, 14 New Human Capital Profiles",
@@ -352,8 +457,8 @@ var NEWS_LISTING = [
     "tag": "Earnings · Developer Update",
     "sourceLabel": "PropertyAtlas.sg Analysis · Hong Fok Corporation AR 2025",
     "sentiment": "neutral"
-  },
-  {
+},
+{
     "id": 56,
     "date": "2026-04-14",
     "title": "Wee Hur Holdings FY2025: Revenue +47% to S$295.4M, Pioneer Lodge Opens, Upper Thomson GLS Won, Maiden Hotel & School Investments",
@@ -362,8 +467,8 @@ var NEWS_LISTING = [
     "tag": "Earnings · Developer Update",
     "sourceLabel": "PropertyAtlas.sg Analysis · Wee Hur Holdings AR 2025",
     "sentiment": "positive"
-  },
-  {
+},
+{
     "id": 55,
     "date": "2026-04-10",
     "title": "Heeton Holdings FY2025: Revenue +3.9% to S$81.2M, Net Loss S$10.1M on Non-Cash Charges, Dawa Bhutan Opens, Two SG Hotel Stakes Acquired",
@@ -372,8 +477,8 @@ var NEWS_LISTING = [
     "tag": "Earnings · Developer Update",
     "sourceLabel": "PropertyAtlas.sg Analysis · Heeton Holdings AR 2025",
     "sentiment": "neutral"
-  },
-  {
+},
+{
     "id": 54,
     "date": "2026-04-10",
     "title": "Link REIT Divests Thomson Plaza Retail Space for S$250M — 23% Premium to Book, Singapore Portfolio Narrows to AMK Hub & Jurong Point",
@@ -382,8 +487,8 @@ var NEWS_LISTING = [
     "tag": "Divestment · REIT Update",
     "sourceLabel": "Business Times · 10 Apr 2026",
     "sentiment": "positive"
-  },
-  {
+},
+{
     "id": 53,
     "date": "2026-04-09",
     "title": "Ho Bee Land FY2025: Underlying Profit +37% to S$102M, Apollo & Lunar Divested, London FV Recovery, DPS Lifted to 5¢",
@@ -392,8 +497,8 @@ var NEWS_LISTING = [
     "tag": "Earnings · Developer Update",
     "sourceLabel": "PropertyAtlas.sg Analysis · Ho Bee Land AR 2025",
     "sentiment": "positive"
-  },
-  {
+},
+{
     "id": 51,
     "date": "2026-04-08",
     "title": "Singapore Land Group FY2025: Revenue +7% to S$783M, SingLand Tower AEI Complete, 388 George Street Sydney Acquired, DPS Maintained at 4.5¢",
@@ -402,8 +507,8 @@ var NEWS_LISTING = [
     "tag": "Earnings · Developer Update",
     "sourceLabel": "PropertyAtlas.sg Analysis · SingLand AR 2025",
     "sentiment": "positive"
-  },
-  {
+},
+{
     "id": 50,
     "date": "2026-04-07",
     "title": "Tuan Sing Holdings FY2025: PAT 13x to S$32.1M on S$70M Fair Value Gains; Dunearn Village AEI Complete, Melbourne Planning Permit Secured",
@@ -412,8 +517,8 @@ var NEWS_LISTING = [
     "tag": "Earnings · Developer Update",
     "sourceLabel": "PropertyAtlas.sg Analysis · Tuan Sing Holdings AR 2025",
     "sentiment": "positive"
-  },
-  {
+},
+{
     "id": 49,
     "date": "2026-04-07",
     "title": "Keppel DC REIT FY2025: Record DPU 10.381¢ +9.8%, AUM +26% to S$6.3B, Tokyo DC 3 Hyperscale Acquired, Joins Straits Times Index",
@@ -422,8 +527,8 @@ var NEWS_LISTING = [
     "tag": "Earnings · REIT Update",
     "sourceLabel": "PropertyAtlas.sg Analysis · Keppel DC REIT AR 2025",
     "sentiment": "positive"
-  },
-  {
+},
+{
     "id": 48,
     "date": "2026-04-07",
     "title": "IREIT Global FY2025: DPU -42.6% to €1.09¢ as Berlin Campus Goes Dark; Repositioning and Green Notes Mark New Chapter",
@@ -432,8 +537,8 @@ var NEWS_LISTING = [
     "tag": "Earnings · REIT Update",
     "sourceLabel": "PropertyAtlas.sg Analysis · IREIT Global AR 2025",
     "sentiment": "neutral"
-  },
-  {
+},
+{
     "id": 47,
     "date": "2026-04-07",
     "title": "ESR-REIT FY2025: DPU +3.4% to 21.914¢, Fitch BBB Rating Secured, S$456M in Divestments",
@@ -442,8 +547,8 @@ var NEWS_LISTING = [
     "tag": "Earnings · REIT Update",
     "sourceLabel": "PropertyAtlas.sg Analysis · ESR-REIT AR 2025",
     "sentiment": "positive"
-  },
-  {
+},
+{
     "id": 46,
     "date": "2026-04-06",
     "title": "Wing Tai Holdings FY2025: Revenue +36% to S$230M, River Green 88% Sold on Launch Day, Amara Holdings Acquired",
@@ -452,8 +557,8 @@ var NEWS_LISTING = [
     "tag": "Earnings · Developer Update",
     "sourceLabel": "PropertyAtlas.sg Analysis · Wing Tai Holdings AR 2025",
     "sentiment": "neutral"
-  },
-  {
+},
+{
     "id": 45,
     "date": "2026-04-06",
     "title": "CICT FY2025: Portfolio S$27.4B (+5.2%), CapitaSpring 100% Owned, DPU 11.58¢ +6.4%, CEO Transition",
@@ -462,8 +567,8 @@ var NEWS_LISTING = [
     "tag": "Earnings · REIT Update",
     "sourceLabel": "PropertyAtlas.sg Analysis · CICT AR 2025",
     "sentiment": "positive"
-  },
-  {
+},
+{
     "id": 44,
     "date": "2026-04-05",
     "title": "Sing Holdings FY2025: North Gaia TOP Jul 2025 Delivers S$878M Revenue, PAT +14x to S$142M, Chuan Grove Next",
@@ -472,8 +577,8 @@ var NEWS_LISTING = [
     "tag": "Earnings · Developer Update",
     "sourceLabel": "PropertyAtlas.sg Analysis · Sing Holdings AR 2025",
     "sentiment": "positive"
-  },
-  {
+},
+{
     "id": 43,
     "date": "2026-04-05",
     "title": "Far East Orchard FY2025: Revenue +29% to S$247.6M on HFS Consolidation, FEOR25 Concludes, FEOR30 Launched",
@@ -482,8 +587,8 @@ var NEWS_LISTING = [
     "tag": "Earnings · Developer Update",
     "sourceLabel": "PropertyAtlas.sg Analysis · Far East Orchard AR 2025",
     "sentiment": "neutral"
-  },
-  {
+},
+{
     "id": 42,
     "date": "2026-04-05",
     "title": "Far East H-Trust FY2025: First Japan Acquisition (FPN Nagoya), RevPAR -3.8%, Core DPS +2.2%, WACD -100bps to 3.1%",
@@ -492,8 +597,8 @@ var NEWS_LISTING = [
     "tag": "Earnings · REIT Update",
     "sourceLabel": "PropertyAtlas.sg Analysis · Far East H-Trust AR 2025",
     "sentiment": "neutral"
-  },
-  {
+},
+{
     "id": 41,
     "date": "2026-04-05",
     "title": "First REIT FY2025: Strategic Review Ongoing (Siloam LOI for Indonesia Portfolio), DPU 2.17¢ -8.1%, IAHCC Divested",
@@ -502,8 +607,8 @@ var NEWS_LISTING = [
     "tag": "Earnings · REIT Update",
     "sourceLabel": "PropertyAtlas.sg Analysis · First REIT AR 2025",
     "sentiment": "neutral"
-  },
-  {
+},
+{
     "id": 40,
     "date": "2026-04-05",
     "title": "Digital Core REIT FY2025: DPU Held at 3.60¢ Despite Linton Hall Downtime; Osaka 3 Acquired; 10-Year Lease-Up Secured Jan 2026",
@@ -512,8 +617,8 @@ var NEWS_LISTING = [
     "tag": "Earnings · REIT Update",
     "sourceLabel": "PropertyAtlas.sg Analysis · Digital Core REIT AR 2025",
     "sentiment": "positive"
-  },
-  {
+},
+{
     "id": 39,
     "date": "2026-04-05",
     "title": "GuocoLand FY2025: Investment Portfolio S$6.97B, Singapore Flagships at 100%, DPS Raised to 7 Cents",
@@ -522,8 +627,8 @@ var NEWS_LISTING = [
     "tag": "Earnings · Developer Update",
     "sourceLabel": "PropertyAtlas.sg Analysis · GuocoLand AR 2025",
     "sentiment": "positive"
-  },
-  {
+},
+{
     "id": 38,
     "date": "2026-04-05",
     "title": "United Hampshire US REIT FY2025: DPU 4.39¢ +8.1%, Portfolio US$774M +3.8%, Third Consecutive DPU Growth",
@@ -532,8 +637,8 @@ var NEWS_LISTING = [
     "tag": "AR Update",
     "sourceLabel": "PropertyAtlas.sg Analysis · UHREIT AR 2025",
     "sentiment": "positive"
-  },
-  {
+},
+{
     "id": 37,
     "date": "2026-04-05",
     "title": "Sasseur REIT FY2025: DPU 6.138¢ (+0.9%), EMA Income RMB682M +2.7%, Outlet Sales RMB4,599M, Leverage 25.1%",
@@ -542,8 +647,8 @@ var NEWS_LISTING = [
     "tag": "AR Update",
     "sourceLabel": "PropertyAtlas.sg Analysis · Sasseur REIT AR 2025",
     "sentiment": "positive"
-  },
-  {
+},
+{
     "id": 36,
     "date": "2026-04-05",
     "title": "Daiwa House Logistics Trust FY2025: DPU 4.33¢ (-9.6%), Portfolio S$835M, Occupancy Eases to 87.8%",
@@ -552,8 +657,8 @@ var NEWS_LISTING = [
     "tag": "AR Update",
     "sourceLabel": "PropertyAtlas.sg Analysis · DHLT AR FY2025",
     "sentiment": "neutral"
-  },
-  {
+},
+{
     "id": 35,
     "date": "2026-04-05",
     "title": "Elite UK REIT FY2025: Portfolio £424.7M, DPU 3.03p +5.6%, WALE 7.2yrs Post DWP Lease Regear",
@@ -562,8 +667,8 @@ var NEWS_LISTING = [
     "tag": "AR Update",
     "sourceLabel": "PropertyAtlas.sg Analysis · Elite UK REIT AR 2025",
     "sentiment": "positive"
-  },
-  {
+},
+{
     "id": 34,
     "date": "2026-04-05",
     "title": "CapitaLand Ascott Trust FY2025: Portfolio S$7.9B, DPS 6.10¢ Stable, Japan +20% Revaluation",
@@ -572,8 +677,8 @@ var NEWS_LISTING = [
     "tag": "AR Update",
     "sourceLabel": "PropertyAtlas.sg Analysis · CLAS AR 2025",
     "sentiment": "positive"
-  },
-  {
+},
+{
     "id": 33,
     "date": "2026-04-05",
     "title": "CapitaLand China Trust FY2025: Portfolio S$4.20B, Retail Occ 97.2%, Yuhuating Divested to C-REIT",
@@ -582,8 +687,8 @@ var NEWS_LISTING = [
     "tag": "AR Update",
     "sourceLabel": "PropertyAtlas.sg Analysis · CLCT AR 2025",
     "sentiment": "neutral"
-  },
-  {
+},
+{
     "id": 32,
     "date": "2026-04-05",
     "title": "CapitaLand Investment FY2025: FUM S$125B, Operating PATMI +6%, DPS 12¢",
@@ -592,8 +697,8 @@ var NEWS_LISTING = [
     "tag": "Earnings · Developer Update",
     "sourceLabel": "PropertyAtlas.sg Analysis · CapitaLand Investment AR 2025",
     "sentiment": "neutral"
-  },
-  {
+},
+{
     "id": 31,
     "date": "2026-04-05",
     "title": "ParkwayLife REIT FY2025: Portfolio S$2.57B, DPU +2.5% to 15.29c — 18th Year of Uninterrupted Growth",
@@ -602,8 +707,8 @@ var NEWS_LISTING = [
     "tag": "Earnings · REIT Update",
     "sourceLabel": "PropertyAtlas.sg Analysis · ParkwayLife REIT AR 2025",
     "sentiment": "positive"
-  },
-  {
+},
+{
     "id": 30,
     "date": "2026-04-05",
     "title": "CDLHT FY2025: Portfolio Value S$3.4B, DPS -9.8% on W Hotel Refurb Drag, Perth Hotels Surge +24.9%",
@@ -612,8 +717,8 @@ var NEWS_LISTING = [
     "tag": "Earnings · REIT Update",
     "sourceLabel": "PropertyAtlas.sg Analysis · CDL Hospitality Trusts AR 2025",
     "sentiment": "neutral"
-  },
-  {
+},
+{
     "id": 29,
     "date": "2026-04-05",
     "title": "CapitaLand Ascendas REIT FY2025: S$18.2B Portfolio, S$1.5B Acquisitions, DPU 15.005c",
@@ -622,8 +727,8 @@ var NEWS_LISTING = [
     "tag": "Earnings · REIT Update",
     "sourceLabel": "PropertyAtlas.sg Analysis · CapitaLand Ascendas REIT AR 2025",
     "sentiment": "positive"
-  },
-  {
+},
+{
     "id": 28,
     "date": "2026-04-04",
     "title": "Alpha Integrated REIT FY2025: 30/32 Tuas Avenue 8 Full Turnaround, Portfolio Occ +5.3pp, DPU +23.4%",
@@ -632,8 +737,8 @@ var NEWS_LISTING = [
     "tag": "Earnings · REIT Update",
     "sourceLabel": "PropertyAtlas.sg Analysis · Alpha Integrated REIT AR 2025",
     "sentiment": "positive"
-  },
-  {
+},
+{
     "id": 27,
     "date": "2026-04-04",
     "title": "Keppel REIT FY2025: MBFC Tower 3 Acquired, Top Ryde City Entry, Singapore Portfolio Resilient",
@@ -642,8 +747,8 @@ var NEWS_LISTING = [
     "tag": "Earnings · REIT Update",
     "sourceLabel": "PropertyAtlas.sg Analysis · Keppel REIT AR 2025",
     "sentiment": "positive"
-  },
-  {
+},
+{
     "id": 26,
     "date": "2026-04-04",
     "title": "OUE REIT FY2025: Lippo Plaza Divested, Singapore Office Near Full, Hotels Soften",
@@ -652,8 +757,8 @@ var NEWS_LISTING = [
     "tag": "Earnings · REIT Update",
     "sourceLabel": "PropertyAtlas.sg Analysis · OUE REIT AR 2025",
     "sentiment": "positive"
-  },
-  {
+},
+{
     "id": 25,
     "date": "2026-04-04",
     "title": "Suntec REIT FY2025: Singapore Portfolio Near Full, UK Minster Slips, Australia Mixed",
@@ -662,8 +767,8 @@ var NEWS_LISTING = [
     "tag": "Earnings · REIT Update",
     "sourceLabel": "PropertyAtlas.sg Analysis · Suntec REIT AR 2025",
     "sentiment": "positive"
-  },
-  {
+},
+{
     "id": 24,
     "date": "2026-04-03",
     "title": "CDL FY2025: Holiday Inn Kensington Acquired, South Beach Reclassified, Tech Park Shenzhen Expanded",
@@ -672,8 +777,8 @@ var NEWS_LISTING = [
     "tag": "Earnings · Developer Update",
     "sourceLabel": "PropertyAtlas.sg Analysis · CDL AR 2025",
     "sentiment": "positive"
-  },
-  {
+},
+{
     "id": 23,
     "date": "2026-04-03",
     "title": "UOL Group FY2025: KINEX Sold, Two New Acquisitions, Portfolio Refreshed Across 8 Markets",
@@ -682,194 +787,5 @@ var NEWS_LISTING = [
     "tag": "Earnings · Developer Update",
     "sourceLabel": "PropertyAtlas.sg Analysis · UOL AR 2025",
     "sentiment": "positive"
-  },
-  {
-    "id": 18,
-    "date": "2026-02-28",
-    "title": "450 HNW Investors Granted Singapore PR Under Global Investor Programme",
-    "source": "Business Times",
-    "category": "Policy",
-    "tag": "Capital Flows",
-    "sentiment": "positive"
-  },
-  {
-    "id": 17,
-    "date": "2026-02-28",
-    "title": "Online LBC Estimator Launched; Longer State Property Tenures Explored",
-    "source": "Business Times",
-    "category": "Policy",
-    "tag": "LBC",
-    "sentiment": "positive"
-  },
-  {
-    "id": 16,
-    "date": "2026-02-28",
-    "title": "OUE Reit Gauging Interest for One Raffles Place at S$2.3-2.4B",
-    "source": "Business Times",
-    "category": "Commercial",
-    "tag": "Investment Sale",
-    "sentiment": "positive"
-  },
-  {
-    "id": 15,
-    "date": "2026-02-28",
-    "title": "City Plaza Secures Mandate for S$970M En Bloc After 2 Failed Attempts",
-    "source": "Straits Times",
-    "category": "Commercial",
-    "tag": "En Bloc",
-    "sentiment": "positive"
-  },
-  {
-    "id": 14,
-    "date": "2026-02-28",
-    "title": "PropNex FY2025 Earnings Up 72% to S$70.4M on Record S$1.1B Revenue",
-    "source": "Business Times",
-    "category": "Market Insight",
-    "tag": "Earnings",
-    "sentiment": "positive"
-  },
-  {
-    "id": 13,
-    "date": "2026-02-28",
-    "title": "LBC Raised: Non-Landed Residential +4.1%, Industrial +3.2%",
-    "source": "Business Times",
-    "category": "Policy",
-    "tag": "LBC",
-    "sentiment": "neutral"
-  },
-  {
-    "id": 12,
-    "date": "2026-02-28",
-    "title": "Frasers Property Acquires Centrepoint Rear Block for S$391.9M",
-    "source": "Business Times",
-    "category": "Commercial",
-    "tag": "Investment Sale",
-    "sentiment": "positive"
-  },
-  {
-    "id": 11,
-    "date": "2026-02-28",
-    "title": "CDL H2 Net Profit +374% to S$538.5M; Strategic Review Underway",
-    "source": "Business Times",
-    "category": "Commercial",
-    "tag": "Earnings",
-    "sentiment": "positive"
-  },
-  {
-    "id": 10,
-    "date": "2026-02-27",
-    "title": "Retail and F&B Rents Make Up Lower Share of Business Costs",
-    "source": "Business Times",
-    "category": "Policy",
-    "tag": "Retail",
-    "sentiment": "positive"
-  },
-  {
-    "id": 9,
-    "date": "2026-02-27",
-    "title": "GDP Forecast Raised to 3.6%; Manufacturing Output +16.6% in Jan",
-    "source": "Business Times",
-    "category": "Market Insight",
-    "tag": "Macro",
-    "sentiment": "positive"
-  },
-  {
-    "id": 8,
-    "date": "2026-02-27",
-    "title": "Soilbuild Construction H2 Profit +84% on Industrial Surge",
-    "source": "Business Times",
-    "category": "Industrial",
-    "tag": "Construction",
-    "sentiment": "positive"
-  },
-  {
-    "id": 7,
-    "date": "2026-02-27",
-    "title": "UOL H2 Net Profit +21% to S$276.2M; Office Described as Attractive",
-    "source": "Business Times",
-    "category": "Commercial",
-    "tag": "Earnings",
-    "sentiment": "positive"
-  },
-  {
-    "id": 6,
-    "date": "2026-02-27",
-    "title": "UI Boustead Reit Files IPO Prospectus to Raise S$1.2B",
-    "source": "Business Times",
-    "category": "Industrial",
-    "tag": "REIT IPO",
-    "sentiment": "positive"
-  },
-  {
-    "id": 20,
-    "date": "2026-02-26",
-    "title": "Singapore Land H2 Profit Down 11% at S$160.9M",
-    "source": "Business Times",
-    "category": "Commercial",
-    "tag": "Earnings",
-    "sentiment": "negative"
-  },
-  {
-    "id": 19,
-    "date": "2026-02-26",
-    "title": "MPs Call for 15% Stamp Duty Tier on Properties Above S$5M",
-    "source": "Straits Times",
-    "category": "Policy",
-    "tag": "Property Tax",
-    "sentiment": "neutral"
-  },
-  {
-    "id": 3,
-    "date": "2026-02-26",
-    "title": "Tan Boon Liat Building Up for Sale at Reduced S$1B Reserve Price",
-    "source": "Business Times",
-    "category": "Commercial",
-    "tag": "En Bloc",
-    "sentiment": "neutral"
-  },
-  {
-    "id": 2,
-    "date": "2026-02-26",
-    "title": "URA Releases 2 Prime GLS Sites at Holland Plain and River Valley",
-    "source": "Business Times",
-    "category": "Commercial",
-    "tag": "GLS",
-    "sentiment": "positive"
-  },
-  {
-    "id": 1,
-    "date": "2026-02-26",
-    "title": "Lendlease REIT Takes Full Control of PLQ Mall in S$116.4M Deal",
-    "source": "Business Times",
-    "category": "Commercial",
-    "tag": "REIT",
-    "sentiment": "positive"
-  },
-  {
-    "id": 5,
-    "date": "2026-02-25",
-    "title": "Singapore Remains Bedrock for Family Offices: StanChart",
-    "source": "Business Times",
-    "category": "Market Insight",
-    "tag": "Capital Flows",
-    "sentiment": "positive"
-  },
-  {
-    "id": 4,
-    "date": "2026-02-25",
-    "title": "Altallo Asset Management Buys 158 Cecil Street for S$175M",
-    "source": "Business Times",
-    "category": "Commercial",
-    "tag": "Investment Sale",
-    "sentiment": "positive"
-  },
-  {
-    "id": 21,
-    "date": "2026-02-20",
-    "title": "Serenity Park Condo in Yio Chu Kang Put on Market at S$505M",
-    "source": "Business Times",
-    "category": "Commercial",
-    "tag": "En Bloc",
-    "sentiment": "neutral"
-  }
+}
 ];
