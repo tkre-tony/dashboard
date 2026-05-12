@@ -21,6 +21,16 @@
      wraps to route ./?article=N → ./#<tab-hash> when in takeover. Result:
      one-click surface switching from any article. Also: hero CTA + Overview
      "Read full article" relabelled to "Read full story" globally. -->
+<!-- v48.45 (12 May 2026): article body defensive weight reset. v48.44's
+     typography rules looked correct in code but the lede paragraph still
+     rendered the post-<strong> content in bold-black on Frasers id=88 and
+     AIMS id=87 (Tony confirmed "different color, in black" — i.e. bold
+     weight, ink color). Some inherited or browser rule was setting the
+     whole <p class="lede"> to bold. v48.45 explicitly forces font-weight:
+     400 on .ed-art-body, on every <p>, every <li>, and the lede paragraph
+     itself. Only <strong> elements remain at 700 (with navy ink). This
+     guarantees: lede in regular serif, bold-navy opening clause, then
+     regular black continuation. -->
 <!-- v48.44 (12 May 2026): article body editorial typography — proper unification.
      v48.43 went too small (12px tidy) on the article body; the actual
      target is the Centurion id=86 reference: comfortable 17px serif at
@@ -26729,9 +26739,9 @@ html.article-takeover .ed-article-page,body.article-takeover .ed-article-page{di
 .ed-art-byline-sep{color:var(--ed-muted);opacity:.5}
 .ed-art-photo{width:100%;border-radius:6px;margin-bottom:8px;display:block}
 .ed-art-photo-credit{font-family:var(--ed-body-serif);font-size:12px;font-style:italic;color:var(--ed-muted);text-align:right;margin:0 0 28px;letter-spacing:.01em}
-.ed-art-body{font-family:var(--ed-body-serif);font-size:17px;line-height:1.7;color:var(--ed-ink)}
+.ed-art-body{font-family:var(--ed-body-serif);font-size:17px;line-height:1.7;color:var(--ed-ink);font-weight:400}
 @media(max-width:768px){.ed-art-body{font-size:16px;line-height:1.65}}
-.ed-art-body p{margin:0 0 18px}
+.ed-art-body p{margin:0 0 18px;font-weight:400}
 /* v48.44: dropcap scoped to the first body paragraph AFTER the first <h2>
    section header. NOT applied to the lede paragraph — the lede's <strong>
    opening sentence is the "this is where the article starts" signal, and a
@@ -26743,13 +26753,16 @@ html.article-takeover .ed-article-page,body.article-takeover .ed-article-page{di
    "pro" look (was 64px). */
 .ed-art-body h2:first-of-type + p::first-letter{font-family:var(--ed-body-serif);font-size:36px;line-height:.9;font-weight:700;color:var(--ed-navy-ink);float:left;padding:4px 8px 0 0;margin-top:2px}
 @media(max-width:480px){.ed-art-body h2:first-of-type + p::first-letter{font-size:1em;float:none;padding:0;margin:0;line-height:inherit;font-weight:inherit;color:inherit;font-family:inherit}}
-/* v48.44: article body editorial typography. Replaces the v48.43 12px-tidy
-   override (which was the wrong target — the Centurion id=86 reference body
-   is comfortable 17px serif at line-height 1.7). The .ed-art-body rule
-   above sets the default; the rules below shape the lede, section headers,
-   inline strong, and lists. The > child combinator scopes everything to
-   direct children of the body container so nested elements layer normally. */
-.ed-art-body p.lede{font-family:var(--ed-body-serif);font-size:17px;line-height:1.7;color:var(--ed-ink);margin:0 0 24px}
+/* v48.45: article body editorial typography — defensive weight reset.
+   v48.44 set up the rules correctly but the lede paragraph still rendered
+   the post-<strong> content in bold-black on Frasers id=88, suggesting an
+   unidentified rule was inheriting bold weight to the whole <p class="lede">.
+   v48.45 explicitly forces font-weight:400 on .ed-art-body, on every <p>,
+   on every <li>, and on the lede paragraph itself. Only <strong> elements
+   are bumped to 700 (with navy ink). This guarantees the editorial pattern:
+   lede paragraph in regular serif with a bold-navy opening clause, then
+   regular black continuation. */
+.ed-art-body p.lede{font-family:var(--ed-body-serif);font-size:17px;line-height:1.7;color:var(--ed-ink);margin:0 0 24px;font-weight:400}
 .ed-art-body p.lede strong{font-weight:700;color:var(--ed-navy-ink)}
 .ed-art-body strong{font-weight:700;color:var(--ed-navy-ink)}
 .ed-art-body h2{font-family:var(--ed-body-serif);font-size:22px;line-height:1.3;font-weight:700;color:var(--ed-navy-ink);letter-spacing:-.005em;margin:32px 0 14px}
@@ -26757,7 +26770,7 @@ html.article-takeover .ed-article-page,body.article-takeover .ed-article-page{di
 .ed-art-body h3{font-family:var(--ed-body-serif);font-size:18px;line-height:1.35;font-weight:700;color:var(--ed-navy-ink);letter-spacing:-.005em;margin:24px 0 10px}
 @media(max-width:768px){.ed-art-body h3{font-size:16px}}
 .ed-art-body ul,.ed-art-body ol{margin:0 0 18px;padding-left:22px}
-.ed-art-body ul li,.ed-art-body ol li{font-family:var(--ed-body-serif);font-size:17px;line-height:1.7;color:var(--ed-ink);margin-bottom:6px}
+.ed-art-body ul li,.ed-art-body ol li{font-family:var(--ed-body-serif);font-size:17px;line-height:1.7;color:var(--ed-ink);margin-bottom:6px;font-weight:400}
 @media(max-width:768px){.ed-art-body ul li,.ed-art-body ol li{font-size:16px;line-height:1.65}}
 .ed-art-section-eyebrow{font-family:'DM Sans',sans-serif;font-size:11.5px;font-weight:700;letter-spacing:.2em;text-transform:uppercase;color:var(--ed-bronze);margin:36px 0 14px;padding-top:18px;border-top:1px solid var(--ed-hairline)}
 .ed-art-section-eyebrow:first-of-type{margin-top:24px}
