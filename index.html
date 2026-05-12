@@ -21,6 +21,26 @@
      wraps to route ./?article=N → ./#<tab-hash> when in takeover. Result:
      one-click surface switching from any article. Also: hero CTA + Overview
      "Read full article" relabelled to "Read full story" globally. -->
+<!-- v48.48 (12 May 2026): Human Capital entity dropdown fix.
+     Tony reported Prime US REIT missing from the entity filter dropdown
+     in the Human Capital tab after v48.47 deploy. Investigation: the
+     #talent-entity-filter <select> at line ~4022 is hardcoded HTML
+     <option> list (unlike #reit-tbl-entity and #pulse-portfolio-entity
+     which are data-driven and auto-pick-up new entities from REIT_DATA).
+     This means adding a new TALENT_DATA entity requires a parallel HTML
+     option insertion. Three surgical edits in this deploy:
+       (1) Insert <option value="Prime US REIT">Prime US REIT (FY2025)
+           after Parkway Life REIT (alphabetical placement)
+       (2) Fix existing bug: value="Frasers Logistics &amp; Commercial
+           Trust" -> value="Frasers Logistics & Commercial Trust"
+           (TALENT_DATA stores the entity with literal &, so the &amp;
+           encoded value never matched -> FLCT filter silently broken)
+       (3) Fix existing bug: value="Starhilll Global REIT" (triple-l)
+           -> value="Starhill Global REIT" (Starhill filter silently broken)
+     L200 candidate: data-drive the talent-entity-filter dropdown the
+     same way Asset Directory does it, to avoid this parallel-update
+     burden on every new entity onboarding. No structural changes
+     beyond the three <option> edits. -->
 <!-- v48.47 (12 May 2026): Prime US REIT — Asset Directory + Human Capital build-out.
      New entity scaffolding: 1 ENTITY_COLORS entry (Prime US REIT → #1f3a5f navy),
      14 REIT_DATA rows (1 Portfolio Overview + 13 Class A freehold US offices, all
@@ -4039,7 +4059,7 @@ body.article-takeover .ed-foot{display:none!important}
       <option value="Far East Orchard">Far East Orchard (FY2025)</option>
       <option value="First REIT">First REIT (FY2025)</option>
       <option value="Frasers Centrepoint Trust">FCT (FY2024/25)</option>
-      <option value="Frasers Logistics &amp; Commercial Trust">FLCT (FY2025)</option>
+      <option value="Frasers Logistics & Commercial Trust">FLCT (FY2025)</option>
       <option value="Frasers Property Limited">Frasers Property (FY2025)</option>
       <option value="GuocoLand">GuocoLand (FY2025)</option>
       <option value="Heeton Holdings Limited">Heeton Holdings (FY2025)</option>
@@ -4057,6 +4077,7 @@ body.article-takeover .ed-foot{display:none!important}
       <option value="OUE REIT">OUE REIT (FY2025)</option>
       <option value="Oxley Holdings">Oxley Holdings (FY2025)</option>
       <option value="Parkway Life REIT">PLife REIT (FY2025)</option>
+      <option value="Prime US REIT">Prime US REIT (FY2025)</option>
       <option value="Sabana REIT (now AI-REIT)">Sabana / Former</option>
       <option value="Sasseur REIT">Sasseur REIT (FY2025)</option>
       <option value="Sing Holdings Limited">Sing Holdings (FY2025)</option>
@@ -4069,7 +4090,7 @@ body.article-takeover .ed-foot{display:none!important}
       <option value="Wee Hur Holdings">Wee Hur Holdings (FY2025)</option>
       <option value="Wing Tai Holdings">Wing Tai (FY2025)</option>
       <option value="Bukit Sembawang Estates">Bukit Sembawang (FY2025)</option>
-      <option value="Starhilll Global REIT">Starhill REIT (FY2024/25)</option>
+      <option value="Starhill Global REIT">Starhill REIT (FY2024/25)</option>
     </select>
     <select class="talent-sort-sel" id="talent-sort" onchange="talentRender()">
       <option value="name">Sort: Name</option>
