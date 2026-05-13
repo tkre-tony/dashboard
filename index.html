@@ -21,6 +21,20 @@
      wraps to route ./?article=N → ./#<tab-hash> when in takeover. Result:
      one-click surface switching from any article. Also: hero CTA + Overview
      "Read full article" relabelled to "Read full story" globally. -->
+<!-- v48.59 (13 May 2026): Scroll-to-top fix on article back-button for site entries.
+     Surgical patch to atlasArticleBack function. Previously when entryGroup was
+     'site' (entrySubtype landing/same-site/cold) AND hasSafeHistory was true, the
+     function called history.back() — which restores the previous scroll position
+     on the landing page. If the user had scrolled into the cards/feed before
+     clicking through to an article, they would return to that mid-page position
+     rather than to the top.
+     Fix: history.back() is now reserved for entryGroup='newsroom' (dashboard
+     newsroom or /news/ archive) where preserving scroll position in the list IS
+     desired. For entryGroup='site' (any landing-page entry), back-click now
+     ALWAYS navigates to LANDING_URL ('./') with a fresh page load — which lands
+     the user at the top of the landing showing the hero.
+     No data array changes. Just one JS function edited.
+     Tony spotted this in v48.58 smoke test on the NTT DC REIT article. -->
 <!-- v48.58 (13 May 2026): NTT DC REIT FY25/26 article (id=90) + REIT_DATA refresh.
      STAGE A: NEWS row + REIT_DATA + version stamp (completed).
      STAGE B: landing cascade rewrite (completed in same deploy).
@@ -27968,19 +27982,25 @@ html.article-takeover .ed-article-page,body.article-takeover .ed-article-page{di
   window.atlasArticleBack = function(ev){
     try {
       if(ev && ev.preventDefault) ev.preventDefault();
-      // history.back() only when referrer was same-origin - that's the
-      // only signal that the previous history entry is a same-site page.
-      // history.length alone is unreliable (Chrome incognito quirks).
-      if(hasSafeHistory){
+      // v48.59: scroll-restoration policy split by entryGroup.
+      //   'newsroom' entries (came from dashboard #newsroom or /news/) use
+      //     history.back() when safe, so the user's place in the list is
+      //     preserved. That's the right UX for "back to where I was browsing".
+      //   'site' entries (came from landing hero/card/feed, same-site referrer,
+      //     or cold paste) ALWAYS land at top of landing. The article hero is
+      //     a discovery moment; back-click should reset to the curated top of
+      //     the page, not drop the user mid-feed where they may have scrolled.
+      if(entryGroup === 'newsroom' && hasSafeHistory){
         window.history.back();
         return false;
       }
-      // No safe history - explicit deterministic destination per subtype.
+      // Explicit deterministic destinations.
       if(entrySubtype === 'dashboard'){
         window.location.href = './#newsroom';
       } else if(entrySubtype === 'news'){
         window.location.href = './news/';
       } else {
+        // landing / same-site / cold — go to top of landing.
         window.location.href = LANDING_URL;
       }
     } catch(e){
