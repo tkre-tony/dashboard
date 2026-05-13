@@ -27784,44 +27784,58 @@ html.article-takeover .ed-article-page,body.article-takeover .ed-article-page{di
 // (href="?article=N"), browser navigates, this IIFE detects the param and
 // mounts the article view. Browser back returns to the source page.
 (function atlasArticlePage(){
-  // v48.53 — Two-type back model (internal-newsroom vs everywhere-else).
+  // v48.54 - Two-type back model + safe-history gate.
   // Entry detection collapses to two label/destination groups:
-  //   'newsroom'  — came from dashboard newsroom (from=dashboard) OR
+  //   'newsroom'  - came from dashboard newsroom (from=dashboard) OR
   //                 from the /news/ archive page (from=news).
   //                 Label: '← Back to Newsroom'.
   //                 Destination fallback: ./#newsroom (dashboard) or
-  //                 ./news/ (news) when history.back() isn't available.
-  //   'site'      — everywhere else: from=landing, same-site referrer,
+  //                 ./news/ (news) when history.back() isn't safe.
+  //   'site'      - everywhere else: from=landing, same-site referrer,
   //                 cold paste, external referrer.
   //                 Label: '← Back to PropertyAtlas'.
   //                 Destination fallback: ./ (the dashboard root, which
   //                 IS the public face since v48.20s).
-  // entrySubtype is preserved for the history-empty fallback so a fresh-tab
-  // open from a dashboard card returns to ./#newsroom (the newsroom section),
-  // and a fresh-tab open from /news/ returns to ./news/ (the archive page).
+  //
+  // v48.54 fix: history.back() is only safe when there's a same-origin
+  // referrer. Cold-paste of a URL with a from= hint produces an entry
+  // group label correctly, but history.back() in that case would route
+  // to the previous page (often the blank new-tab page in Chrome incognito
+  // where history.length === 2). hasSafeHistory captures the referrer
+  // check at entry-capture time and gates the back() call.
+  //
   // captureEntryPointOnce() runs on first article mount; subsequent
   // in-page navigation (related-article clicks) does not overwrite.
   var entryGroup = null;        // 'newsroom' | 'site'
   var entrySubtype = null;      // 'dashboard' | 'news' | 'landing' | 'same-site' | 'cold'
+  var hasSafeHistory = false;   // true only if same-origin referrer exists
   var LANDING_URL = './';       // v48.20s: landing IS the dashboard root
 
   function captureEntryPointOnce(){
     if(entryGroup !== null) return;
     try {
+      // First: detect whether we have a same-origin referrer. This is the
+      // safe-history signal - if true, history.back() goes to a same-site
+      // page and preserves scroll/state. If false, history.back() either
+      // does nothing (history.length===1) or sends the user to a blank
+      // new-tab page (incognito / new-tab-then-paste, history.length===2).
+      var ref = document.referrer || '';
+      var hereOrigin = window.location.origin || '';
+      hasSafeHistory = !!(ref && hereOrigin && ref.indexOf(hereOrigin) === 0);
+
+      // Then: capture the entry group/subtype from from= or referrer.
       var params = new URLSearchParams(window.location.search || '');
       var fromParam = (params.get('from') || '').toLowerCase();
       if(fromParam === 'dashboard'){ entryGroup='newsroom'; entrySubtype='dashboard'; return; }
       if(fromParam === 'news'){ entryGroup='newsroom'; entrySubtype='news'; return; }
       if(fromParam === 'landing'){ entryGroup='site'; entrySubtype='landing'; return; }
-      // No explicit from= — fall back to referrer-based detection.
-      var ref = document.referrer || '';
-      var hereOrigin = window.location.origin || '';
-      if(ref && hereOrigin && ref.indexOf(hereOrigin) === 0){
+      // No explicit from= - classify by referrer.
+      if(hasSafeHistory){
         entryGroup='site'; entrySubtype='same-site';
       } else {
         entryGroup='site'; entrySubtype='cold';
       }
-    } catch(e){ entryGroup='site'; entrySubtype='cold'; }
+    } catch(e){ entryGroup='site'; entrySubtype='cold'; hasSafeHistory=false; }
   }
 
   function getBackLabel(){
@@ -27833,12 +27847,14 @@ html.article-takeover .ed-article-page,body.article-takeover .ed-article-page{di
   window.atlasArticleBack = function(ev){
     try {
       if(ev && ev.preventDefault) ev.preventDefault();
-      // History-back wins when available — preserves scroll + pagination.
-      if(window.history.length > 1 && entrySubtype !== 'cold'){
+      // history.back() only when referrer was same-origin - that's the
+      // only signal that the previous history entry is a same-site page.
+      // history.length alone is unreliable (Chrome incognito quirks).
+      if(hasSafeHistory){
         window.history.back();
         return false;
       }
-      // No history (or cold paste) — explicit deterministic destination.
+      // No safe history - explicit deterministic destination per subtype.
       if(entrySubtype === 'dashboard'){
         window.location.href = './#newsroom';
       } else if(entrySubtype === 'news'){
