@@ -27784,79 +27784,66 @@ html.article-takeover .ed-article-page,body.article-takeover .ed-article-page{di
 // (href="?article=N"), browser navigates, this IIFE detects the param and
 // mounts the article view. Browser back returns to the source page.
 (function atlasArticlePage(){
-  // v48.19c — Smart-back with explicit ?from= parameter support.
-  // Entry types:
-  //   'landing'   — clicked from public landing page (?from=landing)
-  //   'dashboard' — clicked from in-dashboard newsroom (?from=dashboard)
-  //   'same-site' — referrer is on our origin but no explicit from=
-  //   'cold'      — direct URL paste, external referrer, or no referrer
-  // Back action by entry:
-  //   'landing'   → navigate to ./landing_v1.html (explicit)
-  //   'dashboard' → history.back() (preserves scroll + tab state)
-  //   'same-site' → history.back() (best guess for in-app navigation)
-  //   'cold'      → navigate to ./landing_v1.html (treat as new visitor)
-  // We capture once on the very first article-page mount. In-page navigations
-  // (e.g. clicking a related article) shouldn't overwrite the original entry.
-  var entryPoint = null;
-  var LANDING_URL = './';  /* v48.20s: landing is now the dashboard root */
+  // v48.53 — Two-type back model (internal-newsroom vs everywhere-else).
+  // Entry detection collapses to two label/destination groups:
+  //   'newsroom'  — came from dashboard newsroom (from=dashboard) OR
+  //                 from the /news/ archive page (from=news).
+  //                 Label: '← Back to Newsroom'.
+  //                 Destination fallback: ./#newsroom (dashboard) or
+  //                 ./news/ (news) when history.back() isn't available.
+  //   'site'      — everywhere else: from=landing, same-site referrer,
+  //                 cold paste, external referrer.
+  //                 Label: '← Back to PropertyAtlas'.
+  //                 Destination fallback: ./ (the dashboard root, which
+  //                 IS the public face since v48.20s).
+  // entrySubtype is preserved for the history-empty fallback so a fresh-tab
+  // open from a dashboard card returns to ./#newsroom (the newsroom section),
+  // and a fresh-tab open from /news/ returns to ./news/ (the archive page).
+  // captureEntryPointOnce() runs on first article mount; subsequent
+  // in-page navigation (related-article clicks) does not overwrite.
+  var entryGroup = null;        // 'newsroom' | 'site'
+  var entrySubtype = null;      // 'dashboard' | 'news' | 'landing' | 'same-site' | 'cold'
+  var LANDING_URL = './';       // v48.20s: landing IS the dashboard root
+
   function captureEntryPointOnce(){
-    if(entryPoint !== null) return;
+    if(entryGroup !== null) return;
     try {
       var params = new URLSearchParams(window.location.search || '');
       var fromParam = (params.get('from') || '').toLowerCase();
-      if(fromParam === 'landing'){ entryPoint = 'landing'; return; }
-      if(fromParam === 'dashboard'){ entryPoint = 'dashboard'; return; }
-      if(fromParam === 'news'){ entryPoint = 'news'; return; }
+      if(fromParam === 'dashboard'){ entryGroup='newsroom'; entrySubtype='dashboard'; return; }
+      if(fromParam === 'news'){ entryGroup='newsroom'; entrySubtype='news'; return; }
+      if(fromParam === 'landing'){ entryGroup='site'; entrySubtype='landing'; return; }
       // No explicit from= — fall back to referrer-based detection.
       var ref = document.referrer || '';
       var hereOrigin = window.location.origin || '';
       if(ref && hereOrigin && ref.indexOf(hereOrigin) === 0){
-        // Same-origin referrer — try to be more specific based on path.
-        if(ref.indexOf('landing_v1.html') !== -1){ entryPoint = 'landing'; return; }
-        entryPoint = 'same-site';
-      } else if(window.history.length > 1 && ref){
-        entryPoint = 'same-site';
+        entryGroup='site'; entrySubtype='same-site';
       } else {
-        entryPoint = 'cold';
+        entryGroup='site'; entrySubtype='cold';
       }
-    } catch(e){ entryPoint = 'cold'; }
+    } catch(e){ entryGroup='site'; entrySubtype='cold'; }
   }
-  // Returns the back-link label appropriate to the entry point. Called by
-  // edRenderArticlePage at render time. captureEntryPointOnce() must have
-  // run before this is called (it does — handleArticleParam runs it first).
+
   function getBackLabel(){
-    switch(entryPoint){
-      case 'landing':   return '← Back to PropertyAtlas';
-      case 'dashboard': return '← Back to Newsroom';
-      case 'news':      return '← Newsroom';
-      case 'same-site': return '← Back';
-      default:          return '← PropertyAtlas';
-    }
+    return entryGroup === 'newsroom'
+      ? '← Back to Newsroom'
+      : '← Back to PropertyAtlas';
   }
-  // Smart-back handler exposed on window so the inlined onclick on the
-  // .ed-art-back link can call it. Returns false to prevent the href
-  // fallback when the JS path succeeds.
+
   window.atlasArticleBack = function(ev){
     try {
       if(ev && ev.preventDefault) ev.preventDefault();
-      if(entryPoint === 'dashboard' && window.history.length > 1){
+      // History-back wins when available — preserves scroll + pagination.
+      if(window.history.length > 1 && entrySubtype !== 'cold'){
         window.history.back();
-      } else if(entryPoint === 'news' && window.history.length > 1){
-        window.history.back();
-      } else if(entryPoint === 'news'){
+        return false;
+      }
+      // No history (or cold paste) — explicit deterministic destination.
+      if(entrySubtype === 'dashboard'){
+        window.location.href = './#newsroom';
+      } else if(entrySubtype === 'news'){
         window.location.href = './news/';
-      } else if(entryPoint === 'same-site' && window.history.length > 1){
-        window.history.back();
-      } else if(entryPoint === 'landing'){
-        // Explicit landing return — bypass history because cross-page
-        // history.back() may not exist (e.g. opened article in new tab
-        // from a landing card with target=_blank-equivalent behaviour).
-        // If history.length > 1, history.back() is faster (preserves scroll);
-        // otherwise navigate explicitly.
-        if(window.history.length > 1){ window.history.back(); }
-        else { window.location.href = LANDING_URL; }
       } else {
-        // Cold landing — treat as new visitor, send to public landing page.
         window.location.href = LANDING_URL;
       }
     } catch(e){
