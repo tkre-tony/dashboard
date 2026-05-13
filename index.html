@@ -21,6 +21,35 @@
      wraps to route ./?article=N → ./#<tab-hash> when in takeover. Result:
      one-click surface switching from any article. Also: hero CTA + Overview
      "Read full article" relabelled to "Read full story" globally. -->
+<!-- v48.60 (13 May 2026): NTT DC REIT TALENT_DATA full roster expansion.
+     Recovery action under L216 (auto-trigger by report type) — the NTT DC REIT
+     FY25/26 release (12 May 2026) was AR-class, which mandates a Human Capital
+     update. v48.58 article shipped without it; v48.60 closes the gap.
+     
+     TALENT_DATA: 1 entry updated + 8 new entries = 9 changes total.
+       UPDATED: nttdc-ceo-26 (Yutaka Torigoe) — placeholder bio replaced with
+         full career history from IR site Management Team page.
+       NEW:     nttdc-chair-26      (Shuichi Sasakura, Chairman / Non-Ind NED)
+                nttdc-ned-adams-26  (Douglas Stuart Adams, Non-Ind NED / NTT GDC CEO)
+                nttdc-lid-26        (Tan Ser Ping, Lead Independent NED)
+                nttdc-ind-eng-26    (Eng Chin Chin, Ind NED / ex-KPMG audit partner)
+                nttdc-ind-talukdar-26 (Sandip Talukdar, Ind NED / ex-MD Std Chartered)
+                nttdc-cfo-26        (Masayuki Ozaki, CFO / CFA / ex-Blackstone, APG)
+                nttdc-cio-26        (Bobby Little II, CIO / ex-Mapletree-MIT)
+                nttdc-hpmf-26       (Hiroo Hirose, Head of Portfolio Mgmt & Finance)
+     
+     TALENT_DATA total entries: 492 → 500 (+8 net add; Torigoe updated in place).
+     
+     All rem_* fields null — compensation disclosures pending first bound annual
+     report (~August 2026 for SG-listed REITs with 31 Mar year-end).
+     
+     Source: www.nttdcreit.com — Board of Directors + Management Team pages
+     (last accessed 13 May 2026).
+     
+     L211 check: #talent-entity-filter dropdown already contains "NTT DC REIT"
+     option (added in v48.56, alphabetised in v48.57). No dropdown changes needed.
+     L196 fingerprint: VACANCY_DATA=378/378 unchanged. NEWS array unchanged at 67.
+     REIT_DATA unchanged. No chrome / CSS / JS changes outside the TALENT_DATA region. -->
 <!-- v48.59 (13 May 2026): Scroll-to-top fix on article back-button for site entries.
      Surgical patch to atlasArticleBack function. Previously when entryGroup was
      'site' (entrySubtype landing/same-site/cold) AND hasSafeHistory was true, the
@@ -14023,23 +14052,218 @@ var TALENT_DATA = [
     linkedin_url:null, photo_url:null
   },
 
-  // ── NTT DC REIT — Placeholder entry (FY2025/26, first full AR expected mid-2026) ──
+  // ── NTT DC REIT (SGX:NTDU, listed 14 Jul 2025) — FY25/26 first full roster ──
+  // Source: https://www.nttdcreit.com — Board of Directors + Management Team pages
+  // (last accessed 13 May 2026). NTT DC REIT Manager Pte. Ltd. board comprises
+  // 2 Non-Independent NEDs (Chairman Sasakura + NED Adams = NTT Group representation)
+  // and 3 Independent NEDs (Lead Independent Tan Ser Ping + INED Eng Chin Chin
+  // + INED Sandip Talukdar). Management team: CEO Torigoe, CFO Ozaki, CIO Little II,
+  // Head of Portfolio Mgmt & Finance Hirose.
+  // Compensation disclosures (rem_*) pending first bound annual report — typically
+  // ~August 2026 for SG-listed REITs with 31 Mar year-end. All rem_* fields null.
+  // Torigoe entry id 'nttdc-ceo-26' updated from v48.56 placeholder to full bio.
+  {
+    id:'nttdc-chair-26', name:'Shuichi Sasakura', role:'Chairman, Non-Independent Non-Executive Director', role_type:'Chairman',
+    entity:'NTT DC REIT', entity_short:'NTT-DC-REIT', ar_year:'FY2025/26',
+    appointed:null, tenure_yrs:null,
+    rem_exact:null, rem_fixed:null, rem_bonus:null, rem_other:null,
+    rem_note:'Director\'s fee disclosure pending first annual report (FY2025/26 full AR expected ~August 2026). NTT DC REIT IPO\'d 14 Jul 2025; first full reporting cycle covers period from 28 Mar 2025 (Date of Constitution) to 31 Mar 2026.',
+    rem_band:null, rem_pct_fixed:null, rem_pct_bonus:null, rem_pct_other:null,
+    rem_history:[],
+    edu:'Bachelor of Laws, Waseda University',
+    bio:'Chairman and Non-Independent Non-Executive Director of NTT DC REIT Manager Pte. Ltd. NTT Group veteran since 1987 with deep data centre expertise. Currently Executive Vice President & CEO of Data Centers and Connectivity, and CEO of Digital Workplace Services, at NTT DATA, Inc. — having previously served as EVP & CEO of Global Technology Services at NTT DATA, Inc. (October 2023 to June 2024) and Senior EVP managing the global business (June 2022 to September 2023). Spent 12 years at NTT DOCOMO BUSINESS, Inc. (formerly NTT Communications Corporation) across 2007-2010 and 2013-2022 — beginning as Director of Corporate Planning and rising to Executive Vice President & Head of Data Platform Services by 2021 (overseeing data centre services). Board member of NTT DOCOMO BUSINESS, Inc. (2017-2021) and Head of Corporate Planning (2013-2017). Also worked at NTT Resonant Incorporated 2010-2013. Has been a member of the board of NTT Limited (the Sponsor) since August 2022 — providing direct strategic linkage between NTT DC REIT and the sponsor\'s global data centre platform.',
+    prev_roles:[
+      {org:'NTT DATA, Inc.',pos:'EVP & CEO Data Centers and Connectivity / Digital Workplace Services (current); previously EVP & CEO Global Technology Services (Oct 2023-Jun 2024)'},
+      {org:'NTT DOCOMO BUSINESS, Inc.',pos:'EVP & Head of Data Platform Services (2021); Head of Corporate Planning (2013-2017); board member (2017-2021)'},
+      {org:'NTT Resonant Incorporated',pos:'Senior Roles (2010-2013)'},
+      {org:'NTT, Inc. (NTT Group)',pos:'Career start 1987'},
+    ],
+    cross_board_roles:[
+      {entity:'NTT Limited (NTT DC REIT Sponsor)',role:'Board member since August 2022'},
+    ],
+    tags:['Chairman','Non-Independent NED','NTT Group','Data Centre','Sponsor-linked','Cross-Border S-REIT'],
+    linkedin_url:null, photo_url:null
+  },
+
+  {
+    id:'nttdc-ned-adams-26', name:'Douglas Stuart Adams', role:'Non-Independent Non-Executive Director', role_type:'NED',
+    entity:'NTT DC REIT', entity_short:'NTT-DC-REIT', ar_year:'FY2025/26',
+    appointed:null, tenure_yrs:null,
+    rem_exact:null, rem_fixed:null, rem_bonus:null, rem_other:null,
+    rem_note:'Director\'s fee disclosure pending first annual report (FY2025/26 full AR expected ~August 2026).',
+    rem_band:null, rem_pct_fixed:null, rem_pct_bonus:null, rem_pct_other:null,
+    rem_history:[],
+    edu:'Bachelor of Science (Business Administration), University of Southern California',
+    bio:'Non-Independent Non-Executive Director of NTT DC REIT Manager Pte. Ltd. Currently CEO of NTT GDC, the sponsor\'s global data centre business platform (1,626 MW operational + 776 MW planned across 92 sites globally as at FY25/26 — the third-largest data centre provider globally ex-China and the addressable ROFR universe for NTT DC REIT acquisitions). Previously President & CEO of NTT GDC\'s U.S. operations (February 2017 to July 2023), and before that President & Chief Revenue Officer of NTT GDC US, responsible for strategic growth and revenue (December 2013 to February 2017). His board seat is the operational bridge between the REIT and the Sponsor\'s ROFR pipeline — a contractual claim flagged explicitly in the FY25/26 priorities for unitholders.',
+    prev_roles:[
+      {org:'NTT GDC',pos:'Chief Executive Officer (global) — current'},
+      {org:'NTT GDC U.S.',pos:'President & CEO (Feb 2017 - Jul 2023)'},
+      {org:'NTT GDC U.S.',pos:'President & Chief Revenue Officer (Dec 2013 - Feb 2017)'},
+    ],
+    cross_board_roles:[],
+    tags:['Non-Independent NED','NTT GDC CEO','Data Centre','Sponsor-linked','US Operations','ROFR Architect'],
+    linkedin_url:null, photo_url:null
+  },
+
+  {
+    id:'nttdc-lid-26', name:'Tan Ser Ping', role:'Lead Independent Non-Executive Director', role_type:'LID',
+    entity:'NTT DC REIT', entity_short:'NTT-DC-REIT', ar_year:'FY2025/26',
+    appointed:null, tenure_yrs:null,
+    rem_exact:null, rem_fixed:null, rem_bonus:null, rem_other:null,
+    rem_note:'Director\'s fee disclosure pending first annual report.',
+    rem_band:null, rem_pct_fixed:null, rem_pct_bonus:null, rem_pct_other:null,
+    rem_history:[],
+    edu:'Bachelor of Accountancy (Honours), National University of Singapore; Master of Business Administration, University of Leicester',
+    bio:'Lead Independent Non-Executive Director of NTT DC REIT Manager Pte. Ltd. Significant Singapore S-REIT governance experience — most notably as CEO of Ascendas Funds Management (S) Limited from 2004 to 2016, the manager of Ascendas Real Estate Investment Trust (now CapitaLand Ascendas REIT, the largest industrial S-REIT). At Ascendas, was instrumental in scaling A-REIT through its growth decade. Founded Stanway Capital in 2016 (real estate investment + consultancy / advisory) and retired from his founder role in 2023. Prior to Ascendas Funds Management, was Executive Vice President of Real Estate Development & Investment (REDI) at Ascendas Pte Ltd — responsible for REDI policies, strategies, and country operations. Earlier career at Singapore Suzhou Industrial Park Development Company Ltd as Senior General Manager, Residential & Commercial Business Group (1998-2000) and Industrial Property Business Group (1994-1998). His LID position provides anchor Singapore-listed REIT governance expertise to the cross-border NTT DC REIT board.',
+    prev_roles:[
+      {org:'Stanway Capital',pos:'Founder (2016-2023, retired); real estate investment + advisory'},
+      {org:'Ascendas Funds Management (S) Limited',pos:'Chief Executive Officer (2004-2016) — manager of Ascendas REIT (now CLAR)'},
+      {org:'Ascendas Pte Ltd',pos:'EVP, Real Estate Development & Investment (REDI), pre-2004'},
+      {org:'Singapore Suzhou Industrial Park Development Company Ltd',pos:'Senior General Manager — Residential & Commercial Business Group (1998-2000); Industrial Property Business Group (1994-1998)'},
+    ],
+    cross_board_roles:[],
+    tags:['Lead Independent NED','Singapore S-REIT','Ascendas Alumni','Real Estate','Cross-Border S-REIT','A-REIT Veteran'],
+    linkedin_url:null, photo_url:null
+  },
+
+  {
+    id:'nttdc-ind-eng-26', name:'Eng Chin Chin', role:'Independent Non-Executive Director', role_type:'INED',
+    entity:'NTT DC REIT', entity_short:'NTT-DC-REIT', ar_year:'FY2025/26',
+    appointed:null, tenure_yrs:null,
+    rem_exact:null, rem_fixed:null, rem_bonus:null, rem_other:null,
+    rem_note:'Director\'s fee disclosure pending first annual report.',
+    rem_band:null, rem_pct_fixed:null, rem_pct_bonus:null, rem_pct_other:null,
+    rem_history:[],
+    edu:'Bachelor of Accountancy, National University of Singapore; Fellow, Institute of Singapore Chartered Accountants (conferred 2005)',
+    bio:'Independent Non-Executive Director of NTT DC REIT Manager Pte. Ltd. Auditor with KPMG LLP (Singapore) from 1986 to 2022 (36-year tenure) — Audit Partner since 1999, specialising in the real estate and financial services sectors. Was audit engagement partner on a number of Singapore-listed entities including listed real estate investment trusts and real estate companies. In addition to audit, has significant experience in fund raisings and internal controls assurance engagements. Member of the Institute of Singapore Chartered Accountants (Fellow since 2005). The audit-finance independence pillar of the NTT DC REIT board — providing technical depth on REIT financial reporting, internal controls, and IPO/fund raising governance.',
+    prev_roles:[
+      {org:'KPMG LLP (Singapore)',pos:'Audit Partner — Real Estate & Financial Services (1999-2022); Auditor (1986-1999)'},
+    ],
+    cross_board_roles:[],
+    tags:['Independent NED','Singapore CA','KPMG Alumni','Real Estate Audit','REIT Governance','Audit Committee Chair candidate'],
+    linkedin_url:null, photo_url:null
+  },
+
+  {
+    id:'nttdc-ind-talukdar-26', name:'Sandip Talukdar', role:'Independent Non-Executive Director', role_type:'INED',
+    entity:'NTT DC REIT', entity_short:'NTT-DC-REIT', ar_year:'FY2025/26',
+    appointed:null, tenure_yrs:null,
+    rem_exact:null, rem_fixed:null, rem_bonus:null, rem_other:null,
+    rem_note:'Director\'s fee disclosure pending first annual report.',
+    rem_band:null, rem_pct_fixed:null, rem_pct_bonus:null, rem_pct_other:null,
+    rem_history:[],
+    edu:'Master of Business Administration (Palmer Scholar), The Wharton School, University of Pennsylvania; Bachelor of Business Administration (with high distinction), Michigan Business School, University of Michigan Ann Arbor',
+    bio:'Independent Non-Executive Director of NTT DC REIT Manager Pte. Ltd. 20+ years in investment banking and finance. Was CFO of KBS US Prime Property Management Pte. Ltd. (August 2018 - February 2020), developing and implementing financial / corporate strategies. Served as Independent Director of LMIRT Management Ltd. (July 2020 - March 2023, manager of Lippo Malls Indonesia Retail Trust) — providing prior Singapore S-REIT independent director experience. Investment banking career: Standard Chartered Bank, Singapore (2009-2015, Director rising to MD, Head of Southeast Asia Equity Corporate Finance); Credit Suisse, Singapore (2005-2009, VP rising to Director, Co-Head of Southeast Asia Corporate Finance — leading execution and origination of equity / debt / M&A transactions across SEA); Dresdner Kleinwort Wasserstein, Singapore (2003-2005, Associate to VP, Corporate Finance & Advisory); Merrill Lynch Singapore (1999-2002, Associate, Investment Banking); Merrill Lynch & Co. NY and Singapore (1994-1997, Analyst, Investment Banking).',
+    prev_roles:[
+      {org:'KBS US Prime Property Management Pte. Ltd.',pos:'Chief Financial Officer (Aug 2018 - Feb 2020)'},
+      {org:'LMIRT Management Ltd. (manager of Lippo Malls Indonesia Retail Trust)',pos:'Independent Director (Jul 2020 - Mar 2023)'},
+      {org:'Standard Chartered Bank, Singapore',pos:'Director → Managing Director, Head of SEA Equity Corporate Finance (2009-2015)'},
+      {org:'Credit Suisse, Singapore',pos:'Vice President → Director, Co-Head of SEA Corporate Finance (2005-2009)'},
+      {org:'Dresdner Kleinwort Wasserstein, Singapore',pos:'Associate → Vice President, Corporate Finance & Advisory (2003-2005)'},
+      {org:'Merrill Lynch (Singapore) Pte. Ltd.',pos:'Associate, Investment Banking (1999-2002)'},
+      {org:'Merrill Lynch & Company (NY + Singapore)',pos:'Analyst, Investment Banking (1994-1997)'},
+    ],
+    cross_board_roles:[],
+    tags:['Independent NED','Investment Banking','S-REIT Veteran','LMIRT Alumni','KBS Alumni','Standard Chartered','Credit Suisse','Wharton MBA'],
+    linkedin_url:null, photo_url:null
+  },
+
   {
     id:'nttdc-ceo-26', name:'Yutaka Torigoe', role:'Chief Executive Officer', role_type:'CEO',
     entity:'NTT DC REIT', entity_short:'NTT-DC-REIT', ar_year:'FY2025/26',
     appointed:null, tenure_yrs:null,
     rem_exact:null, rem_fixed:null, rem_bonus:null, rem_other:null,
-    rem_note:'Placeholder entry — full compensation disclosure pending first annual report (FY2025/26 expected mid-2026). NTT DC REIT IPO\'d 14 Jul 2025; first full reporting cycle covers the period from 28 Mar 2025 (Date of Constitution) to 31 Mar 2026.',
+    rem_note:'Compensation disclosure pending first annual report (FY2025/26 full AR expected ~August 2026). NTT DC REIT IPO\'d 14 Jul 2025; first full reporting cycle covers the period from 28 Mar 2025 (Date of Constitution) to 31 Mar 2026.',
     rem_band:null, rem_pct_fixed:null, rem_pct_bonus:null, rem_pct_other:null,
     rem_history:[],
-    edu:null,
-    bio:'Chief Executive Officer of NTT DC REIT Manager Pte. Ltd. (the Manager of NTT DC REIT). NTT DC REIT listed on SGX-ST on 14 July 2025 as Singapore\'s first global data centre REIT, with an IPO portfolio of 6 Tier-III equivalent data centres across the United States (Northern Virginia, Northern California), Austria (Vienna) and Singapore — US$1.5bn purchase consideration, 90.7 MW design IT load. Sponsor: NTT Limited (the global data centre subsidiary of NTT DATA, Inc.), part of the NTT Group (TYO:9432) — 3rd largest data centre provider globally excluding China with ~2,300 MW across 92 sites. Trustee: Perpetual (Asia) Limited. Bio details (career history, prior roles, education) to be added once first FY2025/26 annual report is published.',
-    prev_roles:[],
+    edu:'Bachelor of Economics, University of Tokyo; Master of Business Administration, University of Michigan, Ann Arbor',
+    bio:'Chief Executive Officer of NTT DC REIT Manager Pte. Ltd. (the Manager of NTT DC REIT). Began his career at NTT, Inc. (formerly Nippon Telegraph and Telephone Corporation) in April 1988 as Assistant Manager for Accounting and rose through the NTT training programme to Manager of Global Business by June 1999. Prior to joining the Manager, served as Executive Vice President and Head of REIT Project Office at NTT GDC. Most recently before that, was President & CEO of NTT Urban Development Asset Management Corporation (June 2022 to March 2025) and Senior EVP of the same (June 2021 - June 2022), also serving as board member June 2021 - March 2025 — the Asset Management arm that managed NTT Urban Development\'s REIT-format real estate vehicles in Japan. Held senior accounting and finance roles at NTT Urban Development Corporation (June 2016 - June 2021) as Senior VP and Head of Accounting and Finance and board member (Jun 2018 - Jun 2021). Career also includes roles at NTT, Inc. (Director of Global Business, Jun 2015 - May 2016), Dimension Data (Group GM of Joint Business Development, Dec 2011 - May 2015) and NTT DOCOMO BUSINESS, Inc. (Director of Global Business, Jul 2010 - Nov 2011, leading the integration of Dimension Data into NTT). Earlier: Head of Outsourcing Business at NTT Business Associe (Jul 2007 - Jun 2010), Head of Shared Accounting at NTT DOCOMO BUSINESS, Inc. (Dec 2005 - Jun 2007), Director of Finance at Verio (Apr 2002 - Nov 2005, responsible for Verio\'s integration into NTT post-acquisition), and Senior Manager of Global Business at NTT DOCOMO BUSINESS, Inc. (Jul 1999 - Mar 2002).',
+    prev_roles:[
+      {org:'NTT GDC',pos:'EVP & Head of REIT Project Office (pre-Manager)'},
+      {org:'NTT Urban Development Asset Management Corporation',pos:'President & CEO (Jun 2022 - Mar 2025); Senior EVP (Jun 2021 - Jun 2022); board member (Jun 2021 - Mar 2025)'},
+      {org:'NTT Urban Development Corporation',pos:'Senior VP & Head of Accounting and Finance (Jun 2016 - Jun 2021); board member (Jun 2018 - Jun 2021)'},
+      {org:'NTT, Inc.',pos:'Director, Global Business (Jun 2015 - May 2016)'},
+      {org:'Dimension Data',pos:'Group GM, Joint Business Development (Dec 2011 - May 2015)'},
+      {org:'NTT DOCOMO BUSINESS, Inc.',pos:'Director, Global Business (Jul 2010 - Nov 2011) — led Dimension Data integration into NTT; Head of Shared Accounting (Dec 2005 - Jun 2007); Senior Manager Global Business (Jul 1999 - Mar 2002)'},
+      {org:'NTT Business Associe',pos:'Head of Outsourcing Business (Jul 2007 - Jun 2010); integrated into NTT ExC Partner in 2023'},
+      {org:'Verio',pos:'Director of Finance (Apr 2002 - Nov 2005) — led Verio integration into NTT post-acquisition'},
+      {org:'NTT, Inc. (career start)',pos:'Assistant Manager Accounting (Apr 1988) → Manager of Global Business (Jun 1999)'},
+    ],
     cross_board_roles:[],
-    tags:['REIT CEO','Data Centre','IPO 2025','NTT Group','Cross-Border S-REIT'],
+    tags:['REIT CEO','NTT Group','Data Centre','IPO 2025','Cross-Border S-REIT','NTT GDC Alumni','NTT Urban Development Alumni','Tokyo University','Michigan MBA','Integration Specialist'],
     linkedin_url:null, photo_url:null
   },
 
+  {
+    id:'nttdc-cfo-26', name:'Masayuki Ozaki', role:'Chief Financial Officer', role_type:'CFO',
+    entity:'NTT DC REIT', entity_short:'NTT-DC-REIT', ar_year:'FY2025/26',
+    appointed:null, tenure_yrs:null,
+    rem_exact:null, rem_fixed:null, rem_bonus:null, rem_other:null,
+    rem_note:'Compensation disclosure pending first annual report.',
+    rem_band:null, rem_pct_fixed:null, rem_pct_bonus:null, rem_pct_other:null,
+    rem_history:[],
+    edu:'Bachelor of Laws, Keio University; Master of Management in Hospitality, Cornell University; Master of Business Administration, Cornell University; Chartered Financial Analyst (CFA)',
+    bio:'Chief Financial Officer of NTT DC REIT Manager Pte. Ltd. Almost two decades of experience in real estate investments — particularly public equities real estate investments across APAC at firms including APG, Heitman, and Fidelity (FMR). Prior to joining the Manager, was Chief Financial Officer of NTT Global Data Centers Holding Asia from January 2025 to June 2025 (the sponsor\'s APAC DC operating arm). Most recently before NTT, served as Principal at Blackstone Japan (October 2022 - July 2024), overseeing fundraising and investor relations for Japanese institutional investors. Was Senior Portfolio Manager at APG Asset Management Asia (July 2018 - September 2022), involved in equity research and portfolio management of public real estate securities across APAC — one of the largest pension-fund REIT investors globally. Vice President and Senior Analyst, Asia Pacific real estate securities, at Heitman International Real Estate Securities (July 2017 - July 2018). Equity Analyst at Fidelity Management & Research (Japan) (September 2013 - December 2016) and at Cornerstone Real Estate Advisers (July 2006 - August 2013), covering public real estate securities portfolios in Japan, Singapore and Australia. Began career at Citibank, N.A., then Bank of America, N.A. (M&A / securitisation valuation) and Morgan Stanley Japan (CMBS credit analysis). CFA charterholder. Unique CFO profile for a maiden S-REIT — combines sell-side analyst depth with public-REIT portfolio management at APG (a major REIT investor) and private equity capital markets experience at Blackstone.',
+    prev_roles:[
+      {org:'NTT Global Data Centers Holding Asia',pos:'Chief Financial Officer (Jan 2025 - Jun 2025)'},
+      {org:'Blackstone Japan',pos:'Principal — fundraising & IR for Japanese investors (Oct 2022 - Jul 2024)'},
+      {org:'APG Asset Management Asia',pos:'Senior Portfolio Manager — APAC public real estate securities (Jul 2018 - Sep 2022)'},
+      {org:'Heitman International Real Estate Securities',pos:'Vice President & Senior Analyst, APAC real estate securities (Jul 2017 - Jul 2018)'},
+      {org:'Fidelity Management & Research (Japan)',pos:'Equity Analyst (Sep 2013 - Dec 2016)'},
+      {org:'Cornerstone Real Estate Advisers',pos:'Equity Analyst — Japan/Singapore/Australia REITs (Jul 2006 - Aug 2013)'},
+      {org:'Morgan Stanley Japan',pos:'Credit analysis CMBS loans / counterparty risk for Japanese FIs'},
+      {org:'Bank of America, N.A.',pos:'Financial / valuation analysis — M&A and asset securitisation'},
+      {org:'Citibank, N.A.',pos:'Investment product development & management'},
+    ],
+    cross_board_roles:[],
+    tags:['CFO','CFA','Data Centre','NTT Group','Blackstone Alumni','APG Alumni','Cornell MBA','Keio Law','Public REIT Investor Background','Cross-Border S-REIT'],
+    linkedin_url:null, photo_url:null
+  },
+
+  {
+    id:'nttdc-cio-26', name:'Bobby Little II', role:'Chief Investment Officer', role_type:'CIO',
+    entity:'NTT DC REIT', entity_short:'NTT-DC-REIT', ar_year:'FY2025/26',
+    appointed:null, tenure_yrs:null,
+    rem_exact:null, rem_fixed:null, rem_bonus:null, rem_other:null,
+    rem_note:'Compensation disclosure pending first annual report.',
+    rem_band:null, rem_pct_fixed:null, rem_pct_bonus:null, rem_pct_other:null,
+    rem_history:[],
+    edu:'Bachelor of Science (Business and Education), Florida A&M University; Master of Business Administration, Olin Business School, Washington University in St. Louis',
+    bio:'Chief Investment Officer of NTT DC REIT Manager Pte. Ltd. Prior to joining the Manager, served as Senior Director of Investor Relations at NTT GDC (from April 2024). Deep real estate expertise across asset management, REITs and commercial real estate banking. Was Director of Asset Management at Landmark Dividend (January 2022 - March 2023). Notably, was Manager of Asset Management at Mapletree Investments from December 2019 to January 2022 — managing the assets and portfolio of Mapletree Industrial Trust (MIT). This is a direct cross-reference to a Singapore peer DC REIT: MIT is the largest Singapore industrial REIT with significant data centre exposure including in the Sacramento submarket where NTT DC REIT\'s CA1/CA2/CA3 cluster sits. Prior to Mapletree, was Investment Manager at Carter Validus REIT (now Sila Realty Trust) (July 2017 - December 2019), providing portfolio analytics and investment management. Was Associate for Real Estate and REIT Banking at Wells Fargo Bank (January 2017 - July 2017), providing corporate and REIT platform debt and financial support. Earlier roles include Commercial Real Estate Services at Marcus & Millchap as Senior Financial Analyst (July 2014 - December 2016) and Cassidy Turley (now Cushman & Wakefield) as Corporate Real Estate Analyst (July 2012 - July 2014). Began career as Commercial Bank Analyst at US Bank (July 2010 - July 2012). The Mapletree alumni linkage gives NTT DC REIT a CIO with prior hands-on experience managing assets in a competing Singapore DC REIT.',
+    prev_roles:[
+      {org:'NTT GDC',pos:'Senior Director, Investor Relations (from Apr 2024 — pre-Manager role)'},
+      {org:'Landmark Dividend',pos:'Director, Asset Management (Jan 2022 - Mar 2023)'},
+      {org:'Mapletree Investments (managing Mapletree Industrial Trust)',pos:'Manager, Asset Management (Dec 2019 - Jan 2022)'},
+      {org:'Carter Validus REIT (now Sila Realty Trust)',pos:'Investment Manager — portfolio analytics + investment management (Jul 2017 - Dec 2019)'},
+      {org:'Wells Fargo Bank',pos:'Associate, Real Estate & REIT Banking (Jan 2017 - Jul 2017)'},
+      {org:'Marcus & Millchap',pos:'Senior Financial Analyst, CRE Services (Jul 2014 - Dec 2016)'},
+      {org:'Cassidy Turley (now Cushman & Wakefield)',pos:'Corporate Real Estate Analyst (Jul 2012 - Jul 2014)'},
+      {org:'US Bank',pos:'Commercial Bank Analyst (Jul 2010 - Jul 2012)'},
+    ],
+    cross_board_roles:[],
+    tags:['CIO','Data Centre','NTT GDC Alumni','Mapletree Alumni','MIT Alumni','US Real Estate','WashU Olin MBA','Cross-Border S-REIT','REIT Banking'],
+    linkedin_url:null, photo_url:null
+  },
+
+  {
+    id:'nttdc-hpmf-26', name:'Hiroo Hirose', role:'Head of Portfolio Management and Finance', role_type:'Head',
+    entity:'NTT DC REIT', entity_short:'NTT-DC-REIT', ar_year:'FY2025/26',
+    appointed:null, tenure_yrs:null,
+    rem_exact:null, rem_fixed:null, rem_bonus:null, rem_other:null,
+    rem_note:'Compensation disclosure pending first annual report.',
+    rem_band:null, rem_pct_fixed:null, rem_pct_bonus:null, rem_pct_other:null,
+    rem_history:[],
+    edu:'Bachelor of Arts (Philosophy), Gakushuin University',
+    bio:'Head of Portfolio Management and Finance of NTT DC REIT Manager Pte. Ltd. Has been part of the NTT Group for almost three decades. Prior to joining the Manager, was Vice President, APAC Finance Lead (APAC CFO) of NTT Global Data Centers Holding Asia — the sponsor\'s APAC operating arm. Joined what is now NTT DOCOMO BUSINESS, Inc. (formerly NTT Communications Corporation) in April 2003, working in the data centres department until October 2018. Rose to Head of Board Affairs and Capital Projects at NTT GDC in November 2018, holding that role for three years before assuming the current Manager role. His ~3-decade NTT Group tenure provides deep institutional knowledge of NTT GDC\'s pipeline, board governance and capital projects — the operational counterpoint to CIO Bobby Little II\'s external/Mapletree perspective.',
+    prev_roles:[
+      {org:'NTT Global Data Centers Holding Asia',pos:'VP, APAC Finance Lead (APAC CFO) — pre-Manager role'},
+      {org:'NTT GDC',pos:'Head of Board Affairs and Capital Projects (Nov 2018 - ~2021)'},
+      {org:'NTT DOCOMO BUSINESS, Inc. (formerly NTT Communications Corporation)',pos:'Data centres department (Apr 2003 - Oct 2018)'},
+    ],
+    cross_board_roles:[],
+    tags:['Head of Portfolio Mgmt','Head of Finance','NTT Group','NTT GDC Alumni','Data Centre','~30yr NTT veteran','Gakushuin','Cross-Border S-REIT'],
+    linkedin_url:null, photo_url:null
+  }
 ];
 // ═══════════════════════════════════════════════════
 var talentRoleFilter = 'all';
