@@ -21,6 +21,23 @@
      wraps to route ./?article=N → ./#<tab-hash> when in takeover. Result:
      one-click surface switching from any article. Also: hero CTA + Overview
      "Read full article" relabelled to "Read full story" globally. -->
+<!-- v48.58 (13 May 2026): NTT DC REIT FY25/26 article (id=90) + REIT_DATA refresh.
+     STAGE A: NEWS row + REIT_DATA + version stamp (completed).
+     STAGE B: landing cascade rewrite (completed in same deploy).
+     NEWS ARRAY: id=90 inserted at top (NTT DC REIT FY25/26 maiden year article).
+       Total entries: 66 → 67.
+     REIT_DATA: 6 NTT DC REIT entries rewritten with 31 Mar 2026 data.
+       val: IPO purchase → 31 Mar 2026 independent valuation.
+       prev_val: null → IPO purchase consideration (YoY tracking).
+       occ/WALE updated per 31 Mar 2026 readings.
+       ar_year/source/notes/q_* fields refreshed.
+       Portfolio val: US$1,500.0M → US$1,670.2M (+US$170.2M / +11.3%).
+     LANDING CASCADE: Hero id=89 → id=90 (NTT DC REIT). Cards 88/87/86 → 89/88/87.
+     Feed 85/84/83/82/81 → 86/85/84/83/82. id=81 (Landmark) dropped off landing feed.
+     TALENT_DATA: unchanged (Torigoe placeholder from v48.56 preserved).
+     L196 fingerprint: VACANCY_DATA = 378/378 unchanged.
+     External artifacts: images/news_90_ntt_dc_reit_sg1.jpg; article/90.html;
+     LinkedIn post 2,845 UTF-16 chars (separate uploads). -->
 <!-- v48.57 (13 May 2026): Two-fix patch — SG1 tenure shortened + Human Capital
      entity-filter dropdown alphabetised.
      (1) SG1 (NTT DC REIT) tenure string shortened from 63 chars to 36 chars
@@ -2857,30 +2874,34 @@ body.article-takeover .ed-foot{display:none!important}
   <div class="wrap hero-grid">
 
     <!-- Image — Phase 1 GitHub Pages photo pipeline.
-         id:89 Prime US REIT hero — Tower 909, 909 Lake Carolyn Parkway,
-         Irving (Dallas Metroplex), Texas. 19-storey Class A multi-tenanted
-         office, Las Colinas Urban Center submarket. NLA 374K sf, val
-         US$104.9M (31 Dec 2025 audited; 7.5% of carrying value), committed
-         occupancy 93.5% at 31 Mar 2026 (FY25: 92.5%; +1.0pp on 13k sf signed
-         1Q2026 backfilling expiries), submarket occ 79.8% (per CoStar 7 Apr
-         2026). Anchor tenant Matheson Tri-Gas (138k sf, 4.0% portfolio CRI).
-         Sun Belt asset — Dallas is on JLL's office rental clock rising
-         phase. Selected as 1Q2026 hero because it is one of the portfolio's
-         clearest OUTperformer-versus-submarket assets and the visual frame
-         of the Las Colinas waterfront sits well in the hero grid. -->
+         id:90 NTT DC REIT hero — SG1, 51 Serangoon North Avenue 4, Singapore.
+         Singapore's first global-DC-focused S-REIT (listed 14 Jul 2025, SGX:NTDU).
+         Sponsor: NTT Limited (NTT GDC platform — 3rd largest DC provider globally
+         ex. China, ~2,400 MW capacity across 92 sites). SG1 = sole Singapore asset
+         in the 6-property portfolio (also 4x US, 1x Vienna); 8.6 MW design IT load;
+         JTC leasehold to Aug 2040 with +30y option to 2070; RFO 2012, refurb 2024.
+         FY25/26 valuation US$310.7M (S$401.0M) — up 20.0% from IPO consideration
+         US$259.0M, the second-largest valuation gainer in the portfolio after VA2
+         (+25.0%). SG1 is also where the FY25/26 narrative converges: NTT Singapore
+         (sponsor-related anchor) renewed its Master Services Agreement on 31 Mar
+         2026 at S$474/kW (up from S$385/kW) — a +23% reversion that prices ~5%
+         above the disclosed Singapore market band of S$380-450/kW per DC Byte.
+         Selected as hero because SG1 ties together the three biggest threads in
+         this maiden full-year reading: portfolio revaluation, rental reversion
+         runway, and the sponsor-related governance story. -->
     <!-- Image column: photo + credit live together as one grid cell.
          Placing them as separate grid siblings caused credit to land in
          column 2 row 2 (top-right of headline) — Lesson 128 captured. -->
     <div class="hero-image-col">
-      <a class="hero-image" href="./?article=89&amp;from=landing" aria-label="Read full story: Prime US REIT 1Q2026 results analysis">
-        <img src="./images/news_89_prime_us_reit_tower_909.jpg"
-             alt="Tower 909, Las Colinas Urban Center, Irving (Dallas Metroplex), Texas — Prime US REIT 1Q2026 hero asset, one of the 13 Class A freehold U.S. office properties anchoring the US$1.40B portfolio (374K sf NLA, 93.5% committed occupancy, anchor tenant Matheson Tri-Gas)"
+      <a class="hero-image" href="./?article=90&amp;from=landing" aria-label="Read full story: NTT DC REIT FY25/26 maiden year — portfolio revalued to US$1.67bn, +11.3% above IPO consideration">
+        <img src="./images/news_90_ntt_dc_reit_sg1.jpg"
+             alt="SG1, 51 Serangoon North Avenue 4, Singapore — NTT DC REIT FY25/26 hero asset, the sole Singapore property in the 6-asset portfolio (8.6 MW design IT load, JTC leasehold to Aug 2040, +20.0% valuation uplift to US$310.7M / S$401.0M, NTT Singapore MSA renewed at +23% reversion priced above the disclosed Singapore market band)"
              class="hero-image-photo"
              loading="eager"
              fetchpriority="high" />
       </a>
 
-      <p class="hero-credit">Tower 909, Las Colinas, Irving (Dallas), Texas. Photo: Prime US REIT</p>
+      <p class="hero-credit">SG1, 51 Serangoon North Avenue 4, Singapore. Photo: PropertyAtlas via Google Street View</p>
     </div>
 
     <!-- Text column -->
@@ -2888,11 +2909,11 @@ body.article-takeover .ed-foot{display:none!important}
       <div class="hero-eyebrow">
         <span class="pill">Latest</span>
         <span class="cat-tag">Commercial</span>
-        <span class="cat-tag">Earnings · REIT Update · Quarterly · U.S. Office · Cashflow Ramp · Capital Management</span>
+        <span class="cat-tag">Earnings · REIT Update · Maiden Year · Data Centre · Cross-Border · Valuation Uplift · Capital Management</span>
       </div>
 
       <h1 id="hero-h" class="hero-headline">
-        <a href="./?article=89&amp;from=landing">Prime US REIT 1Q2026: Occupancy 83.1% (4th Quarterly Gain), NPI +3.3% QoQ Ends 3-Quarter Descent — But The Real Story Is 463k sf Of Signed-But-Uncommenced Leases Ramping Rent From 3Q2026</a>
+        <a href="./?article=90&amp;from=landing">NTT DC REIT FY25/26 Maiden Reading: Portfolio Independently Valued At US$1,670.2M (+11.3%) — Six Properties, US$170M Revaluation Gain, And A 23% SG1 MSA Reversion That Priced Above The Singapore Market Band</a>
       </h1>
     </div>
 
@@ -2902,35 +2923,39 @@ body.article-takeover .ed-foot{display:none!important}
          headlines caused. -->
     <div class="hero-body">
       <p class="hero-teaser">
-        Prime US REIT 1Q2026 (quarter ended 31 March 2026, released
-        12 May 2026) prints committed occupancy 83.1% — a fourth
-        consecutive quarterly gain from the 78.9% trough twelve
-        months ago. Net property income US$17.2M is +3.3% QoQ,
-        ending three quarters of sequential decline; 99k sf of
-        leasing signed at +4.0% rental reversion; WALE 5.6 years;
-        distributable income US$6.5M supports the 65% payout ratio
-        raised in 4Q2025. The structural read sits beneath the
-        headline: 633k sf of new leases were signed in 2025-2026
-        but only 170k sf is yet contributing rent. The remaining
-        463k sf — equivalent to ~11% of committed occupancy — begins
-        paying rent on a staggered basis from 3Q2026 onwards, after
-        standard 3-12 month rent-free and TI periods. This is the
-        contracted cashflow wedge that backed the manager's
-        decision to lift the payout ratio from 10% to 65%.
-        Aggregate leverage 45.2%, NAV/unit US$0.52 against US$0.171
-        unit price (67% discount), US$485M maturity wall in 2027 —
-        the refinancing window for the recovery to land in.
+        NTT DC REIT (SGX:NTDU) delivered its maiden FY25/26 reading on
+        12 May 2026, ten months after its 14 July 2025 IPO. Independent
+        valuers Newmark Valuation &amp; Advisory and Cushman &amp; Wakefield
+        Regional appraised the six-property portfolio at US$1,670.2 million
+        as at 31 March 2026 — up 11.3% from the US$1,500 million in
+        purchase consideration paid at IPO. DPU of 5.56 US cents beat IPO
+        forecast by 2.6%; NAV per unit grew from US$0.95 at IPO to
+        US$1.14 (+20%). VA2 (Ashburn, Northern Virginia) led the asset
+        uplift at +25.0%, followed by SG1 (Serangoon North, Singapore)
+        at +20.0% — both in the world's tightest data centre submarkets.
+        The structural read sits in two places. First, the SG1 Master
+        Services Agreement with sponsor-related anchor NTT Singapore was
+        renewed on 31 March 2026 at S$474/kW (up from S$385/kW) — a 23%
+        rental reversion pricing roughly 5% above the disclosed Singapore
+        market band of S$380-450/kW. The 23% increment will be recognised
+        in 1Q FY26/27, meaning the next quarterly reading is already
+        structurally higher than this one. Second, the manager has named
+        the sponsor pipeline in contractual terms: "Capitalising on
+        Sponsor's ROFR pipeline" — a Right of First Refusal over NTT
+        GDC's 1,626 MW operational and 776 MW planned global platform.
+        Aggregate leverage closed at 29.2% (31.3% post-distribution),
+        with US$320 million headroom to the 40% ceiling.
       </p>
 
       <div class="hero-meta">
         <span>12 May 2026</span>
         <span class="sep">·</span>
-        <span>2,083 words</span>
+        <span>1,552 words</span>
         <span class="sep">·</span>
-        <span>10 min read</span>
+        <span>6 min read</span>
       </div>
 
-      <a class="btn-primary" href="./?article=89&amp;from=landing">
+      <a class="btn-primary" href="./?article=90&amp;from=landing">
         Read full story
         <span class="arrow" aria-hidden="true">→</span>
       </a>
@@ -2991,7 +3016,26 @@ body.article-takeover .ed-foot{display:none!important}
 
     <div class="cards">
 
-      <!-- Card 1 — id 88 FPL (promoted from hero in v48.51 Prime US REIT cascade) -->
+            <!-- Card 1 — id 89 Prime US REIT (displaced from hero in v48.58 NTT DC REIT cascade) -->
+      <a class="card" href="./?article=89&amp;from=landing">
+        <div class="card-image">
+          <img src="./images/news_89_prime_us_reit_tower_909.jpg"
+               alt="Tower 909, Las Colinas Urban Center, Irving (Dallas Metroplex), Texas — Prime US REIT 1Q2026 hero asset, one of the 13 Class A freehold U.S. office properties anchoring the US$1.40B portfolio"
+               class="card-image-photo"
+               loading="lazy" />
+        </div>
+        <p class="card-credit">Tower 909, Las Colinas, Irving (Dallas), Texas. Photo: Prime US REIT</p>
+        <p class="card-cat">Commercial</p>
+        <h3 class="card-headline">Prime US REIT 1Q2026: Occupancy 83.1% (4th Quarterly Gain), NPI +3.3% QoQ — 463k sf Of Signed Leases Ramping Rent From 3Q2026</h3>
+        <p class="card-teaser">Committed occupancy 83.1% at 31 March 2026 marks four consecutive quarterly gains from the 78.9% trough. NPI US$17.2M is +3.3% QoQ, ending three quarters of decline. 463k sf of signed-but-uncommenced leases (~11% of committed occupancy) ramp rent from 3Q2026 onwards — the contracted cashflow wedge backing the manager's 10% → 65% payout-ratio normalisation. Aggregate leverage 45.2%, NAV/unit US$0.52 vs US$0.171 unit price (67% discount).</p>
+        <p class="card-meta">
+          <span>12 May 2026</span>
+          <span class="sep">·</span>
+          <span>10 min read</span>
+        </p>
+      </a>
+
+      <!-- Card 2 — id 88 FPL (cascaded from card 1 in v48.58 NTT DC REIT cascade) -->
       <a class="card" href="./?article=88&amp;from=landing">
         <div class="card-image">
           <img src="./images/news_88_fpl_frasers_tower.jpg"
@@ -3002,7 +3046,7 @@ body.article-takeover .ed-foot{display:none!important}
         <p class="card-credit">Frasers Tower, 182 Cecil Street, Singapore. Photo: Frasers Property</p>
         <p class="card-cat">Commercial</p>
         <h3 class="card-headline">Frasers Property 1H FY26: Attributable Profit -37.8% To S$88.4m, But Strip One-Offs And Underlying Is +77% — PBIT +13.2% Into Rising Leverage, Centrepoint Collective Sale Opens Orchard Rejuvenation Path, No Interim Dividend Declared</h3>
-        <p class="card-teaser">Headline attributable profit -37.8% to S$88.4m on a S$38.2m Thailand impairment, but strip the 1H FY25 tax provisions reversal and underlying is +77% YoY. PBIT +13.2% to S$678.7m, EBITDA +12.7% to S$719.6m, recurring income 76% of PBIT, NAV S$2.40. Singapore retail PBIT +12.7% on Northpoint City South Wing, Thailand & Vietnam +44.3% on ARAYA industrial land sales, Australia swings to S$34.6m. Centrepoint rear plot collective sale opens Orchard rejuvenation. Net debt/equity 89.2% → 94.2% — leverage now the variable to watch.</p>
+        <p class="card-teaser">Headline attributable profit -37.8% to S$88.4m on a S$38.2m Thailand impairment, but strip the 1H FY25 tax provisions reversal and underlying is +77% YoY. PBIT +13.2% to S$678.7m, EBITDA +12.7% to S$719.6m, recurring income 76% of PBIT, NAV S$2.40. Singapore retail PBIT +12.7% on Northpoint City South Wing, Thailand &amp; Vietnam +44.3% on ARAYA industrial land sales, Australia swings to S$34.6m. Centrepoint rear plot collective sale opens Orchard rejuvenation. Net debt/equity 89.2% → 94.2% — leverage now the variable to watch.</p>
         <p class="card-meta">
           <span>11 May 2026</span>
           <span class="sep">·</span>
@@ -3010,11 +3054,11 @@ body.article-takeover .ed-foot{display:none!important}
         </p>
       </a>
 
-      <!-- Card 2 — id 87 AAREIT (cascaded from card 1 in v48.51 Prime US REIT cascade) -->
+      <!-- Card 3 — id 87 AAREIT (cascaded from card 2 in v48.58 NTT DC REIT cascade) -->
       <a class="card" href="./?article=87&amp;from=landing">
         <div class="card-image">
           <img src="./images/news_87_aareit_10_changi_south_lane.jpg"
-               alt="10 Changi South Lane, Singapore — AIMS APAC REIT FY2026 hero asset, one of 11 Singapore logistics & warehouse properties anchoring the S$2.25B portfolio"
+               alt="10 Changi South Lane, Singapore — AIMS APAC REIT FY2026 hero asset, one of 11 Singapore logistics &amp; warehouse properties anchoring the S$2.25B portfolio"
                class="card-image-photo"
                loading="lazy" />
         </div>
@@ -3026,25 +3070,6 @@ body.article-takeover .ed-foot{display:none!important}
           <span>7 May 2026</span>
           <span class="sep">·</span>
           <span>12 min read</span>
-        </p>
-      </a>
-
-      <!-- Card 3 — id 86 CAREIT (cascaded from card 2 in v48.51 Prime US REIT cascade) -->
-      <a class="card" href="./?article=86&amp;from=landing">
-        <div class="card-image">
-          <img src="./images/news_86_centurion_westlite_woodlands.jpg.png"
-               alt="Westlite Woodlands, Singapore — Centurion Accommodation REIT 1Q 2026 hero asset, one of the five Singapore PBWA properties anchoring 64% of the S$2.19B portfolio valuation"
-               class="card-image-photo"
-               loading="lazy" />
-        </div>
-        <p class="card-credit">Westlite Woodlands, Singapore. Photo: Centurion Accommodation REIT</p>
-        <p class="card-cat">Residential</p>
-        <h3 class="card-headline">CAREIT 1Q 2026: Second Reporting Period Double Beat (+2.7% Rev / +2.4% NPI), But Leverage Walks 22.1% → 31.0% On Macquarie Park</h3>
-        <p class="card-teaser">Revenue S$52.5M (+2.7% above prospectus), NPI S$37.5M (+2.4% ahead) with all three geographies above occupancy guidance — PBWA SG 94.0%, PBSA UK 99.0%, PBSA AU 97.5%. Underneath: aggregate leverage walked 22.1% → 31.0% in 90 days on the A$345M EPIISOD Macquarie Park acquisition (13 Jan 2026), consuming ~43% of available debt headroom in a single transaction.</p>
-        <p class="card-meta">
-          <span>6 May 2026</span>
-          <span class="sep">·</span>
-          <span>11 min read</span>
         </p>
       </a>
 
@@ -3073,7 +3098,31 @@ body.article-takeover .ed-foot{display:none!important}
 
       <div class="feed-month">May 2026</div>
 
-      <!-- Row id 85 — FLCT (cascaded from card 3 in v48.51 Prime US REIT cascade).
+            <!-- Row id 86 — CAREIT (cascaded from card 3 in v48.58 NTT DC REIT cascade).
+           Photo retained per L144 — entry has news_86_centurion_westlite_woodlands.jpg.png on GitHub. -->
+      <a class="feed-row" href="./?article=86&amp;from=landing">
+        <div class="feed-row-image-col">
+          <div class="feed-row-image">
+            <img src="./images/news_86_centurion_westlite_woodlands.jpg.png"
+                 alt="Westlite Woodlands, Singapore — Centurion Accommodation REIT 1Q 2026 hero asset, one of the five Singapore PBWA properties anchoring 64% of the S$2.19B portfolio valuation"
+                 class="feed-row-image-photo"
+                 loading="lazy" />
+          </div>
+          <p class="feed-row-credit">Westlite Woodlands, Singapore. Photo: Centurion Accommodation REIT</p>
+        </div>
+        <div class="feed-row-text">
+          <p class="feed-row-cat">Residential</p>
+          <h3 class="feed-row-headline">CAREIT 1Q 2026: Second Reporting Period Double Beat (+2.7% Rev / +2.4% NPI), But Leverage Walks 22.1% → 31.0% On Macquarie Park</h3>
+          <p class="feed-row-teaser">Revenue S$52.5M (+2.7% above prospectus), NPI S$37.5M (+2.4% ahead) with all three geographies above occupancy guidance — PBWA SG 94.0%, PBSA UK 99.0%, PBSA AU 97.5%. Underneath: aggregate leverage walked 22.1% → 31.0% in 90 days on the A$345M EPIISOD Macquarie Park acquisition (13 Jan 2026), consuming ~43% of available debt headroom in a single transaction.</p>
+          <p class="feed-row-meta">
+            <span>6 May 2026</span>
+            <span class="sep">·</span>
+            <span>11 min read</span>
+          </p>
+        </div>
+      </a>
+
+      <!-- Row id 85 — FLCT (cascaded from feed row 1 in v48.58 NTT DC REIT cascade).
            Photo retained per L144 — entry has news_85_flct_alexandra_technopark.jpg on GitHub. -->
       <a class="feed-row" href="./?article=85&amp;from=landing">
         <div class="feed-row-image-col">
@@ -3097,7 +3146,7 @@ body.article-takeover .ed-foot{display:none!important}
         </div>
       </a>
 
-      <!-- Row id 84 — FEHT (cascaded from feed row 1 in v48.51 Prime US REIT cascade).
+      <!-- Row id 84 — FEHT (cascaded from feed row 2 in v48.58 NTT DC REIT cascade).
            Photo retained per L144 — entry has news_84_feht_oasia_hotel_downtown.jpg on GitHub. -->
       <a class="feed-row" href="./?article=84&amp;from=landing">
         <div class="feed-row-image-col">
@@ -3121,7 +3170,7 @@ body.article-takeover .ed-foot{display:none!important}
         </div>
       </a>
 
-      <!-- Row id 83 — CDLHT (cascaded from feed row 2 in v48.51 Prime US REIT cascade).
+      <!-- Row id 83 — CDLHT (cascaded from feed row 3 in v48.58 NTT DC REIT cascade).
            Photo retained per L144 — entry has news_83_cdlht_w_sentosa.jpg on GitHub. -->
       <a class="feed-row" href="./?article=83&amp;from=landing">
         <div class="feed-row-image-col">
@@ -3145,7 +3194,7 @@ body.article-takeover .ed-foot{display:none!important}
         </div>
       </a>
 
-      <!-- Row id 82 — Starhill (cascaded from feed row 3 in v48.51 Prime US REIT cascade).
+      <!-- Row id 82 — Starhill (cascaded from feed row 4 in v48.58 NTT DC REIT cascade).
            Photo retained per L144 — entry has news_82_starhill_ngee_ann_city.jpg on GitHub. -->
       <a class="feed-row" href="./?article=82&amp;from=landing">
         <div class="feed-row-image-col">
@@ -3169,31 +3218,7 @@ body.article-takeover .ed-foot{display:none!important}
         </div>
       </a>
 
-      <!-- Row id 81 — Landmark (cascaded from feed row 4 in v48.51 Prime US REIT cascade).
-           Photo retained per L144 — entry has news_81_landmark_sun_plaza.jpg on GitHub. -->
-      <a class="feed-row" href="./?article=81&amp;from=landing">
-        <div class="feed-row-image-col">
-          <div class="feed-row-image">
-            <img src="./images/news_81_landmark_sun_plaza.jpg"
-                 alt="Sun Plaza, Medan, North Sumatera — Landmark REIT 1Q 2026 flagship asset (Rp2,944.4bn, 98.6% occupancy)"
-                 class="feed-row-image-photo"
-                 loading="lazy" />
-          </div>
-          <p class="feed-row-credit">Sun Plaza, Medan, North Sumatera. Photo: Landmark REIT (formerly Lippo Malls Indonesia Retail Trust)</p>
-        </div>
-        <div class="feed-row-text">
-          <p class="feed-row-cat">Commercial</p>
-          <h3 class="feed-row-headline">Landmark REIT 1Q 2026: Rebrand From LMIRT Lands With +13.6% IDR Rental Growth, 87.5% Occupancy, Gearing Down To 40.22% — But Distribution Suspension Continues For 7th Consecutive Cessation On 2016 Perpetuals</h3>
-          <p class="feed-row-teaser">Operating recovery is real (NPI +15.6% IDR, occupancy 9pp above industry, 70% of malls above 85%), the rights issue cleaned the balance sheet (gearing −332bps to 40.22%, US$22.6m 2026 Notes redeemed) — but distributions stay suspended for Unitholders and both perpetual tranches pending further cashflow improvement.</p>
-          <p class="feed-row-meta">
-            <span>2 May 2026</span>
-            <span class="sep">·</span>
-            <span>11 min read</span>
-          </p>
-        </div>
-      </a>
-
-      <!-- Row id 69 First REIT dropped off in v48.17 cascade; Row id 70 ESR-REIT dropped off in v48.20b cascade for id:79 IREIT hero; Row id 71 CICT dropped off in v48.20d cascade for id:80 Stoneweg hero; Row id 72 Elite UK dropped off in v48.20d second drop for id:81 Landmark hero; Row id 73 FCT dropped off in v48.20h cascade for id:82 Starhill hero; Row id 74 Suntec dropped off in v48.20k cascade for id:83 CDLHT hero; Row id 75 CLAS dropped off in v48.20l cascade for id:84 FEHT hero; Row id 76 CLAR dropped off in v48.23 cascade for id:85 FLCT hero; Row id 77 MPACT dropped off in v48.24 cascade for id:86 Centurion hero; Row id 78 MIT dropped off in v48.27 cascade for id:87 AIMS APAC hero; Row id 79 IREIT dropped off in v48.38 cascade for id:88 Frasers Property hero; Row id 80 SERT dropped off in v48.51 cascade for id:89 Prime US REIT hero -->
+      <!-- Row id 69 First REIT dropped off in v48.17 cascade; Row id 70 ESR-REIT dropped off in v48.20b cascade for id:79 IREIT hero; Row id 71 CICT dropped off in v48.20d cascade for id:80 Stoneweg hero; Row id 72 Elite UK dropped off in v48.20d second drop for id:81 Landmark hero; Row id 73 FCT dropped off in v48.20h cascade for id:82 Starhill hero; Row id 74 Suntec dropped off in v48.20k cascade for id:83 CDLHT hero; Row id 75 CLAS dropped off in v48.20l cascade for id:84 FEHT hero; Row id 76 CLAR dropped off in v48.23 cascade for id:85 FLCT hero; Row id 77 MPACT dropped off in v48.24 cascade for id:86 Centurion hero; Row id 78 MIT dropped off in v48.27 cascade for id:87 AIMS APAC hero; Row id 79 IREIT dropped off in v48.38 cascade for id:88 Frasers Property hero; Row id 80 SERT dropped off in v48.51 cascade for id:89 Prime US REIT hero; Row id 81 Landmark dropped off in v48.58 cascade for id:90 NTT DC REIT hero -->
 
     </div>
 
@@ -14564,6 +14589,20 @@ var VAL_ARR=[[382.87,299.74,123.93,327.15,109.36,0,113.2],[1150.79,401.34,211.84
 var CNT_ARR=[[362,448,73,289,38,0,91],[424,509,99,463,59,0,212],[209,349,72,404,65,0,98],[127,269,60,149,97,0,34],[249,411,184,819,175,0,46],[209,362,162,596,192,0,98],[138,299,185,575,173,1,64],[200,433,203,982,192,2,66],[133,361,245,764,173,0,69],[284,414,224,674,191,0,59],[277,376,293,433,196,4,42],[468,418,332,750,294,4,56],[719,636,526,1768,318,0,86],[217,230,227,1411,204,3,69],[214,323,271,1705,204,0,88],[478,652,391,3071,307,1,272],[521,743,298,4174,279,4,392],[1153,1518,289,4341,244,1,407],[742,1305,205,2851,157,3,218],[518,510,106,1907,149,0,99],[242,248,104,1236,103,1,95],[286,242,109,927,89,2,58],[344,219,148,885,121,0,57],[337,256,170,939,96,1,64],[314,223,123,1070,103,0,65],[217,151,144,1090,101,2,70],[351,295,253,1748,140,2,123],[316,264,191,1874,131,0,114],[321,272,131,1483,124,0,129],[334,250,87,1622,96,0,162],[355,301,89,1509,163,0,149],[40,42,8,142,11,0,16]];
 var TYPETOT={"office":57330.6,"retail":35459.5,"shophouse":23504.1,"multiUser":39698.3,"singleUser":42601.2,"bizPark":4842.5,"warehouse":8626.0};
 var NEWS=[
+  {id:90, date:"2026-05-12",
+   title:"NTT DC REIT FY25/26 Maiden Year: Portfolio Independently Revalued To US$1,670.2 Million, +11.3% Above IPO Consideration; DPU 5.56 US Cents Beats Forecast By 2.6%; SG1 MSA Renewal Prices 23% Above Market Band For 1Q FY26/27 Recognition",
+   slug:"ntt-dc-reit-fy2526-portfolio-valuation-uplift-1670m",
+   meta_description:"NTT DC REIT maiden FY25/26: portfolio US$1.67bn (+11.3% above IPO consideration), DPU 5.56 US cents (+2.6% vs forecast), NAV/unit US$0.95 → US$1.14 (+20%). VA2 (Ashburn) +25% and SG1 (Singapore) +20% lead the uplift; SG1 MSA renewed at +23% reversion pricing above the disclosed S$380-450/kW Singapore market band; recognised 1Q FY26/27. Aggregate leverage 29.2% post-revaluation.",
+   og_image:"./images/news_90_ntt_dc_reit_sg1.jpg",
+   keywords:"NTT DC REIT, NTDU, FY25/26, maiden DPU, portfolio valuation, data centre REIT, VA2 Ashburn, SG1 Singapore, CA1 CA2 CA3 Sacramento, VIE1 Vienna, NTT Group, NTT GDC, Yutaka Torigoe, ROFR pipeline, Newmark, Cushman Wakefield, DC Byte, S-REIT, Tier-III",
+   display_title:"NTT DC REIT's Maiden Year: Portfolio Revalued to US$1.67bn, +11.3% Above IPO",
+   display_headline:"NTT DC REIT FY25/26 Maiden Reading: Portfolio Independently Valued At US$1,670.2M (+11.3%) — Six Properties, US$170M Revaluation Gain, And A 23% SG1 MSA Reversion That Priced Above The Singapore Market Band",
+   wordCount:1552, minRead:6,
+   image:"./images/news_90_ntt_dc_reit_sg1.jpg",
+   imageCredit:"PropertyAtlas (via Google Street View) | 51 Serangoon North Avenue 4, Singapore — SG1",
+   source:"PropertyAtlas.sg", category:"Commercial", tag:"Earnings · REIT Update · Maiden Year · Data Centre · Cross-Border · Valuation Uplift · Capital Management",
+   sourceLabel:"PropertyAtlas.sg Analysis · NTT DC REIT FY25/26 Financial Results Presentation, Media Release and Asset Valuation announcement dated 12 May 2026", sentiment:"positive",
+   summary:"<p class=\"lede\"><strong>Ten months after listing as Singapore's first global data centre REIT, NTT DC REIT has delivered its maiden full-year reading — and the more telling number sits in a separate SGX filing dated the same day.</strong> Independent valuers Newmark Valuation & Advisory and Cushman & Wakefield Regional appraised the six-property portfolio at US$1,670.2 million as at 31 March 2026, lifting the carrying value 11.3% above the US$1,500 million in purchase consideration paid at IPO on 14 July 2025. NAV per unit grew from US$0.95 at IPO to US$1.14 — a 20.0% increase; adjusted NAV per unit US$1.08.</p>\n\n<p>This is a US$170 million accounting gain crystallised inside a single financial year, against zero acquisitions and one renewed master services agreement. It is the kind of result that quietly answers the structural question every cross-border S-REIT IPO faces in year one: did the assets price correctly, or did the underwriters hand investors a discount?</p>\n\n<h2>Where the Uplift Came From</h2>\n\n<p>The asset-by-asset breakout matters because it tells you what the appraisers — not the manager — believe about each submarket. The headline 11.3% conceals significant dispersion. <strong>VA2</strong> (Ashburn, Northern Virginia) rose from US$200M to US$250M (<strong>+25.0%</strong>). <strong>SG1</strong> (Serangoon North, Singapore) rose from US$259M to US$310.7M (<strong>+20.0%</strong>). <strong>CA2</strong> (Sacramento) rose from US$308M to US$333M (<strong>+8.1%</strong>). <strong>VIE1</strong> (Vienna) rose from US$271M to US$291.5M (<strong>+7.6%</strong>). <strong>CA1</strong> (Sacramento) rose from US$250M to US$263M (<strong>+5.2%</strong>). <strong>CA3</strong> (Sacramento) rose from US$212M to US$222M (<strong>+4.7%</strong>). Portfolio total: US$1,500M → US$1,670.2M (+US$170.2M, +11.3%).</p>\n\n<p>VA2 in Ashburn and SG1 in Singapore lead at +25% and +20%. Both sit in the world's tightest data centre submarkets. Northern Virginia runs at 98.8% contracted capacity per DC Byte's Q1 2026 read, even after 664 MW of new supply landed in the first three months of the calendar year. Singapore runs at 95.0% contracted with most pipeline already pre-committed; the manager notes there were \"no new contracts from Jan to Mar 2026\" not from weak demand but from supply unavailability.</p>\n\n<p>The valuation shift rebalanced the portfolio's geographic exposure without any acquisitions. Northern California's share fell from 51.3% of portfolio at IPO to 48.9% at 31 March 2026. Singapore's share rose from 17.3% to 18.6%, surpassing Vienna at 17.5%. Tier-1 markets carried the year.</p>\n\n<p>Within the Sacramento cluster (36% of IT load), CA2 was the bright spot at +8.1%, anchored by 99.8% occupancy, a 7.1-year WALE and the Fortune 100 US automotive tenant that contributes 31.5% of monthly base rent. CA1 strengthened sharply over Q4 — occupancy jumped from 90.3% at 31 December to 93.6% at 31 March, the strongest gain in the portfolio — as the manager's flagged backfill commencements landed. CA3 trails at +4.7% with 89.9% occupancy now the softest reading in the portfolio; the valuers are paying for what is leased.</p>\n\n<p>VIE1 in Vienna landed at +7.6%. The submarket is small (63.7 MW commissioned at Q1 2026) but supply-constrained by high land, power and construction costs. CBRE projects EU vacancy will reach 6.5% by end-2026 — an all-time low.</p>\n\n<h2>The DPU Beat</h2>\n\n<p>Distribution per unit of 5.56 US cents for the period from 14 July 2025 (Listing Date) to 31 March 2026 — 2.6% above the IPO Forecast of 5.42 US cents. Gross revenue of US$164.8 million beat forecast by 2.5%; net property income of US$74.9 million beat by 2.3%; distributable income of US$57.5 million beat by 2.5%. Net finance costs of US$14.9 million ran 3.3% below forecast, helped by the disciplined 70% fixed-rate debt structure and the weighted average all-in interest rate of 4.01%.</p>\n\n<p>The maiden distribution will be paid on 29 June 2026. Cum-distribution period ends 18 May 2026, with ex-date 19 May and record date 20 May.</p>\n\n<h2>The SG1 MSA — A 23% Reversion Pricing Above the Market Band</h2>\n\n<p>The single most consequential operational event of the year is not in the headline FY25/26 reversion of 8.5%. NTT Singapore Pte. Ltd. — the sponsor-related anchor at SG1 — renewed its Master Services Agreement on 31 March 2026, raising rent from S$385 per kilowatt to S$474 per kilowatt. That is a 23% reversion, with fixed 5% annual escalations, on a three-year term to 31 March 2029 (extended from a one-year arrangement).</p>\n\n<p>The pricing context matters. The manager's own market data, sourced from DC Byte, places Singapore's wholesale and hyperscale rate range at S$380 to S$450 per kilowatt per month. The renewed NTT Singapore rate of S$474/kW sits roughly 5% above the top of that disclosed market band. This is not a reversion that catches up to market; it is a reversion that prices through it. The SG1 asset valuation rose 20% on the same DC Byte underlying that describes \"persistent imbalance, with latent demand continuing to exceed accessible capacity.\"</p>\n\n<p>Including the SG1 MSA, the portfolio's effective rental reversion for FY25/26 is 13.7%, not 8.5%. The 23% increment will be recognised in 1Q FY26/27. Portfolio weighted average rental escalation stepped from 2.7% at the 9M reading to 3.1% at year-end, with 89.4% of leases now on fixed escalators.</p>\n\n<p>NTT Singapore returned 0.3 MW of contracted capacity in the renewal and remains the SG1 anchor at 2.7 MW. The manager is \"in active discussions with prospective tenants\" to backfill the 0.3 MW. SG1 spot occupancy dipped 1.7pp to 91.8% as a result, but WALE doubled from 0.9 years to 1.8 years on the term extension — a quality-for-volume trade the trust may replay across the rest of the portfolio over the next 18 months.</p>\n\n<h2>A Stronger Balance Sheet Than the One That Listed</h2>\n\n<p>Aggregate leverage closed FY25/26 at 29.2%, down from 32.5% at 31 December 2025 and 35.0% at IPO. After the 29 June 2026 distribution, leverage rises to a still-comfortable 31.3%. Interest coverage strengthened to 4.2x. Total debt of US$517 million sits across 45% EUR / 30% USD / 25% SGD, with no maturities for the next two financial years. 100% of total assets remain unencumbered. US$320 million of headroom to the 40% leverage ceiling currently; ~US$201 million post-distribution.</p>\n\n<p>The growth funnel is open. And the manager has now named what it expects to fund through it.</p>\n\n<h2>ROFR, Fee Structure, Portfolio Quality — Three Priorities Made Explicit</h2>\n\n<p>The FY25/26 deck names three FY26/27 priorities in tightened language compared to the 9M update three months earlier:</p>\n\n<p>— <strong>SG1 MSA Renewal</strong> (delivered): +23% uplift, 5% annual escalations, three-year term.</p>\n\n<p>— <strong>Potential Change to the Management Fee Structure</strong> (timing slipped): the 9M update targeted \"implementation by 1H FY26/27\"; the FY25/26 deck now targets the EGM in 3Q FY26/27 — a one-quarter slip, still within the broad FY26/27 window. Not a red flag; fee structure changes for S-REITs typically need careful sequencing with circular publication.</p>\n\n<p>— <strong>Strengthening Portfolio Quality — Capitalising on Sponsor's ROFR pipeline</strong>. The language matters. \"ROFR\" is a Right of First Refusal — a contractual claim, not a soft pipeline. NTT GDC, the sponsor's global data centre platform, now runs 1,626 MW in operation plus 776 MW planned across 92 sites — an addressable acquisition universe far larger than the trust's current 90.7 MW. This is the first time the maiden filings have framed the sponsor relationship in contractual rather than aspirational terms.</p>\n\n<h2>Reading the Markets</h2>\n\n<p>Submarket commentary draws on DC Byte data: Sacramento at 94.8% contracted (96.1 MW supply / 91.1 MW take-up at Q1 2026; rates US$125–175/kW/month); Northern Virginia at 98.8% contracted (3,999 MW supply with 664 MW added in Q1 alone; rates US$130–235/kW/month); Vienna at 91.5% contracted (63.7 MW supply; rates €95–120/kW/month); Singapore at 95.0% contracted (730.9 MW supply; rates S$380–450/kW/month).</p>\n\n<p>The manager is \"mindful of ongoing geopolitical uncertainties and the potential impact on global demand, supply chains and capital market conditions\" — boilerplate but worth noting in a portfolio that is 63.9% US-located by valuation.</p>\n\n<h2>The Read</h2>\n\n<p>Three things change after this filing.</p>\n\n<p>First, the IPO pricing is validated — not by the manager's commentary but by two independent valuers in a separate Rule 703 disclosure. VA2 and SG1, the two assets in the tightest markets, ran hardest. The revaluation re-weighted the portfolio toward Tier-1 markets without a single acquisition.</p>\n\n<p>Second, the next quarterly reading is structurally higher than this one. The SG1 MSA renewal at +23% reversion — priced above the disclosed Singapore market band — lands in 1Q FY26/27. The portfolio's effective rental reversion has stepped from 5.1% (1H) to 9.2% (9M) to 13.7% (FY25/26 including SG1). The slope is the story.</p>\n\n<p>Third, the language has tightened. The 9M update's \"potential acquisition of an asset in a Tier-1 DC market from the Sponsor\" has become an explicit \"Sponsor's ROFR pipeline\" — a contractual rather than aspirational framing. With US$320 million in current debt headroom (~US$201 million post-distribution), NTT GDC's 2,400+ MW global platform as the acquisition universe, and an EGM on the management fee structure already scheduled for 3Q FY26/27, the operating cadence for the next 18 months is now mapped.</p>\n\n<p>What to watch: which Sponsor asset comes through the ROFR first, what the fee structure circular reveals when it lands, and whether the SG1 0.3 MW backfill closes at or above the new MSA rate of S$474/kW. Any one moves the next reading materially.</p>\n\n<p>Maiden filings usually answer the question \"did the IPO work\". This one answers it and points at what comes next.</p>"},
   {id:89, date:"2026-05-12",
    title:"Prime US REIT 1Q2026: Occupancy 83.1% (4th Quarterly Gain) And NPI +3.3% QoQ End Three Quarters Of Decline, But The Real Story Is 463,000 sq ft Of Signed-But-Uncommenced Leases Ramping Rent From 3Q2026 — Six Insights Beyond The Headline",
    slug:"prime-us-reit-1q2026-occupancy-83-1pct-npi-up-33pct-463k-sf-rent-ramp-from-3q2026",
@@ -19396,30 +19435,35 @@ var REIT_DATA = [
   {name:"Cardiff Data Centre",addr:"Ty Cynnal, Dunleavy Drive, Celtic Gateway, Cardiff CF11 0SW",type:"Data Centre",entity:"Keppel DC REIT",entity_type:"REIT",tenure:"Freehold",nla_sqm:7381,occ:100,val:22.8,prev_val:26.6,prev_occ:100,prev_nla_sqm:7381,region:null,area:"Cardiff",country:"United Kingdom",ar_year:"FY2025",source:"Keppel DC REIT FY2025 AR",notes:"100% ownership. 79,439sf NLA. 1 client. Shell & core triple-net. Val GBP13.3M / ~S$22.8M (FY24: ~S$26.6M; GBP/SGD drag). Gross Revenue S$5.5M. Cardiff designated AI Growth Zone under UK AI Opportunities Action Plan. | Valuation: S$27M → S$23M (-14.3% YoY ↓)",q_val:null,q_occ:null,q_period:"1Q 2026",q_source:"Keppel DC REIT 1Q 2026 Business Update dated 17 Apr 2026 (id:62)",q_reversion:null,q_notes:"1Q 2026 reading covered at portfolio level; no per-asset disclosure in id:62. Portfolio context: occupancy 95.6%; agg leverage 35.1%; cost of debt 2.6%; ICR 7.2x; WALE 6.5 yrs by lettable area; ~51% reversion on contracts renewed in 1Q 2026."},
   {name:"GV7 Data Centre",addr:"7 Greenwich View Place, Millharbour Road, London E14 9NN",type:"Data Centre",entity:"Keppel DC REIT",entity_type:"REIT",tenure:"Leasehold to Sep 2183",nla_sqm:2320,occ:100,val:28.8,prev_val:37.4,prev_occ:100,prev_nla_sqm:2320,region:null,area:"London",country:"United Kingdom",ar_year:"FY2025",source:"Keppel DC REIT FY2025 AR",notes:"100% ownership. 24,972sf NLA. 1 client. Fully-fitted single-tenant triple-net. Val GBP16.8M / ~S$28.8M (FY24: ~S$37.4M). Gross Revenue S$5.2M. | Valuation: S$37M → S$29M (-23.0% YoY ↓)",q_val:null,q_occ:null,q_period:"1Q 2026",q_source:"Keppel DC REIT 1Q 2026 Business Update dated 17 Apr 2026 (id:62)",q_reversion:null,q_notes:"1Q 2026 reading covered at portfolio level; no per-asset disclosure in id:62. Portfolio context: occupancy 95.6%; agg leverage 35.1%; cost of debt 2.6%; ICR 7.2x; WALE 6.5 yrs by lettable area; ~51% reversion on contracts renewed in 1Q 2026."},
   {name:"London Data Centre",addr:"Waterside House, Longshot Lane, Bracknell RG12 1WB",type:"Data Centre",entity:"Keppel DC REIT",entity_type:"REIT",tenure:"Freehold",nla_sqm:8814,occ:100,val:83.8,prev_val:82.6,prev_occ:100,prev_nla_sqm:8814,region:null,area:"Bracknell",country:"United Kingdom",ar_year:"FY2025",source:"Keppel DC REIT FY2025 AR",notes:"100% ownership. 94,867sf NLA. 1 client. Shell & core triple-net. Val GBP48.8M / ~S$83.8M (FY24: ~S$82.6M). Gross Revenue S$4.5M. | Valuation: S$83M → S$84M (+1.5% YoY ↑)",q_val:null,q_occ:null,q_period:"1Q 2026",q_source:"Keppel DC REIT 1Q 2026 Business Update dated 17 Apr 2026 (id:62)",q_reversion:null,q_notes:"1Q 2026 reading covered at portfolio level; no per-asset disclosure in id:62. Portfolio context: occupancy 95.6%; agg leverage 35.1%; cost of debt 2.6%; ICR 7.2x; WALE 6.5 yrs by lettable area; ~51% reversion on contracts renewed in 1Q 2026."},
-  // ── NTT DC REIT (SGX: listed 14 Jul 2025) — 1H + 9M FY25/26 ────────────────
+  // ── NTT DC REIT (SGX: NTDU, listed 14 Jul 2025) — FY25/26 (period ended 31 Mar 2026) ──
   // Singapore's first global-DC-focused S-REIT.
   // Sponsor: NTT Limited (NTT GDC platform — 3rd largest DC provider globally ex. China,
-  //   ~2,300 MW across 92 sites). Manager: NTT DC REIT Manager Pte. Ltd.
+  //   ~2,400 MW capacity across 92 sites). Manager: NTT DC REIT Manager Pte. Ltd.
   //   CEO: Yutaka Torigoe. Trustee: Perpetual (Asia) Limited.
-  // IPO Portfolio: 6 assets, US$1,500M purchase consideration, 90.7 MW design IT load,
-  //   100% Tier-III equivalent, 82.7% freehold by purchase consideration.
-  // Reporting cadence: 1H FY25/26 (period ended 30 Sep 2025, reported 12 Nov 2025);
-  //   9M FY25/26 (period ended 31 Dec 2025, reported 10 Feb 2026).
-  // First full annual cycle (FY25/26, year ended 31 Mar 2026) expected mid-2026.
-  // Val field carries IPO Purchase Consideration in US$M (no post-IPO revaluation cycle yet).
+  // FY25/26 reading (period 28 Mar 2025 to 31 Mar 2026, reported 12 May 2026):
+  //   Portfolio independently valued US$1,670.2M (+11.3% above IPO consideration US$1,500M).
+  //   DPU 5.56 US cents (+2.6% vs IPO forecast). NAV/Unit US$0.95 → US$1.14 (+20%).
+  //   Aggregate leverage 29.2% (vs 35.0% at IPO); ICR 4.2x; 70% fixed-rate debt.
+  //   FY25/26 rental reversion 8.5%; +13.7% incl SG1 MSA renewal (recognised 1Q FY26/27).
+  //   First distribution paid 29 June 2026.
+  // Val field: 31 Mar 2026 independent valuation (US$M).
+  // Prev_val field: IPO Purchase Consideration (US$M) — for YoY comparison.
   // SGD references in notes use US$1 = S$1.34.
+  // Three FY26/27 priorities: SG1 MSA delivered; management fee EGM 3Q FY26/27;
+  //   Strengthening Portfolio Quality via Sponsor's ROFR pipeline (NTT GDC = 2,402 MW universe).
   // ─────────────────────────────────────────────────────────────────────────────
-  {name:"VA2",addr:"44610 Guilford Drive, Ashburn, VA 20147, USA",type:"Data Centre",entity:"NTT DC REIT",entity_type:"REIT",tenure:"Freehold",nla_sqm:null,occ:98.1,val:200.0,prev_val:null,prev_occ:98.1,region:"Americas",area:"Northern Virginia — Ashburn (Data Centre Alley)",country:"USA",ar_year:"9M FY25/26",source:"NTT DC REIT 9M FY25/26 Business Update dated 10 Feb 2026 + 1H FY25/26 Financial Update dated 12 Nov 2025",notes:"VA2 is NTT DC REIT's sole Northern Virginia asset, located in Ashburn — the world's largest data centre market (Data Centre Alley, Loudoun County). 14.0 MW design IT load, fully Tier-III equivalent. Hyperscale-heavy: 9 customers but high MBR concentration. Occupancy 98.1% (unchanged Sep→Dec 2025), WALE 3.7 yrs (slightly shorter than Sep's 4.0 yrs as time decays). Last refurbishment 2024. Ashburn benefits from premier connectivity (Loudoun County 'Data Centre Alley') and ~40GW data centre capacity pipeline at Dominion Energy. | Design IT load: 14.0 MW | Customers: 9 | WALE (31 Dec 2025): 3.7 yrs | YTD 9M base rent: US$7.8M (~S$10.5M @ 1.34) | Purchase consideration: US$200.0M (~S$268.0M @ 1.34) | Sep 2025 occ: 98.1% → Dec 2025 occ: 98.1% | RFO / last refurb: 2016 / refurb 2024 | Tier-III equivalent. | Note: NTT DC REIT IPO\'d 14 Jul 2025; first full annual reporting cycle (FY25/26, year ended 31 Mar 2026) expected mid-2026. No post-IPO valuation cycle yet — `val` field carries IPO purchase consideration in US$M as proxy.",q_val:null,q_occ:null,q_period:"9M FY25/26",q_source:"NTT DC REIT 9M FY25/26 Business Update dated 10 Feb 2026",q_reversion:9.2,q_notes:"9M FY25/26 (period ended 31 Dec 2025) reading: portfolio committed occupancy 97.3% (incl. leases committed in 3Q FY25/26 not yet commenced); rent reversion +9.2% (up from +5.1% at 1H); ~2,400 kW of leases secured across CA1, CA3, SG1 with commencement from 4Q FY25/26. Aggregate leverage 32.5%; ICR 4.0x; weighted avg interest rate 3.94%; 70% fixed-rate debt; debt currency 45% EUR / 30% USD / 25% SGD. Top tenant: Fortune 100 US automotive company at 31.5% of MBR. NTT Group itself: 12.8% of MBR. Top 10 customers (incl. NTT) = 75.5% of MBR. Management fee structure change targeted by 1H FY26/27 to enhance alignment with Unitholders."},
+  {name:"VA2",addr:"44610 Guilford Drive, Ashburn, VA 20147, USA",type:"Data Centre",entity:"NTT DC REIT",entity_type:"REIT",tenure:"Freehold",nla_sqm:null,occ:98.1,val:250.0,prev_val:200.0,prev_occ:98.1,region:"Americas",area:"Northern Virginia — Ashburn (Data Centre Alley)",country:"USA",ar_year:"FY25/26",source:"NTT DC REIT FY25/26 Financial Results presentation, Media Release and Asset Valuation announcement dated 12 May 2026",notes:"VA2 in Ashburn is NTT DC REIT's sole Northern Virginia asset and the largest valuation gainer in FY25/26 at +25.0% YoY (US$200M → US$250M as at 31 Mar 2026, valued by Newmark). 14.0 MW design IT load; 9 customers; 98.1% occupancy unchanged Sep→Dec→Mar; WALE 3.5 yrs (decayed 0.2y from Dec as time passed without renewals). Last refurb 2024. Sits in the world's tightest data centre submarket — NoVA at 98.8% contracted capacity per DC Byte Q1 2026, with 664 MW of new supply added in Jan-Mar 2026. Wholesale rates US$130-235/kW/month. | Design IT load: 14.0 MW | Customers: 9 | WALE (31 Mar 2026): 3.5 yrs | YTD FY25/26 base rent: US$12.0M (~S$16.1M @ 1.34) | 31 Mar 2026 valuation: US$250.0M (~S$335.0M @ 1.34); IPO purchase consideration: US$200.0M; revaluation +25.0% YoY by Newmark Valuation & Advisory LLC. | Dec 2025 occ: 98.1% → Mar 2026 occ: 98.1% | RFO / last refurb: 2016 / refurb 2024 | Tier-III equivalent.",q_val:null,q_occ:null,q_period:"FY25/26",q_source:"NTT DC REIT FY25/26 Financial Results, Media Release and Asset Valuation announcement dated 12 May 2026",q_reversion:8.5,q_notes:"FY25/26 (period ended 31 Mar 2026): portfolio independently valued US$1,670.2M, +11.3% above IPO consideration of US$1,500M. DPU 5.56 US cents beats IPO forecast by 2.6%. NAV/Unit grew from US$0.95 (IPO) to US$1.14 (+20%); adjusted NAV/Unit US$1.08. Aggregate leverage 29.2% (down from 35.0% IPO); 31.3% post-distribution; ICR 4.2x; weighted avg interest rate 4.01%; 70% fixed-rate; US$320M headroom to 40% leverage ceiling. FY25/26 rental reversion 8.5%; including SG1 MSA renewal at +23% = 13.7% (recognised 1Q FY26/27). Three FY26/27 priorities: SG1 MSA delivered; management fee structure EGM targeted 3Q FY26/27 (slipped one quarter from 1H FY26/27 at 9M); Strengthening Portfolio Quality via Sponsor's ROFR pipeline (NTT GDC = 1,626 MW operational + 776 MW planned across 92 sites globally). First distribution paid 29 June 2026; cum-distribution ends 18 May 2026."},
 
-  {name:"CA1",addr:"1200 Striker Avenue, Sacramento, CA, USA",type:"Data Centre",entity:"NTT DC REIT",entity_type:"REIT",tenure:"Freehold",nla_sqm:null,occ:90.3,val:250.0,prev_val:null,prev_occ:91.5,region:"Americas",area:"Northern California — Sacramento",country:"USA",ar_year:"9M FY25/26",source:"NTT DC REIT 9M FY25/26 Business Update dated 10 Feb 2026 + 1H FY25/26 Financial Update dated 12 Nov 2025",notes:"CA1 is the oldest of NTT DC REIT's three Sacramento campuses (RFO 2001, refurbished 2025). Colocation-led with 119 customers — the largest customer count in the portfolio. 12.6 MW design IT load. Occupancy 90.3% at Dec 2025 (vs 91.5% Sep), with meaningful backfill secured in 3Q FY25/26 commencing from 4Q FY25/26 — expected to lift committed occupancy materially. Sacramento (Northern California) is the 8th largest US DC market; PG&E reported 40% YoY rise in power inquiries in 2025, totalling 12.8GW. | Design IT load: 12.6 MW | Customers: 119 | WALE (31 Dec 2025): 3.8 yrs | YTD 9M base rent: US$10.8M (~S$14.5M @ 1.34) | Purchase consideration: US$250.0M (~S$335.0M @ 1.34) | Sep 2025 occ: 91.5% → Dec 2025 occ: 90.3% | RFO / last refurb: 2001 / refurb 2025 | Tier-III equivalent. | Note: NTT DC REIT IPO\'d 14 Jul 2025; first full annual reporting cycle (FY25/26, year ended 31 Mar 2026) expected mid-2026. No post-IPO valuation cycle yet — `val` field carries IPO purchase consideration in US$M as proxy.",q_val:null,q_occ:null,q_period:"9M FY25/26",q_source:"NTT DC REIT 9M FY25/26 Business Update dated 10 Feb 2026",q_reversion:9.2,q_notes:"9M FY25/26 (period ended 31 Dec 2025) reading: portfolio committed occupancy 97.3% (incl. leases committed in 3Q FY25/26 not yet commenced); rent reversion +9.2% (up from +5.1% at 1H); ~2,400 kW of leases secured across CA1, CA3, SG1 with commencement from 4Q FY25/26. Aggregate leverage 32.5%; ICR 4.0x; weighted avg interest rate 3.94%; 70% fixed-rate debt; debt currency 45% EUR / 30% USD / 25% SGD. Top tenant: Fortune 100 US automotive company at 31.5% of MBR. NTT Group itself: 12.8% of MBR. Top 10 customers (incl. NTT) = 75.5% of MBR. Management fee structure change targeted by 1H FY26/27 to enhance alignment with Unitholders."},
+  {name:"CA1",addr:"1200 Striker Avenue, Sacramento, CA, USA",type:"Data Centre",entity:"NTT DC REIT",entity_type:"REIT",tenure:"Freehold",nla_sqm:null,occ:93.6,val:263.0,prev_val:250.0,prev_occ:90.3,region:"Americas",area:"Northern California — Sacramento",country:"USA",ar_year:"FY25/26",source:"NTT DC REIT FY25/26 Financial Results presentation, Media Release and Asset Valuation announcement dated 12 May 2026",notes:"CA1 is the oldest of NTT DC REIT's three Sacramento campuses (RFO 2001, refurbished 2025). 12.6 MW design IT load; 118 customers (largest colocation base in portfolio). Occupancy strengthened sharply over Q4 from 90.3% (Dec) to 93.6% (Mar) — the strongest occupancy gain in the portfolio, as backfill commencements flagged at 9M came good. WALE 4.0 yrs. Revalued from US$250M to US$263M as at 31 Mar 2026 by Newmark (+5.2% YoY). Sacramento positioned as alternative to Silicon Valley with ~5% market vacancy; AI/HPC workload spillover. Wholesale rates US$125-175/kW/month. | Design IT load: 12.6 MW | Customers: 118 | WALE (31 Mar 2026): 4.0 yrs | YTD FY25/26 base rent: US$16.5M (~S$22.1M @ 1.34) | 31 Mar 2026 valuation: US$263.0M (~S$352.4M @ 1.34); IPO purchase consideration: US$250.0M; revaluation +5.2% YoY by Newmark Valuation & Advisory LLC. | Dec 2025 occ: 90.3% → Mar 2026 occ: 93.6% | RFO / last refurb: 2001 / refurb 2025 | Tier-III equivalent.",q_val:null,q_occ:null,q_period:"FY25/26",q_source:"NTT DC REIT FY25/26 Financial Results, Media Release and Asset Valuation announcement dated 12 May 2026",q_reversion:8.5,q_notes:"FY25/26 (period ended 31 Mar 2026): portfolio independently valued US$1,670.2M, +11.3% above IPO consideration of US$1,500M. DPU 5.56 US cents beats IPO forecast by 2.6%. NAV/Unit grew from US$0.95 (IPO) to US$1.14 (+20%); adjusted NAV/Unit US$1.08. Aggregate leverage 29.2% (down from 35.0% IPO); 31.3% post-distribution; ICR 4.2x; weighted avg interest rate 4.01%; 70% fixed-rate; US$320M headroom to 40% leverage ceiling. FY25/26 rental reversion 8.5%; including SG1 MSA renewal at +23% = 13.7% (recognised 1Q FY26/27). Three FY26/27 priorities: SG1 MSA delivered; management fee structure EGM targeted 3Q FY26/27 (slipped one quarter from 1H FY26/27 at 9M); Strengthening Portfolio Quality via Sponsor's ROFR pipeline (NTT GDC = 1,626 MW operational + 776 MW planned across 92 sites globally). First distribution paid 29 June 2026; cum-distribution ends 18 May 2026."},
 
-  {name:"CA2",addr:"1312 Striker Avenue, Sacramento, CA, USA",type:"Data Centre",entity:"NTT DC REIT",entity_type:"REIT",tenure:"Freehold",nla_sqm:null,occ:99.8,val:308.0,prev_val:null,prev_occ:99.8,region:"Americas",area:"Northern California — Sacramento",country:"USA",ar_year:"9M FY25/26",source:"NTT DC REIT 9M FY25/26 Business Update dated 10 Feb 2026 + 1H FY25/26 Financial Update dated 12 Nov 2025",notes:"CA2 is the largest asset in the portfolio by both IT load (26.1 MW design) and purchase consideration (US$308M). Hyperscale-anchored: 22 customers but extremely high concentration — the Fortune 100 US automotive tenant (~31.5% of portfolio MBR) is heavily anchored here. Occupancy 99.8% (effectively full), WALE 7.3 yrs (longest in the portfolio, providing cash flow stability through to FY30/31). RFO 2011, last refurb 2025. | Design IT load: 26.1 MW | Customers: 22 | WALE (31 Dec 2025): 7.3 yrs | YTD 9M base rent: US$15.1M (~S$20.2M @ 1.34) | Purchase consideration: US$308.0M (~S$412.7M @ 1.34) | Sep 2025 occ: 99.8% → Dec 2025 occ: 99.8% | RFO / last refurb: 2011 / refurb 2025 | Tier-III equivalent. | Note: NTT DC REIT IPO\'d 14 Jul 2025; first full annual reporting cycle (FY25/26, year ended 31 Mar 2026) expected mid-2026. No post-IPO valuation cycle yet — `val` field carries IPO purchase consideration in US$M as proxy.",q_val:null,q_occ:null,q_period:"9M FY25/26",q_source:"NTT DC REIT 9M FY25/26 Business Update dated 10 Feb 2026",q_reversion:9.2,q_notes:"9M FY25/26 (period ended 31 Dec 2025) reading: portfolio committed occupancy 97.3% (incl. leases committed in 3Q FY25/26 not yet commenced); rent reversion +9.2% (up from +5.1% at 1H); ~2,400 kW of leases secured across CA1, CA3, SG1 with commencement from 4Q FY25/26. Aggregate leverage 32.5%; ICR 4.0x; weighted avg interest rate 3.94%; 70% fixed-rate debt; debt currency 45% EUR / 30% USD / 25% SGD. Top tenant: Fortune 100 US automotive company at 31.5% of MBR. NTT Group itself: 12.8% of MBR. Top 10 customers (incl. NTT) = 75.5% of MBR. Management fee structure change targeted by 1H FY26/27 to enhance alignment with Unitholders."},
+  {name:"CA2",addr:"1312 Striker Avenue, Sacramento, CA, USA",type:"Data Centre",entity:"NTT DC REIT",entity_type:"REIT",tenure:"Freehold",nla_sqm:null,occ:99.8,val:333.0,prev_val:308.0,prev_occ:99.8,region:"Americas",area:"Northern California — Sacramento",country:"USA",ar_year:"FY25/26",source:"NTT DC REIT FY25/26 Financial Results presentation, Media Release and Asset Valuation announcement dated 12 May 2026",notes:"CA2 remains the largest asset in the portfolio by both IT load (26.1 MW design) and valuation (US$333M as at 31 Mar 2026; Newmark). Hyperscale-anchored: 20 customers with extreme concentration — the Fortune 100 US automotive tenant contributing 31.5% of portfolio MBR is heavily anchored here. Occupancy effectively full at 99.8% (unchanged); WALE 7.1 yrs (longest in portfolio, providing cash flow stability through FY30/31). +8.1% YoY revaluation (US$308M → US$333M) — the bright spot of the Sacramento cluster. RFO 2011, last refurb 2025. | Design IT load: 26.1 MW | Customers: 20 | WALE (31 Mar 2026): 7.1 yrs | YTD FY25/26 base rent: US$23.4M (~S$31.4M @ 1.34) | 31 Mar 2026 valuation: US$333.0M (~S$446.2M @ 1.34); IPO purchase consideration: US$308.0M; revaluation +8.1% YoY by Newmark Valuation & Advisory LLC. | Dec 2025 occ: 99.8% → Mar 2026 occ: 99.8% | RFO / last refurb: 2011 / refurb 2025 | Tier-III equivalent.",q_val:null,q_occ:null,q_period:"FY25/26",q_source:"NTT DC REIT FY25/26 Financial Results, Media Release and Asset Valuation announcement dated 12 May 2026",q_reversion:8.5,q_notes:"FY25/26 (period ended 31 Mar 2026): portfolio independently valued US$1,670.2M, +11.3% above IPO consideration of US$1,500M. DPU 5.56 US cents beats IPO forecast by 2.6%. NAV/Unit grew from US$0.95 (IPO) to US$1.14 (+20%); adjusted NAV/Unit US$1.08. Aggregate leverage 29.2% (down from 35.0% IPO); 31.3% post-distribution; ICR 4.2x; weighted avg interest rate 4.01%; 70% fixed-rate; US$320M headroom to 40% leverage ceiling. FY25/26 rental reversion 8.5%; including SG1 MSA renewal at +23% = 13.7% (recognised 1Q FY26/27). Three FY26/27 priorities: SG1 MSA delivered; management fee structure EGM targeted 3Q FY26/27 (slipped one quarter from 1H FY26/27 at 9M); Strengthening Portfolio Quality via Sponsor's ROFR pipeline (NTT GDC = 1,626 MW operational + 776 MW planned across 92 sites globally). First distribution paid 29 June 2026; cum-distribution ends 18 May 2026."},
 
-  {name:"CA3",addr:"1625 West National Drive, Sacramento, CA, USA",type:"Data Centre",entity:"NTT DC REIT",entity_type:"REIT",tenure:"Freehold",nla_sqm:null,occ:89.7,val:212.0,prev_val:null,prev_occ:92.0,region:"Americas",area:"Northern California — Sacramento",country:"USA",ar_year:"9M FY25/26",source:"NTT DC REIT 9M FY25/26 Business Update dated 10 Feb 2026 + 1H FY25/26 Financial Update dated 12 Nov 2025",notes:"CA3 is the newest Sacramento campus (RFO 2015, refurb 2024). 14.0 MW design IT load, mixed customer base with 30 customers. Occupancy 89.7% at Dec 2025 (vs 92.0% Sep — softest in the portfolio). Like CA1, meaningful backfill secured in 3Q FY25/26 with commencement from 4Q FY25/26, expected to lift CA1+CA3 occupancy materially. WALE 5.6 yrs (lengthened from 5.4 yrs at Sep as new long-dated leases committed). | Design IT load: 14.0 MW | Customers: 30 | WALE (31 Dec 2025): 5.6 yrs | YTD 9M base rent: US$9.7M (~S$13.0M @ 1.34) | Purchase consideration: US$212.0M (~S$284.1M @ 1.34) | Sep 2025 occ: 92.0% → Dec 2025 occ: 89.7% | RFO / last refurb: 2015 / refurb 2024 | Tier-III equivalent. | Note: NTT DC REIT IPO\'d 14 Jul 2025; first full annual reporting cycle (FY25/26, year ended 31 Mar 2026) expected mid-2026. No post-IPO valuation cycle yet — `val` field carries IPO purchase consideration in US$M as proxy.",q_val:null,q_occ:null,q_period:"9M FY25/26",q_source:"NTT DC REIT 9M FY25/26 Business Update dated 10 Feb 2026",q_reversion:9.2,q_notes:"9M FY25/26 (period ended 31 Dec 2025) reading: portfolio committed occupancy 97.3% (incl. leases committed in 3Q FY25/26 not yet commenced); rent reversion +9.2% (up from +5.1% at 1H); ~2,400 kW of leases secured across CA1, CA3, SG1 with commencement from 4Q FY25/26. Aggregate leverage 32.5%; ICR 4.0x; weighted avg interest rate 3.94%; 70% fixed-rate debt; debt currency 45% EUR / 30% USD / 25% SGD. Top tenant: Fortune 100 US automotive company at 31.5% of MBR. NTT Group itself: 12.8% of MBR. Top 10 customers (incl. NTT) = 75.5% of MBR. Management fee structure change targeted by 1H FY26/27 to enhance alignment with Unitholders."},
+  {name:"CA3",addr:"1625 West National Drive, Sacramento, CA, USA",type:"Data Centre",entity:"NTT DC REIT",entity_type:"REIT",tenure:"Freehold",nla_sqm:null,occ:89.9,val:222.0,prev_val:212.0,prev_occ:89.7,region:"Americas",area:"Northern California — Sacramento",country:"USA",ar_year:"FY25/26",source:"NTT DC REIT FY25/26 Financial Results presentation, Media Release and Asset Valuation announcement dated 12 May 2026",notes:"CA3 is the newest Sacramento campus (RFO 2015, refurb 2024). 14.0 MW design IT load; 29 customers. Occupancy 89.9% at 31 Mar 2026 (essentially flat from Dec's 89.7%) is now the softest reading in the portfolio — the valuers are paying for what is leased. WALE 5.3 yrs. Revalued from US$212M to US$222M (+4.7% YoY) by Cushman & Wakefield Regional — the laggard of the portfolio's six asset revaluations. Sacramento submarket strong fundamentally (AI/HPC spillover; 94.8% contracted capacity); CA3-specific upside remains contingent on closing the remaining ~10% vacancy. | Design IT load: 14.0 MW | Customers: 29 | WALE (31 Mar 2026): 5.3 yrs | YTD FY25/26 base rent: US$14.5M (~S$19.4M @ 1.34) | 31 Mar 2026 valuation: US$222.0M (~S$297.5M @ 1.34); IPO purchase consideration: US$212.0M; revaluation +4.7% YoY by Cushman & Wakefield Regional LLC. | Dec 2025 occ: 89.7% → Mar 2026 occ: 89.9% | RFO / last refurb: 2015 / refurb 2024 | Tier-III equivalent.",q_val:null,q_occ:null,q_period:"FY25/26",q_source:"NTT DC REIT FY25/26 Financial Results, Media Release and Asset Valuation announcement dated 12 May 2026",q_reversion:8.5,q_notes:"FY25/26 (period ended 31 Mar 2026): portfolio independently valued US$1,670.2M, +11.3% above IPO consideration of US$1,500M. DPU 5.56 US cents beats IPO forecast by 2.6%. NAV/Unit grew from US$0.95 (IPO) to US$1.14 (+20%); adjusted NAV/Unit US$1.08. Aggregate leverage 29.2% (down from 35.0% IPO); 31.3% post-distribution; ICR 4.2x; weighted avg interest rate 4.01%; 70% fixed-rate; US$320M headroom to 40% leverage ceiling. FY25/26 rental reversion 8.5%; including SG1 MSA renewal at +23% = 13.7% (recognised 1Q FY26/27). Three FY26/27 priorities: SG1 MSA delivered; management fee structure EGM targeted 3Q FY26/27 (slipped one quarter from 1H FY26/27 at 9M); Strengthening Portfolio Quality via Sponsor's ROFR pipeline (NTT GDC = 1,626 MW operational + 776 MW planned across 92 sites globally). First distribution paid 29 June 2026; cum-distribution ends 18 May 2026."},
 
-  {name:"VIE1",addr:"Computerstrasse 4, 1100 Vienna, Austria",type:"Data Centre",entity:"NTT DC REIT",entity_type:"REIT",tenure:"Freehold",nla_sqm:null,occ:91.5,val:271.0,prev_val:null,prev_occ:91.4,region:"EMEA",area:"Vienna",country:"Austria",ar_year:"9M FY25/26",source:"NTT DC REIT 9M FY25/26 Business Update dated 10 Feb 2026 + 1H FY25/26 Financial Update dated 12 Nov 2025",notes:"VIE1 is NTT DC REIT's sole EMEA asset and the most recently built (RFO 2023, no refurbishment cycle yet). 15.4 MW design IT load, colocation-led with 77 customers. Occupancy 91.5% (essentially stable Sep→Dec). WALE 6.3 yrs. Acquired by NTT DC REIT on 27 June 2025 — completed two weeks ahead of the main IPO completion to lock in the Vienna foothold. Vienna is a fast-growing EMEA submarket; commissioned colocation capacity rose from 43 MW (2024) to 48 MW (1H 2025) — small but tight. Microsoft Azure cloud region recently opened in Vienna with 3 availability zones. VIE1 contributes to local decarbonization by supplying waste heat to the district-heating network. | Design IT load: 15.4 MW | Customers: 77 | WALE (31 Dec 2025): 6.3 yrs | YTD 9M base rent: US$13.0M (~S$17.4M @ 1.34) | Purchase consideration: US$271.0M (~S$363.1M @ 1.34) | Sep 2025 occ: 91.4% → Dec 2025 occ: 91.5% | RFO / last refurb: 2023 | Tier-III equivalent. | Note: NTT DC REIT IPO\'d 14 Jul 2025; first full annual reporting cycle (FY25/26, year ended 31 Mar 2026) expected mid-2026. No post-IPO valuation cycle yet — `val` field carries IPO purchase consideration in US$M as proxy.",q_val:null,q_occ:null,q_period:"9M FY25/26",q_source:"NTT DC REIT 9M FY25/26 Business Update dated 10 Feb 2026",q_reversion:9.2,q_notes:"9M FY25/26 (period ended 31 Dec 2025) reading: portfolio committed occupancy 97.3% (incl. leases committed in 3Q FY25/26 not yet commenced); rent reversion +9.2% (up from +5.1% at 1H); ~2,400 kW of leases secured across CA1, CA3, SG1 with commencement from 4Q FY25/26. Aggregate leverage 32.5%; ICR 4.0x; weighted avg interest rate 3.94%; 70% fixed-rate debt; debt currency 45% EUR / 30% USD / 25% SGD. Top tenant: Fortune 100 US automotive company at 31.5% of MBR. NTT Group itself: 12.8% of MBR. Top 10 customers (incl. NTT) = 75.5% of MBR. Management fee structure change targeted by 1H FY26/27 to enhance alignment with Unitholders."},
+  {name:"VIE1",addr:"Computerstrasse 4, 1100 Vienna, Austria",type:"Data Centre",entity:"NTT DC REIT",entity_type:"REIT",tenure:"Freehold",nla_sqm:null,occ:92.0,val:291.5,prev_val:271.0,prev_occ:91.5,region:"EMEA",area:"Vienna",country:"Austria",ar_year:"FY25/26",source:"NTT DC REIT FY25/26 Financial Results presentation, Media Release and Asset Valuation announcement dated 12 May 2026",notes:"VIE1 is NTT DC REIT's sole EMEA asset and the most recently built (RFO 2023, no refurbishment cycle yet). 15.4 MW design IT load; 76 customers (largest customer base for the colocation-heavy asset). Occupancy 92.0% at 31 Mar 2026 (up 0.5pp from Dec); WALE 5.2 yrs. Revalued from US$271M to US$291.5M (+7.6% YoY in USD; +10.4% YoY in EUR €230M → €254M as at 31 Mar 2026) by Cushman & Wakefield Regional. Vienna submarket constrained by high land/power/construction costs; 63.7 MW commissioned at Q1 2026 (up from 53.5 MW in 2025); 91.5% contracted. EU vacancy projected to hit all-time low 6.5% by end-2026 (CBRE). Wholesale rates €95-120/kW/month. | Design IT load: 15.4 MW | Customers: 76 | WALE (31 Mar 2026): 5.2 yrs | YTD FY25/26 base rent: US$19.7M (~S$26.4M @ 1.34) | 31 Mar 2026 valuation: US$291.5M (~S$390.6M @ 1.34); IPO purchase consideration: US$271.0M; revaluation +7.6% YoY by Cushman & Wakefield Regional LLC. | Dec 2025 occ: 91.5% → Mar 2026 occ: 92.0% | RFO / last refurb: 2023 | Tier-III equivalent.",q_val:null,q_occ:null,q_period:"FY25/26",q_source:"NTT DC REIT FY25/26 Financial Results, Media Release and Asset Valuation announcement dated 12 May 2026",q_reversion:8.5,q_notes:"FY25/26 (period ended 31 Mar 2026): portfolio independently valued US$1,670.2M, +11.3% above IPO consideration of US$1,500M. DPU 5.56 US cents beats IPO forecast by 2.6%. NAV/Unit grew from US$0.95 (IPO) to US$1.14 (+20%); adjusted NAV/Unit US$1.08. Aggregate leverage 29.2% (down from 35.0% IPO); 31.3% post-distribution; ICR 4.2x; weighted avg interest rate 4.01%; 70% fixed-rate; US$320M headroom to 40% leverage ceiling. FY25/26 rental reversion 8.5%; including SG1 MSA renewal at +23% = 13.7% (recognised 1Q FY26/27). Three FY26/27 priorities: SG1 MSA delivered; management fee structure EGM targeted 3Q FY26/27 (slipped one quarter from 1H FY26/27 at 9M); Strengthening Portfolio Quality via Sponsor's ROFR pipeline (NTT GDC = 1,626 MW operational + 776 MW planned across 92 sites globally). First distribution paid 29 June 2026; cum-distribution ends 18 May 2026."},
 
-  {name:"SG1",addr:"51 Serangoon North Avenue 4, Singapore 554864",type:"Data Centre",entity:"NTT DC REIT",entity_type:"REIT",tenure:"Leasehold to Aug 2040 (+30yr option)",nla_sqm:null,occ:93.5,val:259.0,prev_val:null,prev_occ:93.4,region:"APAC",area:"Serangoon North",country:"Singapore",ar_year:"9M FY25/26",source:"NTT DC REIT 9M FY25/26 Business Update dated 10 Feb 2026 + 1H FY25/26 Financial Update dated 12 Nov 2025",notes:"SG1 is NTT DC REIT's sole Singapore asset and the only non-freehold property in the portfolio (JTC occupational lease, paid in full to Aug 2040 with a +30-year extension option to 2070 — conditions (i) and (ii) confirmed met by JTC). 8.6 MW design IT load. Occupancy 93.5% at Dec 2025 (essentially stable). WALE 0.9 yrs is the shortest in the portfolio — effectively all leases expire within 12 months, presenting the most immediate rental reversion opportunity. Manager is in advanced negotiations with a related-party tenant for meaningful rent reversion at SG1. 100% renewable energy from 1 Jan 2026 via Sembcorp biomass deal (~55 GWh p.a. green electricity), enabling 100% net-zero Scope 2 by 2026. | Design IT load: 8.6 MW | Customers: 28 | WALE (31 Dec 2025): 0.9 yrs | YTD 9M base rent: US$15.7M (~S$21.0M @ 1.34) | Purchase consideration: US$259.0M (~S$347.1M @ 1.34) | Sep 2025 occ: 93.4% → Dec 2025 occ: 93.5% | RFO / last refurb: 2012 / refurb 2024 | Tier-III equivalent. | Note: NTT DC REIT IPO\'d 14 Jul 2025; first full annual reporting cycle (FY25/26, year ended 31 Mar 2026) expected mid-2026. No post-IPO valuation cycle yet — `val` field carries IPO purchase consideration in US$M as proxy.",q_val:null,q_occ:null,q_period:"9M FY25/26",q_source:"NTT DC REIT 9M FY25/26 Business Update dated 10 Feb 2026",q_reversion:9.2,q_notes:"9M FY25/26 (period ended 31 Dec 2025) reading: portfolio committed occupancy 97.3% (incl. leases committed in 3Q FY25/26 not yet commenced); rent reversion +9.2% (up from +5.1% at 1H); ~2,400 kW of leases secured across CA1, CA3, SG1 with commencement from 4Q FY25/26. Aggregate leverage 32.5%; ICR 4.0x; weighted avg interest rate 3.94%; 70% fixed-rate debt; debt currency 45% EUR / 30% USD / 25% SGD. Top tenant: Fortune 100 US automotive company at 31.5% of MBR. NTT Group itself: 12.8% of MBR. Top 10 customers (incl. NTT) = 75.5% of MBR. Management fee structure change targeted by 1H FY26/27 to enhance alignment with Unitholders."},
+  {name:"SG1",addr:"51 Serangoon North Avenue 4, Singapore 555858",type:"Data Centre",entity:"NTT DC REIT",entity_type:"REIT",tenure:"Leasehold to Aug 2040 (+30yr option)",nla_sqm:null,occ:91.8,val:310.7,prev_val:259.0,prev_occ:93.5,region:"APAC",area:"Serangoon North",country:"Singapore",ar_year:"FY25/26",source:"NTT DC REIT FY25/26 Financial Results presentation, Media Release and Asset Valuation announcement dated 12 May 2026",notes:"SG1 is NTT DC REIT's sole Singapore asset and the second-largest valuation gainer in FY25/26 at +20.0% YoY (US$259M → US$310.7M / S$401.0M as at 31 Mar 2026; valued by Cushman & Wakefield Regional). Sponsor-related anchor NTT Singapore Pte. Ltd. renewed its Master Services Agreement on 31 Mar 2026 at S$474/kW (up from S$385/kW) — a 23% rental uplift on a 3-year term (extended from 1-year) with 5% fixed annual escalations. The new rate prices ~5% ABOVE the disclosed Singapore market band of S$380-450/kW per DC Byte. NTT Singapore returned 0.3 MW (now 2.7 MW anchor capacity); manager in active backfill discussions. SG1 spot occupancy dipped 1.7pp (93.5% → 91.8%) on the 0.3 MW return; WALE doubled from 0.9y to 1.8y on term extension. JTC occupational lease paid in full to Aug 2040 with +30y option to 2070 (conditions (i)+(ii) confirmed met by JTC). 100% renewable energy from 1 Jan 2026 via Sembcorp biomass (~55 GWh p.a.); enables 100% net-zero Scope 2 by 2026. | Design IT load: 8.6 MW | Customers: 28 | WALE (31 Mar 2026): 1.8 yrs | YTD FY25/26 base rent: US$24.6M (~S$33.0M @ 1.34) | 31 Mar 2026 valuation: US$310.7M (~S$401.0M @ 1.34); IPO purchase consideration: US$259.0M; revaluation +20.0% YoY by Cushman & Wakefield Regional LLC. | Dec 2025 occ: 93.5% → Mar 2026 occ: 91.8% | RFO / last refurb: 2012 / refurb 2024 | Tier-III equivalent.",q_val:null,q_occ:null,q_period:"FY25/26",q_source:"NTT DC REIT FY25/26 Financial Results, Media Release and Asset Valuation announcement dated 12 May 2026",q_reversion:8.5,q_notes:"FY25/26 (period ended 31 Mar 2026): portfolio independently valued US$1,670.2M, +11.3% above IPO consideration of US$1,500M. DPU 5.56 US cents beats IPO forecast by 2.6%. NAV/Unit grew from US$0.95 (IPO) to US$1.14 (+20%); adjusted NAV/Unit US$1.08. Aggregate leverage 29.2% (down from 35.0% IPO); 31.3% post-distribution; ICR 4.2x; weighted avg interest rate 4.01%; 70% fixed-rate; US$320M headroom to 40% leverage ceiling. FY25/26 rental reversion 8.5%; including SG1 MSA renewal at +23% = 13.7% (recognised 1Q FY26/27). Three FY26/27 priorities: SG1 MSA delivered; management fee structure EGM targeted 3Q FY26/27 (slipped one quarter from 1H FY26/27 at 9M); Strengthening Portfolio Quality via Sponsor's ROFR pipeline (NTT GDC = 1,626 MW operational + 776 MW planned across 92 sites globally). First distribution paid 29 June 2026; cum-distribution ends 18 May 2026."},
+
 
   // ── CDL Hospitality Trusts — Updated FY2025 (AR 31 Dec 2025) ──
   {name:"ORCHARD HOTEL",addr:"442 Orchard Road, Singapore 238879",type:"Hotel",entity:"CDL Hospitality Trusts",entity_type:"REIT",tenure:"Leasehold 56yr to 2081",nla_sqm:null,occ:null,val:498.0,prev_val:517.0,region:"Central",area:"Orchard",country:"Singapore",ar_year:"FY2025",source:"CDLHT AR 2025",notes:"656 rooms; land area 8,588sqm. RevPAR S$182 (-6.2% YoY); NPI S$19.7M (-11.2%); val -S$19.0M to S$498.0M.",q_val:null,q_occ:null,q_period:null,q_source:null,q_reversion:null,q_notes:null},
