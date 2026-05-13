@@ -21,6 +21,22 @@
      wraps to route ./?article=N → ./#<tab-hash> when in takeover. Result:
      one-click surface switching from any article. Also: hero CTA + Overview
      "Read full article" relabelled to "Read full story" globally. -->
+<!-- v48.57 (13 May 2026): Two-fix patch — SG1 tenure shortened + Human Capital
+     entity-filter dropdown alphabetised.
+     (1) SG1 (NTT DC REIT) tenure string shortened from 63 chars to 36 chars
+         (was overflowing the tenure pill in Asset Directory card). Old:
+         'Leasehold (JTC) — paid in full to Aug 2040, +30y option to 2070' (63);
+         New: 'Leasehold to Aug 2040 (+30yr option)' (36) — matches Keppel DC REIT
+         SGP 5 convention. Full JTC detail (paid-in-full, condition (i)+(ii)
+         confirmed) already preserved in notes field.
+     (2) #talent-entity-filter <option> list re-sorted alphabetically (case-
+         insensitive). Three pre-existing out-of-order entries fixed:
+         (a) AIMS APAC REIT (was after Alpha Integrated REIT)
+         (b) Bukit Sembawang Estates (was at end of list after Wing Tai)
+         (c) Starhill Global REIT (was at very end after Bukit Sembawang)
+     'All Entities' default option preserved at the top of the list.
+     No REIT_DATA, TALENT_DATA, NEWS, or VACANCY_DATA changes. No chrome/JS.
+     L196 fingerprint: VACANCY=378/378 unchanged. -->
 <!-- v48.56 (13 May 2026): REIT_DATA + TALENT_DATA expansion — NTT DC REIT onboarded.
      Six asset entries (VA2, CA1, CA2, CA3, VIE1, SG1) inserted in REIT_DATA after the
      last Keppel DC REIT entry. Portfolio: US$1,500M purchase consideration, 90.7 MW
@@ -32,7 +48,11 @@
      No chrome/CSS/JS changes outside the two data arrays. No NEWS array changes.
      L196 fingerprint: VACANCY_DATA = 378/378 buckets unchanged; pre-existing chrome
      markers (hasSafeHistory, scroll-margin-top, invRender, KPI label-flip IDs) all
-     preserved. No regressions expected. -->
+     preserved. CORRECTION: TALENT_DATA dropdown #talent-entity-filter is HARDCODED HTML
+     (not data-driven from TALENT_DATA per v48.48 deploy note); added matching
+     <option value="NTT DC REIT"> after MPACT alphabetically. Without this the
+     Torigoe entry would be invisible in the Human Capital entity filter dropdown.
+     No regressions expected. -->
 <!-- v48.52 (12 May 2026): Second-phase article deletes — 8 more NEWS entries removed,
      ids 11-18 (all dated 28 February 2026). Per Tony's clarification: the editorial
      decision is "delete all February articles", not just "before 28th February".
@@ -4140,8 +4160,9 @@ body.article-takeover .ed-foot{display:none!important}
     <select class="talent-sort-sel" id="talent-entity-filter" onchange="talentRender()" style="max-width:160px">
       <option value="">All Entities</option>
       <option value="Acrophyte Hospitality Trust">Acrophyte / AI-REIT (FY2025)</option>
-      <option value="Alpha Integrated REIT">AI-REIT (FY2025)</option>
       <option value="AIMS APAC REIT">AIMS APAC REIT (FY2025)</option>
+      <option value="Alpha Integrated REIT">AI-REIT (FY2025)</option>
+      <option value="Bukit Sembawang Estates">Bukit Sembawang (FY2025)</option>
       <option value="CapitaLand Ascendas REIT">CLAR (FY2025)</option>
       <option value="CapitaLand Ascott Trust (CLAS)">CLAS (FY2025)</option>
       <option value="CapitaLand China Trust">CLCT (FY2025)</option>
@@ -4172,6 +4193,7 @@ body.article-takeover .ed-foot{display:none!important}
       <option value="Mapletree Industrial Trust">MINT (FY24/25)</option>
       <option value="Mapletree Logistics Trust">MLT (FY2024/25)</option>
       <option value="MPACT">MPACT (FY24/25)</option>
+      <option value="NTT DC REIT">NTT DC REIT (FY2025/26)</option>
       <option value="OUE REIT">OUE REIT (FY2025)</option>
       <option value="Oxley Holdings">Oxley Holdings (FY2025)</option>
       <option value="Parkway Life REIT">PLife REIT (FY2025)</option>
@@ -4180,6 +4202,7 @@ body.article-takeover .ed-foot{display:none!important}
       <option value="Sasseur REIT">Sasseur REIT (FY2025)</option>
       <option value="Sing Holdings Limited">Sing Holdings (FY2025)</option>
       <option value="SingLand">SingLand (FY2025)</option>
+      <option value="Starhill Global REIT">Starhill REIT (FY2024/25)</option>
       <option value="Stoneweg Europe Stapled Trust">SERT (FY2025)</option>
       <option value="Suntec REIT">Suntec REIT (FY2025)</option>
       <option value="Tuan Sing Holdings">Tuan Sing (FY2025)</option>
@@ -4187,8 +4210,6 @@ body.article-takeover .ed-foot{display:none!important}
       <option value="UOL Group">UOL Group (FY2025)</option>
       <option value="Wee Hur Holdings">Wee Hur Holdings (FY2025)</option>
       <option value="Wing Tai Holdings">Wing Tai (FY2025)</option>
-      <option value="Bukit Sembawang Estates">Bukit Sembawang (FY2025)</option>
-      <option value="Starhill Global REIT">Starhill REIT (FY2024/25)</option>
     </select>
     <select class="talent-sort-sel" id="talent-sort" onchange="talentRender()">
       <option value="name">Sort: Name</option>
@@ -19398,7 +19419,7 @@ var REIT_DATA = [
 
   {name:"VIE1",addr:"Computerstrasse 4, 1100 Vienna, Austria",type:"Data Centre",entity:"NTT DC REIT",entity_type:"REIT",tenure:"Freehold",nla_sqm:null,occ:91.5,val:271.0,prev_val:null,prev_occ:91.4,region:"EMEA",area:"Vienna",country:"Austria",ar_year:"9M FY25/26",source:"NTT DC REIT 9M FY25/26 Business Update dated 10 Feb 2026 + 1H FY25/26 Financial Update dated 12 Nov 2025",notes:"VIE1 is NTT DC REIT's sole EMEA asset and the most recently built (RFO 2023, no refurbishment cycle yet). 15.4 MW design IT load, colocation-led with 77 customers. Occupancy 91.5% (essentially stable Sep→Dec). WALE 6.3 yrs. Acquired by NTT DC REIT on 27 June 2025 — completed two weeks ahead of the main IPO completion to lock in the Vienna foothold. Vienna is a fast-growing EMEA submarket; commissioned colocation capacity rose from 43 MW (2024) to 48 MW (1H 2025) — small but tight. Microsoft Azure cloud region recently opened in Vienna with 3 availability zones. VIE1 contributes to local decarbonization by supplying waste heat to the district-heating network. | Design IT load: 15.4 MW | Customers: 77 | WALE (31 Dec 2025): 6.3 yrs | YTD 9M base rent: US$13.0M (~S$17.4M @ 1.34) | Purchase consideration: US$271.0M (~S$363.1M @ 1.34) | Sep 2025 occ: 91.4% → Dec 2025 occ: 91.5% | RFO / last refurb: 2023 | Tier-III equivalent. | Note: NTT DC REIT IPO\'d 14 Jul 2025; first full annual reporting cycle (FY25/26, year ended 31 Mar 2026) expected mid-2026. No post-IPO valuation cycle yet — `val` field carries IPO purchase consideration in US$M as proxy.",q_val:null,q_occ:null,q_period:"9M FY25/26",q_source:"NTT DC REIT 9M FY25/26 Business Update dated 10 Feb 2026",q_reversion:9.2,q_notes:"9M FY25/26 (period ended 31 Dec 2025) reading: portfolio committed occupancy 97.3% (incl. leases committed in 3Q FY25/26 not yet commenced); rent reversion +9.2% (up from +5.1% at 1H); ~2,400 kW of leases secured across CA1, CA3, SG1 with commencement from 4Q FY25/26. Aggregate leverage 32.5%; ICR 4.0x; weighted avg interest rate 3.94%; 70% fixed-rate debt; debt currency 45% EUR / 30% USD / 25% SGD. Top tenant: Fortune 100 US automotive company at 31.5% of MBR. NTT Group itself: 12.8% of MBR. Top 10 customers (incl. NTT) = 75.5% of MBR. Management fee structure change targeted by 1H FY26/27 to enhance alignment with Unitholders."},
 
-  {name:"SG1",addr:"51 Serangoon North Avenue 4, Singapore 554864",type:"Data Centre",entity:"NTT DC REIT",entity_type:"REIT",tenure:"Leasehold (JTC) — paid in full to Aug 2040, +30y option to 2070",nla_sqm:null,occ:93.5,val:259.0,prev_val:null,prev_occ:93.4,region:"APAC",area:"Serangoon North",country:"Singapore",ar_year:"9M FY25/26",source:"NTT DC REIT 9M FY25/26 Business Update dated 10 Feb 2026 + 1H FY25/26 Financial Update dated 12 Nov 2025",notes:"SG1 is NTT DC REIT's sole Singapore asset and the only non-freehold property in the portfolio (JTC occupational lease, paid in full to Aug 2040 with a +30-year extension option to 2070 — conditions (i) and (ii) confirmed met by JTC). 8.6 MW design IT load. Occupancy 93.5% at Dec 2025 (essentially stable). WALE 0.9 yrs is the shortest in the portfolio — effectively all leases expire within 12 months, presenting the most immediate rental reversion opportunity. Manager is in advanced negotiations with a related-party tenant for meaningful rent reversion at SG1. 100% renewable energy from 1 Jan 2026 via Sembcorp biomass deal (~55 GWh p.a. green electricity), enabling 100% net-zero Scope 2 by 2026. | Design IT load: 8.6 MW | Customers: 28 | WALE (31 Dec 2025): 0.9 yrs | YTD 9M base rent: US$15.7M (~S$21.0M @ 1.34) | Purchase consideration: US$259.0M (~S$347.1M @ 1.34) | Sep 2025 occ: 93.4% → Dec 2025 occ: 93.5% | RFO / last refurb: 2012 / refurb 2024 | Tier-III equivalent. | Note: NTT DC REIT IPO\'d 14 Jul 2025; first full annual reporting cycle (FY25/26, year ended 31 Mar 2026) expected mid-2026. No post-IPO valuation cycle yet — `val` field carries IPO purchase consideration in US$M as proxy.",q_val:null,q_occ:null,q_period:"9M FY25/26",q_source:"NTT DC REIT 9M FY25/26 Business Update dated 10 Feb 2026",q_reversion:9.2,q_notes:"9M FY25/26 (period ended 31 Dec 2025) reading: portfolio committed occupancy 97.3% (incl. leases committed in 3Q FY25/26 not yet commenced); rent reversion +9.2% (up from +5.1% at 1H); ~2,400 kW of leases secured across CA1, CA3, SG1 with commencement from 4Q FY25/26. Aggregate leverage 32.5%; ICR 4.0x; weighted avg interest rate 3.94%; 70% fixed-rate debt; debt currency 45% EUR / 30% USD / 25% SGD. Top tenant: Fortune 100 US automotive company at 31.5% of MBR. NTT Group itself: 12.8% of MBR. Top 10 customers (incl. NTT) = 75.5% of MBR. Management fee structure change targeted by 1H FY26/27 to enhance alignment with Unitholders."},
+  {name:"SG1",addr:"51 Serangoon North Avenue 4, Singapore 554864",type:"Data Centre",entity:"NTT DC REIT",entity_type:"REIT",tenure:"Leasehold to Aug 2040 (+30yr option)",nla_sqm:null,occ:93.5,val:259.0,prev_val:null,prev_occ:93.4,region:"APAC",area:"Serangoon North",country:"Singapore",ar_year:"9M FY25/26",source:"NTT DC REIT 9M FY25/26 Business Update dated 10 Feb 2026 + 1H FY25/26 Financial Update dated 12 Nov 2025",notes:"SG1 is NTT DC REIT's sole Singapore asset and the only non-freehold property in the portfolio (JTC occupational lease, paid in full to Aug 2040 with a +30-year extension option to 2070 — conditions (i) and (ii) confirmed met by JTC). 8.6 MW design IT load. Occupancy 93.5% at Dec 2025 (essentially stable). WALE 0.9 yrs is the shortest in the portfolio — effectively all leases expire within 12 months, presenting the most immediate rental reversion opportunity. Manager is in advanced negotiations with a related-party tenant for meaningful rent reversion at SG1. 100% renewable energy from 1 Jan 2026 via Sembcorp biomass deal (~55 GWh p.a. green electricity), enabling 100% net-zero Scope 2 by 2026. | Design IT load: 8.6 MW | Customers: 28 | WALE (31 Dec 2025): 0.9 yrs | YTD 9M base rent: US$15.7M (~S$21.0M @ 1.34) | Purchase consideration: US$259.0M (~S$347.1M @ 1.34) | Sep 2025 occ: 93.4% → Dec 2025 occ: 93.5% | RFO / last refurb: 2012 / refurb 2024 | Tier-III equivalent. | Note: NTT DC REIT IPO\'d 14 Jul 2025; first full annual reporting cycle (FY25/26, year ended 31 Mar 2026) expected mid-2026. No post-IPO valuation cycle yet — `val` field carries IPO purchase consideration in US$M as proxy.",q_val:null,q_occ:null,q_period:"9M FY25/26",q_source:"NTT DC REIT 9M FY25/26 Business Update dated 10 Feb 2026",q_reversion:9.2,q_notes:"9M FY25/26 (period ended 31 Dec 2025) reading: portfolio committed occupancy 97.3% (incl. leases committed in 3Q FY25/26 not yet commenced); rent reversion +9.2% (up from +5.1% at 1H); ~2,400 kW of leases secured across CA1, CA3, SG1 with commencement from 4Q FY25/26. Aggregate leverage 32.5%; ICR 4.0x; weighted avg interest rate 3.94%; 70% fixed-rate debt; debt currency 45% EUR / 30% USD / 25% SGD. Top tenant: Fortune 100 US automotive company at 31.5% of MBR. NTT Group itself: 12.8% of MBR. Top 10 customers (incl. NTT) = 75.5% of MBR. Management fee structure change targeted by 1H FY26/27 to enhance alignment with Unitholders."},
 
   // ── CDL Hospitality Trusts — Updated FY2025 (AR 31 Dec 2025) ──
   {name:"ORCHARD HOTEL",addr:"442 Orchard Road, Singapore 238879",type:"Hotel",entity:"CDL Hospitality Trusts",entity_type:"REIT",tenure:"Leasehold 56yr to 2081",nla_sqm:null,occ:null,val:498.0,prev_val:517.0,region:"Central",area:"Orchard",country:"Singapore",ar_year:"FY2025",source:"CDLHT AR 2025",notes:"656 rooms; land area 8,588sqm. RevPAR S$182 (-6.2% YoY); NPI S$19.7M (-11.2%); val -S$19.0M to S$498.0M.",q_val:null,q_occ:null,q_period:null,q_source:null,q_reversion:null,q_notes:null},
