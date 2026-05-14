@@ -1792,6 +1792,115 @@ body.article-takeover .ed-foot{display:none!important}
   .see-all .arrow { transition: transform 160ms ease; }
   .see-all a:hover .arrow { transform: translateX(3px); }
 
+  /* ============================================================
+     v48.67 P24-Lite: Two-column newsroom layout with right rail.
+     Article list on the left (2fr), Stay Informed subscribe panel
+     on the right (1fr). Rail drops below at <=900px.
+     The "Browse the archive" link becomes a JS-driven "Show 10 more"
+     button that injects additional rows into .feed-list in chunks.
+     ============================================================ */
+  .feed-with-rail {
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+    gap: 40px;
+    align-items: start;
+  }
+  .feed-col { min-width: 0; }
+  .feed-rail {
+    position: sticky;
+    top: 24px;
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+  }
+  .rail-card {
+    background: var(--cream-lt);
+    border: 1px solid var(--hairline-2);
+    border-radius: 2px;
+    padding: 22px 20px;
+    box-shadow: 0 1px 2px rgba(11, 43, 92, 0.04), 0 8px 24px rgba(11, 43, 92, 0.06);
+  }
+  .rail-eyebrow {
+    font-size: 10px;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--bronze);
+    font-weight: 600;
+    margin: 0 0 8px;
+  }
+  .rail-title {
+    font-family: Georgia, "Times New Roman", "DejaVu Serif", serif;
+    font-size: 18px;
+    line-height: 1.25;
+    font-weight: 700;
+    color: var(--navy-ink);
+    margin: 0 0 8px;
+  }
+  .rail-body {
+    font-size: 12.5px;
+    line-height: 1.55;
+    color: var(--ink);
+    margin: 0 0 14px;
+  }
+  .rail-cta {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    padding: 9px 16px;
+    font-size: 12.5px;
+    font-weight: 600;
+    color: var(--cream-lt);
+    background: var(--navy-ink);
+    border-radius: 2px;
+    border: 0;
+    cursor: pointer;
+    transition: background 140ms ease;
+    font-family: inherit;
+  }
+  .rail-cta:hover { background: var(--navy); }
+  .rail-cta .arrow { transition: transform 160ms ease; }
+  .rail-cta:hover .arrow { transform: translateX(3px); }
+  /* The "Show 10 more" button kept visually consistent with the
+     original .see-all anchor styling so cascade-author muscle memory
+     for editing newsroom presentation stays familiar. */
+  .see-all-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 13.5px;
+    font-weight: 600;
+    color: var(--navy);
+    border: 0;
+    background: none;
+    border-bottom: 1px solid var(--hairline-2);
+    padding: 4px 2px;
+    cursor: pointer;
+    font-family: inherit;
+    transition: color 140ms ease, border-color 140ms ease;
+  }
+  .see-all-btn:hover {
+    color: var(--navy-ink);
+    border-color: var(--bronze);
+  }
+  .see-all-btn .arrow { transition: transform 160ms ease; }
+  .see-all-btn:hover .arrow { transform: translateX(3px); }
+  @media (max-width: 900px) {
+    .feed-with-rail {
+      grid-template-columns: 1fr;
+      gap: 24px;
+    }
+    .feed-rail {
+      position: static;
+      flex-direction: row;
+      flex-wrap: wrap;
+    }
+    .rail-card { flex: 1 1 280px; }
+  }
+  @media (max-width: 640px) {
+    .rail-card { flex: 1 1 100%; padding: 18px 16px; }
+    .rail-title { font-size: 16px; }
+  }
+
   /* Mobile pass for feed */
   @media (max-width: 640px) {
     .feed { padding: 36px 0 24px; }
@@ -3152,6 +3261,9 @@ body.article-takeover .ed-foot{display:none!important}
      ========================================================= -->
 <section class="feed" aria-labelledby="feed-h">
   <div class="wrap">
+    <!-- v48.67 P24-Lite: 2-column wrapper with right rail. -->
+    <div class="feed-with-rail">
+      <div class="feed-col">
     <div class="feed-head">
       <h2 id="feed-h" class="feed-title">Recent coverage</h2>
     </div>
@@ -3284,13 +3396,29 @@ body.article-takeover .ed-foot{display:none!important}
 
     </div>
 
-    <!-- Browse the archive link (centered) -->
+    <!-- v48.67 P24-Lite: "Browse the archive" becomes a JS-driven
+         show-more button that injects 10 more rows into .feed-list.
+         Static rows 86, 85, 84, 83, 82 remain authored; subsequent
+         articles are read from the NEWS data array dynamically. -->
     <div class="see-all">
-      <a href="./news/">
-        Browse the archive
+      <button type="button" id="nr-show-more" class="see-all-btn" onclick="nrShowMore()">
+        <span id="nr-show-more-label">Browse the archive</span>
         <span class="arrow" aria-hidden="true">→</span>
-      </a>
+      </button>
     </div>
+      </div><!-- /.feed-col -->
+      <aside class="feed-rail" aria-label="Newsroom sidebar">
+        <div class="rail-card">
+          <p class="rail-eyebrow">Stay informed</p>
+          <h2 class="rail-title">The PropertyAtlas brief</h2>
+          <p class="rail-body">Weekly newsroom highlights, REIT earnings calls coverage, and Singapore commercial-property market signal — direct to your inbox.</p>
+          <button type="button" class="rail-cta" onclick="nlSubOpen('newsroom-rail')">
+            Subscribe
+            <span class="arrow" aria-hidden="true">→</span>
+          </button>
+        </div>
+      </aside>
+    </div><!-- /.feed-with-rail -->
   </div>
 </section>
 
@@ -16887,6 +17015,102 @@ function formatNewsSummary(text, mode){
     }
   });
   return html;
+}
+
+// v48.67 P24-Lite: show-more pagination for the landing newsroom.
+// Static rows 86-82 are authored HTML; subsequent rows are injected
+// 10 at a time from the NEWS array. The static-ids set excludes them
+// from the dynamic injection so each article appears exactly once.
+var NR_STATIC_IDS = [86, 85, 84, 83, 82];
+var NR_PAGE_SIZE = 10;
+var NR_INJECTED_COUNT = 0;
+function nrEscapeHtml(s){
+  if(s == null) return "";
+  return String(s)
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#39;");
+}
+function nrFmtDate(iso){
+  if(!iso) return "";
+  var months = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
+  var p = iso.split("-");
+  if(p.length !== 3) return iso;
+  var d = new Date(+p[0], +p[1]-1, +p[2]);
+  if(isNaN(d.getTime())) return iso;
+  return d.getDate() + " " + months[d.getMonth()] + " " + d.getFullYear();
+}
+function nrEligibleArticles(){
+  // Return articles eligible for dynamic injection: exclude static IDs,
+  // sort newest-first.
+  if(!Array.isArray(window.NEWS)) return [];
+  return window.NEWS
+    .filter(function(n){
+      return n && n.date && NR_STATIC_IDS.indexOf(n.id) === -1;
+    })
+    .slice()
+    .sort(function(a, b){ return b.date.localeCompare(a.date); });
+}
+function nrRenderFeedRow(article){
+  var headline = nrEscapeHtml(article.display_headline || article.display_title || article.title || "");
+  var teaser = nrEscapeHtml(edDeriveStandfirst(article) || "");
+  var cat = nrEscapeHtml(article.category || "");
+  var date = nrEscapeHtml(nrFmtDate(article.date));
+  var readTime = article.read_time_min ? nrEscapeHtml(article.read_time_min) + " min read" : "";
+  var meta = "<span>" + date + "</span>";
+  if(readTime){
+    meta += '<span class="sep">·</span><span>' + readTime + "</span>";
+  }
+  var imgHtml;
+  if(article.image){
+    var alt = nrEscapeHtml(article.imageCredit || headline);
+    var src = nrEscapeHtml(article.image.indexOf("/") === 0 ? article.image : "./" + article.image.replace(/^\.\//, ""));
+    imgHtml = '<img src="' + src + '" alt="' + alt + '" class="feed-row-image-photo" loading="lazy" />';
+  } else {
+    imgHtml = '<div class="placeholder-flat"><div class="placeholder-brand">'
+      + '<span class="placeholder-brand-word">Property<em>Atlas</em></span>'
+      + '<span class="placeholder-brand-divider"></span>'
+      + '<span class="placeholder-brand-tag">Newsroom</span></div></div>';
+  }
+  return '<a class="feed-row" href="./?article=' + article.id + '&amp;from=landing">'
+    + '<div class="feed-row-image-col">'
+    + '<div class="feed-row-image">' + imgHtml + '</div>'
+    + '</div>'
+    + '<div class="feed-row-text">'
+    + (cat ? '<p class="feed-row-cat">' + cat + '</p>' : "")
+    + '<h3 class="feed-row-headline">' + headline + '</h3>'
+    + (teaser ? '<p class="feed-row-teaser">' + teaser + '</p>' : "")
+    + '<p class="feed-row-meta">' + meta + '</p>'
+    + '</div>'
+    + '</a>';
+}
+function nrShowMore(){
+  var feedList = document.querySelector(".feed-list");
+  var btn = document.getElementById("nr-show-more");
+  var label = document.getElementById("nr-show-more-label");
+  if(!feedList || !btn || !label) return;
+  var pool = nrEligibleArticles();
+  var nextBatch = pool.slice(NR_INJECTED_COUNT, NR_INJECTED_COUNT + NR_PAGE_SIZE);
+  if(!nextBatch.length){
+    btn.style.display = "none";
+    return;
+  }
+  var html = nextBatch.map(nrRenderFeedRow).join("");
+  feedList.insertAdjacentHTML("beforeend", html);
+  NR_INJECTED_COUNT += nextBatch.length;
+  // Update label based on remaining count.
+  var shownTotal = NR_STATIC_IDS.length + NR_INJECTED_COUNT;
+  var totalEligible = NR_STATIC_IDS.length + pool.length;
+  var remaining = pool.length - NR_INJECTED_COUNT;
+  if(remaining <= 0){
+    btn.style.display = "none";
+  } else if(remaining < NR_PAGE_SIZE){
+    label.textContent = "Show final " + remaining + " article" + (remaining === 1 ? "" : "s");
+  } else {
+    label.textContent = "Show 10 more (" + shownTotal + " of " + totalEligible + ")";
+  }
 }
 
 function renderNewsroom(){
