@@ -27502,7 +27502,16 @@ html.article-takeover .ed-article-page,body.article-takeover .ed-article-page{di
 .ed-art-share-label{font-family:'DM Sans',sans-serif;font-size:11px;font-weight:700;letter-spacing:.18em;text-transform:uppercase;color:var(--ed-bronze);margin-right:4px}
 .ed-art-share-btns{display:inline-flex;gap:8px;align-items:center;flex-wrap:wrap}
 .ed-art-share-btn{display:inline-flex;align-items:center;justify-content:center;width:36px;height:36px;border:1px solid var(--ed-hairline);border-radius:50%;background:var(--ed-cream-lt);color:var(--ed-navy-ink);cursor:pointer;transition:all .15s;text-decoration:none;padding:0;position:relative}
-.ed-art-share-btn:hover{background:var(--ed-navy-ink);color:var(--ed-cream-lt);border-color:var(--ed-navy-ink);transform:translateY(-1px)}
+/* v48.64 (session 14, addendum): platform-coloured hover states. Default rest
+   state stays monochrome editorial (cream-lt bg, navy-ink stroke) to cohere
+   with the publication aesthetic. On hover, each button flips to its official
+   platform brand colour for instant recognition. Copy-link stays navy-ink
+   since it's not a third-party platform. Brand hexes per platform brand
+   guidelines: LinkedIn #0A66C2, Facebook #1877F2, WhatsApp #25D366. */
+.ed-art-share-btn[data-share-platform="linkedin"]:hover{background:#0A66C2;color:#fff;border-color:#0A66C2;transform:translateY(-1px)}
+.ed-art-share-btn[data-share-platform="facebook"]:hover{background:#1877F2;color:#fff;border-color:#1877F2;transform:translateY(-1px)}
+.ed-art-share-btn[data-share-platform="whatsapp"]:hover{background:#25D366;color:#fff;border-color:#25D366;transform:translateY(-1px)}
+.ed-art-share-btn[data-share-platform="copy"]:hover{background:var(--ed-navy-ink);color:var(--ed-cream-lt);border-color:var(--ed-navy-ink);transform:translateY(-1px)}
 .ed-art-share-btn:focus-visible{outline:2px solid var(--ed-bronze);outline-offset:2px}
 .ed-art-share-btn svg{width:16px;height:16px;fill:currentColor;display:block}
 .ed-art-share-toast{position:absolute;bottom:calc(100% + 6px);left:50%;transform:translateX(-50%);background:var(--ed-navy-ink);color:var(--ed-cream-lt);font-family:'DM Sans',sans-serif;font-size:10.5px;letter-spacing:.06em;text-transform:uppercase;font-weight:600;padding:4px 10px;border-radius:3px;white-space:nowrap;opacity:0;pointer-events:none;transition:opacity .18s;z-index:5}
