@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
-<!-- v48.65 (session 16): four cosmetic/structural fixes bundled.
+<!-- v48.65d (session 16): three cosmetic/structural fixes bundled.
      P19: Tag splitter regex no longer treats hyphens as separators
           (Cross-Border now renders as one chip, not two). Fix in edBuildEyebrow.
      P20: Article-page back-link is now position:fixed top:120px left:24px so
@@ -12,11 +12,14 @@
           Responsive breakpoints at 1280px and 768px. L215 click handler contract
           preserved untouched (v48.65 first shipped as sticky-within-column;
           v48.65b repositioned to fixed-viewport per session 16 staging UAT).
-     P21: Defensive width:100% on .ed-art-related-grid to ensure 3-column grid
-          fills its container regardless of any inline/flex collapse from
-          parent context.
      HC sidebar: linkedin_url null no longer renders "in Not linked" chip;
           renders empty string for cleaner sidebar on entries with no LinkedIn.
+     v48.65/v48.65c P21 attempt (defensive width:100% on grid + viewport breakout
+          on .ed-art-related aside) reverted in v48.65d. P21 (More from cards
+          stacking on article=90 but rendering 3-up on article=89) is an
+          article-specific defect with unknown root cause that did not respond
+          to two CSS workarounds. Deferred to v48.66 for focused investigation.
+          .ed-art-related and .ed-art-related-grid restored to v48.64 originals.
      v48.64 unchanged surfaces: hero, share buttons, brand-colour hover states,
      L215 contract, navy strip nav, all data arrays. -->
 <!-- v48.20g Bug 1 fix: synchronous FOUC pre-hide for ?article= entry.
@@ -27538,9 +27541,9 @@ html.article-takeover .ed-article-page,body.article-takeover .ed-article-page{di
 @media(max-width:480px){.ed-art-share-label{font-size:10.5px;letter-spacing:.16em}.ed-art-share-btn{width:34px;height:34px}}
 .ed-art-share-btn[disabled]{opacity:.5;pointer-events:none}
 
-.ed-art-related{position:relative;left:50%;transform:translateX(-50%);width:100vw;max-width:1180px;margin:48px 0 0;padding:36px 28px;border-top:2px solid var(--ed-hairline);background:var(--ed-cream);box-sizing:border-box}
+.ed-art-related{max-width:1080px;margin:48px auto 0;padding:36px 28px;border-top:2px solid var(--ed-hairline);background:var(--ed-cream)}
 .ed-art-related-title{font-family:var(--ed-body-serif);font-size:14px;font-weight:700;letter-spacing:.16em;text-transform:uppercase;color:var(--ed-bronze);margin:0 0 24px;text-align:center}
-.ed-art-related-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:24px;width:100%}
+.ed-art-related-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:24px}
 @media(max-width:768px){.ed-art-related-grid{grid-template-columns:1fr;gap:18px}}
 .ed-art-related-card{cursor:pointer;border:1px solid var(--ed-hairline);background:var(--ed-cream-lt);border-radius:6px;padding:16px 18px;transition:all .15s;text-decoration:none;color:inherit;display:flex;flex-direction:column;gap:6px;position:relative;overflow:hidden}
 .ed-art-related-card::before{content:'';position:absolute;left:0;top:0;bottom:0;width:3px;background:var(--ed-bronze);border-radius:6px 0 0 6px}
