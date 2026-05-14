@@ -3,6 +3,19 @@
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<!-- v48.65 (session 16): four cosmetic/structural fixes bundled.
+     P19: Tag splitter regex no longer treats hyphens as separators
+          (Cross-Border now renders as one chip, not two). Fix in edBuildEyebrow.
+     P20: Article-page back-link is now position:sticky at top:120px so readers
+          can return to landing/newsroom from any scroll depth without scrolling
+          back to top. L215 click handler contract preserved untouched.
+     P21: Defensive width:100% on .ed-art-related-grid to ensure 3-column grid
+          fills its container regardless of any inline/flex collapse from
+          parent context.
+     HC sidebar: linkedin_url null no longer renders "in Not linked" chip;
+          renders empty string for cleaner sidebar on entries with no LinkedIn.
+     v48.64 unchanged surfaces: hero, share buttons, brand-colour hover states,
+     L215 contract, navy strip nav, all data arrays. -->
 <!-- v48.20g Bug 1 fix: synchronous FOUC pre-hide for ?article= entry.
      Runs during HTML parse, before any chrome paints. Detects the article
      param and stamps article-takeover onto <html> (since <body> doesn't
@@ -14632,7 +14645,7 @@ function talentOpenDrawer(id){
   // LinkedIn badge
   var linkedInHtml = p.linkedin_url
     ? '<a href="'+p.linkedin_url+'" style="display:inline-flex;align-items:center;gap:5px;padding:4px 10px;background:#0077b5;color:#fff;border-radius:5px;font-size:11px;font-weight:600;text-decoration:none;margin-left:8px" target="_blank">in LinkedIn</a>'
-    : '<span style="display:inline-flex;align-items:center;gap:4px;padding:3px 8px;background:var(--srf2);color:var(--mut);border:1px solid var(--bdr);border-radius:5px;font-size:10px" title="Upload LinkedIn URL via Supabase talent_profiles table">in Not linked</span>';
+    : '';
 
   var tagsHtml = (p.tags||[]).map(function(t){
     return '<span class="talent-tag rem-low" style="font-size:10px;padding:3px 8px">'+t+'</span>';
@@ -16729,7 +16742,7 @@ function edBuildEyebrow(article, isLatest){
   if(article.category) parts.push('<span class="ed-cat-tag">'+article.category+'</span>');
   // Split tag string on " · " or " — " or " - " to get individual tags
   if(article.tag){
-    var tags = article.tag.split(/\s*[·•—–\-]\s*/).filter(function(t){return t && t.trim();});
+    var tags = article.tag.split(/\s*[·•—–]\s*/).filter(function(t){return t && t.trim();});
     tags.forEach(function(t){
       parts.push('<span class="ed-cat-tag">'+t.trim()+'</span>');
     });
@@ -27427,7 +27440,7 @@ html.article-takeover .ed-article-page,body.article-takeover .ed-article-page{di
 /* v48.42 P15-A: inline back-link rendered above eyebrow chips inside .ed-art-content.
    Replaces the hidden .ed-art-masthead back-bar. Preserves L169 smart-back logic
    (same onclick handler) while letting .ed-mast + .navtabs handle surface chrome. */
-.ed-art-back-inline{display:inline-flex;align-items:center;gap:6px;font-family:'DM Sans',sans-serif;font-size:12px;font-weight:600;color:var(--ed-navy-ink);text-decoration:none;letter-spacing:.02em;margin:0 0 20px -4px;padding:6px 8px;border-radius:4px;transition:background .12s}
+.ed-art-back-inline{position:sticky;top:120px;z-index:40;align-self:flex-start;display:inline-flex;align-items:center;gap:6px;font-family:'DM Sans',sans-serif;font-size:12px;font-weight:600;color:var(--ed-navy-ink);text-decoration:none;letter-spacing:.02em;margin:0 0 28px -4px;padding:6px 10px;border-radius:4px;background:var(--ed-cream-lt);box-shadow:0 2px 8px -4px rgba(11,43,92,0.08);transition:background .12s}
 .ed-art-back-inline:hover{background:rgba(11,43,92,0.06);text-decoration:none}
 .ed-art-brand{font-family:var(--ed-body-serif);font-size:18px;font-weight:700;color:var(--ed-navy-ink);margin:0 auto;letter-spacing:.005em}
 .ed-art-brand em{font-style:italic;color:var(--ed-bronze)}
@@ -27522,7 +27535,7 @@ html.article-takeover .ed-article-page,body.article-takeover .ed-article-page{di
 
 .ed-art-related{max-width:1080px;margin:48px auto 0;padding:36px 28px;border-top:2px solid var(--ed-hairline);background:var(--ed-cream)}
 .ed-art-related-title{font-family:var(--ed-body-serif);font-size:14px;font-weight:700;letter-spacing:.16em;text-transform:uppercase;color:var(--ed-bronze);margin:0 0 24px;text-align:center}
-.ed-art-related-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:24px}
+.ed-art-related-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:24px;width:100%}
 @media(max-width:768px){.ed-art-related-grid{grid-template-columns:1fr;gap:18px}}
 .ed-art-related-card{cursor:pointer;border:1px solid var(--ed-hairline);background:var(--ed-cream-lt);border-radius:6px;padding:16px 18px;transition:all .15s;text-decoration:none;color:inherit;display:flex;flex-direction:column;gap:6px;position:relative;overflow:hidden}
 .ed-art-related-card::before{content:'';position:absolute;left:0;top:0;bottom:0;width:3px;background:var(--ed-bronze);border-radius:6px 0 0 6px}
