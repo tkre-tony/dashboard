@@ -16698,8 +16698,24 @@ function edCatClass(cat){
 function edDeriveStandfirst(article){
   if(article.standfirst) return article.standfirst;
   if(!article.summary) return '';
-  // Take first sentence(s) up to ~200 chars, ending at a sentence boundary
-  var s = article.summary.split(/\n\n/)[0]; // first paragraph only
+  // v48.66 L236: HTML-aware standfirst derivation.
+  // Older summaries (id <= 83) are plain text; period-boundary regex works.
+  // Newer summaries (id >= 84) are pre-baked HTML opening with
+  //   <p class="lede"><strong>EDITORIAL OPENER</strong> continuation prose...
+  // The previous period-boundary regex on raw HTML can return a string with
+  // open <p>/<strong> tags but no closers (e.g. id:90 lede first period lands
+  // inside the <strong> block). The orphan <strong> escapes into the renderer
+  // and parents subsequent siblings -- including the related-cards aside grid,
+  // collapsing it to a single direct child and visually stacking the 3 cards
+  // into one column. Fix: extract plain-text only, never propagate HTML.
+  var firstPara = article.summary.split(/\n\n/)[0];
+  // Preferred path: pre-baked lede with <strong> opener -- grab strong contents
+  var ledeMatch = firstPara.match(/<p[^>]*class=["']lede["'][^>]*>\s*<strong[^>]*>([\s\S]*?)<\/strong>/i);
+  if(ledeMatch){
+    return ledeMatch[1].replace(/<[^>]+>/g,'').replace(/\s+/g,' ').trim().slice(0,260);
+  }
+  // Fallback: strip all tags then period-boundary the plain text
+  var s = firstPara.replace(/<[^>]+>/g,'').replace(/\s+/g,' ').trim();
   var firstSent = s.match(/^[^.!?]*[.!?]/);
   if(!firstSent) return s.slice(0,180)+'…';
   var out = firstSent[0].trim();
