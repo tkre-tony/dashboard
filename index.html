@@ -6,9 +6,12 @@
 <!-- v48.65 (session 16): four cosmetic/structural fixes bundled.
      P19: Tag splitter regex no longer treats hyphens as separators
           (Cross-Border now renders as one chip, not two). Fix in edBuildEyebrow.
-     P20: Article-page back-link is now position:sticky at top:120px so readers
-          can return to landing/newsroom from any scroll depth without scrolling
-          back to top. L215 click handler contract preserved untouched.
+     P20: Article-page back-link is now position:fixed top:120px left:24px so
+          readers can return to landing/newsroom from any scroll depth without
+          scrolling back to top — pinned to viewport top-left, not column-bound.
+          Responsive breakpoints at 1280px and 768px. L215 click handler contract
+          preserved untouched (v48.65 first shipped as sticky-within-column;
+          v48.65b repositioned to fixed-viewport per session 16 staging UAT).
      P21: Defensive width:100% on .ed-art-related-grid to ensure 3-column grid
           fills its container regardless of any inline/flex collapse from
           parent context.
@@ -27440,8 +27443,10 @@ html.article-takeover .ed-article-page,body.article-takeover .ed-article-page{di
 /* v48.42 P15-A: inline back-link rendered above eyebrow chips inside .ed-art-content.
    Replaces the hidden .ed-art-masthead back-bar. Preserves L169 smart-back logic
    (same onclick handler) while letting .ed-mast + .navtabs handle surface chrome. */
-.ed-art-back-inline{position:sticky;top:120px;z-index:40;align-self:flex-start;display:inline-flex;align-items:center;gap:6px;font-family:'DM Sans',sans-serif;font-size:12px;font-weight:600;color:var(--ed-navy-ink);text-decoration:none;letter-spacing:.02em;margin:0 0 28px -4px;padding:6px 10px;border-radius:4px;background:var(--ed-cream-lt);box-shadow:0 2px 8px -4px rgba(11,43,92,0.08);transition:background .12s}
+.ed-art-back-inline{position:fixed;top:120px;left:24px;z-index:40;display:inline-flex;align-items:center;gap:6px;font-family:'DM Sans',sans-serif;font-size:12px;font-weight:600;color:var(--ed-navy-ink);text-decoration:none;letter-spacing:.02em;margin:0;padding:8px 12px;border-radius:4px;background:var(--ed-cream-lt);box-shadow:0 2px 8px -4px rgba(11,43,92,0.12);transition:background .12s}
 .ed-art-back-inline:hover{background:rgba(11,43,92,0.06);text-decoration:none}
+@media(max-width:1280px){.ed-art-back-inline{top:108px;left:16px;font-size:11px;padding:6px 10px}}
+@media(max-width:768px){.ed-art-back-inline{top:96px;left:12px;font-size:10.5px;padding:5px 8px}}
 .ed-art-brand{font-family:var(--ed-body-serif);font-size:18px;font-weight:700;color:var(--ed-navy-ink);margin:0 auto;letter-spacing:.005em}
 .ed-art-brand em{font-style:italic;color:var(--ed-bronze)}
 .ed-art-share{font-family:'DM Sans',sans-serif;font-size:11px;color:var(--ed-muted);letter-spacing:.06em;text-transform:uppercase}
