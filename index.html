@@ -1808,7 +1808,8 @@ body.article-takeover .ed-foot{display:none!important}
   .feed-col { min-width: 0; }
   .feed-rail {
     position: sticky;
-    top: 24px;
+    /* v48.69: top offset accounts for sticky .navtabs strip (top:64px + ~36px height + 8px buffer) */
+    top: 108px;
     display: flex;
     flex-direction: column;
     gap: 18px;
