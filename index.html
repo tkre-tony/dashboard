@@ -15219,7 +15219,7 @@ var NEWS=[
    keywords:"Centurion Corporation, OU8, Kong Chee Min, David Loh, Wong Kok Hoe, Han Seng Juan, Westlite, Dwell, EPIISOD, ASPRI-Westlite Papan, Westlite Toh Guan, Westlite Mandai, Westlite Ubi, Westlite Juniper, Westlite Woodlands, Westlite Sheung Shui, Dwell Prince Edward, Dwell Ho Man Tin, Dwell Towers on State, Dwell Statesider, Centurion-Cityhome Gaolin, Harum Megah, Karratha, South Hedland, Velocity Village, Concorde South, Pilbara, KWA, Key Worker Accommodation, iron ore, PBWA, PBSA, BTR, FEDA, Foreign Employee Dormitories Act, DTS, IDS, NDS, Dormitory Transition Scheme, Russell Group, EPIISOD North Melbourne, Stirling Highway Perth, Mackenzie Melbourne, William Road London, Kim Chuan Lane, Nusajaya, Negeri Sembilan, NS Corp, Gul Drive, ESLS, Enhanced Supplementary Labour Scheme, CAREIT, asset-light strategy, sponsor pipeline, 1Q 2026",
    display_title:"Centurion Corp 1Q 2026: Revenue +30% To S$89.4M — Australia +107% On EPIISOD, Pilbara KWA Entry Opens Fourth Segment, US Exit Completes",
    display_headline:"Centurion Corporation 1Q 2026: Group Revenue Rises 30% To S$89.4 Million On Mandai Consolidation, Harum Megah Bed Stack And EPIISOD Macquarie Park First-Quarter Contribution — Australia Revenue More Than Doubles To S$7.5 Million (+107% YoY), United States Exit Completed With March 2026 Disposal Of Dwell Towers On State And Dwell Statesider, And April 2026 Pilbara Acquisitions At Karratha And South Hedland Open A Fourth Living-Sector Segment In Key Worker Accommodation Targeting Australia's Iron-Ore Workforce",
-   standfirst:"Centurion Corporation's 1Q 2026 voluntary business update, released 13 May 2026, prints group revenue of S$89.4 million — 30% above the S$69.0 million in the comparable quarter of 2025 — with all three operating segments expanding at exactly the 30% headline rate. PBWA revenue of S$69.2 million carries the Singapore consolidation of Westlite Mandai (wholly-owned from September 2025), c.5,460 newly operational beds across Toh Guan and Mandai new blocks, and the Harum Megah portfolio acquired in Malaysia. PBSA revenue of S$19.6 million reflects sustained 98% occupancy in the United Kingdom and the first-quarter contribution from EPIISOD Macquarie Park in Sydney, where Australia revenue more than doubled to S$7.5 million (+107% YoY). The structural moves sit underneath. In April 2026, the Group entered the Australian Key Worker Accommodation segment with two acquisitions in Western Australia — c.321 beds at Velocity Village and Velocity Motel and Bistro in Karratha plus c.125 beds at Concorde South in South Hedland — opening a fourth living-sector vertical alongside PBWA, PBSA and BTR, with strategic exposure to the Pilbara mining workforce that produces approximately 96% of Australia's iron ore exports. In March 2026, the Group completed its United States exit through the disposal of its two remaining PBSA assets, Dwell Towers on State and Dwell Statesider — the latter being a CUSSHF holding in which Centurion held a 28.7% stake. The forward pipeline disclosed in the update lifts portfolio capacity from 81,388 operational beds to c.85,470 beds by 2027, anchored by Westlite Mandai (3,696-bed new block already operational), Westlite Ubi (+540 beds by 4Q 2027), three Australian PBSA developments under the EPIISOD brand (c.644 beds Melbourne, c.472 beds Perth, c.675 beds Mackenzie), and a UK PBSA development at William Road, London (c.225 beds by 4Q 2028). The asset-light strand of the sponsor's strategy is becoming concrete: a c.1,500-bed Property Management Agreement was secured in February 2026 to manage a third-party dormitory in the Gul Drive vicinity, adding fee income without balance-sheet exposure.",
+   standfirst:"Centurion Corporation's 1Q 2026 update prints group revenue of S$89.4 million — 30% above the S$69.0 million in 1Q 2025 — with all three operating segments expanding at the 30% headline rate.",
    wordCount:2655, minRead:13,
    image:"images/news_92_centurion_aspri_westlite_papan.jpg", imageCredit:"Centurion Corporation Limited",
    source:"PropertyAtlas.sg", category:"Residential",
@@ -17091,7 +17091,16 @@ function edCatClass(cat){
 // All five new fields fall back gracefully if absent so the 75 un-backfilled
 // articles still render cleanly.
 function edDeriveStandfirst(article){
-  if(article.standfirst) return article.standfirst;
+  // v48.75 (session 20): defensive 260-char cap on explicit standfirst.
+  // Matches the cap applied to derived standfirsts below. Prevents
+  // body-length standfirst fields from breaking the newsroom-tab layout
+  // (id:92 Centurion 1Q 2026 was authored with a 2,137-char standfirst
+  // that rendered as a body dump on the dashboard #newsroom view).
+  if(article.standfirst){
+    var sf = String(article.standfirst);
+    if(sf.length <= 260) return sf;
+    return sf.slice(0, 257).replace(/\s+\S*$/, '') + '…';
+  }
   if(!article.summary) return '';
   // v48.66 L236: HTML-aware standfirst derivation.
   // Older summaries (id <= 83) are plain text; period-boundary regex works.
@@ -17287,9 +17296,15 @@ function formatNewsSummary(text, mode){
 // v48.67 P24-Lite: show-more pagination for the landing newsroom.
 // v48.73 L166 cascade for id:92: static feed rows are now 88-84;
 // dynamic injection picks up id:83 CDLHT onward (newest-first sort).
+// v48.75 bug fix (session 20): NR_STATIC_IDS extended from 5 (feed-rows-only)
+// to 9 (hero + 3 cards + 5 feed rows). Previously the dynamic injector did
+// not know that the hero (id:92) and 3 cards (id:91/90/89) were already
+// rendered as static HTML, so "Browse the archive" injected duplicates of
+// the hero and cards as the first 4 dynamic rows. The exclusion list must
+// cover all visible static slots, not just the feed rows.
 // Static rows are authored HTML; the dynamic NEWS-array injector
 // must exclude exactly these IDs so each article appears once.
-var NR_STATIC_IDS = [88, 87, 86, 85, 84];
+var NR_STATIC_IDS = [92, 91, 90, 89, 88, 87, 86, 85, 84];
 var NR_PAGE_SIZE = 10;
 var NR_INJECTED_COUNT = 0;
 function nrEscapeHtml(s){
