@@ -17133,6 +17133,17 @@ function edDeriveStandfirst(article){
 function edDeriveDisplayHeadline(article){
   return article.display_headline || article.display_title || article.title || '';
 }
+// v48.76 (Finding 3): card-length headline for the article-page related-rail.
+// Same L246-class distinction as landing hero vs article H1 — but applied to
+// the article-page "More from PropertyAtlas" 3-card rail. Prefers the
+// shorter `display_title` (~22 words, designed for card surfaces) over the
+// long-form `display_headline` (~25-35+ words, designed for article H1).
+// Fallback chain: display_title → title → display_headline. Legacy entries
+// without display_title fall to the (usually card-length) `title` field;
+// display_headline is last-resort to guarantee non-empty output.
+function edDeriveCardHeadline(article){
+  return article.display_title || article.title || article.display_headline || '';
+}
 function edDeriveByline(article){
   return article.byline || 'PropertyAtlas';
 }
@@ -17390,9 +17401,9 @@ function nrShowMore(){
   if(remaining <= 0){
     btn.style.display = "none";
   } else if(remaining < NR_PAGE_SIZE){
-    label.textContent = "Show final " + remaining + " article" + (remaining === 1 ? "" : "s");
+    label.textContent = "Show 10 more";
   } else {
-    label.textContent = "Show 10 more (" + shownTotal + " of " + totalEligible + ")";
+    label.textContent = "Show 10 more";
   }
 }
 
@@ -28882,12 +28893,43 @@ html.article-takeover .ed-article-page,body.article-takeover .ed-article-page{di
     return false;
   };
   function edFindRelated(currentId){
+    // v48.76 (Finding 2): contemporaneous-3 — return the 3 articles whose dates
+    // are closest in absolute distance to the current article's date, then
+    // re-sort those 3 by date descending for natural reading order in the rail.
+    // Replaces the prior "newest-3" behaviour which surfaced unrelated recent
+    // news on older articles (e.g. article 53 dated 9 Apr was showing 15 May
+    // hero card). Editorial promise shifts from "what's hot" to "news cycle
+    // around this story". See ATLAS lesson candidate (session 21).
     if(!Array.isArray(NEWS)) return [];
+    var current = NEWS.filter(function(n){return n.id === currentId;})[0];
+    if(!current || !current.date) {
+      // Defensive fallback: if current article has no date, return newest-3
+      // (the previous behaviour) so the rail never renders empty.
+      return NEWS
+        .filter(function(n){return n.id !== currentId && n.date;})
+        .slice()
+        .sort(function(a,b){return b.date.localeCompare(a.date);})
+        .slice(0, 3);
+    }
+    function dayDistance(a, b){
+      // Both inputs are "YYYY-MM-DD" strings; parse to UTC ms and take abs diff in days.
+      var ta = Date.parse(a + "T00:00:00Z");
+      var tb = Date.parse(b + "T00:00:00Z");
+      if(isNaN(ta) || isNaN(tb)) return Infinity;
+      return Math.abs(ta - tb) / 86400000;
+    }
     return NEWS
       .filter(function(n){return n.id !== currentId && n.date;})
       .slice()
-      .sort(function(a,b){return b.date.localeCompare(a.date);})
-      .slice(0, 3);
+      .sort(function(a,b){
+        var da = dayDistance(a.date, current.date);
+        var db = dayDistance(b.date, current.date);
+        if(da !== db) return da - db;
+        // Tie-break: newer article first (natural editorial preference)
+        return b.date.localeCompare(a.date);
+      })
+      .slice(0, 3)
+      .sort(function(a,b){return b.date.localeCompare(a.date);});
   }
   // v48.63 (session 14, Phase 5): article share block.
   //
@@ -29032,7 +29074,7 @@ html.article-takeover .ed-article-page,body.article-takeover .ed-article-page{di
     var relatedHtml = '';
     if(related.length){
       var cards = related.map(function(r){
-        var rHL = edDeriveDisplayHeadline(r);
+        var rHL = edDeriveCardHeadline(r);
         var rDate = edFormatDate(r.date);
         var rTime = edDeriveReadTime(r);
         return '<a class="ed-art-related-card" href="?article='+r.id+'">'
