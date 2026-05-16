@@ -1805,6 +1805,13 @@ body.article-takeover .ed-foot{display:none!important}
     gap: 40px;
     align-items: start;
   }
+  /* v48.77: beta-launch hide of newsletter CTA rail. Removing both classes
+     restores the original two-column layout. Will be reverted when newsletter
+     backend (v48.xx) ships. See ATLAS session 21 strategic pivot context. */
+  .feed-with-rail.nl-rail-hidden {
+    grid-template-columns: 1fr;
+  }
+  .feed-rail.nl-rail-hidden { display: none; }
   .feed-col { min-width: 0; }
   .feed-rail {
     position: sticky;
@@ -3255,7 +3262,7 @@ body.article-takeover .ed-foot{display:none!important}
 <section class="feed" aria-labelledby="feed-h">
   <div class="wrap">
     <!-- v48.67 P24-Lite: 2-column wrapper with right rail. -->
-    <div class="feed-with-rail">
+    <div class="feed-with-rail nl-rail-hidden">
       <div class="feed-col">
     <div class="feed-head">
       <h2 id="feed-h" class="feed-title">Recent coverage</h2>
@@ -3400,7 +3407,7 @@ body.article-takeover .ed-foot{display:none!important}
       </button>
     </div>
       </div><!-- /.feed-col -->
-      <aside class="feed-rail" aria-label="Newsroom sidebar">
+      <aside class="feed-rail nl-rail-hidden" aria-label="Newsroom sidebar">
         <div class="rail-card">
           <p class="rail-eyebrow">Stay informed</p>
           <h2 class="rail-title">The PropertyAtlas brief</h2>
