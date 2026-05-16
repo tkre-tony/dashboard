@@ -24398,14 +24398,24 @@ body:not(.tier-authed) #atlas-chat-panel { display: none !important; }
 .atlas-auth-divider::after{
   content:''; flex:1; height:1px; background:rgba(0,0,0,.12);
 }
+/* v48.78: Google OAuth activated — cursor/opacity/hover for live button.
+   .google-soon kept in CSS in case we need to roll back to stub state quickly. */
 .atlas-auth-google{
   width:100%; padding:10px 0;
   background:#fff; color:#444;
   border:1.5px solid rgba(0,0,0,.18); border-radius:7px;
   font-family:Georgia,serif; font-size:13px; font-weight:600;
-  cursor:not-allowed; opacity:.65;
+  cursor:pointer; opacity:1;
   display:flex; align-items:center; justify-content:center; gap:8px;
+  transition:background .15s ease, border-color .15s ease, box-shadow .15s ease;
 }
+.atlas-auth-google:hover{
+  background:#fafafa;
+  border-color:rgba(0,0,0,.28);
+  box-shadow:0 1px 3px rgba(0,0,0,.06);
+}
+.atlas-auth-google:active{ background:#f3f3f3; }
+.atlas-auth-google:disabled{ cursor:not-allowed; opacity:.65; }
 .atlas-auth-google .google-soon{
   font-size:10px; background:rgba(0,0,0,.06); padding:2px 7px;
   border-radius:10px; letter-spacing:.04em; color:#666;
@@ -24578,9 +24588,8 @@ body:not(.tier-authed) #atlas-chat-panel { display: none !important; }
         <div class="atlas-auth-msg" id="atlas-auth-msg"></div>
       </form>
       <div class="atlas-auth-divider">or continue with</div>
-      <button class="atlas-auth-google" onclick="atlasAuthGoogle()" disabled>
+      <button class="atlas-auth-google" onclick="atlasAuthGoogle()" type="button">
         <span>Sign in with Google</span>
-        <span class="google-soon">Coming soon</span>
       </button>
       <div class="atlas-auth-footer">
         By continuing, you agree to PropertyAtlas's terms of use. Your email is used only for authentication and editorial updates.
@@ -24889,8 +24898,32 @@ async function atlasAuthForgotPassword() {
 }
 
 function atlasAuthGoogle() {
-  // Stub — Phase 2d activates when Google Cloud Console OAuth is configured
-  atlasAuthShowMsg('info', 'Google sign-in arrives in v48.12 once OAuth is configured.');
+  // v48.78: Google OAuth live. Supabase project xywgocvjuygudzrduvwr has Google
+  // provider configured with GCP web client; on success Supabase fires
+  // handle_new_user trigger → profiles row created with user_tier='free'.
+  // On callback return, auth state listener (around L24896) fires SIGNED_IN
+  // and tier-gated content re-renders without page reload.
+  atlasAuthShowMsg('info', 'Redirecting to Google\u2026');
+  atlasInitSupabase();
+  var sb = window.atlasSb;
+  if(!sb || !sb.auth || !sb.auth.signInWithOAuth){
+    atlasAuthShowMsg('error', 'Sign-in temporarily unavailable. Please try again in a moment.');
+    return;
+  }
+  sb.auth.signInWithOAuth({
+    provider: 'google',
+    options: {
+      redirectTo: window.location.origin + window.location.pathname,
+      queryParams: { access_type: 'offline', prompt: 'select_account' }
+    }
+  }).then(function(res){
+    if(res && res.error){
+      atlasAuthShowMsg('error', 'Google sign-in failed: ' + res.error.message);
+    }
+    // No success path — browser navigates to Google immediately on success
+  }).catch(function(err){
+    atlasAuthShowMsg('error', 'Google sign-in failed: ' + (err && err.message ? err.message : 'unknown error'));
+  });
 }
 
 // ─── AUTH STATE LISTENER (v48.12 Phase 2c step 3) ───────────────────────────
