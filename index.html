@@ -24554,6 +24554,44 @@ body:not(.tier-authed) #atlas-chat-panel { display: none !important; }
 }
 .atlas-onb-verify-msg.show{display:block;}
 .atlas-onb-verify-msg.err{background:#FBECEC; color:#A03030;}
+
+/* ─── v48.80 newsletter opt-in modal + revisit banner ─────────────────── */
+#atlas-nl-modal-overlay{
+  position:fixed; inset:0; z-index:9998;
+  background:rgba(15,28,52,.62); backdrop-filter:blur(3px);
+  display:none; align-items:center; justify-content:center;
+  padding:20px; box-sizing:border-box;
+}
+#atlas-nl-modal-overlay.open{display:flex;}
+#atlas-nl-modal{
+  width:100%; max-width:460px;
+  background:#FAF7F0; border:1.5px solid #A67C3A; border-radius:14px;
+  font-family:Georgia,serif; box-shadow:0 24px 64px rgba(0,0,0,.32);
+  overflow:hidden;
+}
+.atlas-nl-header{
+  background:#1A4F9C; color:#FAF7F0; padding:20px 24px;
+  border-bottom:2px solid #A67C3A;
+}
+.atlas-nl-header .eyebrow{font-family:Inter,system-ui,sans-serif; font-size:11px; font-weight:700; letter-spacing:.12em; text-transform:uppercase; opacity:.78; margin-bottom:6px;}
+.atlas-nl-header h2{margin:0; font-size:20px; font-weight:700; letter-spacing:-.01em;}
+.atlas-nl-body{padding:20px 24px 22px; color:#2A2A2A;}
+.atlas-nl-body p{margin:0 0 14px; font-size:14.5px; line-height:1.55;}
+.atlas-nl-actions{display:flex; gap:10px; justify-content:flex-end; margin-top:18px; flex-wrap:wrap;}
+.atlas-nl-btn{
+  font-family:Inter,system-ui,sans-serif; font-size:13px; font-weight:600;
+  padding:10px 18px; border-radius:7px; cursor:pointer;
+  border:1.5px solid transparent; transition:opacity .15s, transform .05s;
+}
+.atlas-nl-btn:active{transform:translateY(1px);}
+.atlas-nl-btn.primary{background:#1A4F9C; color:#FAF7F0; border-color:#1A4F9C;}
+.atlas-nl-btn.primary:hover{opacity:.92;}
+.atlas-nl-btn.ghost{background:transparent; color:#1A4F9C; border-color:#A67C3A;}
+.atlas-nl-btn.ghost:hover{background:rgba(166,124,58,.08);}
+/* Revisit banner — reuses .nl-banner base, adds an "info" variant. */
+.nl-banner.info{background:#eff6ff; border:1px solid #bfdbfe; color:#1e3a8a;}
+.nl-banner .nl-banner-cta{margin-left:8px; background:#1A4F9C; color:#FAF7F0; border:none; padding:5px 12px; border-radius:5px; font-size:12px; font-weight:600; cursor:pointer; font-family:Inter,system-ui,sans-serif;}
+.nl-banner .nl-banner-cta:hover{opacity:.92;}
 </style>
 
 <div id="atlas-auth-overlay" role="dialog" aria-modal="true" aria-labelledby="atlas-auth-title">
@@ -24672,6 +24710,25 @@ body:not(.tier-authed) #atlas-chat-panel { display: none !important; }
           <button class="atlas-onb-btn no" onclick="atlasOnbVerifyBack()">Back</button>
           <button class="atlas-onb-btn yes" onclick="atlasOnbConfirmSalesperson()">Confirm</button>
         </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════════════
+     v48.80 — Newsletter opt-in prompt (first-time free login modal)
+═══════════════════════════════════════════════════════════════════ -->
+<div id="atlas-nl-modal-overlay" role="dialog" aria-modal="true" aria-labelledby="atlas-nl-title">
+  <div id="atlas-nl-modal">
+    <div class="atlas-nl-header">
+      <div class="eyebrow">Stay in the loop</div>
+      <h2 id="atlas-nl-title">The PropertyAtlas brief</h2>
+    </div>
+    <div class="atlas-nl-body">
+      <p>Weekly newsroom highlights, REIT earnings calls coverage, and Singapore commercial-property market signal — direct to your inbox.</p>
+      <div class="atlas-nl-actions">
+        <button type="button" class="atlas-nl-btn ghost" onclick="atlasNlPromptDecline()">Maybe later</button>
+        <button type="button" class="atlas-nl-btn primary" onclick="atlasNlPromptSubscribe()">Subscribe</button>
       </div>
     </div>
   </div>
@@ -24996,7 +25053,10 @@ async function atlasHandleSignedIn(session) {
     cea_reg_no: profile && profile.cea_reg_no || null,
     salesperson_asked: !!(profile && profile.salesperson_asked),
     organisation_id: profile && profile.organisation_id || null,
-    org_role: profile && profile.org_role || null
+    org_role: profile && profile.org_role || null,
+    newsletter_asked: !!(profile && profile.newsletter_asked),
+    newsletter_opted_in: profile && profile.newsletter_opted_in,
+    newsletter_revisited_at: profile && profile.newsletter_revisited_at || null
   };
   // Don't clobber a dev-set tier override
   if(!atlasDevTierOverrideActive()) {
@@ -25027,6 +25087,16 @@ async function atlasHandleSignedIn(session) {
   if(profile && profile.salesperson_asked === false) {
     try { if(typeof atlasShowOnboardingModal === 'function') atlasShowOnboardingModal(); } catch(e) {}
   }
+  // v48.80: newsletter opt-in prompt. Fires AFTER salesperson check, and only
+  // when salesperson modal did NOT open (we never double-modal a new user;
+  // newsletter prompt waits for the next login if salesperson modal showed).
+  if(profile && profile.salesperson_asked === true) {
+    if(profile.newsletter_asked === false) {
+      try { if(typeof atlasNlPromptOpen === 'function') atlasNlPromptOpen(); } catch(e) {}
+    } else if(profile.newsletter_opted_in === false && !profile.newsletter_revisited_at) {
+      try { if(typeof atlasNlBannerShow === 'function') atlasNlBannerShow(); } catch(e) {}
+    }
+  }
 }
 
 function atlasHandleSignedOut() {
@@ -25047,6 +25117,130 @@ function atlasHandleSignedOut() {
   try { if(typeof atlasShowTab === 'function') atlasShowTab(atlasCurrentTabId()); } catch(e) {}
   console.log('[ATLAS Auth] Signed out — tier reset to public.');
 }
+
+// ─── v48.80 NEWSLETTER OPT-IN PROMPT (modal + revisit banner) ───────────────
+// State machine driven by four columns on profiles (see migration v48_80):
+//   newsletter_asked=false                    → MODAL on this login
+//   asked=true, opted_in=true                 → silent (subscribed)
+//   asked=true, opted_in=false, revisited=null → BANNER on this login
+//   asked=true, opted_in=false, revisited=set → silent (already revisited)
+// Modal Subscribe routes into the existing nlSubOpen() flow with
+// source_page="post-signin-modal" so subscriber funnel attribution is preserved.
+
+function atlasNlPromptOpen() {
+  var overlay = document.getElementById('atlas-nl-modal-overlay');
+  if(!overlay) return;
+  overlay.classList.add('open');
+  document.addEventListener('keydown', atlasNlPromptKeydown);
+}
+
+function atlasNlPromptClose() {
+  var overlay = document.getElementById('atlas-nl-modal-overlay');
+  if(overlay) overlay.classList.remove('open');
+  document.removeEventListener('keydown', atlasNlPromptKeydown);
+}
+
+function atlasNlPromptKeydown(e) {
+  // Escape on the modal counts as "Maybe later" — explicit consent shape:
+  // we record that the user dismissed without subscribing.
+  if(e.key === 'Escape') atlasNlPromptDecline();
+}
+
+async function atlasNlPromptSubscribe() {
+  // User clicked Subscribe. Record the opt-in answer first, then route into
+  // the existing newsletter subscribe modal (nlSubOpen) so they fill in
+  // cadence/categories like any other signup. The newsletter_subscribers row
+  // is created by that flow's edge function, not by this hook.
+  await atlasNlWriteAnswer(true, /*setRevisitedAt=*/false);
+  atlasNlPromptClose();
+  try {
+    if(typeof window.nlSubOpen === 'function') {
+      // Pre-fill the email field from the signed-in user's session if the
+      // subscribe modal supports a prefill arg — current nlSubOpen takes a
+      // source-page string only, so we set a window hint that the modal's
+      // open-handler can read if it chooses.
+      window.__nlPrefillEmail = (window.atlasCurrentUser && window.atlasCurrentUser.email) || null;
+      window.nlSubOpen('post-signin-modal');
+    }
+  } catch(e) { console.error('[ATLAS NL] nlSubOpen route failed:', e); }
+}
+
+async function atlasNlPromptDecline() {
+  // User clicked Maybe later (or Escape). Record the decline; revisited_at
+  // stays null so they're eligible for the one-time banner on next login.
+  await atlasNlWriteAnswer(false, /*setRevisitedAt=*/false);
+  atlasNlPromptClose();
+}
+
+// ─── Revisit banner (one-time for previously-declining users) ────────────
+
+function atlasNlBannerShow() {
+  // Already-shown guard — defensive. The DB column gates this server-side,
+  // but if atlasHandleSignedIn fires twice in one page lifecycle (e.g.
+  // INITIAL_SESSION then SIGNED_IN), we don't want two banners.
+  if(document.getElementById('atlas-nl-revisit-banner')) return;
+
+  var host = document.querySelector('#tab-news .newsroom-header');
+  if(!host) host = document.body;
+
+  var banner = document.createElement('div');
+  banner.id = 'atlas-nl-revisit-banner';
+  banner.className = 'nl-banner info';
+  banner.style.display = 'flex';
+  banner.style.alignItems = 'center';
+  banner.innerHTML =
+    '<span>✉️</span>' +
+    '<span>Welcome back. Want to revisit your newsletter preferences?</span>' +
+    '<button type="button" class="nl-banner-cta">Subscribe</button>' +
+    '<button class="nl-banner-close" aria-label="Dismiss">×</button>';
+
+  banner.querySelector('.nl-banner-cta').addEventListener('click', async function(){
+    await atlasNlWriteAnswer(/*optedIn=*/null, /*setRevisitedAt=*/true);
+    banner.remove();
+    try {
+      if(typeof window.nlSubOpen === 'function') {
+        window.__nlPrefillEmail = (window.atlasCurrentUser && window.atlasCurrentUser.email) || null;
+        window.nlSubOpen('post-signin-banner');
+      }
+    } catch(e) { console.error('[ATLAS NL] banner→nlSubOpen failed:', e); }
+  });
+  banner.querySelector('.nl-banner-close').addEventListener('click', async function(){
+    await atlasNlWriteAnswer(/*optedIn=*/null, /*setRevisitedAt=*/true);
+    banner.remove();
+  });
+
+  host.parentNode.insertBefore(banner, host);
+}
+
+// ─── DB writer (single point of profile update for both prompt + banner) ──
+
+async function atlasNlWriteAnswer(optedIn, setRevisitedAt) {
+  // Records the answer to either the first-time modal or the revisit banner.
+  //   - First-time MODAL: optedIn=true|false, setRevisitedAt=false
+  //   - Revisit BANNER:   optedIn=null (unchanged), setRevisitedAt=true
+  // Safe to call when offline or signed-out — gracefully no-ops.
+  var sb = window.atlasSb;
+  var u = window.atlasCurrentUser;
+  if(!sb || !u || !u.id) return;
+  var patch = { newsletter_asked: true, newsletter_asked_at: new Date().toISOString() };
+  if(optedIn !== null) patch.newsletter_opted_in = optedIn;
+  if(setRevisitedAt) patch.newsletter_revisited_at = new Date().toISOString();
+  try {
+    var r = await sb.from('profiles').update(patch).eq('id', u.id);
+    if(r.error) throw r.error;
+    // Mirror to local user object so the in-session state matches DB.
+    u.newsletter_asked = true;
+    if(optedIn !== null) u.newsletter_opted_in = optedIn;
+    if(setRevisitedAt) u.newsletter_revisited_at = patch.newsletter_revisited_at;
+  } catch(e) {
+    console.error('[ATLAS NL] profile update failed:', e);
+  }
+}
+
+// Expose for console-driven QA + testing during the 17-25 May window.
+window.atlasNlPromptOpen   = atlasNlPromptOpen;
+window.atlasNlPromptClose  = atlasNlPromptClose;
+window.atlasNlBannerShow   = atlasNlBannerShow;
 
 // ─── SIGN-OUT ACTION (v48.12 Phase 2c step 6) ──────────────────────────────
 // Clicked from the topbar sign-out button. Calls sb.auth.signOut which fires
