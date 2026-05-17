@@ -24588,10 +24588,7 @@ body:not(.tier-authed) #atlas-chat-panel { display: none !important; }
 .atlas-nl-btn.primary:hover{opacity:.92;}
 .atlas-nl-btn.ghost{background:transparent; color:#1A4F9C; border-color:#A67C3A;}
 .atlas-nl-btn.ghost:hover{background:rgba(166,124,58,.08);}
-/* Revisit banner — reuses .nl-banner base, adds an "info" variant. */
-.nl-banner.info{background:#eff6ff; border:1px solid #bfdbfe; color:#1e3a8a;}
-.nl-banner .nl-banner-cta{margin-left:8px; background:#1A4F9C; color:#FAF7F0; border:none; padding:5px 12px; border-radius:5px; font-size:12px; font-weight:600; cursor:pointer; font-family:Inter,system-ui,sans-serif;}
-.nl-banner .nl-banner-cta:hover{opacity:.92;}
+/* Revisit modal reuses .atlas-nl-* — banner CSS deprecated in v48.80.2 */
 </style>
 
 <div id="atlas-auth-overlay" role="dialog" aria-modal="true" aria-labelledby="atlas-auth-title">
@@ -24716,12 +24713,17 @@ body:not(.tier-authed) #atlas-chat-panel { display: none !important; }
 </div>
 
 <!-- ═══════════════════════════════════════════════════════════════════
-     v48.80 — Newsletter opt-in prompt (first-time free login modal)
+     v48.80 — Newsletter opt-in prompt modal
+     Two visual modes share this DOM (driven by atlasNlPromptOpen mode arg):
+       - first-time : eyebrow "STAY IN THE LOOP"
+       - revisit    : eyebrow "WELCOME BACK"
+     Body, title, and buttons are constant across both modes.
 ═══════════════════════════════════════════════════════════════════ -->
 <div id="atlas-nl-modal-overlay" role="dialog" aria-modal="true" aria-labelledby="atlas-nl-title">
   <div id="atlas-nl-modal">
     <div class="atlas-nl-header">
-      <div class="eyebrow">Stay in the loop</div>
+      <div class="eyebrow" id="atlas-nl-eyebrow-first" data-nl-eyebrow="first">Stay in the loop</div>
+      <div class="eyebrow" id="atlas-nl-eyebrow-revisit" data-nl-eyebrow="revisit" style="display:none">Welcome back</div>
       <h2 id="atlas-nl-title">The PropertyAtlas brief</h2>
     </div>
     <div class="atlas-nl-body">
@@ -25090,11 +25092,13 @@ async function atlasHandleSignedIn(session) {
   // v48.80: newsletter opt-in prompt. Fires AFTER salesperson check, and only
   // when salesperson modal did NOT open (we never double-modal a new user;
   // newsletter prompt waits for the next login if salesperson modal showed).
+  // v48.80.2: revisit (previously-declined users) now uses the SAME modal as
+  // first-time, switched to "Welcome back" eyebrow. Banner UI deprecated.
   if(profile && profile.salesperson_asked === true) {
     if(profile.newsletter_asked === false) {
-      try { if(typeof atlasNlPromptOpen === 'function') atlasNlPromptOpen(); } catch(e) {}
+      try { if(typeof atlasNlPromptOpen === 'function') atlasNlPromptOpen('first-time'); } catch(e) {}
     } else if(profile.newsletter_opted_in === false && !profile.newsletter_revisited_at) {
-      try { if(typeof atlasNlBannerShow === 'function') atlasNlBannerShow(); } catch(e) {}
+      try { if(typeof atlasNlPromptOpen === 'function') atlasNlPromptOpen('revisit'); } catch(e) {}
     }
   }
 }
@@ -25114,12 +25118,10 @@ function atlasHandleSignedOut() {
     // v48.25: hide AI chat widget on sign-out (public users see no chat bubble).
     document.body.classList.remove('tier-authed');
   } catch(e) {}
-  // v48.80.1: clean up newsletter prompt UI on sign-out. Without this, a
-  // signed-out user can still see the revisit banner or a stuck-open modal
-  // (auth-gated content that lingered from the prior session).
+  // v48.80.2: close newsletter modal on sign-out if it's somehow open.
+  // (v48.80.1 also removed a banner element; banner UI has since been
+  // deprecated in favour of modal-based revisit, so no banner cleanup needed.)
   try {
-    var nlBanner = document.getElementById('atlas-nl-revisit-banner');
-    if(nlBanner) nlBanner.remove();
     var nlOverlay = document.getElementById('atlas-nl-modal-overlay');
     if(nlOverlay && nlOverlay.classList.contains('open')) {
       nlOverlay.classList.remove('open');
@@ -25138,9 +25140,26 @@ function atlasHandleSignedOut() {
 // Modal Subscribe routes into the existing nlSubOpen() flow with
 // source_page="post-signin-modal" so subscriber funnel attribution is preserved.
 
-function atlasNlPromptOpen() {
+// v48.80.2: modal supports two display modes — 'first-time' and 'revisit'.
+// The active mode determines (a) which eyebrow shows, and (b) what Maybe
+// later writes to the DB. We hold it in a module-private variable rather
+// than reading the DOM eyebrow state, to keep behaviour deterministic.
+var atlasNlCurrentMode = null;  // 'first-time' | 'revisit' | null when closed
+
+function atlasNlPromptOpen(mode) {
   var overlay = document.getElementById('atlas-nl-modal-overlay');
   if(!overlay) return;
+  // Mode defaults to 'first-time' if caller didn't pass one (back-compat
+  // with any console-driven QA calls that omit the argument).
+  atlasNlCurrentMode = (mode === 'revisit') ? 'revisit' : 'first-time';
+  // Swap the eyebrow to match mode. Both eyebrow elements exist in the DOM;
+  // we just toggle which one displays.
+  try {
+    var ebFirst   = document.getElementById('atlas-nl-eyebrow-first');
+    var ebRevisit = document.getElementById('atlas-nl-eyebrow-revisit');
+    if(ebFirst)   ebFirst.style.display   = (atlasNlCurrentMode === 'first-time') ? '' : 'none';
+    if(ebRevisit) ebRevisit.style.display = (atlasNlCurrentMode === 'revisit')    ? '' : 'none';
+  } catch(e) {}
   overlay.classList.add('open');
   document.addEventListener('keydown', atlasNlPromptKeydown);
 }
@@ -25149,86 +25168,49 @@ function atlasNlPromptClose() {
   var overlay = document.getElementById('atlas-nl-modal-overlay');
   if(overlay) overlay.classList.remove('open');
   document.removeEventListener('keydown', atlasNlPromptKeydown);
+  atlasNlCurrentMode = null;
 }
 
 function atlasNlPromptKeydown(e) {
   // Escape on the modal counts as "Maybe later" — explicit consent shape:
-  // we record that the user dismissed without subscribing.
+  // we record the decline with the same write the Maybe later button does.
   if(e.key === 'Escape') atlasNlPromptDecline();
 }
 
 async function atlasNlPromptSubscribe() {
-  // User clicked Subscribe. Record the opt-in answer first, then route into
-  // the existing newsletter subscribe modal (nlSubOpen) so they fill in
-  // cadence/categories like any other signup. The newsletter_subscribers row
-  // is created by that flow's edge function, not by this hook.
+  // User clicked Subscribe. Record opt-in, then route into existing
+  // newsletter subscribe modal (nlSubOpen) for cadence/category selection.
+  // The newsletter_subscribers row is created by that flow's edge function.
+  // Source page tag distinguishes first-time vs revisit subscription funnel
+  // attribution downstream.
+  var sourceTag = (atlasNlCurrentMode === 'revisit') ? 'post-signin-revisit' : 'post-signin-modal';
   await atlasNlWriteAnswer(true, /*setRevisitedAt=*/false);
   atlasNlPromptClose();
   try {
     if(typeof window.nlSubOpen === 'function') {
-      // Pre-fill the email field from the signed-in user's session if the
-      // subscribe modal supports a prefill arg — current nlSubOpen takes a
-      // source-page string only, so we set a window hint that the modal's
-      // open-handler can read if it chooses.
       window.__nlPrefillEmail = (window.atlasCurrentUser && window.atlasCurrentUser.email) || null;
-      window.nlSubOpen('post-signin-modal');
+      window.nlSubOpen(sourceTag);
     }
   } catch(e) { console.error('[ATLAS NL] nlSubOpen route failed:', e); }
 }
 
 async function atlasNlPromptDecline() {
-  // User clicked Maybe later (or Escape). Record the decline; revisited_at
-  // stays null so they're eligible for the one-time banner on next login.
-  await atlasNlWriteAnswer(false, /*setRevisitedAt=*/false);
+  // User clicked Maybe later (or Escape).
+  //   - first-time mode: record decline, leave revisited_at NULL so user
+  //                       is eligible for the revisit modal on next login.
+  //   - revisit   mode: record decline AND set revisited_at — second decline
+  //                       is terminal. System goes silent forever.
+  var setRevisitedAt = (atlasNlCurrentMode === 'revisit');
+  await atlasNlWriteAnswer(false, setRevisitedAt);
   atlasNlPromptClose();
 }
 
-// ─── Revisit banner (one-time for previously-declining users) ────────────
-
-function atlasNlBannerShow() {
-  // Already-shown guard — defensive. The DB column gates this server-side,
-  // but if atlasHandleSignedIn fires twice in one page lifecycle (e.g.
-  // INITIAL_SESSION then SIGNED_IN), we don't want two banners.
-  if(document.getElementById('atlas-nl-revisit-banner')) return;
-
-  var host = document.querySelector('#tab-news .newsroom-header');
-  if(!host) host = document.body;
-
-  var banner = document.createElement('div');
-  banner.id = 'atlas-nl-revisit-banner';
-  banner.className = 'nl-banner info';
-  banner.style.display = 'flex';
-  banner.style.alignItems = 'center';
-  banner.innerHTML =
-    '<span>✉️</span>' +
-    '<span>Welcome back. Want to revisit your newsletter preferences?</span>' +
-    '<button type="button" class="nl-banner-cta">Subscribe</button>' +
-    '<button class="nl-banner-close" aria-label="Dismiss">×</button>';
-
-  banner.querySelector('.nl-banner-cta').addEventListener('click', async function(){
-    await atlasNlWriteAnswer(/*optedIn=*/null, /*setRevisitedAt=*/true);
-    banner.remove();
-    try {
-      if(typeof window.nlSubOpen === 'function') {
-        window.__nlPrefillEmail = (window.atlasCurrentUser && window.atlasCurrentUser.email) || null;
-        window.nlSubOpen('post-signin-banner');
-      }
-    } catch(e) { console.error('[ATLAS NL] banner→nlSubOpen failed:', e); }
-  });
-  banner.querySelector('.nl-banner-close').addEventListener('click', async function(){
-    await atlasNlWriteAnswer(/*optedIn=*/null, /*setRevisitedAt=*/true);
-    banner.remove();
-  });
-
-  host.parentNode.insertBefore(banner, host);
-}
-
-// ─── DB writer (single point of profile update for both prompt + banner) ──
+// ─── DB writer (single point of profile update for both modal modes) ──────
 
 async function atlasNlWriteAnswer(optedIn, setRevisitedAt) {
-  // Records the answer to either the first-time modal or the revisit banner.
-  //   - First-time MODAL: optedIn=true|false, setRevisitedAt=false
-  //   - Revisit BANNER:   optedIn=null (unchanged), setRevisitedAt=true
+  // Records the answer from either modal mode.
+  //   - first-time MODAL: optedIn=true|false, setRevisitedAt=false
+  //   - revisit    MODAL: optedIn=true|false, setRevisitedAt=true (terminal)
   // Safe to call when offline or signed-out — gracefully no-ops.
   var sb = window.atlasSb;
   var u = window.atlasCurrentUser;
@@ -25249,9 +25231,10 @@ async function atlasNlWriteAnswer(optedIn, setRevisitedAt) {
 }
 
 // Expose for console-driven QA + testing during the 17-25 May window.
+// Call atlasNlPromptOpen('first-time') or atlasNlPromptOpen('revisit') to
+// preview each mode without DB state changes.
 window.atlasNlPromptOpen   = atlasNlPromptOpen;
 window.atlasNlPromptClose  = atlasNlPromptClose;
-window.atlasNlBannerShow   = atlasNlBannerShow;
 
 // ─── SIGN-OUT ACTION (v48.12 Phase 2c step 6) ──────────────────────────────
 // Clicked from the topbar sign-out button. Calls sb.auth.signOut which fires
