@@ -1,0 +1,495 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>Privacy Policy | PropertyAtlas</title>
+<meta name="description" content="PropertyAtlas Privacy Policy — how TK Real Estate collects, uses, and protects personal data in accordance with Singapore's PDPA."/>
+<meta name="robots" content="index,follow"/>
+<link rel="canonical" href="https://propertyatlas.sg/privacy"/>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet"/>
+<style>
+:root{
+  --bg:#FAF7F0;
+  --srf:#FFFCF5;
+  --ed-navy:#1A4F9C;
+  --ed-navy-deep:#0F3775;
+  --ed-navy-ink:#0B2B5C;
+  --ed-bronze:#A67C3A;
+  --ed-bronze-lt:#C99B5A;
+  --ed-cream:#F7F3EB;
+  --ed-cream-lt:#FAF7F0;
+  --ed-ink:#1A1A1A;
+  --ed-muted:#6B6157;
+  --ed-hairline:rgba(11,43,92,0.10);
+  --ed-hairline-2:rgba(11,43,92,0.18);
+  --ed-body-serif:Georgia,"Times New Roman","DejaVu Serif",serif;
+}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0;background:var(--bg);color:var(--ed-ink);font-family:'DM Sans',sans-serif;font-size:15px;line-height:1.6;-webkit-font-smoothing:antialiased}
+
+/* ============================================================
+   MASTHEAD — mirrors landing index.html .ed-mast
+   ============================================================ */
+.ed-mast{
+  background:var(--ed-cream);
+  border-bottom:1px solid var(--ed-hairline);
+  position:sticky;
+  top:0;
+  z-index:200;
+}
+.ed-mast-inner{
+  max-width:1400px;
+  margin:0 auto;
+  padding:0 24px;
+  height:64px;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:16px;
+}
+.ed-mast-brand{
+  display:flex;
+  align-items:center;
+  gap:12px;
+  text-decoration:none;
+  color:var(--ed-navy-ink);
+  flex-shrink:0;
+}
+.ed-mast-brand-mark{
+  width:32px;
+  height:32px;
+  background:var(--ed-navy-ink);
+  color:var(--ed-cream);
+  border-radius:4px;
+  font-family:Georgia,'Times New Roman',serif;
+  font-weight:700;
+  font-size:14px;
+  letter-spacing:-0.04em;
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  border-bottom:2px solid var(--ed-bronze-lt);
+}
+.ed-mast-brand-word{
+  font-family:Georgia,'Times New Roman',serif;
+  font-size:18px;
+  font-weight:700;
+  letter-spacing:-0.01em;
+  color:var(--ed-navy-ink);
+}
+.ed-mast-brand-word em{
+  font-style:italic;
+  color:var(--ed-bronze);
+  font-weight:700;
+}
+.ed-mast-nav{
+  display:flex;
+  align-items:center;
+  gap:28px;
+}
+.ed-mast-nav-link{
+  font-family:'DM Sans',sans-serif;
+  font-size:14px;
+  font-weight:600;
+  color:var(--ed-navy-ink);
+  text-decoration:none;
+  padding:6px 0;
+  border-bottom:2px solid transparent;
+  transition:color 140ms ease,border-color 140ms ease;
+}
+.ed-mast-nav-link:hover{color:var(--ed-navy)}
+@media (max-width:760px){
+  .ed-mast-inner{height:56px;padding:0 16px}
+  .ed-mast-brand-word{font-size:16px}
+  .ed-mast-nav{gap:14px}
+  .ed-mast-nav-link{font-size:12px}
+}
+
+/* ============================================================
+   ARTICLE / LEGAL CONTENT
+   ============================================================ */
+.legal-wrap{
+  max-width:760px;
+  margin:0 auto;
+  padding:48px 24px 72px;
+}
+.legal-eyebrow{
+  font-family:'DM Sans',sans-serif;
+  font-size:11px;
+  font-weight:700;
+  letter-spacing:0.18em;
+  text-transform:uppercase;
+  color:var(--ed-bronze);
+  margin:0 0 14px;
+}
+.legal-title{
+  font-family:Georgia,'Times New Roman',serif;
+  font-size:38px;
+  font-weight:700;
+  letter-spacing:-0.015em;
+  line-height:1.15;
+  color:var(--ed-navy-ink);
+  margin:0 0 18px;
+}
+.legal-meta{
+  font-family:'DM Sans',sans-serif;
+  font-size:13px;
+  color:var(--ed-muted);
+  margin:0 0 36px;
+  padding-bottom:24px;
+  border-bottom:1px solid var(--ed-hairline);
+}
+.legal-meta strong{color:var(--ed-ink);font-weight:600}
+.legal-meta span{display:inline-block;margin-right:18px}
+
+.legal-body{
+  font-family:var(--ed-body-serif);
+  font-size:16px;
+  line-height:1.72;
+  color:var(--ed-ink);
+}
+.legal-body p{margin:0 0 18px}
+.legal-body h2{
+  font-family:Georgia,'Times New Roman',serif;
+  font-size:22px;
+  font-weight:700;
+  color:var(--ed-navy-ink);
+  margin:40px 0 14px;
+  letter-spacing:-0.01em;
+  line-height:1.25;
+}
+.legal-body h3{
+  font-family:Georgia,'Times New Roman',serif;
+  font-size:17px;
+  font-weight:600;
+  color:var(--ed-navy-ink);
+  margin:28px 0 10px;
+  font-style:italic;
+}
+.legal-body a{color:var(--ed-navy);text-decoration:underline;text-underline-offset:2px}
+.legal-body a:hover{color:var(--ed-navy-deep)}
+.legal-body ul{margin:0 0 18px;padding-left:22px}
+.legal-body li{margin-bottom:6px}
+.legal-body strong{font-weight:700;color:var(--ed-ink)}
+.legal-body em{font-style:italic}
+.legal-body hr{
+  border:none;
+  border-top:1px solid var(--ed-hairline);
+  margin:32px 0;
+}
+.legal-body table{
+  width:100%;
+  border-collapse:collapse;
+  margin:18px 0 24px;
+  font-family:'DM Sans',sans-serif;
+  font-size:13.5px;
+}
+.legal-body th{
+  font-family:Georgia,'Times New Roman',serif;
+  font-style:italic;
+  font-weight:600;
+  text-align:left;
+  color:var(--ed-navy-ink);
+  padding:10px 12px;
+  border-bottom:1px solid var(--ed-hairline-2);
+}
+.legal-body td{
+  padding:10px 12px;
+  border-bottom:1px solid var(--ed-hairline);
+  vertical-align:top;
+  color:var(--ed-ink);
+  line-height:1.55;
+}
+.legal-body td strong{color:var(--ed-navy-ink)}
+
+.legal-sign{
+  margin-top:48px;
+  padding-top:24px;
+  border-top:1px solid var(--ed-hairline);
+  font-family:'DM Sans',sans-serif;
+  font-size:13px;
+  line-height:1.7;
+  color:var(--ed-muted);
+}
+.legal-sign strong{color:var(--ed-navy-ink);font-weight:700;display:block;margin-bottom:4px}
+.legal-sign em{font-style:italic;display:block;margin-top:14px;font-size:12.5px}
+
+@media (max-width:600px){
+  .legal-wrap{padding:32px 18px 56px}
+  .legal-title{font-size:30px}
+  .legal-body{font-size:15.5px}
+  .legal-body h2{font-size:20px}
+  .legal-body h3{font-size:16px}
+}
+
+/* ============================================================
+   FOOTER — mirrors landing index.html .ed-foot
+   ============================================================ */
+.ed-foot{
+  background:var(--ed-navy-ink);
+  color:var(--ed-cream-lt);
+  padding:28px 0;
+  margin-top:0;
+}
+.ed-foot-inner{
+  max-width:1400px;
+  margin:0 auto;
+  padding:0 24px;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:24px;
+  flex-wrap:wrap;
+}
+.ed-foot-attr{
+  font-family:'DM Sans',sans-serif;
+  font-size:12px;
+  color:rgba(250,247,240,0.70);
+  margin:0;
+}
+.ed-foot-attr strong{color:var(--ed-cream-lt)}
+.ed-foot-links{
+  list-style:none;
+  display:flex;
+  gap:20px;
+  margin:0;
+  padding:0;
+}
+.ed-foot-links a{
+  font-family:'DM Sans',sans-serif;
+  font-size:12px;
+  color:rgba(250,247,240,0.70);
+  text-decoration:none;
+  transition:color 140ms ease;
+}
+.ed-foot-links a:hover{color:var(--ed-bronze-lt)}
+@media (max-width:760px){
+  .ed-foot-inner{flex-direction:column;align-items:flex-start;gap:14px}
+  .ed-foot-links{flex-wrap:wrap;gap:14px}
+}
+</style>
+</head>
+<body>
+
+<header class="ed-mast" role="banner">
+  <div class="ed-mast-inner">
+    <a class="ed-mast-brand" href="/" aria-label="PropertyAtlas — Home">
+      <span class="ed-mast-brand-mark" aria-hidden="true">PA</span>
+      <span class="ed-mast-brand-word">Property<em>Atlas</em></span>
+    </a>
+    <nav class="ed-mast-nav" aria-label="Primary">
+      <a href="/" class="ed-mast-nav-link">Newsroom</a>
+      <a href="/#analytics" class="ed-mast-nav-link">Analytics</a>
+      <a href="/#transactions" class="ed-mast-nav-link">Transactions</a>
+    </nav>
+  </div>
+</header>
+
+<main class="legal-wrap">
+
+  <p class="legal-eyebrow">Legal · PDPA-compliant</p>
+  <h1 class="legal-title">Privacy Policy</h1>
+  <p class="legal-meta">
+    <span><strong>Effective Date:</strong> 16 May 2026</span>
+    <span><strong>Last Updated:</strong> 16 May 2026</span>
+  </p>
+
+  <div class="legal-body">
+
+    <p>This Privacy Policy explains how <strong>TK Real Estate</strong> ("we", "us", or "our") collects, uses, discloses, and protects personal data through the <strong>PropertyAtlas</strong> platform at <a href="https://propertyatlas.sg">propertyatlas.sg</a> and any related subdomains, dashboards, and tools (collectively, the "Platform").</p>
+
+    <p>This Policy is issued in accordance with Singapore's <strong>Personal Data Protection Act 2012</strong> ("PDPA") and forms part of the terms governing your use of the Platform. By accessing or using the Platform, you acknowledge that you have read this Policy. Where the PDPA requires your consent for specific processing activities, we will obtain that consent at the point of collection.</p>
+
+    <h2>1. Who we are</h2>
+    <p>PropertyAtlas is a Singapore commercial and industrial real estate market intelligence platform operated by <strong>TK Real Estate</strong>, a Singapore-based business. We publish editorial coverage of Singapore-listed REITs and developers, asset directories, transaction data, and analytical content for property professionals, investors, brokers, and researchers.</p>
+    <p>The party responsible for personal data collected through the Platform is TK Real Estate, contactable at <a href="mailto:info@tkre.sg">info@tkre.sg</a>.</p>
+
+    <h2>2. Data Protection Officer</h2>
+    <p>In accordance with Section 11 of the PDPA, we have designated a Data Protection Officer ("DPO") to oversee our compliance with the PDPA.</p>
+    <p>You may contact our DPO at any time with questions, requests, or complaints concerning your personal data:</p>
+    <ul>
+      <li><strong>Email:</strong> <a href="mailto:info@tkre.sg">info@tkre.sg</a></li>
+      <li><strong>Subject line:</strong> Please mark as <em>"DPO — [Access / Correction / Withdrawal / Complaint]"</em> to help us route your request</li>
+    </ul>
+    <p>We aim to acknowledge DPO enquiries within three Singapore business days and respond substantively within thirty days, in line with PDPC guidance.</p>
+
+    <h2>3. What personal data we collect</h2>
+    <p>We collect different categories of personal data depending on how you use the Platform.</p>
+
+    <h3>3.1 Visitors (anonymous browsing — Tier 0)</h3>
+    <p>When you browse the Platform without signing in, we do not collect personal data that identifies you individually. Our hosting and content-delivery infrastructure (GitHub Pages, Cloudflare) automatically processes routine operational telemetry such as IP address, browser type, device type, referring URL, and pages visited, for the limited purposes of serving content, protecting against abuse, and basic aggregate analytics. We do not combine this telemetry with any identifying information unless you subsequently sign in or submit a form.</p>
+
+    <h3>3.2 Registered users — Tier 1 (Sign in with Google)</h3>
+    <p>When you sign in via Google OAuth, Google transmits to us the following data fields from your Google account:</p>
+    <ul>
+      <li>Email address</li>
+      <li>Display name (first name and last name as recorded on your Google account)</li>
+      <li>Profile picture URL (if you have set one on your Google account)</li>
+      <li>A unique Google identifier ("sub" claim)</li>
+    </ul>
+    <p>We store this data in our authentication database to identify you across sessions, personalise your signed-in experience, and grant access to features available to registered users (such as the Directory module).</p>
+
+    <h3>3.3 Tier 1 users who self-identify as CEA salespersons (optional)</h3>
+    <p>If you identify yourself as a Council for Estate Agencies ("CEA") registered salesperson during our optional onboarding flow, we additionally collect:</p>
+    <ul>
+      <li>Your CEA registration number (e.g. R012345A)</li>
+      <li>Confirmation of your name as recorded on the CEA public register</li>
+      <li>Your registered estate agent (agency) name</li>
+      <li>Your CEA registration commencement date</li>
+      <li>A preferred contact email address (which may differ from your Google account email)</li>
+      <li>A preferred contact mobile number</li>
+    </ul>
+    <p>We use this data to verify your salesperson status against the publicly available CEA Salesperson Information dataset (sourced from data.gov.sg), and to share agent-specific tools and resources as we build them. Providing this information is voluntary; you may decline the onboarding step or skip it for later.</p>
+    <p><strong>We do not collect NRIC numbers</strong> or copies of NRIC cards. The CEA registration number is a professional licensing identifier and is treated as such, not as a national identifier.</p>
+
+    <h3>3.4 Tier 2 subscribers (corporate accounts — future)</h3>
+    <p>When we introduce paid subscription access, we will collect additional billing and corporate-identification information. A separate notification will be provided at the point of collection, and this Policy will be updated accordingly.</p>
+
+    <h3>3.5 Enquiry and lead capture forms</h3>
+    <p>When you submit an enquiry through the Platform (for example, the Stock-tab listing enquiry form), we collect:</p>
+    <ul>
+      <li>Your name</li>
+      <li>Your email address</li>
+      <li>Your phone number (if provided)</li>
+      <li>The content of your message and the listing context (e.g. the property reference you enquired about)</li>
+    </ul>
+    <p>This data is used solely to respond to your enquiry and is forwarded to the relevant operator inbox at TK Real Estate.</p>
+
+    <h3>3.6 Newsletter subscribers (future)</h3>
+    <p>When the PropertyAtlas newsletter launches, we will collect your email address (and optionally your name) for the purpose of delivering editorial updates. A separate consent notification will be provided at the point of subscription, and you will be able to unsubscribe at any time.</p>
+
+    <h2>4. Purposes for which we use your personal data</h2>
+    <p>Under Section 20 of the PDPA, we are required to notify you of the purposes for which we collect, use, and disclose your personal data. We use personal data for the following purposes:</p>
+    <ul>
+      <li><strong>Account creation and authentication</strong> — verifying your identity, maintaining your signed-in session, and securing your account against unauthorised access.</li>
+      <li><strong>Service delivery</strong> — providing access to features available to your tier (Directory, Stock, Asset Directory, and other modules as they are launched).</li>
+      <li><strong>Communication</strong> — responding to enquiries you submit through the Platform, sending you transactional notifications (such as authentication confirmation emails or content you have explicitly requested), and where you have separately consented, sending editorial updates and product announcements.</li>
+      <li><strong>Salesperson verification</strong> — checking your CEA registration number against the publicly available CEA Salesperson register, with your consent, where you self-identify as a salesperson.</li>
+      <li><strong>Operational telemetry</strong> — running aggregated, non-identifying analytics to understand how the Platform is used and to improve content and features.</li>
+      <li><strong>Security and abuse prevention</strong> — detecting and preventing fraud, abuse, automated scraping, and unauthorised access.</li>
+      <li><strong>Legal compliance</strong> — complying with applicable Singapore law, lawful regulatory requests, and our own internal records-keeping obligations.</li>
+    </ul>
+    <p>We do not use your personal data for purposes outside the above without first obtaining your consent.</p>
+
+    <h2>5. Consent and withdrawal</h2>
+    <p>Where consent is required under the PDPA, we obtain it either:</p>
+    <ul>
+      <li><strong>Expressly</strong>, where you actively click a button, tick a box, or otherwise affirmatively confirm your agreement (for example, when you sign in via Google for the first time, when you submit an enquiry form, or when you subscribe to the newsletter); or</li>
+      <li><strong>By notification</strong>, where you have been given reasonable opportunity to opt out before processing begins, in accordance with the Personal Data Protection (Notification of Purpose) Regulations.</li>
+    </ul>
+    <p>You may withdraw your consent at any time by writing to <a href="mailto:info@tkre.sg">info@tkre.sg</a> with the subject line <em>"DPO — Withdrawal"</em>. Upon receipt of a valid withdrawal request, we will cease the relevant processing within a reasonable period (and in any event no later than thirty days), and inform you of the likely consequences of withdrawal. Note that withdrawing consent may mean we can no longer provide certain features (for example, signing out and revoking authentication consent will end your access to tier-gated content).</p>
+    <p>Withdrawal does not affect the lawfulness of processing carried out before the withdrawal took effect.</p>
+
+    <h2>6. Disclosure to third parties</h2>
+    <p>We do not sell your personal data. We disclose personal data to third parties only in the following limited circumstances:</p>
+
+    <h3>6.1 Service providers acting as our data intermediaries</h3>
+    <p>We rely on the following service providers to operate the Platform. Each is engaged under terms that require them to process personal data only on our instructions and to maintain protection comparable to the PDPA:</p>
+    <table>
+      <thead>
+        <tr><th>Provider</th><th>Function</th><th>Data residency</th></tr>
+      </thead>
+      <tbody>
+        <tr><td><strong>Supabase, Inc.</strong></td><td>Authentication, database storage of user profiles and platform data</td><td>AWS Asia Pacific (Singapore) region</td></tr>
+        <tr><td><strong>Google LLC</strong></td><td>Sign in with Google identity provider</td><td>United States (Singapore-residents' data processed under Google's PDPA-aligned commitments)</td></tr>
+        <tr><td><strong>Resend</strong></td><td>Transactional email delivery</td><td>United States</td></tr>
+        <tr><td><strong>GitHub, Inc.</strong> (GitHub Pages)</td><td>Static site hosting</td><td>Global CDN; primary infrastructure United States</td></tr>
+        <tr><td><strong>Cloudflare, Inc.</strong></td><td>DNS, content delivery, abuse protection</td><td>Global edge network</td></tr>
+      </tbody>
+    </table>
+
+    <h3>6.2 Regulatory, legal, or law-enforcement requests</h3>
+    <p>We may disclose personal data where required by Singapore law, court order, or a lawful request from a Singapore regulator or law-enforcement authority. We disclose only the minimum data necessary to comply.</p>
+
+    <h3>6.3 Business transfers</h3>
+    <p>If TK Real Estate is acquired by, merged with, or restructures into another entity, personal data may be transferred as part of that transaction. We will provide notice on the Platform before any such transfer takes effect and will require the receiving entity to maintain protection at least equivalent to this Policy.</p>
+    <p>We do not disclose your personal data to any other third party for marketing, advertising, or unrelated business purposes.</p>
+
+    <h2>7. Overseas transfer of personal data</h2>
+    <p>Some of our service providers process personal data outside Singapore (see Section 6.1). Under Section 26 of the PDPA, we ensure that overseas transfers are made only where the receiving jurisdiction or recipient provides a standard of protection comparable to the PDPA, through contractual safeguards or recognised certification frameworks (such as the APEC Cross-Border Privacy Rules).</p>
+    <p>We have selected our providers with this requirement in mind. Where you wish to know more about the safeguards in place for a specific provider, please contact us at <a href="mailto:info@tkre.sg">info@tkre.sg</a>.</p>
+
+    <h2>8. Data retention</h2>
+    <p>We retain personal data only for as long as is necessary to fulfil the purposes for which it was collected, or as required by law:</p>
+    <ul>
+      <li><strong>Tier 1 user accounts (Google OAuth profiles):</strong> retained for as long as your account remains active. If you have not signed in for twenty-four consecutive months, we may notify you and, absent a response, delete your account.</li>
+      <li><strong>CEA salesperson verification data:</strong> retained for as long as your account is active and you remain identified as a salesperson. If you later notify us that you have ceased CEA registration or wish to remove this data, we will delete it within thirty days of your request, subject to the access and correction obligations in Section 9.</li>
+      <li><strong>Enquiry form submissions:</strong> retained for up to twenty-four months from the date of enquiry, for record-keeping and follow-up purposes.</li>
+      <li><strong>Operational telemetry:</strong> retained in aggregate, non-identifying form indefinitely; identifiable raw logs retained for no more than ninety days.</li>
+    </ul>
+    <p>Upon account deletion or a valid withdrawal request, we will remove personal data from our active systems within thirty days. Backup copies are overwritten on a rolling basis no later than ninety days following the deletion date.</p>
+
+    <h2>9. Your rights — access and correction</h2>
+    <p>Under Sections 21 and 22 of the PDPA, you have the right to:</p>
+    <ul>
+      <li><strong>Request access</strong> to personal data we hold about you, and information about how we have used or disclosed it within the twelve months preceding your request.</li>
+      <li><strong>Request correction</strong> of any error or omission in your personal data. Upon receipt of a valid correction request, we will correct your data as soon as practicable (typically within thirty days) and inform any third parties to whom we previously disclosed the data, unless you instruct otherwise.</li>
+    </ul>
+    <p>To make an access or correction request, write to <a href="mailto:info@tkre.sg">info@tkre.sg</a> with the subject line <em>"DPO — Access"</em> or <em>"DPO — Correction"</em> and provide sufficient information for us to identify you and the data in question. We may charge a reasonable fee for access requests where permitted under the PDPA; correction requests are free of charge.</p>
+    <p>We may decline access or correction requests in the limited circumstances permitted under the PDPA (for example, where disclosure could reveal personal data about another individual, or where the request is frivolous or vexatious). In such cases we will notify you in writing with reasons.</p>
+
+    <h2>10. Security</h2>
+    <p>We take reasonable security arrangements to protect personal data in our possession or under our control against unauthorised access, collection, use, disclosure, copying, modification, disposal, or similar risks. These measures include:</p>
+    <ul>
+      <li>Encryption in transit (HTTPS / TLS 1.2 or above) for all data transmitted between your browser and our infrastructure</li>
+      <li>Encryption at rest for all data stored in our Supabase database</li>
+      <li>Access controls that limit which personnel can view personal data, with row-level security policies enforced at the database level</li>
+      <li>Authentication best practices including OAuth-based sign-in, secure session management, and protection against common web vulnerabilities</li>
+      <li>Regular review of our security posture and our service providers' security commitments</li>
+    </ul>
+    <p>No system is perfectly secure, and we cannot guarantee absolute security. If you become aware of any actual or suspected security incident affecting your personal data, please contact us immediately at <a href="mailto:info@tkre.sg">info@tkre.sg</a>.</p>
+
+    <h2>11. Data breach notification</h2>
+    <p>In the event of a data breach that meets the notification thresholds under Sections 26C and 26D of the PDPA — namely, a breach that is likely to result in significant harm to affected individuals, or that affects 500 or more individuals — we will:</p>
+    <ul>
+      <li>Assess the breach within thirty days of becoming aware of it</li>
+      <li>Notify the Personal Data Protection Commission as soon as practicable (within three calendar days of determining a notifiable breach)</li>
+      <li>Notify affected individuals as soon as practicable, providing information about the nature of the breach, the data affected, the steps we are taking, and recommended protective actions</li>
+    </ul>
+
+    <h2>12. Cookies and similar technologies</h2>
+    <p>The Platform uses cookies and local browser storage for essential operational purposes including session authentication (so that you remain signed in across pages) and feature preferences (for example, your tier-aware view state). We do not use third-party advertising or cross-site tracking cookies.</p>
+    <p>You may disable cookies in your browser settings, but doing so will prevent you from signing in or using tier-gated features.</p>
+
+    <h2>13. Children's data</h2>
+    <p>The Platform is intended for property professionals, investors, and researchers and is not directed at individuals under the age of 18. We do not knowingly collect personal data from children. If you believe a child has provided personal data through the Platform, please contact us at <a href="mailto:info@tkre.sg">info@tkre.sg</a> and we will delete it.</p>
+
+    <h2>14. Changes to this Policy</h2>
+    <p>We may update this Policy from time to time to reflect changes in our practices, our service providers, or the law. The "Last Updated" date at the top of this Policy indicates when it was most recently changed. For material changes that affect how we use your personal data, we will provide reasonable notice through the Platform or by email to registered users before the changes take effect.</p>
+    <p>We encourage you to review this Policy periodically.</p>
+
+    <h2>15. Complaints</h2>
+    <p>If you believe we have not handled your personal data in accordance with the PDPA or this Policy, you may write to our DPO at <a href="mailto:info@tkre.sg">info@tkre.sg</a> with the subject line <em>"DPO — Complaint"</em>. We aim to acknowledge complaints within three business days and to resolve them within thirty days.</p>
+    <p>If you are not satisfied with our response, you have the right to refer your complaint to the <strong>Personal Data Protection Commission of Singapore</strong> at <a href="https://www.pdpc.gov.sg" target="_blank" rel="noopener">www.pdpc.gov.sg</a>.</p>
+
+    <h2>16. Governing law</h2>
+    <p>This Policy is governed by the laws of the Republic of Singapore. Any disputes arising from or in connection with this Policy shall be subject to the exclusive jurisdiction of the Singapore courts.</p>
+
+  </div>
+
+  <div class="legal-sign">
+    <strong>TK Real Estate</strong>
+    PropertyAtlas — <a href="https://propertyatlas.sg" style="color:var(--ed-navy);text-decoration:none">propertyatlas.sg</a><br/>
+    <a href="mailto:info@tkre.sg" style="color:var(--ed-navy);text-decoration:none">info@tkre.sg</a>
+    <em>This Privacy Policy is intended to be a clear, plain-language statement of our practices. It is not a substitute for legal advice. If you have specific concerns about how the PDPA applies to your circumstances, please consult a qualified Singapore-licensed legal practitioner.</em>
+  </div>
+
+</main>
+
+<footer class="ed-foot" role="contentinfo">
+  <div class="ed-foot-inner">
+    <p class="ed-foot-attr">
+      © 2026 <strong>PropertyAtlas</strong> · TK Real Estate. All rights reserved.
+    </p>
+    <ul class="ed-foot-links">
+      <li><a href="/privacy">Privacy</a></li>
+      <li><a href="/terms">Terms</a></li>
+      <li><a href="mailto:info@tkre.sg">Contact</a></li>
+      <li><a href="https://www.linkedin.com/company/propertyatlas-sg" target="_blank" rel="noopener">LinkedIn</a></li>
+    </ul>
+  </div>
+</footer>
+
+</body>
+</html>
