@@ -25114,6 +25114,17 @@ function atlasHandleSignedOut() {
     // v48.25: hide AI chat widget on sign-out (public users see no chat bubble).
     document.body.classList.remove('tier-authed');
   } catch(e) {}
+  // v48.80.1: clean up newsletter prompt UI on sign-out. Without this, a
+  // signed-out user can still see the revisit banner or a stuck-open modal
+  // (auth-gated content that lingered from the prior session).
+  try {
+    var nlBanner = document.getElementById('atlas-nl-revisit-banner');
+    if(nlBanner) nlBanner.remove();
+    var nlOverlay = document.getElementById('atlas-nl-modal-overlay');
+    if(nlOverlay && nlOverlay.classList.contains('open')) {
+      nlOverlay.classList.remove('open');
+    }
+  } catch(e) {}
   try { if(typeof atlasShowTab === 'function') atlasShowTab(atlasCurrentTabId()); } catch(e) {}
   console.log('[ATLAS Auth] Signed out — tier reset to public.');
 }
