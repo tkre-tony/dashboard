@@ -24739,6 +24739,14 @@ body:not(.tier-authed) #atlas-chat-panel { display: none !important; }
        - revisit    : eyebrow "WELCOME BACK"
      Body, title, and buttons are constant across both modes.
 ═══════════════════════════════════════════════════════════════════ -->
+<!-- ═══════════════════════════════════════════════════════════════════
+     v48.82 — Dedicated confirm/unsubscribe surfaces (Tier 3)
+     Full-viewport dead-end pages rendered when ?view=confirmed or
+     ?view=unsubscribed is in the URL (after the corresponding token-handler
+     fetch succeeds). HTML is injected by nlRenderView(); container starts empty.
+═══════════════════════════════════════════════════════════════════════ -->
+<div id="nl-fullscreen-host" role="dialog" aria-modal="true" aria-labelledby="nl-fs-title"></div>
+
 <div id="atlas-nl-modal-overlay" role="dialog" aria-modal="true" aria-labelledby="atlas-nl-title">
   <div id="atlas-nl-modal">
     <div class="atlas-nl-header">
@@ -28147,6 +28155,39 @@ function enqEmailRow(label, value) {
 .nl-banner.error{background:#fef2f2;border:1px solid #fecaca;color:#b91c1c}
 .nl-banner-close{margin-left:auto;background:transparent;border:none;color:inherit;cursor:pointer;font-size:16px;line-height:1;padding:0 4px;opacity:.6}
 .nl-banner-close:hover{opacity:1}
+
+/* v48.82 — Dedicated confirm/unsubscribe surfaces (Tier 3)
+   Full-bleed dead-end pages reached via ?view=confirmed or ?view=unsubscribed.
+   Render inside #nl-fullscreen-host, overlay the entire site, dismissible via
+   the "Back to PropertyAtlas" pill (clears the ?view param, hides overlay). */
+#nl-fullscreen-host{display:none;position:fixed;inset:0;z-index:9000;background:#fafaf7;
+  overflow-y:auto;-webkit-overflow-scrolling:touch;animation:nlFsFadeIn .25s ease-out}
+#nl-fullscreen-host.open{display:block}
+@keyframes nlFsFadeIn{from{opacity:0}to{opacity:1}}
+.nl-fs-wrap{max-width:560px;margin:0 auto;padding:64px 32px 80px;text-align:center;
+  display:flex;flex-direction:column;align-items:center;min-height:100vh;justify-content:center;box-sizing:border-box}
+.nl-fs-brand{font-family:'Playfair Display',Georgia,serif;font-size:22px;font-weight:700;
+  color:#0d1f3c;letter-spacing:-0.005em;margin-bottom:48px}
+.nl-fs-brand .pa-atlas{font-style:italic;color:#a98244}
+.nl-fs-icon{font-size:48px;line-height:1;margin-bottom:24px}
+.nl-fs-title{font-family:'Playfair Display',Georgia,serif;font-size:34px;font-weight:700;
+  color:#0d1f3c;letter-spacing:-0.01em;line-height:1.18;margin:0 0 20px}
+.nl-fs-body{font-size:15px;line-height:1.65;color:#475569;max-width:440px;margin:0 0 32px}
+.nl-fs-body strong{color:#1e293b;font-weight:600}
+.nl-fs-sig{font-size:13px;color:#64748b;font-style:italic;margin:24px 0 32px}
+.nl-fs-primary{display:inline-block;background:#0d1f3c;color:#fff;text-decoration:none;
+  font-size:13px;font-weight:700;letter-spacing:.02em;padding:13px 28px;border-radius:8px;
+  border:none;cursor:pointer;font-family:inherit;transition:background .15s}
+.nl-fs-primary:hover{background:#1a2f52}
+.nl-fs-secondary{display:inline-block;margin-top:18px;font-size:12px;color:#64748b;
+  text-decoration:underline;background:transparent;border:none;cursor:pointer;font-family:inherit;padding:6px 10px}
+.nl-fs-secondary:hover{color:#0d1f3c}
+.nl-fs-meta{margin-top:48px;padding-top:24px;border-top:1px solid #e2e8f0;font-size:11px;color:#94a3b8;line-height:1.6;max-width:440px}
+@media (max-width:600px){
+  .nl-fs-wrap{padding:48px 24px 64px}
+  .nl-fs-title{font-size:28px}
+  .nl-fs-body{font-size:14px}
+}
 </style>
 
 <!-- ════════════════════════════════════════════════════════════
@@ -28640,16 +28681,100 @@ html.article-takeover .ed-article-page,body.article-takeover .ed-article-page{di
     if(kind === 'success') setTimeout(function(){ if(banner.parentNode) banner.remove(); }, 8000);
   }
 
+  // ═══════════════════════════════════════════════════════════════════
+  // v48.82 — Dedicated full-screen surfaces for confirm/unsubscribe results.
+  // Replaces the session-26 inline-banner-only flow. Banner is preserved for
+  // the error path; success paths route to ?view=confirmed or ?view=unsubscribed,
+  // which renders a brand-marked dead-end page in #nl-fullscreen-host.
+  // ═══════════════════════════════════════════════════════════════════
+
+  function nlRenderView(kind, opts){
+    // kind: 'confirmed' | 'unsubscribed'
+    // opts: { already: bool, email: string|null }
+    opts = opts || {};
+    var host = document.getElementById('nl-fullscreen-host');
+    if(!host) return;
+
+    var html;
+    if(kind === 'confirmed'){
+      var titleC = opts.already ? 'Already confirmed' : 'You\'re in.';
+      var bodyC  = opts.already
+        ? 'Your subscription is already active \u2014 nothing more to do. We\'ll see you in your inbox.'
+        : 'Welcome to the PropertyAtlas newsroom. We publish <strong>2-3 briefs a week</strong> on Singapore and Asia-Pacific real estate \u2014 earnings, transactions, capital markets. Most reads land at 3-5 minutes.';
+      html =
+        '<div class="nl-fs-wrap">'
+        + '<div class="nl-fs-brand">Property<span class="pa-atlas">Atlas</span></div>'
+        + '<div class="nl-fs-icon">\u2709\ufe0f</div>'
+        + '<h1 class="nl-fs-title" id="nl-fs-title">'+titleC+'</h1>'
+        + '<p class="nl-fs-body">'+bodyC+'</p>'
+        + '<button type="button" class="nl-fs-primary" onclick="nlCloseView()">Back to the newsroom</button>'
+        + '<div class="nl-fs-meta">PropertyAtlas \u00b7 Singapore property intelligence \u00b7 powered by TK Real Estate</div>'
+        + '</div>';
+    } else {
+      var titleU = opts.already ? 'Already unsubscribed' : 'You\'ve been unsubscribed.';
+      var bodyU  = opts.already
+        ? 'You\'re already off the list \u2014 nothing more to do. If this was a mistake, you can re-subscribe below.'
+        : 'We\'re sorry to see you go. You won\'t receive any further emails from PropertyAtlas.';
+      html =
+        '<div class="nl-fs-wrap">'
+        + '<div class="nl-fs-brand">Property<span class="pa-atlas">Atlas</span></div>'
+        + '<div class="nl-fs-icon">\u2713</div>'
+        + '<h1 class="nl-fs-title" id="nl-fs-title">'+titleU+'</h1>'
+        + '<p class="nl-fs-body">'+bodyU+'</p>'
+        + (opts.already ? '' : '<p class="nl-fs-sig">\u2014 Tony Koe, founder, PropertyAtlas</p>')
+        + '<button type="button" class="nl-fs-primary" onclick="nlCloseView()">Back to PropertyAtlas</button>'
+        + '<button type="button" class="nl-fs-secondary" onclick="nlResubscribeFromUnsubPage()">Was this a mistake? Re-subscribe</button>'
+        + '<div class="nl-fs-meta">PropertyAtlas \u00b7 Singapore property intelligence \u00b7 powered by TK Real Estate</div>'
+        + '</div>';
+    }
+    host.innerHTML = html;
+    host.classList.add('open');
+    // Lock background scroll while overlay is open
+    document.body.style.overflow = 'hidden';
+  }
+
+  window.nlCloseView = function(){
+    var host = document.getElementById('nl-fullscreen-host');
+    if(host){
+      host.classList.remove('open');
+      host.innerHTML = '';
+    }
+    document.body.style.overflow = '';
+    // Clean the ?view param if still present
+    var qs = new URLSearchParams(window.location.search);
+    if(qs.has('view')){
+      qs.delete('view');
+      var newSearch = qs.toString();
+      var newUrl = window.location.pathname + (newSearch ? '?'+newSearch : '') + (window.location.hash || '');
+      history.replaceState(null, '', newUrl);
+    }
+  };
+
+  window.nlResubscribeFromUnsubPage = function(){
+    // Close the unsubscribed surface first, then trigger the standard subscribe modal
+    // with a source-page marker so funnel analytics can identify the re-subscribe path.
+    if(typeof window.nlCloseView === 'function') window.nlCloseView();
+    if(typeof window.nlSubOpen === 'function') window.nlSubOpen('unsubscribed-page');
+  };
+
   async function nlHandleTokenActions(){
     var qs = new URLSearchParams(window.location.search);
     var confirmTok = qs.get('confirm');
     var unsubTok   = qs.get('unsubscribe');
+    var viewParam  = qs.get('view');
+
+    // Direct render if ?view= is present (user refreshed view URL or shared it)
+    if(viewParam === 'confirmed' || viewParam === 'unsubscribed'){
+      nlRenderView(viewParam, { already: false });
+      return;
+    }
+
     if(!confirmTok && !unsubTok) return;
 
     var action = confirmTok ? 'confirm' : 'unsubscribe';
     var token  = confirmTok || unsubTok;
 
-    // Clean the URL immediately so a refresh doesn't re-trigger
+    // Clean the URL immediately so a refresh doesn't re-trigger the token action
     var cleanUrl = window.location.pathname + (window.location.hash || '');
     history.replaceState(null, '', cleanUrl);
 
@@ -28662,16 +28787,16 @@ html.article-takeover .ed-article-page,body.article-takeover .ed-article-page{di
       var data = await res.json().catch(function(){ return {}; });
 
       if(res.ok){
-        if(action === 'confirm'){
-          nlShowBanner('success', data.already
-            ? 'Your subscription was already confirmed — you\'re all set.'
-            : 'Subscription confirmed. Welcome to the PropertyAtlas newsroom.');
-        } else {
-          nlShowBanner('success', data.already
-            ? 'You were already unsubscribed.'
-            : 'You\'ve been unsubscribed. We\'re sorry to see you go.');
-        }
+        // Success — route to the dedicated surface, not a banner.
+        // Push ?view= into the URL so the user can refresh / share-link the state.
+        var viewKind = (action === 'confirm') ? 'confirmed' : 'unsubscribed';
+        var newSearch = 'view=' + viewKind;
+        var newUrl = window.location.pathname + '?' + newSearch + (window.location.hash || '');
+        history.replaceState(null, '', newUrl);
+        nlRenderView(viewKind, { already: !!data.already, email: data.email || null });
       } else {
+        // Error path keeps the lightweight banner — invalid/expired tokens
+        // do not warrant a dedicated full-page surface.
         nlShowBanner('error', (data && data.error) ? data.error : 'Link invalid or expired.');
       }
     } catch(e){
