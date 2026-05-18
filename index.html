@@ -323,35 +323,50 @@ html.article-takeover{background:#FAF7F0}
 </style>
 <title>SG Market Intelligence | TKRE</title>
 <!-- ═══════════════════════════════════════════════════════════════════
-     v48.83 — Pre-paint cloak for from-email landings.
-     When the URL contains ?confirm=, ?unsubscribe=, or ?view=, the body is
-     hidden synchronously before any paint, so the newsroom does not flash
-     before the v48.82 dedicated surface renders. nlRenderView() removes
-     the cloak after the surface is in the DOM. A 1500ms timeout safety-net
-     removes the cloak unconditionally so the user is never stuck on a blank
-     screen if anything goes wrong (network failure, JS error, etc.).
+     v48.84 — INVERTED cloak (hide-by-default).
+     v48.83 used a "soft cloak" (visible by default, hidden when a token
+     URL was detected) — but the race window between body parse and
+     class-application allowed a single paint frame to leak through, which
+     produced the observed flash.
+     v48.84 inverts the pattern: <body> is hidden by default via a CSS
+     rule that matches `html:not([data-ready])`. Only when the inline head
+     script (or nlRenderView, or the error path) sets data-ready="true"
+     does the body become visible. There is no race window because the
+     default state is hidden.
+     Safety net: 800ms timeout reveals unconditionally so users with JS
+     errors or slow networks are never stuck on a blank screen.
+     <noscript>: CSS rule sets data-ready for JS-disabled browsers.
 ═══════════════════════════════════════════════════════════════════════ -->
 <style>
-html.nl-cloaked > body{visibility:hidden!important}
+html:not([data-ready]) > body{visibility:hidden!important}
 </style>
+<noscript><style>html{--noscript:1}html > body{visibility:visible!important}</style></noscript>
 <script>
 (function(){
   try{
     var qs = new URLSearchParams(window.location.search);
-    if(qs.get('confirm') || qs.get('unsubscribe') || qs.get('view')){
-      document.documentElement.classList.add('nl-cloaked');
-      // Safety net: never leave the body invisible for more than 1.5s.
-      // nlRenderView() (or the error path in nlHandleTokenActions) should
-      // normally remove the cloak well before this fires.
-      setTimeout(function(){
-        document.documentElement.classList.remove('nl-cloaked');
-      }, 1500);
+    var hasTokenOrView = !!(qs.get('confirm') || qs.get('unsubscribe') || qs.get('view'));
+    if(!hasTokenOrView){
+      // Clean URL — reveal immediately so normal newsroom visits have
+      // zero perceptible delay.
+      document.documentElement.setAttribute('data-ready', 'true');
     }
+    // Safety net: regardless of hasTokenOrView, reveal after 800ms so a JS
+    // error, hung fetch, or slow network never strands the user on a blank
+    // screen. nlRenderView() / the error paths normally reveal much sooner.
+    setTimeout(function(){
+      if(!document.documentElement.hasAttribute('data-ready')){
+        document.documentElement.setAttribute('data-ready', 'true');
+      }
+    }, 800);
   }catch(e){
-    // Defensive: never block the page on a cloak-script error.
-    if(document.documentElement){
-      document.documentElement.classList.remove('nl-cloaked');
-    }
+    // Defensive: a script-level error in this tiny block must never block
+    // the entire site. Reveal immediately on any error.
+    try{
+      if(document.documentElement){
+        document.documentElement.setAttribute('data-ready', 'true');
+      }
+    }catch(_){}
   }
 })();
 </script>
@@ -28764,10 +28779,11 @@ html.article-takeover .ed-article-page,body.article-takeover .ed-article-page{di
     host.classList.add('open');
     // Lock background scroll while overlay is open
     document.body.style.overflow = 'hidden';
-    // v48.83 — uncloak now that the surface is painted. Removing the cloak
-    // class re-shows <body>, but the fullscreen host sits on top with z-index
-    // 9000, so the newsroom underneath is never visible.
-    document.documentElement.classList.remove('nl-cloaked');
+    // v48.84 — reveal body now that the surface is painted. Setting
+    // data-ready=true releases the inverted-cloak CSS rule; the fullscreen
+    // host sits on top with z-index 9000, so the newsroom underneath is
+    // never visible to the user.
+    document.documentElement.setAttribute('data-ready', 'true');
   }
 
   window.nlCloseView = function(){
@@ -28834,14 +28850,14 @@ html.article-takeover .ed-article-page,body.article-takeover .ed-article-page{di
       } else {
         // Error path keeps the lightweight banner — invalid/expired tokens
         // do not warrant a dedicated full-page surface.
-        // v48.83 — uncloak so the banner is visible against the newsroom.
-        document.documentElement.classList.remove('nl-cloaked');
+        // v48.84 — reveal the page so the error banner is visible against the newsroom.
+        document.documentElement.setAttribute('data-ready', 'true');
         nlShowBanner('error', (data && data.error) ? data.error : 'Link invalid or expired.');
       }
     } catch(e){
       console.error('Token action error:', e);
-      // v48.83 — uncloak in the catch path too, same reason as above.
-      document.documentElement.classList.remove('nl-cloaked');
+      // v48.84 — reveal in the catch path too, same reason as above.
+      document.documentElement.setAttribute('data-ready', 'true');
       nlShowBanner('error', 'Could not reach server. Please try the link again later.');
     }
   }
