@@ -6,12 +6,16 @@
 <!-- v48.86 (18 May 2026, session 29): Pre-apex-flip URL audit fixes.
      Bundle of two corrections preparing v48.85 for the 23 May 2026 flip from
      tkre-tony.github.io/dashboard to propertyatlas.sg.
-     (1) SHARE-URL APEX PORTABILITY (line ~29426). edRenderShareBlock() previously
+     (1) SHARE-URL APEX PORTABILITY (line ~29455). edRenderShareBlock() previously
          hardcoded shareUrl as 'https://tkre-tony.github.io/dashboard/?article=N'.
-         Replaced with window.location.origin-derived URL with fallback to
-         https://propertyatlas.sg. Affects all four share buttons (LinkedIn,
-         Facebook, WhatsApp, Copy) on every article. Post-flip, shares now emit
-         apex URLs; pre-flip/fallback still emits a working github.io URL.
+         Replaced with hostname-conditional base: apex if window.location.hostname
+         === 'propertyatlas.sg', otherwise the path-qualified github.io URL. This
+         handles both pre-flip (github.io lives under /dashboard/ path prefix that
+         window.location.origin alone strips) and post-flip (apex serves dashboard
+         at root) correctly. Affects all four share buttons (LinkedIn, Facebook,
+         WhatsApp, Copy) on every article. First patch attempted origin-only
+         derivation but broke pre-flip share URLs because origin omits the
+         /dashboard/ path prefix; corrected mid-session to hostname-conditional.
      (2) OG_IMAGE DATA HYGIENE (NEWS entries ids 83-88, 92, 93 — 8 fixes; and
          normalisation of ids 89-91 from "./images/" to "images/" — 3 fixes).
          The og_image field on NEWS entries had been written as the absolute URL
@@ -24,8 +28,7 @@
          for social-share preview cards is queued as a separate post-flip task.
      No structural CSS/JS changes. L196 fingerprint expected unchanged from
      v48.85 baseline; chrome tripwire counts preserved. NR_STATIC_IDS
-     and NEWS cascade unchanged. Two-line net code delta (Issue 1) + 11
-     string-only data edits (Issue 2). -->
+     and NEWS cascade unchanged. -->
 <!-- v48.65d (session 16): three cosmetic/structural fixes bundled.
      P19: Tag splitter regex no longer treats hyphens as separators
           (Cross-Border now renders as one chip, not two). Fix in edBuildEyebrow.
@@ -29453,10 +29456,14 @@ html.article-takeover .ed-article-page,body.article-takeover .ed-article-page{di
   //   - Copy/link icon (custom, non-branded)
   function edRenderShareBlock(article){
     if(!article || typeof article.id !== 'number') return '';
-    var shareOrigin = (window.location && window.location.origin && window.location.origin.indexOf('http') === 0)
-      ? window.location.origin
-      : 'https://propertyatlas.sg';
-    var shareUrl = shareOrigin + '/?article=' + article.id;
+    // v48.86b in-session correction: window.location.origin alone strips the
+    // /dashboard/ path prefix that the github.io deploy lives under, so origin
+    // + '/?article=' produced a broken pre-flip share URL. Use hostname-
+    // conditional base: apex post-23-May, github.io path-qualified pre-flip.
+    var shareBase = (window.location && window.location.hostname === 'propertyatlas.sg')
+      ? 'https://propertyatlas.sg'
+      : 'https://tkre-tony.github.io/dashboard';
+    var shareUrl = shareBase + '/?article=' + article.id;
     var shareText = edDeriveDisplayHeadline(article) || ('PropertyAtlas article ' + article.id);
     // URL-encode once for share-endpoint use; HTML-escape for attribute insertion.
     var encUrl = encodeURIComponent(shareUrl);
