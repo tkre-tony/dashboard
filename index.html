@@ -3,6 +3,29 @@
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<!-- v48.86 (18 May 2026, session 29): Pre-apex-flip URL audit fixes.
+     Bundle of two corrections preparing v48.85 for the 23 May 2026 flip from
+     tkre-tony.github.io/dashboard to propertyatlas.sg.
+     (1) SHARE-URL APEX PORTABILITY (line ~29426). edRenderShareBlock() previously
+         hardcoded shareUrl as 'https://tkre-tony.github.io/dashboard/?article=N'.
+         Replaced with window.location.origin-derived URL with fallback to
+         https://propertyatlas.sg. Affects all four share buttons (LinkedIn,
+         Facebook, WhatsApp, Copy) on every article. Post-flip, shares now emit
+         apex URLs; pre-flip/fallback still emits a working github.io URL.
+     (2) OG_IMAGE DATA HYGIENE (NEWS entries ids 83-88, 92, 93 — 8 fixes; and
+         normalisation of ids 89-91 from "./images/" to "images/" — 3 fixes).
+         The og_image field on NEWS entries had been written as the absolute URL
+         "https://propertyatlas.sg/dashboard/images/news_NN_*.jpg" for 8 entries,
+         a pattern broken in both pre-flip and post-flip worlds (the apex has no
+         /dashboard/ path prefix when bound to root). The og_image field is
+         currently dead data — no <meta property="og:image"> tag consumes it —
+         but the values are now correct relative paths matching the image: field
+         convention used across all 11 cascade entries. Wiring og:image meta tags
+         for social-share preview cards is queued as a separate post-flip task.
+     No structural CSS/JS changes. L196 fingerprint expected unchanged from
+     v48.85 baseline; chrome tripwire counts preserved. NR_STATIC_IDS
+     and NEWS cascade unchanged. Two-line net code delta (Issue 1) + 11
+     string-only data edits (Issue 2). -->
 <!-- v48.65d (session 16): three cosmetic/structural fixes bundled.
      P19: Tag splitter regex no longer treats hyphens as separators
           (Cross-Border now renders as one chip, not two). Fix in edBuildEyebrow.
@@ -15274,7 +15297,7 @@ var NEWS=[
    title:"Mapletree Logistics Trust 4Q And FY25/26: Reported DPU 1.819¢ (-7.0%) And FY DPU 7.262¢ (-9.8%) On Absent Divestment-Gain Top-Up + Regional Currency Weakness — But The Structural Read Is Four Consecutive Quarters Of Steady Operational DPU Under New CEO Jean Kam, China Healing On A Multi-Quarter Slope (-9.4% → -2.0% Reversions), And A Visible Rejuvenation Flywheel With S$53.2M Mumbai Grade-A Entry — Three Moves Beyond The Headline",
    slug:"mlt-4q-fy25-26-steady-operational-dpu-china-healing-mumbai-entry",
    meta_description:"MLT 4Q FY25/26: DPU 1.819¢ (-7.0% YoY headline; +0.9% YoY ex-gains). FY DPU 7.262¢ (-9.8%; -3.4% ex-gains). Four consecutive quarters of steady operational DPU under Jean Kam's first full year as CEO. China reversion -2.0% (vs -9.4% a year ago — 740bps compression). Portfolio occupancy 96.9%, reversion +3.3% (+4.2% ex China). S$53.2M Bhiwandi Mumbai Grade-A entry; S$99M FY25/26 divestments at ~20% premium; MJKLH redevelopment completed 99.3% leased.",
-   og_image:"https://propertyatlas.sg/dashboard/images/news_93_mlt_25_pandan_crescent.jpg",
+   og_image:"images/news_93_mlt_25_pandan_crescent.jpg",
    keywords:"Mapletree Logistics Trust, MLT, Jean Kam, Ng Kiat, Charmaine Lum, Lee Chong Kwee, Loh Shai Weng, Lim Mei, Tan Wah Yeow, Mapletree Investments, MIPL, Bhiwandi, Mumbai, Pune, Delhi, Chennai, Mapletree Joo Koon Logistics Hub, MJKLH, Mapletree Pioneer Logistics Hub, Mapletree Zhongshan Modern Logistics Park, Mapletree Yuyao Logistics Park, Mapletree Logistics Hub Tanjung Pelepas, Mapletree Logistics Hub Tsing Yi, Mapletree Logistics Park Majang 3, 25 Pandan Crescent, 4 Pandan Avenue, 51 Benoi Road, Mapletree Benoi Logistics Hub, Subang, Yeoju, Barnawartha North, 1 Genting Lane, 8 Tuas View Square, 31 Penjuru Lane, Equinix, CWT, Coles Group, HKTV, S.F.Express, Coupang, Bidvest, YCH, Cainiao, GXO Logistics, IGBC Gold, Fitch BBB+, MAS aggregate leverage, RESEND, divestment gains, rental reversion, China logistics, India logistics, Mumbai logistics, Asia Pacific logistics REIT, 4Q FY25/26, FY25/26, S-REIT",
    display_title:"MLT FY25/26: 4 Straight Quarters Of Steady Operational DPU Under Jean Kam, China Reversions Heal -9.4% → -2.0%, S$53.2M Mumbai Grade-A Entry — But Headline -7.0% DPU Carries Divestment-Gain Base Effect",
    display_headline:"MLT FY25/26: 4 Straight Quarters Of Steady Operational DPU Under Jean Kam, China Reversions Heal −9.4% → −2.0%, S$53.2M Mumbai Grade-A Entry",
@@ -15290,7 +15313,7 @@ var NEWS=[
    title:"Centurion Corporation 1Q 2026: Group Revenue +30% To S$89.4M As Mandai Consolidation, Harum Megah Bed Stack And EPIISOD Macquarie Park Compound — Australia Revenue Doubles +107%, US Exit Completed, And April 2026 Pilbara KWA Acquisitions Open Fourth Living-Sector Segment",
    slug:"centurion-corp-1q-2026-revenue-30-kwa-entry-us-exit",
    meta_description:"Centurion Corp 1Q 2026: Group revenue S$89.4M (+30% YoY), PBWA S$69.2M (+30%) on Mandai consolidation and Harum Megah, PBSA S$19.6M (+30%) with AU +107%, US exit completed Mar 2026 (Dwell Towers on State + Dwell Statesider), Pilbara KWA segment entry April 2026 with c.446 beds at Karratha and South Hedland, portfolio capacity 81,388 → c.85,470 by 2027.",
-   og_image:"https://propertyatlas.sg/dashboard/images/news_92_centurion_aspri_westlite_papan.jpg",
+   og_image:"images/news_92_centurion_aspri_westlite_papan.jpg",
    keywords:"Centurion Corporation, OU8, Kong Chee Min, David Loh, Wong Kok Hoe, Han Seng Juan, Westlite, Dwell, EPIISOD, ASPRI-Westlite Papan, Westlite Toh Guan, Westlite Mandai, Westlite Ubi, Westlite Juniper, Westlite Woodlands, Westlite Sheung Shui, Dwell Prince Edward, Dwell Ho Man Tin, Dwell Towers on State, Dwell Statesider, Centurion-Cityhome Gaolin, Harum Megah, Karratha, South Hedland, Velocity Village, Concorde South, Pilbara, KWA, Key Worker Accommodation, iron ore, PBWA, PBSA, BTR, FEDA, Foreign Employee Dormitories Act, DTS, IDS, NDS, Dormitory Transition Scheme, Russell Group, EPIISOD North Melbourne, Stirling Highway Perth, Mackenzie Melbourne, William Road London, Kim Chuan Lane, Nusajaya, Negeri Sembilan, NS Corp, Gul Drive, ESLS, Enhanced Supplementary Labour Scheme, CAREIT, asset-light strategy, sponsor pipeline, 1Q 2026",
    display_title:"Centurion Corp 1Q 2026: Revenue +30% To S$89.4M — Australia +107% On EPIISOD, Pilbara KWA Entry Opens Fourth Segment, US Exit Completes",
    display_headline:"Centurion Corporation 1Q 2026: Group Revenue Rises 30% To S$89.4 Million On Mandai Consolidation, Harum Megah Bed Stack And EPIISOD Macquarie Park First-Quarter Contribution — Australia Revenue More Than Doubles To S$7.5 Million (+107% YoY), United States Exit Completed With March 2026 Disposal Of Dwell Towers On State And Dwell Statesider, And April 2026 Pilbara Acquisitions At Karratha And South Hedland Open A Fourth Living-Sector Segment In Key Worker Accommodation Targeting Australia's Iron-Ore Workforce",
@@ -15306,7 +15329,7 @@ var NEWS=[
    title:"United Hampshire US REIT 1Q 2026: Distributable Income +10.0% To US$6.9M And NPI +12.7% Outpace Revenue +8.7% — Self-Storage Occupancy Bottoms At 89.2%, 2026 Lease Rollover Compressed To 2.0%, WAIR Falls Fourth Consecutive Quarter To 4.91% — Six Insights Beyond The Headline",
    slug:"uhreit-1q-2026-distributable-income-up-10pct-npi-up-127pct-operating-leverage",
    meta_description:"United Hampshire US REIT 1Q 2026: gross revenue US$19.7M (+8.7% YoY), NPI US$13.2M (+12.7%), distributable income US$6.9M (+10.0%). G&N occupancy 97.7% held; WALE lengthened to 8.0yr; self-storage occupancy 89.2% (vs 88.7% at FY25 close) — first sequential gain; 2026 lease rollover compressed from 2.9% to 2.0%; WAIR fell fourth consecutive quarter to 4.91%; no refinancing until Feb 2028; aggregate leverage 40.3% (+170bps on Wallingford completion). Six insights beyond the headline.",
-   og_image:"./images/news_91_uhreit_garden_city_square.jpg",
+   og_image:"images/news_91_uhreit_garden_city_square.jpg",
    keywords:"United Hampshire US REIT, UHREIT, ODBU, 1Q 2026, US grocery-anchored, self-storage, BJ's Wholesale, Wallingford Fair, Dover Marketplace, Hudson Valley Plaza, DICK's Sporting Goods, Gerard Yuen, UOB Global Capital, Hampshire Companies, Extra Space Storage, triple-net lease, strip center, Green Street, distributable income, NPI growth, WAIR, ICR, S-REIT, US East Coast",
    display_title:"UHREIT 1Q 2026: Distributable Income +10.0%, NPI +12.7% — Self-Storage Bottoms, 2026 Rollover Compressed To 2.0%",
    display_headline:"UHREIT 1Q 2026: Distributable Income +10.0% To US$6.9M, NPI +12.7% Outpace Revenue +8.7% — Self-Storage Occupancy Bottoms At 89.2%, 2026 Lease Rollover Compressed To 2.0%, WAIR Falls Fourth Consecutive Quarter To 4.91%",
@@ -15320,7 +15343,7 @@ var NEWS=[
    title:"NTT DC REIT FY25/26 Maiden Year: Portfolio Independently Revalued To US$1,670.2 Million, +11.3% Above IPO Consideration; DPU 5.56 US Cents Beats Forecast By 2.6%; SG1 MSA Renewal Prices 23% Above Market Band For 1Q FY26/27 Recognition",
    slug:"ntt-dc-reit-fy2526-portfolio-valuation-uplift-1670m",
    meta_description:"NTT DC REIT maiden FY25/26: portfolio US$1.67bn (+11.3% above IPO consideration), DPU 5.56 US cents (+2.6% vs forecast), NAV/unit US$0.95 → US$1.14 (+20%). VA2 (Ashburn) +25% and SG1 (Singapore) +20% lead the uplift; SG1 MSA renewed at +23% reversion pricing above the disclosed S$380-450/kW Singapore market band; recognised 1Q FY26/27. Aggregate leverage 29.2% post-revaluation.",
-   og_image:"./images/news_90_ntt_dc_reit_sg1.jpg",
+   og_image:"images/news_90_ntt_dc_reit_sg1.jpg",
    keywords:"NTT DC REIT, NTDU, FY25/26, maiden DPU, portfolio valuation, data centre REIT, VA2 Ashburn, SG1 Singapore, CA1 CA2 CA3 Sacramento, VIE1 Vienna, NTT Group, NTT GDC, Yutaka Torigoe, ROFR pipeline, Newmark, Cushman Wakefield, DC Byte, S-REIT, Tier-III",
    display_title:"NTT DC REIT's Maiden Year: Portfolio Revalued to US$1.67bn, +11.3% Above IPO",
    display_headline:"NTT DC REIT FY25/26 Maiden Reading: Portfolio Independently Valued At US$1,670.2M (+11.3%) — Six Properties, US$170M Revaluation Gain, And A 23% SG1 MSA Reversion That Priced Above The Singapore Market Band",
@@ -15334,7 +15357,7 @@ var NEWS=[
    title:"Prime US REIT 1Q2026: Occupancy 83.1% (4th Quarterly Gain) And NPI +3.3% QoQ End Three Quarters Of Decline, But The Real Story Is 463,000 sq ft Of Signed-But-Uncommenced Leases Ramping Rent From 3Q2026 — Six Insights Beyond The Headline",
    slug:"prime-us-reit-1q2026-occupancy-83-1pct-npi-up-33pct-463k-sf-rent-ramp-from-3q2026",
    meta_description:"Prime US REIT 1Q2026: committed occupancy 83.1% (4th consecutive quarterly gain), NPI US$17.2M +3.3% QoQ ends 3-quarter descent, distributable income US$6.5M; 463k sf of committed leases (11.0% of occupancy) staggered to commence rent from 3Q2026 onwards — the contracted cashflow wedge backing the 10% → 65% payout-ratio normalisation. Aggregate leverage 45.2%, NAV/unit US$0.52 vs unit price US$0.171 (67% discount).",
-   og_image:"./images/news_89_prime_us_reit_tower_909.jpg",
+   og_image:"images/news_89_prime_us_reit_tower_909.jpg",
    keywords:"Prime US REIT, OXMU, 1Q2026, US Office, occupancy, NPI, distributable income, lease commencement, payout ratio, KBS Asia Partners, Keppel Capital, Cuscaden Peak, Tower 909, Village Center Station, S&P Global, JLL Office Market Dynamics",
    display_title:"Prime US REIT 1Q2026: Occupancy 83.1%, NPI +3.3% QoQ — 463k sf Of Signed Leases Ramping Rent From 3Q2026",
    display_headline:"Prime US REIT 1Q2026: Occupancy 83.1% (4th Quarterly Gain), NPI +3.3% QoQ Ends 3-Quarter Descent — But The Real Story Is 463k sf Of Signed-But-Uncommenced Leases Ramping Rent From 3Q2026",
@@ -15348,7 +15371,7 @@ var NEWS=[
    title:"Frasers Property 1H FY26: Attributable Profit -37.8% to S$88.4m On A S$38.2m Thailand Impairment, But Strip One-Offs And Underlying Is +77% YoY — PBIT +13.2% To S$678.7m, Net Debt/Equity 89.2% → 94.2%, NAV S$2.37 → S$2.40, Recurring Income 76% Of PBIT, Singapore Retail PBIT +12.7% On Full-Period Northpoint City South Wing, Thailand ARAYA Industrial Estate Land Sales Drive +44.3% Segment PBIT, Centrepoint Rear Plot Collective Sale Awarded February 2026 Opens Orchard Rejuvenation Optionality, No Interim Dividend Declared, Shares -2.6% To S$1.11 On Release Day",
    slug:"fpl-1h-fy26-attributable-profit-down-378pct-pbit-up-132pct-rising-leverage",
    meta_description:"Frasers Property 1H FY26: attributable profit -37.8% to S$88.4m on S$38.2m Thailand impairment; underlying +77% YoY ex-1H FY25 tax reversal; PBIT +13.2% to S$678.7m, EBITDA +12.7% to S$719.6m, NAV S$2.40 (FY25: S$2.37); net debt/equity 89.2% → 94.2%; recurring income 76% of PBIT; The Centrepoint collective sale awarded Feb 2026; no interim dividend declared.",
-   og_image:"https://propertyatlas.sg/dashboard/images/news_88_fpl_frasers_tower.jpg",
+   og_image:"images/news_88_fpl_frasers_tower.jpg",
    keywords:"Frasers Property Limited, FPL, TQ5, Panote Sirivadhanabhakdi, Loo Choo Leong, 1H FY26, attributable profit S$88.4m, PBIT S$678.7m, EBITDA S$719.6m, recurring income 76 percent, Thailand impairment S$38.2m, ARAYA Eastern Gateway industrial estate land sales, Northpoint City South Wing, FCT, Sky Eden@Bedok TOP, The Orie, Dunearn House, Kallang Close GLS, The Centrepoint collective sale, MCST Plan 1304, Hougang Mall AEI, NEX AEI, Mambourin Retail, Brunswick & Co, Burwood Brickworks, Discovery Point, Chineham Park, One Bangkok, FPT, GELEX Infrastructure Vietnam, Frasers Tower, Alexandra Point, net debt to equity 94.2 percent, perpetual securities redemption January 2026, S$1.5b FY26 maturities, S$2.0b cash, no interim dividend, EC measures 10 year MOP, deferred payment scheme scrapped, FY25 tax provision reversal, capital recycling S$424m, FY26",
    display_title:"Frasers Property 1H FY26: Attributable Profit -37.8% To S$88.4m, But Strip One-Offs And Underlying Is +77% — PBIT +13.2% Into Rising Leverage, Centrepoint Collective Sale Opens Orchard Rejuvenation Path, No Interim Dividend Declared",
    display_headline:"Frasers Property 1H FY26: Attributable Profit Drops 37.8% To S$88.4m On A S$38.2m Thailand Impairment, But Stripping The 1H FY25 Tax Reversal Reveals 77% Underlying Growth As Leverage Climbs To 94.2%",
@@ -15363,7 +15386,7 @@ var NEWS=[
    title:"AIMS APAC REIT FY2026: DPU +2.6% to 9.850¢ Closes Decade of Outperformance — NAV S$1.23→S$1.28, Macquarie Park + Bella Vista Endorsed By NSW Government Among 15 Data Centre Sites Worth A$51.9B Alongside Microsoft / NEXTDC / Goodman, Two Perpetual Securities Pre-Funded At 4.10% / 4.25% Ahead Of US-Iran Conflict To Refinance S$250M 5.375% Securities Due September 2026, Aggregate Leverage Steps Down 28.9% → 26.8% On 5.9% Portfolio Valuation Uplift To S$2.25B",
    slug:"aareit-fy2026-dpu-up-26pct-nav-128-data-centre-optionality-perpetual-prefunding",
    meta_description:"AIMS APAC REIT FY2026: DPU 9.850¢ (+2.6%), NAV S$1.23→S$1.28, NPI +5.7% to S$141.3M, aggregate leverage 26.8%, portfolio S$2.25B (+5.9% YoY); Macquarie Park + Bella Vista among 15 NSW Government IDA-endorsed data centre sites worth A$51.9B; pre-funded S$150M 4.10% + S$100M 4.25% perpetual securities to refinance S$250M 5.375% Sep-26 redemption.",
-   og_image:"https://propertyatlas.sg/dashboard/images/news_87_aareit_10_changi_south_lane.jpg",
+   og_image:"images/news_87_aareit_10_changi_south_lane.jpg",
    keywords:"AIMS APAC REIT, AA REIT, AAREIT, Russell Ng, George Wang, AIMS Financial Group, FY2026, DPU 9.850 cents, NAV per unit, 2 Aljunied Avenue 1, Framework Building, 3 Toh Tuck Link divestment, 8 Senoko South Road divestment, 15 Tai Seng Drive AEI, 7 Clementi Loop AEI, perpetual securities, 4.10% perpetual, 4.25% perpetual, S$250M redemption September 2026, NSW Government IDA, Investment Delivery Authority, Macquarie Park, Bella Vista, Optus Centre, Woolworths HQ, data centre endorsement, A$51.9 billion, Microsoft NEXTDC Goodman Stockland, Five Eyes data sovereignty, Distribution Reinvestment Plan, DRP, GRESB score, sustainability-linked loan, SBTi, 31% emissions reduction, solar 15.46 MWp, US-Iran conflict, MAS April 2026, RBA cash rate 4.35%, industrial REIT, logistics REIT, Singapore Australia portfolio",
    display_title:"AIMS APAC REIT FY2026: DPU +2.6% to 9.850¢, NAV S$1.23→S$1.28 — Macquarie Park + Bella Vista Endorsed As Data Centre Sites, S$250M Perpetual Pre-Funded At 4.10% / 4.25%",
    display_headline:"AIMS APAC REIT FY2026: DPU +2.6% To 9.850¢, NAV S$1.23 → S$1.28 — Macquarie Park And Bella Vista Endorsed Among NSW's 15 Data Centre Sites As Aggregate Leverage Steps Down 28.9% → 26.8%",
@@ -15378,7 +15401,7 @@ var NEWS=[
    title:"Centurion Accommodation REIT 1Q 2026: Double Beat In Second Reporting Period — Revenue +2.7% / NPI +2.4% Above Prospectus, Leverage Walks 22.1% → 31.0% On A$345M Macquarie Park Acquisition, Hedge Ratio Rebuilt To 71.7%",
    slug:"careit-1q-2026-double-beat-leverage-step-up-hedge-rebuild",
    meta_description:"CAREIT 1Q 2026 second reporting period since SGX listing: revenue S$52.5M (+2.7% vs prospectus), NPI S$37.5M (+2.4%), all three geographies beat occupancy forecasts (PBWA SG 94.0%, PBSA UK 99.0%, PBSA AU 97.5%). Aggregate leverage 22.1% → 31.0% post EPIISOD Macquarie Park A$345M acquisition; hedge ratio walks 55.8% → 71.7% by 5 May 2026; WAFC 3.57% vs 4.11% prospectus.",
-   og_image:"https://propertyatlas.sg/dashboard/images/news_86_centurion_westlite_woodlands.jpg.png",
+   og_image:"images/news_86_centurion_westlite_woodlands.jpg.png",
    keywords:"Centurion Accommodation REIT, CAREIT, Tony Bin, Westlite Woodlands, Westlite Toh Guan, Westlite Mandai, Westlite Ubi, Westlite Juniper, EPIISOD Macquarie Park, Dwell Hotwells House, Herring Road Management, Centurion Corporation, PBWA, PBSA, FEDA, Foreign Employee Dormitories Act, Dormitory Transition Scheme, DTS, IDS, NDS, prospectus forecast, master lease, aggregate leverage, hedge ratio, WAFC, debt headroom, ROFR, Right of First Refusal, IPO prospectus, second reporting period",
    display_title:"CAREIT 1Q 2026: Second Reporting Period Double Beat (+2.7% Rev / +2.4% NPI), But Leverage Walks 22.1% → 31.0% On Macquarie Park",
    display_headline:"Centurion Accommodation REIT 1Q 2026: Two-Of-Two Prospectus Beat With Revenue +2.7% / NPI +2.4% / All Three Geographies Above Occupancy Forecast — But Aggregate Leverage Walked From 22.1% To 31.0% In Ninety Days On A$345M Sydney Acquisition, Hedge Ratio Rebuilt From 55.8% To 71.7% Across The Reporting Window",
@@ -15394,7 +15417,7 @@ var NEWS=[
    title:"Frasers Logistics & Commercial Trust 1HFY26: Three Manager Choices Are Doing The Work — 75% Management-Fee-In-Units (vs 43.1% Prior), Capital Distribution Of Just 0.13 Cents (Down From 0.48 In 1HFY25 As Divestment Gains Exhaust), And ATP Ex-Google Backfill At 83% Committed With Full Commencement Mapped To January 2027 — Reported DPU 2.95 Cents (-1.7%) Masks +11.9% Organic Growth; Hapert NL Acquired At 3.3% Discount To JLL Valuation; AU NSW Single Lease Reverts +35.3% On Incoming-Vs-Outgoing",
    slug:"flct-1hfy26-three-manager-choices-doing-the-work",
    meta_description:"FLCT 1HFY26: DPU 2.95 cents (-1.7% reported / +11.9% organic), 96.1% occupancy, NSW lease reverts +35.3%, Hapert NL acquired at 3.3% discount, 75% mgmt fee in units lifts distributable income.",
-   og_image:"https://propertyatlas.sg/dashboard/images/news_85_flct_alexandra_technopark.jpg",
+   og_image:"images/news_85_flct_alexandra_technopark.jpg",
    keywords:"Frasers Logistics & Commercial Trust, FLCT, Anthea Lee, Alexandra Technopark, ATP, ex-Google backfill, Hapert Netherlands, Diamantweg 26, DSV Air & Sea, 357 Collins Street, management fee scrip, capital distribution divestment gains, NSW Sydney rental reversion, Outer Central West, Australia industrial, Germany logistics, Netherlands logistics, Frasers Property, REIT 1HFY26, Singapore REIT, logistics REIT",
    display_title:"FLCT 1HFY26: 2.95-Cent DPU Hides 75% Mgmt-Fee Scrip Lift, Capital Distribution Halving — But +11.9% Organic And NSW Reversion +35.3%",
    display_headline:"Frasers Logistics & Commercial Trust 1HFY26: Reported DPU 2.95¢ (-1.7%) Masks +11.9% Organic Growth As 75% Of Management Fees Taken In Units Vs 43.1% Prior; Capital Distribution From Divestments Down To 0.13¢ With 357 Collins Residual Nearly Exhausted; ATP Ex-Google Backfill At 83% With Full Commencement By January 2027; AU NSW Single Lease Reverts +35.3% — Hapert NL €43M Acquired At 3.3% Discount To JLL Valuation",
@@ -15410,7 +15433,7 @@ var NEWS=[
    title:"Far East Hospitality Trust 1Q 2026: Singapore Hotels Hit 84.2% Occupancy On Airshow + Hari Raya, But ADR Slips 3.9% As RevPAR Grows Just 2.5%; Japan FPN Delivers First Full Comparable Quarter With RevPAR +10.8% And GOP +26.6%; WACD Compresses Further To 2.3% Driving Distributable Income +12.2% Despite NPI Growth Of Just +3.4%",
    slug:"feht-1q-2026-occupancy-up-adr-down-japan-validates",
    meta_description:"Far East Hospitality Trust 1Q 2026: Singapore occupancy 84.2% on Airshow + Hari Raya but ADR -3.9%; Japan FPN +26.6% GOP; WACD 2.3% drives DPU +12.2%.",
-   og_image:"https://propertyatlas.sg/dashboard/images/news_84_feht_oasia_hotel_downtown.jpg",
+   og_image:"images/news_84_feht_oasia_hotel_downtown.jpg",
    keywords:"Far East Hospitality Trust, FEHT, Far East H-Trust, hospitality REIT, Singapore REIT, Oasia Hotel Downtown, Four Points by Sheraton Nagoya, FPN, Chubu International Airport, Singapore Airshow 2026, Hari Raya, Japan F1 Grand Prix, Orchard Rendezvous Hotel, Singapore Martini Club, Vibe Hotel Singapore Orchard, Rooh, Dario Knox, WACD compression, JPY loan, Far East Organization, REIT earnings 1Q 2026",
    display_title:"Far East H-Trust 1Q 2026: 84.2% Occupancy, but ADR -3.9% Underneath — Japan FPN +26.6% GOP, WACD Drops to 2.3%",
    display_headline:"Far East H-Trust 1Q 2026: Occupancy Climbs to 84.2% on Event-Driven Demand, but Singapore ADR -3.9% Underneath; Japan FPN's First Full Quarter Lifts Group RevPAR, While WACD Compression to 2.3% Drives DPU Income +12.2%",
@@ -15427,7 +15450,7 @@ var NEWS=[
    title:"CDL Hospitality Trusts 1Q 2026: Reported Revenue +5.9% To S$67.1M And NPI +10.4% To S$33.1M, Singapore Hotels NPI +5.9% On Airshow-Driven RevPAR +6.6% To S$184, Maldives NPI -26.3% And Japan NPI -10.3% On Independent Geopolitical Drags, UK Living Assets NPI +68.8% Doing The Stability Work, Capital Stack Re-Rated To 2.8% Cost Of Debt And 35.3% Gearing — Five Moves Beyond The Headline",
    slug:"cdlht-1q-2026-singapore-strength-geographic-drag",
    meta_description:"CDL Hospitality Trusts 1Q 2026: NPI +10.4% to S$33.1M as Singapore Hotels deliver +6.6% RevPAR while Maldives -26.3% and Japan -10.3% on geopolitical drag.",
-   og_image:"https://propertyatlas.sg/dashboard/images/news_83_cdlht_w_sentosa.jpg",
+   og_image:"images/news_83_cdlht_w_sentosa.jpg",
    keywords:"CDL Hospitality Trusts, CDLHT, hospitality REIT, Singapore REIT, W Singapore Sentosa Cove, Moxy Singapore Clarke Quay, Grand Millennium Auckland, The Castings Manchester, Benson Yard Liverpool, Singapore Airshow 2026, Maldives tourism, Middle East conflict, perpetual securities, gearing, capital management, REIT earnings 1Q 2026",
    display_title:"CDLHT 1Q 2026: Singapore Strength Funds The Geographic Drag, Capital Stack Re-Rated To 2.8% / 35.3% Gearing — But Maldives And Japan Mark The Real Geopolitical Exposure",
    display_headline:"Singapore portfolio compounding +5.9% NPI on Airshow tailwind, capital stack re-rated to 2.8% cost of debt and 35.3% gearing — but Maldives -26.3% and Japan -10.3% mark where the real geopolitical risk has landed",
@@ -29408,11 +29431,18 @@ html.article-takeover .ed-article-page,body.article-takeover .ed-article-page{di
   // Facebook, WhatsApp, Copy link. Drops Instagram per session-14 decision
   // (Instagram does not expose a web share URL; replaced with Copy link for
   // honest UX). Each button uses the article's canonical cold URL:
-  //   https://tkre-tony.github.io/dashboard/?article={id}
+  //   <origin>/?article={id}
   // The share preview text uses the article's display headline + standfirst-
   // derived teaser when available. LinkedIn/Facebook/WhatsApp fire window.open
   // to the platform's share endpoint; Copy link writes to navigator.clipboard
   // and shows a brief toast.
+  //
+  // v48.86 (18 May 2026, session 29): share URL changed from hardcoded
+  // https://tkre-tony.github.io/dashboard/?article={id} to apex-portable
+  // derivation. Uses window.location.origin so the share link matches
+  // whichever host is currently serving the page (apex post-flip, github.io
+  // pre-flip / fallback). Falls back to https://propertyatlas.sg if origin
+  // is unavailable (e.g. file:// preview).
   //
   // Inline SVG icons keep the deploy = index.html only (L214 compliant); no
   // external icon fonts, no image files. Icons are simplified brand glyphs
@@ -29423,7 +29453,10 @@ html.article-takeover .ed-article-page,body.article-takeover .ed-article-page{di
   //   - Copy/link icon (custom, non-branded)
   function edRenderShareBlock(article){
     if(!article || typeof article.id !== 'number') return '';
-    var shareUrl = 'https://tkre-tony.github.io/dashboard/?article=' + article.id;
+    var shareOrigin = (window.location && window.location.origin && window.location.origin.indexOf('http') === 0)
+      ? window.location.origin
+      : 'https://propertyatlas.sg';
+    var shareUrl = shareOrigin + '/?article=' + article.id;
     var shareText = edDeriveDisplayHeadline(article) || ('PropertyAtlas article ' + article.id);
     // URL-encode once for share-endpoint use; HTML-escape for attribute insertion.
     var encUrl = encodeURIComponent(shareUrl);
