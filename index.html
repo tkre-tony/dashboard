@@ -377,14 +377,19 @@ html:not([data-ready]) > body{visibility:hidden!important}
       // zero perceptible delay.
       document.documentElement.setAttribute('data-ready', 'true');
     }
-    // Safety net: regardless of hasTokenOrView, reveal after 800ms so a JS
-    // error, hung fetch, or slow network never strands the user on a blank
-    // screen. nlRenderView() / the error paths normally reveal much sooner.
+    // Safety net: reveal after a timeout so a JS error, hung fetch, or slow
+    // network never strands the user on a blank screen. nlRenderView() / the
+    // error paths in nlHandleTokenActions normally reveal much sooner.
+    // v48.87: timeout is 2000ms when a token/view param is present (so a
+    // 900-1500ms confirm-fetch round-trip doesn't trip the safety net and
+    // briefly expose the newsroom before nlRenderView paints), and 800ms
+    // for clean URLs (where the immediate-reveal branch above means this
+    // safety net only fires on catastrophic script errors anyway).
     setTimeout(function(){
       if(!document.documentElement.hasAttribute('data-ready')){
         document.documentElement.setAttribute('data-ready', 'true');
       }
-    }, 800);
+    }, hasTokenOrView ? 2000 : 800);
   }catch(e){
     // Defensive: a script-level error in this tiny block must never block
     // the entire site. Reveal immediately on any error.
