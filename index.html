@@ -377,19 +377,20 @@ html:not([data-ready]) > body{visibility:hidden!important}
       // zero perceptible delay.
       document.documentElement.setAttribute('data-ready', 'true');
     }
-    // Safety net: reveal after a timeout so a JS error, hung fetch, or slow
-    // network never strands the user on a blank screen. nlRenderView() / the
-    // error paths in nlHandleTokenActions normally reveal much sooner.
-    // v48.87: timeout is 2000ms when a token/view param is present (so a
-    // 900-1500ms confirm-fetch round-trip doesn't trip the safety net and
-    // briefly expose the newsroom before nlRenderView paints), and 800ms
-    // for clean URLs (where the immediate-reveal branch above means this
-    // safety net only fires on catastrophic script errors anyway).
+    // Safety net: reveal after 800ms so a JS error before nlHandleTokenActions
+    // runs (script parse error, DOM never reaches handler attachment) doesn't
+    // strand the user on a blank screen.
+    // v48.87 had bumped this to 2000ms on token URLs to mask fetch latency, but
+    // v48.88's pre-fetch placeholder in nlHandleTokenActions / nlRenderView
+    // ('pending') paints into the fullscreen host BEFORE the fetch, releasing
+    // the cloak via data-ready while keeping the newsroom covered. So the
+    // safety net is back to its original purpose: catastrophic JS failure
+    // before any of our handlers run. 800ms is enough for that case.
     setTimeout(function(){
       if(!document.documentElement.hasAttribute('data-ready')){
         document.documentElement.setAttribute('data-ready', 'true');
       }
-    }, hasTokenOrView ? 2000 : 800);
+    }, 800);
   }catch(e){
     // Defensive: a script-level error in this tiny block must never block
     // the entire site. Reveal immediately on any error.
@@ -28249,6 +28250,8 @@ function enqEmailRow(label, value) {
   color:#0d1f3c;letter-spacing:-0.005em;margin-bottom:48px}
 .nl-fs-brand .pa-atlas{font-style:italic;color:#a98244}
 .nl-fs-icon{font-size:48px;line-height:1;margin-bottom:24px}
+.nl-fs-spinner{width:44px;height:44px;margin-bottom:24px;border:3px solid #e2e8f0;border-top-color:#0d1f3c;border-radius:50%;animation:nlFsSpin .9s linear infinite}
+@keyframes nlFsSpin{to{transform:rotate(360deg)}}
 .nl-fs-title{font-family:'Playfair Display',Georgia,serif;font-size:34px;font-weight:700;
   color:#0d1f3c;letter-spacing:-0.01em;line-height:1.18;margin:0 0 20px}
 .nl-fs-body{font-size:15px;line-height:1.65;color:#475569;max-width:440px;margin:0 0 32px}
@@ -28768,14 +28771,54 @@ html.article-takeover .ed-article-page,body.article-takeover .ed-article-page{di
   // ═══════════════════════════════════════════════════════════════════
 
   function nlRenderView(kind, opts){
-    // kind: 'confirmed' | 'unsubscribed'
-    // opts: { already: bool, email: string|null }
+    // kind: 'confirmed' | 'unsubscribed' | 'pending' | 'error'
+    //   - 'pending' (v48.88): pre-fetch placeholder painted immediately on token URL.
+    //     Eliminates the race between cloak-release and nlRenderView paint that
+    //     produced the v48.86-87 newsroom flash on slow networks.
+    //   - 'error'   (v48.88): dedicated surface for failed token actions (invalid /
+    //     expired token, server unreachable). Replaces the v48.84 inline-banner-
+    //     over-newsroom pattern for the from-email arrival case, consistent with
+    //     L258 (every from-email arrival gets a dedicated surface, not a banner).
+    // opts: { already: bool, email: string|null, action?: 'confirm'|'unsubscribe',
+    //         message?: string (error kind only) }
     opts = opts || {};
     var host = document.getElementById('nl-fullscreen-host');
     if(!host) return;
 
     var html;
-    if(kind === 'confirmed'){
+    if(kind === 'pending'){
+      // v48.88 placeholder. Brand mark + spinner + a single line of body.
+      // Reuses the same .nl-fs-wrap / .nl-fs-brand / .nl-fs-title visual grammar
+      // as the success surfaces so the transition pending → confirmed is just
+      // an innerHTML replacement with no layout shift.
+      var titleP = (opts.action === 'unsubscribe') ? 'Unsubscribing\u2026' : 'Confirming subscription\u2026';
+      var bodyP  = 'One moment while we verify your link.';
+      html =
+        '<div class="nl-fs-wrap">'
+        + '<div class="nl-fs-brand">Property<span class="pa-atlas">Atlas</span></div>'
+        + '<div class="nl-fs-spinner" aria-hidden="true"></div>'
+        + '<h1 class="nl-fs-title" id="nl-fs-title">'+titleP+'</h1>'
+        + '<p class="nl-fs-body">'+bodyP+'</p>'
+        + '<div class="nl-fs-meta">PropertyAtlas \u00b7 Singapore property intelligence \u00b7 powered by TK Real Estate</div>'
+        + '</div>';
+    } else if(kind === 'error'){
+      // v48.88 error surface. Replaces the legacy "reveal body + nlShowBanner"
+      // path in nlHandleTokenActions for from-email arrivals. Token-action errors
+      // get the dedicated full-bleed treatment per L258, not a banner over the
+      // newsroom (which would be hostile UX for a user who clicked an email link
+      // and now sees a busy newsroom with an apologetic strip above it).
+      var titleE = 'Link invalid or expired';
+      var bodyE  = opts.message || 'We couldn\'t verify this link. It may have already been used, or expired. Please request a fresh link by subscribing again.';
+      html =
+        '<div class="nl-fs-wrap">'
+        + '<div class="nl-fs-brand">Property<span class="pa-atlas">Atlas</span></div>'
+        + '<div class="nl-fs-icon">\u26a0\ufe0f</div>'
+        + '<h1 class="nl-fs-title" id="nl-fs-title">'+titleE+'</h1>'
+        + '<p class="nl-fs-body">'+bodyE+'</p>'
+        + '<button type="button" class="nl-fs-primary" onclick="nlCloseView()">Back to the newsroom</button>'
+        + '<div class="nl-fs-meta">PropertyAtlas \u00b7 Singapore property intelligence \u00b7 powered by TK Real Estate</div>'
+        + '</div>';
+    } else if(kind === 'confirmed'){
       var titleC = opts.already ? 'Already confirmed' : 'You\'re in.';
       var bodyC  = opts.already
         ? 'Your subscription is already active \u2014 nothing more to do. We\'ll see you in your inbox.'
@@ -28814,6 +28857,9 @@ html.article-takeover .ed-article-page,body.article-takeover .ed-article-page{di
     // data-ready=true releases the inverted-cloak CSS rule; the fullscreen
     // host sits on top with z-index 9000, so the newsroom underneath is
     // never visible to the user.
+    // v48.88 — for 'pending' this fires BEFORE the fetch, so the placeholder
+    // is what the user sees during the API round-trip. Idempotent on subsequent
+    // calls (success / error replaces host.innerHTML; data-ready already set).
     document.documentElement.setAttribute('data-ready', 'true');
   }
 
@@ -28862,6 +28908,14 @@ html.article-takeover .ed-article-page,body.article-takeover .ed-article-page{di
     var cleanUrl = window.location.pathname + (window.location.hash || '');
     history.replaceState(null, '', cleanUrl);
 
+    // v48.88 — paint the placeholder BEFORE the fetch.
+    // This guarantees the user sees a brand-marked "Confirming..." / "Unsubscribing..."
+    // surface during the API round-trip rather than risk a newsroom flash if the
+    // fetch outlasts the cloak safety-net timer. nlRenderView('pending') sets
+    // data-ready=true, releasing the cloak; the fullscreen host overlays the
+    // newsroom with z-index 9000, so the underlying page is never visible.
+    nlRenderView('pending', { action: action });
+
     try {
       var res = await fetch(nlEndpoint('newsletter-confirm'), {
         method: 'POST',
@@ -28871,7 +28925,7 @@ html.article-takeover .ed-article-page,body.article-takeover .ed-article-page{di
       var data = await res.json().catch(function(){ return {}; });
 
       if(res.ok){
-        // Success — route to the dedicated surface, not a banner.
+        // Success — replace the placeholder surface with the dedicated result surface.
         // Push ?view= into the URL so the user can refresh / share-link the state.
         var viewKind = (action === 'confirm') ? 'confirmed' : 'unsubscribed';
         var newSearch = 'view=' + viewKind;
@@ -28879,17 +28933,16 @@ html.article-takeover .ed-article-page,body.article-takeover .ed-article-page{di
         history.replaceState(null, '', newUrl);
         nlRenderView(viewKind, { already: !!data.already, email: data.email || null });
       } else {
-        // Error path keeps the lightweight banner — invalid/expired tokens
-        // do not warrant a dedicated full-page surface.
-        // v48.84 — reveal the page so the error banner is visible against the newsroom.
-        document.documentElement.setAttribute('data-ready', 'true');
-        nlShowBanner('error', (data && data.error) ? data.error : 'Link invalid or expired.');
+        // v48.88 — error replaces placeholder with dedicated error surface inside
+        // the fullscreen host, per L258 (every from-email arrival gets a dedicated
+        // surface, not a banner). Replaces v48.84's "reveal body + nlShowBanner"
+        // path which was an inline-banner-over-newsroom regression for this case.
+        nlRenderView('error', { message: (data && data.error) ? data.error : null });
       }
     } catch(e){
       console.error('Token action error:', e);
-      // v48.84 — reveal in the catch path too, same reason as above.
-      document.documentElement.setAttribute('data-ready', 'true');
-      nlShowBanner('error', 'Could not reach server. Please try the link again later.');
+      // v48.88 — same error-surface treatment for network failure (no JSON to read).
+      nlRenderView('error', { message: 'Could not reach the server. Please try the link again later, or subscribe again to get a fresh confirmation link.' });
     }
   }
 
