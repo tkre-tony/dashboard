@@ -2099,6 +2099,37 @@ body.article-takeover .ed-foot{display:none!important}
   .panel > .pa-coming-soon-wrap ~ * { display: none !important; }
   body.dev-mode .panel > .pa-coming-soon-wrap { display: none !important; }
   body.dev-mode .panel > .pa-coming-soon-wrap ~ * { display: revert !important; }
+
+  /* v48.96 (session 35): Viewport-breakout for data-heavy panels.
+     Five panels (Transactions, Analytics, Listings, Directory, Asset Directory) escape
+     the .wrap 1080px editorial column to span ~full viewport width — same pattern
+     used by realsmart.sg for data tables. Calc trick: width:100vw plus negative margin
+     equal to half the difference between viewport and parent. The 16px reserve on each
+     side prevents horizontal scroll from scrollbar overlap.
+     Newsroom landing surfaces (.week, .feed) keep the editorial 1080px column.
+     Market Pulse, Newsroom dashboard, Human Capital, Corporate Watch unchanged. */
+  #tab-transactions,
+  #tab-analytics,
+  #tab-forsale,
+  #tab-directory,
+  #tab-reit {
+    width: calc(100vw - 32px);
+    margin-left: calc(-50vw + 50% + 16px);
+    margin-right: calc(-50vw + 50% + 16px);
+    max-width: none;
+  }
+  /* Mobile/tablet (<=768px): revert to default in-wrap layout. */
+  @media (max-width: 768px) {
+    #tab-transactions,
+    #tab-analytics,
+    #tab-forsale,
+    #tab-directory,
+    #tab-reit {
+      width: auto;
+      margin-left: 0;
+      margin-right: 0;
+    }
+  }
 </style>
 <!-- v48.20s — DEV-MODE UNLOCK FOR HIDDEN 5 TOOLS (v48.25: Pipeline removed)
      Public visitors see 4 tabs: Newsroom, Market Pulse, Analytics, Transactions
