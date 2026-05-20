@@ -2100,14 +2100,15 @@ body.article-takeover .ed-foot{display:none!important}
   body.dev-mode .panel > .pa-coming-soon-wrap { display: none !important; }
   body.dev-mode .panel > .pa-coming-soon-wrap ~ * { display: revert !important; }
 
-  /* v48.96 (session 35): Viewport-breakout for data-heavy panels.
-     Five panels (Transactions, Analytics, Listings, Directory, Asset Directory) escape
-     the .wrap 1080px editorial column to span ~full viewport width — same pattern
+  /* v48.97 (session 35): Viewport-breakout for data-heavy panels.
+     Six panels (Market Pulse, Transactions, Analytics, Listings, Directory, Asset Directory)
+     escape the .wrap 1080px editorial column to span ~full viewport width — same pattern
      used by realsmart.sg for data tables. Calc trick: width:100vw plus negative margin
      equal to half the difference between viewport and parent. The 16px reserve on each
      side prevents horizontal scroll from scrollbar overlap.
      Newsroom landing surfaces (.week, .feed) keep the editorial 1080px column.
-     Market Pulse, Newsroom dashboard, Human Capital, Corporate Watch unchanged. */
+     Newsroom dashboard, Human Capital, Corporate Watch unchanged. */
+  #tab-overview,
   #tab-transactions,
   #tab-analytics,
   #tab-forsale,
@@ -2120,6 +2121,7 @@ body.article-takeover .ed-foot{display:none!important}
   }
   /* Mobile/tablet (<=768px): revert to default in-wrap layout. */
   @media (max-width: 768px) {
+    #tab-overview,
     #tab-transactions,
     #tab-analytics,
     #tab-forsale,
