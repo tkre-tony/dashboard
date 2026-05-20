@@ -2132,26 +2132,24 @@ body.article-takeover .ed-foot{display:none!important}
     }
   }
 
-  /* v48.98 (session 35): Fixed-bottom segmented pill for Market Analysis sub-lens switcher.
-     Inspired by realsmart.sg lens icons. Only visible when tab-analytics is the active tab.
-     Bottom-center positioning to avoid the bottom-right chat widget (#atlas-chat-bubble). */
+  /* v48.99 (session 35): Top-inline segmented pill for Market Analysis sub-lens switcher.
+     Inline at top of #tab-analytics panel (was fixed-bottom in v48.98). Inherits panel
+     visibility — no body.pa-anal-active class needed. Centered self-margin keeps it
+     visually anchored regardless of panel width (which is full viewport via wide-panel CSS). */
   .pa-anal-pill {
-    position: fixed;
-    bottom: 24px;
-    left: 50%;
-    transform: translateX(-50%);
-    z-index: 950;
-    display: none;
+    display: inline-flex;
     align-items: center;
     gap: 4px;
     padding: 6px;
+    margin: 0 auto 20px;
     background: #0B2B5C;
     border: 1px solid rgba(201,155,90,.35);
     border-radius: 999px;
-    box-shadow: 0 8px 24px rgba(0,0,0,.18);
+    box-shadow: 0 4px 12px rgba(0,0,0,.12);
     font-family: 'DM Sans', sans-serif;
   }
-  body.pa-anal-active .pa-anal-pill { display: flex; }
+  /* Wrap the pill in a flex container so margin:auto centers it. */
+  #tab-analytics > .pa-anal-pill { display: flex; width: fit-content; }
   .pa-anal-pill-btn {
     padding: 8px 16px;
     border: none;
@@ -2175,9 +2173,9 @@ body.article-takeover .ed-foot{display:none!important}
     color: #0B2B5C;
     font-weight: 700;
   }
-  /* Mobile: pill becomes smaller, may wrap. */
+  /* Mobile: pill wraps if narrow. */
   @media (max-width: 600px) {
-    .pa-anal-pill { bottom: 16px; flex-wrap: wrap; max-width: 92vw; justify-content: center; }
+    .pa-anal-pill { flex-wrap: wrap; max-width: 96vw; justify-content: center; }
     .pa-anal-pill-btn { padding: 6px 10px; font-size: 11px; }
   }
 </style>
@@ -2723,8 +2721,16 @@ body.article-takeover .ed-foot{display:none!important}
 
   <div class="panel" id="tab-analytics">
 
-    <!-- v48.98 (session 35): Analytics top sub-tab bar moved to fixed-bottom segmented pill.
-         Pill rendered once near </body> at .pa-anal-pill, only visible when tab-analytics is active. -->
+    <!-- v48.99 (session 35): Market Analysis lens pill — top inline. Moved from fixed-bottom
+         to top inline (v48.98 → v48.99) for discoverability + consistency with Asset Directory
+         sub-tabs / Listings dropdown. No body.pa-anal-active class needed since panel itself is
+         already hidden/shown by atlasShowTab. -->
+    <div class="pa-anal-pill" role="tablist" aria-label="Market Analysis lens">
+      <button class="pa-anal-pill-btn on" data-atab="pnl" onclick="analShowTab('pnl')" role="tab">📊 Profit / Loss</button>
+      <button class="pa-anal-pill-btn" data-atab="proj" onclick="analShowTab('proj')" role="tab">🏢 Projects</button>
+      <button class="pa-anal-pill-btn" data-atab="tx" onclick="analShowTab('tx')" role="tab">🏆 Top Transactions</button>
+      <button class="pa-anal-pill-btn" data-atab="txall" onclick="analShowTab('txall')" role="tab">🔍 All Transactions</button>
+    </div>
 
     <!-- v48.98 (session 35): All Transactions sub-panel (formerly standalone Transactions tab).
          Hidden by default — pnl remains the default Market Analysis lens. searchTransactions(0)
@@ -29917,39 +29923,5 @@ html.article-takeover .ed-article-page,body.article-takeover .ed-article-page{di
   </div>
 </footer>
 
-
-<!-- v48.98 (session 35): Market Analysis fixed-bottom sub-lens pill. -->
-<div class="pa-anal-pill" id="pa-anal-pill" role="tablist" aria-label="Market Analysis lens">
-  <button class="pa-anal-pill-btn on" data-atab="pnl" onclick="analShowTab('pnl')" role="tab">📊 Profit / Loss</button>
-  <button class="pa-anal-pill-btn" data-atab="proj" onclick="analShowTab('proj')" role="tab">🏢 Projects</button>
-  <button class="pa-anal-pill-btn" data-atab="tx" onclick="analShowTab('tx')" role="tab">🏆 Top Transactions</button>
-  <button class="pa-anal-pill-btn" data-atab="txall" onclick="analShowTab('txall')" role="tab">🔍 All Transactions</button>
-</div>
-<script>
-/* v48.98 (session 35): Toggle body.pa-anal-active when Market Analysis tab is shown.
-   The pill CSS depends on this class to control visibility. */
-(function paAnalPillVisibility(){
-  function updatePill(){
-    var analPanel = document.getElementById('tab-analytics');
-    var visible = analPanel && analPanel.style.display !== 'none';
-    document.body.classList.toggle('pa-anal-active', !!visible);
-  }
-  // Hook into atlasShowTab without replacing it.
-  if(typeof window.atlasShowTab === 'function'){
-    var origShowTab = window.atlasShowTab;
-    window.atlasShowTab = function(tab){
-      var r = origShowTab.apply(this, arguments);
-      updatePill();
-      return r;
-    };
-  }
-  // Initial state.
-  if(document.readyState === 'loading'){
-    document.addEventListener('DOMContentLoaded', updatePill);
-  } else {
-    updatePill();
-  }
-}());
-</script>
 </body>
 </html>
