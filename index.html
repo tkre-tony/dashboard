@@ -3,6 +3,36 @@
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<!-- v48.103 (20 May 2026, session 36): Card pill clip-bug RIGHT fix (L262 fix-arc).
+     Tony reported clip persisted post-v48.102 even in fresh incognito. Investigation:
+     pixel-sampled the gold pill background (RGB ~167/126/60 ~= --bronze #A67C3A),
+     but the main .pill rule defines no background and .p-tag sets background:var(--glt)
+     (light blue). Cascade audit revealed a SECOND .pill rule at the bottom of the
+     newsroom-imported style block, inherited unscoped from landing_v1.html. With equal
+     class specificity and later position, this imported rule clobbered the entire .pill
+     + .p-tag main-app cascade: background:var(--bronze), display:inline-flex, height:20px.
+     The fixed 20px height was the clip source -- wrapped lines truncated by the box.
+     v48.102 patched the WRONG rule -- the main one at ~@49031 -- so the additions had
+     zero effect (display:inline-block overridden by inline-flex, box-decoration-break
+     irrelevant on flex, line-height irrelevant under fixed height:20px).
+     Fix arc table:
+      | Deploy | Hypothesis                            | Disproved by                | Fix targeted               |
+      | v48.102 | Wrapped pill needs line-height/clone | Tony screenshot post-deploy | Main .pill rule (no-op)    |
+      | v48.103 | Imported newsroom .pill leaks global | Pixel-sampled bronze color  | Scope imported rule        |
+     v48.103 fixes (2):
+     (1) Scope the imported newsroom .pill rule from `.pill { ... }` to `#tab-news .pill { ... }`.
+         This preserves the gold "Latest" hero badge inside #tab-news (the only .pill markup
+         site inside that panel) while freeing every other .pill use across the dashboard
+         (Market Pulse Latest News cards, PnL tables, det-type-pill, etc) to use the main
+         .pill rule + its .p-tag/.p-pos/.p-neu/.p-amber/.p-blue color modifiers.
+     (2) Revert the v48.102 main .pill additions (display:inline-block; box-decoration-break:clone;
+         line-height:1.55). They were dead code -- always overridden -- and keeping them risked
+         confusing future debugging. Main .pill back to pre-v48.102 form: padding/font/transform
+         only, inline display (browser default).
+     Wider architectural note (NOT FIXED IN THIS DEPLOY): 7 other class names also collide
+     between the imported newsroom block and main app CSS (.arrow, .card, .ed-mast, .is-active,
+     .navtabs, .on, .wrap). Currently benign (the imported versions either match main or only
+     apply to inert surfaces). Worth a future scoping pass when there's budget. -->
 <!-- v48.102 (20 May 2026, session 36): Two UI polish fixes.
      (1) Swap "Type" and "Sale Type" columns in Market Pulse Recent Transactions table.
          Sale Type now appears before Type (header + filter row + body row, all three in sync).
@@ -646,7 +676,7 @@ html,body{background:var(--bg);color:var(--txt);font-family:'DM Sans',sans-serif
 .nr-count{font-size:11px;color:var(--mut);font-weight:500}
 
 /* ── PILLS ── */
-.pill{padding:2px 8px;border-radius:4px;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;display:inline-block;-webkit-box-decoration-break:clone;box-decoration-break:clone;line-height:1.55}
+.pill{padding:2px 8px;border-radius:4px;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.05em}
 .p-pos{background:#e6f4ec;color:#1a7a4a}
 .p-neg{background:#fce8ec;color:var(--red)}
 .p-neu{background:var(--srf3);color:var(--mut)}
@@ -1417,7 +1447,7 @@ body.article-takeover .ed-foot{display:none!important}
     margin-bottom: 14px;
     flex-wrap: wrap;
   }
-  .pill {
+  #tab-news .pill {
     display: inline-flex;
     align-items: center;
     height: 20px;
