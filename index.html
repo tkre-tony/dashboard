@@ -2132,24 +2132,27 @@ body.article-takeover .ed-foot{display:none!important}
     }
   }
 
-  /* v48.99 (session 35): Top-inline segmented pill for Market Analysis sub-lens switcher.
-     Inline at top of #tab-analytics panel (was fixed-bottom in v48.98). Inherits panel
-     visibility — no body.pa-anal-active class needed. Centered self-margin keeps it
-     visually anchored regardless of panel width (which is full viewport via wide-panel CSS). */
+  /* v48.100 (session 35): Top-sticky segmented pill for Market Analysis sub-lens switcher.
+     Inline at top of #tab-analytics panel; position:sticky so it stays visible while user
+     scrolls long P/L tables. Sticky top:110px clears both the cream masthead (.ed-mast,
+     sticky top:0, ~64px tall) and the navy navtab strip (.navtabs, sticky top:64px,
+     ~46px tall). z-index:198 sits below both (200, 199) so it tucks under cleanly. */
   .pa-anal-pill {
-    display: inline-flex;
+    display: flex;
     align-items: center;
     gap: 4px;
     padding: 6px;
     margin: 0 auto 20px;
+    width: fit-content;
     background: #0B2B5C;
     border: 1px solid rgba(201,155,90,.35);
     border-radius: 999px;
     box-shadow: 0 4px 12px rgba(0,0,0,.12);
     font-family: 'DM Sans', sans-serif;
+    position: sticky;
+    top: 110px;
+    z-index: 198;
   }
-  /* Wrap the pill in a flex container so margin:auto centers it. */
-  #tab-analytics > .pa-anal-pill { display: flex; width: fit-content; }
   .pa-anal-pill-btn {
     padding: 8px 16px;
     border: none;
