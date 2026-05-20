@@ -2092,6 +2092,13 @@ body.article-takeover .ed-foot{display:none!important}
   @media (prefers-reduced-motion: reduce) {
     * { transition: none !important; animation: none !important; }
   }
+
+  /* v48.94 (session 35): Coming Soon overlay rules.
+     When .pa-coming-soon-wrap is present inside a panel, hide all sibling content.
+     body.dev-mode bypasses: hides the overlay itself, restores siblings for preview. */
+  .panel > .pa-coming-soon-wrap ~ * { display: none !important; }
+  body.dev-mode .panel > .pa-coming-soon-wrap { display: none !important; }
+  body.dev-mode .panel > .pa-coming-soon-wrap ~ * { display: revert !important; }
 </style>
 <!-- v48.20s — DEV-MODE UNLOCK FOR HIDDEN 5 TOOLS (v48.25: Pipeline removed)
      Public visitors see 4 tabs: Newsroom, Market Pulse, Analytics, Transactions
@@ -2169,24 +2176,25 @@ body.article-takeover .ed-foot{display:none!important}
 </header>
 
 <div class="navtabs">
-  <!-- v48.20s: PUBLIC tabs (always visible to all visitors). Tier-login & masking applies inside each tool. -->
+  <!-- v48.94 (20 May 2026, session 35): tab reorder + Stock’Listings rename + dev-tab class strip.
+       New order: 7 free tabs (Newsroom…Listings) + 2 Coming Soon (HC, Corp Watch).
+       navtab-hidden class removed (was already no-op CSS per v48.28). Gating now lives
+       entirely in ATLAS_GATED_TABS (↓ trimmed to talent+pulse only). -->
   <div class="navtab on" data-tab="news"><span class="navtab-icon">📰</span>Newsroom</div>
   <div class="navtab" data-tab="overview"><span class="navtab-icon">📊</span>Market Pulse</div>
   <div class="navtab" data-tab="transactions"><span class="navtab-icon">💹</span>Transactions</div>
   <div class="navtab" data-tab="analytics"><span class="navtab-icon">📈</span>Analytics</div>
-  <!-- v48.20s: HIDDEN tabs (visible only when body.dev-mode active — visit /#dev to unlock). -->
-  <div class="navtab navtab-hidden" data-tab="directory"><span class="navtab-icon">🏢</span>Directory</div>
-  <!-- v48.25: Pipeline tab removed entirely (deferred until use case clear). -->
-  <div class="navtab navtab-hidden" data-tab="assetdir" style="display:flex;align-items:center;gap:6px">
+  <div class="navtab" data-tab="directory"><span class="navtab-icon">🏢</span>Directory</div>
+  <div class="navtab" data-tab="assetdir" style="display:flex;align-items:center;gap:6px">
     <span class="navtab-icon">🗂</span>Asset Directory
   </div>
-  <div class="navtab navtab-hidden" data-tab="talent" style="display:flex;align-items:center;gap:6px">
+  <div class="navtab" data-tab="forsale" style="display:flex;align-items:center;gap:6px">
+    <span class="navtab-icon">🏗</span>Listings
+  </div>
+  <div class="navtab" data-tab="talent" style="display:flex;align-items:center;gap:6px">
     <span class="navtab-icon">👤</span>Human Capital
   </div>
-  <div class="navtab navtab-hidden" data-tab="forsale" style="display:flex;align-items:center;gap:6px">
-    <span class="navtab-icon">🏗</span>Stock
-  </div>
-  <div class="navtab navtab-hidden" data-tab="pulse" style="display:flex;align-items:center;gap:6px">
+  <div class="navtab" data-tab="pulse" style="display:flex;align-items:center;gap:6px">
     <span class="navtab-icon">📡</span>Corporate Watch
   </div>
 </div>
@@ -4441,6 +4449,13 @@ body.article-takeover .ed-foot{display:none!important}
 
 <!-- ═══════════════════════════════════════════════════════════ -->
 <div class="panel" id="tab-talent">
+  <!-- v48.94 (session 35): Coming Soon overlay for HC. Hides all sibling content
+       in this panel unless body.dev-mode is active (preview path via /#dev). -->
+  <div class="pa-coming-soon-wrap" data-pa-cs="talent" style="max-width:520px;margin:120px auto 80px;padding:48px 36px;background:#F7F3EB;border:1px solid rgba(26,79,156,.18);border-radius:14px;text-align:center;font-family:Georgia,'Times New Roman',serif">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" width="64" height="64" style="display:block;margin:0 auto 22px"><rect width="32" height="32" rx="5" fill="#0B2B5C"/><rect x="2.5" y="2.5" width="27" height="27" rx="3.5" fill="none" stroke="#C99B5A" stroke-width="0.7"/><text x="11" y="22" font-family="Georgia,'Times New Roman',serif" font-size="17" font-weight="700" fill="#F7F3EB" text-anchor="middle">P</text><g transform="translate(22 16)"><polygon points="0,-7 2,-1 0,0 -2,-1" fill="#C99B5A"/><polygon points="0,7 -2,1 0,0 2,1" fill="#C99B5A" opacity="0.55"/><polygon points="-7,0 -1,-2 0,0 -1,2" fill="#C99B5A" opacity="0.55"/><polygon points="7,0 1,2 0,0 1,-2" fill="#C99B5A" opacity="0.55"/></g></svg>
+    <div style="font-size:13px;letter-spacing:.18em;text-transform:uppercase;color:#A67C3A;font-weight:600;margin-bottom:14px">Coming Soon</div>
+    <p style="font-size:15px;color:#333;line-height:1.6;margin:0">We’re building this.</p>
+  </div>
 
   <!-- Hero -->
   <div class="talent-hero">
@@ -4564,6 +4579,12 @@ body.article-takeover .ed-foot{display:none!important}
   <!-- CORPORATE WATCH TAB                                              -->
   <!-- ═══════════════════════════════════════════════════════════════ -->
   <div class="panel" id="tab-pulse">
+  <!-- v48.94 (session 35): Coming Soon overlay for Corporate Watch. -->
+  <div class="pa-coming-soon-wrap" data-pa-cs="pulse" style="max-width:520px;margin:120px auto 80px;padding:48px 36px;background:#F7F3EB;border:1px solid rgba(26,79,156,.18);border-radius:14px;text-align:center;font-family:Georgia,'Times New Roman',serif">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" width="64" height="64" style="display:block;margin:0 auto 22px"><rect width="32" height="32" rx="5" fill="#0B2B5C"/><rect x="2.5" y="2.5" width="27" height="27" rx="3.5" fill="none" stroke="#C99B5A" stroke-width="0.7"/><text x="11" y="22" font-family="Georgia,'Times New Roman',serif" font-size="17" font-weight="700" fill="#F7F3EB" text-anchor="middle">P</text><g transform="translate(22 16)"><polygon points="0,-7 2,-1 0,0 -2,-1" fill="#C99B5A"/><polygon points="0,7 -2,1 0,0 2,1" fill="#C99B5A" opacity="0.55"/><polygon points="-7,0 -1,-2 0,0 -1,2" fill="#C99B5A" opacity="0.55"/><polygon points="7,0 1,2 0,0 1,-2" fill="#C99B5A" opacity="0.55"/></g></svg>
+    <div style="font-size:13px;letter-spacing:.18em;text-transform:uppercase;color:#A67C3A;font-weight:600;margin-bottom:14px">Coming Soon</div>
+    <p style="font-size:15px;color:#333;line-height:1.6;margin:0">We’re building this.</p>
+  </div>
 
     <!-- Hero -->
     <div style="background:linear-gradient(135deg,var(--hdr) 0%,var(--hdr3) 100%);border-radius:8px;padding:16px 20px;margin-bottom:16px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;border:1px solid rgba(255,255,255,.06)">
@@ -16254,11 +16275,13 @@ window.ATLAS_TIER_LABELS = {
 // Gated tabs: require 'subscriber'. Non-subscribers see a subscribe-to-access stub.
 // Public tabs (overview, transactions, analytics, news) are always visible; addresses
 // within them may be masked via maskAddress() below.
+// v48.94 (session 35): Directory, Asset Directory, Listings (forsale) ungated
+// → free for all visitors. Only HC (talent) and Corp Watch (pulse) remain
+// gated, both now showing Coming Soon overlay in their panels (overlay is
+// visually rendered HTML in the panel; this map kept for atlasShowTab
+// short-circuit so the renderer init code does not run).
 var ATLAS_GATED_TABS = {
-  "directory": true,
-  "assetdir":  true,
   "talent":    true,
-  "forsale":   true,
   "pulse":     true
 };
 
