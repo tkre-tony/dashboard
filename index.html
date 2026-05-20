@@ -4147,6 +4147,16 @@ body.article-takeover .ed-foot{display:none!important}
 
   <!-- FOR SALE TAB (Inventory + Projects) -->
   <div class="panel" id="tab-forsale">
+  <!-- v48.95 (session 35): Coming Soon overlay for Listings. Hides sibling content
+       unless body.dev-mode is active. POST-BETA TODO: rebuild Listings access tiers —
+       Brokerage tier (paid) sees full data incl. landlord; Free signed-in sees masked
+       listings without landlord identification (same maskAddress() pattern). Until
+       Brokerage tier is built, Listings stays Coming Soon for everyone except #dev. -->
+  <div class="pa-coming-soon-wrap" data-pa-cs="forsale" style="max-width:560px;margin:80px auto;padding:48px 36px;background:#F7F3EB;border:1px solid rgba(26,79,156,.18);border-radius:14px;text-align:center;font-family:Georgia,'Times New Roman',serif">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" width="72" height="72" style="display:block;margin:0 auto 24px"><rect width="32" height="32" rx="5" fill="#0B2B5C"/><rect x="2.5" y="2.5" width="27" height="27" rx="3.5" fill="none" stroke="#C99B5A" stroke-width="0.7"/><text x="11" y="22" font-family="Georgia,'Times New Roman',serif" font-size="17" font-weight="700" fill="#F7F3EB" text-anchor="middle">P</text><g transform="translate(22 16)"><polygon points="0,-7 2,-1 0,0 -2,-1" fill="#C99B5A"/><polygon points="0,7 -2,1 0,0 2,1" fill="#C99B5A" opacity="0.55"/><polygon points="-7,0 -1,-2 0,0 -1,2" fill="#C99B5A" opacity="0.55"/><polygon points="7,0 1,2 0,0 1,-2" fill="#C99B5A" opacity="0.55"/></g></svg>
+    <h2 style="font-size:32px;color:#1A4F9C;margin:0 0 16px;font-weight:700;letter-spacing:-.01em">Coming Soon</h2>
+    <p style="font-size:15px;color:#666;line-height:1.6;margin:0">We’re building this.</p>
+  </div>
 
     <!-- Sub-view selector -->
     <div style="display:flex;align-items:center;gap:10px;margin-bottom:16px">
@@ -4449,12 +4459,12 @@ body.article-takeover .ed-foot{display:none!important}
 
 <!-- ═══════════════════════════════════════════════════════════ -->
 <div class="panel" id="tab-talent">
-  <!-- v48.94 (session 35): Coming Soon overlay for HC. Hides all sibling content
-       in this panel unless body.dev-mode is active (preview path via /#dev). -->
-  <div class="pa-coming-soon-wrap" data-pa-cs="talent" style="max-width:520px;margin:120px auto 80px;padding:48px 36px;background:#F7F3EB;border:1px solid rgba(26,79,156,.18);border-radius:14px;text-align:center;font-family:Georgia,'Times New Roman',serif">
-    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" width="64" height="64" style="display:block;margin:0 auto 22px"><rect width="32" height="32" rx="5" fill="#0B2B5C"/><rect x="2.5" y="2.5" width="27" height="27" rx="3.5" fill="none" stroke="#C99B5A" stroke-width="0.7"/><text x="11" y="22" font-family="Georgia,'Times New Roman',serif" font-size="17" font-weight="700" fill="#F7F3EB" text-anchor="middle">P</text><g transform="translate(22 16)"><polygon points="0,-7 2,-1 0,0 -2,-1" fill="#C99B5A"/><polygon points="0,7 -2,1 0,0 2,1" fill="#C99B5A" opacity="0.55"/><polygon points="-7,0 -1,-2 0,0 -1,2" fill="#C99B5A" opacity="0.55"/><polygon points="7,0 1,2 0,0 1,-2" fill="#C99B5A" opacity="0.55"/></g></svg>
-    <div style="font-size:13px;letter-spacing:.18em;text-transform:uppercase;color:#A67C3A;font-weight:600;margin-bottom:14px">Coming Soon</div>
-    <p style="font-size:15px;color:#333;line-height:1.6;margin:0">We’re building this.</p>
+  <!-- v48.95 (session 35): Coming Soon overlay for HC. Hides sibling content unless
+       body.dev-mode is active (preview path via /#dev). Logo + large headline pattern. -->
+  <div class="pa-coming-soon-wrap" data-pa-cs="talent" style="max-width:560px;margin:80px auto;padding:48px 36px;background:#F7F3EB;border:1px solid rgba(26,79,156,.18);border-radius:14px;text-align:center;font-family:Georgia,'Times New Roman',serif">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" width="72" height="72" style="display:block;margin:0 auto 24px"><rect width="32" height="32" rx="5" fill="#0B2B5C"/><rect x="2.5" y="2.5" width="27" height="27" rx="3.5" fill="none" stroke="#C99B5A" stroke-width="0.7"/><text x="11" y="22" font-family="Georgia,'Times New Roman',serif" font-size="17" font-weight="700" fill="#F7F3EB" text-anchor="middle">P</text><g transform="translate(22 16)"><polygon points="0,-7 2,-1 0,0 -2,-1" fill="#C99B5A"/><polygon points="0,7 -2,1 0,0 2,1" fill="#C99B5A" opacity="0.55"/><polygon points="-7,0 -1,-2 0,0 -1,2" fill="#C99B5A" opacity="0.55"/><polygon points="7,0 1,2 0,0 1,-2" fill="#C99B5A" opacity="0.55"/></g></svg>
+    <h2 style="font-size:32px;color:#1A4F9C;margin:0 0 16px;font-weight:700;letter-spacing:-.01em">Coming Soon</h2>
+    <p style="font-size:15px;color:#666;line-height:1.6;margin:0">We’re building this.</p>
   </div>
 
   <!-- Hero -->
@@ -4579,11 +4589,11 @@ body.article-takeover .ed-foot{display:none!important}
   <!-- CORPORATE WATCH TAB                                              -->
   <!-- ═══════════════════════════════════════════════════════════════ -->
   <div class="panel" id="tab-pulse">
-  <!-- v48.94 (session 35): Coming Soon overlay for Corporate Watch. -->
-  <div class="pa-coming-soon-wrap" data-pa-cs="pulse" style="max-width:520px;margin:120px auto 80px;padding:48px 36px;background:#F7F3EB;border:1px solid rgba(26,79,156,.18);border-radius:14px;text-align:center;font-family:Georgia,'Times New Roman',serif">
-    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" width="64" height="64" style="display:block;margin:0 auto 22px"><rect width="32" height="32" rx="5" fill="#0B2B5C"/><rect x="2.5" y="2.5" width="27" height="27" rx="3.5" fill="none" stroke="#C99B5A" stroke-width="0.7"/><text x="11" y="22" font-family="Georgia,'Times New Roman',serif" font-size="17" font-weight="700" fill="#F7F3EB" text-anchor="middle">P</text><g transform="translate(22 16)"><polygon points="0,-7 2,-1 0,0 -2,-1" fill="#C99B5A"/><polygon points="0,7 -2,1 0,0 2,1" fill="#C99B5A" opacity="0.55"/><polygon points="-7,0 -1,-2 0,0 -1,2" fill="#C99B5A" opacity="0.55"/><polygon points="7,0 1,2 0,0 1,-2" fill="#C99B5A" opacity="0.55"/></g></svg>
-    <div style="font-size:13px;letter-spacing:.18em;text-transform:uppercase;color:#A67C3A;font-weight:600;margin-bottom:14px">Coming Soon</div>
-    <p style="font-size:15px;color:#333;line-height:1.6;margin:0">We’re building this.</p>
+  <!-- v48.95 (session 35): Coming Soon overlay for Corp Watch. Same pattern as HC. -->
+  <div class="pa-coming-soon-wrap" data-pa-cs="pulse" style="max-width:560px;margin:80px auto;padding:48px 36px;background:#F7F3EB;border:1px solid rgba(26,79,156,.18);border-radius:14px;text-align:center;font-family:Georgia,'Times New Roman',serif">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" width="72" height="72" style="display:block;margin:0 auto 24px"><rect width="32" height="32" rx="5" fill="#0B2B5C"/><rect x="2.5" y="2.5" width="27" height="27" rx="3.5" fill="none" stroke="#C99B5A" stroke-width="0.7"/><text x="11" y="22" font-family="Georgia,'Times New Roman',serif" font-size="17" font-weight="700" fill="#F7F3EB" text-anchor="middle">P</text><g transform="translate(22 16)"><polygon points="0,-7 2,-1 0,0 -2,-1" fill="#C99B5A"/><polygon points="0,7 -2,1 0,0 2,1" fill="#C99B5A" opacity="0.55"/><polygon points="-7,0 -1,-2 0,0 -1,2" fill="#C99B5A" opacity="0.55"/><polygon points="7,0 1,2 0,0 1,-2" fill="#C99B5A" opacity="0.55"/></g></svg>
+    <h2 style="font-size:32px;color:#1A4F9C;margin:0 0 16px;font-weight:700;letter-spacing:-.01em">Coming Soon</h2>
+    <p style="font-size:15px;color:#666;line-height:1.6;margin:0">We’re building this.</p>
   </div>
 
     <!-- Hero -->
@@ -16275,15 +16285,16 @@ window.ATLAS_TIER_LABELS = {
 // Gated tabs: require 'subscriber'. Non-subscribers see a subscribe-to-access stub.
 // Public tabs (overview, transactions, analytics, news) are always visible; addresses
 // within them may be masked via maskAddress() below.
-// v48.94 (session 35): Directory, Asset Directory, Listings (forsale) ungated
-// → free for all visitors. Only HC (talent) and Corp Watch (pulse) remain
-// gated, both now showing Coming Soon overlay in their panels (overlay is
-// visually rendered HTML in the panel; this map kept for atlasShowTab
-// short-circuit so the renderer init code does not run).
-var ATLAS_GATED_TABS = {
-  "talent":    true,
-  "pulse":     true
-};
+// v48.95 (session 35): ATLAS_GATED_TABS emptied. Previously HC (talent), Corp Watch
+// (pulse), and Listings (forsale) were "gated" → atlasRenderSubscribeStub fired
+// and wiped the panel innerHTML, overwriting our in-DOM Coming Soon overlay with
+// the legacy Subscribe-to-access card. We now render Coming Soon directly as panel
+// HTML (with body.dev-mode bypass), so we need the gate to NOT fire — hence empty.
+// Future: when Brokerage tier ships, Listings re-gating logic will be tier-aware
+// (free public sees masked listings; Brokerage tier sees full data including landlord).
+// L196 reminder: do NOT delete the var declaration; atlasShowTab and the snapshot IIFE
+// both read it. Empty object is the correct shape.
+var ATLAS_GATED_TABS = {};
 
 // L164 (v48.15) — Snapshot original innerHTML of each gated panel at page-load,
 // BEFORE any atlasShowTab call. atlasRenderSubscribeStub destroys panel innerHTML
