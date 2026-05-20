@@ -2122,7 +2122,6 @@ body.article-takeover .ed-foot{display:none!important}
   /* Mobile/tablet (<=768px): revert to default in-wrap layout. */
   @media (max-width: 768px) {
     #tab-overview,
-    #tab-transactions,
     #tab-analytics,
     #tab-forsale,
     #tab-directory,
@@ -2131,6 +2130,55 @@ body.article-takeover .ed-foot{display:none!important}
       margin-left: 0;
       margin-right: 0;
     }
+  }
+
+  /* v48.98 (session 35): Fixed-bottom segmented pill for Market Analysis sub-lens switcher.
+     Inspired by realsmart.sg lens icons. Only visible when tab-analytics is the active tab.
+     Bottom-center positioning to avoid the bottom-right chat widget (#atlas-chat-bubble). */
+  .pa-anal-pill {
+    position: fixed;
+    bottom: 24px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 950;
+    display: none;
+    align-items: center;
+    gap: 4px;
+    padding: 6px;
+    background: #0B2B5C;
+    border: 1px solid rgba(201,155,90,.35);
+    border-radius: 999px;
+    box-shadow: 0 8px 24px rgba(0,0,0,.18);
+    font-family: 'DM Sans', sans-serif;
+  }
+  body.pa-anal-active .pa-anal-pill { display: flex; }
+  .pa-anal-pill-btn {
+    padding: 8px 16px;
+    border: none;
+    background: transparent;
+    color: rgba(247,243,235,.7);
+    font-size: 12.5px;
+    font-weight: 600;
+    font-family: inherit;
+    border-radius: 999px;
+    cursor: pointer;
+    transition: background .15s, color .15s;
+    white-space: nowrap;
+    letter-spacing: .01em;
+  }
+  .pa-anal-pill-btn:hover:not(.on) {
+    color: #F7F3EB;
+    background: rgba(247,243,235,.06);
+  }
+  .pa-anal-pill-btn.on {
+    background: #C99B5A;
+    color: #0B2B5C;
+    font-weight: 700;
+  }
+  /* Mobile: pill becomes smaller, may wrap. */
+  @media (max-width: 600px) {
+    .pa-anal-pill { bottom: 16px; flex-wrap: wrap; max-width: 92vw; justify-content: center; }
+    .pa-anal-pill-btn { padding: 6px 10px; font-size: 11px; }
   }
 </style>
 <!-- v48.20s — DEV-MODE UNLOCK FOR HIDDEN 5 TOOLS (v48.25: Pipeline removed)
@@ -2197,8 +2245,7 @@ body.article-takeover .ed-foot{display:none!important}
     <nav class="ed-mast-nav" aria-label="Primary">
       <a href="./" class="ed-mast-nav-link">Newsroom</a>
       <a href="./" class="ed-mast-nav-link" data-ed-tab="overview">Market Pulse</a>
-      <a href="./#analytics" class="ed-mast-nav-link" data-ed-tab="analytics">Analytics</a>
-      <a href="./#transactions" class="ed-mast-nav-link" data-ed-tab="transactions">Transactions</a>
+      <a href="./#analytics" class="ed-mast-nav-link" data-ed-tab="analytics">Market Analysis</a>
       <a href="javascript:void(0)" id="atlas-signin-link" class="ed-mast-nav-signin"
          onclick="if(window.atlasOpenLoginModal){window.atlasOpenLoginModal();}return false;">Sign in</a>
       <a href="javascript:void(0)" id="atlas-signout-btn" class="ed-mast-nav-signout"
@@ -2215,8 +2262,7 @@ body.article-takeover .ed-foot{display:none!important}
        entirely in ATLAS_GATED_TABS (↓ trimmed to talent+pulse only). -->
   <div class="navtab on" data-tab="news"><span class="navtab-icon">📰</span>Newsroom</div>
   <div class="navtab" data-tab="overview"><span class="navtab-icon">📊</span>Market Pulse</div>
-  <div class="navtab" data-tab="transactions"><span class="navtab-icon">💹</span>Transactions</div>
-  <div class="navtab" data-tab="analytics"><span class="navtab-icon">📈</span>Analytics</div>
+  <div class="navtab" data-tab="analytics"><span class="navtab-icon">📈</span>Market Analysis</div>
   <div class="navtab" data-tab="directory"><span class="navtab-icon">🏢</span>Directory</div>
   <div class="navtab" data-tab="assetdir" style="display:flex;align-items:center;gap:6px">
     <span class="navtab-icon">🗂</span>Asset Directory
@@ -2677,12 +2723,99 @@ body.article-takeover .ed-foot{display:none!important}
 
   <div class="panel" id="tab-analytics">
 
-    <!-- ── Analytics Sub-Tab Bar ── -->
-    <div style="display:flex;gap:0;margin-bottom:16px;border-bottom:2px solid var(--bdr)">
-      <button class="anal-stab on" data-atab="pnl" onclick="analShowTab('pnl')">📊 Profit / Loss Overview</button>
-      <button class="anal-stab" data-atab="proj" onclick="analShowTab('proj')">🏢 Projects Overview</button>
-      <button class="anal-stab" data-atab="tx" onclick="analShowTab('tx')">🔍 Transactions Overview</button>
+    <!-- v48.98 (session 35): Analytics top sub-tab bar moved to fixed-bottom segmented pill.
+         Pill rendered once near </body> at .pa-anal-pill, only visible when tab-analytics is active. -->
+
+    <!-- v48.98 (session 35): All Transactions sub-panel (formerly standalone Transactions tab).
+         Hidden by default — pnl remains the default Market Analysis lens. searchTransactions(0)
+         is now called by analShowTab('txall') first-visit, replacing the old atlasShowTab branch. -->
+    <div id="anal-panel-txall" style="display:none">
+    <!-- Stat strip -->
+    <div class="stat-strip" id="tx-stat-strip" style="display:none">
+      <div class="stat-strip-item">
+        <div class="stat-strip-lbl">Results</div>
+        <div class="stat-strip-val" id="tx-strip-count">—</div>
+        <div class="stat-strip-sub">transactions</div>
+      </div>
+      <div class="stat-strip-item">
+        <div class="stat-strip-lbl">Total Value</div>
+        <div class="stat-strip-val" id="tx-strip-val">—</div>
+        <div class="stat-strip-sub">S$ millions</div>
+      </div>
+      <div class="stat-strip-item">
+        <div class="stat-strip-lbl">Avg PSF</div>
+        <div class="stat-strip-val" id="tx-strip-psf">—</div>
+        <div class="stat-strip-sub">per sq ft</div>
+      </div>
+      <div class="stat-strip-item">
+        <div class="stat-strip-lbl">Median PSF</div>
+        <div class="stat-strip-val" id="tx-strip-med">—</div>
+        <div class="stat-strip-sub">per sq ft</div>
+      </div>
     </div>
+    <div class="card">
+      <div class="card-hdr">
+        <div><div class="card-title"><span class="card-title-dot"></span>Transaction Search</div><div class="card-subtitle"><span id="db-txn-count-search">81,929</span> transactions · Commercial & Industrial · 1995–2026</div></div>
+        <div style="font-size:11px;color:var(--mut);font-family:'DM Mono',monospace;font-weight:600" id="tx-count">—</div>
+      </div>
+      <!-- Search filters -->
+      <div style="display:grid;grid-template-columns:2fr 1fr 1fr 1fr auto auto;gap:8px;margin-bottom:14px;align-items:end">
+        <div class="ac-wrap">
+          <input id="tx-project" placeholder="🔍  Project name..." autocomplete="off" class="cs-input"/>
+          <div class="ac-dropdown" id="ac-dropdown"></div>
+        </div>
+        <select id="tx-type" class="cs-select">
+          <option value="">All Property Types</option>
+          <option value="Multiple-user Factory">Multi-User</option>
+          <option value="Single-user Factory">Single-User</option>
+          <option value="Warehouse">Warehouse</option>
+          <option value="Business Park">Business Park</option>
+          <option value="Office">Office</option>
+          <option value="Retail">Retail</option>
+          <option value="Shop House">Shop House</option>
+        </select>
+        <select id="tx-year" class="cs-select">
+          <option value="">All Years</option>
+          <option value="2026">2026</option>
+          <option value="2025">2025</option>
+          <option value="2024">2024</option>
+          <option value="2023">2023</option>
+          <option value="2022">2022</option>
+          <option value="2021">2021</option>
+          <option value="2020">2020</option>
+          <option value="2019">2019</option>
+          <option value="2018">2018</option>
+          <option value="2017">2017</option>
+          <option value="2016">2016</option>
+          <option value="2015">2015</option>
+        </select>
+        <select id="tx-region" class="cs-select">
+          <option value="">All Regions</option>
+          <option value="Central Region">Central</option>
+          <option value="East Region">East</option>
+          <option value="North Region">North</option>
+          <option value="North-East Region">North-East</option>
+          <option value="West Region">West</option>
+        </select>
+        <button onclick="searchTransactions()" class="cs-btn">Search</button>
+        <button onclick="clearSearch()" class="cs-btn-ghost">Clear</button>
+      </div>
+      <!-- Results table -->
+      <div id="tx-loading" style="display:none;text-align:center;padding:30px;color:var(--mut);font-size:13px">Loading transactions...</div>
+      <div style="overflow-x:auto;border-radius:6px;border:1px solid var(--bdr)">
+        <table class="ptable" id="tx-table" style="display:none">
+          <thead><tr>
+            <th>Date</th><th>Project</th><th>Address</th><th>Type</th>
+            <th style="text-align:right">Price</th><th style="text-align:right">Area (sqft)</th><th style="text-align:right">PSF</th><th>Tenure</th><th>Region</th>
+          </tr></thead>
+          <tbody id="tx-tbody"></tbody>
+        </table>
+      </div>
+      <div id="tx-pagination" style="display:flex;gap:8px;align-items:center;margin-top:12px;justify-content:center"></div>
+      <div id="tx-empty" style="display:none;text-align:center;padding:40px;color:var(--mut);font-size:13px">No transactions found. Try adjusting your search.</div>
+    </div>
+    </div>
+    <!-- /anal-panel-txall -->
 
     <!-- ── Panel: Profit/Loss Overview ── -->
     <div id="anal-panel-pnl">
@@ -3568,92 +3701,6 @@ body.article-takeover .ed-foot{display:none!important}
 
   </div>
 
-  <div class="panel" id="tab-transactions">
-    <!-- Stat strip -->
-    <div class="stat-strip" id="tx-stat-strip" style="display:none">
-      <div class="stat-strip-item">
-        <div class="stat-strip-lbl">Results</div>
-        <div class="stat-strip-val" id="tx-strip-count">—</div>
-        <div class="stat-strip-sub">transactions</div>
-      </div>
-      <div class="stat-strip-item">
-        <div class="stat-strip-lbl">Total Value</div>
-        <div class="stat-strip-val" id="tx-strip-val">—</div>
-        <div class="stat-strip-sub">S$ millions</div>
-      </div>
-      <div class="stat-strip-item">
-        <div class="stat-strip-lbl">Avg PSF</div>
-        <div class="stat-strip-val" id="tx-strip-psf">—</div>
-        <div class="stat-strip-sub">per sq ft</div>
-      </div>
-      <div class="stat-strip-item">
-        <div class="stat-strip-lbl">Median PSF</div>
-        <div class="stat-strip-val" id="tx-strip-med">—</div>
-        <div class="stat-strip-sub">per sq ft</div>
-      </div>
-    </div>
-    <div class="card">
-      <div class="card-hdr">
-        <div><div class="card-title"><span class="card-title-dot"></span>Transaction Search</div><div class="card-subtitle"><span id="db-txn-count-search">81,929</span> transactions · Commercial & Industrial · 1995–2026</div></div>
-        <div style="font-size:11px;color:var(--mut);font-family:'DM Mono',monospace;font-weight:600" id="tx-count">—</div>
-      </div>
-      <!-- Search filters -->
-      <div style="display:grid;grid-template-columns:2fr 1fr 1fr 1fr auto auto;gap:8px;margin-bottom:14px;align-items:end">
-        <div class="ac-wrap">
-          <input id="tx-project" placeholder="🔍  Project name..." autocomplete="off" class="cs-input"/>
-          <div class="ac-dropdown" id="ac-dropdown"></div>
-        </div>
-        <select id="tx-type" class="cs-select">
-          <option value="">All Property Types</option>
-          <option value="Multiple-user Factory">Multi-User</option>
-          <option value="Single-user Factory">Single-User</option>
-          <option value="Warehouse">Warehouse</option>
-          <option value="Business Park">Business Park</option>
-          <option value="Office">Office</option>
-          <option value="Retail">Retail</option>
-          <option value="Shop House">Shop House</option>
-        </select>
-        <select id="tx-year" class="cs-select">
-          <option value="">All Years</option>
-          <option value="2026">2026</option>
-          <option value="2025">2025</option>
-          <option value="2024">2024</option>
-          <option value="2023">2023</option>
-          <option value="2022">2022</option>
-          <option value="2021">2021</option>
-          <option value="2020">2020</option>
-          <option value="2019">2019</option>
-          <option value="2018">2018</option>
-          <option value="2017">2017</option>
-          <option value="2016">2016</option>
-          <option value="2015">2015</option>
-        </select>
-        <select id="tx-region" class="cs-select">
-          <option value="">All Regions</option>
-          <option value="Central Region">Central</option>
-          <option value="East Region">East</option>
-          <option value="North Region">North</option>
-          <option value="North-East Region">North-East</option>
-          <option value="West Region">West</option>
-        </select>
-        <button onclick="searchTransactions()" class="cs-btn">Search</button>
-        <button onclick="clearSearch()" class="cs-btn-ghost">Clear</button>
-      </div>
-      <!-- Results table -->
-      <div id="tx-loading" style="display:none;text-align:center;padding:30px;color:var(--mut);font-size:13px">Loading transactions...</div>
-      <div style="overflow-x:auto;border-radius:6px;border:1px solid var(--bdr)">
-        <table class="ptable" id="tx-table" style="display:none">
-          <thead><tr>
-            <th>Date</th><th>Project</th><th>Address</th><th>Type</th>
-            <th style="text-align:right">Price</th><th style="text-align:right">Area (sqft)</th><th style="text-align:right">PSF</th><th>Tenure</th><th>Region</th>
-          </tr></thead>
-          <tbody id="tx-tbody"></tbody>
-        </table>
-      </div>
-      <div id="tx-pagination" style="display:flex;gap:8px;align-items:center;margin-top:12px;justify-content:center"></div>
-      <div id="tx-empty" style="display:none;text-align:center;padding:40px;color:var(--mut);font-size:13px">No transactions found. Try adjusting your search.</div>
-    </div>
-  </div>
 
   <!-- v48.25: Pipeline panel removed entirely (was id="tab-pipeline"). -->
 
@@ -16281,7 +16328,11 @@ var ATLAS_TAB_MAP = {
   "overview":     "tab-overview",
   "analytics":    "tab-analytics",
   "directory":    "tab-directory",
-  "transactions": "tab-transactions",
+  // v48.98: 'transactions' key kept as legacy alias → routes to tab-analytics.
+  // atlasShowTab('transactions') will land on Market Analysis; URL-hash router
+  // additionally activates the 'txall' sub-lens after the tab show. See edFloatToTab
+  // hash dispatch logic for the post-show lens preselect.
+  "transactions": "tab-analytics",
   "news":         "tab-news",
   "assetdir":     "tab-reit",
   "talent":       "tab-talent",
@@ -16454,10 +16505,11 @@ function atlasShowTab(tab) {
   if(tab === "assetdir"){ reitSearch(0); loadARTracker(); }
   if(tab === "analytics"){ renderAnalytics(); if(!pnlLoaded) pnlLoadData(); }
   if(tab === "directory"){ dirSearch(0); }
+  // v48.98: 'transactions' tab merged into Market Analysis. Legacy callers (hash router)
+  // hit this branch via the ATLAS_TAB_MAP 'transactions' alias → tab-analytics. We auto-
+  // switch the analytics sub-lens to txall so users land directly on the search panel.
   if(tab === "transactions"){
-    if(document.getElementById("tx-tbody") && document.getElementById("tx-tbody").innerHTML === ""){
-      searchTransactions(0);
-    }
+    if(typeof analShowTab === 'function') analShowTab('txall');
   }
   if(tab === "talent"){
     if(!talentInited){
@@ -17819,10 +17871,11 @@ function renderPipeline(){
 var analActiveTab = 'pnl';
 function analShowTab(tab){
   analActiveTab = tab;
-  document.querySelectorAll('.anal-stab').forEach(function(b){
+  // v48.98: pa-anal-pill (fixed-bottom) and .anal-stab (legacy, none rendered now) both updated.
+  document.querySelectorAll('.anal-stab, .pa-anal-pill-btn').forEach(function(b){
     b.classList.toggle('on', b.dataset.atab === tab);
   });
-  var panels = ['pnl','proj','tx'];
+  var panels = ['pnl','proj','tx','txall'];
   panels.forEach(function(p){
     var el = document.getElementById('anal-panel-'+p);
     if(el) el.style.display = p===tab ? '' : 'none';
@@ -17836,6 +17889,11 @@ function analShowTab(tab){
     var f = document.getElementById('tx-date-from');
     if(f && !f.value) txSetCurrentQuarter();
     txRender();
+  }
+  if(tab==='txall'){
+    // v48.98: first-time load mirrors the old atlasShowTab('transactions') branch.
+    var tbody = document.getElementById('tx-tbody');
+    if(tbody && tbody.innerHTML === '') searchTransactions(0);
   }
 }
 
@@ -29859,5 +29917,39 @@ html.article-takeover .ed-article-page,body.article-takeover .ed-article-page{di
   </div>
 </footer>
 
+
+<!-- v48.98 (session 35): Market Analysis fixed-bottom sub-lens pill. -->
+<div class="pa-anal-pill" id="pa-anal-pill" role="tablist" aria-label="Market Analysis lens">
+  <button class="pa-anal-pill-btn on" data-atab="pnl" onclick="analShowTab('pnl')" role="tab">📊 Profit / Loss</button>
+  <button class="pa-anal-pill-btn" data-atab="proj" onclick="analShowTab('proj')" role="tab">🏢 Projects</button>
+  <button class="pa-anal-pill-btn" data-atab="tx" onclick="analShowTab('tx')" role="tab">🏆 Top Transactions</button>
+  <button class="pa-anal-pill-btn" data-atab="txall" onclick="analShowTab('txall')" role="tab">🔍 All Transactions</button>
+</div>
+<script>
+/* v48.98 (session 35): Toggle body.pa-anal-active when Market Analysis tab is shown.
+   The pill CSS depends on this class to control visibility. */
+(function paAnalPillVisibility(){
+  function updatePill(){
+    var analPanel = document.getElementById('tab-analytics');
+    var visible = analPanel && analPanel.style.display !== 'none';
+    document.body.classList.toggle('pa-anal-active', !!visible);
+  }
+  // Hook into atlasShowTab without replacing it.
+  if(typeof window.atlasShowTab === 'function'){
+    var origShowTab = window.atlasShowTab;
+    window.atlasShowTab = function(tab){
+      var r = origShowTab.apply(this, arguments);
+      updatePill();
+      return r;
+    };
+  }
+  // Initial state.
+  if(document.readyState === 'loading'){
+    document.addEventListener('DOMContentLoaded', updatePill);
+  } else {
+    updatePill();
+  }
+}());
+</script>
 </body>
 </html>
