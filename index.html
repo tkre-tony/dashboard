@@ -3,6 +3,17 @@
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<!-- v48.102 (20 May 2026, session 36): Two UI polish fixes.
+     (1) Swap "Type" and "Sale Type" columns in Market Pulse Recent Transactions table.
+         Sale Type now appears before Type (header + filter row + body row, all three in sync).
+         No JS rewire: no sort handlers on either column, no column-index dependencies.
+     (2) .pill CSS robustness: when text wraps to multiple lines (long n.tag in news cards,
+         long tenure strings, etc.) the background, border, and border-radius now repeat
+         cleanly on each wrapped line via display:inline-block + box-decoration-break:clone
+         + line-height:1.55. Affected: every .pill site-wide (Market Pulse Latest News tag
+         bar, Asset Directory tenure pills, det-type-pill, PnL p-neu pills, etc.). Short
+         single-line pills unaffected. Scoped .pill rule inside standalone-newsroom block
+         (display:inline-flex; height:20px) more specific, untouched. -->
 <!-- v48.101 (20 May 2026, session 36): Transaction-table Type column cleanup.
      Two related changes:
      (1) Strip pill badge wrappers from 4 transaction Type cells (Market Pulse Recent Tx,
@@ -635,7 +646,7 @@ html,body{background:var(--bg);color:var(--txt);font-family:'DM Sans',sans-serif
 .nr-count{font-size:11px;color:var(--mut);font-weight:500}
 
 /* ── PILLS ── */
-.pill{padding:2px 8px;border-radius:4px;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.05em}
+.pill{padding:2px 8px;border-radius:4px;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;display:inline-block;-webkit-box-decoration-break:clone;box-decoration-break:clone;line-height:1.55}
 .p-pos{background:#e6f4ec;color:#1a7a4a}
 .p-neg{background:#fce8ec;color:var(--red)}
 .p-neu{background:var(--srf3);color:var(--mut)}
@@ -2509,8 +2520,8 @@ body.article-takeover .ed-foot{display:none!important}
             <th onclick="ovSortBy('postal_district')" style="cursor:pointer;user-select:none;white-space:nowrap;width:58px">Dist. <span id="ovs-postal_district"></span></th>
             <th style="width:130px">Project</th>
             <th style="width:130px">Address</th>
-            <th style="width:72px">Type</th>
             <th style="width:72px">Sale Type</th>
+            <th style="width:72px">Type</th>
             <th style="width:58px">Area Type</th>
             <th onclick="ovSortBy('transacted_price')" style="cursor:pointer;user-select:none;width:90px">Price <span id="ovs-transacted_price"></span></th>
             <th onclick="ovSortBy('area_sqft')" style="cursor:pointer;user-select:none;width:60px">Area <span id="ovs-area_sqft"></span></th>
@@ -2559,6 +2570,14 @@ body.article-takeover .ed-foot{display:none!important}
               <input id="ovf-address" placeholder="Search address..." style="width:100%;padding:3px 6px;font-size:10px;border:1px solid var(--bdr);border-radius:4px;background:var(--srf);color:var(--txt)" oninput="ovApplyFilters()">
             </td>
             <td style="padding:4px 6px;position:relative">
+              <button id="ovf-tos-btn" onclick="ovToggleDrop('tos')" style="width:100%;padding:3px 6px;font-size:10px;border:1px solid var(--bdr);border-radius:4px;background:var(--srf);color:var(--txt);cursor:pointer;text-align:left;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">All ▾</button>
+              <div id="ovf-tos-drop" style="display:none;position:absolute;top:100%;left:0;z-index:999;background:var(--srf);border:1px solid var(--bdr);border-radius:4px;min-width:120px;box-shadow:0 4px 12px rgba(0,0,0,.12);padding:4px 0">
+                <label style="display:flex;align-items:center;gap:6px;padding:4px 10px;font-size:11px;cursor:pointer;white-space:nowrap"><input type="checkbox" value="New Sale" onchange="ovDropChange('tos')"> New Sale</label>
+                <label style="display:flex;align-items:center;gap:6px;padding:4px 10px;font-size:11px;cursor:pointer;white-space:nowrap"><input type="checkbox" value="Resale" onchange="ovDropChange('tos')"> Resale</label>
+                <label style="display:flex;align-items:center;gap:6px;padding:4px 10px;font-size:11px;cursor:pointer;white-space:nowrap"><input type="checkbox" value="Sub Sale" onchange="ovDropChange('tos')"> Sub Sale</label>
+              </div>
+            </td>
+            <td style="padding:4px 6px;position:relative">
               <button id="ovf-type-btn" onclick="ovToggleDrop('type')" style="width:100%;padding:3px 6px;font-size:10px;border:1px solid var(--bdr);border-radius:4px;background:var(--srf);color:var(--txt);cursor:pointer;text-align:left;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">All Types ▾</button>
               <div id="ovf-type-drop" style="display:none;position:absolute;top:100%;left:0;z-index:999;background:var(--srf);border:1px solid var(--bdr);border-radius:4px;min-width:140px;box-shadow:0 4px 12px rgba(0,0,0,.12);padding:4px 0">
                 <label style="display:flex;align-items:center;gap:6px;padding:4px 10px;font-size:11px;cursor:pointer;white-space:nowrap"><input type="checkbox" value="Office" onchange="ovDropChange('type')"> Office</label>
@@ -2568,14 +2587,6 @@ body.article-takeover .ed-foot{display:none!important}
                 <label style="display:flex;align-items:center;gap:6px;padding:4px 10px;font-size:11px;cursor:pointer;white-space:nowrap"><input type="checkbox" value="Single-User Factory" onchange="ovDropChange('type')"> Single-User</label>
                 <label style="display:flex;align-items:center;gap:6px;padding:4px 10px;font-size:11px;cursor:pointer;white-space:nowrap"><input type="checkbox" value="Business Park" onchange="ovDropChange('type')"> Business Park</label>
                 <label style="display:flex;align-items:center;gap:6px;padding:4px 10px;font-size:11px;cursor:pointer;white-space:nowrap"><input type="checkbox" value="Warehouse" onchange="ovDropChange('type')"> Warehouse</label>
-              </div>
-            </td>
-            <td style="padding:4px 6px;position:relative">
-              <button id="ovf-tos-btn" onclick="ovToggleDrop('tos')" style="width:100%;padding:3px 6px;font-size:10px;border:1px solid var(--bdr);border-radius:4px;background:var(--srf);color:var(--txt);cursor:pointer;text-align:left;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">All ▾</button>
-              <div id="ovf-tos-drop" style="display:none;position:absolute;top:100%;left:0;z-index:999;background:var(--srf);border:1px solid var(--bdr);border-radius:4px;min-width:120px;box-shadow:0 4px 12px rgba(0,0,0,.12);padding:4px 0">
-                <label style="display:flex;align-items:center;gap:6px;padding:4px 10px;font-size:11px;cursor:pointer;white-space:nowrap"><input type="checkbox" value="New Sale" onchange="ovDropChange('tos')"> New Sale</label>
-                <label style="display:flex;align-items:center;gap:6px;padding:4px 10px;font-size:11px;cursor:pointer;white-space:nowrap"><input type="checkbox" value="Resale" onchange="ovDropChange('tos')"> Resale</label>
-                <label style="display:flex;align-items:center;gap:6px;padding:4px 10px;font-size:11px;cursor:pointer;white-space:nowrap"><input type="checkbox" value="Sub Sale" onchange="ovDropChange('tos')"> Sub Sale</label>
               </div>
             </td>
             <td style="padding:4px 6px;position:relative">
@@ -19775,8 +19786,8 @@ function renderOvTable(rows){
       +"<td class='mono' style='font-size:10.5px;white-space:nowrap;vertical-align:top'>"+dist+"</td>"
       +"<td style='font-weight:600;font-size:10.5px;vertical-align:top;word-break:break-word'>"+(r.project_name||"-")+abortedBadge+"</td>"
       +"<td style='font-size:12px;color:var(--txt);vertical-align:top;overflow-wrap:break-word;word-break:keep-all'>"+((maskAddress(r.address)||"-").replace(/\s*(#\S+)/g,"<span style=\"display:block;white-space:nowrap;color:var(--mut2);font-size:11.5px\">$1</span>"))+"</td>"
-      +"<td style='vertical-align:top;text-align:center;font-size:10.5px;line-height:1.25'>"+fmtPropTypeHtml(r.property_type||"-")+"</td>"
       +"<td style='font-size:10px;color:var(--mut);vertical-align:top'>"+tos+(r.buy_tos ? boughtLabel+"<div style='"+mutStyle+"'>"+r.buy_tos+"</div>" : "")+"</td>"
+      +"<td style='vertical-align:top;text-align:center;font-size:10.5px;line-height:1.25'>"+fmtPropTypeHtml(r.property_type||"-")+"</td>"
       +"<td style='font-size:10px;color:var(--mut);vertical-align:top'>"+(r.type_of_area||"-")+"</td>"
       +"<td class='mono' style='vertical-align:top;font-size:10.5px'>"+priceCell+"</td>"
       +"<td class='mono' style='font-size:10.5px;vertical-align:top'>"+area+"</td>"
