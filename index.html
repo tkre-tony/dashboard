@@ -3,6 +3,27 @@
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<!-- v48.106 (21 May 2026, session 37): Profit/Loss empty-state recovery + project autocomplete.
+     Tony post-deploy feedback on v48.105 surfaced three real bugs:
+       (1) Typing a non-matching string into the project search hid the entire filter bar (dead-end — no way to recover).
+       (2) Filtering "Office" when the loaded window held only Retail transactions reproduced the same dead-end.
+       (3) Other search bars in the site offered autocomplete suggestions; PnL's did not.
+     ROOT CAUSE of (1) and (2): The v48.105 refactor placed #pnl-filter-bar INSIDE #pnl-tabs-wrap.
+       The empty-state branch in pnlApplyFilters hides pnl-tabs-wrap entirely, so the filter bar disappeared with it.
+       The user lost access to the input they needed to edit in order to recover.
+     FIXES:
+       (a) Structural — #pnl-filter-bar moved OUT of #pnl-tabs-wrap (now a sibling of #pnl-stats).
+           Filter bar visibility now decoupled from table visibility: stays visible whenever data is loaded.
+       (b) Empty-state UX — pnlApplyFilters no longer hides any chrome on empty results.
+           pnlRenderTable's empty-row injects a friendly message INSIDE the table tbody with a "clear all filters" link.
+           Legacy #pnl-empty div retained but never shown (orphaned, harmless).
+       (c) Autocomplete — #pnl-shared-project input wrapped in .ac-wrap; sibling .ac-dropdown #pnl-ac-dropdown added.
+           Five new functions added: pnlACSuggestions / pnlACHighlight / pnlACShow / pnlACSelect / pnlInitAutocomplete.
+           Mirrors the All Transactions tx-project pattern but reads from in-memory PNL_PAIRS (no Supabase calls).
+           Reuses existing .ac-wrap / .ac-dropdown / .ac-item CSS classes — visual consistency with site's other search bars.
+           Init wired right after initAutocomplete()+initOvAutocomplete() at module startup.
+     L270 cascade audit: no CSS rules edited; not triggered. L271 imported-block scope: no imported selectors touched.
+     v48.105 base preserved: shared filter model, KPI partition logic, sortable date column, From/To range pickers, 5-card KPI strip, 2-tab strip. -->
 <!-- v48.105 (21 May 2026, session 37): Profit/Loss surface refactor — shared filter model + Aborted UI removed + Date column sort + date range pickers.
      Tony spec (5 items, one deploy):
      (1) Remove 'Aborted & Re-sold' from the KPI strip AND from the tab nav. 5 KPI cards instead of 6; 2 tabs instead of 3.
@@ -768,6 +789,9 @@ html,body{background:var(--bg);color:var(--txt);font-family:'DM Sans',sans-serif
 .ac-item:last-child{border-bottom:none}
 .ac-item:hover,.ac-item.selected{background:var(--glt);color:var(--g1)}
 .ac-item b{color:var(--g1)}
+
+/* ── v48.106 PnL filter bar (lifted out of #pnl-tabs-wrap so it stays visible across empty states) ── */
+.pnl-fbar{display:flex;gap:8px;margin-bottom:10px;padding:8px 10px;background:var(--srf2);border:1px solid var(--bdr);border-radius:6px;flex-wrap:wrap;align-items:center}
 
 /* ── TABLES ── */
 .ptable{width:100%;border-collapse:separate;border-spacing:0}
@@ -2993,12 +3017,15 @@ body.article-takeover .ed-foot{display:none!important}
       </div>
       <div id="pnl-empty" style="display:none;text-align:center;padding:32px;color:var(--mut);font-size:13px">No matched pairs found for selected filters.</div>
 
-      <!-- Sub-tabs -->
-      <div id="pnl-tabs-wrap" style="display:none">
-        <!-- v48.105 SHARED FILTER BAR: single source of truth across Profitable + Unprofitable tabs. -->
-        <div id="pnl-filter-bar" style="display:flex;gap:8px;margin-bottom:10px;padding:8px 10px;background:var(--srf2);border:1px solid var(--bdr);border-radius:6px;flex-wrap:wrap;align-items:center">
+            <!-- v48.106 NOTE: filter bar moved OUT of #pnl-tabs-wrap so it stays visible during empty filter results.
+           Initially hidden; shown after first successful pnlApplyFilters call. -->
+      <!-- v48.105 SHARED FILTER BAR: single source of truth across Profitable + Unprofitable tabs. -->
+        <div id="pnl-filter-bar" class="pnl-fbar" style="display:none">
           <div style="display:flex;align-items:center;gap:6px;flex:1;min-width:160px">
-            <input id="pnl-shared-project" placeholder="Project / address..." oninput="pnlApplyFilters()" style="width:100%;padding:5px 8px;font-size:11px;border:1px solid var(--bdr);border-radius:4px;background:var(--srf);color:var(--txt)">
+            <div class="ac-wrap" style="flex:1">
+              <input id="pnl-shared-project" placeholder="Project / address..." oninput="pnlApplyFilters()" autocomplete="off" style="width:100%;padding:5px 8px;font-size:11px;border:1px solid var(--bdr);border-radius:4px;background:var(--srf);color:var(--txt)">
+              <div class="ac-dropdown" id="pnl-ac-dropdown"></div>
+            </div>
           </div>
           <div style="position:relative">
             <button id="pnl-f-shared-type-btn" onclick="pnlToggleColDrop('shared-type')" style="padding:5px 10px;font-size:11px;border:1px solid var(--bdr);border-radius:4px;background:var(--srf);color:var(--txt);cursor:pointer;text-align:left;white-space:nowrap;min-width:110px">All Types &#9660;</button>
@@ -3024,7 +3051,10 @@ body.article-takeover .ed-foot{display:none!important}
           <input id="pnl-shared-price-max" placeholder="Max S$" oninput="pnlApplyFilters()" style="width:90px;padding:5px 8px;font-size:11px;border:1px solid var(--bdr);border-radius:4px;background:var(--srf);color:var(--txt);font-family:'DM Mono',monospace">
           <button onclick="pnlClearAllFilters()" title="Clear filters" style="padding:5px 10px;font-size:11px;background:none;border:1px solid var(--bdr);border-radius:4px;color:var(--mut);cursor:pointer">&#10006; Clear</button>
         </div>
-        <div style="display:flex;gap:4px;margin-bottom:12px;border-bottom:2px solid var(--srf3)">
+
+      <!-- Sub-tabs -->
+      <div id="pnl-tabs-wrap" style="display:none">
+                <div style="display:flex;gap:4px;margin-bottom:12px;border-bottom:2px solid var(--srf3)">
           <button class="pnl-stab on" data-section="profit" onclick="pnlShowSection('profit')">&#9989; Profitable <span id="pnl-tab-cnt-profit"></span></button>
           <button class="pnl-stab" data-section="loss" onclick="pnlShowSection('loss')">&#128308; Unprofitable <span id="pnl-tab-cnt-loss"></span></button>
         </div>
@@ -18000,7 +18030,7 @@ function pnlHide(id){
 
 async function pnlLoadData(){
   pnlLoaded = false;
-  pnlHide('pnl-tabs-wrap'); pnlHide('pnl-stats'); pnlHide('pnl-empty');
+  pnlHide('pnl-tabs-wrap'); pnlHide('pnl-stats'); pnlHide('pnl-filter-bar'); pnlHide('pnl-empty');
   pnlShow('pnl-loading');
   document.getElementById('pnl-load-btn').disabled = true;
 
@@ -18201,6 +18231,96 @@ function pnlSortBy(sec, col){
   else { pnlPageLoss=0; pnlRenderTable('loss', PNL_FILTERED_LOSS, 0); }
 }
 
+var pnlAcIndex = -1;
+var pnlAcTimer = null;
+
+function pnlACSuggestions(query){
+  // v48.106: client-side autocomplete derived from already-loaded PNL_PAIRS.
+  // Returns up to 10 unique project_name matches (case-insensitive).
+  if(!PNL_PAIRS || !PNL_PAIRS.length || !query) return [];
+  var q = query.toLowerCase();
+  var seen = {}, names = [];
+  for(var i = 0; i < PNL_PAIRS.length && names.length < 50; i++){
+    var n = PNL_PAIRS[i].project_name;
+    if(!n || seen[n]) continue;
+    if(n.toLowerCase().indexOf(q) === -1) continue;
+    seen[n] = true;
+    names.push(n);
+  }
+  return names.slice(0, 10);
+}
+
+function pnlACHighlight(name, query){
+  var idx = name.toLowerCase().indexOf(query.toLowerCase());
+  if(idx < 0) return name;
+  return name.substring(0,idx) + '<b>' + name.substring(idx, idx+query.length) + '</b>' + name.substring(idx+query.length);
+}
+
+function pnlACShow(names, query){
+  var dd = document.getElementById('pnl-ac-dropdown');
+  if(!dd){ return; }
+  if(!names.length){ dd.style.display = 'none'; return; }
+  pnlAcIndex = -1;
+  dd.innerHTML = names.map(function(n,i){
+    var esc = n.replace(/'/g, "\\'");
+    return '<div class="ac-item" data-val="' + n + '" onmousedown="pnlACSelect(\'' + esc + '\')">' + pnlACHighlight(n, query) + '</div>';
+  }).join('');
+  dd.style.display = 'block';
+}
+
+function pnlACSelect(name){
+  var inp = document.getElementById('pnl-shared-project');
+  var dd  = document.getElementById('pnl-ac-dropdown');
+  if(inp){ inp.value = name; }
+  if(dd){ dd.style.display = 'none'; }
+  pnlApplyFilters();
+}
+
+function pnlInitAutocomplete(){
+  var inp = document.getElementById('pnl-shared-project');
+  var dd  = document.getElementById('pnl-ac-dropdown');
+  if(!inp || !dd) return;
+
+  inp.addEventListener('input', function(){
+    var q = inp.value.trim();
+    clearTimeout(pnlAcTimer);
+    if(q.length < 2){ dd.style.display = 'none'; return; }
+    // Debounce 120ms (in-memory is fast but rapid typers still benefit)
+    pnlAcTimer = setTimeout(function(){
+      var names = pnlACSuggestions(q);
+      pnlACShow(names, q);
+    }, 120);
+  });
+
+  inp.addEventListener('keydown', function(e){
+    var items = dd.querySelectorAll('.ac-item');
+    if(e.key === 'ArrowDown'){
+      pnlAcIndex = Math.min(pnlAcIndex+1, items.length-1);
+      items.forEach(function(x,i){ x.classList.toggle('selected', i===pnlAcIndex); });
+      e.preventDefault();
+    } else if(e.key === 'ArrowUp'){
+      pnlAcIndex = Math.max(pnlAcIndex-1, 0);
+      items.forEach(function(x,i){ x.classList.toggle('selected', i===pnlAcIndex); });
+      e.preventDefault();
+    } else if(e.key === 'Enter'){
+      if(pnlAcIndex >= 0 && items[pnlAcIndex]){
+        pnlACSelect(items[pnlAcIndex].dataset.val);
+      } else {
+        dd.style.display = 'none';
+      }
+    } else if(e.key === 'Escape'){
+      dd.style.display = 'none';
+    }
+  });
+
+  // Hide dropdown on outside click
+  document.addEventListener('click', function(e){
+    if(e.target !== inp && !dd.contains(e.target)){
+      dd.style.display = 'none';
+    }
+  });
+}
+
 function pnlClearDateRange(){
   var f = document.getElementById('pnl-date-from');
   var t = document.getElementById('pnl-date-to');
@@ -18364,11 +18484,13 @@ function pnlApplyFilters(){
 
   pnlPageProfit = 0; pnlPageLoss = 0;
 
-  if(!base.length){
-    pnlHide('pnl-tabs-wrap'); pnlHide('pnl-stats'); pnlShow('pnl-empty'); return;
-  }
+  // v48.106: KPI strip + filter bar + tab strip remain visible at all times once data is loaded.
+  // Empty filter results are shown INSIDE the table tbody (pnlRenderTable has its own empty-state row).
+  // This prevents the dead-end where users couldn't recover from a no-match search.
   pnlHide('pnl-empty');
-  pnlShow('pnl-stats'); pnlShow('pnl-tabs-wrap');
+  pnlShow('pnl-stats');
+  pnlShow('pnl-filter-bar');
+  pnlShow('pnl-tabs-wrap');
   pnlShowSection(pnlActiveSection === 'abort' ? 'profit' : pnlActiveSection);
 
   // Pre-populate Projects-tab date range to current quarter (existing behaviour, untouched)
@@ -18857,7 +18979,7 @@ function pnlRenderTable(sec, rows, page){
   var tbody = document.getElementById('pnl-tbody-'+sec);
   var start = page * pnlPageSize, end = start + pnlPageSize;
   var slice = rows.slice(start, end);
-  if(!slice.length){ tbody.innerHTML='<tr><td colspan="10" style="text-align:center;color:var(--mut);padding:24px">No data</td></tr>'; return; }
+  if(!slice.length){ tbody.innerHTML='<tr><td colspan="10" style="text-align:center;color:var(--mut);padding:32px 24px"><div style="font-size:13px;margin-bottom:6px">No matches for the current filters.</div><div style="font-size:11px;color:var(--mut2)">Try adjusting the project search, type filter, or date range — or <a href="#" onclick="pnlClearAllFilters();return false;" style="color:var(--g1);text-decoration:underline;cursor:pointer">clear all filters</a>.</div></td></tr>'; return; }
   tbody.innerHTML = slice.map(function(r){
     var isLoss     = r.profit < 0;
     var profitCol  = isLoss ? '#b71c1c' : '#1a6b3c';
@@ -20205,6 +20327,7 @@ matchPendingDeals();
 // v48.25: renderPipeline() call removed (panel deleted; function definition orphaned but harmless).
 initAutocomplete();
 initOvAutocomplete();
+pnlInitAutocomplete();
 loadDefaultTransactions(0);
 requestAnimationFrame(function(){
   renderAll();
