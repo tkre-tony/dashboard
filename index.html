@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
-<!-- v48.110 (21 May 2026, session 38): Projects KPI strip cleanup — dropped misleading Profitable/Non-Profitable Transactions cards (counted projects, not transactions). Section headers renamed Profitable/Unprofitable Projects for vocabulary consistency with Profit/Loss.
+<!-- v48.111 (21 May 2026, session 38): Projects sub-tab toggle — side-by-side Profitable/Unprofitable Projects tabs (mirrors P/L pattern). Misleading per-tab transaction counts removed. Chip-style collapse-headers replaced with .pnl-stab tab buttons.
      Tony post-deploy on v48.109: Last 5 Years / Last 10 Years / All Time all returned exactly 3,000 pairs (same numbers).
      ROOT CAUSE: Supabase PostgREST default max-rows cap is 1,000 per response. The query string
      &limit=10000 is silently clamped server-side. The v48.109 loop's early-exit check
@@ -3207,12 +3207,14 @@ body.article-takeover .ed-foot{display:none!important}
         <!-- Summary chips -->
         <div id="proj-ov-stats" style="display:flex;gap:10px;flex-wrap:wrap;margin-bottom:18px"></div>
 
+        <!-- v48.111: side-by-side sub-tabs (mirrors P/L pattern) -->
+        <div style="display:flex;gap:4px;margin-bottom:12px;border-bottom:2px solid var(--srf3)">
+          <button class="pnl-stab on" data-projsec="profit" onclick="projShowSection('profit')">🏆 Profitable Projects</button>
+          <button class="pnl-stab" data-projsec="loss" onclick="projShowSection('loss')">📉 Unprofitable Projects</button>
+        </div>
+
         <!-- Profitable table -->
-        <div style="margin-bottom:20px">
-          <div style="margin-bottom:8px;display:flex;align-items:center;gap:8px">
-            <span id="proj-hdr-profit" onclick="projToggleSection('profit')" style="display:inline-block;background:#e8f5e9;border:1px solid #a5d6a7;border-radius:12px;padding:4px 14px;font-size:12px;font-weight:700;color:#1a6b3c;cursor:pointer;user-select:none">🏆 Profitable Projects</span>
-            <button id="proj-toggle-profit" onclick="projToggleSection('profit')" style="background:none;border:none;color:var(--mut);font-size:14px;cursor:pointer;padding:0 4px">▾</button>
-          </div>
+        <div id="proj-sec-profit">
           <div id="proj-tbl-wrap-profit">
             <div style="overflow-x:auto;border-radius:6px;border:1px solid var(--bdr)">
               <table class="ptable" id="proj-tbl-profit">
@@ -3233,12 +3235,8 @@ body.article-takeover .ed-foot{display:none!important}
           </div>
         </div>
 
-        <!-- Non-Profitable table -->
-        <div>
-          <div style="margin-bottom:8px;display:flex;align-items:center;gap:8px">
-            <span id="proj-hdr-loss" onclick="projToggleSection('loss')" style="display:inline-block;background:#fce4ec;border:1px solid #ef9a9a;border-radius:12px;padding:4px 14px;font-size:12px;font-weight:700;color:#b71c1c;cursor:pointer;user-select:none">📉 Unprofitable Projects</span>
-            <button id="proj-toggle-loss" onclick="projToggleSection('loss')" style="background:none;border:none;color:var(--mut);font-size:14px;cursor:pointer;padding:0 4px">▾</button>
-          </div>
+        <!-- Unprofitable table (hidden by default; toggled via projShowSection) -->
+        <div id="proj-sec-loss" style="display:none">
           <div id="proj-tbl-wrap-loss">
             <div style="overflow-x:auto;border-radius:6px;border:1px solid var(--bdr)">
               <table class="ptable" id="proj-tbl-loss">
@@ -19228,8 +19226,7 @@ function pnlRenderProjectsTab(){
   // Update section header labels
   var hProfit = document.getElementById('proj-hdr-profit');
   var hLoss   = document.getElementById('proj-hdr-loss');
-  if(hProfit) hProfit.textContent = '🏆 Profitable Transactions (' + topProfit.length + ')';
-  if(hLoss)   hLoss.textContent   = '📉 Non-Profitable Transactions (' + topLoss.length + ')';
+  // v48.111: header labels are now static in DOM (no counts) — see projShowSection
 
   // Update subtitle
   var periodEl = document.getElementById('pnl-period-filter');
@@ -19258,6 +19255,15 @@ function projToggleSection(key){
   el.style.display = hidden ? '' : 'none';
   var btn = document.getElementById('proj-toggle-'+key);
   if(btn) btn.textContent = hidden ? '▾' : '▸';
+}
+
+// v48.111: tab-style section switcher (replaces collapse/expand of projToggleSection)
+function projShowSection(sec){
+  document.querySelectorAll('.pnl-stab[data-projsec]').forEach(function(b){ b.classList.toggle('on', b.dataset.projsec===sec); });
+  var p = document.getElementById('proj-sec-profit');
+  var l = document.getElementById('proj-sec-loss');
+  if(p) p.style.display = sec==='profit' ? '' : 'none';
+  if(l) l.style.display = sec==='loss'   ? '' : 'none';
 }
 
 function pnlGoPage(sec, p){
