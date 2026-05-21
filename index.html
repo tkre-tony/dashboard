@@ -3,7 +3,8 @@
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
-<!-- v48.114 (21 May 2026, session 38): Tenure display in full — P/L stacks raw tenure under address (verbatim, wraps); Projects Tenure column shows raw string with wrap. fmtTenureShort helper now orphan but retained.
+<!-- v48.115 (21 May 2026, session 39): Most Active sub-tab — (1) Renamed "🏢 Projects" sub-tab to "🔥 Most Active" in Market Analysis pill; (2) Click-to-drill-down modal on project-name OR volume in either Profitable/Unprofitable tabs → shows that project's transactions in an 8-col overlay (Sell date · Address · Unit · Sell $ · Buy $ · Profit · Hold · Ann.return), sorted by highest profit / biggest loss first per L277 confirmation. Per L276: Object.values rebuild gains `pairs: g.pairs` passthrough so modal sees pairs. data-tab key "proj" unchanged (S35 stability rule). Backdrop click + ESC + ✕ button all close modal.
+v48.114 (21 May 2026, session 38): Tenure display in full — P/L stacks raw tenure under address (verbatim, wraps); Projects Tenure column shows raw string with wrap. fmtTenureShort helper now orphan but retained.
      Tony post-deploy on v48.109: Last 5 Years / Last 10 Years / All Time all returned exactly 3,000 pairs (same numbers).
      ROOT CAUSE: Supabase PostgREST default max-rows cap is 1,000 per response. The query string
      &limit=10000 is silently clamped server-side. The v48.109 loop's early-exit check
@@ -2942,7 +2943,7 @@ body.article-takeover .ed-foot{display:none!important}
          already hidden/shown by atlasShowTab. -->
     <div class="pa-anal-pill" role="tablist" aria-label="Market Analysis lens">
       <button class="pa-anal-pill-btn on" data-atab="pnl" onclick="analShowTab('pnl')" role="tab">📊 Profit / Loss</button>
-      <button class="pa-anal-pill-btn" data-atab="proj" onclick="analShowTab('proj')" role="tab">🏢 Projects</button>
+      <button class="pa-anal-pill-btn" data-atab="proj" onclick="analShowTab('proj')" role="tab">🔥 Most Active</button>
       <button class="pa-anal-pill-btn" data-atab="tx" onclick="analShowTab('tx')" role="tab">🏆 Top Transactions</button>
       <button class="pa-anal-pill-btn" data-atab="txall" onclick="analShowTab('txall')" role="tab">🔍 All Transactions</button>
     </div>
@@ -4181,6 +4182,35 @@ body.article-takeover .ed-foot{display:none!important}
             </table>
           </div>
           <div style="padding:10px 18px;border-top:1px solid var(--bdr);font-size:10px;color:var(--mut2)">Source: Department of Statistics Singapore (DOS)</div>
+        </div>
+      </div>
+
+      <!-- v48.115: Project transactions drill-down modal (Most Active) -->
+      <div id="proj-tx-modal" onclick="if(event.target===this)projCloseTxModal()" style="display:none;position:fixed;inset:0;z-index:9999;background:rgba(0,0,0,.55);align-items:center;justify-content:center">
+        <div style="background:var(--srf,#fff);border:1px solid var(--bdr);border-radius:14px;max-width:920px;width:94%;max-height:84vh;display:flex;flex-direction:column;box-shadow:0 20px 60px rgba(0,0,0,.5)">
+          <div style="display:flex;align-items:center;justify-content:space-between;padding:14px 18px;border-bottom:1px solid var(--bdr);gap:12px">
+            <div style="flex:1;min-width:0">
+              <div id="proj-tx-modal-title" style="font-size:14px;font-weight:700;color:var(--txt);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">Project transactions</div>
+              <div id="proj-tx-modal-sub" style="font-size:11px;color:var(--mut);margin-top:2px"></div>
+            </div>
+            <button onclick="projCloseTxModal()" style="background:none;border:none;cursor:pointer;color:var(--mut);font-size:20px;line-height:1;padding:4px 8px;flex-shrink:0">✕</button>
+          </div>
+          <div style="overflow:auto;padding:0">
+            <table style="width:100%;border-collapse:collapse;font-size:11px">
+              <thead><tr style="background:var(--srf2);position:sticky;top:0;z-index:1">
+                <th style="padding:9px 10px;text-align:left;color:var(--mut);font-size:10px;text-transform:uppercase;letter-spacing:.04em;border-bottom:1px solid var(--bdr);white-space:nowrap">Sell Date</th>
+                <th style="padding:9px 10px;text-align:left;color:var(--mut);font-size:10px;text-transform:uppercase;letter-spacing:.04em;border-bottom:1px solid var(--bdr)">Address</th>
+                <th style="padding:9px 10px;text-align:left;color:var(--mut);font-size:10px;text-transform:uppercase;letter-spacing:.04em;border-bottom:1px solid var(--bdr);white-space:nowrap">Unit</th>
+                <th style="padding:9px 10px;text-align:right;color:var(--mut);font-size:10px;text-transform:uppercase;letter-spacing:.04em;border-bottom:1px solid var(--bdr);white-space:nowrap">Sell $</th>
+                <th style="padding:9px 10px;text-align:right;color:var(--mut);font-size:10px;text-transform:uppercase;letter-spacing:.04em;border-bottom:1px solid var(--bdr);white-space:nowrap">Buy $</th>
+                <th style="padding:9px 10px;text-align:right;color:var(--mut);font-size:10px;text-transform:uppercase;letter-spacing:.04em;border-bottom:1px solid var(--bdr);white-space:nowrap">Profit</th>
+                <th style="padding:9px 10px;text-align:right;color:var(--mut);font-size:10px;text-transform:uppercase;letter-spacing:.04em;border-bottom:1px solid var(--bdr);white-space:nowrap">Hold</th>
+                <th style="padding:9px 10px;text-align:right;color:var(--mut);font-size:10px;text-transform:uppercase;letter-spacing:.04em;border-bottom:1px solid var(--bdr);white-space:nowrap">Ann. Return</th>
+              </tr></thead>
+              <tbody id="proj-tx-modal-body"></tbody>
+            </table>
+          </div>
+          <div id="proj-tx-modal-foot" style="padding:9px 18px;border-top:1px solid var(--bdr);font-size:10px;color:var(--mut2);text-align:right"></div>
         </div>
       </div>
 
@@ -19136,7 +19166,8 @@ function pnlRenderProjectsTab(){
       avg_profit:  avgProfit,
       high_loss:   highLoss,
       low_loss:    lowLoss,
-      avg_loss:    avgLoss
+      avg_loss:    avgLoss,
+      pairs:       g.pairs
     };
   });
 
@@ -19206,15 +19237,19 @@ function pnlRenderProjectsTab(){
       } else {
         hi = fmtMoney(g.high_loss); lo = fmtMoney(g.low_loss); av = fmtMoney(g.avg_loss);
       }
+      var globalIdx = start + i;
+      var clickAttr = ' onclick="projOpenTxModal('+globalIdx+','+(isProfitable?1:0)+')" style="cursor:pointer" title="View transactions"';
       return '<tr>'
-        +'<td style="font-size:11px;font-weight:600;color:var(--txt);white-space:normal;line-height:1.3">'
+        +'<td'+clickAttr.replace(/style="cursor:pointer"/, 'style="font-size:11px;font-weight:600;color:var(--txt);white-space:normal;line-height:1.3;cursor:pointer"')+'>'
           +'<span style="display:inline-block;min-width:18px;font-size:10px;color:var(--mut);margin-right:3px">'+(start+i+1)+'.</span>'
-          +g.project_name
+          +'<span style="text-decoration:underline;text-decoration-color:var(--mut2);text-decoration-style:dotted;text-underline-offset:3px">'+g.project_name+'</span>'
           +(distLabel ? '<br><span style="font-size:10px;font-weight:400;color:var(--mut);margin-left:21px">'+distLabel+'</span>' : '')
         +'</td>'
         +'<td style="font-size:10px;color:var(--mut);white-space:nowrap">'+typeShort+'</td>'
         +'<td style="font-size:10px;color:var(--mut);white-space:normal;line-height:1.3;max-width:180px">'+(g.tenure || '—')+'</td>'
-        +'<td class="mono" style="text-align:right;font-size:11px">'+(isProfitable ? g.profit_cnt : g.loss_cnt)+'</td>'
+        +'<td'+clickAttr.replace(/style="cursor:pointer"/, 'style="text-align:right;font-size:11px;cursor:pointer"')+' class="mono">'
+          +'<span style="text-decoration:underline;text-decoration-color:var(--mut2);text-decoration-style:dotted;text-underline-offset:3px">'+(isProfitable ? g.profit_cnt : g.loss_cnt)+'</span>'
+        +'</td>'
         +'<td class="mono" style="text-align:right;font-size:11px;font-weight:700;color:'+(isProfitable?pc:lc)+'">'+hi+'</td>'
         +'<td class="mono" style="text-align:right;font-size:11px;color:'+(isProfitable?pc:lc)+'">'+lo+'</td>'
         +'<td class="mono" style="text-align:right;font-size:11px;color:'+(isProfitable?pc:lc)+'">'+av+'</td>'
@@ -19255,6 +19290,88 @@ function pnlRenderProjectsTab(){
   if(sub) sub.textContent = 'Ranked by P&L performance · '+periodLabel+' · '+totalProjects+' projects from '+PNL_FILTERED_ALL.length+' matched pairs';
 }
 // ─────────────────────────────────────────────────────────────────────
+
+// v48.115: Project transactions drill-down modal
+function projOpenTxModal(idx, isProfitable){
+  var arr = isProfitable ? (window._projTopProfit||[]) : (window._projTopLoss||[]);
+  var g = arr[idx];
+  if(!g || !g.pairs || !g.pairs.length){
+    console.warn("[v48.115] projOpenTxModal: no group or no pairs", idx, isProfitable, g);
+    return;
+  }
+  // Filter pairs by profitability of THIS tab (a project may have both profitable and unprofitable pairs)
+  var pairs = g.pairs.filter(function(p){ return isProfitable ? p.profit > 0 : p.profit <= 0; });
+  // Sort: profitable -> highest profit first; unprofitable -> biggest loss (most negative) first
+  pairs.sort(function(a,b){ return isProfitable ? (b.profit - a.profit) : (a.profit - b.profit); });
+
+  // Formatters (scoped local to this fn)
+  function _fmtDt(d){ if(!d) return "—"; var p=String(d).split("-"); return p.length===3 ? p[2]+"/"+p[1]+"/"+p[0] : d; }
+  function _fmtPrice(v){ if(v==null||isNaN(v)) return "—"; var a=Math.abs(v); if(a>=1e6) return "S$"+(a/1e6).toFixed(2)+"M"; if(a>=1e3) return "S$"+(a/1e3).toFixed(0)+"K"; return "S$"+Math.round(a).toLocaleString(); }
+  function _fmtPL(v){ if(v==null||isNaN(v)) return "—"; var a=Math.abs(v); var sign=v<0?"−":"+"; var col=v<0?"#b71c1c":"#1a6b3c"; var disp; if(a>=1e6) disp=sign+" S$"+(a/1e6).toFixed(2)+"M"; else if(a>=1e3) disp=sign+" S$"+(a/1e3).toFixed(0)+"K"; else disp=sign+" S$"+Math.round(a).toLocaleString(); return '<span style="color:'+col+';font-weight:700">'+disp+'</span>'; }
+  function _fmtAnn(v){ if(v==null||isNaN(v)) return "—"; var col=v<0?"#b71c1c":"#1a6b3c"; return '<span style="color:'+col+'">'+(v>=0?"+":"")+v.toFixed(1)+'%</span>'; }
+  function _fmtHold(v){ if(v==null||isNaN(v)) return "—"; return v.toFixed(1)+"y"; }
+  function _splitAddrUnit(addr){
+    if(!addr) return {addr:"—", unit:""};
+    var m = String(addr).match(/^(.*?)\s*(#\S+)\s*$/);
+    if(m) return {addr:m[1], unit:m[2]};
+    return {addr:String(addr), unit:""};
+  }
+
+  // Header
+  var titleEl = document.getElementById("proj-tx-modal-title");
+  var subEl   = document.getElementById("proj-tx-modal-sub");
+  var icon = isProfitable ? "🏆" : "📉";
+  var lbl  = isProfitable ? "Profitable transactions" : "Unprofitable transactions";
+  var sortLbl = isProfitable ? "highest profit first" : "biggest loss first";
+  if(titleEl) titleEl.textContent = icon+" "+g.project_name+" · "+lbl;
+  if(subEl)   subEl.textContent   = pairs.length+" transactions · sorted by "+sortLbl;
+
+  // Body
+  var body = document.getElementById("proj-tx-modal-body");
+  if(body){
+    if(!pairs.length){
+      body.innerHTML = '<tr><td colspan="8" style="text-align:center;color:var(--mut);padding:24px;font-size:12px">No transactions in this category</td></tr>';
+    } else {
+      body.innerHTML = pairs.map(function(p, i){
+        var au = _splitAddrUnit(p.address);
+        var stripe = i%2===0 ? "" : "background:rgba(0,0,0,.02);";
+        return '<tr style="'+stripe+'">'
+          +'<td style="padding:8px 10px;border-bottom:1px solid var(--bdr);font-size:11px;color:var(--txt);white-space:nowrap" class="mono">'+_fmtDt(p.sell_date)+'</td>'
+          +'<td style="padding:8px 10px;border-bottom:1px solid var(--bdr);font-size:11px;color:var(--txt)">'+(au.addr||"—")+'</td>'
+          +'<td style="padding:8px 10px;border-bottom:1px solid var(--bdr);font-size:11px;color:var(--mut);white-space:nowrap" class="mono">'+(au.unit||"—")+'</td>'
+          +'<td style="padding:8px 10px;border-bottom:1px solid var(--bdr);font-size:11px;text-align:right;color:var(--txt)" class="mono">'+_fmtPrice(p.sell_price)+'</td>'
+          +'<td style="padding:8px 10px;border-bottom:1px solid var(--bdr);font-size:11px;text-align:right;color:var(--mut)" class="mono">'+_fmtPrice(p.buy_price)+'</td>'
+          +'<td style="padding:8px 10px;border-bottom:1px solid var(--bdr);font-size:11px;text-align:right" class="mono">'+_fmtPL(p.profit)+'</td>'
+          +'<td style="padding:8px 10px;border-bottom:1px solid var(--bdr);font-size:11px;text-align:right;color:var(--mut)" class="mono">'+_fmtHold(p.yrs_held)+'</td>'
+          +'<td style="padding:8px 10px;border-bottom:1px solid var(--bdr);font-size:11px;text-align:right" class="mono">'+_fmtAnn(p.ann_return)+'</td>'
+        +'</tr>';
+      }).join("");
+    }
+  }
+
+  // Footer - total
+  var totalPL = pairs.reduce(function(s,p){ return s + (p.profit||0); }, 0);
+  var foot = document.getElementById("proj-tx-modal-foot");
+  if(foot){
+    var totLbl = isProfitable ? "Total profit" : "Total loss";
+    foot.innerHTML = totLbl+": "+_fmtPL(totalPL);
+  }
+
+  var modal = document.getElementById("proj-tx-modal");
+  if(modal) modal.style.display = "flex";
+}
+
+function projCloseTxModal(){
+  var modal = document.getElementById("proj-tx-modal");
+  if(modal) modal.style.display = "none";
+}
+// ESC key closes modal
+document.addEventListener("keydown", function(e){
+  if(e.key === "Escape"){
+    var m = document.getElementById("proj-tx-modal");
+    if(m && m.style.display !== "none") projCloseTxModal();
+  }
+});
 
 function projGoPage(key, page){
   if(key==='Profit'){
