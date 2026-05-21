@@ -3,6 +3,37 @@
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<!-- v48.109 (21 May 2026, session 37): Profit/Loss server-side materialized view (Option B).
+     Tony post-deploy on v48.108: progressive feedback helped UX but All Time / Last 5 Years still
+     spent minutes fetching 30k+ rows. v48.108 frontend optimization had reached its ceiling.
+     SERVER-SIDE FIX (frontend + SQL migration):
+       SQL migration (manual run in Supabase SQL Editor — file: v48_109_pnl_pairs_mv.sql):
+         - CREATE MATERIALIZED VIEW pnl_pairs_mv: pre-computed buy↔sell pairs via LAG()
+           over a partition keyed on (UPPER(TRIM(project_name)), UPPER(TRIM(address)),
+           ROUND(area_sqft/5)*5). Replicates v48.108 client-side matching exactly.
+         - Indexes: sell_date DESC, property_type, profit DESC, unique (sell_id, buy_id) for
+           REFRESH CONCURRENTLY.
+         - refresh_pnl_pairs() SECURITY DEFINER function — call after each URA upload
+           (Tony's chosen cadence: manual, per Option A discussion. Twice-weekly URA uploads).
+         - GRANT SELECT to anon + authenticated. EXECUTE revoked from both (admin-only refresh).
+       Frontend (this deploy):
+         - New pnlLoadData() tries the MV path: single paginated SELECT, ~441 rows per
+           Last 6 Months window instead of 30k+ rows + 175 batches.
+         - Fallback: the v48.108 client-side path is preserved as pnlLoadDataClientFallback().
+           If the MV query 404s (migration not yet run) or any error fires, the fallback runs
+           — launch-safe regardless of migration timing.
+         - Cache key bumped to pnl_cache_v2_* (invalidates v48.108 cache entries whose shape
+           may differ minutely from MV-derived rows). 30-min TTL, 4MB size guard preserved.
+         - PNL_ABORT empty when MV path succeeds (Aborted UI was removed in v48.105). If/when
+           Aborted tab is resurrected, add a sibling pnl_aborts_mv view.
+     OPERATIONAL NOTE: after running v48_109_pnl_pairs_mv.sql once, refresh after each URA
+     upload via:   SELECT refresh_pnl_pairs();
+     Expected impact: All Time load drops from ~minutes to ~1 second. Last 5 Years ~1s.
+     Last 6 Months effectively instant. Repeat loads of any preset are still instant via cache.
+     L270 cascade audit: no CSS rules edited. L271: no imported selectors touched.
+     v48.105/106/107/108 base preserved: shared filter bar, KPI partition logic, case-insensitive
+     Type filter, sortable columns, From/To range, autocomplete, empty-state recovery,
+     pager-stale fix, progressive feedback. -->
 <!-- v48.108 (21 May 2026, session 37): Profit/Loss load-time optimization (3-part: cache + batch tuning + progress feedback).
      Tony post-deploy concern on v48.107: loading "Last 5 Years" took uncomfortably long (>1 min).
      Phase 2 was fetching buy-legs for 11,537 unique addresses in 230 parallel requests, queued 6-at-a-time
@@ -18067,6 +18098,142 @@ function pnlHide(id){
 
 
 async function pnlLoadData(){
+  // v48.109: Server-side materialized view path. Falls back to v48.108 client-side
+  // matching if the view doesn't exist or the query fails (graceful degradation).
+  pnlLoaded = false;
+  pnlHide('pnl-tabs-wrap'); pnlHide('pnl-stats'); pnlHide('pnl-filter-bar'); pnlHide('pnl-empty');
+  pnlShow('pnl-loading');
+  document.getElementById('pnl-load-btn').disabled = true;
+
+  var presetVal = document.getElementById('pnl-period-filter').value;
+  var periodYrs = parseFloat(presetVal);
+  var fromDate  = '';
+  if(periodYrs > 0){
+    var d = new Date();
+    d.setTime(d.getTime() - periodYrs * 365.25 * 24 * 60 * 60 * 1000);
+    fromDate = d.toISOString().slice(0,10);
+  }
+
+  // SessionStorage cache (same key shape as v48.108 for backwards compatibility)
+  var CACHE_KEY    = 'pnl_cache_v2_' + presetVal;  // v2 to invalidate v48.108 cache entries that lack newer fields
+  var CACHE_TTL_MS = 30 * 60 * 1000;
+  var forceRefresh = window.pnlForceRefresh === true;
+  window.pnlForceRefresh = false;
+
+  if(!forceRefresh){
+    try {
+      var cached = sessionStorage.getItem(CACHE_KEY);
+      if(cached){
+        var blob = JSON.parse(cached);
+        if(blob && blob.t && (Date.now() - blob.t) < CACHE_TTL_MS && Array.isArray(blob.pairs)){
+          document.getElementById('pnl-progress').textContent =
+            'Loaded from cache (' + blob.pairs.length.toLocaleString() + ' matched pairs)';
+          PNL_PAIRS = blob.pairs;
+          PNL_ABORT = Array.isArray(blob.abort) ? blob.abort : [];
+          pnlLoaded = true;
+          pnlActiveSection = 'profit';
+          document.getElementById('pnl-load-btn').disabled = false;
+          var expBtnC = document.getElementById('pnl-export-btn');
+          if(expBtnC) expBtnC.style.display = '';
+          pnlHide('pnl-loading');
+          pnlApplyFilters();
+          return;
+        }
+      }
+    } catch(e){ /* cache parse fail → live fetch */ }
+  }
+
+  var SB_HDR = {'apikey':SB_KEY,'Authorization':'Bearer '+SB_KEY,'Prefer':'count=none'};
+
+  // ── Try server-side materialized view path ──
+  try {
+    document.getElementById('pnl-progress').textContent = 'Loading from server-side view…';
+    var mvCols = 'sell_id,buy_id,sell_date,buy_date,project_name,address,property_type,sell_price,buy_price,sell_type,buy_type,area_sqft,psf_sell,psf_buy,postal_district,planning_region,profit,yrs_held,ann_return';
+    var dateFilter = fromDate ? '&sell_date=gte.'+fromDate : '';
+    var mvPairs = [];
+    var limit = 10000, offset = 0;
+    while(offset < 100000){
+      var url = SB_URL+'/rest/v1/pnl_pairs_mv?select='+mvCols
+        + dateFilter
+        +'&order=sell_date.desc&limit='+limit+'&offset='+offset;
+      var res = await fetch(url, {headers:SB_HDR});
+      if(!res.ok){
+        // 404 = view doesn't exist yet; any other error = fall through too
+        throw new Error('MV path returned HTTP '+res.status);
+      }
+      var rows = await res.json();
+      if(!Array.isArray(rows)) throw new Error('MV path returned non-array');
+      if(!rows.length) break;
+      mvPairs = mvPairs.concat(rows);
+      document.getElementById('pnl-progress').textContent =
+        'Loaded ' + mvPairs.length.toLocaleString() + ' matched pairs…';
+      if(rows.length < limit) break;
+      offset += limit;
+    }
+
+    // Map MV column names to the PNL_PAIRS shape that pnlApplyFilters / pnlRenderTable expect
+    PNL_PAIRS = mvPairs.map(function(r){
+      return {
+        sell_date:       r.sell_date,
+        buy_date:        r.buy_date,
+        project_name:    r.project_name,
+        address:         r.address,
+        property_type:   r.property_type,
+        buy_price:       Number(r.buy_price),
+        sell_price:      Number(r.sell_price),
+        buy_type:        r.buy_type,
+        sell_type:       r.sell_type,
+        profit:          Number(r.profit),
+        ann_return:      Number(r.ann_return),
+        yrs_held:        Number(r.yrs_held),
+        area_sqft:       r.area_sqft,
+        psf_sell:        r.psf_sell,
+        psf_buy:         r.psf_buy,
+        postal_district: r.postal_district,
+        planning_region: r.planning_region
+      };
+    });
+    // MV does not compute the Aborted (resold) set. Leave empty — UI surface for Aborted
+    // was removed in v48.105 so this has no user-visible effect. If/when the Aborted tab is
+    // resurrected, a second MV (pnl_aborts_mv) can be added.
+    PNL_ABORT = [];
+
+    document.getElementById('pnl-progress').textContent =
+      'Loaded ' + PNL_PAIRS.length.toLocaleString() + ' matched pairs from server view';
+
+    // Write cache (size-guarded ~4MB to leave headroom under 5MB sessionStorage limit)
+    try {
+      var payload = JSON.stringify({t: Date.now(), pairs: PNL_PAIRS, abort: PNL_ABORT});
+      if(payload.length < 4 * 1024 * 1024){
+        sessionStorage.setItem(CACHE_KEY, payload);
+      } else {
+        try { sessionStorage.removeItem(CACHE_KEY); } catch(e){}
+      }
+    } catch(e){
+      try { sessionStorage.removeItem(CACHE_KEY); } catch(e2){}
+    }
+
+    pnlLoaded = true;
+    pnlActiveSection = 'profit';
+    document.getElementById('pnl-load-btn').disabled = false;
+    var expBtn = document.getElementById('pnl-export-btn');
+    if(expBtn) expBtn.style.display = '';
+    pnlHide('pnl-loading');
+    pnlApplyFilters();
+    return;
+
+  } catch(mvErr){
+    // Server view path failed — log it and fall back to the v48.108 client-side path.
+    // Reasons this might fire: view not yet created (migration not run), RLS denying anon,
+    // network glitch, schema mismatch. Fallback keeps the launch safe.
+    console.warn('[v48.109] MV path failed, falling back to client-side matching:', mvErr.message);
+    document.getElementById('pnl-progress').textContent =
+      'Server view unavailable — falling back to client-side matching…';
+    return pnlLoadDataClientFallback();
+  }
+}
+
+async function pnlLoadDataClientFallback(){
   pnlLoaded = false;
   pnlHide('pnl-tabs-wrap'); pnlHide('pnl-stats'); pnlHide('pnl-filter-bar'); pnlHide('pnl-empty');
   pnlShow('pnl-loading');
