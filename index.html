@@ -3,6 +3,33 @@
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<!-- v48.108 (21 May 2026, session 37): Profit/Loss load-time optimization (3-part: cache + batch tuning + progress feedback).
+     Tony post-deploy concern on v48.107: loading "Last 5 Years" took uncomfortably long (>1 min).
+     Phase 2 was fetching buy-legs for 11,537 unique addresses in 230 parallel requests, queued 6-at-a-time
+     by the browser's per-origin connection cap, with no in-flight progress feedback.
+     OPTIMIZATIONS (no DB schema changes — pure frontend):
+     (A) SessionStorage cache. Key = preset value ('0.5'/'1'/'5'/'10'/'0'). TTL = 30 min.
+         Cache hit → instant load, no network. Cache miss → live fetch, then write.
+         Size-guarded at 4MB to stay under the 5MB sessionStorage soft cap.
+         Explicit Load Data button click sets window.pnlForceRefresh=true to bypass cache.
+         Preset dropdown onchange still goes through cache (so switching between presets the user has
+         already loaded is instant).
+     (D) Batch tuning. Phase 2 batchSize raised 50 → 200 addresses per request (4× fewer requests).
+         Also: changed Promise.all-all-at-once into sequential waves of 6 concurrent batches.
+         Matches the browser's per-origin connection cap without over-queueing.
+         Per-batch limit raised 5000 → 10000 rows to handle larger batch sizes.
+     (E) Progressive feedback. Phase 1 emits 'N sell candidates fetched…' updating each 1k-row page.
+         Phase 2 emits 'M / N batches (rows so far)…' updating after each wave of 6.
+         User sees movement throughout instead of staring at static text.
+     KEPT FOR POST-BETA (v48.110+):
+     (B) Server-side materialised view. Right architectural fix — DB pre-pairs buy/sell rows,
+         frontend fetches ~441 already-matched pairs instead of doing the join client-side.
+         Deferred because it requires SQL migration + RLS review + refresh cadence policy —
+         too risky 4 days before beta launch.
+     L270 cascade audit: no CSS rules edited. L271: no imported selectors touched.
+     v48.105/v48.106/v48.107 base preserved: shared filter bar, KPI partition logic, case-insensitive
+     Type filter via fmtPropType, sortable Date+Price columns, From/To range pickers, project
+     autocomplete, structural empty-state recovery, pager-stale fix. -->
 <!-- v48.107 (21 May 2026, session 37): Type filter case fix + pager stale fix + duplicate dropdown removal.
      Tony post-deploy feedback on v48.106:
        (1) Ticking any combination of Type checkboxes (Office / Retail / Shophouse / etc) returned 0 results.
@@ -2991,7 +3018,7 @@ body.article-takeover .ed-foot{display:none!important}
             <input type="date" id="pnl-date-to" onchange="pnlApplyFilters()" style="font-size:11px;border:none;background:transparent;color:var(--txt);padding:0 2px;outline:none;width:120px">
             <button onclick="pnlClearDateRange()" title="Clear date range (revert to preset window)" style="border:none;background:none;cursor:pointer;color:var(--mut);font-size:12px;padding:0 2px;line-height:1">✕</button>
           </div>
-          <button id="pnl-load-btn" onclick="pnlLoadData()" style="font-size:11px;padding:5px 12px;background:var(--g1);color:#fff;border:none;border-radius:6px;cursor:pointer;font-weight:600">Load Data</button>
+          <button id="pnl-load-btn" onclick="window.pnlForceRefresh=true;pnlLoadData()" style="font-size:11px;padding:5px 12px;background:var(--g1);color:#fff;border:none;border-radius:6px;cursor:pointer;font-weight:600">Load Data</button>
           <button id="pnl-export-btn" onclick="pnlExportCSV()" style="display:none;font-size:11px;padding:5px 12px;background:var(--srf2);color:var(--txt);border:1px solid var(--bdr);border-radius:6px;cursor:pointer">&#8659; Export CSV</button>
         </div>
       </div>
@@ -18045,7 +18072,8 @@ async function pnlLoadData(){
   pnlShow('pnl-loading');
   document.getElementById('pnl-load-btn').disabled = true;
 
-  var periodYrs = parseFloat(document.getElementById('pnl-period-filter').value);
+  var presetVal = document.getElementById('pnl-period-filter').value;
+  var periodYrs = parseFloat(presetVal);
   var fromDate  = '';
   if(periodYrs > 0){
     var d = new Date();
@@ -18053,12 +18081,39 @@ async function pnlLoadData(){
     fromDate = d.toISOString().slice(0,10);
   }
 
+  // v48.108 OPT A: SessionStorage cache. Key = preset value. TTL = 30 min.
+  // window.pnlForceRefresh flag bypasses cache (set by explicit Load Data button).
+  var CACHE_KEY    = 'pnl_cache_v1_' + presetVal;
+  var CACHE_TTL_MS = 30 * 60 * 1000;
+  var forceRefresh = window.pnlForceRefresh === true;
+  window.pnlForceRefresh = false;
+
+  if(!forceRefresh){
+    try {
+      var cached = sessionStorage.getItem(CACHE_KEY);
+      if(cached){
+        var blob = JSON.parse(cached);
+        if(blob && blob.t && (Date.now() - blob.t) < CACHE_TTL_MS && Array.isArray(blob.pairs) && Array.isArray(blob.abort)){
+          document.getElementById('pnl-progress').textContent = 'Loaded from cache (' + blob.pairs.length.toLocaleString() + ' matched pairs)';
+          PNL_PAIRS = blob.pairs;
+          PNL_ABORT = blob.abort;
+          pnlLoaded = true;
+          pnlActiveSection = 'profit';
+          document.getElementById('pnl-load-btn').disabled = false;
+          var expBtnC = document.getElementById('pnl-export-btn');
+          if(expBtnC) expBtnC.style.display = '';
+          pnlHide('pnl-loading');
+          pnlApplyFilters();
+          return;
+        }
+      }
+    } catch(e){ /* cache parse failure: fall through to live fetch */ }
+  }
+
   var SB_HDR = {'apikey':SB_KEY,'Authorization':'Bearer '+SB_KEY,'Prefer':'count=none'};
   var cols = 'id,project_name,address,area_sqft,transacted_price,sale_date,type_of_sale,property_type,unit_price_psf,postal_district,planning_region';
 
   try {
-    // ── PHASE 1: fetch sell-leg candidates within the period ──
-    // Only non-New-Sale transactions on or after fromDate.
     document.getElementById('pnl-progress').textContent = 'Phase 1: fetching recent transactions…';
     var sellRows = [];
     var dateFilter = fromDate ? '&sale_date=gte.'+fromDate : '';
@@ -18073,48 +18128,57 @@ async function pnlLoadData(){
       var rows = await res.json();
       if(!Array.isArray(rows)||!rows.length) break;
       sellRows = sellRows.concat(rows);
+      // v48.108 OPT E: progressive feedback during pagination
+      document.getElementById('pnl-progress').textContent =
+        'Phase 1: ' + sellRows.length.toLocaleString() + ' sell candidates fetched…';
       if(rows.length < limit) break;
       offset += limit;
     }
-    document.getElementById('pnl-progress').textContent = 'Phase 1 done: '+sellRows.length.toLocaleString()+' sell candidates. Phase 2: fetching buy legs…';
+    document.getElementById('pnl-progress').textContent =
+      'Phase 1 complete: ' + sellRows.length.toLocaleString() + ' sell candidates. Starting Phase 2…';
 
-    // ── PHASE 2: collect unique addresses, fetch all txns in parallel batches ──
     var addrSet = {};
     sellRows.forEach(function(r){
       if(r.address) addrSet[r.address.trim()] = true;
     });
     var addrs = Object.keys(addrSet);
 
-    document.getElementById('pnl-progress').textContent =
-      'Phase 2: fetching buy legs for '+addrs.length+' addresses…';
-
-    var batchSize = 50;
+    // v48.108 OPT D: batch size 50 → 200 (4× fewer requests).
+    // Sequential waves of 6 concurrent batches (matches browser per-origin connection cap).
+    var batchSize = 200;
     var batches = [];
     for(var i = 0; i < addrs.length; i += batchSize){
       batches.push(addrs.slice(i, i + batchSize));
     }
-
-    // Run all batches in parallel
-    var batchResults = await Promise.all(batches.map(function(batch){
-      var inList = batch.map(function(a){ return '"'+a.replace(/"/g,'\\"')+'"'; }).join(',');
-      var bUrl = SB_URL+'/rest/v1/transactions?select='+cols
-        +'&address=in.('+encodeURIComponent(inList)+')'
-        +'&order=id.asc&limit=5000';
-      return fetch(bUrl, {headers:SB_HDR})
-        .then(function(r){ return r.ok ? r.json() : []; })
-        .catch(function(){ return []; });
-    }));
-
+    var WAVE = 6;
     var buyRows = [];
-    batchResults.forEach(function(rows){ if(Array.isArray(rows)) buyRows = buyRows.concat(rows); });
+    var batchesDone = 0;
 
-    // ── Merge: deduplicate by id ──
-    document.getElementById('pnl-progress').textContent = 'Matching…';
+    document.getElementById('pnl-progress').textContent =
+      'Phase 2: 0 / ' + batches.length + ' batches (' + addrs.length.toLocaleString() + ' addresses)…';
+
+    for(var w = 0; w < batches.length; w += WAVE){
+      var wave = batches.slice(w, w + WAVE);
+      var waveResults = await Promise.all(wave.map(function(batch){
+        var inList = batch.map(function(a){ return '"'+a.replace(/"/g,'\\"')+'"'; }).join(',');
+        var bUrl = SB_URL+'/rest/v1/transactions?select='+cols
+          +'&address=in.('+encodeURIComponent(inList)+')'
+          +'&order=id.asc&limit=10000';
+        return fetch(bUrl, {headers:SB_HDR})
+          .then(function(r){ return r.ok ? r.json() : []; })
+          .catch(function(){ return []; });
+      }));
+      waveResults.forEach(function(rows){ if(Array.isArray(rows)) buyRows = buyRows.concat(rows); });
+      batchesDone += wave.length;
+      document.getElementById('pnl-progress').textContent =
+        'Phase 2: ' + batchesDone + ' / ' + batches.length + ' batches (' + buyRows.length.toLocaleString() + ' rows)…';
+    }
+
+    document.getElementById('pnl-progress').textContent = 'Matching buy↔sell pairs…';
     var allById = {};
     sellRows.concat(buyRows).forEach(function(r){ allById[r.id] = r; });
     var allRows = Object.values(allById);
 
-    // ── GROUP BY: project_name + address + area_sqft (rounded to nearest 5 sqft) ──
     var byKey = {};
     allRows.forEach(function(r){
       if(!r.project_name || !r.address || !r.area_sqft) return;
@@ -18137,8 +18201,6 @@ async function pnlLoadData(){
       for(var j = 1; j < txs.length; j++){
         var sell = txs[j];
         var buy  = txs[j-1];
-        // Skip if sell leg is New Sale — developer selling, no prior resale owner to compute P&L for
-        // Sub Sales are valid sell legs (sold before CSC — normal early exit)
         if(sell.type_of_sale === 'New Sale') continue;
         if(!buy.transacted_price || !sell.transacted_price) continue;
         var daysHeld = (new Date(sell.sale_date) - new Date(buy.sale_date)) / 86400000;
@@ -18167,9 +18229,6 @@ async function pnlLoadData(){
         });
       }
 
-      // ── Aborted: same unit sold as New Sale MORE THAN ONCE ──
-      // Developer sold unit, original buyer backed out (forfeited deposit),
-      // developer re-sold same unit as New Sale again.
       var newSales = txs.filter(function(t){ return t.type_of_sale === 'New Sale'; });
       if(newSales.length >= 2){
         for(var n = 1; n < newSales.length; n++){
@@ -18193,6 +18252,18 @@ async function pnlLoadData(){
         }
       }
     });
+
+    // v48.108 OPT A: write cache (size-guarded ~4MB to leave headroom under 5MB sessionStorage limit)
+    try {
+      var payload = JSON.stringify({t: Date.now(), pairs: PNL_PAIRS, abort: PNL_ABORT});
+      if(payload.length < 4 * 1024 * 1024){
+        sessionStorage.setItem(CACHE_KEY, payload);
+      } else {
+        try { sessionStorage.removeItem(CACHE_KEY); } catch(e){}
+      }
+    } catch(e){
+      try { sessionStorage.removeItem(CACHE_KEY); } catch(e2){}
+    }
 
   } catch(e){
     document.getElementById('pnl-progress').textContent = 'Error: '+e.message;
