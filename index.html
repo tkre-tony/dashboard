@@ -3,6 +3,19 @@
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<!-- v48.104 (21 May 2026, session 37): Profit/Loss table column reorder.
+     Tony spec: new order = Date / Project-Address / Buy→Sell / PSF Sold / Area / Type / Type of Sale / Profit-Loss / Ann.Return / Yrs Held.
+     Three coordinated edits per L243 cascade discipline:
+     (a) Profit thead + filter row reordered to new 10-col sequence.
+     (b) Loss thead + filter row reordered identically.
+     (c) pnlRenderTable body cells reordered to match new header sequence (same renderer powers both Profitable + Unprofitable tabs).
+     Two structural changes per spec:
+     - Buy→Sell filter cell now stacks Min/Max inputs vertically (display:block; width:100%; margin-bottom:3px on Min).
+     - PSF column header renamed "PSF Sell" → "PSF Sold". Internal sort key (psf_sell) preserved — it's a field name, not the label.
+     L270 cascade audit run before edit: confirmed no positional CSS depends on column index (3 nth-child uses in file are .ptable zebra-stripe + chat typing dots, all column-independent). Safe to reorder.
+     CSV export (function pnlExportCSV @~2062k) intentionally untouched — it's a downstream contract with its own column order including PSF Buy + District + Region.
+     Type-of-Sale dropdown anchor changed from right:0 to left:0 (no longer last column).
+     Pill cascade per v48.103 unchanged. -->
 <!-- v48.103 (20 May 2026, session 36): Card pill clip-bug RIGHT fix (L262 fix-arc).
      Tony reported clip persisted post-v48.102 even in fresh incognito. Investigation:
      pixel-sampled the gold pill background (RGB ~167/126/60 ~= --bronze #A67C3A),
@@ -2962,17 +2975,20 @@ body.article-takeover .ed-foot{display:none!important}
           <div style="overflow-x:auto;border-radius:6px;border:1px solid var(--bdr)">
             <table class="ptable" id="pnl-tbl-profit">
               <thead><tr>
-                <th>Date</th><th>Project / Address</th><th>Type</th><th>Buy &#8594; Sell (S$)</th>
+                <th>Date</th><th>Project / Address</th><th style="white-space:nowrap">Buy &#8594; Sell (S$)</th><th style="cursor:pointer;user-select:none" onclick="pnlSortBy('profit','psf_sell')">PSF Sold <span id="pnl-sort-profit-psf_sell"></span></th><th style="cursor:pointer;user-select:none" onclick="pnlSortBy('profit','area_sqft')">Area (sqft) <span id="pnl-sort-profit-area_sqft"></span></th><th>Type</th><th>Type of Sale</th>
                 <th style="cursor:pointer;user-select:none" onclick="pnlSortBy('profit','profit')">Profit / Loss <span id="pnl-sort-profit-profit"></span></th>
                 <th style="cursor:pointer;user-select:none" onclick="pnlSortBy('profit','ann_return')">Ann. Return <span id="pnl-sort-profit-ann_return"></span></th>
                 <th style="cursor:pointer;user-select:none" onclick="pnlSortBy('profit','yrs_held')">Yrs Held <span id="pnl-sort-profit-yrs_held"></span></th>
-                <th style="cursor:pointer;user-select:none" onclick="pnlSortBy('profit','area_sqft')">Area (sqft) <span id="pnl-sort-profit-area_sqft"></span></th>
-                <th style="cursor:pointer;user-select:none" onclick="pnlSortBy('profit','psf_sell')">PSF Sell <span id="pnl-sort-profit-psf_sell"></span></th>
-                <th>Type of Sale</th>
               </tr>
               <tr style="background:var(--srf2)">
                 <td style="padding:4px 6px"></td>
                 <td style="padding:4px 6px"><input id="pnl-f-project" placeholder="Project / address..." oninput="pnlApplyFilters()" style="width:100%;padding:3px 6px;font-size:10px;border:1px solid var(--bdr);border-radius:4px;background:var(--srf);color:var(--txt)"></td>
+                <td style="padding:4px 6px;white-space:nowrap">
+                  <input id="pnl-f-price-min" placeholder="Min S$" oninput="pnlApplyFilters()" style="display:block;width:100%;padding:3px 4px;font-size:10px;border:1px solid var(--bdr);border-radius:4px;background:var(--srf);color:var(--txt);font-family:'DM Mono',monospace;margin-bottom:3px">
+                  <input id="pnl-f-price-max" placeholder="Max S$" oninput="pnlApplyFilters()" style="display:block;width:100%;padding:3px 4px;font-size:10px;border:1px solid var(--bdr);border-radius:4px;background:var(--srf);color:var(--txt);font-family:'DM Mono',monospace">
+                </td>
+                <td style="padding:4px 6px;text-align:center;font-size:10px;color:var(--mut)">click &#8597;</td>
+                <td style="padding:4px 6px;text-align:center;font-size:10px;color:var(--mut)">click &#8597;</td>
                 <td style="padding:4px 6px;position:relative">
                   <button id="pnl-f-type-btn" onclick="pnlToggleColDrop('type')" style="width:100%;padding:3px 6px;font-size:10px;border:1px solid var(--bdr);border-radius:4px;background:var(--srf);color:var(--txt);cursor:pointer;text-align:left;white-space:nowrap">All &#9660;</button>
                   <div id="pnl-f-type-drop" style="display:none;position:absolute;top:100%;left:0;z-index:999;background:var(--srf);border:1px solid var(--bdr);border-radius:4px;min-width:150px;box-shadow:0 4px 12px rgba(0,0,0,.12);padding:4px 0">
@@ -2985,23 +3001,17 @@ body.article-takeover .ed-foot{display:none!important}
                     <label style="display:flex;align-items:center;gap:6px;padding:4px 10px;font-size:11px;cursor:pointer;white-space:nowrap"><input type="checkbox" value="Warehouse" onchange="pnlColDropChange('type')"> Warehouse</label>
                   </div>
                 </td>
-                <td style="padding:4px 6px;white-space:nowrap">
-                  <input id="pnl-f-price-min" placeholder="Min S$" oninput="pnlApplyFilters()" style="width:47%;padding:3px 4px;font-size:10px;border:1px solid var(--bdr);border-radius:4px;background:var(--srf);color:var(--txt);font-family:'DM Mono',monospace">
-                  <input id="pnl-f-price-max" placeholder="Max S$" oninput="pnlApplyFilters()" style="width:47%;padding:3px 4px;font-size:10px;border:1px solid var(--bdr);border-radius:4px;background:var(--srf);color:var(--txt);font-family:'DM Mono',monospace">
-                </td>
-                <td style="padding:4px 6px;text-align:center;font-size:10px;color:var(--mut)">click &#8597;</td>
-                <td style="padding:4px 6px;text-align:center;font-size:10px;color:var(--mut)">click &#8597;</td>
-                <td style="padding:4px 6px;text-align:center;font-size:10px;color:var(--mut)">click &#8597;</td>
-                <td style="padding:4px 6px;text-align:center;font-size:10px;color:var(--mut)">click &#8597;</td>
-                <td style="padding:4px 6px;text-align:center;font-size:10px;color:var(--mut)">click &#8597;</td>
                 <td style="padding:4px 6px;position:relative">
                   <button id="pnl-f-entry-btn" onclick="pnlToggleColDrop('entry')" style="width:100%;padding:3px 6px;font-size:10px;border:1px solid var(--bdr);border-radius:4px;background:var(--srf);color:var(--txt);cursor:pointer;text-align:left;white-space:nowrap">All &#9660;</button>
-                  <div id="pnl-f-entry-drop" style="display:none;position:absolute;top:100%;right:0;z-index:999;background:var(--srf);border:1px solid var(--bdr);border-radius:4px;min-width:130px;box-shadow:0 4px 12px rgba(0,0,0,.12);padding:4px 0">
+                  <div id="pnl-f-entry-drop" style="display:none;position:absolute;top:100%;left:0;z-index:999;background:var(--srf);border:1px solid var(--bdr);border-radius:4px;min-width:130px;box-shadow:0 4px 12px rgba(0,0,0,.12);padding:4px 0">
                     <label style="display:flex;align-items:center;gap:6px;padding:4px 10px;font-size:11px;cursor:pointer;white-space:nowrap"><input type="checkbox" value="New Sale" onchange="pnlColDropChange('entry')"> New Sale</label>
                     <label style="display:flex;align-items:center;gap:6px;padding:4px 10px;font-size:11px;cursor:pointer;white-space:nowrap"><input type="checkbox" value="Resale" onchange="pnlColDropChange('entry')"> Resale</label>
                     <label style="display:flex;align-items:center;gap:6px;padding:4px 10px;font-size:11px;cursor:pointer;white-space:nowrap"><input type="checkbox" value="Sub Sale" onchange="pnlColDropChange('entry')"> Sub Sale</label>
                   </div>
                 </td>
+                <td style="padding:4px 6px;text-align:center;font-size:10px;color:var(--mut)">click &#8597;</td>
+                <td style="padding:4px 6px;text-align:center;font-size:10px;color:var(--mut)">click &#8597;</td>
+                <td style="padding:4px 6px;text-align:center;font-size:10px;color:var(--mut)">click &#8597;</td>
               </tr></thead>
               <tbody id="pnl-tbody-profit"></tbody>
             </table>
@@ -3014,17 +3024,20 @@ body.article-takeover .ed-foot{display:none!important}
           <div style="overflow-x:auto;border-radius:6px;border:1px solid var(--bdr)">
             <table class="ptable" id="pnl-tbl-loss">
               <thead><tr>
-                <th>Date</th><th>Project / Address</th><th>Type</th><th>Buy &#8594; Sell (S$)</th>
+                <th>Date</th><th>Project / Address</th><th style="white-space:nowrap">Buy &#8594; Sell (S$)</th><th style="cursor:pointer;user-select:none" onclick="pnlSortBy('loss','psf_sell')">PSF Sold <span id="pnl-sort-loss-psf_sell"></span></th><th style="cursor:pointer;user-select:none" onclick="pnlSortBy('loss','area_sqft')">Area (sqft) <span id="pnl-sort-loss-area_sqft"></span></th><th>Type</th><th>Type of Sale</th>
                 <th style="cursor:pointer;user-select:none" onclick="pnlSortBy('loss','profit')">Profit / Loss <span id="pnl-sort-loss-profit"></span></th>
                 <th style="cursor:pointer;user-select:none" onclick="pnlSortBy('loss','ann_return')">Ann. Return <span id="pnl-sort-loss-ann_return"></span></th>
                 <th style="cursor:pointer;user-select:none" onclick="pnlSortBy('loss','yrs_held')">Yrs Held <span id="pnl-sort-loss-yrs_held"></span></th>
-                <th style="cursor:pointer;user-select:none" onclick="pnlSortBy('loss','area_sqft')">Area (sqft) <span id="pnl-sort-loss-area_sqft"></span></th>
-                <th style="cursor:pointer;user-select:none" onclick="pnlSortBy('loss','psf_sell')">PSF Sell <span id="pnl-sort-loss-psf_sell"></span></th>
-                <th>Type of Sale</th>
               </tr>
               <tr style="background:var(--srf2)">
                 <td style="padding:4px 6px"></td>
                 <td style="padding:4px 6px"><input id="pnl-f-project-loss" placeholder="Project / address..." oninput="pnlApplyFilters()" style="width:100%;padding:3px 6px;font-size:10px;border:1px solid var(--bdr);border-radius:4px;background:var(--srf);color:var(--txt)"></td>
+                <td style="padding:4px 6px;white-space:nowrap">
+                  <input id="pnl-f-price-min-loss" placeholder="Min S$" oninput="pnlApplyFilters()" style="display:block;width:100%;padding:3px 4px;font-size:10px;border:1px solid var(--bdr);border-radius:4px;background:var(--srf);color:var(--txt);font-family:'DM Mono',monospace;margin-bottom:3px">
+                  <input id="pnl-f-price-max-loss" placeholder="Max S$" oninput="pnlApplyFilters()" style="display:block;width:100%;padding:3px 4px;font-size:10px;border:1px solid var(--bdr);border-radius:4px;background:var(--srf);color:var(--txt);font-family:'DM Mono',monospace">
+                </td>
+                <td style="padding:4px 6px;text-align:center;font-size:10px;color:var(--mut)">click &#8597;</td>
+                <td style="padding:4px 6px;text-align:center;font-size:10px;color:var(--mut)">click &#8597;</td>
                 <td style="padding:4px 6px;position:relative">
                   <button id="pnl-f-type-btn-loss" onclick="pnlToggleColDrop('type-loss')" style="width:100%;padding:3px 6px;font-size:10px;border:1px solid var(--bdr);border-radius:4px;background:var(--srf);color:var(--txt);cursor:pointer;text-align:left;white-space:nowrap">All &#9660;</button>
                   <div id="pnl-f-type-drop-loss" style="display:none;position:absolute;top:100%;left:0;z-index:999;background:var(--srf);border:1px solid var(--bdr);border-radius:4px;min-width:150px;box-shadow:0 4px 12px rgba(0,0,0,.12);padding:4px 0">
@@ -3037,23 +3050,17 @@ body.article-takeover .ed-foot{display:none!important}
                     <label style="display:flex;align-items:center;gap:6px;padding:4px 10px;font-size:11px;cursor:pointer;white-space:nowrap"><input type="checkbox" value="Warehouse" onchange="pnlColDropChange('type-loss')"> Warehouse</label>
                   </div>
                 </td>
-                <td style="padding:4px 6px;white-space:nowrap">
-                  <input id="pnl-f-price-min-loss" placeholder="Min S$" oninput="pnlApplyFilters()" style="width:47%;padding:3px 4px;font-size:10px;border:1px solid var(--bdr);border-radius:4px;background:var(--srf);color:var(--txt);font-family:'DM Mono',monospace">
-                  <input id="pnl-f-price-max-loss" placeholder="Max S$" oninput="pnlApplyFilters()" style="width:47%;padding:3px 4px;font-size:10px;border:1px solid var(--bdr);border-radius:4px;background:var(--srf);color:var(--txt);font-family:'DM Mono',monospace">
-                </td>
-                <td style="padding:4px 6px;text-align:center;font-size:10px;color:var(--mut)">click &#8597;</td>
-                <td style="padding:4px 6px;text-align:center;font-size:10px;color:var(--mut)">click &#8597;</td>
-                <td style="padding:4px 6px;text-align:center;font-size:10px;color:var(--mut)">click &#8597;</td>
-                <td style="padding:4px 6px;text-align:center;font-size:10px;color:var(--mut)">click &#8597;</td>
-                <td style="padding:4px 6px;text-align:center;font-size:10px;color:var(--mut)">click &#8597;</td>
                 <td style="padding:4px 6px;position:relative">
                   <button id="pnl-f-entry-btn-loss" onclick="pnlToggleColDrop('entry-loss')" style="width:100%;padding:3px 6px;font-size:10px;border:1px solid var(--bdr);border-radius:4px;background:var(--srf);color:var(--txt);cursor:pointer;text-align:left;white-space:nowrap">All &#9660;</button>
-                  <div id="pnl-f-entry-drop-loss" style="display:none;position:absolute;top:100%;right:0;z-index:999;background:var(--srf);border:1px solid var(--bdr);border-radius:4px;min-width:130px;box-shadow:0 4px 12px rgba(0,0,0,.12);padding:4px 0">
+                  <div id="pnl-f-entry-drop-loss" style="display:none;position:absolute;top:100%;left:0;z-index:999;background:var(--srf);border:1px solid var(--bdr);border-radius:4px;min-width:130px;box-shadow:0 4px 12px rgba(0,0,0,.12);padding:4px 0">
                     <label style="display:flex;align-items:center;gap:6px;padding:4px 10px;font-size:11px;cursor:pointer;white-space:nowrap"><input type="checkbox" value="New Sale" onchange="pnlColDropChange('entry-loss')"> New Sale</label>
                     <label style="display:flex;align-items:center;gap:6px;padding:4px 10px;font-size:11px;cursor:pointer;white-space:nowrap"><input type="checkbox" value="Resale" onchange="pnlColDropChange('entry-loss')"> Resale</label>
                     <label style="display:flex;align-items:center;gap:6px;padding:4px 10px;font-size:11px;cursor:pointer;white-space:nowrap"><input type="checkbox" value="Sub Sale" onchange="pnlColDropChange('entry-loss')"> Sub Sale</label>
                   </div>
                 </td>
+                <td style="padding:4px 6px;text-align:center;font-size:10px;color:var(--mut)">click &#8597;</td>
+                <td style="padding:4px 6px;text-align:center;font-size:10px;color:var(--mut)">click &#8597;</td>
+                <td style="padding:4px 6px;text-align:center;font-size:10px;color:var(--mut)">click &#8597;</td>
               </tr></thead>
               <tbody id="pnl-tbody-loss"></tbody>
             </table>
@@ -18838,33 +18845,40 @@ function pnlRenderTable(sec, rows, page){
       ? '<span class="pill" style="background:#fff3e0;color:#e65100;font-size:9px;white-space:nowrap">Sub Sale</span>'
       : '<span class="pill p-neu" style="font-size:9px;white-space:nowrap">'+(r.sell_type||'—')+'</span>';
     return '<tr style="'+rowStyle+'">'
-      // Date: sell date prominent, BOUGHT label + buy date below. No "SOLD" label.
+      // 1. Date: sell date prominent, BOUGHT label + buy date below.
       +'<td class="mono" style="white-space:nowrap;vertical-align:top">'
         +'<div style="font-size:12px;font-weight:600">'+r.sell_date+'</div>'
         +'<div style="font-size:9px;color:var(--mut2);text-transform:uppercase;letter-spacing:.04em;margin-top:5px;font-family:\'DM Sans\',sans-serif">Bought</div>'
         +'<div style="font-size:11px;color:var(--mut)">'+r.buy_date+'</div>'
       +'</td>'
+      // 2. Project / Address
       +'<td style="vertical-align:top;max-width:180px">'
         +'<div style="font-weight:600;font-size:12px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis" title="'+(r.project_name||'')+'">'+( r.project_name||'—')+'</div>'
         +'<div style="font-size:10px;color:var(--mut);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-top:2px" title="'+(maskAddress(r.address)||'')+'">'+(maskAddress(r.address)||'—')+'</div>'
       +'</td>'
-      +'<td style="vertical-align:top;font-size:10px;line-height:1.25">'+fmtPropTypeHtml(r.property_type||'—')+'</td>'
-      // Buy→Sell: sell price (current, bold) on top; buy price (muted) below
+      // 3. Buy→Sell: sell price (current, bold) on top; buy price (muted) below
       +'<td class="mono" style="white-space:nowrap;vertical-align:top">'
         +'<div style="font-size:12px;font-weight:600">'+fmtFull(r.sell_price)+'</div>'
         +'<div style="font-size:11px;color:var(--mut);margin-top:2px">'+fmtFull(r.buy_price)+'</div>'
       +'</td>'
-      +'<td class="mono" style="color:'+profitCol+';font-weight:700;white-space:nowrap;vertical-align:top">'+fmtPL(r.profit)+'</td>'
-      +'<td class="mono" style="color:'+annCol+';white-space:nowrap;vertical-align:top">'+annSign+r.ann_return.toFixed(1)+'%</td>'
-      +'<td class="mono" style="vertical-align:top">'+r.yrs_held.toFixed(1)+'</td>'
-      +'<td class="mono" style="vertical-align:top">'+(r.area_sqft ? Math.round(r.area_sqft).toLocaleString() : '—')+'</td>'
-      // PSF: sell PSF on top, "Bought" label, buy PSF below
+      // 4. PSF Sold: sell PSF on top, "Bought" label, buy PSF below
       +'<td class="mono" style="white-space:nowrap;vertical-align:top">'
         +'<div style="font-size:12px">'+(r.psf_sell ? 'S$'+Math.round(r.psf_sell).toLocaleString() : '—')+'</div>'
         +(r.psf_buy ? '<div style="font-size:9px;color:var(--mut2);text-transform:uppercase;letter-spacing:.04em;margin-top:4px;font-family:\'DM Sans\',sans-serif">Bought</div>'
                      +'<div style="font-size:11px;color:var(--mut)">S$'+Math.round(r.psf_buy).toLocaleString()+'</div>' : '')
       +'</td>'
+      // 5. Area (sqft)
+      +'<td class="mono" style="vertical-align:top">'+(r.area_sqft ? Math.round(r.area_sqft).toLocaleString() : '—')+'</td>'
+      // 6. Type
+      +'<td style="vertical-align:top;font-size:10px;line-height:1.25">'+fmtPropTypeHtml(r.property_type||'—')+'</td>'
+      // 7. Type of Sale
       +'<td style="vertical-align:top">'+tosBadge+'</td>'
+      // 8. Profit / Loss
+      +'<td class="mono" style="color:'+profitCol+';font-weight:700;white-space:nowrap;vertical-align:top">'+fmtPL(r.profit)+'</td>'
+      // 9. Ann. Return
+      +'<td class="mono" style="color:'+annCol+';white-space:nowrap;vertical-align:top">'+annSign+r.ann_return.toFixed(1)+'%</td>'
+      // 10. Yrs Held
+      +'<td class="mono" style="vertical-align:top">'+r.yrs_held.toFixed(1)+'</td>'
       +'</tr>';
   }).join('');
   pnlRenderPager('pnl-pg-'+sec, rows.length, page, sec);
