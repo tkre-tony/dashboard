@@ -3,6 +3,33 @@
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<!-- v48.105 (21 May 2026, session 37): Profit/Loss surface refactor — shared filter model + Aborted UI removed + Date column sort + date range pickers.
+     Tony spec (5 items, one deploy):
+     (1) Remove 'Aborted & Re-sold' from the KPI strip AND from the tab nav. 5 KPI cards instead of 6; 2 tabs instead of 3.
+     (2) Fix Type filter not syncing to KPIs: cause was per-tab independent filter state in pnlApplyFilters. KPIs derived from a 'base' set that was only header-type + preset-date filtered, never the column filters. KPIs were therefore stuck on the unfiltered totals.
+     (3) Make Date column sortable. Pattern: special-case sell_date as string-comparable in pnlSortBy (existing fields list was numeric-only).
+     (4) Same KPI bug as (2) — fixed in the same place. Picking a Type of Sale (entry filter) now re-derives KPIs in lockstep.
+     (5) Add From/To date range pickers next to the Last N preset dropdown. Behaviour: preset still drives the Supabase server-side query window; From/To overlays as a client-side refinement on the already-loaded set. Clear button (✕) wipes range only, leaves preset intact.
+     ARCHITECTURE CHANGE (Tony question → my recommendation → confirmed):
+     Per-column filters lived INSIDE each table’s thead, duplicated for Profit and Loss tabs. Filters refactored to a single SHARED FILTER BAR above the tabs (#pnl-filter-bar). Profitable + Unprofitable now derive from one consistent filtered base — the KPI ambiguity from items (2)/(4) is structurally eliminated, and ~40 lines of duplicated branching code in pnlApplyFilters collapsed to a single set.
+     SUB-EDITS:
+     - HTML: Strip pnl-stat-abort KPI card. Strip third tab button. Strip <div id="pnl-sec-abort"> body block.
+     - HTML: Strip filter row from both profit + loss thead blocks (the 10-cell <tr style="background:var(--srf2)">).
+     - HTML: Insert #pnl-filter-bar above .pnl-stab tab strip. Inputs: pnl-shared-project, pnl-f-shared-type-btn/drop, pnl-f-shared-entry-btn/drop, pnl-shared-price-min, pnl-shared-price-max, Clear button.
+     - HTML: Add pnl-date-from + pnl-date-to + ✕ reset next to pnl-period-filter (mirrors Projects-tab proj-date-from/to pattern).
+     - HTML: Add Date <th> sort handlers in both profit + loss theads, plus Buy→Sell column also gets a sort handler now (sell_price field).
+     - JS: pnlApplyFilters rewritten end-to-end with single shared filter state + KPI-as-partition logic.
+     - JS: pnlSortBy extended — sell_date and sell_price added to fields[]; sell_date special-cased as string compare (ISO-8601 dates sort lexically).
+     - JS: pnlShowSection coerces legacy 'abort' → 'profit'. pnlRenderSection drops the abort branch.
+     - JS: Add pnlClearDateRange + pnlClearAllFilters helpers.
+     KEPT FOR COMPATIBILITY (dead in PnL UI but referenced elsewhere):
+     - PNL_ABORT data var (populated by pnlLoadData)
+     - PNL_FILTERED_ABORT (still computed in pnlApplyFilters — Projects tab may reference)
+     - pnlRenderAbort function definition
+     - pnlPageAbort var
+     L270 cascade audit: no CSS rules edited; not triggered. L271 imported-block scope: no imported selectors touched.
+     v48.104 base preserved: column order (Date / Project / Buy→Sell / PSF Sold / Area / Type / Type of Sale / Profit/Loss / Ann Return / Yrs Held), pnlRenderTable body untouched.
+     Pill cascade per v48.103 unchanged. -->
 <!-- v48.104 (21 May 2026, session 37): Profit/Loss table column reorder.
      Tony spec: new order = Date / Project-Address / Buy→Sell / PSF Sold / Area / Type / Type of Sale / Profit-Loss / Ann.Return / Yrs Held.
      Three coordinated edits per L243 cascade discipline:
@@ -2921,6 +2948,14 @@ body.article-takeover .ed-foot{display:none!important}
             <option value="10">Last 10 Years</option>
             <option value="0">All Time</option>
           </select>
+          <!-- v48.105: client-side date range overlay (refines within the preset window) -->
+          <div style="display:flex;align-items:center;gap:4px;border:1px solid var(--bdr);border-radius:6px;padding:3px 8px;background:var(--srf2);font-size:11px;color:var(--mut)">
+            <span>From</span>
+            <input type="date" id="pnl-date-from" onchange="pnlApplyFilters()" style="font-size:11px;border:none;background:transparent;color:var(--txt);padding:0 2px;outline:none;width:120px">
+            <span>to</span>
+            <input type="date" id="pnl-date-to" onchange="pnlApplyFilters()" style="font-size:11px;border:none;background:transparent;color:var(--txt);padding:0 2px;outline:none;width:120px">
+            <button onclick="pnlClearDateRange()" title="Clear date range (revert to preset window)" style="border:none;background:none;cursor:pointer;color:var(--mut);font-size:12px;padding:0 2px;line-height:1">✕</button>
+          </div>
           <button id="pnl-load-btn" onclick="pnlLoadData()" style="font-size:11px;padding:5px 12px;background:var(--g1);color:#fff;border:none;border-radius:6px;cursor:pointer;font-weight:600">Load Data</button>
           <button id="pnl-export-btn" onclick="pnlExportCSV()" style="display:none;font-size:11px;padding:5px 12px;background:var(--srf2);color:var(--txt);border:1px solid var(--bdr);border-radius:6px;cursor:pointer">&#8659; Export CSV</button>
         </div>
@@ -2941,10 +2976,6 @@ body.article-takeover .ed-foot{display:none!important}
             <div style="font-size:10px;text-transform:uppercase;letter-spacing:.07em;color:#c62828;margin-bottom:3px">Unprofitable</div>
             <div class="mono" id="pnl-stat-loss" style="font-size:20px;font-weight:700;color:#b71c1c">&#8212;</div>
           </div>
-          <div style="flex:1;min-width:110px;background:#fff8e1;border:1px solid #ffe082;border-radius:8px;padding:10px 14px">
-            <div style="font-size:10px;text-transform:uppercase;letter-spacing:.07em;color:#f57f17;margin-bottom:3px">Aborted &#8594; Re-sold</div>
-            <div class="mono" id="pnl-stat-abort" style="font-size:20px;font-weight:700;color:#e65100">&#8212;</div>
-          </div>
           <div style="flex:1;min-width:130px;background:var(--srf2);border:1px solid var(--bdr);border-radius:8px;padding:10px 14px">
             <div style="font-size:10px;text-transform:uppercase;letter-spacing:.07em;color:var(--mut);margin-bottom:3px">Median Ann. Return</div>
             <div class="mono" id="pnl-stat-median" style="font-size:20px;font-weight:700;color:var(--txt)">&#8212;</div>
@@ -2964,10 +2995,38 @@ body.article-takeover .ed-foot{display:none!important}
 
       <!-- Sub-tabs -->
       <div id="pnl-tabs-wrap" style="display:none">
+        <!-- v48.105 SHARED FILTER BAR: single source of truth across Profitable + Unprofitable tabs. -->
+        <div id="pnl-filter-bar" style="display:flex;gap:8px;margin-bottom:10px;padding:8px 10px;background:var(--srf2);border:1px solid var(--bdr);border-radius:6px;flex-wrap:wrap;align-items:center">
+          <div style="display:flex;align-items:center;gap:6px;flex:1;min-width:160px">
+            <input id="pnl-shared-project" placeholder="Project / address..." oninput="pnlApplyFilters()" style="width:100%;padding:5px 8px;font-size:11px;border:1px solid var(--bdr);border-radius:4px;background:var(--srf);color:var(--txt)">
+          </div>
+          <div style="position:relative">
+            <button id="pnl-f-shared-type-btn" onclick="pnlToggleColDrop('shared-type')" style="padding:5px 10px;font-size:11px;border:1px solid var(--bdr);border-radius:4px;background:var(--srf);color:var(--txt);cursor:pointer;text-align:left;white-space:nowrap;min-width:110px">All Types &#9660;</button>
+            <div id="pnl-f-shared-type-drop" style="display:none;position:absolute;top:100%;left:0;z-index:999;background:var(--srf);border:1px solid var(--bdr);border-radius:4px;min-width:160px;box-shadow:0 4px 12px rgba(0,0,0,.12);padding:4px 0;margin-top:2px">
+              <label style="display:flex;align-items:center;gap:6px;padding:4px 12px;font-size:11px;cursor:pointer;white-space:nowrap"><input type="checkbox" value="Office" onchange="pnlColDropChange('shared-type')"> Office</label>
+              <label style="display:flex;align-items:center;gap:6px;padding:4px 12px;font-size:11px;cursor:pointer;white-space:nowrap"><input type="checkbox" value="Retail" onchange="pnlColDropChange('shared-type')"> Retail</label>
+              <label style="display:flex;align-items:center;gap:6px;padding:4px 12px;font-size:11px;cursor:pointer;white-space:nowrap"><input type="checkbox" value="Shop House" onchange="pnlColDropChange('shared-type')"> Shophouse</label>
+              <label style="display:flex;align-items:center;gap:6px;padding:4px 12px;font-size:11px;cursor:pointer;white-space:nowrap"><input type="checkbox" value="Multiple-User Factory" onchange="pnlColDropChange('shared-type')"> Multi-User</label>
+              <label style="display:flex;align-items:center;gap:6px;padding:4px 12px;font-size:11px;cursor:pointer;white-space:nowrap"><input type="checkbox" value="Single-User Factory" onchange="pnlColDropChange('shared-type')"> Single-User</label>
+              <label style="display:flex;align-items:center;gap:6px;padding:4px 12px;font-size:11px;cursor:pointer;white-space:nowrap"><input type="checkbox" value="Business Park" onchange="pnlColDropChange('shared-type')"> Business Park</label>
+              <label style="display:flex;align-items:center;gap:6px;padding:4px 12px;font-size:11px;cursor:pointer;white-space:nowrap"><input type="checkbox" value="Warehouse" onchange="pnlColDropChange('shared-type')"> Warehouse</label>
+            </div>
+          </div>
+          <div style="position:relative">
+            <button id="pnl-f-shared-entry-btn" onclick="pnlToggleColDrop('shared-entry')" style="padding:5px 10px;font-size:11px;border:1px solid var(--bdr);border-radius:4px;background:var(--srf);color:var(--txt);cursor:pointer;text-align:left;white-space:nowrap;min-width:140px">All Sale Types &#9660;</button>
+            <div id="pnl-f-shared-entry-drop" style="display:none;position:absolute;top:100%;left:0;z-index:999;background:var(--srf);border:1px solid var(--bdr);border-radius:4px;min-width:140px;box-shadow:0 4px 12px rgba(0,0,0,.12);padding:4px 0;margin-top:2px">
+              <label style="display:flex;align-items:center;gap:6px;padding:4px 12px;font-size:11px;cursor:pointer;white-space:nowrap"><input type="checkbox" value="New Sale" onchange="pnlColDropChange('shared-entry')"> New Sale</label>
+              <label style="display:flex;align-items:center;gap:6px;padding:4px 12px;font-size:11px;cursor:pointer;white-space:nowrap"><input type="checkbox" value="Resale" onchange="pnlColDropChange('shared-entry')"> Resale</label>
+              <label style="display:flex;align-items:center;gap:6px;padding:4px 12px;font-size:11px;cursor:pointer;white-space:nowrap"><input type="checkbox" value="Sub Sale" onchange="pnlColDropChange('shared-entry')"> Sub Sale</label>
+            </div>
+          </div>
+          <input id="pnl-shared-price-min" placeholder="Min S$" oninput="pnlApplyFilters()" style="width:90px;padding:5px 8px;font-size:11px;border:1px solid var(--bdr);border-radius:4px;background:var(--srf);color:var(--txt);font-family:'DM Mono',monospace">
+          <input id="pnl-shared-price-max" placeholder="Max S$" oninput="pnlApplyFilters()" style="width:90px;padding:5px 8px;font-size:11px;border:1px solid var(--bdr);border-radius:4px;background:var(--srf);color:var(--txt);font-family:'DM Mono',monospace">
+          <button onclick="pnlClearAllFilters()" title="Clear filters" style="padding:5px 10px;font-size:11px;background:none;border:1px solid var(--bdr);border-radius:4px;color:var(--mut);cursor:pointer">&#10006; Clear</button>
+        </div>
         <div style="display:flex;gap:4px;margin-bottom:12px;border-bottom:2px solid var(--srf3)">
           <button class="pnl-stab on" data-section="profit" onclick="pnlShowSection('profit')">&#9989; Profitable <span id="pnl-tab-cnt-profit"></span></button>
           <button class="pnl-stab" data-section="loss" onclick="pnlShowSection('loss')">&#128308; Unprofitable <span id="pnl-tab-cnt-loss"></span></button>
-          <button class="pnl-stab" data-section="abort" onclick="pnlShowSection('abort')">&#9889; Aborted &amp; Re-sold <span id="pnl-tab-cnt-abort"></span></button>
         </div>
 
         <!-- Profitable table -->
@@ -2975,43 +3034,10 @@ body.article-takeover .ed-foot{display:none!important}
           <div style="overflow-x:auto;border-radius:6px;border:1px solid var(--bdr)">
             <table class="ptable" id="pnl-tbl-profit">
               <thead><tr>
-                <th>Date</th><th>Project / Address</th><th style="white-space:nowrap">Buy &#8594; Sell (S$)</th><th style="cursor:pointer;user-select:none" onclick="pnlSortBy('profit','psf_sell')">PSF Sold <span id="pnl-sort-profit-psf_sell"></span></th><th style="cursor:pointer;user-select:none" onclick="pnlSortBy('profit','area_sqft')">Area (sqft) <span id="pnl-sort-profit-area_sqft"></span></th><th>Type</th><th>Type of Sale</th>
+                <th style="cursor:pointer;user-select:none" onclick="pnlSortBy('profit','sell_date')">Date <span id="pnl-sort-profit-sell_date"></span></th><th>Project / Address</th><th style="cursor:pointer;user-select:none;white-space:nowrap" onclick="pnlSortBy('profit','sell_price')">Buy &#8594; Sell (S$) <span id="pnl-sort-profit-sell_price"></span></th><th style="cursor:pointer;user-select:none" onclick="pnlSortBy('profit','psf_sell')">PSF Sold <span id="pnl-sort-profit-psf_sell"></span></th><th style="cursor:pointer;user-select:none" onclick="pnlSortBy('profit','area_sqft')">Area (sqft) <span id="pnl-sort-profit-area_sqft"></span></th><th>Type</th><th>Type of Sale</th>
                 <th style="cursor:pointer;user-select:none" onclick="pnlSortBy('profit','profit')">Profit / Loss <span id="pnl-sort-profit-profit"></span></th>
                 <th style="cursor:pointer;user-select:none" onclick="pnlSortBy('profit','ann_return')">Ann. Return <span id="pnl-sort-profit-ann_return"></span></th>
                 <th style="cursor:pointer;user-select:none" onclick="pnlSortBy('profit','yrs_held')">Yrs Held <span id="pnl-sort-profit-yrs_held"></span></th>
-              </tr>
-              <tr style="background:var(--srf2)">
-                <td style="padding:4px 6px"></td>
-                <td style="padding:4px 6px"><input id="pnl-f-project" placeholder="Project / address..." oninput="pnlApplyFilters()" style="width:100%;padding:3px 6px;font-size:10px;border:1px solid var(--bdr);border-radius:4px;background:var(--srf);color:var(--txt)"></td>
-                <td style="padding:4px 6px;white-space:nowrap">
-                  <input id="pnl-f-price-min" placeholder="Min S$" oninput="pnlApplyFilters()" style="display:block;width:100%;padding:3px 4px;font-size:10px;border:1px solid var(--bdr);border-radius:4px;background:var(--srf);color:var(--txt);font-family:'DM Mono',monospace;margin-bottom:3px">
-                  <input id="pnl-f-price-max" placeholder="Max S$" oninput="pnlApplyFilters()" style="display:block;width:100%;padding:3px 4px;font-size:10px;border:1px solid var(--bdr);border-radius:4px;background:var(--srf);color:var(--txt);font-family:'DM Mono',monospace">
-                </td>
-                <td style="padding:4px 6px;text-align:center;font-size:10px;color:var(--mut)">click &#8597;</td>
-                <td style="padding:4px 6px;text-align:center;font-size:10px;color:var(--mut)">click &#8597;</td>
-                <td style="padding:4px 6px;position:relative">
-                  <button id="pnl-f-type-btn" onclick="pnlToggleColDrop('type')" style="width:100%;padding:3px 6px;font-size:10px;border:1px solid var(--bdr);border-radius:4px;background:var(--srf);color:var(--txt);cursor:pointer;text-align:left;white-space:nowrap">All &#9660;</button>
-                  <div id="pnl-f-type-drop" style="display:none;position:absolute;top:100%;left:0;z-index:999;background:var(--srf);border:1px solid var(--bdr);border-radius:4px;min-width:150px;box-shadow:0 4px 12px rgba(0,0,0,.12);padding:4px 0">
-                    <label style="display:flex;align-items:center;gap:6px;padding:4px 10px;font-size:11px;cursor:pointer;white-space:nowrap"><input type="checkbox" value="Office" onchange="pnlColDropChange('type')"> Office</label>
-                    <label style="display:flex;align-items:center;gap:6px;padding:4px 10px;font-size:11px;cursor:pointer;white-space:nowrap"><input type="checkbox" value="Retail" onchange="pnlColDropChange('type')"> Retail</label>
-                    <label style="display:flex;align-items:center;gap:6px;padding:4px 10px;font-size:11px;cursor:pointer;white-space:nowrap"><input type="checkbox" value="Shop House" onchange="pnlColDropChange('type')"> Shophouse</label>
-                    <label style="display:flex;align-items:center;gap:6px;padding:4px 10px;font-size:11px;cursor:pointer;white-space:nowrap"><input type="checkbox" value="Multiple-User Factory" onchange="pnlColDropChange('type')"> Multi-User</label>
-                    <label style="display:flex;align-items:center;gap:6px;padding:4px 10px;font-size:11px;cursor:pointer;white-space:nowrap"><input type="checkbox" value="Single-User Factory" onchange="pnlColDropChange('type')"> Single-User</label>
-                    <label style="display:flex;align-items:center;gap:6px;padding:4px 10px;font-size:11px;cursor:pointer;white-space:nowrap"><input type="checkbox" value="Business Park" onchange="pnlColDropChange('type')"> Business Park</label>
-                    <label style="display:flex;align-items:center;gap:6px;padding:4px 10px;font-size:11px;cursor:pointer;white-space:nowrap"><input type="checkbox" value="Warehouse" onchange="pnlColDropChange('type')"> Warehouse</label>
-                  </div>
-                </td>
-                <td style="padding:4px 6px;position:relative">
-                  <button id="pnl-f-entry-btn" onclick="pnlToggleColDrop('entry')" style="width:100%;padding:3px 6px;font-size:10px;border:1px solid var(--bdr);border-radius:4px;background:var(--srf);color:var(--txt);cursor:pointer;text-align:left;white-space:nowrap">All &#9660;</button>
-                  <div id="pnl-f-entry-drop" style="display:none;position:absolute;top:100%;left:0;z-index:999;background:var(--srf);border:1px solid var(--bdr);border-radius:4px;min-width:130px;box-shadow:0 4px 12px rgba(0,0,0,.12);padding:4px 0">
-                    <label style="display:flex;align-items:center;gap:6px;padding:4px 10px;font-size:11px;cursor:pointer;white-space:nowrap"><input type="checkbox" value="New Sale" onchange="pnlColDropChange('entry')"> New Sale</label>
-                    <label style="display:flex;align-items:center;gap:6px;padding:4px 10px;font-size:11px;cursor:pointer;white-space:nowrap"><input type="checkbox" value="Resale" onchange="pnlColDropChange('entry')"> Resale</label>
-                    <label style="display:flex;align-items:center;gap:6px;padding:4px 10px;font-size:11px;cursor:pointer;white-space:nowrap"><input type="checkbox" value="Sub Sale" onchange="pnlColDropChange('entry')"> Sub Sale</label>
-                  </div>
-                </td>
-                <td style="padding:4px 6px;text-align:center;font-size:10px;color:var(--mut)">click &#8597;</td>
-                <td style="padding:4px 6px;text-align:center;font-size:10px;color:var(--mut)">click &#8597;</td>
-                <td style="padding:4px 6px;text-align:center;font-size:10px;color:var(--mut)">click &#8597;</td>
               </tr></thead>
               <tbody id="pnl-tbody-profit"></tbody>
             </table>
@@ -3024,43 +3050,10 @@ body.article-takeover .ed-foot{display:none!important}
           <div style="overflow-x:auto;border-radius:6px;border:1px solid var(--bdr)">
             <table class="ptable" id="pnl-tbl-loss">
               <thead><tr>
-                <th>Date</th><th>Project / Address</th><th style="white-space:nowrap">Buy &#8594; Sell (S$)</th><th style="cursor:pointer;user-select:none" onclick="pnlSortBy('loss','psf_sell')">PSF Sold <span id="pnl-sort-loss-psf_sell"></span></th><th style="cursor:pointer;user-select:none" onclick="pnlSortBy('loss','area_sqft')">Area (sqft) <span id="pnl-sort-loss-area_sqft"></span></th><th>Type</th><th>Type of Sale</th>
+                <th style="cursor:pointer;user-select:none" onclick="pnlSortBy('loss','sell_date')">Date <span id="pnl-sort-loss-sell_date"></span></th><th>Project / Address</th><th style="cursor:pointer;user-select:none;white-space:nowrap" onclick="pnlSortBy('loss','sell_price')">Buy &#8594; Sell (S$) <span id="pnl-sort-loss-sell_price"></span></th><th style="cursor:pointer;user-select:none" onclick="pnlSortBy('loss','psf_sell')">PSF Sold <span id="pnl-sort-loss-psf_sell"></span></th><th style="cursor:pointer;user-select:none" onclick="pnlSortBy('loss','area_sqft')">Area (sqft) <span id="pnl-sort-loss-area_sqft"></span></th><th>Type</th><th>Type of Sale</th>
                 <th style="cursor:pointer;user-select:none" onclick="pnlSortBy('loss','profit')">Profit / Loss <span id="pnl-sort-loss-profit"></span></th>
                 <th style="cursor:pointer;user-select:none" onclick="pnlSortBy('loss','ann_return')">Ann. Return <span id="pnl-sort-loss-ann_return"></span></th>
                 <th style="cursor:pointer;user-select:none" onclick="pnlSortBy('loss','yrs_held')">Yrs Held <span id="pnl-sort-loss-yrs_held"></span></th>
-              </tr>
-              <tr style="background:var(--srf2)">
-                <td style="padding:4px 6px"></td>
-                <td style="padding:4px 6px"><input id="pnl-f-project-loss" placeholder="Project / address..." oninput="pnlApplyFilters()" style="width:100%;padding:3px 6px;font-size:10px;border:1px solid var(--bdr);border-radius:4px;background:var(--srf);color:var(--txt)"></td>
-                <td style="padding:4px 6px;white-space:nowrap">
-                  <input id="pnl-f-price-min-loss" placeholder="Min S$" oninput="pnlApplyFilters()" style="display:block;width:100%;padding:3px 4px;font-size:10px;border:1px solid var(--bdr);border-radius:4px;background:var(--srf);color:var(--txt);font-family:'DM Mono',monospace;margin-bottom:3px">
-                  <input id="pnl-f-price-max-loss" placeholder="Max S$" oninput="pnlApplyFilters()" style="display:block;width:100%;padding:3px 4px;font-size:10px;border:1px solid var(--bdr);border-radius:4px;background:var(--srf);color:var(--txt);font-family:'DM Mono',monospace">
-                </td>
-                <td style="padding:4px 6px;text-align:center;font-size:10px;color:var(--mut)">click &#8597;</td>
-                <td style="padding:4px 6px;text-align:center;font-size:10px;color:var(--mut)">click &#8597;</td>
-                <td style="padding:4px 6px;position:relative">
-                  <button id="pnl-f-type-btn-loss" onclick="pnlToggleColDrop('type-loss')" style="width:100%;padding:3px 6px;font-size:10px;border:1px solid var(--bdr);border-radius:4px;background:var(--srf);color:var(--txt);cursor:pointer;text-align:left;white-space:nowrap">All &#9660;</button>
-                  <div id="pnl-f-type-drop-loss" style="display:none;position:absolute;top:100%;left:0;z-index:999;background:var(--srf);border:1px solid var(--bdr);border-radius:4px;min-width:150px;box-shadow:0 4px 12px rgba(0,0,0,.12);padding:4px 0">
-                    <label style="display:flex;align-items:center;gap:6px;padding:4px 10px;font-size:11px;cursor:pointer;white-space:nowrap"><input type="checkbox" value="Office" onchange="pnlColDropChange('type-loss')"> Office</label>
-                    <label style="display:flex;align-items:center;gap:6px;padding:4px 10px;font-size:11px;cursor:pointer;white-space:nowrap"><input type="checkbox" value="Retail" onchange="pnlColDropChange('type-loss')"> Retail</label>
-                    <label style="display:flex;align-items:center;gap:6px;padding:4px 10px;font-size:11px;cursor:pointer;white-space:nowrap"><input type="checkbox" value="Shop House" onchange="pnlColDropChange('type-loss')"> Shophouse</label>
-                    <label style="display:flex;align-items:center;gap:6px;padding:4px 10px;font-size:11px;cursor:pointer;white-space:nowrap"><input type="checkbox" value="Multiple-User Factory" onchange="pnlColDropChange('type-loss')"> Multi-User</label>
-                    <label style="display:flex;align-items:center;gap:6px;padding:4px 10px;font-size:11px;cursor:pointer;white-space:nowrap"><input type="checkbox" value="Single-User Factory" onchange="pnlColDropChange('type-loss')"> Single-User</label>
-                    <label style="display:flex;align-items:center;gap:6px;padding:4px 10px;font-size:11px;cursor:pointer;white-space:nowrap"><input type="checkbox" value="Business Park" onchange="pnlColDropChange('type-loss')"> Business Park</label>
-                    <label style="display:flex;align-items:center;gap:6px;padding:4px 10px;font-size:11px;cursor:pointer;white-space:nowrap"><input type="checkbox" value="Warehouse" onchange="pnlColDropChange('type-loss')"> Warehouse</label>
-                  </div>
-                </td>
-                <td style="padding:4px 6px;position:relative">
-                  <button id="pnl-f-entry-btn-loss" onclick="pnlToggleColDrop('entry-loss')" style="width:100%;padding:3px 6px;font-size:10px;border:1px solid var(--bdr);border-radius:4px;background:var(--srf);color:var(--txt);cursor:pointer;text-align:left;white-space:nowrap">All &#9660;</button>
-                  <div id="pnl-f-entry-drop-loss" style="display:none;position:absolute;top:100%;left:0;z-index:999;background:var(--srf);border:1px solid var(--bdr);border-radius:4px;min-width:130px;box-shadow:0 4px 12px rgba(0,0,0,.12);padding:4px 0">
-                    <label style="display:flex;align-items:center;gap:6px;padding:4px 10px;font-size:11px;cursor:pointer;white-space:nowrap"><input type="checkbox" value="New Sale" onchange="pnlColDropChange('entry-loss')"> New Sale</label>
-                    <label style="display:flex;align-items:center;gap:6px;padding:4px 10px;font-size:11px;cursor:pointer;white-space:nowrap"><input type="checkbox" value="Resale" onchange="pnlColDropChange('entry-loss')"> Resale</label>
-                    <label style="display:flex;align-items:center;gap:6px;padding:4px 10px;font-size:11px;cursor:pointer;white-space:nowrap"><input type="checkbox" value="Sub Sale" onchange="pnlColDropChange('entry-loss')"> Sub Sale</label>
-                  </div>
-                </td>
-                <td style="padding:4px 6px;text-align:center;font-size:10px;color:var(--mut)">click &#8597;</td>
-                <td style="padding:4px 6px;text-align:center;font-size:10px;color:var(--mut)">click &#8597;</td>
-                <td style="padding:4px 6px;text-align:center;font-size:10px;color:var(--mut)">click &#8597;</td>
               </tr></thead>
               <tbody id="pnl-tbody-loss"></tbody>
             </table>
@@ -3069,21 +3062,7 @@ body.article-takeover .ed-foot{display:none!important}
         </div>
 
         <!-- Aborted table -->
-        <div id="pnl-sec-abort" style="display:none">
-          <div style="overflow-x:auto;border-radius:6px;border:1px solid var(--bdr)">
-            <table class="ptable" id="pnl-tbl-abort">
-              <thead><tr>
-                <th>Project</th><th>Address</th><th>Type</th>
-                <th>1st New Sale Date</th><th>1st New Sale Price</th><th>1st PSF</th>
-                <th>Re-issued Date</th><th>Re-issued Price</th><th>Re-issued PSF</th>
-                <th>Price Diff</th><th>Area (sqft)</th>
-              </tr></thead>
-              <tbody id="pnl-tbody-abort"></tbody>
-            </table>
-          </div>
-          <div id="pnl-pg-abort" style="margin-top:10px;display:flex;gap:6px;align-items:center;flex-wrap:wrap"></div>
-        </div>
-
+        
       </div><!-- end pnl-tabs-wrap -->
     </div><!-- end card -->
     </div><!-- end anal-panel-pnl -->
@@ -18197,7 +18176,8 @@ function pnlSortBy(sec, col){
   if(!st) return;
   if(st.col === col){ st.dir = st.dir === 'desc' ? 'asc' : 'desc'; }
   else { st.col = col; st.dir = 'desc'; }
-  var fields = ['profit','ann_return','yrs_held','area_sqft','psf_sell'];
+  // v48.105: sell_date and sell_price added as sortable columns
+  var fields = ['sell_date','sell_price','profit','ann_return','yrs_held','area_sqft','psf_sell'];
   fields.forEach(function(f){
     var el = document.getElementById('pnl-sort-'+sec+'-'+f);
     if(el) el.textContent = '';
@@ -18205,12 +18185,46 @@ function pnlSortBy(sec, col){
   var indicator = document.getElementById('pnl-sort-'+sec+'-'+col);
   if(indicator) indicator.textContent = st.dir === 'desc' ? ' ↓' : ' ↑';
   var arr = sec==='profit' ? PNL_FILTERED_PROFIT : PNL_FILTERED_LOSS;
+  // Date columns are ISO-8601 strings; sort lexically (string compare). All others numeric.
+  var isString = (col === 'sell_date');
   arr.sort(function(a,b){
-    var av = a[col]||0, bv = b[col]||0;
+    var av = a[col], bv = b[col];
+    if(isString){
+      av = av || ''; bv = bv || '';
+      if(av === bv) return 0;
+      return st.dir==='desc' ? (av < bv ? 1 : -1) : (av < bv ? -1 : 1);
+    }
+    av = av || 0; bv = bv || 0;
     return st.dir==='desc' ? bv-av : av-bv;
   });
   if(sec==='profit'){ pnlPageProfit=0; pnlRenderTable('profit', PNL_FILTERED_PROFIT, 0); }
   else { pnlPageLoss=0; pnlRenderTable('loss', PNL_FILTERED_LOSS, 0); }
+}
+
+function pnlClearDateRange(){
+  var f = document.getElementById('pnl-date-from');
+  var t = document.getElementById('pnl-date-to');
+  if(f) f.value = '';
+  if(t) t.value = '';
+  pnlApplyFilters();
+}
+
+function pnlClearAllFilters(){
+  // Reset every shared filter input back to default. Date range cleared. Preset dropdown left as user set it.
+  var p = document.getElementById('pnl-shared-project');         if(p) p.value = '';
+  var mn = document.getElementById('pnl-shared-price-min');       if(mn) mn.value = '';
+  var mx = document.getElementById('pnl-shared-price-max');       if(mx) mx.value = '';
+  ['shared-type','shared-entry'].forEach(function(name){
+    var drop = document.getElementById('pnl-f-'+name+'-drop');
+    var btn  = document.getElementById('pnl-f-'+name+'-btn');
+    if(drop) drop.querySelectorAll('input[type=checkbox]').forEach(function(cb){ cb.checked = false; });
+    if(btn){
+      btn.textContent = (name === 'shared-type' ? 'All Types' : 'All Sale Types') + ' ▾';
+    }
+  });
+  var df = document.getElementById('pnl-date-from'); if(df) df.value = '';
+  var dt = document.getElementById('pnl-date-to');   if(dt) dt.value = '';
+  pnlApplyFilters();
 }
 
 function pnlToggleColDrop(name){
@@ -18266,85 +18280,98 @@ function pnlGetCheckedTypes(){
 function pnlApplyFilters(){
   if(!pnlLoaded) return;
   pnlHide('pnl-loading');
-  // Header-level type filter
-  var headerTypes  = pnlGetCheckedTypes();
-  // Period filter
-  var periodYrs    = parseFloat(document.getElementById('pnl-period-filter').value);
-  var fromDate     = '';
+
+  // v48.105: SHARED FILTER MODEL
+  // All filter inputs now live in #pnl-filter-bar above the tabs (single source of truth).
+  // Both Profitable and Unprofitable use the same filter values, so KPI cards reflect
+  // the partition of one consistent filtered base.
+
+  // Header-level chrome filters (preset dropdown + From/To range)
+  var headerTypes = pnlGetCheckedTypes();
+  var periodYrs   = parseFloat(document.getElementById('pnl-period-filter').value);
+  var presetFrom  = '';
   if(periodYrs > 0){
     var d = new Date();
     d.setTime(d.getTime() - periodYrs * 365.25 * 24 * 60 * 60 * 1000);
-    fromDate = d.toISOString().slice(0,10);
+    presetFrom = d.toISOString().slice(0,10);
   }
-  // Column-level filters (profit tab)
-  var colTypes       = pnlGetColChecked('type');
-  var colTypesLoss   = pnlGetColChecked('type-loss');
-  var colEntry       = pnlGetColChecked('entry');
-  var colEntryLoss   = pnlGetColChecked('entry-loss');
-  var colProject     = pnlGetColVal('pnl-f-project').toLowerCase();
-  var colProjectLoss = pnlGetColVal('pnl-f-project-loss').toLowerCase();
-  var colPriceMin    = parseFloat(pnlGetColVal('pnl-f-price-min')) || 0;
-  var colPriceMax    = parseFloat(pnlGetColVal('pnl-f-price-max')) || Infinity;
-  var colPriceMinL   = parseFloat(pnlGetColVal('pnl-f-price-min-loss')) || 0;
-  var colPriceMaxL   = parseFloat(pnlGetColVal('pnl-f-price-max-loss')) || Infinity;
+  var rangeFrom = (document.getElementById('pnl-date-from')||{}).value || '';
+  var rangeTo   = (document.getElementById('pnl-date-to')||{}).value   || '';
+
+  // Shared column filters (single set, applied to BOTH profit and loss partitions)
+  var fType     = pnlGetColChecked('shared-type');
+  var fEntry    = pnlGetColChecked('shared-entry');
+  var fProject  = pnlGetColVal('pnl-shared-project').toLowerCase();
+  var fPriceMin = parseFloat(pnlGetColVal('pnl-shared-price-min')) || 0;
+  var fPriceMax = parseFloat(pnlGetColVal('pnl-shared-price-max')) || Infinity;
 
   function headerTypeMatch(r){ return !headerTypes.length || headerTypes.indexOf(r.property_type) !== -1; }
-  function dateMatch(r){ return !fromDate || r.sell_date >= fromDate; }
-  function abortDateMatch(r){ return !fromDate || r.resold_date >= fromDate; }
-
-  // Base filter (header type + period)
-  var base = PNL_PAIRS.filter(function(r){ return headerTypeMatch(r) && dateMatch(r); });
-
-  // All tab (profit + loss combined) — kept for Projects/TX tabs which reference PNL_FILTERED_ALL
-  PNL_FILTERED_ALL = base.filter(function(r){ return true; })
-    .sort(function(a,b){ return a.sell_date < b.sell_date ? 1 : -1; });
-  PNL_FILTERED_PROFIT = base.filter(function(r){
-    if(r.profit <= 0) return false;
-    if(colTypes.length && colTypes.indexOf(r.property_type) === -1) return false;
-    if(colEntry.length && colEntry.indexOf(r.sell_type) === -1) return false;
-    if(colProject && (r.project_name||'').toLowerCase().indexOf(colProject) === -1 && (r.address||'').toLowerCase().indexOf(colProject) === -1) return false;
-    if(r.sell_price < colPriceMin || r.sell_price > colPriceMax) return false;
+  function presetDateMatch(r){ return !presetFrom || r.sell_date >= presetFrom; }
+  function rangeDateMatch(r){
+    if(rangeFrom && r.sell_date < rangeFrom) return false;
+    if(rangeTo   && r.sell_date > rangeTo)   return false;
     return true;
-  }).sort(function(a,b){ return a.sell_date < b.sell_date ? 1 : -1; });
-
-  // Loss tab column filters
-  PNL_FILTERED_LOSS = base.filter(function(r){
-    if(r.profit > 0) return false;
-    if(colTypesLoss.length && colTypesLoss.indexOf(r.property_type) === -1) return false;
-    if(colEntryLoss.length && colEntryLoss.indexOf(r.sell_type) === -1) return false;
-    if(colProjectLoss && (r.project_name||'').toLowerCase().indexOf(colProjectLoss) === -1 && (r.address||'').toLowerCase().indexOf(colProjectLoss) === -1) return false;
-    if(r.sell_price < colPriceMinL || r.sell_price > colPriceMaxL) return false;
+  }
+  function abortDateMatch(r){ return !presetFrom || r.resold_date >= presetFrom; }
+  function sharedColMatch(r){
+    if(fType.length  && fType.indexOf(r.property_type)  === -1) return false;
+    if(fEntry.length && fEntry.indexOf(r.sell_type)     === -1) return false;
+    if(fProject){
+      var pn = (r.project_name||'').toLowerCase();
+      var ad = (r.address||'').toLowerCase();
+      if(pn.indexOf(fProject) === -1 && ad.indexOf(fProject) === -1) return false;
+    }
+    if(r.sell_price < fPriceMin || r.sell_price > fPriceMax) return false;
     return true;
-  }).sort(function(a,b){ return a.sell_date < b.sell_date ? 1 : -1; });
+  }
 
-  PNL_FILTERED_ABORT = PNL_ABORT.filter(function(r){ return headerTypeMatch(r) && abortDateMatch(r); })
-    .sort(function(a,b){ return a.final_date < b.final_date ? 1 : -1; });
+  // Base filtered set: header type + preset date + range date + shared column filters
+  var base = PNL_PAIRS.filter(function(r){
+    return headerTypeMatch(r) && presetDateMatch(r) && rangeDateMatch(r) && sharedColMatch(r);
+  });
 
-  var allFiltered = base;
-  var allReturns = allFiltered.map(function(r){ return r.ann_return; }).sort(function(a,b){return a-b;});
-  var medReturn  = allReturns.length ? allReturns[Math.floor(allReturns.length/2)] : null;
-  var avgHold    = allFiltered.length ? allFiltered.reduce(function(s,r){return s+r.yrs_held;},0)/allFiltered.length : null;
+  // Partition by profit sign
+  PNL_FILTERED_PROFIT = base.filter(function(r){ return r.profit  > 0; })
+                           .sort(function(a,b){ return a.sell_date < b.sell_date ? 1 : -1; });
+  PNL_FILTERED_LOSS   = base.filter(function(r){ return r.profit <= 0; })
+                           .sort(function(a,b){ return a.sell_date < b.sell_date ? 1 : -1; });
 
-  document.getElementById('pnl-stat-pairs').textContent   = allFiltered.length.toLocaleString();
-  document.getElementById('pnl-stat-profit').textContent  = allFiltered.filter(function(r){return r.profit>0;}).length.toLocaleString();
-  document.getElementById('pnl-stat-loss').textContent    = allFiltered.filter(function(r){return r.profit<=0;}).length.toLocaleString();
-  document.getElementById('pnl-stat-abort').textContent   = PNL_FILTERED_ABORT.length.toLocaleString();
-  document.getElementById('pnl-stat-median').textContent  = medReturn !== null ? (medReturn>=0?'+':'')+medReturn.toFixed(1)+'%' : '—';
-  document.getElementById('pnl-stat-hold').textContent    = avgHold !== null ? avgHold.toFixed(1)+' yrs' : '—';
+  // PNL_FILTERED_ALL kept for Projects/TX tab compatibility
+  PNL_FILTERED_ALL = base.slice().sort(function(a,b){ return a.sell_date < b.sell_date ? 1 : -1; });
 
-  document.getElementById('pnl-tab-cnt-profit').textContent = '('+PNL_FILTERED_PROFIT.length+')';
-  document.getElementById('pnl-tab-cnt-loss').textContent   = '('+PNL_FILTERED_LOSS.length+')';
-  document.getElementById('pnl-tab-cnt-abort').textContent  = '('+PNL_FILTERED_ABORT.length+')';
+  // Abort data is still loaded but no longer shown in PnL tab UI (KPI card + tab removed in v48.105).
+  // Variable kept so Projects/TX tabs and the data pipeline are unaffected.
+  PNL_FILTERED_ABORT = PNL_ABORT.filter(function(r){
+    return headerTypeMatch(r) && abortDateMatch(r);
+  }).sort(function(a,b){ return a.final_date < b.final_date ? 1 : -1; });
 
-  pnlPageProfit = 0; pnlPageLoss = 0; pnlPageAbort = 0;
+  // KPI cards: derive from the partitioned shared base — this is the v48.105 KPI sync fix
+  var totalCount  = base.length;
+  var profitCount = PNL_FILTERED_PROFIT.length;
+  var lossCount   = PNL_FILTERED_LOSS.length;
+  var allReturns  = base.map(function(r){ return r.ann_return; }).sort(function(a,b){return a-b;});
+  var medReturn   = allReturns.length ? allReturns[Math.floor(allReturns.length/2)] : null;
+  var avgHold     = base.length ? base.reduce(function(s,r){return s+r.yrs_held;},0)/base.length : null;
 
-  if(!allFiltered.length && !PNL_FILTERED_ABORT.length){
+  document.getElementById('pnl-stat-pairs').textContent  = totalCount.toLocaleString();
+  document.getElementById('pnl-stat-profit').textContent = profitCount.toLocaleString();
+  document.getElementById('pnl-stat-loss').textContent   = lossCount.toLocaleString();
+  document.getElementById('pnl-stat-median').textContent = medReturn !== null ? (medReturn>=0?'+':'')+medReturn.toFixed(1)+'%' : '—';
+  document.getElementById('pnl-stat-hold').textContent   = avgHold   !== null ? avgHold.toFixed(1)+' yrs' : '—';
+
+  document.getElementById('pnl-tab-cnt-profit').textContent = '('+profitCount+')';
+  document.getElementById('pnl-tab-cnt-loss').textContent   = '('+lossCount+')';
+
+  pnlPageProfit = 0; pnlPageLoss = 0;
+
+  if(!base.length){
     pnlHide('pnl-tabs-wrap'); pnlHide('pnl-stats'); pnlShow('pnl-empty'); return;
   }
   pnlHide('pnl-empty');
   pnlShow('pnl-stats'); pnlShow('pnl-tabs-wrap');
-  pnlShowSection(pnlActiveSection);
-  // Pre-populate date range to current quarter (only if not already set)
+  pnlShowSection(pnlActiveSection === 'abort' ? 'profit' : pnlActiveSection);
+
+  // Pre-populate Projects-tab date range to current quarter (existing behaviour, untouched)
   var fromEl = document.getElementById('proj-date-from');
   var toEl   = document.getElementById('proj-date-to');
   if(fromEl && !fromEl.value && toEl && !toEl.value){
@@ -18352,11 +18379,12 @@ function pnlApplyFilters(){
   }
   pnlRenderProjectsTab();
 }
-
 function pnlShowSection(sec){
+  // v48.105: 'abort' section removed from UI; coerce any legacy 'abort' to 'profit'.
+  if(sec === 'abort') sec = 'profit';
   pnlActiveSection = sec;
   document.querySelectorAll('.pnl-stab').forEach(function(b){ b.classList.toggle('on', b.dataset.section===sec); });
-  ['profit','loss','abort'].forEach(function(s){
+  ['profit','loss'].forEach(function(s){
     var el = document.getElementById('pnl-sec-'+s);
     if(el) el.style.display = s===sec ? '' : 'none';
   });
@@ -18366,7 +18394,7 @@ function pnlShowSection(sec){
 function pnlRenderSection(sec){
   if(sec==='profit') pnlRenderTable('profit', PNL_FILTERED_PROFIT, pnlPageProfit);
   else if(sec==='loss') pnlRenderTable('loss', PNL_FILTERED_LOSS, pnlPageLoss);
-  else pnlRenderAbort(PNL_FILTERED_ABORT, pnlPageAbort);
+  // v48.105: 'abort' branch removed; PNL_FILTERED_ABORT remains populated for legacy callers but unused in UI
 }
 
 function pnlFmtPrice(v){ if(!v) return '—'; return 'S$'+(v/1e6>=1?(v/1e6).toFixed(2)+'M':(v/1000).toFixed(0)+'K'); }
