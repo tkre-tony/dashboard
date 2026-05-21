@@ -3,6 +3,20 @@
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<!-- v48.109b (21 May 2026, session 37): MV pagination fix — PostgREST 1000-row cap workaround.
+     Tony post-deploy on v48.109: Last 5 Years / Last 10 Years / All Time all returned exactly 3,000 pairs (same numbers).
+     ROOT CAUSE: Supabase PostgREST default max-rows cap is 1,000 per response. The query string
+     &limit=10000 is silently clamped server-side. The v48.109 loop's early-exit check
+     'if(rows.length < limit) break' compared returned 1000-row pages against my unclamped limit=10000,
+     so the loop kept iterating until offset hit the project-specific cap (showing 3,000 = 3 pages of 1000).
+     FIX: switched to PostgREST's official Range-header pagination.
+       - Send Range: 0-999, then Range: 1000-1999, etc. (1000-row pages)
+       - Prefer: count=exact returns Content-Range header with total count
+       - Loop terminates on mvPairs.length >= totalCount or short-page detection
+       - Safety ceiling at offset 200000 (covers any conceivable window)
+     Cache key bumped v2 → v3 to invalidate the broken cached results from v48.109.
+     v48.109 baseline preserved: server-side matching via pnl_pairs_mv, NULL ann_return for sub-30-day
+     holds, fallback to v48.108 client-side path on view failure. -->
 <!-- v48.109 (21 May 2026, session 37): Profit/Loss server-side materialized view (Option B).
      Tony post-deploy on v48.108: progressive feedback helped UX but All Time / Last 5 Years still
      spent minutes fetching 30k+ rows. v48.108 frontend optimization had reached its ceiling.
@@ -18115,7 +18129,7 @@ async function pnlLoadData(){
   }
 
   // SessionStorage cache (same key shape as v48.108 for backwards compatibility)
-  var CACHE_KEY    = 'pnl_cache_v2_' + presetVal;  // v2 to invalidate v48.108 cache entries that lack newer fields
+  var CACHE_KEY    = 'pnl_cache_v3_' + presetVal;  // v48.109b: bumped to invalidate the broken 3000-row cached results from v48.109  // v2 to invalidate v48.108 cache entries that lack newer fields
   var CACHE_TTL_MS = 30 * 60 * 1000;
   var forceRefresh = window.pnlForceRefresh === true;
   window.pnlForceRefresh = false;
@@ -18151,24 +18165,50 @@ async function pnlLoadData(){
     var mvCols = 'sell_id,buy_id,sell_date,buy_date,project_name,address,property_type,sell_price,buy_price,sell_type,buy_type,area_sqft,psf_sell,psf_buy,postal_district,planning_region,profit,yrs_held,ann_return';
     var dateFilter = fromDate ? '&sell_date=gte.'+fromDate : '';
     var mvPairs = [];
-    var limit = 10000, offset = 0;
-    while(offset < 100000){
+    // v48.109b: PostgREST default caps responses at 1000 rows regardless of limit query param.
+    // Use Range header pagination (the official PostgREST mechanism) and read Content-Range
+    // response header to detect when we have all rows. Loop bails when server tells us
+    // there are no more rows beyond our current range.
+    var pageSize = 1000;
+    var offset = 0;
+    var totalCount = null;
+    while(offset < 200000){
       var url = SB_URL+'/rest/v1/pnl_pairs_mv?select='+mvCols
         + dateFilter
-        +'&order=sell_date.desc&limit='+limit+'&offset='+offset;
-      var res = await fetch(url, {headers:SB_HDR});
-      if(!res.ok){
-        // 404 = view doesn't exist yet; any other error = fall through too
+        +'&order=sell_date.desc';
+      var pageHdr = Object.assign({}, SB_HDR, {
+        'Range-Unit': 'items',
+        'Range': offset + '-' + (offset + pageSize - 1),
+        'Prefer': 'count=exact'
+      });
+      var res = await fetch(url, {headers: pageHdr});
+      if(!res.ok && res.status !== 206){
         throw new Error('MV path returned HTTP '+res.status);
       }
       var rows = await res.json();
       if(!Array.isArray(rows)) throw new Error('MV path returned non-array');
       if(!rows.length) break;
       mvPairs = mvPairs.concat(rows);
+
+      // Parse Content-Range header to learn total count on first response
+      var cr = res.headers.get('content-range') || res.headers.get('Content-Range');
+      if(cr && totalCount === null){
+        var slash = cr.lastIndexOf('/');
+        if(slash > -1){
+          var tc = parseInt(cr.substring(slash+1), 10);
+          if(!isNaN(tc)) totalCount = tc;
+        }
+      }
+
       document.getElementById('pnl-progress').textContent =
-        'Loaded ' + mvPairs.length.toLocaleString() + ' matched pairs…';
-      if(rows.length < limit) break;
-      offset += limit;
+        'Loaded ' + mvPairs.length.toLocaleString() +
+        (totalCount !== null ? ' of ' + totalCount.toLocaleString() : '') +
+        ' matched pairs…';
+
+      // Stop conditions: we have everything, or the page came back short
+      if(totalCount !== null && mvPairs.length >= totalCount) break;
+      if(rows.length < pageSize) break;
+      offset += pageSize;
     }
 
     // Map MV column names to the PNL_PAIRS shape that pnlApplyFilters / pnlRenderTable expect
