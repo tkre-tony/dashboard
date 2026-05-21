@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
-<!-- v48.111 (21 May 2026, session 38): Projects sub-tab toggle — side-by-side Profitable/Unprofitable Projects tabs (mirrors P/L pattern). Misleading per-tab transaction counts removed. Chip-style collapse-headers replaced with .pnl-stab tab buttons.
+<!-- v48.112 (21 May 2026, session 38): Tenure on Profit/Loss + Projects — added sell_tenure column to pnl_pairs_mv (v48_112 SQL migration required); P/L stacks tenure under address; Projects gets Tenure column after Type. Cache key bumped v3 -> v4.
      Tony post-deploy on v48.109: Last 5 Years / Last 10 Years / All Time all returned exactly 3,000 pairs (same numbers).
      ROOT CAUSE: Supabase PostgREST default max-rows cap is 1,000 per response. The query string
      &limit=10000 is silently clamped server-side. The v48.109 loop's early-exit check
@@ -3221,6 +3221,7 @@ body.article-takeover .ed-foot{display:none!important}
                 <thead><tr>
                   <th style="min-width:160px">Project</th>
                   <th>Type</th>
+                  <th>Tenure</th>
                   <th class="mono" style="text-align:right">Vol.</th>
                   <th class="mono" style="text-align:right">Highest Profit</th>
                   <th class="mono" style="text-align:right">Lowest Profit</th>
@@ -3243,6 +3244,7 @@ body.article-takeover .ed-foot{display:none!important}
                 <thead><tr>
                   <th style="min-width:160px">Project</th>
                   <th>Type</th>
+                  <th>Tenure</th>
                   <th class="mono" style="text-align:right">Vol.</th>
                   <th class="mono" style="text-align:right">Highest Loss</th>
                   <th class="mono" style="text-align:right">Lowest Loss</th>
@@ -16884,6 +16886,17 @@ function classifyTenure(t){
   return null;
 }
 
+// v48.112: short categorical tenure label for cramped cells (P/L address stack, Projects col)
+function fmtTenureShort(t){
+  var c = classifyTenure(t);
+  if(c === 'freehold') return 'Freehold';
+  if(c === '999') return '999y';
+  if(c === '99')  return '99y';
+  if(c === '60')  return '60y';
+  if(c === '30')  return '30y';
+  return '';  // unclassifiable / null / blank -- caller decides em-dash policy
+}
+
 function renderTenureChips(){
   var el=document.getElementById("tenure-chips");
   if(!el) return;
@@ -18127,7 +18140,7 @@ async function pnlLoadData(){
   }
 
   // SessionStorage cache (same key shape as v48.108 for backwards compatibility)
-  var CACHE_KEY    = 'pnl_cache_v3_' + presetVal;  // v48.109b: bumped to invalidate the broken 3000-row cached results from v48.109  // v2 to invalidate v48.108 cache entries that lack newer fields
+  var CACHE_KEY    = 'pnl_cache_v4_' + presetVal;  // v48.109b: bumped to invalidate the broken 3000-row cached results from v48.109  // v2 to invalidate v48.108 cache entries that lack newer fields
   var CACHE_TTL_MS = 30 * 60 * 1000;
   var forceRefresh = window.pnlForceRefresh === true;
   window.pnlForceRefresh = false;
@@ -18160,7 +18173,7 @@ async function pnlLoadData(){
   // ── Try server-side materialized view path ──
   try {
     document.getElementById('pnl-progress').textContent = 'Loading from server-side view…';
-    var mvCols = 'sell_id,buy_id,sell_date,buy_date,project_name,address,property_type,sell_price,buy_price,sell_type,buy_type,area_sqft,psf_sell,psf_buy,postal_district,planning_region,profit,yrs_held,ann_return';
+    var mvCols = 'sell_id,buy_id,sell_date,buy_date,project_name,address,property_type,sell_price,buy_price,sell_type,buy_type,area_sqft,psf_sell,psf_buy,postal_district,planning_region,sell_tenure,profit,yrs_held,ann_return';
     var dateFilter = fromDate ? '&sell_date=gte.'+fromDate : '';
     var mvPairs = [];
     // v48.109b: PostgREST default caps responses at 1000 rows regardless of limit query param.
@@ -18228,7 +18241,8 @@ async function pnlLoadData(){
         psf_sell:        r.psf_sell,
         psf_buy:         r.psf_buy,
         postal_district: r.postal_district,
-        planning_region: r.planning_region
+        planning_region: r.planning_region,
+        sell_tenure:     r.sell_tenure
       };
     });
     // MV does not compute the Aborted (resold) set. Leave empty — UI surface for Aborted
@@ -18316,7 +18330,7 @@ async function pnlLoadDataClientFallback(){
   }
 
   var SB_HDR = {'apikey':SB_KEY,'Authorization':'Bearer '+SB_KEY,'Prefer':'count=none'};
-  var cols = 'id,project_name,address,area_sqft,transacted_price,sale_date,type_of_sale,property_type,unit_price_psf,postal_district,planning_region';
+  var cols = 'id,project_name,address,area_sqft,transacted_price,sale_date,type_of_sale,property_type,unit_price_psf,postal_district,planning_region,tenure';
 
   try {
     document.getElementById('pnl-progress').textContent = 'Phase 1: fetching recent transactions…';
@@ -18430,7 +18444,8 @@ async function pnlLoadDataClientFallback(){
           psf_sell:        sell.unit_price_psf,
           psf_buy:         buy.unit_price_psf,
           postal_district: sell.postal_district || buy.postal_district,
-          planning_region: sell.planning_region || buy.planning_region
+          planning_region: sell.planning_region || buy.planning_region,
+          sell_tenure:     sell.tenure || buy.tenure
         });
       }
 
@@ -19065,10 +19080,13 @@ function pnlRenderProjectsTab(){
       project_name: key,
       property_type: p.property_type || '',
       postal_district: p.postal_district || '',
+      tenure: '',  // v48.112: populated from first pair with classifiable tenure (set below)
       pairs: [], profits: [], losses: [], ann_returns: [], profit_ann_returns: [], loss_ann_returns: [], yrs_helds: []
     };
     var g = map[key];
     g.pairs.push(p);
+    // v48.112: capture tenure on first pair that has a classifiable value (assumes all pairs in a project share tenure -- same physical building)
+    if(!g.tenure){ var ts = fmtTenureShort(p.sell_tenure); if(ts) g.tenure = ts; }
     if(p.profit > 0){ g.profits.push(p.profit); g.profit_ann_returns.push(p.ann_return); }
     else { g.losses.push(p.profit); g.loss_ann_returns.push(p.ann_return); }
     g.ann_returns.push(p.ann_return);
@@ -19173,7 +19191,7 @@ function pnlRenderProjectsTab(){
     if(!el) return;
     var start = page * PROJ_PAGE_SIZE;
     var pageRows = rows.slice(start, start + PROJ_PAGE_SIZE);
-    if(!rows.length){ el.innerHTML='<tr><td colspan="8" style="text-align:center;color:var(--mut);padding:20px;font-size:12px">No data</td></tr>'; if(pag) pag.innerHTML=''; return; }
+    if(!rows.length){ el.innerHTML='<tr><td colspan="9" style="text-align:center;color:var(--mut);padding:20px;font-size:12px">No data</td></tr>'; if(pag) pag.innerHTML=''; return; }
     var pc = '#1a6b3c', lc = '#b71c1c';
     el.innerHTML = pageRows.map(function(g, i){
       var annColor = (isProfitable ? g.med_ann_profit : g.med_ann_loss) >= 0 ? pc : lc;
@@ -19194,6 +19212,7 @@ function pnlRenderProjectsTab(){
           +(distLabel ? '<br><span style="font-size:10px;font-weight:400;color:var(--mut);margin-left:21px">'+distLabel+'</span>' : '')
         +'</td>'
         +'<td style="font-size:10px;color:var(--mut);white-space:nowrap">'+typeShort+'</td>'
+        +'<td style="font-size:10px;color:var(--mut);white-space:nowrap">'+(g.tenure || '—')+'</td>'
         +'<td class="mono" style="text-align:right;font-size:11px">'+(isProfitable ? g.profit_cnt : g.loss_cnt)+'</td>'
         +'<td class="mono" style="text-align:right;font-size:11px;font-weight:700;color:'+(isProfitable?pc:lc)+'">'+hi+'</td>'
         +'<td class="mono" style="text-align:right;font-size:11px;color:'+(isProfitable?pc:lc)+'">'+lo+'</td>'
@@ -19303,10 +19322,11 @@ function pnlRenderTable(sec, rows, page){
         +'<div style="font-size:9px;color:var(--mut2);text-transform:uppercase;letter-spacing:.04em;margin-top:5px;font-family:\'DM Sans\',sans-serif">Bought</div>'
         +'<div style="font-size:11px;color:var(--mut)">'+r.buy_date+'</div>'
       +'</td>'
-      // 2. Project / Address
+      // 2. Project / Address (with tenure stacked underneath when classifiable -- v48.112)
       +'<td style="vertical-align:top;max-width:180px">'
         +'<div style="font-weight:600;font-size:12px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis" title="'+(r.project_name||'')+'">'+( r.project_name||'—')+'</div>'
         +'<div style="font-size:10px;color:var(--mut);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-top:2px" title="'+(maskAddress(r.address)||'')+'">'+(maskAddress(r.address)||'—')+'</div>'
+        +(fmtTenureShort(r.sell_tenure) ? '<div style="font-size:9px;color:var(--mut2);margin-top:3px;text-transform:uppercase;letter-spacing:.04em;font-family:\'DM Sans\',sans-serif">'+fmtTenureShort(r.sell_tenure)+'</div>' : '')
       +'</td>'
       // 3. Buy→Sell: sell price (current, bold) on top; buy price (muted) below
       +'<td class="mono" style="white-space:nowrap;vertical-align:top">'
