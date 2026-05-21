@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
-<!-- v48.113 (21 May 2026, session 38): Projects tenure fix — v48.112 added tenure to aggregation map but the subsequent Object.values(map).map() rebuild dropped it. Single line patch: tenure now flows through to the rendered group objects.
+<!-- v48.114 (21 May 2026, session 38): Tenure display in full — P/L stacks raw tenure under address (verbatim, wraps); Projects Tenure column shows raw string with wrap. fmtTenureShort helper now orphan but retained.
      Tony post-deploy on v48.109: Last 5 Years / Last 10 Years / All Time all returned exactly 3,000 pairs (same numbers).
      ROOT CAUSE: Supabase PostgREST default max-rows cap is 1,000 per response. The query string
      &limit=10000 is silently clamped server-side. The v48.109 loop's early-exit check
@@ -19085,8 +19085,8 @@ function pnlRenderProjectsTab(){
     };
     var g = map[key];
     g.pairs.push(p);
-    // v48.112: capture tenure on first pair that has a classifiable value (assumes all pairs in a project share tenure -- same physical building)
-    if(!g.tenure){ var ts = fmtTenureShort(p.sell_tenure); if(ts) g.tenure = ts; }
+    // v48.114: capture raw tenure verbatim on first pair that has one (assumes all pairs in a project share tenure -- same physical building)
+    if(!g.tenure && p.sell_tenure){ g.tenure = p.sell_tenure; }
     if(p.profit > 0){ g.profits.push(p.profit); g.profit_ann_returns.push(p.ann_return); }
     else { g.losses.push(p.profit); g.loss_ann_returns.push(p.ann_return); }
     g.ann_returns.push(p.ann_return);
@@ -19213,7 +19213,7 @@ function pnlRenderProjectsTab(){
           +(distLabel ? '<br><span style="font-size:10px;font-weight:400;color:var(--mut);margin-left:21px">'+distLabel+'</span>' : '')
         +'</td>'
         +'<td style="font-size:10px;color:var(--mut);white-space:nowrap">'+typeShort+'</td>'
-        +'<td style="font-size:10px;color:var(--mut);white-space:nowrap">'+(g.tenure || '—')+'</td>'
+        +'<td style="font-size:10px;color:var(--mut);white-space:normal;line-height:1.3;max-width:180px">'+(g.tenure || '—')+'</td>'
         +'<td class="mono" style="text-align:right;font-size:11px">'+(isProfitable ? g.profit_cnt : g.loss_cnt)+'</td>'
         +'<td class="mono" style="text-align:right;font-size:11px;font-weight:700;color:'+(isProfitable?pc:lc)+'">'+hi+'</td>'
         +'<td class="mono" style="text-align:right;font-size:11px;color:'+(isProfitable?pc:lc)+'">'+lo+'</td>'
@@ -19327,7 +19327,7 @@ function pnlRenderTable(sec, rows, page){
       +'<td style="vertical-align:top;max-width:180px">'
         +'<div style="font-weight:600;font-size:12px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis" title="'+(r.project_name||'')+'">'+( r.project_name||'—')+'</div>'
         +'<div style="font-size:10px;color:var(--mut);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-top:2px" title="'+(maskAddress(r.address)||'')+'">'+(maskAddress(r.address)||'—')+'</div>'
-        +(fmtTenureShort(r.sell_tenure) ? '<div style="font-size:9px;color:var(--mut2);margin-top:3px;text-transform:uppercase;letter-spacing:.04em;font-family:\'DM Sans\',sans-serif">'+fmtTenureShort(r.sell_tenure)+'</div>' : '')
+        +(r.sell_tenure ? '<div style="font-size:9.5px;color:var(--mut2);margin-top:3px;line-height:1.3;white-space:normal">'+r.sell_tenure+'</div>' : '')
       +'</td>'
       // 3. Buy→Sell: sell price (current, bold) on top; buy price (muted) below
       +'<td class="mono" style="white-space:nowrap;vertical-align:top">'
