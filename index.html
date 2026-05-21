@@ -3,7 +3,8 @@
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
-<!-- v48.115 (21 May 2026, session 39): Most Active sub-tab — (1) Renamed "🏢 Projects" sub-tab to "🔥 Most Active" in Market Analysis pill; (2) Click-to-drill-down modal on project-name OR volume in either Profitable/Unprofitable tabs → shows that project's transactions in an 8-col overlay (Sell date · Address · Unit · Sell $ · Buy $ · Profit · Hold · Ann.return), sorted by highest profit / biggest loss first per L277 confirmation. Per L276: Object.values rebuild gains `pairs: g.pairs` passthrough so modal sees pairs. data-tab key "proj" unchanged (S35 stability rule). Backdrop click + ESC + ✕ button all close modal.
+<!-- v48.116 (21 May 2026, session 39): Modal placement fix — the v48.115 proj-tx-modal HTML was nested inside <div class="panel" id="tab-reit"> (Asset Directory). When user clicks from Market Analysis tab, tab-reit has display:none, which prevents any descendant from painting regardless of position:fixed. Fix: relocated modal HTML to end-of-body alongside talent-drawer-overlay. Lesson candidate L278: floating modals must live outside all tab panels.
+v48.115 (21 May 2026, session 39): Most Active sub-tab — (1) Renamed "🏢 Projects" sub-tab to "🔥 Most Active" in Market Analysis pill; (2) Click-to-drill-down modal on project-name OR volume in either Profitable/Unprofitable tabs → shows that project's transactions in an 8-col overlay (Sell date · Address · Unit · Sell $ · Buy $ · Profit · Hold · Ann.return), sorted by highest profit / biggest loss first per L277 confirmation. Per L276: Object.values rebuild gains `pairs: g.pairs` passthrough so modal sees pairs. data-tab key "proj" unchanged (S35 stability rule). Backdrop click + ESC + ✕ button all close modal.
 v48.114 (21 May 2026, session 38): Tenure display in full — P/L stacks raw tenure under address (verbatim, wraps); Projects Tenure column shows raw string with wrap. fmtTenureShort helper now orphan but retained.
      Tony post-deploy on v48.109: Last 5 Years / Last 10 Years / All Time all returned exactly 3,000 pairs (same numbers).
      ROOT CAUSE: Supabase PostgREST default max-rows cap is 1,000 per response. The query string
@@ -4185,33 +4186,8 @@ body.article-takeover .ed-foot{display:none!important}
         </div>
       </div>
 
-      <!-- v48.115: Project transactions drill-down modal (Most Active) -->
-      <div id="proj-tx-modal" onclick="if(event.target===this)projCloseTxModal()" style="display:none;position:fixed;inset:0;z-index:9999;background:rgba(0,0,0,.55);align-items:center;justify-content:center">
-        <div style="background:var(--srf,#fff);border:1px solid var(--bdr);border-radius:14px;max-width:920px;width:94%;max-height:84vh;display:flex;flex-direction:column;box-shadow:0 20px 60px rgba(0,0,0,.5)">
-          <div style="display:flex;align-items:center;justify-content:space-between;padding:14px 18px;border-bottom:1px solid var(--bdr);gap:12px">
-            <div style="flex:1;min-width:0">
-              <div id="proj-tx-modal-title" style="font-size:14px;font-weight:700;color:var(--txt);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">Project transactions</div>
-              <div id="proj-tx-modal-sub" style="font-size:11px;color:var(--mut);margin-top:2px"></div>
-            </div>
-            <button onclick="projCloseTxModal()" style="background:none;border:none;cursor:pointer;color:var(--mut);font-size:20px;line-height:1;padding:4px 8px;flex-shrink:0">✕</button>
-          </div>
-          <div style="overflow:auto;padding:0">
-            <table style="width:100%;border-collapse:collapse;font-size:11px">
-              <thead><tr style="background:var(--srf2);position:sticky;top:0;z-index:1">
-                <th style="padding:9px 10px;text-align:left;color:var(--mut);font-size:10px;text-transform:uppercase;letter-spacing:.04em;border-bottom:1px solid var(--bdr);white-space:nowrap">Sell Date</th>
-                <th style="padding:9px 10px;text-align:left;color:var(--mut);font-size:10px;text-transform:uppercase;letter-spacing:.04em;border-bottom:1px solid var(--bdr)">Address</th>
-                <th style="padding:9px 10px;text-align:left;color:var(--mut);font-size:10px;text-transform:uppercase;letter-spacing:.04em;border-bottom:1px solid var(--bdr);white-space:nowrap">Unit</th>
-                <th style="padding:9px 10px;text-align:right;color:var(--mut);font-size:10px;text-transform:uppercase;letter-spacing:.04em;border-bottom:1px solid var(--bdr);white-space:nowrap">Sell $</th>
-                <th style="padding:9px 10px;text-align:right;color:var(--mut);font-size:10px;text-transform:uppercase;letter-spacing:.04em;border-bottom:1px solid var(--bdr);white-space:nowrap">Buy $</th>
-                <th style="padding:9px 10px;text-align:right;color:var(--mut);font-size:10px;text-transform:uppercase;letter-spacing:.04em;border-bottom:1px solid var(--bdr);white-space:nowrap">Profit</th>
-                <th style="padding:9px 10px;text-align:right;color:var(--mut);font-size:10px;text-transform:uppercase;letter-spacing:.04em;border-bottom:1px solid var(--bdr);white-space:nowrap">Hold</th>
-                <th style="padding:9px 10px;text-align:right;color:var(--mut);font-size:10px;text-transform:uppercase;letter-spacing:.04em;border-bottom:1px solid var(--bdr);white-space:nowrap">Ann. Return</th>
-              </tr></thead>
-              <tbody id="proj-tx-modal-body"></tbody>
-            </table>
-          </div>
-          <div id="proj-tx-modal-foot" style="padding:9px 18px;border-top:1px solid var(--bdr);font-size:10px;color:var(--mut2);text-align:right"></div>
-        </div>
+
+      <div class="card" id="tenant-panel"</div>
       </div>
 
       <div class="card" id="tenant-panel" style="margin-top:14px">
@@ -5025,6 +5001,35 @@ body.article-takeover .ed-foot{display:none!important}
 </div><!-- /wrap -->
 
 <!-- end main wrap -->
+
+<!-- v48.116: Project transactions drill-down modal (Most Active) - relocated to end-of-body so no tab-panel ancestor can hide it -->
+<div id="proj-tx-modal" onclick="if(event.target===this)projCloseTxModal()" style="display:none;position:fixed;inset:0;z-index:9999;background:rgba(0,0,0,.55);align-items:center;justify-content:center">
+  <div style="background:var(--srf,#fff);border:1px solid var(--bdr);border-radius:14px;max-width:920px;width:94%;max-height:84vh;display:flex;flex-direction:column;box-shadow:0 20px 60px rgba(0,0,0,.5)">
+    <div style="display:flex;align-items:center;justify-content:space-between;padding:14px 18px;border-bottom:1px solid var(--bdr);gap:12px">
+      <div style="flex:1;min-width:0">
+        <div id="proj-tx-modal-title" style="font-size:14px;font-weight:700;color:var(--txt);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">Project transactions</div>
+        <div id="proj-tx-modal-sub" style="font-size:11px;color:var(--mut);margin-top:2px"></div>
+      </div>
+      <button onclick="projCloseTxModal()" style="background:none;border:none;cursor:pointer;color:var(--mut);font-size:20px;line-height:1;padding:4px 8px;flex-shrink:0">✕</button>
+    </div>
+    <div style="overflow:auto;padding:0">
+      <table style="width:100%;border-collapse:collapse;font-size:11px">
+        <thead><tr style="background:var(--srf2);position:sticky;top:0;z-index:1">
+          <th style="padding:9px 10px;text-align:left;color:var(--mut);font-size:10px;text-transform:uppercase;letter-spacing:.04em;border-bottom:1px solid var(--bdr);white-space:nowrap">Sell Date</th>
+          <th style="padding:9px 10px;text-align:left;color:var(--mut);font-size:10px;text-transform:uppercase;letter-spacing:.04em;border-bottom:1px solid var(--bdr)">Address</th>
+          <th style="padding:9px 10px;text-align:left;color:var(--mut);font-size:10px;text-transform:uppercase;letter-spacing:.04em;border-bottom:1px solid var(--bdr);white-space:nowrap">Unit</th>
+          <th style="padding:9px 10px;text-align:right;color:var(--mut);font-size:10px;text-transform:uppercase;letter-spacing:.04em;border-bottom:1px solid var(--bdr);white-space:nowrap">Sell $</th>
+          <th style="padding:9px 10px;text-align:right;color:var(--mut);font-size:10px;text-transform:uppercase;letter-spacing:.04em;border-bottom:1px solid var(--bdr);white-space:nowrap">Buy $</th>
+          <th style="padding:9px 10px;text-align:right;color:var(--mut);font-size:10px;text-transform:uppercase;letter-spacing:.04em;border-bottom:1px solid var(--bdr);white-space:nowrap">Profit</th>
+          <th style="padding:9px 10px;text-align:right;color:var(--mut);font-size:10px;text-transform:uppercase;letter-spacing:.04em;border-bottom:1px solid var(--bdr);white-space:nowrap">Hold</th>
+          <th style="padding:9px 10px;text-align:right;color:var(--mut);font-size:10px;text-transform:uppercase;letter-spacing:.04em;border-bottom:1px solid var(--bdr);white-space:nowrap">Ann. Return</th>
+        </tr></thead>
+        <tbody id="proj-tx-modal-body"></tbody>
+      </table>
+    </div>
+    <div id="proj-tx-modal-foot" style="padding:9px 18px;border-top:1px solid var(--bdr);font-size:10px;color:var(--mut2);text-align:right"></div>
+  </div>
+</div>
 
 <!-- Detail drawer -->
 <div class="talent-drawer-overlay" id="talent-overlay" onclick="talentCloseDrawer(event)">
