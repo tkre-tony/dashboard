@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
-<!-- v48.109b (21 May 2026, session 37): MV pagination fix — PostgREST 1000-row cap workaround.
+<!-- v48.110 (21 May 2026, session 38): Projects KPI strip cleanup — dropped misleading Profitable/Non-Profitable Transactions cards (counted projects, not transactions). Section headers renamed Profitable/Unprofitable Projects for vocabulary consistency with Profit/Loss.
      Tony post-deploy on v48.109: Last 5 Years / Last 10 Years / All Time all returned exactly 3,000 pairs (same numbers).
      ROOT CAUSE: Supabase PostgREST default max-rows cap is 1,000 per response. The query string
      &limit=10000 is silently clamped server-side. The v48.109 loop's early-exit check
@@ -3210,7 +3210,7 @@ body.article-takeover .ed-foot{display:none!important}
         <!-- Profitable table -->
         <div style="margin-bottom:20px">
           <div style="margin-bottom:8px;display:flex;align-items:center;gap:8px">
-            <span id="proj-hdr-profit" onclick="projToggleSection('profit')" style="display:inline-block;background:#e8f5e9;border:1px solid #a5d6a7;border-radius:12px;padding:4px 14px;font-size:12px;font-weight:700;color:#1a6b3c;cursor:pointer;user-select:none">🏆 Profitable Transactions</span>
+            <span id="proj-hdr-profit" onclick="projToggleSection('profit')" style="display:inline-block;background:#e8f5e9;border:1px solid #a5d6a7;border-radius:12px;padding:4px 14px;font-size:12px;font-weight:700;color:#1a6b3c;cursor:pointer;user-select:none">🏆 Profitable Projects</span>
             <button id="proj-toggle-profit" onclick="projToggleSection('profit')" style="background:none;border:none;color:var(--mut);font-size:14px;cursor:pointer;padding:0 4px">▾</button>
           </div>
           <div id="proj-tbl-wrap-profit">
@@ -3236,7 +3236,7 @@ body.article-takeover .ed-foot{display:none!important}
         <!-- Non-Profitable table -->
         <div>
           <div style="margin-bottom:8px;display:flex;align-items:center;gap:8px">
-            <span id="proj-hdr-loss" onclick="projToggleSection('loss')" style="display:inline-block;background:#fce4ec;border:1px solid #ef9a9a;border-radius:12px;padding:4px 14px;font-size:12px;font-weight:700;color:#b71c1c;cursor:pointer;user-select:none">📉 Non-Profitable Transactions</span>
+            <span id="proj-hdr-loss" onclick="projToggleSection('loss')" style="display:inline-block;background:#fce4ec;border:1px solid #ef9a9a;border-radius:12px;padding:4px 14px;font-size:12px;font-weight:700;color:#b71c1c;cursor:pointer;user-select:none">📉 Unprofitable Projects</span>
             <button id="proj-toggle-loss" onclick="projToggleSection('loss')" style="background:none;border:none;color:var(--mut);font-size:14px;cursor:pointer;padding:0 4px">▾</button>
           </div>
           <div id="proj-tbl-wrap-loss">
@@ -19128,9 +19128,7 @@ function pnlRenderProjectsTab(){
   var profitableProj = groups.filter(function(g){return g.net>0;}).length;
   var statsEl = document.getElementById('proj-ov-stats');
   statsEl.innerHTML = [
-    {label:'Projects Analysed', val:totalProjects, bg:'var(--srf2)', bdr:'var(--bdr)', tc:'var(--txt)', vc:'var(--txt)'},
-    {label:'Profitable Transactions', val:profitableProj, bg:'#e8f5e9', bdr:'#a5d6a7', tc:'#2e7d32', vc:'#1a6b3c'},
-    {label:'Non-Profitable Transactions', val:totalProjects-profitableProj, bg:'#fce4ec', bdr:'#ef9a9a', tc:'#c62828', vc:'#b71c1c'}
+    {label:'Projects Analysed', val:totalProjects, bg:'var(--srf2)', bdr:'var(--bdr)', tc:'var(--txt)', vc:'var(--txt)'}
   ].map(function(s){
     return '<div style="flex:1;min-width:110px;background:'+s.bg+';border:1px solid '+s.bdr+';border-radius:8px;padding:8px 14px">'
       +'<div style="font-size:10px;text-transform:uppercase;letter-spacing:.07em;color:'+s.tc+';margin-bottom:2px">'+s.label+'</div>'
