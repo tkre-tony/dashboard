@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
-<!-- v48.112 (21 May 2026, session 38): Tenure on Profit/Loss + Projects — added sell_tenure column to pnl_pairs_mv (v48_112 SQL migration required); P/L stacks tenure under address; Projects gets Tenure column after Type. Cache key bumped v3 -> v4.
+<!-- v48.113 (21 May 2026, session 38): Projects tenure fix — v48.112 added tenure to aggregation map but the subsequent Object.values(map).map() rebuild dropped it. Single line patch: tenure now flows through to the rendered group objects.
      Tony post-deploy on v48.109: Last 5 Years / Last 10 Years / All Time all returned exactly 3,000 pairs (same numbers).
      ROOT CAUSE: Supabase PostgREST default max-rows cap is 1,000 per response. The query string
      &limit=10000 is silently clamped server-side. The v48.109 loop's early-exit check
@@ -19120,6 +19120,7 @@ function pnlRenderProjectsTab(){
       project_name: g.project_name,
       property_type: g.property_type,
       postal_district: g.postal_district,
+      tenure: g.tenure,
       cnt: g.pairs.length,
       profit_cnt: g.profits.length,
       loss_cnt: g.losses.length,
