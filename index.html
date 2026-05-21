@@ -3,6 +3,29 @@
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<!-- v48.107 (21 May 2026, session 37): Type filter case fix + pager stale fix + duplicate dropdown removal.
+     Tony post-deploy feedback on v48.106:
+       (1) Ticking any combination of Type checkboxes (Office / Retail / Shophouse / etc) returned 0 results.
+       (2) Pager still showed "1–25 of 352" even when table body showed empty-state row.
+       (3) Two "All Types" dropdowns visible — one in header chrome (legacy) + one in shared filter bar (new from v48.105). Confusing duplicate.
+     ROOT CAUSE OF (1) — diagnosed via PNL_PAIRS[0].property_type console inspection:
+       DB stores property_type as lowercase ("multiple-user factory", "office", "retail" etc).
+       My v48.105 shared-type checkboxes used Title-Case ("Multiple-User Factory", "Office", "Retail").
+       JavaScript === is case-sensitive: fType.indexOf(r.property_type) === -1 always true → every row excluded.
+       sell_type was already Title-Case in DB ("Resale", "New Sale", "Sub Sale") so Type-of-Sale filter was never affected.
+     FIXES:
+       (a) sharedColMatch — normalize both sides via fmtPropType() (existing case-insensitive canonical mapper).
+           Pre-compute fType.map(fmtPropType) outside the per-row callback to avoid N² work on large sets.
+           Type-of-Sale path unchanged (no case quirk in data).
+       (b) pnlRenderTable empty-state branch — emit pnlRenderPager(rows.length=0) BEFORE the early-return.
+           Was leaving the pager DOM with stale "1–25 of N" from the previous render.
+       (c) HTML — strip the header chrome "All Types" dropdown (#pnl-type-btn, #pnl-type-drop and 7 nested labels).
+           pnlApplyFilters' headerTypes derivation collapsed to const empty array (was calling pnlGetCheckedTypes()).
+           Function definitions pnlTypeChange / pnlGetCheckedTypes / pnlToggleTypeDrop left orphaned but harmless
+           (mirrors v48.105 convention with PNL_ABORT / pnlRenderAbort).
+     L270 cascade audit: no CSS rules edited. L271 imported-block scope: no imported selectors touched.
+     v48.105/v48.106 base preserved: shared filter bar, KPI partition logic, sortable Date column, From/To range pickers,
+     autocomplete on project search, structural empty-state recovery. -->
 <!-- v48.106 (21 May 2026, session 37): Profit/Loss empty-state recovery + project autocomplete.
      Tony post-deploy feedback on v48.105 surfaced three real bugs:
        (1) Typing a non-matching string into the project search hid the entire filter bar (dead-end — no way to recover).
@@ -2953,18 +2976,6 @@ body.article-takeover .ed-foot{display:none!important}
           <div class="card-subtitle" id="pnl-subtitle">Match buy vs resale of same unit &middot; Project + Address + Area matching</div>
         </div>
         <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
-          <div style="position:relative">
-            <button id="pnl-type-btn" onclick="pnlToggleTypeDrop()" style="padding:5px 10px;font-size:11px;border:1px solid var(--bdr);border-radius:6px;background:var(--srf);color:var(--txt);cursor:pointer;white-space:nowrap;min-width:110px;text-align:left">All Types &#9660;</button>
-            <div id="pnl-type-drop" style="display:none;position:absolute;top:calc(100% + 4px);left:0;z-index:999;background:var(--srf);border:1px solid var(--bdr);border-radius:6px;min-width:160px;box-shadow:0 4px 16px rgba(0,0,0,.12);padding:4px 0">
-              <label style="display:flex;align-items:center;gap:7px;padding:5px 12px;font-size:11px;cursor:pointer;color:var(--txt)"><input type="checkbox" value="Office" onchange="pnlTypeChange()"> Office</label>
-              <label style="display:flex;align-items:center;gap:7px;padding:5px 12px;font-size:11px;cursor:pointer;color:var(--txt)"><input type="checkbox" value="Retail" onchange="pnlTypeChange()"> Retail</label>
-              <label style="display:flex;align-items:center;gap:7px;padding:5px 12px;font-size:11px;cursor:pointer;color:var(--txt)"><input type="checkbox" value="Shop House" onchange="pnlTypeChange()"> Shophouse</label>
-              <label style="display:flex;align-items:center;gap:7px;padding:5px 12px;font-size:11px;cursor:pointer;color:var(--txt)"><input type="checkbox" value="Multiple-User Factory" onchange="pnlTypeChange()"> Multi-User</label>
-              <label style="display:flex;align-items:center;gap:7px;padding:5px 12px;font-size:11px;cursor:pointer;color:var(--txt)"><input type="checkbox" value="Single-User Factory" onchange="pnlTypeChange()"> Single-User</label>
-              <label style="display:flex;align-items:center;gap:7px;padding:5px 12px;font-size:11px;cursor:pointer;color:var(--txt)"><input type="checkbox" value="Business Park" onchange="pnlTypeChange()"> Business Park</label>
-              <label style="display:flex;align-items:center;gap:7px;padding:5px 12px;font-size:11px;cursor:pointer;color:var(--txt)"><input type="checkbox" value="Warehouse" onchange="pnlTypeChange()"> Warehouse</label>
-            </div>
-          </div>
           <select id="pnl-period-filter" class="ov-sel" onchange="pnlLoadData()" style="font-size:11px;padding:4px 8px">
             <option value="0.5" selected>Last 6 Months</option>
             <option value="1">Last 1 Year</option>
@@ -18407,7 +18418,8 @@ function pnlApplyFilters(){
   // the partition of one consistent filtered base.
 
   // Header-level chrome filters (preset dropdown + From/To range)
-  var headerTypes = pnlGetCheckedTypes();
+  // v48.107: header 'All Types' dropdown removed (duplicate of shared filter bar); headerTypes is now always [].
+  var headerTypes = [];
   var periodYrs   = parseFloat(document.getElementById('pnl-period-filter').value);
   var presetFrom  = '';
   if(periodYrs > 0){
@@ -18433,8 +18445,11 @@ function pnlApplyFilters(){
     return true;
   }
   function abortDateMatch(r){ return !presetFrom || r.resold_date >= presetFrom; }
+  // v48.107: pre-normalize fType via fmtPropType so case-mismatch between
+  // checkbox value ("Multiple-User Factory") and DB raw ("multiple-user factory") doesn't reject everything.
+  var fTypeCanon = fType.map(fmtPropType);
   function sharedColMatch(r){
-    if(fType.length  && fType.indexOf(r.property_type)  === -1) return false;
+    if(fType.length  && fTypeCanon.indexOf(fmtPropType(r.property_type)) === -1) return false;
     if(fEntry.length && fEntry.indexOf(r.sell_type)     === -1) return false;
     if(fProject){
       var pn = (r.project_name||'').toLowerCase();
@@ -18979,7 +18994,12 @@ function pnlRenderTable(sec, rows, page){
   var tbody = document.getElementById('pnl-tbody-'+sec);
   var start = page * pnlPageSize, end = start + pnlPageSize;
   var slice = rows.slice(start, end);
-  if(!slice.length){ tbody.innerHTML='<tr><td colspan="10" style="text-align:center;color:var(--mut);padding:32px 24px"><div style="font-size:13px;margin-bottom:6px">No matches for the current filters.</div><div style="font-size:11px;color:var(--mut2)">Try adjusting the project search, type filter, or date range — or <a href="#" onclick="pnlClearAllFilters();return false;" style="color:var(--g1);text-decoration:underline;cursor:pointer">clear all filters</a>.</div></td></tr>'; return; }
+  if(!slice.length){
+    tbody.innerHTML='<tr><td colspan="10" style="text-align:center;color:var(--mut);padding:32px 24px"><div style="font-size:13px;margin-bottom:6px">No matches for the current filters.</div><div style="font-size:11px;color:var(--mut2)">Try adjusting the project search, type filter, or date range — or <a href="#" onclick="pnlClearAllFilters();return false;" style="color:var(--g1);text-decoration:underline;cursor:pointer">clear all filters</a>.</div></td></tr>';
+    // v48.107: emit pager BEFORE returning so it reflects the current empty state (no stale '1–25 of 352')
+    pnlRenderPager('pnl-pg-'+sec, rows.length, page, sec);
+    return;
+  }
   tbody.innerHTML = slice.map(function(r){
     var isLoss     = r.profit < 0;
     var profitCol  = isLoss ? '#b71c1c' : '#1a6b3c';
