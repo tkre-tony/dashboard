@@ -3,6 +3,20 @@
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<!-- v48.117 (22 May 2026, session 40): NEWSROOM DROP id:95 PLife REIT 1Q FY2026 Business Update.
+     L166 three-tier cascade applied. L243 cascade preflight: NR_STATIC_IDS rotates
+     [94,93,92,91,90,89,88,87,86] -> [95,94,93,92,91,90,89,88,87] (drop 86).
+     Hero: id:94 Lendlease REIT -> id:95 PLife REIT (Mount Elizabeth Hospital photo).
+     Cards: 93 MLT / 92 Centurion / 91 UHREIT -> 94 Lendlease / 93 MLT / 92 Centurion.
+     Feed: 90 / 89 / 88 / 87 / 86 -> 91 / 90 / 89 / 88 / 87 (id 86 CAREIT drops off).
+     L216 quarterly classification: M&A scan completed. Findings: 5 Miyako Osaka
+     properties repossessed Jan/Feb 2026 + 1 Kikuya vacant; no new acquisitions, no
+     divestments. Per-property q_* REIT_DATA updates proposed in Summary.md, deferred
+     to a separate atomic deploy pending Tony approval (does not block this article ship).
+     L246: landing hero short-form headline at 242 chars / 36 words (within 250 budget).
+     L245 LinkedIn compound 4-angle: 2,788 UTF-16 in news_95_plife_linkedin.txt.
+     L196: all 7 chrome tripwires preserved (no JS/CSS structural changes this splice).
+     L217: LF-only count maintained at 0; byte-mode throughout. -->
 <!-- v48.116 (21 May 2026, session 39): Modal placement fix — the v48.115 proj-tx-modal HTML was nested inside <div class="panel" id="tab-reit"> (Asset Directory). When user clicks from Market Analysis tab, tab-reit has display:none, which prevents any descendant from painting regardless of position:fixed. Fix: relocated modal HTML to end-of-body alongside talent-drawer-overlay. Lesson candidate L278: floating modals must live outside all tab panels.
 v48.115 (21 May 2026, session 39): Most Active sub-tab — (1) Renamed "🏢 Projects" sub-tab to "🔥 Most Active" in Market Analysis pill; (2) Click-to-drill-down modal on project-name OR volume in either Profitable/Unprofitable tabs → shows that project's transactions in an 8-col overlay (Sell date · Address · Unit · Sell $ · Buy $ · Profit · Hold · Ann.return), sorted by highest profit / biggest loss first per L277 confirmation. Per L276: Object.values rebuild gains `pairs: g.pairs` passthrough so modal sees pairs. data-tab key "proj" unchanged (S35 stability rule). Backdrop click + ESC + ✕ button all close modal.
 v48.114 (21 May 2026, session 38): Tenure display in full — P/L stacks raw tenure under address (verbatim, wraps); Projects Tenure column shows raw string with wrap. fmtTenureShort helper now orphan but retained.
@@ -3474,37 +3488,37 @@ body.article-takeover .ed-foot{display:none!important}
   <div class="wrap hero-grid">
 
     <!-- Image — Phase 1 GitHub Pages photo pipeline.
-         id:94 Lendlease REIT hero — Jem, 50 Jurong Gateway Road,
-         Singapore. Lendlease REIT 3Q FY2026 hero asset, 100% interest,
-         99.9% committed occupancy at 30 September 2025, valued at
-         S$2,299M (~44% of the S$4.2B portfolio post PLQ Mall
-         consolidation), retail-only following the November 2025
-         divestment of the Jem office component. v48.92 cascade. -->
+         id:95 Parkway Life REIT hero — Mount Elizabeth Hospital,
+         3 Mount Elizabeth, Singapore. PLife REIT 1Q FY2026 hero asset,
+         S$1,014.6M appraised value (58.2% of the S$1,743.5M Singapore
+         portfolio), Project Renaissance S$350M renewal capex completed
+         February 2026 with provisional Green Mark Platinum certification.
+         v48.117 cascade. -->
     <!-- Image column: photo + credit live together as one grid cell.
          Placing them as separate grid siblings caused credit to land in
          column 2 row 2 (top-right of headline) — Lesson 128 captured. -->
     <div class="hero-image-col">
-      <a class="hero-image" href="./?article=94&amp;from=landing" aria-label="Read full story: Lendlease REIT 3Q FY2026 — 26 March PLQ Mall full-ownership closes the nine-month repositioning arc, retail reversion +12.2% YTD, gearing 37.5% proforma, cost of debt 2.89% — but +2.5% like-for-like tenant sales versus +17.6% reported is the cleanest cut of acquisition optics versus organic strength">
-        <img src="./images/news_94_lendlease_reit_jem.jpg"
-             alt="Jem, 50 Jurong Gateway Road, Singapore — Lendlease REIT 3Q FY2026 hero asset, 100% interest, S$2,299M valuation (~44% of S$4.2B portfolio), retail-only post the November 2025 office divestment; the largest single asset in the new Singapore-anchored suburban retail portfolio"
+      <a class="hero-image" href="./?article=95&amp;from=landing" aria-label="Read full story: PLife REIT 1Q FY2026 — Mount Elizabeth Project Renaissance completes with Green Mark Platinum, DPU +15.1% on Singapore rent review step-up, 5 Miyako properties repossessed in Osaka, maiden green bond + social loan extend debt maturity">
+        <img src="./images/news_95_plife_reit_mount_elizabeth.jpg"
+             alt="Mount Elizabeth Hospital, 3 Mount Elizabeth, Singapore — Parkway Life REIT 1Q FY2026 hero asset; Project Renaissance S$350M renewal capex completed February 2026 with provisional Green Mark Platinum certification from BCA; the largest single asset in the S$1.74B Singapore portfolio at S$1,014.6M appraised value"
              class="hero-image-photo"
              loading="eager"
              fetchpriority="high" />
       </a>
 
-      <p class="hero-credit">Jem, 50 Jurong Gateway Road, Singapore — Lendlease REIT flagship suburban retail asset, 100% interest, S$2,299M valuation. Photo: Lendlease Global Commercial REIT</p>
+      <p class="hero-credit">Mount Elizabeth Hospital, 3 Mount Elizabeth, Singapore — PLife REIT flagship Singapore hospital, Project Renaissance S$350M refit complete. Photo: ParkwayHealth / Parkway Life REIT</p>
     </div>
 
     <!-- Text column -->
     <div class="hero-text">
       <div class="hero-eyebrow">
         <span class="pill">Latest</span>
-        <span class="cat-tag">Commercial</span>
-        <span class="cat-tag">Earnings · REIT Update · Quarterly · Retail · Singapore · Capital Recycling · Acquisition</span>
+        <span class="cat-tag">Healthcare</span>
+        <span class="cat-tag">Earnings · REIT Update · Quarterly · Healthcare · Singapore · Japan · France · Capital Recycling</span>
       </div>
 
       <h1 id="hero-h" class="hero-headline">
-        <a href="./?article=94&amp;from=landing">Lendlease REIT 3Q FY2026: 26 March PLQ Mall Full-Ownership Closes The Nine-Month Repositioning — Retail Reversion +12.2% YTD, Gearing 37.5% Proforma, Cost Of Debt 2.89%, But +2.5% Like-For-Like Tenant Sales Vs +17.6% Reported Is The Organic Number</a>
+        <a href="./?article=95&amp;from=landing">PLife REIT 1Q FY2026: Mount Elizabeth's S$350M Project Renaissance Completes With Green Mark Platinum, DPU +15.1% On Singapore Rent Review Step-Up, 5 Miyako Properties Repossessed In Osaka, Maiden Green Bond + Social Loan Extend Debt Maturity</a>
       </h1>
     </div>
 
@@ -3514,57 +3528,47 @@ body.article-takeover .ed-foot{display:none!important}
          headlines caused. -->
     <div class="hero-body">
       <p class="hero-teaser">
-        Lendlease Global Commercial REIT on Monday 18 May reported 3Q
-        FY2026 (quarter ended 31 March 2026, on a 1 July–30 June fiscal
-        year). Headline retail rental reversion of +12.2% YTD; portfolio
-        committed occupancy 95.3% with Singapore retail at 99.7%; gearing
-        38.7% (37.5% on a proforma basis post-quarter, following S$82.8M
-        of preferential offering proceeds applied to debt repayment);
-        weighted average cost of debt 2.89% per annum (down 57 basis
-        points from 3.46% at FY2025 close, nine months ago); S$120M
-        of new perpetual securities issued at 4.28% per annum on 14
-        April 2026, partially refinancing the S$200M perpetual
-        securities reset in June 2026 — S$80M residual to be decided.
-        The structural reading: this 3Q print closes a nine-month
-        portfolio repositioning arc that began with the Jem office
-        divestment for S$462M on 12 November 2025, continued with the
-        70% PLQ Mall acquisition the same month funded by a S$280M
-        private placement, and concluded with the 30% PLQ top-up
-        acquired on 26 March 2026 — five days before the quarter end
-        — taking Lendlease REIT to full ownership of the Paya Lebar
-        Quarter mall. The trust has converted from a mixed retail-
-        and-office vehicle with 89% Singapore exposure and 42.7%
-        gearing at FY2025 close into a Singapore-anchored suburban
-        retail trust with 90% Singapore exposure, ~65% suburban
-        retail by asset class, and sub-38% proforma gearing. The
-        +12.2% YTD retail reversion compounds across the three
-        quarterly prints (+8.9% at 1Q, +10.4% at 1H, +12.2% at 3Q)
-        and runs approximately 6× the CBRE market rent-index growth.
-        Year-to-date tenant sales grew 17.6% YoY including four months
-        of PLQ Mall contribution; on a like-for-like basis excluding
-        PLQ Mall, the figure is +2.5% — the cleanest cut available
-        across the SG REIT cohort this quarter of what is acquisition
-        optics and what is organic retail strength. The 2027 catalyst
-        stack is concrete: ~16,000 sq ft PLQ Mall reconfiguration
-        completes end-2026 with rent uplift on new lease commencements
-        in 2027; electricity tariffs hedged at fixed rates through
-        FY2028 deliver ~15% expense reduction from 1 July 2026;
-        Building 3 Milan lease-up resolution opens the strategic
-        optionality on a Milan divestment to redeploy capital into
-        Singapore; and the S$80M residual perpetual decision lands
-        ahead of the June 2026 reset window. This is Lendlease REIT's
-        first appearance in the PropertyAtlas newsroom.
+        Parkway Life REIT on Thursday 30 April released its 1Q FY2026
+        business update (quarter ended 31 March 2026) — the structural
+        seam of four years compressed into a single quarterly print.
+        Project Renaissance, the S$350 million Mount Elizabeth Hospital
+        refit jointly funded with IHH Healthcare Singapore, completed
+        in February 2026 with provisional Green Mark Platinum awarded
+        by BCA — three years and five months after Unitholders’
+        approval at the 30 September 2021 EGM. The new Annual Rent
+        Review Formula for the three Singapore master leases kicked
+        in for the first non-step-up year and lifted FY2026 minimum
+        aggregate rent to S$99.1 million — a +24.3% step over the
+        S$79.7 million payable in FY2025. The Japan book absorbed a
+        tenant default: Miyako Group entered liquidation proceedings,
+        prompting the manager to repossess five Osaka properties in
+        January and February 2026; affected rental ~1.6% of FY2026
+        portfolio gross revenue, with 4–8 months of security deposits
+        held against outstanding obligations. The Sustainable Financing
+        Framework was established in early 2026 and operationalised
+        through an inaugural 5-year S$70.0M green bond at 2.103% and
+        a maiden 10-year JPY8.8 billion (~S$70.9M) social loan that
+        pre-emptively terms out the JPY8.8B loan facility maturing
+        4Q 2026, extending weighted debt term to maturity from 3.0
+        years to ~3.8 years. Gross revenue S$38.2M (-2.1% YoY) and
+        NPI S$35.85M (-2.7%) print red on JPY depreciation and the
+        Japan exit — but DPU 4.42 cents is +15.1% YoY, hedging gains
+        compensate the FX drag, and the Singapore engine has re-priced.
+        Gearing 34.2%, all-in debt cost 1.66%, ICR 8.4×, ~96% rate-
+        hedged. The 4.42 cents 1Q DPU is 29% of FY2025’s 15.29
+        cents recurrent — on track for the un-interrupted DPU growth
+        pattern PLife REIT has delivered every year since its 2007 IPO.
       </p>
 
       <div class="hero-meta">
-        <span>20 May 2026</span>
+        <span>30 April 2026</span>
         <span class="sep">·</span>
-        <span>3,580 words</span>
+        <span>2,416 words</span>
         <span class="sep">·</span>
-        <span>13 min read</span>
+        <span>9 min read</span>
       </div>
 
-      <a class="btn-primary" href="./?article=94&amp;from=landing">
+      <a class="btn-primary" href="./?article=95&amp;from=landing">
         Read full story
         <span class="arrow" aria-hidden="true">→</span>
       </a>
@@ -3620,12 +3624,31 @@ body.article-takeover .ed-foot{display:none!important}
   <div class="wrap">
     <div class="week-head">
       <h2 id="week-h" class="week-title">More from this week</h2>
-      <div class="week-meta">Updated 18 May 2026</div>
+      <div class="week-meta">Updated 20 May 2026</div>
     </div>
 
     <div class="cards">
 
-            <!-- Card 1 — id 93 Mapletree Logistics Trust (cascaded from hero in v48.92 Lendlease REIT cascade) -->
+            <!-- Card 1 — id 94 Lendlease Global Commercial REIT (cascaded from hero in v48.117 PLife REIT cascade) -->
+      <a class="card" href="./?article=94&amp;from=landing">
+        <div class="card-image">
+          <img src="./images/news_94_lendlease_reit_jem.jpg"
+               alt="Jem, 50 Jurong Gateway Road, Singapore — Lendlease REIT 3Q FY2026 hero asset, 100% interest, S$2,299M valuation (~44% of S$4.2B portfolio), retail-only post the November 2025 office divestment"
+               class="card-image-photo"
+               loading="lazy" />
+        </div>
+        <p class="card-credit">Jem, 50 Jurong Gateway Road, Singapore — Lendlease REIT flagship retail asset, 100% interest. Photo: Lendlease Global Commercial REIT</p>
+        <p class="card-cat">Commercial</p>
+        <h3 class="card-headline">Lendlease REIT 3Q FY2026: 26 March PLQ Mall Full-Ownership Closes The Nine-Month Repositioning — Retail Reversion +12.2% YTD, Gearing 37.5% Proforma, Cost Of Debt 2.89% — But +2.5% Like-For-Like Tenant Sales Vs +17.6% Reported Is The Organic Number</h3>
+        <p class="card-teaser">Lendlease REIT closes a nine-month portfolio repositioning arc: Jem office divestment Nov 2025, 70% PLQ Mall acquisition Nov 2025, 30% PLQ top-up 26 March 2026 — full ownership of Paya Lebar Quarter mall. Retail reversion +12.2% YTD compounding +8.9% / +10.4% / +12.2% across three quarters. Gearing 37.5% proforma; weighted debt cost 2.89% (-57bps in 9mo).</p>
+        <p class="card-meta">
+          <span>20 May 2026</span>
+          <span class="sep">·</span>
+          <span>13 min read</span>
+        </p>
+      </a>
+
+            <!-- Card 2 — id 93 Mapletree Logistics Trust (cascaded from card 1 in v48.117 PLife REIT cascade) -->
       <a class="card" href="./?article=93&amp;from=landing">
         <div class="card-image">
           <img src="./images/news_93_mlt_25_pandan_crescent.jpg"
@@ -3644,7 +3667,7 @@ body.article-takeover .ed-foot{display:none!important}
         </p>
       </a>
 
-            <!-- Card 2 — id 92 Centurion Corporation (cascaded from card 1 in v48.92 Lendlease REIT cascade) -->
+      <!-- Card 3 — id 92 Centurion Corporation (cascaded from card 2 in v48.117 PLife REIT cascade) -->
       <a class="card" href="./?article=92&amp;from=landing">
         <div class="card-image">
           <img src="./images/news_92_centurion_aspri_westlite_papan.jpg"
@@ -3660,25 +3683,6 @@ body.article-takeover .ed-foot{display:none!important}
           <span>15 May 2026</span>
           <span class="sep">·</span>
           <span>13 min read</span>
-        </p>
-      </a>
-
-      <!-- Card 3 — id 91 United Hampshire US REIT (cascaded from card 2 in v48.92 Lendlease REIT cascade) -->
-      <a class="card" href="./?article=91&amp;from=landing">
-        <div class="card-image">
-          <img src="./images/news_91_uhreit_garden_city_square.jpg"
-               alt="Garden City Square, Long Island, NY — BJ's Wholesale Club &amp; LA Fitness anchored grocery-anchored strip centre, one of UHREIT's 24 New York / New England / DC metro grocery-anchored neighborhood centers; BJ's is UHREIT's top tenant at 10.7% of GRI; LA Fitness at 5.5%."
-               class="card-image-photo"
-               loading="lazy" />
-        </div>
-        <p class="card-credit">Garden City Square, Long Island, NY — BJ's Wholesale Club &amp; LA Fitness. Photo: United Hampshire US REIT</p>
-        <p class="card-cat">Retail</p>
-        <h3 class="card-headline">UHREIT 1Q 2026: Distributable Income +10.0% To US$6.9M, NPI +12.7% Outpace Revenue +8.7% — Self-Storage Occupancy Bottoms At 89.2%, 2026 Lease Rollover Compressed To 2.0%, WAIR Falls Fourth Consecutive Quarter To 4.91%</h3>
-        <p class="card-teaser">Gross revenue +8.7% YoY to US$19.7M; NPI +12.7% to US$13.2M; distributable income +10.0% to US$6.9M — the 4.0pp revenue-to-NPI spread is operating leverage compounding. Self-storage bottoms at 89.2% (first sequential uptick), 2026 lease rollover compressed to 2.0%, WAIR fell to 4.91% (fourth consecutive quarter of decline). DICK's Sporting Goods grand opening at Hudson Valley Plaza in March 2026. Aggregate leverage 40.3%.</p>
-        <p class="card-meta">
-          <span>13 May 2026</span>
-          <span class="sep">·</span>
-          <span>8 min read</span>
         </p>
       </a>
 
@@ -3710,7 +3714,31 @@ body.article-takeover .ed-foot{display:none!important}
 
       <div class="feed-month">May 2026</div>
 
-            <!-- Row id 90 — NTT DC REIT (cascaded from card 3 in v48.92 Lendlease REIT cascade).
+            <!-- Row id 91 — United Hampshire US REIT (cascaded from card 3 in v48.117 PLife REIT cascade).
+           Photo retained per L144 — entry has news_91_uhreit_garden_city_square.jpg on GitHub. -->
+      <a class="feed-row" href="./?article=91&amp;from=landing">
+        <div class="feed-row-image-col">
+          <div class="feed-row-image">
+            <img src="./images/news_91_uhreit_garden_city_square.jpg"
+                 alt="Garden City Square, Long Island, NY — BJ's Wholesale Club &amp; LA Fitness anchored grocery-anchored strip centre, one of UHREIT's 24 New York / New England / DC metro grocery-anchored neighborhood centers; BJ's is UHREIT's top tenant at 10.7% of GRI; LA Fitness at 5.5%."
+                 class="feed-row-image-photo"
+                 loading="lazy" />
+          </div>
+          <p class="feed-row-credit">Garden City Square, Long Island, NY — BJ's Wholesale Club &amp; LA Fitness. Photo: United Hampshire US REIT</p>
+        </div>
+        <div class="feed-row-text">
+          <p class="feed-row-cat">Retail</p>
+          <h3 class="feed-row-headline">UHREIT 1Q 2026: Distributable Income +10.0% To US$6.9M, NPI +12.7% Outpace Revenue +8.7% — Self-Storage Occupancy Bottoms At 89.2%, 2026 Lease Rollover Compressed To 2.0%, WAIR Falls Fourth Consecutive Quarter To 4.91%</h3>
+          <p class="feed-row-teaser">Gross revenue +8.7% YoY to US$19.7M; NPI +12.7% to US$13.2M; distributable income +10.0% to US$6.9M — the 4.0pp revenue-to-NPI spread is operating leverage compounding. Self-storage bottoms at 89.2% (first sequential uptick), 2026 lease rollover compressed to 2.0%, WAIR fell to 4.91% (fourth consecutive quarter of decline). DICK's Sporting Goods grand opening at Hudson Valley Plaza in March 2026. Aggregate leverage 40.3%.</p>
+          <p class="feed-row-meta">
+          <span>13 May 2026</span>
+          <span class="sep">·</span>
+          <span>8 min read</span>
+          </p>
+        </div>
+      </a>
+
+            <!-- Row id 90 — NTT DC REIT (cascaded from feed row 1 in v48.117 PLife REIT cascade).
            Photo retained per L144 — entry has news_90_ntt_dc_reit_sg1.jpg on GitHub. -->
       <a class="feed-row" href="./?article=90&amp;from=landing">
         <div class="feed-row-image-col">
@@ -3734,7 +3762,7 @@ body.article-takeover .ed-foot{display:none!important}
         </div>
       </a>
 
-            <!-- Row id 89 — Prime US REIT (cascaded from feed row 1 in v48.92 Lendlease REIT cascade).
+      <!-- Row id 89 — Prime US REIT (cascaded from feed row 2 in v48.117 PLife REIT cascade).
            Photo retained per L144 — entry has news_89_prime_us_reit_tower_909.jpg on GitHub. -->
       <a class="feed-row" href="./?article=89&amp;from=landing">
         <div class="feed-row-image-col">
@@ -3758,7 +3786,7 @@ body.article-takeover .ed-foot{display:none!important}
         </div>
       </a>
 
-      <!-- Row id 88 — Frasers Property Limited (cascaded from feed row 2 in v48.92 Lendlease REIT cascade).
+      <!-- Row id 88 — Frasers Property Limited (cascaded from feed row 3 in v48.117 PLife REIT cascade).
            Photo retained per L144 — entry has news_88_fpl_frasers_tower.jpg on GitHub. -->
       <a class="feed-row" href="./?article=88&amp;from=landing">
         <div class="feed-row-image-col">
@@ -3782,7 +3810,7 @@ body.article-takeover .ed-foot{display:none!important}
         </div>
       </a>
 
-      <!-- Row id 87 — AIMS APAC REIT (cascaded from feed row 3 in v48.92 Lendlease REIT cascade).
+      <!-- Row id 87 — AIMS APAC REIT (cascaded from feed row 4 in v48.117 PLife REIT cascade).
            Photo retained per L144 — entry has news_87_aareit_10_changi_south_lane.jpg on GitHub. -->
       <a class="feed-row" href="./?article=87&amp;from=landing">
         <div class="feed-row-image-col">
@@ -3806,31 +3834,7 @@ body.article-takeover .ed-foot{display:none!important}
         </div>
       </a>
 
-      <!-- Row id 86 — CAREIT (cascaded from feed row 4 in v48.92 Lendlease REIT cascade).
-           Photo retained per L144 — entry has news_86_centurion_westlite_woodlands.jpg.png on GitHub. -->
-      <a class="feed-row" href="./?article=86&amp;from=landing">
-        <div class="feed-row-image-col">
-          <div class="feed-row-image">
-            <img src="./images/news_86_centurion_westlite_woodlands.jpg.png"
-                 alt="Westlite Woodlands, Singapore — Centurion Accommodation REIT 1Q 2026 hero asset, one of the five Singapore PBWA properties anchoring 64% of the S$2.19B portfolio valuation"
-                 class="feed-row-image-photo"
-                 loading="lazy" />
-          </div>
-          <p class="feed-row-credit">Westlite Woodlands, Singapore. Photo: Centurion Accommodation REIT</p>
-        </div>
-        <div class="feed-row-text">
-          <p class="feed-row-cat">Residential</p>
-          <h3 class="feed-row-headline">CAREIT 1Q 2026: First Quarterly Print Lands At Mid-Single-Digit Reversion, +S$36M Valuation Lift, S$78.2M Capacity Pipeline Underwriting The FY2026 Forecast</h3>
-          <p class="feed-row-teaser">Centurion Accommodation REIT delivered its first quarterly business update post-IPO. Revenue and NPI tracked the IPO forecast within 1%. Five SG PBWA assets anchor 64% of the S$2.19B portfolio val (+S$36M YoY). 78,000 beds total capacity. SG PBWA bed expansion pipeline visible across two committed projects + adjacent land options. Gearing 22.4% leaves ample debt headroom — the runway to underwrite the FY2026 IPO forecast distribution stays clear.</p>
-          <p class="feed-row-meta">
-            <span>7 May 2026</span>
-            <span class="sep">·</span>
-            <span>9 min read</span>
-          </p>
-        </div>
-      </a>
-
-      <!-- Row id 69 First REIT dropped off in v48.17 cascade; Row id 70 ESR-REIT dropped off in v48.20b cascade for id:79 IREIT hero; Row id 71 CICT dropped off in v48.20d cascade for id:80 Stoneweg hero; Row id 72 Elite UK dropped off in v48.20d second drop for id:81 Landmark hero; Row id 73 FCT dropped off in v48.20h cascade for id:82 Starhill hero; Row id 74 Suntec dropped off in v48.20k cascade for id:83 CDLHT hero; Row id 75 CLAS dropped off in v48.20l cascade for id:84 FEHT hero; Row id 76 CLAR dropped off in v48.23 cascade for id:85 FLCT hero; Row id 77 MPACT dropped off in v48.24 cascade for id:86 Centurion hero; Row id 78 MIT dropped off in v48.27 cascade for id:87 AIMS APAC hero; Row id 79 IREIT dropped off in v48.38 cascade for id:88 Frasers Property hero; Row id 80 SERT dropped off in v48.51 cascade for id:89 Prime US REIT hero; Row id 81 Landmark dropped off in v48.58 cascade for id:90 NTT DC REIT hero; Row id 82 Starhill dropped off in v48.68 cascade for id:91 UHREIT hero; Row id 83 CDLHT dropped off in v48.73 cascade for id:92 Centurion Corp hero; Row id 84 FEHT dropped off in v48.81 cascade for id:93 MLT hero -->
+      <!-- Row id 69 First REIT dropped off in v48.17 cascade; Row id 70 ESR-REIT dropped off in v48.20b cascade for id:79 IREIT hero; Row id 71 CICT dropped off in v48.20d cascade for id:80 Stoneweg hero; Row id 72 Elite UK dropped off in v48.20d second drop for id:81 Landmark hero; Row id 73 FCT dropped off in v48.20h cascade for id:82 Starhill hero; Row id 74 Suntec dropped off in v48.20k cascade for id:83 CDLHT hero; Row id 75 CLAS dropped off in v48.20l cascade for id:84 FEHT hero; Row id 76 CLAR dropped off in v48.23 cascade for id:85 FLCT hero; Row id 77 MPACT dropped off in v48.24 cascade for id:86 Centurion hero; Row id 78 MIT dropped off in v48.27 cascade for id:87 AIMS APAC hero; Row id 79 IREIT dropped off in v48.38 cascade for id:88 Frasers Property hero; Row id 80 SERT dropped off in v48.51 cascade for id:89 Prime US REIT hero; Row id 81 Landmark dropped off in v48.58 cascade for id:90 NTT DC REIT hero; Row id 82 Starhill dropped off in v48.68 cascade for id:91 UHREIT hero; Row id 83 CDLHT dropped off in v48.73 cascade for id:92 Centurion Corp hero; Row id 84 FEHT dropped off in v48.81 cascade for id:93 MLT hero; Row id 85 FLCT dropped off in v48.92 cascade for id:94 Lendlease REIT hero; Row id 86 CAREIT dropped off in v48.117 cascade for id:95 PLife REIT hero -->
 
     </div>
 
@@ -15626,6 +15630,20 @@ var VAL_ARR=[[382.87,299.74,123.93,327.15,109.36,0,113.2],[1150.79,401.34,211.84
 var CNT_ARR=[[362,448,73,289,38,0,91],[424,509,99,463,59,0,212],[209,349,72,404,65,0,98],[127,269,60,149,97,0,34],[249,411,184,819,175,0,46],[209,362,162,596,192,0,98],[138,299,185,575,173,1,64],[200,433,203,982,192,2,66],[133,361,245,764,173,0,69],[284,414,224,674,191,0,59],[277,376,293,433,196,4,42],[468,418,332,750,294,4,56],[719,636,526,1768,318,0,86],[217,230,227,1411,204,3,69],[214,323,271,1705,204,0,88],[478,652,391,3071,307,1,272],[521,743,298,4174,279,4,392],[1153,1518,289,4341,244,1,407],[742,1305,205,2851,157,3,218],[518,510,106,1907,149,0,99],[242,248,104,1236,103,1,95],[286,242,109,927,89,2,58],[344,219,148,885,121,0,57],[337,256,170,939,96,1,64],[314,223,123,1070,103,0,65],[217,151,144,1090,101,2,70],[351,295,253,1748,140,2,123],[316,264,191,1874,131,0,114],[321,272,131,1483,124,0,129],[334,250,87,1622,96,0,162],[355,301,89,1509,163,0,149],[40,42,8,142,11,0,16]];
 var TYPETOT={"office":57330.6,"retail":35459.5,"shophouse":23504.1,"multiUser":39698.3,"singleUser":42601.2,"bizPark":4842.5,"warehouse":8626.0};
 var NEWS=[
+    {id:95, date:"2026-04-30",
+   title:"Parkway Life REIT 1Q FY2026 Business Update: Mount Elizabeth Hospital's S$350 Million Project Renaissance Refit Completes In February 2026 With Provisional Green Mark Platinum Certification, The Annual Rent Review Formula Kicks In For The First Non-Step-Up Year Lifting FY2026 Minimum Aggregate Singapore Rent +24.3% From S$79.7M To S$99.1M And DPU +15.1% To 4.42 Cents, Miyako Group Liquidation Triggers Repossession Of Five Osaka Properties Representing ~1.6% Of FY2026 Portfolio Gross Revenue Backed By 4-8 Months Of Security Deposits, And The Sustainable Financing Framework Is Operationalised Through An Inaugural S$70M Five-Year Green Bond At 2.103% And A Maiden JPY8.8B Ten-Year Social Loan That Extends Weighted Average Debt Term To Maturity From 3.0 To 3.8 Years",
+   display_title:"PLife REIT 1Q FY2026: Mount Elizabeth's S$350M Project Renaissance Completes With Green Mark Platinum, DPU +15.1% On Singapore Rent Review Step-Up, 5 Miyako Properties Repossessed In Osaka, Maiden Green Bond + Social Loan Extend Debt Maturity",
+   display_headline:"PLife REIT 1Q FY2026: Mount Elizabeth's S$350M Project Renaissance Completes With Green Mark Platinum, DPU +15.1% On Singapore Rent Review Step-Up, 5 Miyako Properties Repossessed In Osaka, Maiden Green Bond + Social Loan Extend Debt Maturity",
+   standfirst:"Parkway Life REIT on Thursday 30 April 2026 released its 1Q FY2026 business update (quarter ended 31 March 2026) with the structural seam of four years compressed into a single quarterly print: Project Renaissance — the S$350 million renewal capital expenditure for Mount Elizabeth Hospital jointly funded with IHH Healthcare Singapore — completed in February 2026, three years and five months after Unitholders' approval at the 30 September 2021 EGM; the new Annual Rent Review Formula for the Singapore master leases kicked in for the first non-step-up year and lifted the FY2026 minimum aggregate rent to S$99.1 million, +24.3% on the S$79.7 million payable in FY2025; the Japan portfolio absorbed a tenant default with the Miyako Group entering liquidation proceedings, triggering the manager to repossess five Osaka properties in January and February 2026, with the affected rental representing approximately 1.6% of FY2026 portfolio gross revenue and 4-8 months of security deposits held; and the Sustainable Financing Framework was established in early 2026, operationalised through an inaugural 5-year S$70.0 million fixed-rate green bond at 2.103% per annum and a maiden 10-year JPY8.8 billion (~S$70.9 million) social loan that pre-emptively terms out the JPY8.8 billion loan facility maturing in 4Q 2026, extending weighted average debt term to maturity from 3.0 years to approximately 3.8 years. Gross revenue S$38.2 million (-2.1% YoY) and NPI S$35.85 million (-2.7%) printed red on JPY depreciation and the Japan exit, but DPU of 4.42 cents was +15.1% YoY, with hedging gains compensating the FX drag and the Singapore rent reset providing the underlying lift. Gearing 34.2%, all-in debt cost 1.66%, interest cover 8.4 times, ~96% of interest rate exposure hedged. The 4.42 cents 1Q DPU is 29% of FY2025's 15.29 cents recurrent — on track for the un-interrupted DPU growth pattern PLife REIT has delivered every year since its 2007 IPO.",
+ byline:"PropertyAtlas", read_time_min:9, word_count:2416,
+   financial_headlines:[{label:"DPU (1Q FY2026)",value:"4.42 cents",change:"+15.1% YoY",change_dir:"up"},{label:"Gross revenue",value:"S$38.2M",change:"-2.1% YoY",change_dir:"down"},{label:"Net property income",value:"S$35.85M",change:"-2.7% YoY",change_dir:"down"},{label:"Amount available for distribution",value:"S$28.82M",change:"+15.1% YoY",change_dir:"up"},{label:"FY2026 min. aggregate SG rent",value:"S$99.1M",change:"+24.3% vs FY2025",change_dir:"up"},{label:"Project Renaissance capex (MEH)",value:"S$350M (joint w/ IHH)",change:"completed Feb 2026",change_dir:"flat"},{label:"Investment properties",value:"S$2,562.2M",change:"-0.4% QoQ",change_dir:"down"},{label:"NAV per unit",value:"S$2.53",change:"-1.2% QoQ",change_dir:"down"},{label:"Unit price (31 Mar)",value:"S$4.00",change:"-2.0% QoQ",change_dir:"down"},{label:"Premium to NAV",value:"+58.1%",change:"-130bps QoQ",change_dir:"down"},{label:"Gearing",value:"34.2%",change_dir:"flat"},{label:"All-in debt cost",value:"1.66% p.a.",change_dir:"flat"},{label:"Interest coverage ratio",value:"8.4×",change_dir:"flat"},{label:"Interest rate hedging",value:"~96%",change_dir:"flat"},{label:"Weighted average debt maturity",value:"3.0y → 3.8y (post-term-out)",change_dir:"up"},{label:"Inaugural green bond",value:"S$70.0M @ 2.103%, 5y",change_dir:"flat"},{label:"Maiden social loan",value:"JPY8.8B (~S$70.9M), 10y",change_dir:"flat"},{label:"WALE (by gross revenue)",value:"14.85 years",change_dir:"flat"},{label:"Portfolio size",value:"S$2.57B",change_dir:"flat"},{label:"Property count",value:"74 (3 SG + 60 JP + 11 FR)",change_dir:"flat"},{label:"Singapore occupancy",value:"100%",change_dir:"flat"},{label:"Japan occupancy",value:"93.0%",change:"6 properties vacant",change_dir:"down"},{label:"France occupancy",value:"100%",change_dir:"flat"},{label:"Miyako exposure (FY2026 GR)",value:"~1.6%",change:"4-8mo deposits held",change_dir:"flat"},{label:"Total return since IPO",value:"384%",change:"S$1.28 → S$4.00 + S$2.1986 DPU",change_dir:"up"}],
+   image:"images/news_95_plife_reit_mount_elizabeth.jpg",
+   imageCredit:"Mount Elizabeth Hospital, 3 Mount Elizabeth, Singapore — PLife REIT 1Q FY2026 hero asset, S$1,014.6M appraised value (58.2% of the S$1,743.5M Singapore portfolio), Project Renaissance S$350M renewal capex completed February 2026 with provisional Green Mark Platinum certification. Photo: ParkwayHealth / Parkway Life REIT",
+   source:"PropertyAtlas.sg", category:"Healthcare",
+   tag:"Earnings · REIT Update · Quarterly · Healthcare · Singapore · Japan · France · Capital Recycling",
+   sourceLabel:"PropertyAtlas.sg Analysis · Parkway Life REIT 1Q 2026 Business Update dated 30 April 2026 (58 slides)",
+   sentiment:"positive",
+   summary:"<p><strong>Parkway Life REIT</strong> on Thursday 30 April 2026 released its 1Q FY2026 business update — the structural seam of four years compressed into a single quarterly print. Project Renaissance, the S$350 million renewal capital expenditure for Mount Elizabeth Hospital jointly funded with IHH Healthcare Singapore, completed in February 2026, three years and five months after Unitholders' approval at the 30 September 2021 EGM. The new Annual Rent Review Formula for the three Singapore master leases kicked in for the first non-step-up year, lifting the FY2026 minimum aggregate rent to S$99.1 million — a +24.3% step over the S$79.7 million payable in FY2025. The Japan portfolio absorbed a tenant default, with Miyako Group entering liquidation proceedings (Miyako Enterprise corporate rehabilitation filed 31 December 2025; Miyako Kenkoukai bankruptcy filed 15 April 2026), prompting the manager to repossess five Osaka properties in January and February 2026; affected rental represents approximately 1.6% of FY2026 portfolio gross revenue, with 4–8 months of security deposits held against outstanding obligations. The Sustainable Financing Framework was established in early 2026 and operationalised through an inaugural 5-year S$70.0 million fixed-rate green bond at 2.103% per annum and a maiden 10-year JPY8.8 billion (~S$70.9 million) social loan that pre-emptively terms out the JPY8.8 billion loan facility maturing in 4Q 2026 — extending weighted average debt term to maturity from 3.0 years to approximately 3.8 years. Headline financials: gross revenue S$38.2M (-2.1% YoY) and NPI S$35.85M (-2.7%) printed red on JPY depreciation and the Japan exit, but DPU of 4.42 cents represents +15.1% YoY (1Q FY2025: 3.84 cents), with hedging gains compensating the FX drag and the Singapore rent reset providing the underlying lift. Gearing 34.2%, all-in debt cost 1.66%, interest cover 8.4 times, ~96% of interest rate exposure hedged.</p>\n\n<h2>Project Renaissance Closes The S$350 Million Renewal Capex Loop</h2>\n\n<p>The completion of Project Renaissance in February 2026 closes an arc that began at the 30 September 2021 EGM, when 99.99755% of Unitholders approved the proposed master-lease renewal transaction for the three Singapore hospitals — Mount Elizabeth Hospital, Gleneagles Hospital and Parkway East Hospital — with Parkway Hospitals Singapore Pte Ltd, the wholly-owned IHH Healthcare Berhad subsidiary that operates the assets. The transactional agreements were executed on 13 October 2021. The renewal term runs 20.4 years from 23 August 2022 to 31 December 2042, with an option to extend for a further 10 years. Embedded in the renewal package was the commitment to renewal capital expenditure of S$150 million (the underwritten quantum disclosed in the 8 September 2021 circular); the executed quantum at completion is S$350 million, jointly funded with IHH Healthcare Singapore — the difference reflecting expanded scope around M&E upgrades, space reconfiguration and sustainability enhancements that materialised during execution.</p>\n\n<p>The sustainability scope is what carried the project to a provisional Green Mark Platinum certification from Singapore's Building and Construction Authority — the highest rating in BCA's sustainability framework. Green Mark Platinum is the operational signal that the refurbishment carries the carbon-and-energy-performance attributes required to underwrite the long-tail master lease economics across the 20.4-year renewal term (and the 10-year option beyond), and is the structural prerequisite to PLife REIT's Sustainable Financing Framework deploying capital against the upgraded asset.</p>\n\n<p>Mount Elizabeth Hospital, at 3 Mount Elizabeth in Singapore's Orchard medical cluster, anchors the Singapore portfolio at an appraised value of S$1,014.6 million as at 31 December 2025 — 58.2% of the Singapore portfolio's S$1,743.5 million total. The asset is held on a 67-year leasehold with 278 hospital beds, 58,139 square metres of gross floor area across the hospital and medical centre buildings, and a triple-net lease structure to PHS that puts property tax, property insurance and property operating expenses on the tenant rather than the trust. The completion of Project Renaissance is the operational predicate to the rental escalation step disclosed in this quarter's update — and to the asset-quality positioning of the Singapore portfolio against competing local healthcare estate.</p>\n\n<h2>Singapore Rent Review Formula Lifts FY2026 Minimum Rent +24.3%</h2>\n\n<p>The Annual Rent Review Formula for FY2026 is the higher of two paths: Path 1 = Base Rent + Variable Rent (Variable Rent computed at 3.8% of Adjusted Hospital Revenue, or AHR, of the three hospitals for the period); Path 2 = {1 + (CPI + 1%)} × Preceding Year's Rent, where CPI denotes the percentage increase in the Consumer Price Index announced by the Department of Statistics for the relevant year compared to the immediately preceding year (with CPI deemed zero if negative). CPI is fixed at 0.9% for FY2026 in the manager's disclosure footnote. The formula replaces the 3.0% per annum fixed step-up that ran across FY2023, FY2024 and FY2025 (S$72.9M → S$75.1M → S$77.4M → S$79.7M, each year a flat 3.0% lift).</p>\n\n<p>The minimum aggregate rent payable in FY2026 under the formula is S$99.1 million — a S$19.3 million / +24.3% lift on the S$79.7 million payable in FY2025. The Singapore Hospitals master-lease minimum is computed against an Initial Rent of S$97.2 million per the deck's footnote (the formula reference base for Path 2 calculation), and the FY2026 minimum of S$99.1 million is what the deck labels as guaranteed. Variable Rent at 3.8% of AHR provides further upside if the three hospitals' performance exceeds the minimum threshold — the manager flags \"potential for further rental upside if the performance of Singapore hospitals exceeds minimum rent\" without quantifying the upside band. The step-up is therefore floor-guaranteed at +24.3% with optionality on top.</p>\n\n<p>The DPU print for 1Q FY2026 of 4.42 cents (versus 3.84 cents in 1Q FY2025, +15.1% YoY) is the proximate financial expression of this lift. Distributable income rose 15.1% to S$28.8 million on a quarterly basis even as gross revenue and NPI both posted negative year-on-year prints — the rent step has been substantial enough to overpower the JPY depreciation and Japan tenant-exit drags at the distribution line. PLife REIT distributes semi-annually rather than quarterly, so the 4.42 cents will form part of the 1H FY2026 distribution declared with the 1H result; the disclosure as a quarterly DPU number is for transparency rather than declaration.</p>\n\n<p>Reading across the un-interrupted DPU growth chart since IPO: PLife REIT delivered 6.32 cents (annualised) in FY2007, 6.83 in FY2008, 7.74 in FY2009 and so on through to 15.29 cents recurrent in FY2025 — a 141.9% cumulative growth from IPO through to FY2025 across 19 fiscal years without a single year of decline. The 4.42 cents 1Q FY2026 represents 29% of the FY2025 recurrent figure; if the same proportional run rate holds through the remaining three quarters and the variable rent upside materialises, the FY2026 full-year DPU stacks materially above 15.29 cents. The structural lift is the Singapore rent reset doing exactly the work that was underwritten at the 2021 EGM.</p>\n\n<h2>Miyako Liquidation Triggers Repossession Of Five Osaka Properties</h2>\n\n<p>The Japan portfolio's tenant-exit event is the contained downside print this quarter. Miyako Group, one of the manager's Japan tenants, entered liquidation proceedings during 1Q FY2026: Miyako Enterprise Co., Ltd (\"MEP\") filed for corporate rehabilitation on 31 December 2025; Miyako Kenkoukai Medical Corporation (\"MKK\") filed for bankruptcy on 15 April 2026 (a post-period event disclosed in the update). The manager moved decisively to repossess the affected properties in January and February 2026 — five Osaka properties in total: Maison des Centenaire Ishizugawa (vacated 28 February 2026), Maison des Centenaire Haruki (vacated 30 January 2026), Maison des Centenaire Hannan, Maison des Centenaire Ohhama (vacated 30 January 2026), and Sunhill Miyako (vacated 28 February 2026 — the only extended-stay lodging facility in the Japan portfolio, distinct from the 60 nursing homes).</p>\n\n<p>The aggregate rental from these properties represents approximately 1.6% of FY2026 portfolio gross revenue — a contained but material exposure quantum. Two structural protections sit between the default event and PLife REIT's distributable income: security deposits of 4 to 8 months of gross rental held against each property, which the manager flags as \"largely sufficient to offset outstanding rental obligations, significantly mitigating downside risk\"; and the freehold land tenure plus owned-building structure of the Japan portfolio, which means the repossession is asset-level rather than litigation-bound — the manager controls the physical premises and the option to re-lease, rejuvenate, restructure or divest. Leasing discussions are flagged as ongoing.</p>\n\n<p>A sixth Japan property — Kikuya Warakuen, acquired 24 February 2017 in the same tranche as Habitation Hakusho and Live In Wakaba — is also currently vacant. The deck footnote explains that legal proceedings against the previous operator are largely completed and a replacement operator has been secured pending authority approval to operate. The Kikuya situation is structurally separate from the Miyako event but lands in the same category of operator-transition risk inherent to the 28-lessee Japan book.</p>\n\n<p>The aggregate Japan portfolio committed occupancy of 93.0% as at 31 March 2026 reflects these six vacant properties (5 Miyako + 1 Kikuya) against the 60-property nursing-home base. The wider Japan portfolio retains structural diversification: 28 lessees, no single tenant exceeding 17.4% of Japan gross revenue (K.K. Sawayaka Club at the top, followed by K.K. Habitation at 15.9% and Fuyo Shoji Kabushiki Kaisha at 7.0%). 52 properties have rent-review-with-downside-protection terms (98.0% of Japan gross revenue); 2 properties have market revision every 2-3 years subject to mutual agreement (2.0% of Japan gross revenue). The \"up only\" rent review provision dominates the Japan rental contract base.</p>\n\n<p>The manager's framing of the repossession as having \"unlocked value-creation optionality\" — asset rejuvenation, upgrading operator quality, lease restructuring with built-in rental escalations, potential divestment — reads as forward-leaning rather than defensive. Across PLife REIT's history of Japan portfolio management, divestments have happened in tranches (December 2014: seven assets; December 2016: four assets — both delivering distribution top-ups via one-off divestment gains spread across the subsequent fiscal year). A divestment-bracketed exit on the Osaka properties would follow that pattern; a re-leasing on rejuvenated terms would deepen the Japan operating book at higher rental coverage. The manager has not signalled a preferred path; the operational option set is the disclosure.</p>\n\n<h2>Maiden Green Bond And Social Loan Operationalise The Sustainable Financing Framework</h2>\n\n<p>The Sustainable Financing Framework — established by PLife REIT in early 2026 — is the new structural component of the capital management stack. In alignment with the Framework, the manager has executed two inaugural sustainable-financing instruments during 1Q FY2026: a 5-year S$70.0 million fixed-rate green bond at 2.103% per annum; and a 10-year JPY8.8 billion (approximately S$70.9 million at the S$1.00:¥121.4 reference rate) social loan. Together they total approximately S$141 million of sustainability-labelled debt, against an outstanding gross loan balance of approximately S$905.4 million as at 31 March 2026.</p>\n\n<p>The strategic purpose is dual. First, debt-term extension: the maiden social loan is structured to term out the JPY8.8 billion loan facility scheduled to mature in 4Q 2026 — the deck flags the loan as \"secured a 10-year social loan in February 2026 to term out the maturing JPY8.8 billion (S$70.9 million) loan facility by Q3 2026.\" The weighted average debt term to maturity extends from 3.0 years (as at 31 March 2026) to approximately 3.8 years post the terming out of the maturing loans. Second, the Framework signals a strategic commitment to the ESG financing market that opens future access at potentially advantaged pricing — particularly relevant given PLife REIT's structural exposure to healthcare assets with strong social-utility scores and to refurbishment programmes like Project Renaissance that carry the sustainability-performance attributes required for green-bond underwriting.</p>\n\n<p>The capital management scorecard as at 31 March 2026 sits at the conservative end of the S-REIT cohort. Gearing 34.2% (against the regulatory 50% ceiling with ICR ≥1.5x effective from 28 November 2024) implies S$517.9 million of debt headroom before reaching 45% gearing and S$834.2 million before reaching the 50% ceiling. All-in debt cost 1.66% per annum is materially below the cohort average — driven by the natural-hedge financing strategy (JPY acquisitions funded by JPY loans; SGD raised from the Equity Fund Raising swapped into EUR via cross-currency swap to fund France acquisitions) and approximately 96% of interest rate exposure hedged. Interest coverage ratio 8.4 times sits an order of magnitude above the regulatory 1.5x floor. Debt maturity profile is well-staggered: no more than 30% of total debts due in any single year, with the 2027 cluster (S$234.0 million / 26%) being the next material refinancing window. No long-term debt refinancing needs until March 2027.</p>\n\n<p>The integrated financing picture: a portfolio carrying healthcare-and-elderly-care assets across three geographies (Singapore 67.8% of asset value, Japan 25.3%, France 6.9%), funded with currency-matched debt that mitigates principal FX risk, JPY and EUR net-income hedges in place to 1Q 2029 and 1Q 2030 respectively, and a sustainable-financing infrastructure now operational and extending duration. The Framework's first two instruments are the proof of concept; the structure to deploy further green-and-social tranches against the maturing debt stack in 2027 and beyond is in place.</p>\n\n<h2>Key Takeaway</h2>\n\n<p>Parkway Life REIT 1Q FY2026 is the structural seam of four years compressed into one quarterly print. Project Renaissance closes the renewal capex loop underwritten at the 30 September 2021 EGM with Green Mark Platinum delivery and reinforces the operational predicate for the long-tail master lease economics through 2042 (with the option through 2052). The Annual Rent Review Formula delivers a guaranteed +24.3% step in the FY2026 minimum aggregate Singapore rent (S$79.7M → S$99.1M) — the first non-step-up year and the proximate driver of the 1Q DPU at 4.42 cents (+15.1% YoY) despite negative gross-revenue and NPI prints from JPY depreciation and the Japan exit. The Miyako liquidation is a contained ~1.6% gross-revenue exposure with 4–8 months of security deposits absorbing the downside and a re-leasing/rejuvenation/restructuring/divestment optionality set in place — the structural protection of freehold Japan ownership delivering exactly what the underwriting framework anticipates for tenant default events. The maiden green bond and social loan operationalise the Sustainable Financing Framework and extend weighted debt term to maturity from 3.0 to 3.8 years, complementing a capital stack already at 34.2% gearing, 1.66% all-in cost, 8.4× ICR and 96% rate-hedged. The 4.42 cents 1Q DPU is 29% of FY2025's 15.29 cents recurrent — the un-interrupted DPU growth pattern since 2007 IPO remains on track, total return since IPO at 384% as at 31 March 2026. Watch the 1H FY2026 result for the consolidated half-year DPU declaration, the FY2026 full-year variable-rent print as Singapore hospital AHR feeds through the formula, and the disposition path on the five Osaka properties as the manager elects between re-leasing, restructuring, rejuvenation or divestment.</p>"},
     {id:94, date:"2026-05-20",
    title:"Lendlease Global Commercial REIT 3Q FY2026: Full PLQ Mall Ownership Closes 26 March, Completing The Nine-Month Repositioning Arc That Began With Jem Office Divestment And 70% PLQ Acquisition In November 2025 — Retail Rental Reversion Compounds +8.9% → +10.4% → +12.2% YTD Across The Year, Gearing Cycles 42.7% → 38.4% → 38.7% (37.5% Proforma), Weighted Average Cost Of Debt 2.89%, S$120M Perpetual Issued At 4.28% Partially Refinances The S$200M June 2026 Reset — But Like-For-Like Tenant Sales +2.5% YoY Versus +17.6% Reported Is The Cleanest Cut Of Acquisition Optics Versus Organic Strength",
    display_title:"Lendlease REIT 3Q FY2026: 26 March PLQ Mall Full-Ownership Closes The Nine-Month Repositioning — Retail Reversion +12.2% YTD, Gearing 37.5% Proforma, Cost Of Debt 2.89% — But +2.5% Like-For-Like Tenant Sales Versus +17.6% Reported Is The Cleanest Cut Of Acquisition Optics Versus Organic Strength",
@@ -17778,7 +17796,7 @@ function formatNewsSummary(text, mode){
 // cover all visible static slots, not just the feed rows.
 // Static rows are authored HTML; the dynamic NEWS-array injector
 // must exclude exactly these IDs so each article appears once.
-var NR_STATIC_IDS = [94, 93, 92, 91, 90, 89, 88, 87, 86];
+var NR_STATIC_IDS = [95, 94, 93, 92, 91, 90, 89, 88, 87];
 var NR_PAGE_SIZE = 10;
 var NR_INJECTED_COUNT = 0;
 function nrEscapeHtml(s){
