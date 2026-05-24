@@ -1,0 +1,691 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>About — PropertyAtlas</title>
+<meta name="description" content="PropertyAtlas is Singapore commercial property intelligence, published by Tony Koe — a working broker with 20+ years across landlord and tenant rep, building a free, useful data platform for the market.">
+<meta name="robots" content="index,follow">
+<link rel="canonical" href="https://propertyatlas.sg/about.html">
+
+<!-- Open Graph -->
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://propertyatlas.sg/about.html">
+<meta property="og:title" content="About — PropertyAtlas">
+<meta property="og:description" content="Singapore commercial property intelligence, published by a working broker. About Tony Koe and the platform.">
+<meta property="og:image" content="https://propertyatlas.sg/images/tony_koe_headshot.jpg">
+<meta property="og:site_name" content="PropertyAtlas">
+
+<!-- Twitter -->
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="About — PropertyAtlas">
+<meta name="twitter:description" content="Singapore commercial property intelligence, published by a working broker.">
+<meta name="twitter:image" content="https://propertyatlas.sg/images/tony_koe_headshot.jpg">
+
+<!-- Favicon -->
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='5' fill='%230B2B5C'/%3E%3Crect x='2.5' y='2.5' width='27' height='27' rx='3.5' fill='none' stroke='%23C99B5A' stroke-width='0.7'/%3E%3Ctext x='11' y='22' font-family='Georgia,serif' font-size='17' font-weight='700' fill='%23F7F3EB' text-anchor='middle'%3EP%3C/text%3E%3Cg transform='translate(22 16)'%3E%3Cpolygon points='0,-7 2,-1 0,0 -2,-1' fill='%23C99B5A'/%3E%3Cpolygon points='0,7 -2,1 0,0 2,1' fill='%23C99B5A' opacity='0.55'/%3E%3Cpolygon points='-7,0 -1,-2 0,0 -1,2' fill='%23C99B5A' opacity='0.55'/%3E%3Cpolygon points='7,0 1,2 0,0 1,-2' fill='%23C99B5A' opacity='0.55'/%3E%3C/g%3E%3C/svg%3E">
+
+<style>
+:root{
+  --ed-navy:#1A4F9C;
+  --ed-navy-deep:#0F3775;
+  --ed-navy-ink:#0B2B5C;
+  --ed-bronze:#A67C3A;
+  --ed-bronze-lt:#C9A264;
+  --ed-cream:#F7F3EB;
+  --ed-cream-lt:#FAF7F0;
+  --ed-ink:#1A1A1A;
+  --ed-muted:#6B6157;
+  --ed-hairline:rgba(11,43,92,0.10);
+  --ed-hairline-2:rgba(11,43,92,0.18);
+  --ed-shadow-card:0 1px 2px rgba(11,43,92,0.04),0 8px 24px rgba(11,43,92,0.06);
+  --ed-body-serif:Georgia,"Times New Roman","DejaVu Serif",serif;
+}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0}
+body{
+  font-family:var(--ed-body-serif);
+  color:var(--ed-ink);
+  background:var(--ed-cream-lt);
+  line-height:1.6;
+  -webkit-font-smoothing:antialiased;
+  -moz-osx-font-smoothing:grayscale;
+}
+
+/* ── Masthead (mirror of index.html ed-mast) ─────────────────────── */
+.ed-mast{
+  background:var(--ed-cream);
+  border-bottom:1px solid var(--ed-hairline);
+  position:sticky;
+  top:0;
+  z-index:100;
+}
+.ed-mast-inner{
+  max-width:1400px;
+  margin:0 auto;
+  padding:0 24px;
+  height:64px;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:16px;
+}
+.ed-mast-brand{
+  display:flex;
+  align-items:center;
+  gap:12px;
+  text-decoration:none;
+  color:var(--ed-navy-ink);
+  flex-shrink:0;
+}
+.ed-mast-brand-mark{display:inline-flex;width:32px;height:32px}
+.ed-mast-brand-word{
+  font-family:var(--ed-body-serif);
+  font-size:21px;
+  font-weight:700;
+  letter-spacing:-0.005em;
+  color:var(--ed-navy-ink);
+}
+.ed-mast-brand-word em{font-style:italic;font-weight:600;color:var(--ed-bronze)}
+.ed-mast-nav{display:flex;align-items:center;gap:28px}
+.ed-mast-nav a{
+  font-family:'DM Sans','Helvetica Neue',Arial,sans-serif;
+  font-size:14px;
+  font-weight:600;
+  color:var(--ed-navy-ink);
+  text-decoration:none;
+  padding:6px 0;
+  border-bottom:2px solid transparent;
+  transition:color 140ms ease,border-color 140ms ease;
+}
+.ed-mast-nav a:hover{color:var(--ed-bronze);border-bottom-color:var(--ed-bronze)}
+.ed-mast-nav a.is-current{color:var(--ed-bronze);border-bottom-color:var(--ed-bronze)}
+
+/* ── Page wrap ─────────────────────────────────────────────────── */
+.page{max-width:980px;margin:0 auto;padding:0 24px}
+
+/* ── HERO BAND ─────────────────────────────────────────────────── */
+.hero{
+  display:grid;
+  grid-template-columns:280px 1fr;
+  gap:48px;
+  align-items:center;
+  padding:64px 0 56px;
+  border-bottom:1px solid var(--ed-hairline);
+}
+.hero-photo{
+  width:280px;
+  height:280px;
+  border-radius:8px;
+  overflow:hidden;
+  background:var(--ed-cream);
+  box-shadow:var(--ed-shadow-card);
+  flex-shrink:0;
+}
+.hero-photo img{width:100%;height:100%;object-fit:cover;object-position:center 22%;display:block}
+.hero-eyebrow{
+  font-family:'DM Sans','Helvetica Neue',Arial,sans-serif;
+  font-size:11px;
+  font-weight:700;
+  letter-spacing:0.14em;
+  text-transform:uppercase;
+  color:var(--ed-bronze);
+  margin:0 0 14px;
+}
+.hero-headline{
+  font-family:var(--ed-body-serif);
+  font-size:38px;
+  font-weight:700;
+  line-height:1.18;
+  letter-spacing:-0.01em;
+  color:var(--ed-navy-ink);
+  margin:0 0 18px;
+}
+.hero-headline em{font-style:italic;color:var(--ed-bronze);font-weight:600}
+.hero-sub{
+  font-size:18px;
+  line-height:1.55;
+  color:var(--ed-ink);
+  margin:0;
+  max-width:520px;
+}
+
+/* ── SECTION (mission + founder) ───────────────────────────────── */
+.section{padding:56px 0;border-bottom:1px solid var(--ed-hairline)}
+.section-label{
+  font-family:'DM Sans','Helvetica Neue',Arial,sans-serif;
+  font-size:11px;
+  font-weight:700;
+  letter-spacing:0.14em;
+  text-transform:uppercase;
+  color:var(--ed-bronze);
+  margin:0 0 14px;
+}
+.section-title{
+  font-family:var(--ed-body-serif);
+  font-size:28px;
+  font-weight:700;
+  letter-spacing:-0.005em;
+  color:var(--ed-navy-ink);
+  margin:0 0 22px;
+  line-height:1.25;
+}
+.section p{
+  font-size:17px;
+  line-height:1.72;
+  color:var(--ed-ink);
+  margin:0 0 16px;
+}
+.section p:last-child{margin-bottom:0}
+.section p em{color:var(--ed-navy-deep)}
+
+/* Mission band pull-quote */
+.mission-quote{
+  border-left:3px solid var(--ed-bronze);
+  padding:8px 0 8px 22px;
+  margin:24px 0;
+  font-style:italic;
+  font-size:18px;
+  color:var(--ed-navy-deep);
+  line-height:1.55;
+}
+
+/* ── Credentials strip (within founder band) ───────────────────── */
+.creds{
+  margin-top:28px;
+  padding:22px 24px;
+  background:var(--ed-cream);
+  border:1px solid var(--ed-hairline);
+  border-radius:8px;
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
+  gap:18px 28px;
+}
+.cred-item{}
+.cred-label{
+  font-family:'DM Sans','Helvetica Neue',Arial,sans-serif;
+  font-size:10px;
+  font-weight:700;
+  letter-spacing:0.12em;
+  text-transform:uppercase;
+  color:var(--ed-muted);
+  margin:0 0 4px;
+}
+.cred-value{
+  font-family:var(--ed-body-serif);
+  font-size:15px;
+  font-weight:600;
+  color:var(--ed-navy-ink);
+  margin:0;
+}
+.cred-value a{color:var(--ed-navy-deep);text-decoration:underline;text-decoration-color:var(--ed-bronze-lt);text-underline-offset:3px}
+.cred-value a:hover{color:var(--ed-bronze)}
+
+/* ── TALK-TO-TONY form band ───────────────────────────────────── */
+.contact{
+  padding:64px 0 56px;
+  border-bottom:1px solid var(--ed-hairline);
+}
+.contact-intro{
+  font-size:17px;
+  line-height:1.7;
+  color:var(--ed-ink);
+  margin:0 0 28px;
+  max-width:640px;
+}
+.form{
+  background:var(--ed-cream);
+  border:1px solid var(--ed-hairline);
+  border-radius:10px;
+  padding:32px 30px;
+  box-shadow:var(--ed-shadow-card);
+  max-width:640px;
+}
+.field{margin-bottom:18px}
+.field:last-of-type{margin-bottom:24px}
+.field label{
+  display:block;
+  font-family:'DM Sans','Helvetica Neue',Arial,sans-serif;
+  font-size:12px;
+  font-weight:700;
+  letter-spacing:0.06em;
+  color:var(--ed-navy-ink);
+  margin-bottom:6px;
+}
+.field label .req{color:var(--ed-bronze);margin-left:3px}
+.field label .opt{
+  color:var(--ed-muted);
+  font-weight:500;
+  font-size:11px;
+  text-transform:uppercase;
+  letter-spacing:0.08em;
+  margin-left:6px;
+}
+.field input,
+.field textarea{
+  width:100%;
+  font-family:var(--ed-body-serif);
+  font-size:15px;
+  color:var(--ed-ink);
+  background:var(--ed-cream-lt);
+  border:1px solid var(--ed-hairline-2);
+  border-radius:6px;
+  padding:10px 12px;
+  outline:none;
+  transition:border-color 140ms ease,box-shadow 140ms ease;
+}
+.field textarea{min-height:96px;resize:vertical;line-height:1.55}
+.field input:focus,
+.field textarea:focus{
+  border-color:var(--ed-bronze);
+  box-shadow:0 0 0 3px rgba(166,124,58,0.13);
+}
+.field input.invalid,
+.field textarea.invalid{border-color:#A33333;box-shadow:0 0 0 3px rgba(163,51,51,0.13)}
+.field-hint{
+  font-family:'DM Sans','Helvetica Neue',Arial,sans-serif;
+  font-size:11px;
+  color:var(--ed-muted);
+  margin-top:5px;
+}
+.form-actions{display:flex;align-items:center;gap:14px;flex-wrap:wrap}
+.btn-send{
+  font-family:'DM Sans','Helvetica Neue',Arial,sans-serif;
+  font-size:14px;
+  font-weight:700;
+  letter-spacing:0.02em;
+  color:var(--ed-cream);
+  background:var(--ed-navy-ink);
+  border:1px solid var(--ed-navy-ink);
+  border-radius:6px;
+  padding:11px 22px;
+  cursor:pointer;
+  transition:background-color 140ms ease,transform 80ms ease;
+}
+.btn-send:hover{background:var(--ed-navy-deep);border-color:var(--ed-navy-deep)}
+.btn-send:active{transform:translateY(1px)}
+.btn-send[disabled]{opacity:0.55;cursor:not-allowed}
+.form-msg{
+  font-family:'DM Sans','Helvetica Neue',Arial,sans-serif;
+  font-size:13px;
+  font-weight:600;
+  display:none;
+}
+.form-msg.show{display:inline-block}
+.form-msg.ok{color:#2A7349}
+.form-msg.err{color:#A33333}
+.form-success{
+  display:none;
+  padding:24px 26px;
+  background:rgba(42,115,73,0.08);
+  border:1px solid rgba(42,115,73,0.25);
+  border-radius:8px;
+  color:#1A4A2E;
+}
+.form-success.show{display:block}
+.form-success h3{
+  font-family:var(--ed-body-serif);
+  font-size:20px;
+  font-weight:700;
+  margin:0 0 8px;
+  color:#1A4A2E;
+}
+.form-success p{margin:0;font-size:15px;line-height:1.6}
+
+/* ── Direct contact row (WA + email + LinkedIn) ─────────────────── */
+.direct-contact{
+  margin-top:30px;
+  padding:22px 24px;
+  background:var(--ed-cream);
+  border:1px solid var(--ed-hairline);
+  border-radius:8px;
+}
+.direct-contact-label{
+  font-family:'DM Sans','Helvetica Neue',Arial,sans-serif;
+  font-size:11px;
+  font-weight:700;
+  letter-spacing:0.12em;
+  text-transform:uppercase;
+  color:var(--ed-muted);
+  margin:0 0 12px;
+}
+.direct-contact-links{
+  display:flex;
+  gap:20px;
+  flex-wrap:wrap;
+}
+.direct-contact-links a{
+  display:inline-flex;
+  align-items:center;
+  gap:8px;
+  font-family:'DM Sans','Helvetica Neue',Arial,sans-serif;
+  font-size:14px;
+  font-weight:600;
+  color:var(--ed-navy-ink);
+  text-decoration:none;
+  padding:8px 14px;
+  background:var(--ed-cream-lt);
+  border:1px solid var(--ed-hairline-2);
+  border-radius:6px;
+  transition:background-color 140ms ease,color 140ms ease,border-color 140ms ease;
+}
+.direct-contact-links a:hover{
+  background:var(--ed-navy-ink);
+  color:var(--ed-cream);
+  border-color:var(--ed-navy-ink);
+}
+.direct-contact-links a:hover svg{stroke:var(--ed-cream);fill:var(--ed-cream)}
+.direct-contact-links svg{
+  width:16px;
+  height:16px;
+  stroke:var(--ed-navy-ink);
+  fill:none;
+  stroke-width:2;
+  stroke-linecap:round;
+  stroke-linejoin:round;
+  transition:stroke 140ms ease;
+}
+.direct-contact-links svg.solid{fill:var(--ed-navy-ink);stroke:none;transition:fill 140ms ease}
+.direct-contact-links a:hover svg.solid{fill:var(--ed-cream)}
+
+/* ── Footer ─────────────────────────────────────────────────────── */
+.foot{
+  padding:36px 24px 48px;
+  text-align:center;
+  background:var(--ed-cream-lt);
+  border-top:1px solid var(--ed-hairline);
+  margin-top:0;
+}
+.foot-brand{
+  font-family:var(--ed-body-serif);
+  font-size:15px;
+  font-weight:600;
+  color:var(--ed-navy-ink);
+  margin:0 0 8px;
+}
+.foot-brand em{font-style:italic;color:var(--ed-bronze)}
+.foot-tag{
+  font-family:'DM Sans','Helvetica Neue',Arial,sans-serif;
+  font-size:12px;
+  color:var(--ed-muted);
+  margin:0 0 14px;
+  letter-spacing:0.03em;
+}
+.foot-links{
+  display:flex;
+  justify-content:center;
+  gap:22px;
+  flex-wrap:wrap;
+  font-family:'DM Sans','Helvetica Neue',Arial,sans-serif;
+  font-size:12px;
+}
+.foot-links a{
+  color:var(--ed-muted);
+  text-decoration:none;
+  transition:color 140ms ease;
+}
+.foot-links a:hover{color:var(--ed-bronze)}
+
+/* ── Responsive ─────────────────────────────────────────────────── */
+@media (max-width:720px){
+  .hero{
+    grid-template-columns:1fr;
+    gap:28px;
+    padding:40px 0 36px;
+  }
+  .hero-photo{width:200px;height:200px;margin:0 auto}
+  .hero-headline{font-size:28px;text-align:center}
+  .hero-sub{font-size:16px;text-align:center;margin:0 auto}
+  .hero-eyebrow{text-align:center}
+  .section{padding:40px 0}
+  .section-title{font-size:22px}
+  .section p{font-size:16px}
+  .contact{padding:40px 0 36px}
+  .form{padding:22px 18px}
+  .ed-mast-inner{padding:0 16px;gap:10px}
+  .ed-mast-nav{gap:18px}
+  .ed-mast-brand-word{font-size:18px}
+  .page{padding:0 18px}
+  .creds{padding:18px 20px;gap:14px 20px}
+  .direct-contact{padding:18px 20px}
+  .direct-contact-links{gap:12px}
+}
+</style>
+</head>
+<body>
+
+<!-- ── Masthead (parallel to index.html ed-mast) ─────────────────── -->
+<header class="ed-mast" role="banner">
+  <div class="ed-mast-inner">
+    <a class="ed-mast-brand" href="./" aria-label="PropertyAtlas — Home">
+      <span class="ed-mast-brand-mark" aria-hidden="true">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32">
+          <rect width="32" height="32" rx="5" fill="#0B2B5C"/>
+          <rect x="2.5" y="2.5" width="27" height="27" rx="3.5" fill="none" stroke="#C99B5A" stroke-width="0.7"/>
+          <text x="11" y="22" font-family="Georgia,'Times New Roman',serif" font-size="17" font-weight="700" fill="#F7F3EB" text-anchor="middle">P</text>
+          <g transform="translate(22 16)">
+            <polygon points="0,-7 2,-1 0,0 -2,-1" fill="#C99B5A"/>
+            <polygon points="0,7 -2,1 0,0 2,1" fill="#C99B5A" opacity="0.55"/>
+            <polygon points="-7,0 -1,-2 0,0 -1,2" fill="#C99B5A" opacity="0.55"/>
+            <polygon points="7,0 1,2 0,0 1,-2" fill="#C99B5A" opacity="0.55"/>
+          </g>
+        </svg>
+      </span>
+      <span class="ed-mast-brand-word">Property<em>Atlas</em></span>
+    </a>
+    <nav class="ed-mast-nav" aria-label="Primary">
+      <a href="./about.html" class="is-current">About</a>
+      <a href="./" aria-label="Back to newsroom">Newsroom</a>
+    </nav>
+  </div>
+</header>
+
+<!-- ── HERO BAND ──────────────────────────────────────────────────── -->
+<div class="page">
+<section class="hero">
+  <div class="hero-photo">
+    <img src="./images/tony_koe_headshot.jpg" alt="Tony Koe, founder of PropertyAtlas" width="280" height="280">
+  </div>
+  <div>
+    <p class="hero-eyebrow">About PropertyAtlas</p>
+    <h1 class="hero-headline">Singapore commercial property intelligence, <em>published by a working broker.</em></h1>
+    <p class="hero-sub">Free, useful data and analysis for landlords, tenants, and the brokers who advise them — built by someone who still does deals.</p>
+  </div>
+</section>
+
+<!-- ── MISSION BAND ───────────────────────────────────────────────── -->
+<section class="section">
+  <p class="section-label">The Publication</p>
+  <h2 class="section-title">A platform where landlords and tenants can get free, useful data for their real estate journey.</h2>
+  <p>Singapore's commercial property market is data-rich but information-poor. URA records every transaction, ACRA records every tenancy, the listed REITs publish every quarterly result — yet the working knowledge of <em>which landlord owns what, who their tenants are, what rents are clearing, and how the portfolio is moving</em> sits scattered across PDFs, regulatory filings, and brokers' personal notes.</p>
+  <p>PropertyAtlas brings that picture into one place. The newsroom tracks every listed landlord — REITs, listed developers, and the property arms of conglomerates — with REIT-analyst-grade depth on portfolios, transactions, vacancies, tenants, and people. Quarterly results get same-day coverage. Annual reports get structured breakdowns. The same data pipeline that drives the editorial output also powers the dashboards: live transactions, market pulse, asset directories, human-capital intelligence.</p>
+  <div class="mission-quote">The goal is straightforward — give the market a free, trustworthy reference layer, then let the brokerage relationships build on top of that trust.</div>
+  <p>Everything on the platform is free to read at beta. Subscriber and salesperson tiers unlock deeper drill-downs and operational tools, but the core intelligence — the newsroom, the directories, the pulse — stays open. That is the editorial commitment.</p>
+</section>
+
+<!-- ── FOUNDER BAND ───────────────────────────────────────────────── -->
+<section class="section">
+  <p class="section-label">The Founder</p>
+  <h2 class="section-title">Tony Koe — 25 years in Singapore real estate, building the platform he wished he had as a broker.</h2>
+  <p>Tony has spent over two decades in Singapore real estate, beginning as a salesperson in the late 1990s and progressively scaling teams through the 2000s. By 2003 he was leading a 500-person sales organisation. In 2006 he joined a global real estate firm as General Manager of the associates' division, where he grew the team from 100 to 1,200 salespersons and delivered a tenfold revenue increase over four-and-a-half years. He launched Singapore's first property portal in 2008, featuring 720° virtual tours of over 2,800 projects — among the first deployments of digital marketing tooling for salespersons in the local market.</p>
+  <p>In 2010 he took over a boutique brokerage as CEO and led it through to acquisition by a global real estate brand, then drove regional expansion across Singapore, Jakarta, and Shanghai, securing strategic partnerships including rights with one of the world's largest owner-operated commercial real estate networks. The firm reached a Top 10 industry ranking within two years.</p>
+  <p>In 2016 Tony co-founded <em>SRI</em> and served as CEO. By the third year, the firm had become a full-service real estate consultancy spanning auction, business space, capital markets, project marketing, international project marketing, and research &amp; consultancy, with a salesforce of over 1,200 salespersons. Under his leadership, SRI annual topline revenue exceeded S$100M within five years of inception and was recognised with the <em>Enterprise 50</em> award and named one of Singapore's <em>Fastest Growing Companies</em> in both 2021 and 2022. SRI also developed the industry's first interactive real estate analytical CRM platform — integrating transactional data, real-time statistics, predictive analytics, and machine learning into a tool widely recognised as a market game-changer.</p>
+  <p>Tony stepped down from SRI in 2023 as Co-Founder and CEO. PropertyAtlas — and his current independent brokerage, <em>TK Real Estate</em> — is the next chapter: applying 25 years of brokerage experience, a deep market network, and a clear conviction that the Singapore commercial market deserves a working broker's publication.</p>
+
+  <div class="creds">
+    <div class="cred-item">
+      <p class="cred-label">CEA Salesperson</p>
+      <p class="cred-value">R003757I</p>
+    </div>
+    <div class="cred-item">
+      <p class="cred-label">Estate Agent Licence</p>
+      <p class="cred-value">L3011027G &nbsp;·&nbsp; TK Real Estate</p>
+    </div>
+    <div class="cred-item">
+      <p class="cred-label">LinkedIn</p>
+      <p class="cred-value"><a href="https://www.linkedin.com/in/tonykoe/" target="_blank" rel="noopener noreferrer">linkedin.com/in/tonykoe</a></p>
+    </div>
+  </div>
+</section>
+
+<!-- ── TALK TO TONY ──────────────────────────────────────────────── -->
+<section class="contact">
+  <p class="section-label">Talk to Tony</p>
+  <h2 class="section-title">Need a broker who reads the market the way PropertyAtlas covers it?</h2>
+  <p class="contact-intro">Drop a note below for tenant representation, landlord advisory, or any commercial leasing or capital-markets enquiry. Tony reads every message personally and replies within one business day.</p>
+
+  <div class="form" id="ttt-form-card">
+    <div class="field">
+      <label for="ttt-name">Name <span class="req">*</span></label>
+      <input type="text" id="ttt-name" autocomplete="name" placeholder="Your full name">
+    </div>
+    <div class="field">
+      <label for="ttt-email">Email <span class="req">*</span></label>
+      <input type="email" id="ttt-email" autocomplete="email" placeholder="you@example.com">
+    </div>
+    <div class="field">
+      <label for="ttt-mobile">Mobile <span class="opt">optional</span></label>
+      <input type="tel" id="ttt-mobile" autocomplete="tel" placeholder="+65 9123 4567">
+      <p class="field-hint">For urgent enquiries Tony can reach back faster on phone or WhatsApp.</p>
+    </div>
+    <div class="field">
+      <label for="ttt-company">Company <span class="opt">optional</span></label>
+      <input type="text" id="ttt-company" autocomplete="organization" placeholder="Your company or organisation">
+    </div>
+    <div class="field">
+      <label for="ttt-message">What you're looking for <span class="req">*</span></label>
+      <textarea id="ttt-message" placeholder="e.g. Tenant-rep on a 5,000 sqft office in CBD, looking to move from current premises in Q3 2026. Or: Landlord advisory on positioning a vacancy in an industrial cluster."></textarea>
+    </div>
+    <div class="form-actions">
+      <button type="button" class="btn-send" id="ttt-submit" onclick="tttSubmit()">Send to Tony</button>
+      <span class="form-msg" id="ttt-msg"></span>
+    </div>
+  </div>
+
+  <div class="form-success" id="ttt-success">
+    <h3>Message received.</h3>
+    <p>Tony has your enquiry and will respond within one business day to the email you provided. For urgent matters, you can also reach him directly via the channels below.</p>
+  </div>
+
+  <div class="direct-contact">
+    <p class="direct-contact-label">Or reach Tony directly</p>
+    <div class="direct-contact-links">
+      <a href="https://wa.me/6597971118" target="_blank" rel="noopener noreferrer" aria-label="WhatsApp Tony">
+        <svg class="solid" viewBox="0 0 24 24" aria-hidden="true"><path d="M12.04 2C6.58 2 2.13 6.45 2.13 11.91c0 1.75.46 3.45 1.32 4.95L2.05 22l5.25-1.38c1.45.79 3.08 1.21 4.74 1.21h0c5.46 0 9.91-4.45 9.91-9.91 0-2.65-1.03-5.14-2.9-7.01A9.816 9.816 0 0 0 12.04 2zm0 18.15h0c-1.48 0-2.93-.4-4.2-1.15l-.3-.18-3.12.82.83-3.04-.2-.31a8.264 8.264 0 0 1-1.26-4.38c0-4.54 3.7-8.24 8.25-8.24 2.2 0 4.27.86 5.83 2.42a8.183 8.183 0 0 1 2.42 5.82c-.01 4.54-3.71 8.24-8.25 8.24zm4.52-6.16c-.25-.12-1.47-.72-1.69-.81-.23-.08-.39-.12-.56.12-.16.25-.64.81-.79.97-.14.17-.29.18-.54.06-.25-.12-1.05-.39-1.99-1.23-.74-.66-1.23-1.47-1.38-1.72-.14-.25-.02-.38.11-.51.11-.11.25-.29.37-.43.12-.14.16-.24.25-.41.08-.16.04-.31-.02-.43-.06-.12-.55-1.34-.76-1.83-.2-.48-.4-.42-.55-.43-.14-.01-.31-.01-.47-.01-.16 0-.43.06-.66.31-.23.25-.86.85-.86 2.07 0 1.22.89 2.4 1.01 2.56.12.17 1.75 2.67 4.23 3.74.59.26 1.05.41 1.41.52.59.19 1.13.16 1.55.1.47-.07 1.47-.6 1.67-1.18.21-.58.21-1.07.14-1.18-.06-.11-.22-.17-.47-.29z"/></svg>
+        WhatsApp
+      </a>
+      <a href="mailto:tony@tkre.sg?subject=PropertyAtlas%20enquiry" aria-label="Email Tony">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 7l9 6 9-6"/></svg>
+        tony@tkre.sg
+      </a>
+      <a href="https://www.linkedin.com/in/tonykoe/" target="_blank" rel="noopener noreferrer" aria-label="Tony Koe on LinkedIn">
+        <svg class="solid" viewBox="0 0 24 24" aria-hidden="true"><path d="M19 3H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V5a2 2 0 0 0-2-2zM8.34 18H5.67V9.67h2.67V18zM7 8.5a1.55 1.55 0 1 1 0-3.1 1.55 1.55 0 0 1 0 3.1zM18.34 18h-2.67v-4.5c0-1.07-.02-2.45-1.5-2.45-1.5 0-1.73 1.17-1.73 2.37V18h-2.67V9.67h2.56v1.14h.04c.36-.68 1.23-1.4 2.54-1.4 2.71 0 3.21 1.78 3.21 4.1V18z"/></svg>
+        LinkedIn
+      </a>
+    </div>
+  </div>
+</section>
+</div>
+
+<!-- ── Footer ──────────────────────────────────────────────────── -->
+<footer class="foot">
+  <p class="foot-brand">Property<em>Atlas</em></p>
+  <p class="foot-tag">Singapore property intelligence · powered by TK Real Estate</p>
+  <div class="foot-links">
+    <a href="./">Newsroom</a>
+    <a href="./about.html">About</a>
+    <a href="./privacy.html">Privacy</a>
+    <a href="./terms.html">Terms</a>
+  </div>
+</footer>
+
+<script>
+// ── Talk-to-Tony form submission ────────────────────────────────────
+// Posts to send-lead-alert Edge Function with source="about_page" so the
+// inbox alert subject differentiates About-page leads from Listing leads.
+// Endpoint URL must match the Edge Function deployment.
+
+var TTT_ENDPOINT = 'https://xywgocvjuygudzrduvwr.supabase.co/functions/v1/send-lead-alert';
+var TTT_ANON_KEY = ''; // populated at deploy time if Edge Function requires auth headers
+
+function tttEl(id){ return document.getElementById(id); }
+function tttSetMsg(text, kind){
+  var m = tttEl('ttt-msg');
+  m.textContent = text || '';
+  m.className = 'form-msg ' + (kind === 'ok' ? 'ok' : 'err') + (text ? ' show' : '');
+}
+function tttClearInvalid(){
+  ['ttt-name','ttt-email','ttt-mobile','ttt-company','ttt-message'].forEach(function(id){
+    var el = tttEl(id); if(el) el.classList.remove('invalid');
+  });
+}
+function tttValidEmail(v){
+  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(String(v||'').trim());
+}
+
+function tttSubmit(){
+  tttClearInvalid();
+  tttSetMsg('', '');
+
+  var name    = (tttEl('ttt-name').value || '').trim();
+  var email   = (tttEl('ttt-email').value || '').trim();
+  var mobile  = (tttEl('ttt-mobile').value || '').trim();
+  var company = (tttEl('ttt-company').value || '').trim();
+  var message = (tttEl('ttt-message').value || '').trim();
+
+  var bad = false;
+  if(!name){ tttEl('ttt-name').classList.add('invalid'); bad = true; }
+  if(!email || !tttValidEmail(email)){ tttEl('ttt-email').classList.add('invalid'); bad = true; }
+  if(!message || message.length < 8){ tttEl('ttt-message').classList.add('invalid'); bad = true; }
+  if(bad){
+    tttSetMsg('Please fill in the required fields with valid info.', 'err');
+    return;
+  }
+
+  var btn = tttEl('ttt-submit');
+  btn.disabled = true;
+  btn.textContent = 'Sending…';
+
+  var payload = {
+    source: 'about_page',
+    name: name,
+    email: email,
+    mobile: mobile,
+    company: company,
+    message: message,
+    user_agent: (navigator && navigator.userAgent) || '',
+    referrer: document.referrer || '',
+    submitted_at: new Date().toISOString()
+  };
+
+  var headers = { 'Content-Type': 'application/json' };
+  if(TTT_ANON_KEY){
+    headers['apikey'] = TTT_ANON_KEY;
+    headers['Authorization'] = 'Bearer ' + TTT_ANON_KEY;
+  }
+
+  fetch(TTT_ENDPOINT, {
+    method: 'POST',
+    headers: headers,
+    body: JSON.stringify(payload)
+  }).then(function(r){
+    if(!r.ok) throw new Error('http ' + r.status);
+    return r.json().catch(function(){ return {}; });
+  }).then(function(){
+    tttEl('ttt-form-card').style.display = 'none';
+    tttEl('ttt-success').classList.add('show');
+    if(window.scrollTo){
+      var rect = tttEl('ttt-success').getBoundingClientRect();
+      window.scrollTo({top: window.pageYOffset + rect.top - 80, behavior: 'smooth'});
+    }
+  }).catch(function(err){
+    btn.disabled = false;
+    btn.textContent = 'Send to Tony';
+    tttSetMsg('Sorry, that did not send. Please try again, or reach Tony directly via WhatsApp or email below.', 'err');
+    if(window.console) console.error('[TTT submit]', err);
+  });
+}
+</script>
+
+</body>
+</html>
