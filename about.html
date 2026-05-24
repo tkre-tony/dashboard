@@ -190,36 +190,33 @@ body{
   line-height:1.55;
 }
 
-/* ── Credentials strip (within founder band) ───────────────────── */
-.creds{
-  margin-top:28px;
-  padding:22px 24px;
-  background:var(--ed-cream);
-  border:1px solid var(--ed-hairline);
-  border-radius:8px;
-  display:grid;
-  grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
-  gap:18px 28px;
-}
-.cred-item{}
-.cred-label{
+/* ── Credit line (within founder band) ─────────────────── */
+.creds-line{
+  margin-top:30px;
+  padding:18px 0 0;
+  border-top:1px solid var(--ed-hairline);
   font-family:'DM Sans','Helvetica Neue',Arial,sans-serif;
+  font-size:13px;
+  line-height:1.7;
+  color:var(--ed-navy-ink);
+  font-weight:500;
+  letter-spacing:0.01em;
+}
+.creds-line .cred-tag{
   font-size:10px;
   font-weight:700;
   letter-spacing:0.12em;
   text-transform:uppercase;
   color:var(--ed-muted);
-  margin:0 0 4px;
+  margin-right:4px;
 }
-.cred-value{
-  font-family:var(--ed-body-serif);
-  font-size:15px;
-  font-weight:600;
-  color:var(--ed-navy-ink);
-  margin:0;
+.creds-line a{
+  color:var(--ed-navy-deep);
+  text-decoration:underline;
+  text-decoration-color:var(--ed-bronze-lt);
+  text-underline-offset:3px;
 }
-.cred-value a{color:var(--ed-navy-deep);text-decoration:underline;text-decoration-color:var(--ed-bronze-lt);text-underline-offset:3px}
-.cred-value a:hover{color:var(--ed-bronze)}
+.creds-line a:hover{color:var(--ed-bronze)}
 
 /* ── TALK-TO-TONY form band ───────────────────────────────────── */
 .contact{
@@ -446,7 +443,7 @@ body{
   .ed-mast-nav{gap:18px}
   .ed-mast-brand-word{font-size:18px}
   .page{padding:0 18px}
-  .creds{padding:18px 20px;gap:14px 20px}
+  .creds-line{font-size:12px;line-height:1.75;padding-top:14px}
   .direct-contact{padding:18px 20px}
   .direct-contact-links{gap:12px}
 }
@@ -512,20 +509,7 @@ body{
   <p>In 2016 Tony co-founded <em>SRI</em> and served as CEO. By the third year, the firm had become a full-service real estate consultancy spanning auction, business space, capital markets, project marketing, international project marketing, and research &amp; consultancy, with a salesforce of over 1,200 salespersons. Under his leadership, SRI annual topline revenue exceeded S$100M within five years of inception and was recognised with the <em>Enterprise 50</em> award and named one of Singapore's <em>Fastest Growing Companies</em> in both 2021 and 2022. SRI also developed the industry's first interactive real estate analytical CRM platform — integrating transactional data, real-time statistics, predictive analytics, and machine learning into a tool widely recognised as a market game-changer.</p>
   <p>Tony stepped down from SRI in 2023 as Co-Founder and CEO. PropertyAtlas — and his current independent brokerage, <em>TK Real Estate</em> — is the next chapter: applying 25 years of brokerage experience, a deep market network, and a clear conviction that the Singapore commercial market deserves a working broker's publication.</p>
 
-  <div class="creds">
-    <div class="cred-item">
-      <p class="cred-label">CEA Salesperson</p>
-      <p class="cred-value">R003757I</p>
-    </div>
-    <div class="cred-item">
-      <p class="cred-label">Estate Agent Licence</p>
-      <p class="cred-value">L3011027G &nbsp;·&nbsp; TK Real Estate</p>
-    </div>
-    <div class="cred-item">
-      <p class="cred-label">LinkedIn</p>
-      <p class="cred-value"><a href="https://www.linkedin.com/in/tonykoe/" target="_blank" rel="noopener noreferrer">linkedin.com/in/tonykoe</a></p>
-    </div>
-  </div>
+  <p class="creds-line"><span class="cred-tag">CEA Salesperson</span> R003757I &nbsp;·&nbsp; <span class="cred-tag">Estate Agent Licence</span> L3011027G (TK Real Estate) &nbsp;·&nbsp; <a href="https://www.linkedin.com/in/tonykoe/" target="_blank" rel="noopener noreferrer">linkedin.com/in/tonykoe</a></p>
 </section>
 
 <!-- ── TALK TO TONY ──────────────────────────────────────────────── -->
