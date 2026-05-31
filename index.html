@@ -4421,7 +4421,7 @@ body.article-takeover .ed-foot{display:none!important}
 
       <!-- ROW 1: full-width live search -->
       <div style="margin-bottom:11px">
-        <input id="reit-search" placeholder="\uD83D\uDD0D  Search building, address, area, city, district..." autocomplete="off"
+        <input id="reit-search" placeholder="🔍  Search building, address, area, city, district..." autocomplete="off"
           class="cs-input" style="width:100%;box-sizing:border-box;font-size:13px;padding:9px 13px"
           oninput="reitSearchDelay()" onkeydown="if(event.key==='Enter')reitSearch(0)"/>
       </div>
@@ -4434,30 +4434,30 @@ body.article-takeover .ed-foot{display:none!important}
         </div>
         <div style="display:flex;gap:10px;align-items:center;background:var(--srf2);border:1px solid var(--bdr);border-radius:8px;padding:5px 12px">
           <span style="font-size:9px;color:var(--mut);font-weight:600;text-transform:uppercase;letter-spacing:.04em">AR Data</span>
-          <span style="font-size:10px;color:var(--mut)"><span style="color:#4ade80">\u25CF</span> FY2025</span>
-          <span style="font-size:10px;color:var(--mut)"><span style="color:#f59e0b">\u25CF</span> FY2024</span>
-          <span style="font-size:10px;color:var(--mut)"><span style="color:#6b7280">\u25CF</span> Older</span>
+          <span style="font-size:10px;color:var(--mut)"><span style="color:#4ade80">●</span> FY2025</span>
+          <span style="font-size:10px;color:var(--mut)"><span style="color:#f59e0b">●</span> FY2024</span>
+          <span style="font-size:10px;color:var(--mut)"><span style="color:#6b7280">●</span> Older</span>
         </div>
         <select id="reit-sort" onchange="reitSearch(0)" class="cs-select">
-          <option value="name.asc">A \u2192 Z</option>
-          <option value="val.desc">Valuation \u2193</option>
-          <option value="val.asc">Valuation \u2191</option>
-          <option value="occ.desc">Occupancy \u2193</option>
+          <option value="name.asc">A → Z</option>
+          <option value="val.desc">Valuation ↓</option>
+          <option value="val.asc">Valuation ↑</option>
+          <option value="occ.desc">Occupancy ↓</option>
           <option value="entity.asc">Entity Name</option>
         </select>
         <div style="display:flex;border:1px solid var(--bdr);border-radius:6px;overflow:hidden;flex-shrink:0">
-          <button id="reit-vbtn-grid" onclick="reitSetView('grid')" title="Card view" style="padding:6px 10px;border:none;background:var(--g1);color:#fff;cursor:pointer">\u25A6</button>
-          <button id="reit-vbtn-tbl" onclick="reitSetView('table')" title="Table view" style="padding:6px 10px;border:none;background:var(--srf2);color:var(--mut);cursor:pointer">\u2630</button>
+          <button id="reit-vbtn-grid" onclick="reitSetView('grid')" title="Card view" style="padding:6px 10px;border:none;background:var(--g1);color:#fff;cursor:pointer">▦</button>
+          <button id="reit-vbtn-tbl" onclick="reitSetView('table')" title="Table view" style="padding:6px 10px;border:none;background:var(--srf2);color:var(--mut);cursor:pointer">☰</button>
         </div>
         <button onclick="reitClear()" class="cs-btn-ghost" style="margin-left:auto">Clear all</button>
-        <div style="font-size:11px;color:var(--mut);white-space:nowrap;font-family:'DM Mono',monospace;font-weight:600" id="reit-count">\u2014</div>
+        <div style="font-size:11px;color:var(--mut);white-space:nowrap;font-family:'DM Mono',monospace;font-weight:600" id="reit-count">—</div>
       </div>
       <!-- ROW 3: geo scope toggle -->
       <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-bottom:11px">
         <div style="display:flex;background:var(--srf2);border:1px solid var(--bdr);border-radius:9px;padding:3px;gap:2px">
           <button id="geo-all" onclick="reitSetGeo('ALL')" style="padding:5px 16px;border:none;border-radius:7px;font-size:12px;font-weight:600;font-family:'DM Sans',sans-serif;cursor:pointer;background:transparent;color:var(--mut)">All</button>
-          <button id="geo-sg"  onclick="reitSetGeo('SG')"  style="padding:5px 16px;border:none;border-radius:7px;font-size:12px;font-weight:700;font-family:'DM Sans',sans-serif;cursor:pointer;background:var(--g1);color:#fff">\uD83C\uDDF8\uD83C\uDDEC Singapore</button>
-          <button id="geo-ov"  onclick="reitSetGeo('OV')"  style="padding:5px 16px;border:none;border-radius:7px;font-size:12px;font-weight:600;font-family:'DM Sans',sans-serif;cursor:pointer;background:transparent;color:var(--mut)">\uD83C\uDF0F Overseas</button>
+          <button id="geo-sg"  onclick="reitSetGeo('SG')"  style="padding:5px 16px;border:none;border-radius:7px;font-size:12px;font-weight:700;font-family:'DM Sans',sans-serif;cursor:pointer;background:var(--g1);color:#fff">🇸🇬 Singapore</button>
+          <button id="geo-ov"  onclick="reitSetGeo('OV')"  style="padding:5px 16px;border:none;border-radius:7px;font-size:12px;font-weight:600;font-family:'DM Sans',sans-serif;cursor:pointer;background:transparent;color:var(--mut)">🌏 Overseas</button>
         </div>
       </div>
       <!-- ROW 4a: SG district buttons (shown in SG mode) -->
@@ -22473,7 +22473,7 @@ function reitBuildDistrictBtns(){
   var cnt={};
   REIT_DATA.forEach(function(r){ if(r.district) cnt[r.district]=(cnt[r.district]||0)+1; });
   var ds=Object.keys(cnt).sort();
-  var html=_reitLabel('\uD83D\uDCCD District')+_reitBtn(reitActiveDistrict==='','data-dist','','All',null,"reitSetDistrict(this)");
+  var html=_reitLabel('📍 District')+_reitBtn(reitActiveDistrict==='','data-dist','','All',null,"reitSetDistrict(this)");
   ds.forEach(function(d){ html+=_reitBtn(reitActiveDistrict===d,'data-dist',d,d,cnt[d],"reitSetDistrict(this)"); });
   row.innerHTML=html;
 }
@@ -22483,7 +22483,7 @@ function reitBuildContinentBtns(){
   var cnt={};
   REIT_DATA.forEach(function(r){ if(r.continent) cnt[r.continent]=(cnt[r.continent]||0)+1; });
   var cs=Object.keys(cnt).sort();
-  var html=_reitLabel('\uD83C\uDF0F Continent')+_reitBtn(reitActiveContinent==='','data-cont','','All Countries',null,"reitSetContinent(this)");
+  var html=_reitLabel('🌏 Continent')+_reitBtn(reitActiveContinent==='','data-cont','','All Countries',null,"reitSetContinent(this)");
   cs.forEach(function(c){ html+=_reitBtn(reitActiveContinent===c,'data-cont',c,c,cnt[c],"reitSetContinent(this)"); });
   row.innerHTML=html;
 }
@@ -22498,7 +22498,7 @@ function reitBuildCountryBtns(){
   });
   var cs=Object.keys(cnt).sort();
   if(!cs.length){ row.innerHTML=''; row.style.display='none'; return; }
-  var html=_reitLabel('\uD83C\uDFF3\uFE0F Country')+_reitBtn(reitActiveCountry==='','data-cty','','All',null,"reitSetCountry(this)");
+  var html=_reitLabel('🏳️ Country')+_reitBtn(reitActiveCountry==='','data-cty','','All',null,"reitSetCountry(this)");
   cs.forEach(function(c){ html+=_reitBtn(reitActiveCountry===c,'data-cty',c,c,cnt[c],"reitSetCountry(this)"); });
   row.innerHTML=html; row.style.display='flex';
 }
@@ -22513,7 +22513,7 @@ function reitBuildCityBtns(){
   });
   var cs=Object.keys(cnt).sort();
   if(!cs.length){ row.innerHTML=''; row.style.display='none'; return; }
-  var html=_reitLabel('\uD83C\uDFD9\uFE0F City')+_reitBtn(reitActiveCity==='','data-ci','','All',null,"reitSetCity(this)");
+  var html=_reitLabel('🏙️ City')+_reitBtn(reitActiveCity==='','data-ci','','All',null,"reitSetCity(this)");
   cs.forEach(function(c){ html+=_reitBtn(reitActiveCity===c,'data-ci',c,c,cnt[c],"reitSetCity(this)"); });
   row.innerHTML=html; row.style.display='flex';
 }
