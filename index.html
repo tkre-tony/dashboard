@@ -4419,79 +4419,56 @@ body.article-takeover .ed-foot{display:none!important}
 
     <div class="card" style="margin-bottom:14px">
 
-      <!-- Row 1: Geo toggle + Entity toggle -->
-      <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-bottom:13px">
-        <!-- SG / Overseas pill toggle -->
-        <div style="display:flex;background:var(--srf2);border:1px solid var(--bdr);border-radius:9px;padding:3px;gap:2px">
-          <button id="geo-sg" onclick="reitSetGeo('SG')" style="padding:5px 16px;border:none;border-radius:7px;font-size:12px;font-weight:700;font-family:'DM Sans',sans-serif;cursor:pointer;background:var(--g1);color:#fff;transition:all .15s">🇸🇬 Singapore</button>
-          <button id="geo-ov" onclick="reitSetGeo('OV')" style="padding:5px 16px;border:none;border-radius:7px;font-size:12px;font-weight:600;font-family:'DM Sans',sans-serif;cursor:pointer;background:transparent;color:var(--mut);transition:all .15s">🌏 Overseas</button>
-          <button id="geo-all" onclick="reitSetGeo('ALL')" style="padding:5px 16px;border:none;border-radius:7px;font-size:12px;font-weight:600;font-family:'DM Sans',sans-serif;cursor:pointer;background:transparent;color:var(--mut);transition:all .15s">All</button>
-        </div>
-        <!-- Entity type toggle -->
-        <div style="display:flex;background:var(--srf2);border:1px solid var(--bdr);border-radius:9px;padding:3px;gap:2px">
-          <button id="ent-all" onclick="reitSetEntity('ALL')" style="padding:5px 14px;border:none;border-radius:7px;font-size:12px;font-weight:700;font-family:'DM Sans',sans-serif;cursor:pointer;background:var(--g1);color:#fff;transition:all .15s">All</button>
-          <button id="ent-reit" onclick="reitSetEntity('REIT')" style="padding:5px 14px;border:none;border-radius:7px;font-size:12px;font-weight:600;font-family:'DM Sans',sans-serif;cursor:pointer;background:transparent;color:var(--mut);transition:all .15s">REITs</button>
-          <button id="ent-dev" onclick="reitSetEntity('DEV')" style="padding:5px 14px;border:none;border-radius:7px;font-size:12px;font-weight:600;font-family:'DM Sans',sans-serif;cursor:pointer;background:transparent;color:var(--mut);transition:all .15s">Developers</button>
-        </div>
-        <!-- AR freshness legend -->
-        <div style="display:flex;gap:10px;align-items:center;margin-left:auto;background:var(--srf2);border:1px solid var(--bdr);border-radius:8px;padding:5px 12px">
-          <span style="font-size:9px;color:var(--mut);font-weight:600;text-transform:uppercase;letter-spacing:.04em">AR Data</span>
-          <span style="font-size:10px;color:var(--mut)"><span style="color:#4ade80">●</span> FY2025</span>
-          <span style="font-size:10px;color:var(--mut)"><span style="color:#f59e0b">●</span> FY2024</span>
-          <span style="font-size:10px;color:var(--mut)"><span style="color:#6b7280">●</span> Older</span>
-        </div>
-        <div style="height:28px;width:1px;background:var(--bdr)"></div>
-        <input id="reit-search" placeholder="🔍  Search building, address, area..." autocomplete="off"
-          class="cs-input" style="flex:1;min-width:180px"
+      <!-- ROW 1: full-width live search -->
+      <div style="margin-bottom:11px">
+        <input id="reit-search" placeholder="\uD83D\uDD0D  Search building, address, area, city, district..." autocomplete="off"
+          class="cs-input" style="width:100%;box-sizing:border-box;font-size:13px;padding:9px 13px"
           oninput="reitSearchDelay()" onkeydown="if(event.key==='Enter')reitSearch(0)"/>
-        <select id="reit-country" onchange="reitSearch(0)" class="cs-select" style="display:none">
-          <option value="">All Countries</option>
-          <option value="Australia">Australia</option>
-          <option value="China">China</option>
-          <option value="Germany">Germany</option>
-          <option value="Hong Kong">Hong Kong</option>
-          <option value="India">India</option>
-          <option value="Ireland">Ireland</option>
-          <option value="Italy">Italy</option>
-          <option value="Japan">Japan</option>
-          <option value="Malaysia">Malaysia</option>
-          <option value="Maldives">Maldives</option>
-          <option value="Netherlands">Netherlands</option>
-          <option value="New Zealand">New Zealand</option>
-          <option value="South Korea">South Korea</option>
-          <option value="Switzerland">Switzerland</option>
-          <option value="United Kingdom">United Kingdom</option>
-          <option value="USA">United States</option>
-          <option value="Vietnam">Vietnam</option>
-        </select>
-        <select id="reit-region" onchange="reitSearch(0)" class="cs-select">
-          <option value="">All Regions</option>
-          <option value="Central">Central</option>
-          <option value="East">East</option>
-          <option value="North">North</option>
-          <option value="North-East">North-East</option>
-          <option value="West">West</option>
-          <option value="South">South</option>
-        </select>
+      </div>
+      <!-- ROW 2: entity type + AR data legend + sort + view + clear -->
+      <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-bottom:11px">
+        <div style="display:flex;background:var(--srf2);border:1px solid var(--bdr);border-radius:9px;padding:3px;gap:2px">
+          <button id="ent-all"  onclick="reitSetEntity('ALL')"  style="padding:5px 14px;border:none;border-radius:7px;font-size:12px;font-weight:700;font-family:'DM Sans',sans-serif;cursor:pointer;background:var(--g1);color:#fff">All</button>
+          <button id="ent-dev"  onclick="reitSetEntity('DEV')"  style="padding:5px 14px;border:none;border-radius:7px;font-size:12px;font-weight:600;font-family:'DM Sans',sans-serif;cursor:pointer;background:transparent;color:var(--mut)">Developers</button>
+          <button id="ent-reit" onclick="reitSetEntity('REIT')" style="padding:5px 14px;border:none;border-radius:7px;font-size:12px;font-weight:600;font-family:'DM Sans',sans-serif;cursor:pointer;background:transparent;color:var(--mut)">REITs</button>
+        </div>
+        <div style="display:flex;gap:10px;align-items:center;background:var(--srf2);border:1px solid var(--bdr);border-radius:8px;padding:5px 12px">
+          <span style="font-size:9px;color:var(--mut);font-weight:600;text-transform:uppercase;letter-spacing:.04em">AR Data</span>
+          <span style="font-size:10px;color:var(--mut)"><span style="color:#4ade80">\u25CF</span> FY2025</span>
+          <span style="font-size:10px;color:var(--mut)"><span style="color:#f59e0b">\u25CF</span> FY2024</span>
+          <span style="font-size:10px;color:var(--mut)"><span style="color:#6b7280">\u25CF</span> Older</span>
+        </div>
         <select id="reit-sort" onchange="reitSearch(0)" class="cs-select">
-          <option value="name.asc">A → Z</option>
-          <option value="val.desc">Valuation ↓</option>
-          <option value="val.asc">Valuation ↑</option>
-          <option value="occ.desc">Occupancy ↓</option>
+          <option value="name.asc">A \u2192 Z</option>
+          <option value="val.desc">Valuation \u2193</option>
+          <option value="val.asc">Valuation \u2191</option>
+          <option value="occ.desc">Occupancy \u2193</option>
           <option value="entity.asc">Entity Name</option>
         </select>
-        <button onclick="reitSearch(0)" class="cs-btn">Search</button>
-        <button onclick="reitClear()" class="cs-btn-ghost">Clear</button>
         <div style="display:flex;border:1px solid var(--bdr);border-radius:6px;overflow:hidden;flex-shrink:0">
-          <button id="reit-vbtn-grid" onclick="reitSetView('grid')" title="Card view" style="padding:6px 10px;border:none;background:var(--g1);color:#fff;cursor:pointer;font-size:13px">⊞</button>
-          <button id="reit-vbtn-tbl" onclick="reitSetView('table')" title="Table view" style="padding:6px 10px;border:none;background:var(--srf2);color:var(--mut);cursor:pointer;font-size:13px;border-left:1px solid var(--bdr)">☰</button>
+          <button id="reit-vbtn-grid" onclick="reitSetView('grid')" title="Card view" style="padding:6px 10px;border:none;background:var(--g1);color:#fff;cursor:pointer">\u25A6</button>
+          <button id="reit-vbtn-tbl" onclick="reitSetView('table')" title="Table view" style="padding:6px 10px;border:none;background:var(--srf2);color:var(--mut);cursor:pointer">\u2630</button>
         </div>
-        <div style="font-size:11px;color:var(--mut);white-space:nowrap;font-family:'DM Mono',monospace;font-weight:600" id="reit-count">—</div>
+        <button onclick="reitClear()" class="cs-btn-ghost" style="margin-left:auto">Clear all</button>
+        <div style="font-size:11px;color:var(--mut);white-space:nowrap;font-family:'DM Mono',monospace;font-weight:600" id="reit-count">\u2014</div>
       </div>
+      <!-- ROW 3: geo scope toggle -->
+      <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-bottom:11px">
+        <div style="display:flex;background:var(--srf2);border:1px solid var(--bdr);border-radius:9px;padding:3px;gap:2px">
+          <button id="geo-all" onclick="reitSetGeo('ALL')" style="padding:5px 16px;border:none;border-radius:7px;font-size:12px;font-weight:600;font-family:'DM Sans',sans-serif;cursor:pointer;background:transparent;color:var(--mut)">All</button>
+          <button id="geo-sg"  onclick="reitSetGeo('SG')"  style="padding:5px 16px;border:none;border-radius:7px;font-size:12px;font-weight:700;font-family:'DM Sans',sans-serif;cursor:pointer;background:var(--g1);color:#fff">\uD83C\uDDF8\uD83C\uDDEC Singapore</button>
+          <button id="geo-ov"  onclick="reitSetGeo('OV')"  style="padding:5px 16px;border:none;border-radius:7px;font-size:12px;font-weight:600;font-family:'DM Sans',sans-serif;cursor:pointer;background:transparent;color:var(--mut)">\uD83C\uDF0F Overseas</button>
+        </div>
+      </div>
+      <!-- ROW 4a: SG district buttons (shown in SG mode) -->
+      <div id="row-district" style="display:flex;gap:6px;flex-wrap:wrap;align-items:center;margin-bottom:9px"></div>
+      <!-- ROW 4b: Overseas continent buttons -->
+      <div id="row-continent" style="display:none;gap:6px;flex-wrap:wrap;align-items:center;margin-bottom:9px"></div>
+      <!-- ROW 4c: Overseas country buttons (after continent) -->
+      <div id="row-country" style="display:none;gap:6px;flex-wrap:wrap;align-items:center;margin-bottom:9px"></div>
+      <!-- ROW 4d: city buttons (after country) -->
+      <div id="row-city" style="display:none;gap:6px;flex-wrap:wrap;align-items:center;margin-bottom:9px"></div>
 
-      <!-- Overseas country/city drill-down (loud chip rows; shown only in Overseas mode) -->
-      <div id="chip-country-row" style="display:none;gap:6px;flex-wrap:wrap;align-items:center;margin-bottom:9px"></div>
-      <div id="chip-city-row" style="display:none;gap:6px;flex-wrap:wrap;align-items:center;margin-bottom:9px"></div>
       <!-- Row 2: Entity chips (REITs + Developers combined, shown/hidden by entity toggle) -->
       <!-- v48.21d-redo: chip rows are now data-driven from REIT_DATA via reitBuildChipRows().
            Future entity additions auto-appear without HTML edits. The All button stays hardcoded
@@ -22121,7 +22098,7 @@ async function loadReitAssets(cb){
   if(cb) _reitCbs.push(cb);
   if(reitAssetsLoading) return;
   reitAssetsLoading = true;
-  var FIELDS = 'name,addr,type,entity,entity_type,entity_short,tenure,nla_sqm,occ,val,prev_val,prev_occ,prev_nla_sqm,region,area,country,ar_year,source,status,notes,q_period,q_occ,q_val,q_reversion,q_source,q_notes,q_dpu,q_nav,q_rev,q_npi,q_date,country_norm,city';
+  var FIELDS = 'name,addr,type,entity,entity_type,entity_short,tenure,nla_sqm,occ,val,prev_val,prev_occ,prev_nla_sqm,region,area,country,ar_year,source,status,notes,q_period,q_occ,q_val,q_reversion,q_source,q_notes,q_dpu,q_nav,q_rev,q_npi,q_date,country_norm,city,continent,district';
   try {
     var all = [], from = 0, guard = 0;
     while(guard++ < 50){
@@ -22263,8 +22240,11 @@ async function dismissARBanner(){
 // ─────────────────────────────────────────────────────────────────────────────
 var reitActiveAsset = '';
 var reitActiveGeo = 'SG';
+var reitActiveContinent = '';
 var reitActiveCountry = '';
 var reitActiveCity = '';
+var reitActiveDistrict = '';
+var _reitGeoRowsInit = false;
 var reitActiveEntType = 'ALL';
 var reitPage = 0;
 var reitPageSize = 18;
@@ -22461,33 +22441,105 @@ function reitSetGeo(geo){
       btn.style.fontWeight = active ? '700' : '600';
     }
   });
-  var cSel = document.getElementById('reit-country');
-  var rSel = document.getElementById('reit-region');
-  var ccRow = document.getElementById('chip-country-row');
-  var cyRow = document.getElementById('chip-city-row');
-  if(cSel) cSel.style.display='none';
-  if(geo==='OV'){
-    if(rSel) rSel.style.display='none';
-    reitBuildCountryChips(); if(ccRow) ccRow.style.display='flex';
-    if(reitActiveCountry){ reitBuildCityChips(reitActiveCountry); } else if(cyRow){ cyRow.style.display='none'; }
-  } else {
-    if(rSel) rSel.style.display = (geo==='SG') ? '' : 'none';
-    if(ccRow) ccRow.style.display='none';
-    if(cyRow) cyRow.style.display='none';
-    reitActiveCountry=''; reitActiveCity='';
+  // reset geo sub-filters when scope changes
+  reitActiveContinent=''; reitActiveCountry=''; reitActiveCity=''; reitActiveDistrict='';
+  var rD=document.getElementById('row-district'), rCo=document.getElementById('row-continent'),
+      rCy=document.getElementById('row-country'), rCi=document.getElementById('row-city');
+  if(rCy) rCy.style.display='none';
+  if(rCi) rCi.style.display='none';
+  if(geo==='SG'){
+    if(rD){ reitBuildDistrictBtns(); rD.style.display='flex'; }
+    if(rCo) rCo.style.display='none';
+  } else if(geo==='OV'){
+    if(rD) rD.style.display='none';
+    if(rCo){ reitBuildContinentBtns(); rCo.style.display='flex'; }
+  } else { // ALL
+    if(rD) rD.style.display='none';
+    if(rCo) rCo.style.display='none';
   }
   reitSearch(0);
 }
+// ---- geo button builders (district / continent / country / city) ----
+function _reitBtn(active,attr,val,label,count,onclick){
+  return '<button class="dir-tbtn'+(active?' on':'')+'" '+attr+'="'+String(val).replace(/"/g,'&quot;')+'" onclick="'+onclick+'">'
+    + label + (count!=null?' <span style="opacity:.55;font-size:10px">('+count+')</span>':'') + '</button>';
+}
+function _reitLabel(txt){
+  return '<span style="font-size:11px;font-weight:700;color:var(--g2);text-transform:uppercase;letter-spacing:.06em;margin-right:2px">'+txt+'</span>';
+}
+function reitBuildDistrictBtns(){
+  if(typeof REIT_DATA==='undefined'||!REIT_DATA.length) return;
+  var row=document.getElementById('row-district'); if(!row) return;
+  var cnt={};
+  REIT_DATA.forEach(function(r){ if(r.district) cnt[r.district]=(cnt[r.district]||0)+1; });
+  var ds=Object.keys(cnt).sort();
+  var html=_reitLabel('\uD83D\uDCCD District')+_reitBtn(reitActiveDistrict==='','data-dist','','All',null,"reitSetDistrict(this)");
+  ds.forEach(function(d){ html+=_reitBtn(reitActiveDistrict===d,'data-dist',d,d,cnt[d],"reitSetDistrict(this)"); });
+  row.innerHTML=html;
+}
+function reitBuildContinentBtns(){
+  if(typeof REIT_DATA==='undefined'||!REIT_DATA.length) return;
+  var row=document.getElementById('row-continent'); if(!row) return;
+  var cnt={};
+  REIT_DATA.forEach(function(r){ if(r.continent) cnt[r.continent]=(cnt[r.continent]||0)+1; });
+  var cs=Object.keys(cnt).sort();
+  var html=_reitLabel('\uD83C\uDF0F Continent')+_reitBtn(reitActiveContinent==='','data-cont','','All Countries',null,"reitSetContinent(this)");
+  cs.forEach(function(c){ html+=_reitBtn(reitActiveContinent===c,'data-cont',c,c,cnt[c],"reitSetContinent(this)"); });
+  row.innerHTML=html;
+}
+function reitBuildCountryBtns(){
+  var row=document.getElementById('row-country'); if(!row) return;
+  var cnt={};
+  REIT_DATA.forEach(function(r){
+    var cn=r.country_norm||r.country;
+    if(!cn||cn==='Singapore') return;
+    if(reitActiveContinent && r.continent!==reitActiveContinent) return;
+    cnt[cn]=(cnt[cn]||0)+1;
+  });
+  var cs=Object.keys(cnt).sort();
+  if(!cs.length){ row.innerHTML=''; row.style.display='none'; return; }
+  var html=_reitLabel('\uD83C\uDFF3\uFE0F Country')+_reitBtn(reitActiveCountry==='','data-cty','','All',null,"reitSetCountry(this)");
+  cs.forEach(function(c){ html+=_reitBtn(reitActiveCountry===c,'data-cty',c,c,cnt[c],"reitSetCountry(this)"); });
+  row.innerHTML=html; row.style.display='flex';
+}
+function reitBuildCityBtns(){
+  var row=document.getElementById('row-city'); if(!row) return;
+  if(!reitActiveCountry){ row.innerHTML=''; row.style.display='none'; return; }
+  var cnt={};
+  REIT_DATA.forEach(function(r){
+    var cn=r.country_norm||r.country;
+    if(cn!==reitActiveCountry||!r.city) return;
+    cnt[r.city]=(cnt[r.city]||0)+1;
+  });
+  var cs=Object.keys(cnt).sort();
+  if(!cs.length){ row.innerHTML=''; row.style.display='none'; return; }
+  var html=_reitLabel('\uD83C\uDFD9\uFE0F City')+_reitBtn(reitActiveCity==='','data-ci','','All',null,"reitSetCity(this)");
+  cs.forEach(function(c){ html+=_reitBtn(reitActiveCity===c,'data-ci',c,c,cnt[c],"reitSetCity(this)"); });
+  row.innerHTML=html; row.style.display='flex';
+}
+function reitSetDistrict(b){ reitActiveDistrict=b.getAttribute('data-dist')||''; reitBuildDistrictBtns(); reitSearch(0); }
+function reitSetContinent(b){
+  reitActiveContinent=b.getAttribute('data-cont')||''; reitActiveCountry=''; reitActiveCity='';
+  reitBuildContinentBtns(); reitBuildCountryBtns();
+  var rCi=document.getElementById('row-city'); if(rCi) rCi.style.display='none';
+  reitSearch(0);
+}
+function reitSetCountry(b){
+  reitActiveCountry=b.getAttribute('data-cty')||''; reitActiveCity='';
+  reitBuildCountryBtns(); reitBuildCityBtns(); reitSearch(0);
+}
+function reitSetCity(b){ reitActiveCity=b.getAttribute('data-ci')||''; reitBuildCityBtns(); reitSearch(0); }
 
 function reitSetEntity(type){
   reitActiveEntType = type;
   reitActiveEntity = '';
   reitActiveDev = '';
+  var entColors = { all:'var(--g1)', reit:'var(--g1)', dev:'#475569' };
   ['all','reit','dev'].forEach(function(k){
     var btn = document.getElementById('ent-'+k);
     if(btn){
       var active = (k.toUpperCase()===type);
-      btn.style.background = active ? 'var(--g1)' : 'transparent';
+      btn.style.background = active ? entColors[k] : 'transparent';
       btn.style.color = active ? '#fff' : 'var(--mut)';
       btn.style.fontWeight = active ? '700' : '600';
     }
@@ -22514,11 +22566,8 @@ function reitSetFilter(btn, kind, val){
         var gb = document.getElementById('geo-'+k);
         if(gb){ var a=(k==='all'); gb.style.background=a?'var(--g1)':'transparent'; gb.style.color=a?'#fff':'var(--mut)'; gb.style.fontWeight=a?'700':'600'; }
       });
-      var cSel=document.getElementById('reit-country'); var rSel=document.getElementById('reit-region');
-      if(cSel) cSel.style.display='none'; if(rSel) rSel.style.display='';
-      var ccR=document.getElementById('chip-country-row'); if(ccR) ccR.style.display='none';
-      var cyR=document.getElementById('chip-city-row'); if(cyR) cyR.style.display='none';
-      reitActiveCountry=''; reitActiveCity='';
+      reitActiveContinent=''; reitActiveCountry=''; reitActiveCity=''; reitActiveDistrict='';
+      ['row-district','row-continent','row-country','row-city'].forEach(function(id){ var el=document.getElementById(id); if(el) el.style.display='none'; });
     }
   } else if(kind==='dev'){
     reitActiveDev = val;
@@ -22529,11 +22578,8 @@ function reitSetFilter(btn, kind, val){
         var gb = document.getElementById('geo-'+k);
         if(gb){ var a=(k==='all'); gb.style.background=a?'var(--g1)':'transparent'; gb.style.color=a?'#fff':'var(--mut)'; gb.style.fontWeight=a?'700':'600'; }
       });
-      var cSel=document.getElementById('reit-country'); var rSel=document.getElementById('reit-region');
-      if(cSel) cSel.style.display='none'; if(rSel) rSel.style.display='';
-      var ccR=document.getElementById('chip-country-row'); if(ccR) ccR.style.display='none';
-      var cyR=document.getElementById('chip-city-row'); if(cyR) cyR.style.display='none';
-      reitActiveCountry=''; reitActiveCity='';
+      reitActiveContinent=''; reitActiveCountry=''; reitActiveCity=''; reitActiveDistrict='';
+      ['row-district','row-continent','row-country','row-city'].forEach(function(id){ var el=document.getElementById(id); if(el) el.style.display='none'; });
     }
   } else {
     reitActiveAsset = val;
@@ -22691,56 +22737,16 @@ function reitBuildChipRows(){
   _reitChipsBuilt = true;
 }
 
-function reitBuildCountryChips(){
-  if(typeof REIT_DATA==='undefined' || !REIT_DATA.length) return;
-  var row=document.getElementById('chip-country-row'); if(!row) return;
-  var cnt={};
-  REIT_DATA.forEach(function(r){
-    var cn=r.country_norm||r.country;
-    if(!cn || cn==='Singapore' || cn==='Multi-country') return;
-    cnt[cn]=(cnt[cn]||0)+1;
-  });
-  var cs=Object.keys(cnt).sort(function(a,b){ return cnt[b]-cnt[a] || a.localeCompare(b); });
-  var lbl='<span style="font-size:11px;font-weight:700;color:var(--g2);text-transform:uppercase;letter-spacing:.06em;margin-right:2px">\uD83C\uDF0D Country</span>';
-  var html=lbl+'<button class="dir-tbtn'+(reitActiveCountry===''?' on':'')+'" data-cn="" onclick="reitSetCountry(this)">All</button>';
-  cs.forEach(function(c){
-    html+='<button class="dir-tbtn'+(reitActiveCountry===c?' on':'')+'" data-cn="'+c.replace(/"/g,'&quot;')+'" onclick="reitSetCountry(this)">'+c+' <span style="opacity:.55;font-size:10px">('+cnt[c]+')</span></button>';
-  });
-  row.innerHTML=html;
-}
-function reitBuildCityChips(country){
-  var row=document.getElementById('chip-city-row'); if(!row) return;
-  if(!country){ row.innerHTML=''; row.style.display='none'; return; }
-  var cnt={};
-  REIT_DATA.forEach(function(r){
-    var cn=r.country_norm||r.country;
-    if(cn!==country || !r.city) return;
-    cnt[r.city]=(cnt[r.city]||0)+1;
-  });
-  var cs=Object.keys(cnt).sort(function(a,b){ return cnt[b]-cnt[a] || a.localeCompare(b); });
-  if(!cs.length){ row.innerHTML=''; row.style.display='none'; return; }
-  var lbl='<span style="font-size:11px;font-weight:700;color:var(--g2);text-transform:uppercase;letter-spacing:.06em;margin-right:2px">\uD83C\uDFD9\uFE0F City</span>';
-  var html=lbl+'<button class="dir-tbtn'+(reitActiveCity===''?' on':'')+'" data-cty="" onclick="reitSetCity(this)">All</button>';
-  cs.forEach(function(c){
-    html+='<button class="dir-tbtn'+(reitActiveCity===c?' on':'')+'" data-cty="'+c.replace(/"/g,'&quot;')+'" onclick="reitSetCity(this)">'+c+' <span style="opacity:.55;font-size:10px">('+cnt[c]+')</span></button>';
-  });
-  row.innerHTML=html; row.style.display='flex';
-}
-function reitSetCountry(btn){
-  reitActiveCountry=btn.getAttribute('data-cn')||''; reitActiveCity='';
-  reitBuildCountryChips(); reitBuildCityChips(reitActiveCountry); reitSearch(0);
-}
-function reitSetCity(btn){
-  reitActiveCity=btn.getAttribute('data-cty')||'';
-  reitBuildCityChips(reitActiveCountry); reitSearch(0);
-}
 function reitSearch(page){
   reitBuildChipRows();
-  if(reitActiveGeo==='OV') reitBuildCountryChips();                  // v48.21d-redo: ensure chips exist before first filter pass
+  if(!_reitGeoRowsInit && typeof REIT_DATA!=='undefined' && REIT_DATA.length){
+    _reitGeoRowsInit=true;
+    if(reitActiveGeo==='SG'){ reitBuildDistrictBtns(); var _rd=document.getElementById('row-district'); if(_rd) _rd.style.display='flex'; }
+  }                  // v48.21d-redo: ensure chips exist before first filter pass
   page = page||0; reitPage = page;
   var q = (document.getElementById('reit-search').value||'').trim().toLowerCase();
-  var region = (document.getElementById('reit-region')||{}).value||'';
-  var country = (document.getElementById('reit-country')||{}).value||'';
+  // var region = (document.getElementById('reit-region')||{}).value||'';  (removed: geo now via chip-state vars)
+  // var country = (document.getElementById('reit-country')||{}).value||'';  (removed: geo now via chip-state vars)
   var sort = document.getElementById('reit-sort').value;
   var tblEntity = (document.getElementById('reit-tbl-entity')||{}).value||'';
   var tblAsset  = (document.getElementById('reit-tbl-asset')||{}).value||'';
@@ -22767,7 +22773,8 @@ function reitSearch(page){
     }
     if(tblEntity && p.entity !== tblEntity) return false;
     if(tblAsset && p.type !== tblAsset) return false;
-    if(region && p.region !== region) return false;
+    if(reitActiveDistrict && p.district !== reitActiveDistrict) return false;
+    if(reitActiveContinent && p.continent !== reitActiveContinent) return false;
     if(reitActiveCountry && (p.country_norm||p.country) !== reitActiveCountry) return false;
     if(reitActiveCity && p.city !== reitActiveCity) return false;
     if(q){
@@ -23380,12 +23387,9 @@ window.addEventListener('popstate',function(e){
 
 function reitClear(){
   document.getElementById('reit-search').value='';
-  var rr=document.getElementById('reit-region'); if(rr) rr.value='';
-  var rc=document.getElementById('reit-country'); if(rc) rc.value='';
-  reitActiveCountry=''; reitActiveCity='';
-  var ccR=document.getElementById('chip-country-row'); if(ccR){ if(reitActiveGeo==='OV'){ reitBuildCountryChips(); ccR.style.display='flex'; } else { ccR.style.display='none'; } }
-  var cyR=document.getElementById('chip-city-row'); if(cyR) cyR.style.display='none';
   document.getElementById('reit-sort').value='name.asc';
+  reitActiveContinent=''; reitActiveCountry=''; reitActiveCity=''; reitActiveDistrict='';
+  reitSetGeo('SG');
   reitActiveEntity=''; reitActiveDev=''; reitActiveAsset='';
   document.querySelectorAll('[data-reitf]').forEach(function(b){ b.classList.remove('on'); });
   var a1=document.querySelector('[data-reitf=""]'); if(a1) a1.classList.add('on');
