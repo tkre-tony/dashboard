@@ -1,0 +1,9 @@
+User-agent: *
+Allow: /
+
+# Keep transactional / token URLs out of the index
+Disallow: /*?confirm=
+Disallow: /*?unsubscribe=
+Disallow: /*?view=
+
+Sitemap: https://propertyatlas.sg/sitemap.xml
