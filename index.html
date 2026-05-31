@@ -4444,11 +4444,25 @@ body.article-takeover .ed-foot{display:none!important}
         <input id="reit-search" placeholder="🔍  Search building, address, area..." autocomplete="off"
           class="cs-input" style="flex:1;min-width:180px"
           oninput="reitSearchDelay()" onkeydown="if(event.key==='Enter')reitSearch(0)"/>
-        <select id="reit-country" onchange="reitSetCountry()" class="cs-select" style="display:none">
+        <select id="reit-country" onchange="reitSearch(0)" class="cs-select" style="display:none">
           <option value="">All Countries</option>
-        </select>
-        <select id="reit-city" onchange="reitSearch(0)" class="cs-select" style="display:none">
-          <option value="">All Cities</option>
+          <option value="Australia">Australia</option>
+          <option value="China">China</option>
+          <option value="Germany">Germany</option>
+          <option value="Hong Kong">Hong Kong</option>
+          <option value="India">India</option>
+          <option value="Ireland">Ireland</option>
+          <option value="Italy">Italy</option>
+          <option value="Japan">Japan</option>
+          <option value="Malaysia">Malaysia</option>
+          <option value="Maldives">Maldives</option>
+          <option value="Netherlands">Netherlands</option>
+          <option value="New Zealand">New Zealand</option>
+          <option value="South Korea">South Korea</option>
+          <option value="Switzerland">Switzerland</option>
+          <option value="United Kingdom">United Kingdom</option>
+          <option value="USA">United States</option>
+          <option value="Vietnam">Vietnam</option>
         </select>
         <select id="reit-region" onchange="reitSearch(0)" class="cs-select">
           <option value="">All Regions</option>
@@ -4475,6 +4489,9 @@ body.article-takeover .ed-foot{display:none!important}
         <div style="font-size:11px;color:var(--mut);white-space:nowrap;font-family:'DM Mono',monospace;font-weight:600" id="reit-count">—</div>
       </div>
 
+      <!-- Overseas country/city drill-down (loud chip rows; shown only in Overseas mode) -->
+      <div id="chip-country-row" style="display:none;gap:6px;flex-wrap:wrap;align-items:center;margin-bottom:9px"></div>
+      <div id="chip-city-row" style="display:none;gap:6px;flex-wrap:wrap;align-items:center;margin-bottom:9px"></div>
       <!-- Row 2: Entity chips (REITs + Developers combined, shown/hidden by entity toggle) -->
       <!-- v48.21d-redo: chip rows are now data-driven from REIT_DATA via reitBuildChipRows().
            Future entity additions auto-appear without HTML edits. The All button stays hardcoded
@@ -22246,6 +22263,8 @@ async function dismissARBanner(){
 // ─────────────────────────────────────────────────────────────────────────────
 var reitActiveAsset = '';
 var reitActiveGeo = 'SG';
+var reitActiveCountry = '';
+var reitActiveCity = '';
 var reitActiveEntType = 'ALL';
 var reitPage = 0;
 var reitPageSize = 18;
@@ -22444,9 +22463,19 @@ function reitSetGeo(geo){
   });
   var cSel = document.getElementById('reit-country');
   var rSel = document.getElementById('reit-region');
-  var ciSel = document.getElementById('reit-city');
-  if(geo==='OV'){ if(cSel) cSel.style.display=''; if(ciSel) ciSel.style.display=''; if(rSel) rSel.style.display='none'; }
-  else { if(cSel) cSel.style.display='none'; if(ciSel) ciSel.style.display='none'; if(rSel) rSel.style.display=''; }
+  var ccRow = document.getElementById('chip-country-row');
+  var cyRow = document.getElementById('chip-city-row');
+  if(cSel) cSel.style.display='none';
+  if(geo==='OV'){
+    if(rSel) rSel.style.display='none';
+    reitBuildCountryChips(); if(ccRow) ccRow.style.display='flex';
+    if(reitActiveCountry){ reitBuildCityChips(reitActiveCountry); } else if(cyRow){ cyRow.style.display='none'; }
+  } else {
+    if(rSel) rSel.style.display = (geo==='SG') ? '' : 'none';
+    if(ccRow) ccRow.style.display='none';
+    if(cyRow) cyRow.style.display='none';
+    reitActiveCountry=''; reitActiveCity='';
+  }
   reitSearch(0);
 }
 
@@ -22485,8 +22514,11 @@ function reitSetFilter(btn, kind, val){
         var gb = document.getElementById('geo-'+k);
         if(gb){ var a=(k==='all'); gb.style.background=a?'var(--g1)':'transparent'; gb.style.color=a?'#fff':'var(--mut)'; gb.style.fontWeight=a?'700':'600'; }
       });
-      var cSel=document.getElementById('reit-country'); var rSel=document.getElementById('reit-region'); var ciSel=document.getElementById('reit-city');
-      if(cSel) cSel.style.display='none'; if(ciSel) ciSel.style.display='none'; if(rSel) rSel.style.display='';
+      var cSel=document.getElementById('reit-country'); var rSel=document.getElementById('reit-region');
+      if(cSel) cSel.style.display='none'; if(rSel) rSel.style.display='';
+      var ccR=document.getElementById('chip-country-row'); if(ccR) ccR.style.display='none';
+      var cyR=document.getElementById('chip-city-row'); if(cyR) cyR.style.display='none';
+      reitActiveCountry=''; reitActiveCity='';
     }
   } else if(kind==='dev'){
     reitActiveDev = val;
@@ -22497,8 +22529,11 @@ function reitSetFilter(btn, kind, val){
         var gb = document.getElementById('geo-'+k);
         if(gb){ var a=(k==='all'); gb.style.background=a?'var(--g1)':'transparent'; gb.style.color=a?'#fff':'var(--mut)'; gb.style.fontWeight=a?'700':'600'; }
       });
-      var cSel=document.getElementById('reit-country'); var rSel=document.getElementById('reit-region'); var ciSel=document.getElementById('reit-city');
-      if(cSel) cSel.style.display='none'; if(ciSel) ciSel.style.display='none'; if(rSel) rSel.style.display='';
+      var cSel=document.getElementById('reit-country'); var rSel=document.getElementById('reit-region');
+      if(cSel) cSel.style.display='none'; if(rSel) rSel.style.display='';
+      var ccR=document.getElementById('chip-country-row'); if(ccR) ccR.style.display='none';
+      var cyR=document.getElementById('chip-city-row'); if(cyR) cyR.style.display='none';
+      reitActiveCountry=''; reitActiveCity='';
     }
   } else {
     reitActiveAsset = val;
@@ -22656,42 +22691,56 @@ function reitBuildChipRows(){
   _reitChipsBuilt = true;
 }
 
-function reitSetCountry(){
-  var ci=document.getElementById('reit-city'); if(ci) ci.value='';
-  reitSearch(0);
-}
-function reitFillGeoOpts(){
+function reitBuildCountryChips(){
   if(typeof REIT_DATA==='undefined' || !REIT_DATA.length) return;
-  var cSel=document.getElementById('reit-country');
-  var ciSel=document.getElementById('reit-city');
-  if(cSel && cSel.getAttribute('data-filled')!=='1'){
-    var cs=REIT_DATA.map(function(r){return r.country_norm||r.country;})
-      .filter(function(v){return v && v!=='Singapore' && v!=='Multi-country';});
-    cs=cs.filter(function(v,i,a){return a.indexOf(v)===i;}).sort();
-    if(cs.length){ cs.forEach(function(c){var o=document.createElement('option');o.value=c;o.textContent=c;cSel.appendChild(o);}); cSel.setAttribute('data-filled','1'); }
-  }
-  if(ciSel){
-    var sel=(cSel||{}).value||''; var prev=ciSel.value;
-    var cities=REIT_DATA.filter(function(r){
-      var cn=r.country_norm||r.country;
-      if(cn==='Singapore') return false;
-      if(sel && cn!==sel) return false;
-      return !!r.city;
-    }).map(function(r){return r.city;});
-    cities=cities.filter(function(v,i,a){return a.indexOf(v)===i;}).sort();
-    ciSel.innerHTML='<option value="">All Cities</option>';
-    cities.forEach(function(c){var o=document.createElement('option');o.value=c;o.textContent=c;ciSel.appendChild(o);});
-    ciSel.value = (cities.indexOf(prev)>=0) ? prev : '';
-  }
+  var row=document.getElementById('chip-country-row'); if(!row) return;
+  var cnt={};
+  REIT_DATA.forEach(function(r){
+    var cn=r.country_norm||r.country;
+    if(!cn || cn==='Singapore' || cn==='Multi-country') return;
+    cnt[cn]=(cnt[cn]||0)+1;
+  });
+  var cs=Object.keys(cnt).sort(function(a,b){ return cnt[b]-cnt[a] || a.localeCompare(b); });
+  var lbl='<span style="font-size:11px;font-weight:700;color:var(--g2);text-transform:uppercase;letter-spacing:.06em;margin-right:2px">\uD83C\uDF0D Country</span>';
+  var html=lbl+'<button class="dir-tbtn'+(reitActiveCountry===''?' on':'')+'" data-cn="" onclick="reitSetCountry(this)">All</button>';
+  cs.forEach(function(c){
+    html+='<button class="dir-tbtn'+(reitActiveCountry===c?' on':'')+'" data-cn="'+c.replace(/"/g,'&quot;')+'" onclick="reitSetCountry(this)">'+c+' <span style="opacity:.55;font-size:10px">('+cnt[c]+')</span></button>';
+  });
+  row.innerHTML=html;
+}
+function reitBuildCityChips(country){
+  var row=document.getElementById('chip-city-row'); if(!row) return;
+  if(!country){ row.innerHTML=''; row.style.display='none'; return; }
+  var cnt={};
+  REIT_DATA.forEach(function(r){
+    var cn=r.country_norm||r.country;
+    if(cn!==country || !r.city) return;
+    cnt[r.city]=(cnt[r.city]||0)+1;
+  });
+  var cs=Object.keys(cnt).sort(function(a,b){ return cnt[b]-cnt[a] || a.localeCompare(b); });
+  if(!cs.length){ row.innerHTML=''; row.style.display='none'; return; }
+  var lbl='<span style="font-size:11px;font-weight:700;color:var(--g2);text-transform:uppercase;letter-spacing:.06em;margin-right:2px">\uD83C\uDFD9\uFE0F City</span>';
+  var html=lbl+'<button class="dir-tbtn'+(reitActiveCity===''?' on':'')+'" data-cty="" onclick="reitSetCity(this)">All</button>';
+  cs.forEach(function(c){
+    html+='<button class="dir-tbtn'+(reitActiveCity===c?' on':'')+'" data-cty="'+c.replace(/"/g,'&quot;')+'" onclick="reitSetCity(this)">'+c+' <span style="opacity:.55;font-size:10px">('+cnt[c]+')</span></button>';
+  });
+  row.innerHTML=html; row.style.display='flex';
+}
+function reitSetCountry(btn){
+  reitActiveCountry=btn.getAttribute('data-cn')||''; reitActiveCity='';
+  reitBuildCountryChips(); reitBuildCityChips(reitActiveCountry); reitSearch(0);
+}
+function reitSetCity(btn){
+  reitActiveCity=btn.getAttribute('data-cty')||'';
+  reitBuildCityChips(reitActiveCountry); reitSearch(0);
 }
 function reitSearch(page){
   reitBuildChipRows();
-  reitFillGeoOpts();                  // v48.21d-redo: ensure chips exist before first filter pass
+  if(reitActiveGeo==='OV') reitBuildCountryChips();                  // v48.21d-redo: ensure chips exist before first filter pass
   page = page||0; reitPage = page;
   var q = (document.getElementById('reit-search').value||'').trim().toLowerCase();
   var region = (document.getElementById('reit-region')||{}).value||'';
   var country = (document.getElementById('reit-country')||{}).value||'';
-  var citySel = (document.getElementById('reit-city')||{}).value||'';
   var sort = document.getElementById('reit-sort').value;
   var tblEntity = (document.getElementById('reit-tbl-entity')||{}).value||'';
   var tblAsset  = (document.getElementById('reit-tbl-asset')||{}).value||'';
@@ -22719,8 +22768,8 @@ function reitSearch(page){
     if(tblEntity && p.entity !== tblEntity) return false;
     if(tblAsset && p.type !== tblAsset) return false;
     if(region && p.region !== region) return false;
-    if(country && (p.country_norm||p.country) !== country) return false;
-    if(citySel && p.city !== citySel) return false;
+    if(reitActiveCountry && (p.country_norm||p.country) !== reitActiveCountry) return false;
+    if(reitActiveCity && p.city !== reitActiveCity) return false;
     if(q){
       var hay = ((p.name||'')+' '+(p.addr||'')+' '+(p.area||'')+' '+(p.entity||'')+' '+(p.country||'')).toLowerCase();
       if(!hay.includes(q)) return false;
@@ -23333,7 +23382,9 @@ function reitClear(){
   document.getElementById('reit-search').value='';
   var rr=document.getElementById('reit-region'); if(rr) rr.value='';
   var rc=document.getElementById('reit-country'); if(rc) rc.value='';
-  var rci=document.getElementById('reit-city'); if(rci){ rci.value=''; rci.setAttribute('data-filled','0'); }
+  reitActiveCountry=''; reitActiveCity='';
+  var ccR=document.getElementById('chip-country-row'); if(ccR){ if(reitActiveGeo==='OV'){ reitBuildCountryChips(); ccR.style.display='flex'; } else { ccR.style.display='none'; } }
+  var cyR=document.getElementById('chip-city-row'); if(cyR) cyR.style.display='none';
   document.getElementById('reit-sort').value='name.asc';
   reitActiveEntity=''; reitActiveDev=''; reitActiveAsset='';
   document.querySelectorAll('[data-reitf]').forEach(function(b){ b.classList.remove('on'); });
