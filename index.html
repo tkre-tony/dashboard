@@ -4459,6 +4459,7 @@ body.article-takeover .ed-foot{display:none!important}
           <button id="geo-sg"  onclick="reitSetGeo('SG')"  style="padding:5px 16px;border:none;border-radius:7px;font-size:12px;font-weight:700;font-family:'DM Sans',sans-serif;cursor:pointer;background:var(--g1);color:#fff">🇸🇬 Singapore</button>
           <button id="geo-ov"  onclick="reitSetGeo('OV')"  style="padding:5px 16px;border:none;border-radius:7px;font-size:12px;font-weight:600;font-family:'DM Sans',sans-serif;cursor:pointer;background:transparent;color:var(--mut)">🌏 Overseas</button>
         </div>
+        <span style="font-size:11px;color:var(--mut);font-style:italic">← drill down by continent → country → city across 35 markets</span>
       </div>
       <!-- ROW 4a: SG district buttons (shown in SG mode) -->
       <div id="row-district" style="display:flex;gap:6px;flex-wrap:wrap;align-items:center;margin-bottom:9px"></div>
@@ -22655,9 +22656,29 @@ var REIT_CHIP_LABELS = {
 };
 
 var _reitChipsBuilt = false;
+// Returns {entity: matchCount} for entities with >=1 asset under the CURRENT
+// geo (SG/OV/All + continent/country/city/district) and type filter. Used to
+// grey out entity chips that have nothing in the active scope.
+function reitScopedEntityCounts(){
+  var out={};
+  if(typeof REIT_DATA==='undefined') return out;
+  var tp = reitActiveAsset || '';
+  REIT_DATA.forEach(function(r){
+    var isSG = (r.country==='Singapore');
+    if(reitActiveGeo==='SG' && !isSG) return;
+    if(reitActiveGeo==='OV' && isSG) return;
+    if(reitActiveDistrict && r.district!==reitActiveDistrict) return;
+    if(reitActiveContinent && r.continent!==reitActiveContinent) return;
+    if(reitActiveCountry && (r.country_norm||r.country)!==reitActiveCountry) return;
+    if(reitActiveCity && r.city!==reitActiveCity) return;
+    if(tp && r.type!==tp) return;
+    if(r.entity) out[r.entity]=(out[r.entity]||0)+1;
+  });
+  return out;
+}
 function reitBuildChipRows(){
-  if(_reitChipsBuilt) return;          // idempotent guard — runs once per page-load
   if(typeof REIT_DATA==='undefined' || !REIT_DATA.length) return;
+  var _scoped = reitScopedEntityCounts();   // entity -> count in current geo/type scope
 
   // Group rows by entity, capture entity_type + AR-year freshness
   var entMap = {};
@@ -22690,11 +22711,15 @@ function reitBuildChipRows(){
     var label = REIT_CHIP_LABELS[entity] || entity;
     var dotColor = freshnessColor(bucket.fyMax, bucket.isDelisted);
     var dotHtml = bucket.isDelisted ? ' \u26AB' : (dotColor ? ' <span style="color:'+dotColor+';font-size:8px">\u25CF</span>' : '');
-    // Escape entity for safe inline use in onclick attr
     var safeEnt = entity.replace(/'/g, "\\'");
-    return '<button class="dir-tbtn" data-'+kind+'f="'+entity.replace(/"/g,'&quot;')+'" '
+    var scopeN = _scoped[entity] || 0;
+    var anyScope = (reitActiveGeo!=='ALL' || reitActiveDistrict || reitActiveContinent || reitActiveCountry || reitActiveCity || reitActiveAsset);
+    var dim = (anyScope && scopeN===0);
+    var cntHtml = (anyScope && scopeN>0) ? ' <span style="opacity:.55;font-size:10px">('+scopeN+')</span>' : '';
+    var dimStyle = dim ? ' style="opacity:.32;pointer-events:none" disabled' : '';
+    return '<button class="dir-tbtn"'+dimStyle+' data-'+kind+'f="'+entity.replace(/"/g,'&quot;')+'" '
          + 'onclick="reitSetFilter(this,\''+kind+'\',\''+safeEnt+'\')">'
-         + label + dotHtml + '</button>';
+         + label + dotHtml + cntHtml + '</button>';
   }
 
   // Sort: alphabetical by display label, with delisted at the END
@@ -22734,6 +22759,15 @@ function reitBuildChipRows(){
   var devTarget = document.getElementById('chip-dev-dynamic');
   if(devTarget) devTarget.innerHTML = devEnts.map(function(e){return buildButton(e,'dev');}).join('');
 
+  // Reapply active-selection highlight after rebuild (chips are re-created each pass now)
+  if(reitActiveEntity){
+    var rb=document.querySelector('[data-reitf="'+reitActiveEntity.replace(/"/g,'&quot;')+'"]');
+    if(rb) rb.classList.add('on');
+  }
+  if(reitActiveDev){
+    var db=document.querySelector('[data-devf="'+reitActiveDev.replace(/"/g,'&quot;')+'"]');
+    if(db) db.classList.add('on');
+  }
   _reitChipsBuilt = true;
 }
 
