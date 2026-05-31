@@ -22147,6 +22147,28 @@ async function loadReitAssets(cb){
 }
 if(document.readyState === 'loading'){ document.addEventListener('DOMContentLoaded', function(){ loadReitAssets(); }); } else { loadReitAssets(); }
 
+// Per-entity valuation currency. Default = S$ (SG-functional REITs/devs report whole
+// book in SGD even for overseas assets). Only entities whose AR/quarterly PRESENTS in a
+// foreign currency are listed here. To correct: edit one line — no logic change needed.
+var REIT_CCY = {
+  "Manulife US REIT":"US$",
+  "Prime US REIT":"US$",
+  "United Hampshire US REIT":"US$",
+  "Digital Core REIT":"US$",
+  "Sasseur REIT":"RMB",
+  "EC World REIT":"RMB",
+  "Elite UK REIT":"\u00a3",
+  "IREIT Global":"\u20ac",
+  "Stoneweg Europe Stapled Trust":"\u20ac",
+  "Daiwa House Logistics Trust":"\u00a5"
+};
+function reitCcy(entity){ return (entity && REIT_CCY[entity]) || 'S$'; }
+// Valuation formatter — currency by entity, not hardcoded S$.
+function fmtAssetVal(p){
+  if(p==null || p.val==null) return '\u2014';
+  return reitCcy(p.entity) + p.val.toLocaleString() + 'M';
+}
+
 var ENTITY_COLORS = {
   "AIMS APAC REIT":"#1a5276",
   "Alpha Integrated REIT (former Sabana)":"#6e2f8a",
@@ -22393,8 +22415,8 @@ function reitRenderTable(data){
 
     // #1 AR dot merged into Val cell (shown below the value)
     var arDot=p.ar_year==='FY2025'?'<span style="color:#4ade80;font-size:8px">●</span>':p.ar_year==='FY2024'?'<span style="color:#f59e0b;font-size:8px">●</span>':'<span style="color:#6b7280;font-size:8px">●</span>';
-    // #3 Val label: "Val $M" (no S prefix) — currency already shown in value
-    var valDisplay=p.val!=null?('$'+p.val.toLocaleString()+'M'):'—';
+    // #3 Val label: currency by entity (RMB/US$/etc.), not hardcoded
+    var valDisplay=fmtAssetVal(p);
     var valArHtml='<div style="font-family:DM Mono,monospace;font-size:11px;text-align:left">'+valDisplay+'</div>'
       +'<div style="font-size:9px;color:var(--mut);margin-top:1px;text-align:left">'+arDot+' '+(p.ar_year||'—')+'</div>';
 
@@ -22998,7 +23020,7 @@ function reitSearch(page){
     var ic = REIT_TYPE_ICONS[p.type]||'🏢';
     var nla = p.nla_sqm ? (p.nla_sqm>=10000?(p.nla_sqm/1000).toFixed(0)+'K sqm':p.nla_sqm.toLocaleString()+' sqm') : '\u2014';
     var occ = p.occ ? p.occ.toFixed(1)+'%' : '\u2014';
-    var val = p.val ? 'S$'+p.val.toLocaleString()+'M' : '\u2014';
+    var val = fmtAssetVal(p);
     var assetKey = p.name.replace(/'/g,"\\'");
     var et = (p.entity_type||'');
     var isDev = (et==='DEV' || et==='Dev' || et==='Developer');
@@ -23143,7 +23165,7 @@ function reitOpenDetail(idx){
   var areaLabel = p.country==='Singapore' ? 'Planning Area' : 'City / Area';
 
   var stats=[
-    {l:'Valuation',v:p.val?'S$'+p.val.toLocaleString()+'M':'\u2014'},
+    {l:'Valuation',v:fmtAssetVal(p)},
     {l:'Occupancy',v:p.occ?p.occ.toFixed(1)+'%':'\u2014'},
     {l:'NLA (sqm)',v:p.nla_sqm?p.nla_sqm.toLocaleString():'\u2014'},
     {l:'NLA (sqft)',v:p.nla_sqm?Math.round(p.nla_sqm*10.764).toLocaleString():'\u2014'},
