@@ -22145,12 +22145,87 @@ requestAnimationFrame(function(){
 //   tenure,nla_sqm,occ,val,region,area,country,source,ar_year,status
 var REIT_DATA = [];  /* v48.177 cutover: REIT_DATA is now loaded at runtime from public.reit_assets (deduped table; replaces the inline 1,651-row array). Single source of truth — future AR / acquisition / disposal updates touch only the table. See loadReitAssets(). */
 var reitAssetsLoaded = false, reitAssetsLoading = false, _reitCbs = [];
+// v48.197 (1 Jun 2026, S75): Asset Directory loader now uses a stale-while-revalidate
+// sessionStorage cache (mirrors the PNL tab pattern). Cache hit -> paint instantly from
+// cache (no "Loading..." flash), then revalidate in the background and silently swap +
+// re-render ONLY if the data actually changed. Cache miss -> original cold-fetch path.
+// Kills the repeat-cold-load flash (hard refresh, post-login tab-restore). Bump the
+// version suffix in REIT_ASSETS_CACHE_KEY to force an immediate cold pull after a big backfill.
+var REIT_ASSETS_FIELDS = 'name,addr,type,entity,entity_type,entity_short,tenure,nla_sqm,occ,val,prev_val,prev_occ,prev_nla_sqm,region,area,country,ar_year,source,status,notes,q_period,q_occ,q_val,q_reversion,q_source,q_notes,q_dpu,q_nav,q_rev,q_npi,q_date,country_norm,city,continent,district';
+var REIT_ASSETS_CACHE_KEY = 'atlas_reit_assets_v1';
+var REIT_ASSETS_CACHE_TTL_MS = 30 * 60 * 1000;
+
+async function _reitFetchAll(){
+  var res = await fetch(SB_URL + '/rest/v1/reit_assets?select=' + REIT_ASSETS_FIELDS + '&order=id.asc&limit=2000', {
+    headers: { 'apikey': SB_KEY, 'Authorization': 'Bearer ' + SB_KEY }
+  });
+  if(!res.ok) throw new Error('reit_assets HTTP ' + res.status);
+  var all = await res.json();
+  // Safety net: if a future row count ever exceeds 2000, page the remainder
+  if(all.length === 2000){
+    var from = 2000;
+    while(from < 50000){
+      var r2 = await fetch(SB_URL + '/rest/v1/reit_assets?select=' + REIT_ASSETS_FIELDS + '&order=id.asc&limit=2000&offset=' + from, {
+        headers: { 'apikey': SB_KEY, 'Authorization': 'Bearer ' + SB_KEY }
+      });
+      if(!r2.ok) break;
+      var b2 = await r2.json();
+      if(!b2.length) break;
+      all = all.concat(b2); from += b2.length;
+      if(b2.length < 2000) break;
+    }
+  }
+  return all;
+}
+
+function _reitCacheWrite(arr){
+  try {
+    var payload = JSON.stringify({ t: Date.now(), data: arr });
+    // size-guarded ~4MB to leave headroom under the 5MB sessionStorage cap
+    if(payload.length < 4 * 1024 * 1024){ sessionStorage.setItem(REIT_ASSETS_CACHE_KEY, payload); }
+    else { try { sessionStorage.removeItem(REIT_ASSETS_CACHE_KEY); } catch(e){} }
+  } catch(e){ try { sessionStorage.removeItem(REIT_ASSETS_CACHE_KEY); } catch(e2){} }
+}
+
+function _reitRenderLoaded(){
+  try { if(typeof reitSearch === 'function') reitSearch(typeof reitPage !== 'undefined' ? (reitPage||0) : 0); } catch(_e){}
+  try { if(typeof pulseInited !== 'undefined' && pulseInited && typeof buildPortfolioIndex === 'function'){ PULSE_PORTFOLIO_IDX = buildPortfolioIndex(); } } catch(_e){}
+}
+
 async function loadReitAssets(cb){
   if(reitAssetsLoaded){ if(cb) cb(); return; }
   if(cb) _reitCbs.push(cb);
   if(reitAssetsLoading) return;
   reitAssetsLoading = true;
-  // Loading state — make the fetch wait feel intentional, not broken
+
+  // -- Stale-while-revalidate: try the sessionStorage cache first --
+  try {
+    var cachedRaw = sessionStorage.getItem(REIT_ASSETS_CACHE_KEY);
+    if(cachedRaw){
+      var blob = JSON.parse(cachedRaw);
+      if(blob && blob.t && (Date.now() - blob.t) < REIT_ASSETS_CACHE_TTL_MS && Array.isArray(blob.data) && blob.data.length){
+        // Paint instantly from cache -- no loading flash
+        REIT_DATA = blob.data;
+        reitAssetsLoaded = true;
+        reitAssetsLoading = false;
+        _reitRenderLoaded();
+        var cbsC = _reitCbs.slice(); _reitCbs = []; cbsC.forEach(function(f){ try { f(); } catch(_e){} });
+        // Revalidate in the background; swap + re-render only if the data changed
+        _reitFetchAll().then(function(fresh){
+          try {
+            if(JSON.stringify(fresh) !== JSON.stringify(REIT_DATA)){
+              REIT_DATA = fresh;
+              _reitRenderLoaded();
+            }
+            _reitCacheWrite(fresh); // refresh timestamp regardless
+          } catch(_e){}
+        }).catch(function(_e){ /* keep cached data on revalidate failure */ });
+        return;
+      }
+    }
+  } catch(_e){ /* cache parse/storage error -- fall through to cold fetch */ }
+
+  // -- Cache miss: cold fetch path (original behavior, with loading state) --
   try {
     var _lg = document.getElementById('reit-grid');
     if(_lg) _lg.innerHTML = '<div style="grid-column:1/-1;padding:48px 20px;text-align:center;color:var(--mut);font-family:\'DM Sans\',sans-serif">'
@@ -22159,30 +22234,11 @@ async function loadReitAssets(cb){
       + '<div style="font-size:11px;margin-top:5px">Fetching 1,500+ REIT &amp; developer properties</div></div>';
     var _lc = document.getElementById('reit-count'); if(_lc) _lc.textContent = 'loading\u2026';
   } catch(_e){}
-  var FIELDS = 'name,addr,type,entity,entity_type,entity_short,tenure,nla_sqm,occ,val,prev_val,prev_occ,prev_nla_sqm,region,area,country,ar_year,source,status,notes,q_period,q_occ,q_val,q_reversion,q_source,q_notes,q_dpu,q_nav,q_rev,q_npi,q_date,country_norm,city,continent,district';
   try {
-    // Single-page fetch: 1,528 rows fit under one 2,000-row page = one round-trip
-    var res = await fetch(SB_URL + '/rest/v1/reit_assets?select=' + FIELDS + '&order=id.asc&limit=2000', {
-      headers: { 'apikey': SB_KEY, 'Authorization': 'Bearer ' + SB_KEY }
-    });
-    if(!res.ok) throw new Error('reit_assets HTTP ' + res.status);
-    var all = await res.json();
-    // Safety net: if a future row count ever exceeds 2000, page the remainder
-    if(all.length === 2000){
-      var from = 2000;
-      while(from < 50000){
-        var r2 = await fetch(SB_URL + '/rest/v1/reit_assets?select=' + FIELDS + '&order=id.asc&limit=2000&offset=' + from, {
-          headers: { 'apikey': SB_KEY, 'Authorization': 'Bearer ' + SB_KEY }
-        });
-        if(!r2.ok) break;
-        var b2 = await r2.json();
-        if(!b2.length) break;
-        all = all.concat(b2); from += b2.length;
-        if(b2.length < 2000) break;
-      }
-    }
+    var all = await _reitFetchAll();
     REIT_DATA = all;
     reitAssetsLoaded = true;
+    _reitCacheWrite(all);
   } catch(e){
     console.error('reit_assets load failed:', e);
     try {
