@@ -4523,6 +4523,7 @@ body.article-takeover .ed-foot{display:none!important}
         <button class="dir-tbtn" data-rasset="Logistics" onclick="reitSetFilter(this,'asset','Logistics')">Logistics</button>
         <button class="dir-tbtn" data-rasset="Residential" onclick="reitSetFilter(this,'asset','Residential')">Residential</button>
         <button class="dir-tbtn" data-rasset="Serviced Suites" onclick="reitSetFilter(this,'asset','Serviced Suites')">Serviced Suites</button>
+        <button class="dir-tbtn" data-rasset="Self-Storage" onclick="reitSetFilter(this,'asset','Self-Storage')">Self-Storage</button><!-- v48.198 (1 Jun 2026, S75): Self-Storage TYPE chip — UHREIT (Carteret, Millburn) is the first self-storage holder -->
       </div>
     </div>
 
@@ -7351,6 +7352,115 @@ var TALENT_DATA = [
     cross_board_roles:[],
     linkedin_url:null, photo_url:null,
     tags:['Non-Independent','UOB Sponsor','Hospitality','Penn Econ']
+  },
+
+  // ── UHREIT v48.198 (S75): board+management completion — was CEO + 4 directors only;
+  //    added 2 sponsor directors (Hanson, Goss) + CFO Yap + CIO Gardella + Head of IR Wong.
+  {
+    id:'uhreit-dir-hanson-25', name:'James Ernest Edwin Hanson II', role:'Non-Independent Non-Executive Director', role_type:'Board',
+    entity:'United Hampshire US REIT', entity_short:'UHREIT', ar_year:'FY2025',
+    appointed:'21 Feb 2020', tenure_yrs:5.9,
+    rem_exact:0, rem_fixed:0, rem_bonus:null, rem_other:0,
+    rem_note:'Nil director fees. As President and CEO of The Hampshire Sponsor (one of the two UHREIT sponsors and the U.S. asset manager), Mr Hanson is a sponsor-nominated Non-Independent NED and does not receive director fees. Substantial shareholder of the Manager via an indirect 41.70% interest in Hampshire U.S. Holdco.',
+    rem_band:null, rem_pct_fixed:null, rem_pct_bonus:null, rem_pct_other:null,
+    rem_history:[
+      {year:'FY2024', total:0, pct_fixed:0, pct_bonus:0, pct_ltp:0, pct_other:0, note:'Nil — sponsor employee'},
+      {year:'FY2025', total:0, pct_fixed:0, pct_bonus:0, pct_ltp:0, pct_other:0, note:'Nil — sponsor employee'},
+    ],
+    edu:null,
+    bio:'Non-Independent Non-Executive Director, age 67. President and CEO of The Hampshire Companies, LLC — a vertically integrated U.S. real estate firm and fund manager with ~US$2.9 billion AUM (US$3.7 billion including UHREIT). The Hampshire Companies is UHREIT U.S. asset manager and property manager for 14 of the 23 properties. Oversees the operation and investment activities of The Hampshire Companies. Substantial shareholder of the Manager via indirect 41.70% interest in Hampshire U.S. Holdco.',
+    prev_roles:[
+      {org:'The Hampshire Companies, LLC',pos:'President and CEO'},
+      {org:'United Hampshire US Parent REIT, Inc.',pos:'Director'},
+      {org:'Lakeland Bancorp, Inc.',pos:'Director (preceding 3 years)'},
+    ],
+    cross_board_roles:[
+      {entity:'The Hampshire Companies, LLC',role:'President and CEO',listed:false},
+      {entity:'Hampshire Partners REIT VIII, Inc.',role:'Director',listed:false},
+    ],
+    linkedin_url:null, photo_url:null,
+    tags:['Non-Independent','Hampshire Sponsor','US Real Estate','Substantial Shareholder']
+  },
+  {
+    id:'uhreit-dir-goss-25', name:'David Tuvia Goss', role:'Non-Independent Non-Executive Director', role_type:'Board',
+    entity:'United Hampshire US REIT', entity_short:'UHREIT', ar_year:'FY2025',
+    appointed:'21 Feb 2020', tenure_yrs:5.9,
+    rem_exact:0, rem_fixed:0, rem_bonus:null, rem_other:0,
+    rem_note:'Nil director fees. As Managing Director of UOB Global Capital LLC (the UOB Sponsor), Mr Goss is a sponsor-nominated Non-Independent NED and does not receive director fees.',
+    rem_band:null, rem_pct_fixed:null, rem_pct_bonus:null, rem_pct_other:null,
+    rem_history:[
+      {year:'FY2024', total:0, pct_fixed:0, pct_bonus:0, pct_ltp:0, pct_other:0, note:'Nil — sponsor employee'},
+      {year:'FY2025', total:0, pct_fixed:0, pct_bonus:0, pct_ltp:0, pct_other:0, note:'Nil — sponsor employee'},
+    ],
+    edu:null,
+    bio:'Non-Independent Non-Executive Director, age 78. Managing Director of UOB Global Capital LLC (the UOB Sponsor) since 1998. Before UOB Global Capital, President and CEO of AIG Asset Management Services in New York from March 1995. Earlier a Partner at the law firm Harry Goss Attorneys. Represents the UOB Sponsor interest on the Board.',
+    prev_roles:[
+      {org:'UOB Global Capital LLC',pos:'Managing Director (since 1998)'},
+      {org:'AIG Asset Management Services, New York',pos:'President and CEO (from Mar 1995)'},
+      {org:'Harry Goss Attorneys',pos:'Partner'},
+    ],
+    cross_board_roles:[
+      {entity:'United Hampshire US Parent REIT, Inc.',role:'Director',listed:false},
+    ],
+    linkedin_url:null, photo_url:null,
+    tags:['Non-Independent','UOB Sponsor','US Asset Management','Legal Background']
+  },
+  {
+    id:'uhreit-cfo-25', name:'Yap Soh Cheng', role:'Chief Financial Officer', role_type:'CFO',
+    entity:'United Hampshire US REIT', entity_short:'UHREIT', ar_year:'FY2025',
+    appointed:'1 May 2023', tenure_yrs:2.7,
+    rem_exact:null, rem_fixed:null, rem_bonus:null, rem_other:null,
+    rem_note:'Individual KMP remuneration not separately disclosed. UHREIT discloses the CEO remuneration in exact terms; other key management personnel are disclosed on an aggregate basis only (Board determination, FY2025 Corporate Governance report).',
+    rem_band:null, rem_pct_fixed:null, rem_pct_bonus:null, rem_pct_other:null,
+    rem_history:[],
+    edu:'ACCA; Chartered Accountant (Singapore), Institute of Singapore Chartered Accountants',
+    bio:'Chief Financial Officer of the Manager since 1 May 2023. Previously Finance Director of the Manager from the UHREIT IPO (Mar 2020), playing a pivotal role in the SGX listing. Responsible for financial strategy, capital management, financial risk management, treasury, tax and financial reporting. 20+ years across financial and accounting functions. Prior to the Manager: Financial Controller of CashShield Pte Ltd and Leader Energy Pte Ltd; Finance Director of Heptagon Micro Optics Pte Ltd; external auditor at PricewaterhouseCoopers LLP and Ernst & Young LLP.',
+    prev_roles:[
+      {org:'United Hampshire US REIT Management Pte. Ltd.',pos:'Finance Director (Mar 2020–Apr 2023)'},
+      {org:'CashShield Pte Ltd / Leader Energy Pte Ltd',pos:'Financial Controller'},
+      {org:'Heptagon Micro Optics Pte Ltd',pos:'Finance Director'},
+      {org:'PricewaterhouseCoopers LLP / Ernst & Young LLP',pos:'External Auditor'},
+    ],
+    cross_board_roles:[],
+    linkedin_url:null, photo_url:null,
+    tags:['REIT CFO','ACCA','Chartered Accountant','US Real Estate']
+  },
+  {
+    id:'uhreit-cio-25', name:'Derek Gardella', role:'Chief Investment Officer', role_type:'CIO',
+    entity:'United Hampshire US REIT', entity_short:'UHREIT', ar_year:'FY2025',
+    appointed:'12 Mar 2020', tenure_yrs:5.8,
+    rem_exact:null, rem_fixed:null, rem_bonus:null, rem_other:null,
+    rem_note:'Individual KMP remuneration not separately disclosed. UHREIT discloses the CEO remuneration in exact terms; other key management personnel are disclosed on an aggregate basis only. Mr Gardella is based at The Hampshire Companies (U.S. asset manager).',
+    rem_band:null, rem_pct_fixed:null, rem_pct_bonus:null, rem_pct_other:null,
+    rem_history:[],
+    edu:'BSc Finance and Information Systems (Dual Major), Fairfield University; MSc Real Estate, New York University',
+    bio:'Chief Investment Officer of the Manager; deeply involved in the UHREIT IPO. Oversees strategic execution of portfolio management, acquisitions and asset management, working closely with the CEO and management team on corporate strategy. 20+ years of real estate experience. Joined The Hampshire Companies in 2011; previously Portfolio Manager for Core-Plus and Value-Add closed-end institutional real estate funds and Director of Acquisitions and Financing. Earlier spent the majority of his career at JPMorgan in Investment Management and Investment Banking. Member of the International Council of Shopping Centers; adjunct faculty at New York University and Fordham University.',
+    prev_roles:[
+      {org:'The Hampshire Companies',pos:'Portfolio Manager; Director of Acquisitions and Financing (since 2011)'},
+      {org:'JPMorgan',pos:'Investment Management / Investment Banking'},
+    ],
+    cross_board_roles:[],
+    linkedin_url:null, photo_url:null,
+    tags:['REIT CIO','US Real Estate','Hampshire','JPMorgan Alumni','NYU Adjunct']
+  },
+  {
+    id:'uhreit-ir-wong-25', name:'Wong Siew Lu', role:'Head of Investor Relations and Sustainability', role_type:'Mgmt',
+    entity:'United Hampshire US REIT', entity_short:'UHREIT', ar_year:'FY2025',
+    appointed:null, tenure_yrs:null,
+    rem_exact:null, rem_fixed:null, rem_bonus:null, rem_other:null,
+    rem_note:'Individual KMP remuneration not separately disclosed. UHREIT discloses the CEO remuneration in exact terms; other key management personnel are disclosed on an aggregate basis only.',
+    rem_band:null, rem_pct_fixed:null, rem_pct_bonus:null, rem_pct_other:null,
+    rem_history:[],
+    edu:'CFA charterholder; Chartered Accountant (Singapore)',
+    bio:'Head of Investor Relations and Sustainability of the Manager. Key liaison between UHREIT and the investment community, managing investor relations, communications and sustainability functions and working with the management team on UHREIT sustainability strategy. 15+ years of international experience in investor relations, capital markets (buy-side) and corporate banking, with involvement in capital raising, M&A, corporate strategy and business development. Prior to the Manager: Head of Investor Relations and Capital Markets at Sasseur REIT (instrumental in profiling it as a top-5 performing S-REIT in 2019). Earlier corporate banking at National Australia Bank, investment analyst roles, and Head of Investor Relations at SGX Mainboard-listed Falcon Energy Group Limited.',
+    prev_roles:[
+      {org:'Sasseur REIT',pos:'Head of Investor Relations and Capital Markets'},
+      {org:'Falcon Energy Group Limited',pos:'Head of Investor Relations'},
+      {org:'National Australia Bank',pos:'Corporate Banking'},
+    ],
+    cross_board_roles:[],
+    linkedin_url:null, photo_url:null,
+    tags:['Head of IR','Sustainability','CFA','Chartered Accountant','Sasseur Alumni']
   },
 
   // ── SASSEUR REIT — FY2025 ──────────────────────────────────────────────────
@@ -22773,6 +22883,7 @@ var REIT_CHIP_LABELS = {
   'Keppel REIT': 'Keppel REIT',
   'Lendlease Global Commercial REIT': 'Lendlease',
   'Manulife US REIT': 'Manulife US',
+  'United Hampshire US REIT': 'UHREIT',
   'Mapletree Industrial Trust': 'MIT',
   'Mapletree Logistics Trust': 'MLT',
   'Mapletree Pan Asia Commercial Trust': 'MPACT',
