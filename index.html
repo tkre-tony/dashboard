@@ -22357,8 +22357,11 @@ async function loadReitAssets(cb){
     } catch(_e2){}
   } finally {
     reitAssetsLoading = false;
-    try { if(typeof reitSearch === 'function') reitSearch(0); } catch(_e){}
-    try { if(typeof pulseInited !== 'undefined' && pulseInited && typeof buildPortfolioIndex === 'function'){ PULSE_PORTFOLIO_IDX = buildPortfolioIndex(); } } catch(_e){}
+    // v48.199 (S75): only re-render on success. On a failed cold fetch REIT_DATA stays [],
+    // so an unconditional reitSearch(0) would clobber the "Please refresh" message with a
+    // misleading "No properties found" empty state. Guard both renders on reitAssetsLoaded.
+    try { if(reitAssetsLoaded && typeof reitSearch === 'function') reitSearch(0); } catch(_e){}
+    try { if(reitAssetsLoaded && typeof pulseInited !== 'undefined' && pulseInited && typeof buildPortfolioIndex === 'function'){ PULSE_PORTFOLIO_IDX = buildPortfolioIndex(); } } catch(_e){}
     var cbs = _reitCbs.slice(); _reitCbs = []; cbs.forEach(function(f){ try { f(); } catch(_e){} });
   }
 }
