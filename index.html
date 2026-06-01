@@ -3915,6 +3915,7 @@ body.article-takeover .ed-foot{display:none!important}
      field of the NEWS entry.
      ========================================================= -->
 <main id="newsroom">
+<!-- v48.195 (1 Jun 2026, S72): Phase 2A RE-APPLIED. 13 landing hrefs repointed ./?article=N&from=landing -> /news/<slug>/ now that the static pages render correctly (CSS + share block + related rail, all 81 gated). data-article-id retained so cascade_gate_v2 stays valid. Slug source: id2slug_final bijection vs live sitemap. -->
 <!-- v48.194 (1 Jun 2026, S72 hotfix): Phase 2A landing hrefs REVERTED to ./?article=N&from=landing (in-app SPA reader) because the /news/ static pages render unstyled (pre-existing S70 template bug, predates 2A). data-article-id retained so cascade_gate_v2 stays valid. Slug backfill (v48.193) kept intact. Re-apply Phase 2A links after the static-page template is fixed. -->
 <!-- v48.192 Phase 2A: landing hero/cards/feed internal links repointed ./?article=N&from=landing -> /news/<slug>/ (root-relative, matches live static pages + sitemap). data-article-id retained per anchor for cascade gate + analytics. Slugs sourced from live sitemap.xml. -->
       <section class="hero" aria-labelledby="hero-h">
@@ -3922,7 +3923,7 @@ body.article-takeover .ed-foot{display:none!important}
 
     <!-- Image — id:104 Sasseur REIT 1Q 2026. v48.190 cascade. -->
     <div class="hero-image-col">
-      <a class="hero-image" href="./?article=104&amp;from=landing" data-article-id="104" aria-label="Read full story: Sasseur REIT 1Q 2026 record portfolio sales">
+      <a class="hero-image" href="/news/sasseur-reit-1q-2026-portfolio-sales-hit-record-rmb1-390-4m-plus/" data-article-id="104" aria-label="Read full story: Sasseur REIT 1Q 2026 record portfolio sales">
         <img src="./images/news_104_sasseur_chongqing_liangjiang.jpg"
              alt="Sasseur (Chongqing Liangjiang) Outlet — Sasseur REIT flagship outlet mall, China"
              class="hero-image-photo"
@@ -3942,7 +3943,7 @@ body.article-takeover .ed-foot{display:none!important}
       </div>
 
       <h1 id="hero-h" class="hero-headline">
-        <a href="./?article=104&amp;from=landing" data-article-id="104">Sasseur REIT 1Q 2026: Record Portfolio Sales RMB1,390.4M (+11.4%), EMA Rental +5.7% RMB / +5.1% S$, Cost Of Debt Cut To 3.9% &mdash; But A 1.6-Year WALE Names The Tenant-Mix Reset Beneath The Record</a>
+        <a href="/news/sasseur-reit-1q-2026-portfolio-sales-hit-record-rmb1-390-4m-plus/" data-article-id="104">Sasseur REIT 1Q 2026: Record Portfolio Sales RMB1,390.4M (+11.4%), EMA Rental +5.7% RMB / +5.1% S$, Cost Of Debt Cut To 3.9% &mdash; But A 1.6-Year WALE Names The Tenant-Mix Reset Beneath The Record</a>
       </h1>
     </div>
 
@@ -3960,7 +3961,7 @@ body.article-takeover .ed-foot{display:none!important}
         <span>7 min read</span>
       </div>
 
-      <a class="btn-primary" href="./?article=104&amp;from=landing" data-article-id="104">
+      <a class="btn-primary" href="/news/sasseur-reit-1q-2026-portfolio-sales-hit-record-rmb1-390-4m-plus/" data-article-id="104">
         Read full story
         <span class="arrow" aria-hidden="true">&rarr;</span>
       </a>
@@ -4022,7 +4023,7 @@ body.article-takeover .ed-foot{display:none!important}
     <div class="cards">
 
       <!-- Card 1 — id 102 Weekly URA Realis (cascaded from hero in v48.172 CLAS id:103 cascade) -->
-      <a class="card" href="./?article=103&amp;from=landing" data-article-id="103">
+      <a class="card" href="/news/capitaland-ascott-trust-divests-the-robertson-house-for-s-360m-4-pct/" data-article-id="103">
         <div class="card-image">
           <img src="./images/news_103_clas_robertson_house.jpg"
                alt="The Robertson House by The Crest Collection — 336-unit upscale hotel on Unity Street, Singapore"
@@ -4041,7 +4042,7 @@ body.article-takeover .ed-foot{display:none!important}
       </a>
 
       <!-- Card 2 — id 101 KSH Holdings (cascaded from card 1) -->
-      <a class="card" href="./?article=102&amp;from=landing" data-article-id="102">
+      <a class="card" href="/news/weekly-ura-realis-updates-week-of-25-may-2026-keong-saik-shophouse/" data-article-id="102">
         <div class="card-image">
           <img src="./images/news_102_cbd_skyline.jpg"
                alt="Singapore central business district — commercial and industrial property"
@@ -4060,7 +4061,7 @@ body.article-takeover .ed-foot{display:none!important}
       </a>
 
       <!-- Card 3 — id 100 DHLT (cascaded from card 2) -->
-      <a class="card" href="./?article=101&amp;from=landing" data-article-id="101">
+      <a class="card" href="/news/ksh-fy2026-construction-margins-drive-loss-to-profit-turnaround-s-965m-order/" data-article-id="101">
         <div class="card-image">
           <img src="./images/news_101_ksh_arcady_boon_keng.jpg"
                alt="The Arcady at Boon Keng — KSH Holdings 49% JV residential development in Singapore"
@@ -4108,7 +4109,7 @@ body.article-takeover .ed-foot{display:none!important}
 
 
       <!-- Row id 99 — Manulife US REIT (cascaded from card 3 in v48.172 CLAS id:103 cascade) -->
-<a class="feed-row" href="./?article=100&amp;from=landing" data-article-id="100">
+<a class="feed-row" href="/news/dhlt-1q-fy2026-occupancy-holds-at-87-8-pct-positive-reversion-on/" data-article-id="100">
         <div class="feed-row-image-col">
           <div class="feed-row-image">
             <img src="./images/news_100_dhlt_sapporo_higashi_kariki.jpg"
@@ -4131,7 +4132,7 @@ body.article-takeover .ed-foot{display:none!important}
       </a>
 
       <!-- Row id 99 — Manulife US REIT (cascaded) -->
-            <a class="feed-row" href="./?article=99&amp;from=landing" data-article-id="99">
+            <a class="feed-row" href="/news/manulife-us-reit-1q-2026-figueroa-divestment-de-risked-with-psa-signed/" data-article-id="99">
         <div class="feed-row-image-col">
           <div class="feed-row-image">
             <img src="./images/news_99_manulife_us_reit_figueroa.jpg"
@@ -4154,7 +4155,7 @@ body.article-takeover .ed-foot{display:none!important}
       </a>
 
       <!-- Row id 98 — Acrophyte Hospitality Trust (cascaded from card 3 in v48.169 cascade) -->
-      <a class="feed-row" href="./?article=98&amp;from=landing" data-article-id="98">
+      <a class="feed-row" href="/news/acrophyte-hospitality-trust-1q-2026-revenue-2-6-pct-npi-13-9/" data-article-id="98">
         <div class="feed-row-image-col">
           <div class="feed-row-image">
             <img src="./images/news_98_acroht_hyatt_place.jpg"
@@ -4177,7 +4178,7 @@ body.article-takeover .ed-foot{display:none!important}
       </a>
 
       <!-- Row id 97 — CapitaLand Investment (cascaded from card 3 in v48.162 KSH cascade) -->
-      <a class="feed-row" href="./?article=97&amp;from=landing" data-article-id="97">
+      <a class="feed-row" href="/news/cli-1q-fy2026-asset-light-threshold-crossed-at-59-41-mix-fee/" data-article-id="97">
         <div class="feed-row-image-col">
           <div class="feed-row-image">
             <img src="./images/news_97_cli_kallang_wave_mall.jpg"
@@ -4201,7 +4202,7 @@ body.article-takeover .ed-foot{display:none!important}
 
       <!-- Row id 96 — BHG Retail REIT (cascaded from card 3 in v48.161 MUST cascade).
            Photo retained per L144 — entry has news_96_bhg_reit_beijing_wanliu.jpg on GitHub. -->
-      <a class="feed-row" href="./?article=96&amp;from=landing" data-article-id="96">
+      <a class="feed-row" href="/news/bhg-retail-reit-fy2025-margin-compression-headlines-revenue-9-6-pct-npi/" data-article-id="96">
         <div class="feed-row-image-col">
           <div class="feed-row-image">
             <img src="./images/news_96_bhg_reit_beijing_wanliu.jpg"
@@ -4225,7 +4226,7 @@ body.article-takeover .ed-foot{display:none!important}
 
       <!-- Row id 95 — Parkway Life REIT (cascaded from card 3 in v48.159 MUST cascade).
            Photo retained per L144 — entry has news_94_lendlease_reit_jem.jpg on GitHub. -->
-      <a class="feed-row" href="./?article=95&amp;from=landing" data-article-id="95">
+      <a class="feed-row" href="/news/plife-reit-1q-fy2026-mount-elizabeth-s-s-350m-project-renaissance-completes/" data-article-id="95">
         <div class="feed-row-image-col">
           <div class="feed-row-image">
             <img src="./images/news_95_plife_reit_mount_elizabeth.jpg"
@@ -4249,7 +4250,7 @@ body.article-takeover .ed-foot{display:none!important}
 
             <!-- Row id 94 — Lendlease Global Commercial REIT (cascaded from row 1 in v48.159 MUST cascade).
            Photo retained per L144 — entry has news_94_lendlease_reit_jem.jpg on GitHub. -->
-      <a class="feed-row" href="./?article=94&amp;from=landing" data-article-id="94">
+      <a class="feed-row" href="/news/lendlease-reit-3q-fy2026-26-march-plq-mall-full-ownership-closes-the/" data-article-id="94">
         <div class="feed-row-image-col">
           <div class="feed-row-image">
             <img src="./images/news_94_lendlease_reit_jem.jpg"
