@@ -4480,14 +4480,14 @@ body.article-takeover .ed-foot{display:none!important}
       <!-- ROW 3: geo scope toggle -->
       <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-bottom:11px">
         <div style="display:flex;background:var(--srf2);border:1px solid var(--bdr);border-radius:9px;padding:3px;gap:2px">
-          <button id="geo-all" onclick="reitSetGeo('ALL')" style="padding:5px 16px;border:none;border-radius:7px;font-size:12px;font-weight:600;font-family:'DM Sans',sans-serif;cursor:pointer;background:transparent;color:var(--mut)">All</button>
-          <button id="geo-sg"  onclick="reitSetGeo('SG')"  style="padding:5px 16px;border:none;border-radius:7px;font-size:12px;font-weight:700;font-family:'DM Sans',sans-serif;cursor:pointer;background:var(--g1);color:#fff">🇸🇬 Singapore</button>
+          <button id="geo-all" onclick="reitSetGeo('ALL')" style="padding:5px 16px;border:none;border-radius:7px;font-size:12px;font-weight:700;font-family:'DM Sans',sans-serif;cursor:pointer;background:var(--g1);color:#fff">All</button>
+          <button id="geo-sg"  onclick="reitSetGeo('SG')"  style="padding:5px 16px;border:none;border-radius:7px;font-size:12px;font-weight:600;font-family:'DM Sans',sans-serif;cursor:pointer;background:transparent;color:var(--mut)">🇸🇬 Singapore</button>
           <button id="geo-ov"  onclick="reitSetGeo('OV')"  style="padding:5px 16px;border:none;border-radius:7px;font-size:12px;font-weight:600;font-family:'DM Sans',sans-serif;cursor:pointer;background:transparent;color:var(--mut)">🌏 Overseas</button>
         </div>
         <span style="font-size:11px;color:var(--mut);font-style:italic">← drill down by continent → country → city across 35 markets</span>
       </div>
-      <!-- ROW 4a: SG district buttons (shown in SG mode) -->
-      <div id="row-district" style="display:flex;gap:6px;flex-wrap:wrap;align-items:center;margin-bottom:9px"></div>
+      <!-- ROW 4a: SG district buttons (shown in SG mode; v48.196 default display:none since directory now opens in ALL mode) -->
+      <div id="row-district" style="display:none;gap:6px;flex-wrap:wrap;align-items:center;margin-bottom:9px"></div>
       <!-- ROW 4b: Overseas continent buttons -->
       <div id="row-continent" style="display:none;gap:6px;flex-wrap:wrap;align-items:center;margin-bottom:9px"></div>
       <!-- ROW 4c: Overseas country buttons (after continent) -->
@@ -22335,7 +22335,7 @@ async function dismissARBanner(){
 }
 // ─────────────────────────────────────────────────────────────────────────────
 var reitActiveAsset = '';
-var reitActiveGeo = 'SG';
+var reitActiveGeo = 'ALL'; /* v48.196 (1 Jun 2026, S75): Asset Directory now defaults to ALL (was 'SG'). Hero KPI then reads the full 1551/55 set, matching the subline. Cascade: geo-all button active-styled in static HTML, row-district default display:none, reitClear() resets to ALL. */
 var reitActiveContinent = '';
 var reitActiveCountry = '';
 var reitActiveCity = '';
@@ -23518,7 +23518,7 @@ function reitClear(){
   document.getElementById('reit-search').value='';
   document.getElementById('reit-sort').value='name.asc';
   reitActiveContinent=''; reitActiveCountry=''; reitActiveCity=''; reitActiveDistrict='';
-  reitSetGeo('SG');
+  reitSetGeo('ALL'); /* v48.196: Clear all returns to ALL default (was 'SG') */
   reitActiveEntity=''; reitActiveDev=''; reitActiveAsset='';
   document.querySelectorAll('[data-reitf]').forEach(function(b){ b.classList.remove('on'); });
   var a1=document.querySelector('[data-reitf=""]'); if(a1) a1.classList.add('on');
