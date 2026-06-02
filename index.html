@@ -2,6 +2,23 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8"/>
+<!-- v48.201 (2 Jun 2026, session 77): Newsletter admin-token persistence.
+
+     CHANGE: the #admin/newsletter console now stores the admin token (key
+     'nl_admin_token') in localStorage via a TOKEN_STORE handle, instead of
+     sessionStorage. The token survives new tabs / hard refreshes on the admin
+     machine, ending the re-enter-every-tab friction. Forget token still clears
+     it; the Supabase NEWSLETTER_ADMIN_TOKEN secret is unaffected.
+
+     TRADE-OFF: the token rests on disk in that browser — fine on a personal
+     admin laptop, not a shared one. TOKEN_STORE falls back to sessionStorage if
+     localStorage is blocked (private mode). Only the newsletter-admin token
+     moves stores; page caches (CACHE_KEY, REIT_ASSETS_CACHE_KEY,
+     atlas_post_auth_tab) stay sessionStorage.
+
+     ALSO: lock-screen copy corrected ADMIN_TOKEN -> NEWSLETTER_ADMIN_TOKEN (the
+     real Supabase secret name). JS + one <code> text node; no HTML structural
+     change, so L282 tag balance is unchanged from the v48.200 baseline. -->
 <!-- v48.200 (2 Jun 2026, session 76): Newsletter email SEO-link repoint (index half).
 
      CHANGE: nlAdminSend now passes slug: post.slug in the post payload to the
@@ -30013,7 +30030,7 @@ html.article-takeover .ed-article-page,body.article-takeover .ed-article-page{di
     <div id="nl-admin-locked" class="nl-admin-card nl-admin-locked">
       <div class="nl-lock-icon">🔒</div>
       <h3>Admin token required</h3>
-      <p>Enter the admin token to access newsletter controls. The token is the value of the <code>ADMIN_TOKEN</code> secret set on the Supabase Edge Function.</p>
+      <p>Enter the admin token to access newsletter controls. The token is the value of the <code>NEWSLETTER_ADMIN_TOKEN</code> secret set on the Supabase Edge Function.</p>
       <div style="max-width:360px;margin:0 auto">
         <input type="password" id="nl-admin-token-input" placeholder="Paste admin token" style="width:100%;height:38px;padding:0 12px;border:1px solid var(--bdr);border-radius:7px;font-family:inherit;font-size:12px;box-sizing:border-box;margin-bottom:10px">
         <button class="nl-admin-btn primary" style="width:100%" onclick="nlAdminUnlock()">Unlock</button>
@@ -30063,6 +30080,10 @@ html.article-takeover .ed-article-page,body.article-takeover .ed-article-page{di
 // ═══════════════════════════════════════════════════════════════════════
 (function(){
   var TOKEN_KEY = 'nl_admin_token';
+  // v48.201: persist the admin token across tabs/refreshes (localStorage) instead
+  // of per-tab sessionStorage. Falls back to sessionStorage if localStorage is
+  // blocked (private mode). Only this token moves stores; page caches stay sessionStorage.
+  var TOKEN_STORE = (function(){ try { var t='__nl_ts__'; window.localStorage.setItem(t,'1'); window.localStorage.removeItem(t); return window.localStorage; } catch(e){ return window.sessionStorage; } })();
 
   function nlAdminLog(msg, kind){
     var el = document.getElementById('nl-admin-log');
@@ -30078,7 +30099,7 @@ html.article-takeover .ed-article-page,body.article-takeover .ed-article-page{di
     panel.classList.add('open');
     document.body.style.overflow = 'hidden';
     // Check for existing token
-    var tok = sessionStorage.getItem(TOKEN_KEY);
+    var tok = TOKEN_STORE.getItem(TOKEN_KEY);
     if(tok){
       document.getElementById('nl-admin-locked').style.display = 'none';
       document.getElementById('nl-admin-unlocked').style.display = 'block';
@@ -30106,7 +30127,7 @@ html.article-takeover .ed-article-page,body.article-takeover .ed-article-page{di
     var inp = document.getElementById('nl-admin-token-input');
     var tok = (inp.value || '').trim();
     if(!tok){ inp.focus(); return; }
-    sessionStorage.setItem(TOKEN_KEY, tok);
+    TOKEN_STORE.setItem(TOKEN_KEY, tok);
     document.getElementById('nl-admin-locked').style.display = 'none';
     document.getElementById('nl-admin-unlocked').style.display = 'block';
     inp.value = '';
@@ -30115,7 +30136,7 @@ html.article-takeover .ed-article-page,body.article-takeover .ed-article-page{di
   };
 
   window.nlAdminForget = function(){
-    sessionStorage.removeItem(TOKEN_KEY);
+    TOKEN_STORE.removeItem(TOKEN_KEY);
     document.getElementById('nl-admin-locked').style.display = 'block';
     document.getElementById('nl-admin-unlocked').style.display = 'none';
   };
@@ -30132,7 +30153,7 @@ html.article-takeover .ed-article-page,body.article-takeover .ed-article-page{di
   }
 
   window.nlAdminRefreshStats = async function(){
-    var tok = sessionStorage.getItem(TOKEN_KEY);
+    var tok = TOKEN_STORE.getItem(TOKEN_KEY);
     if(!tok) return;
     var wrap = document.getElementById('nl-admin-stats');
     wrap.innerHTML = '<div class="nl-stat"><div class="nl-stat-n">…</div><div class="nl-stat-l">Loading</div></div>';
@@ -30171,7 +30192,7 @@ html.article-takeover .ed-article-page,body.article-takeover .ed-article-page{di
   };
 
   window.nlAdminSend = async function(dryRun){
-    var tok = sessionStorage.getItem(TOKEN_KEY);
+    var tok = TOKEN_STORE.getItem(TOKEN_KEY);
     if(!tok){ nlAdminLog('No admin token — unlock first.', 'err'); return; }
     if(typeof NEWS === 'undefined'){ nlAdminLog('NEWS array not loaded yet.', 'err'); return; }
 
