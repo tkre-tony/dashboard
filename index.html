@@ -2,6 +2,22 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8"/>
+<!-- v48.200 (2 Jun 2026, session 76): Newsletter email SEO-link repoint (index half).
+
+     CHANGE: nlAdminSend now passes slug: post.slug in the post payload to the
+     newsletter-send edge function. The email CTA + paste-link can now emit the
+     canonical static page /news/<slug>/ instead of /?article=N.
+
+     PAIRED EDGE-FUNCTION EDIT (newsletter-send/index.ts, deployed via Supabase 2 Jun):
+     Post interface gained slug (optional string); articleUrl uses a
+     post.slug present ? /news/<slug>/ : /?article=N  fallback. Both halves are
+     required for the SEO link to appear; the fallback makes deploy order safe
+     (worst case = working /?article=N link until both ship).
+
+     Slug source: the baked NEWS slug field (v48.193 sitemap bijection), never
+     re-derived at send time. L258 does not apply (article-destination link, not a
+     token-action surface). Single-line JS payload edit, no HTML structural change,
+     so L282 tag balance is unchanged from the v48.199 baseline. -->
 <!-- v48.160 (27 May 2026, session 60): Social-share OG meta tags block — regression fix.
 
      ISSUE: LinkedIn share preview for propertyatlas.sg/?article=N returns "Cannot display preview"
@@ -30179,7 +30195,7 @@ html.article-takeover .ed-article-page,body.article-takeover .ed-article-page{di
           cadence: cadence,
           dry_run: !!dryRun,
           post: {
-            id: post.id, title: post.title, date: post.date,
+            id: post.id, slug: post.slug, title: post.title, date: post.date,
             category: post.category, tag: post.tag, source: post.source,
             sentiment: post.sentiment, summary: post.summary
           }
