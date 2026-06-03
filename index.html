@@ -2,6 +2,10 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8"/>
+<!-- v48.209 (3 Jun 2026, S81): Asset Directory entity-header rollup fix - the SG PORTFOLIO /
+     OVERSEAS valuation tiles hardcoded "S$" instead of the per-entity currency, so Landmark
+     (IDR) rendered "S$18609.80B". Now uses reitCcy(selectedEntity) -> "Rp18609.80B".
+     Per-asset cards were already correct (fmtAssetVal). One line, no data changes. -->
 <!-- v48.208 (3 Jun 2026, S81): HC fix - register Landmark REIT in the Human Capital entity
      <select> (hardcoded option list; the v48.207 TALENT_DATA profiles existed but the entity
      was unreachable without an option). Added <option value="Landmark REIT"> between
@@ -23311,7 +23315,7 @@ function reitSearch(page){
         };
         var sgVal = sumVal(sgRows);
         var ovVal = sumVal(ovRows);
-        var fmt = function(v){return v==null?'—':'S$'+(v>=1000?(v/1000).toFixed(2)+'B':Math.round(v).toLocaleString()+'M');};
+        var fmt = function(v){return v==null?'—':reitCcy(selectedEntity)+(v>=1000?(v/1000).toFixed(2)+'B':Math.round(v).toLocaleString()+'M');};
         // Entity_type label (handle all casings)
         var etRaw = (entRows[0].entity_type||'');
         var etLabel = (etRaw==='DEV'||etRaw==='Dev'||etRaw==='Developer') ? 'Developer'
