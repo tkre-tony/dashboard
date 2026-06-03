@@ -2,6 +2,12 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8"/>
+<!-- v48.207 (3 Jun 2026, S81): Landmark REIT (D5IU, formerly Lippo Malls Indonesia Retail Trust) backfill.
+     (1) Asset Directory: 29 Indonesia retail malls loaded to reit_assets (STORE-only SQL, run separately).
+     (2) REIT_CCY: "Landmark REIT" -> "Rp" (first IDR-presenting entity; val stored in Rp million).
+     (3) ENTITY_COLORS: "Landmark REIT" -> #d62828 (distinct crimson).
+     (4) TALENT_DATA: 5 HC profiles (4 board + CFO) with FY2023-25 rem_history YoY
+         (directors exact 3y; CEO exact FY24/25, banded FY23; CFO banded KMP). -->
 <!-- v48.206 (3 Jun 2026, S80): display-layer pass (gated, one push).
      (1) Landing feed dedupe: nrEligibleArticles() now also excludes the hero id (newest);
          previously the hero leaked into the "Show 10 more" pool and duplicated on scroll
@@ -5653,6 +5659,83 @@ body.article-takeover .ed-foot{display:none!important}
 // Source: Annual Reports (SGX-listed)
 // ═══════════════════════════════════════════════════
 var TALENT_DATA = [
+  // ── LANDMARK REIT (D5IU, formerly Lippo Malls Indonesia Retail Trust) — FY2025 board + KMP ──
+  // rem_history sourced from LMIRT FY2023 AR, LMIRT FY2024 AR, Landmark REIT FY2025 AR (directors' fees exact; CEO exact FY2024/25, banded FY2023; CFO banded KMP).
+  {
+    id:'landmark-chair-25', name:'Murray Dangar Bell', role:'Chairman & Lead Independent Director', role_type:'Board',
+    entity:'Landmark REIT', entity_short:'Landmark', ar_year:'FY2025',
+    appointed:'1 November 2019', tenure_yrs:6.2,
+    rem_exact:162500, rem_fixed:162500, rem_bonus:0, rem_other:0,
+    rem_band:null, rem_note:'FY2025 directors\' fees S$162,500, paid wholly in cash by the Manager from its fees (not from Landmark REIT). All-cash, fixed; no bonus, units or options. Chairman of the NRC; Member of the ARC. YoY: +4.2% vs FY2024 (S$155,921).',
+    rem_pct_fixed:100, rem_pct_bonus:0, rem_pct_other:0,
+    rem_history:[{year:'FY2025', total:162500}, {year:'FY2024', total:155921}, {year:'FY2023', total:137500}],
+    edu:'Bachelor of Arts, majoring in Economics and Law, University of Sydney (Australia)',
+    bio:'Chairman and Lead Independent Director of Landmark REIT Management Ltd. (appointed Lead Independent Director 1 Nov 2019, Chairman 31 Dec 2019). Over 30 years in commercial real estate, primarily shopping-mall management across Asia Pacific and the Middle East. Held senior leadership roles at Al Futtaim Group Real Estate (UAE), AMP Capital Shopping Centres (Australia), Lippo Karawaci (Indonesia), Majid Al Futtaim (UAE), Jones Lang LaSalle (South Korea), Lend Lease Retail (Australia) and Intergen Property Group.',
+    prev_roles:[{org:'Al Futtaim Group Real Estate (UAE)',pos:'Senior leadership'},{org:'AMP Capital Shopping Centres (Australia)',pos:'Senior leadership'},{org:'Lippo Karawaci (Indonesia)',pos:'Senior leadership'}],
+    cross_board_roles:[{entity:'Keneco Property Pty Ltd',role:'Chairman & Independent Director',listed:false}],
+    tags:['Chairman','Lead Independent','NRC Chairman','ARC Member','Retail/Mall','APAC & Middle East','Univ of Sydney'],
+    linkedin_url:null, photo_url:null
+  },
+  {
+    id:'landmark-ceo-25', name:'Liew Chee Seng James', role:'Executive Director & Chief Executive Officer', role_type:'CEO',
+    entity:'Landmark REIT', entity_short:'Landmark', ar_year:'FY2025',
+    appointed:'1 May 2019', tenure_yrs:6.7,
+    rem_exact:587553, rem_fixed:434789, rem_bonus:76382, rem_other:76382,
+    rem_band:null, rem_note:'FY2025 total remuneration S$587,553 (all cash, paid by the Manager): 68% salary & AWS, 13% performance bonus, 6% allowance & benefits, 13% deferred compensation award (time-vested over 3 tranches). Does not receive directors\' fees. YoY: -15.1% vs FY2024 (S$691,784). FY2023 was disclosed in a S$250k band (exact withheld), so FY2023->FY2024 % is not computable.',
+    rem_pct_fixed:74, rem_pct_bonus:13, rem_pct_other:13,
+    rem_history:[{year:'FY2025', total:587553}, {year:'FY2024', total:691784}, {year:'FY2023', total:null, note:'Disclosed in a S$250,000 band in LMIRT FY2023 AR; exact quantum withheld'}],
+    edu:'Master of Business Administration (Strategic Management) and Bachelor of Business, Banking & Finance (First Class Honours), Nanyang Technological University (Singapore)',
+    bio:'Executive Director & CEO of Landmark REIT Management Ltd. Joined the Manager in June 2018 as Chief Operating Officer, appointed Deputy CEO in October 2018 and CEO in May 2019; Executive Director since 31 December 2019. Over 20 years in finance and real estate. Prior to the Manager, Senior Director, Corporate Finance & Asset Enhancement at Lippo Group (Sep 2015-May 2018), working on Indonesian real estate projects; earlier roles at Temasek Holdings, United Overseas Bank, UOB Asset Management and Raiffeisen Bank.',
+    prev_roles:[{org:'Lippo Group',pos:'Senior Director, Corporate Finance & Asset Enhancement (2015-2018)'},{org:'Temasek Holdings',pos:'Various roles'},{org:'United Overseas Bank / UOB Asset Management',pos:'Various roles'}],
+    cross_board_roles:[],
+    tags:['CEO','Executive Director','Ex-Lippo Group','Ex-Temasek','Ex-UOB','Corporate Finance','NTU First Class'],
+    linkedin_url:null, photo_url:null
+  },
+  {
+    id:'landmark-ined-gouw-25', name:'Gouw Vi Ven', role:'Independent Director', role_type:'Board',
+    entity:'Landmark REIT', entity_short:'Landmark', ar_year:'FY2025',
+    appointed:'31 December 2019', tenure_yrs:6.0,
+    rem_exact:109868, rem_fixed:109868, rem_bonus:0, rem_other:0,
+    rem_band:null, rem_note:'FY2025 directors\' fees S$109,868 (inclusive of withholding tax and additional attendance fee), paid wholly in cash by the Manager. Member of the NRC and ARC. Redesignated from Non-Executive Non-Independent to Independent Director on 31 Mar 2023. YoY: -8.7% vs FY2024 (S$120,395).',
+    rem_pct_fixed:100, rem_pct_bonus:0, rem_pct_other:0,
+    rem_history:[{year:'FY2025', total:109868}, {year:'FY2024', total:120395}, {year:'FY2023', total:100493}],
+    edu:'Degree in Computer Science and Statistics, University of New South Wales (Australia)',
+    bio:'Independent Director of Landmark REIT Management Ltd. Formerly CEO of the Manager (2007-Apr 2013) and Executive Director (to Mar 2017); returned as CEO (Oct 2018-May 2019) and remained Executive Director to Dec 2019; redesignated Non-Executive Non-Independent Director (31 Dec 2019) and Independent Director (31 Mar 2023). Over 30 years in real estate management, marketing and sales. Was President Director of Lippo Karawaci, helping build it into Indonesia\'s largest listed property company by asset size.',
+    prev_roles:[{org:'Landmark REIT Management Ltd. (Manager)',pos:'CEO (2007-2013) and Executive Director'},{org:'Lippo Karawaci',pos:'President Director'}],
+    cross_board_roles:[{entity:'Catalano Seafood Ltd',role:'Non-Executive Director (2022-2023)',listed:true},{entity:'LifeBrandz Ltd',role:'Executive Chairman & Director (2023)',listed:true}],
+    tags:['Independent','NRC Member','ARC Member','Ex-CEO of Manager','Ex-Lippo Karawaci','Indonesia Retail','UNSW'],
+    linkedin_url:null, photo_url:null
+  },
+  {
+    id:'landmark-ined-leong-25', name:'Mark Leong Kei Wei', role:'Independent Director & ARC Chairman', role_type:'Board',
+    entity:'Landmark REIT', entity_short:'Landmark', ar_year:'FY2025',
+    appointed:'15 July 2020', tenure_yrs:5.5,
+    rem_exact:96000, rem_fixed:96000, rem_bonus:0, rem_other:0,
+    rem_band:null, rem_note:'FY2025 directors\' fees S$96,000 (inclusive of additional attendance fee), paid wholly in cash by the Manager. Chairman of the ARC; Member of the NRC. YoY: -9.4% vs FY2024 (S$106,000).',
+    rem_pct_fixed:100, rem_pct_bonus:0, rem_pct_other:0,
+    rem_history:[{year:'FY2025', total:96000}, {year:'FY2024', total:106000}, {year:'FY2023', total:91250}],
+    edu:'Chartered Accountant (ISCA); Fellow, Association of Chartered Certified Accountants (ACCA); ASEAN Chartered Professional Accountant; Member, Singapore Institute of Directors (SID)',
+    bio:'Independent Director and Chairman of the Audit & Risk Committee of Landmark REIT Management Ltd. (appointed 15 Jul 2020). Considerable corporate, management and directorship experience across industries, having held C-suite roles (Chairman, CEO, COO and CFO) in both private and public companies.',
+    prev_roles:[],
+    cross_board_roles:[{entity:'MDR Limited',role:'Lead Independent Director',listed:true},{entity:'HS Optimus Holdings Limited (formerly KLW Holdings)',role:'Independent Non-Executive Director',listed:true},{entity:'Osteopore Ltd',role:'Executive Chairman & Director',listed:true},{entity:'9R Limited (formerly Viking Offshore and Marine)',role:'Independent Non-Executive Director',listed:true},{entity:'CytoMed Therapeutics Limited',role:'Independent Non-Executive Director',listed:true}],
+    tags:['Independent','ARC Chairman','NRC Member','Chartered Accountant','ACCA Fellow','SID','Multi-board'],
+    linkedin_url:null, photo_url:null
+  },
+  {
+    id:'landmark-cfo-25', name:'Wong Yoon Thim', role:'Chief Financial & Sustainability Officer', role_type:'CFO',
+    entity:'Landmark REIT', entity_short:'Landmark', ar_year:'FY2025',
+    appointed:'July 2021', tenure_yrs:4.5,
+    rem_exact:null, rem_fixed:null, rem_bonus:null, rem_other:null,
+    rem_band:'Top-5 KMP band (S$250k-wide bands; exact figure withheld)', rem_note:'Remuneration disclosed only within the top-5 key management personnel (excluding CEO/Directors) in bands no wider than S$250,000; exact quantum not published, so no YoY % is shown (consistent with not splaying banded/aggregate pay). Comprises fixed salary, performance bonus and benefits in kind, paid by the Manager.',
+    rem_pct_fixed:null, rem_pct_bonus:null, rem_pct_other:null,
+    rem_history:[{year:'FY2025', total:null, note:'Among top-5 KMP disclosed in S$250k-wide bands; exact figure withheld'}],
+    edu:'Chartered Accountant; Member, Institute of Singapore Chartered Accountants (ISCA)',
+    bio:'Chief Financial & Sustainability Officer of Landmark REIT Management Ltd. Joined the Manager in July 2021 as CFO and redesignated CF&SO in September 2024. Over 15 years as CFO of listed companies in Singapore and Hong Kong, with in-depth knowledge of SGX and HKEX listing rules and corporate governance. Prior eight years with an SGX Mainboard-listed construction and manufacturing company; strong track record in fundraising, M&A and corporate/operational restructuring.',
+    prev_roles:[{org:'SGX Mainboard-listed construction/manufacturing company',pos:'Senior finance role (8 years)'}],
+    cross_board_roles:[],
+    tags:['CFO','Sustainability','Chartered Accountant','ISCA','SG & HK listcos','Fundraising/M&A'],
+    linkedin_url:null, photo_url:null
+  },
   // ── DAIWA HOUSE LOGISTICS TRUST (DHLT) — FY2025 (board + KMP, from AR 2025) ──
   {
     id:'dhlt-chair-25', name:'Tan Jeh Wuan', role:'Chairman & Independent Non-Executive Director', role_type:'Board',
@@ -22430,7 +22513,8 @@ var REIT_CCY = {
   "Elite UK REIT":"\u00a3",
   "IREIT Global":"\u20ac",
   "Stoneweg Europe Stapled Trust":"\u20ac",
-  "Daiwa House Logistics Trust":"\u00a5"
+  "Daiwa House Logistics Trust":"\u00a5",
+  "Landmark REIT":"Rp"
 };
 function reitCcy(entity){ return (entity && REIT_CCY[entity]) || 'S$'; }
 // Valuation formatter — currency by entity, not hardcoded S$.
@@ -22493,7 +22577,8 @@ var ENTITY_COLORS = {
   "Stoneweg Europe Stapled Trust":"#e55a1c",
   "Tuan Sing Holdings":"#1a5c45",
   "BHG Retail REIT":"#a93226",
-  "Centurion Accommodation REIT":"#be1e2d"
+  "Centurion Accommodation REIT":"#be1e2d",
+  "Landmark REIT":"#d62828"
 };
 var REIT_COLORS = ENTITY_COLORS;
 
