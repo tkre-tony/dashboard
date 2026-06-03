@@ -2,6 +2,10 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8"/>
+<!-- v48.208 (3 Jun 2026, S81): HC fix - register Landmark REIT in the Human Capital entity
+     <select> (hardcoded option list; the v48.207 TALENT_DATA profiles existed but the entity
+     was unreachable without an option). Added <option value="Landmark REIT"> between
+     Keppel REIT and Lendlease. No TALENT_DATA / display changes. -->
 <!-- v48.207 (3 Jun 2026, S81): Landmark REIT (D5IU, formerly Lippo Malls Indonesia Retail Trust) backfill.
      (1) Asset Directory: 29 Indonesia retail malls loaded to reit_assets (STORE-only SQL, run separately).
      (2) REIT_CCY: "Landmark REIT" -> "Rp" (first IDR-presenting entity; val stored in Rp million).
@@ -5251,6 +5255,7 @@ body.article-takeover .ed-foot{display:none!important}
       <option value="KSH Holdings">KSH Holdings (FY2026)</option>
       <option value="Keppel DC REIT">Keppel DC REIT (FY2025)</option>
       <option value="Keppel REIT">Keppel REIT (FY2025)</option>
+      <option value="Landmark REIT">Landmark REIT (FY2025)</option>
       <option value="Lendlease Global Commercial REIT">Lendlease REIT (FY2025)</option>
       <option value="Manulife US REIT">Manulife US REIT (FY2025)</option>
       <option value="Mapletree Industrial Trust">MINT (FY24/25)</option>
