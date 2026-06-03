@@ -2,6 +2,11 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8"/>
+<!-- v48.206 (3 Jun 2026, S80): display-layer pass (gated, one push).
+     (1) Landing feed dedupe: nrEligibleArticles() now also excludes the hero id (newest);
+         previously the hero leaked into the "Show 10 more" pool and duplicated on scroll
+         (the "Sasseur cascade duplicate", now reproduced as 105). NR_STATIC_IDS unchanged.
+     (2) ENTITY_COLORS: "Centurion Accommodation REIT" -> #be1e2d (was default blue #1a4f9c). -->
 <!-- v48.205 (3 Jun 2026, S80): id:105 /news/ static page built + deployed (Sasseur-clone,
      SOP s1-s5 gates green); 3 hero links flipped ?article=105 -> /news/2h2026-gls-town-hall-link-confirmed/
      (v48.195 re-apply). sitemap.xml +1 entry (83). Redirect stub overwritten. -->
@@ -19083,15 +19088,19 @@ function nrFmtDate(iso){
   return d.getDate() + " " + months[d.getMonth()] + " " + d.getFullYear();
 }
 function nrEligibleArticles(){
-  // Return articles eligible for dynamic injection: exclude static IDs,
-  // sort newest-first.
+  // Return articles eligible for dynamic injection: exclude static IDs AND the
+  // landing hero (newest by date, already rendered statically). S80 fix: the hero
+  // id is not in NR_STATIC_IDS, so without this it leaked into the "Show 10 more"
+  // pool and duplicated on scroll (the "Sasseur cascade duplicate", now 105).
   if(!Array.isArray(window.NEWS)) return [];
-  return window.NEWS
-    .filter(function(n){
-      return n && n.date && NR_STATIC_IDS.indexOf(n.id) === -1;
-    })
+  var sorted = window.NEWS
+    .filter(function(n){ return n && n.date; })
     .slice()
     .sort(function(a, b){ return b.date.localeCompare(a.date); });
+  var heroId = sorted.length ? sorted[0].id : null;
+  return sorted.filter(function(n){
+    return NR_STATIC_IDS.indexOf(n.id) === -1 && n.id !== heroId;
+  });
 }
 function nrRenderFeedRow(article){
   var headline = nrEscapeHtml(article.display_headline || article.display_title || article.title || "");
@@ -22483,7 +22492,8 @@ var ENTITY_COLORS = {
   "IREIT Global":"#5d4e8a",
   "Stoneweg Europe Stapled Trust":"#e55a1c",
   "Tuan Sing Holdings":"#1a5c45",
-  "BHG Retail REIT":"#a93226"
+  "BHG Retail REIT":"#a93226",
+  "Centurion Accommodation REIT":"#be1e2d"
 };
 var REIT_COLORS = ENTITY_COLORS;
 
