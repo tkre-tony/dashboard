@@ -2,6 +2,12 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8"/>
+<!-- v48.203 (3 Jun 2026, S79 hotfix): id:105 hero links reverted to the in-app SPA reader
+     (./?article=105&amp;from=landing) because the static /news/2h2026-gls-town-hall-link-confirmed/
+     page is not yet generated (live 404). Mirrors the v48.194 precedent. Re-apply /news/<slug>/
+     links (Phase 2A) once the static page is built + deployed. data-article-id retained; cascade
+     gate + L282 unaffected. -->
+
 <!-- v48.202 (3 Jun 2026, session 79): Newsroom — add id:105 URA 2H2026 GLS article.
 
      CHANGE: new NEWS entry id:105 (slug 2h2026-gls-town-hall-link-confirmed) + landing
@@ -3965,7 +3971,7 @@ body.article-takeover .ed-foot{display:none!important}
 
     <!-- Image — id:105 URA 2H2026 GLS. v48.202 cascade. -->
     <div class="hero-image-col">
-      <a class="hero-image" href="/news/2h2026-gls-town-hall-link-confirmed/" data-article-id="105" aria-label="Read full story: URA 2H2026 GLS — Jurong Lake District white site promoted to Confirmed">
+      <a class="hero-image" href="./?article=105&amp;from=landing" data-article-id="105" aria-label="Read full story: URA 2H2026 GLS — Jurong Lake District white site promoted to Confirmed">
         <img src="./images/news_105_jld_town_hall_link.jpg"
              alt="Artist's impression of Jurong Lake District — Singapore's next largest business and sustainability district"
              class="hero-image-photo"
@@ -3985,7 +3991,7 @@ body.article-takeover .ed-foot{display:none!important}
       </div>
 
       <h1 id="hero-h" class="hero-headline">
-        <a href="/news/2h2026-gls-town-hall-link-confirmed/" data-article-id="105">2H2026 GLS: Jurong Lake District White Site Jumps To Confirmed &mdash; 9,200 Homes, 188,100 sqm Commercial In The Pipeline</a>
+        <a href="./?article=105&amp;from=landing" data-article-id="105">2H2026 GLS: Jurong Lake District White Site Jumps To Confirmed &mdash; 9,200 Homes, 188,100 sqm Commercial In The Pipeline</a>
       </h1>
     </div>
 
@@ -4003,7 +4009,7 @@ body.article-takeover .ed-foot{display:none!important}
         <span>3 min read</span>
       </div>
 
-      <a class="btn-primary" href="/news/2h2026-gls-town-hall-link-confirmed/" data-article-id="105">
+      <a class="btn-primary" href="./?article=105&amp;from=landing" data-article-id="105">
         Read full story
         <span class="arrow" aria-hidden="true">&rarr;</span>
       </a>
