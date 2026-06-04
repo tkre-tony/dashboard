@@ -2,6 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8"/>
+<!-- v48.213 (4 Jun 2026, S83): Share/copy URL + browser bar now emit canonical /news/<slug>/ instead of ?article=N; fixes LinkedIn og:image preview bug (L258). -->
 <!-- v48.212 (4 Jun 2026, S82): Newsroom article id:106 KORE US REIT 1Q 2026 operational update, back-dated 2026-04-18 (L171 user-requested) so NOT the landing hero (hero=newest by date). Static page added; NEWS entry inserted; sitemap updated. Landing hardcoded surfaces UNCHANGED. -->
 <!-- v48.211 (4 Jun 2026, S82): Asset-detail YoY table currency fix - the Year-on-Year valuation
      cells (prev_val/val) hardcoded "S$" instead of reitCcy(p.entity), so US$/IDR entities (KORE, Landmark)
@@ -30786,7 +30787,7 @@ html.article-takeover .ed-article-page,body.article-takeover .ed-article-page{di
     var shareBase = (window.location && window.location.hostname === 'propertyatlas.sg')
       ? 'https://propertyatlas.sg'
       : 'https://tkre-tony.github.io/dashboard';
-    var shareUrl = shareBase + '/?article=' + article.id;
+    var shareUrl = article.slug ? shareBase + '/news/' + article.slug + '/' : shareBase + '/?article=' + article.id;
     var shareText = edDeriveDisplayHeadline(article) || ('PropertyAtlas article ' + article.id);
     // URL-encode once for share-endpoint use; HTML-escape for attribute insertion.
     var encUrl = encodeURIComponent(shareUrl);
@@ -30977,6 +30978,8 @@ html.article-takeover .ed-article-page,body.article-takeover .ed-article-page{di
       mount.innerHTML = edRenderArticlePage(article);
       // Update browser title
       try { document.title = (article.display_headline || article.display_title || article.title || 'Article')+' · PropertyAtlas'; } catch(e) {}
+      // v48.213: canonical URL in browser bar — copy/paste gives /news/<slug>/ with correct og:meta
+      try { if(article.slug) history.replaceState({articleId:article.id}, '', '/news/'+article.slug+'/'); } catch(e) {}
       // Scroll to top so the user lands at the masthead
       try { window.scrollTo(0, 0); } catch(e) {}
     } catch(e) { /* silently ignore — broken deep-link should degrade to dashboard, not error */ }
