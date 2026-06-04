@@ -2,6 +2,10 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8"/>
+<!-- v48.210 (4 Jun 2026, S82): KORE US REIT (CMOU, formerly Keppel Pacific Oak US REIT) backfill.
+     (1) Asset Directory via STORE SQL - 13 freehold US office assets, US$1,325.4M (31 Dec 2025 vintage); no index change.
+     (2) Index display+HC: REIT_CCY "US$"; ENTITY_COLORS #c8102e; 8 TALENT_DATA profiles (6 board + CEO + Head of Finance),
+     FY2024->FY2025 YoY pay deltas (Roger Tay no badge - prorated prior year); HC dropdown <option>. -->
 <!-- v48.209 (3 Jun 2026, S81): Asset Directory entity-header rollup fix - the SG PORTFOLIO /
      OVERSEAS valuation tiles hardcoded "S$" instead of the per-entity currency, so Landmark
      (IDR) rendered "S$18609.80B". Now uses reitCcy(selectedEntity) -> "Rp18609.80B".
@@ -5259,6 +5263,7 @@ body.article-takeover .ed-foot{display:none!important}
       <option value="KSH Holdings">KSH Holdings (FY2026)</option>
       <option value="Keppel DC REIT">Keppel DC REIT (FY2025)</option>
       <option value="Keppel REIT">Keppel REIT (FY2025)</option>
+      <option value="KORE US REIT">KORE US REIT (FY2025)</option>
       <option value="Landmark REIT">Landmark REIT (FY2025)</option>
       <option value="Lendlease Global Commercial REIT">Lendlease REIT (FY2025)</option>
       <option value="Manulife US REIT">Manulife US REIT (FY2025)</option>
@@ -5668,6 +5673,127 @@ body.article-takeover .ed-foot{display:none!important}
 // Source: Annual Reports (SGX-listed)
 // ═══════════════════════════════════════════════════
 var TALENT_DATA = [
+  // ── KORE US REIT (CMOU, FY2025 AR) - 6 board + CEO + Head of Finance ──
+  {
+    id:'kore-chair-25', name:'Peter McMillan III', role:'Chairman & Non-Executive Director', role_type:'Board',
+    entity:'KORE US REIT', entity_short:'KORE', ar_year:'FY2025',
+    appointed:'19 October 2017', tenure_yrs:8.2,
+    rem_exact:80000, rem_fixed:80000, rem_bonus:0, rem_other:0,
+    rem_band:null, rem_note:'FY2025 directors\' fees S$80,000 (70% cash / 30% units, per the standard fee structure). Non-Executive Chairman; serves on no Board committee. YoY: 0.0% vs FY2024 (S$80,000).',
+    rem_pct_fixed:100, rem_pct_bonus:0, rem_pct_other:0,
+    rem_history:[{year:'FY2025', total:80000}, {year:'FY2024', total:80000}],
+    edu:'Bachelor of Arts (Honours) in Economics, Clark University; Master of Business Administration, Wharton Graduate School of Business, University of Pennsylvania',
+    bio:'Chairman and Non-Executive Director of KORE US REIT Management Pte. Ltd., serving since the REIT listing on 19 October 2017. Co-founder of Pacific Oak Capital Advisors LLC (KORE\'s US asset manager) and co-founder and Managing Partner of Willowbrook Capital Group. Brings decades of US real estate investment and fund management experience.',
+    prev_roles:[{org:'Pacific Oak Capital Advisors LLC',pos:'Co-founder'},{org:'Willowbrook Capital Group, LLC',pos:'Co-founder & Managing Partner'}],
+    cross_board_roles:[{entity:'TCW Strategic Income Fund, Inc.',role:'Director',listed:true},{entity:'TCW Private Asset Income Fund',role:'Director',listed:true},{entity:'Pacific Oak Strategic Opportunity REIT, Inc.',role:'Director',listed:false}],
+    tags:['Chairman','Non-Executive','Pacific Oak Co-founder','US Asset Management','Wharton MBA'],
+    linkedin_url:null, photo_url:null
+  },
+  {
+    id:'kore-lid-25', name:'Lawrence David Sperling', role:'Lead Independent Director', role_type:'Board',
+    entity:'KORE US REIT', entity_short:'KORE', ar_year:'FY2025',
+    appointed:'30 June 2022', tenure_yrs:3.5,
+    rem_exact:96000, rem_fixed:96000, rem_bonus:0, rem_other:0,
+    rem_band:null, rem_note:'FY2025 directors\' fees S$96,000 (incl. a lead-independence fee; 70% cash / 30% units). Chairman of the ESG Committee; member of the ARC and NRC. YoY: +19.9% vs FY2024 (S$80,060) — but FY2024 itself included a prorated lead-independence fee and an interim ARC-chair fee, so the two years are not strictly like-for-like.',
+    rem_pct_fixed:100, rem_pct_bonus:0, rem_pct_other:0,
+    rem_history:[{year:'FY2025', total:96000}, {year:'FY2024', total:80060, note:'Included interim ARC-chair fee (23 Aug-15 Nov 2024) and prorated lead-independence fee'}],
+    edu:'Juris Doctor and Master of Business Administration, University of North Carolina at Chapel Hill; Bachelor of Arts in History, University of Virginia; Licensed Attorney, The North Carolina State Bar',
+    bio:'Lead Independent Director of KORE US REIT Management Pte. Ltd., appointed 30 June 2022 and Lead Independent Director from 15 November 2024. Chairman of the Environmental, Social and Governance Committee and a member of the Audit and Risk Committee and the Nominating and Remuneration Committee. A licensed US attorney with extensive legal and governance experience.',
+    prev_roles:[],
+    cross_board_roles:[{entity:'Meadpoint Pte Ltd.',role:'Director',listed:false}],
+    tags:['Lead Independent','ESG Chairman','ARC Member','NRC Member','Attorney','UNC JD/MBA'],
+    linkedin_url:null, photo_url:null
+  },
+  {
+    id:'kore-ined-tay-25', name:'Roger Tay Puay Cheng', role:'Independent Director (ARC Chairman)', role_type:'Board',
+    entity:'KORE US REIT', entity_short:'KORE', ar_year:'FY2025',
+    appointed:'15 November 2024', tenure_yrs:1.1,
+    rem_exact:75000, rem_fixed:75000, rem_bonus:0, rem_other:0,
+    rem_band:null, rem_note:'FY2025 directors\' fees S$75,000 (70% cash / 30% units) — first full year. Chairman of the Audit and Risk Committee. No YoY % shown: FY2024 (S$9,631) was prorated from his 15 November 2024 appointment, so a year-on-year comparison would not be meaningful.',
+    rem_pct_fixed:100, rem_pct_bonus:0, rem_pct_other:0,
+    rem_history:[{year:'FY2025', total:75000}, {year:'FY2024', total:null, note:'Prorated S$9,631 from 15 November 2024 appointment; not comparable, so no YoY shown'}],
+    edu:'Bachelor of Accountancy (Honours), National University of Singapore; Fellow, Institute of Singapore Chartered Accountants; Fellow, Insolvency Practitioners Association of Singapore',
+    bio:'Independent Director of KORE US REIT Management Pte. Ltd. and Chairman of the Audit and Risk Committee, appointed 15 November 2024. A Fellow Chartered Accountant with deep accounting, audit and insolvency expertise.',
+    prev_roles:[{org:'Roger Tay Advisory Pte. Ltd.',pos:'Principal'}],
+    cross_board_roles:[],
+    tags:['Independent','ARC Chairman','Chartered Accountant','ISCA Fellow','NUS'],
+    linkedin_url:null, photo_url:null
+  },
+  {
+    id:'kore-ined-tan-25', name:'Kenneth Tan Jhu Hwa', role:'Independent Director (NRC Chairman)', role_type:'Board',
+    entity:'KORE US REIT', entity_short:'KORE', ar_year:'FY2025',
+    appointed:'19 October 2017', tenure_yrs:8.2,
+    rem_exact:87000, rem_fixed:87000, rem_bonus:0, rem_other:0,
+    rem_band:null, rem_note:'FY2025 directors\' fees S$87,000 (70% cash / 30% units). Chairman of the Nominating and Remuneration Committee; member of the ARC and ESG Committee. YoY: 0.0% vs FY2024 (S$87,000).',
+    rem_pct_fixed:100, rem_pct_bonus:0, rem_pct_other:0,
+    rem_history:[{year:'FY2025', total:87000}, {year:'FY2024', total:87000}],
+    edu:'Bachelor of Arts in Economics (First Class Honours), Cambridge University',
+    bio:'Independent Director of KORE US REIT Management Pte. Ltd. since the listing on 19 October 2017, and Chairman of the Nominating and Remuneration Committee. Chief Executive Officer of Southern Capital Group, a private equity firm.',
+    prev_roles:[],
+    cross_board_roles:[{entity:'Southern Capital Group Private Limited',role:'Director & CEO',listed:false}],
+    tags:['Independent','NRC Chairman','ARC Member','Private Equity','Cambridge'],
+    linkedin_url:null, photo_url:null
+  },
+  {
+    id:'kore-ined-wortmann-25', name:'Sharon Riley Wortmann', role:'Independent Director', role_type:'Board',
+    entity:'KORE US REIT', entity_short:'KORE', ar_year:'FY2025',
+    appointed:'20 April 2021', tenure_yrs:4.7,
+    rem_exact:80000, rem_fixed:80000, rem_bonus:0, rem_other:0,
+    rem_band:null, rem_note:'FY2025 directors\' fees S$80,000 (70% cash / 30% units). Member of the ARC, NRC and ESG Committee. YoY: 0.0% vs FY2024 (S$80,000).',
+    rem_pct_fixed:100, rem_pct_bonus:0, rem_pct_other:0,
+    rem_history:[{year:'FY2025', total:80000}, {year:'FY2024', total:80000}],
+    edu:'Bachelor of Business Administration (Real Estate Finance & Urban Development), Georgia State University',
+    bio:'Independent Director of KORE US REIT Management Pte. Ltd., appointed 20 April 2021. Member of the Audit and Risk, Nominating and Remuneration, and ESG Committees. Managing Director of the JLL Industrial Services Group, bringing US industrial and commercial real estate expertise.',
+    prev_roles:[],
+    cross_board_roles:[{entity:'NAIOP Inland Empire Chapter',role:'Committee Chair',listed:false}],
+    tags:['Independent','ARC/NRC/ESG Member','JLL Industrial','US Real Estate','Georgia State'],
+    linkedin_url:null, photo_url:null
+  },
+  {
+    id:'kore-ned-lee-25', name:'Bridget Lee Siow Pei', role:'Non-Executive Director', role_type:'Board',
+    entity:'KORE US REIT', entity_short:'KORE', ar_year:'FY2025',
+    appointed:'20 October 2021', tenure_yrs:4.2,
+    rem_exact:58000, rem_fixed:58000, rem_bonus:0, rem_other:0,
+    rem_band:null, rem_note:'FY2025 directors\' fees S$58,000, paid 100% in cash to Keppel Capital International Pte. Ltd. Member of the NRC. YoY: +9.7% vs FY2024 (S$52,863).',
+    rem_pct_fixed:100, rem_pct_bonus:0, rem_pct_other:0,
+    rem_history:[{year:'FY2025', total:58000}, {year:'FY2024', total:52863}],
+    edu:'Master of Management, JL Kellogg Graduate School of Management, Northwestern University; Bachelor of Accountancy, Nanyang Technological University',
+    bio:'Non-Executive Director of KORE US REIT Management Pte. Ltd., appointed 20 October 2021 and a member of the Nominating and Remuneration Committee. Chief Investment Officer, Real Estate, at Keppel Ltd. Her director fees are paid to Keppel Capital International.',
+    prev_roles:[],
+    cross_board_roles:[{entity:'Keppel Credit Fund Management Pte. Ltd.',role:'Director',listed:false}],
+    tags:['Non-Executive','Keppel CIO Real Estate','NRC Member','Kellogg','NTU'],
+    linkedin_url:null, photo_url:null
+  },
+  {
+    id:'kore-ceo-25', name:'David Eric Snyder', role:'Chief Executive Officer & Chief Investment Officer', role_type:'CEO',
+    entity:'KORE US REIT', entity_short:'KORE', ar_year:'FY2025',
+    appointed:'9 November 2017', tenure_yrs:8.1,
+    rem_exact:971163, rem_fixed:437023, rem_bonus:194233, rem_other:339907,
+    rem_band:null, rem_note:'FY2025 total remuneration S$971,163: 45% base/fixed salary, 20% variable/performance bonus, 17% contingent units under the PUP and 18% deferred units under the RUP (benefits-in-kind not material). YoY: +0.9% vs FY2024 (S$962,684), both disclosed exactly. CEO and CIO since the REIT listing in November 2017.',
+    rem_pct_fixed:45, rem_pct_bonus:20, rem_pct_other:35,
+    rem_history:[{year:'FY2025', total:971163}, {year:'FY2024', total:962684}],
+    edu:'Bachelor of Science in Business Administration, Biola University',
+    bio:'Chief Executive Officer and Chief Investment Officer of KORE US REIT Management Pte. Ltd. since the listing on 9 November 2017. Previously CFO of KBS Capital Advisors and five of its non-traded REITs, where he led the transfer of the AFRT portfolio (over 800 properties valued at over US$1.7 billion). Earlier, Financial Controller at Nationwide Health Properties (a listed healthcare REIT); began his career as an auditor at Arthur Andersen.',
+    prev_roles:[{org:'KBS Capital Advisors',pos:'Chief Financial Officer (2008-2015)'},{org:'Nationwide Health Properties',pos:'Financial Controller (1998-2008)'},{org:'Arthur Andersen LLP',pos:'Auditor'}],
+    cross_board_roles:[],
+    tags:['CEO','CIO','Ex-KBS Capital CFO','US Office REIT','Real Estate Finance'],
+    linkedin_url:null, photo_url:null
+  },
+  {
+    id:'kore-fin-25', name:'See Ai Lin', role:'Head of Finance', role_type:'CFO',
+    entity:'KORE US REIT', entity_short:'KORE', ar_year:'FY2025',
+    appointed:'16 June 2025', tenure_yrs:0.5,
+    rem_exact:null, rem_fixed:null, rem_bonus:null, rem_other:null,
+    rem_band:'Below S$250,000 band (key management personnel, excl. CEO/Directors)', rem_note:'FY2025 remuneration disclosed only within a band of S$250,000 (Below S$250,000): 52% base salary, 36% variable bonus, 12% deferred units (RUP); exact quantum withheld, so no YoY % is shown. Appointed Head of Finance on 16 June 2025, succeeding Andy Gwee, whose tenure as Chief Financial Officer ceased the same day. With the Manager since 2018.',
+    rem_pct_fixed:null, rem_pct_bonus:null, rem_pct_other:null,
+    rem_history:[{year:'FY2025', total:null, note:'Disclosed in the Below-S$250,000 KMP band; exact figure withheld. Part-year as Head of Finance from 16 June 2025'}],
+    edu:'Bachelor of Commerce (Accounting), The University of Queensland; CPA Australia',
+    bio:'Head of Finance of KORE US REIT Management Pte. Ltd. from 16 June 2025, overseeing financial and statutory reporting, management reporting, compliance, taxation and budgeting. With the Manager since 2018, shortly after KORE\'s listing; previously Assistant Manager at Keppel REIT Management and an Assistant Audit Manager at PricewaterhouseCoopers. Over 14 years in accounting, finance and audit.',
+    prev_roles:[{org:'Keppel REIT Management Pte. Ltd.',pos:'Assistant Manager'},{org:'PricewaterhouseCoopers LLP',pos:'Assistant Audit Manager (2011-2016)'}],
+    cross_board_roles:[],
+    tags:['Head of Finance','Banded','Ex-Keppel REIT','Ex-PwC','CPA Australia'],
+    linkedin_url:null, photo_url:null
+  },
   // ── LANDMARK REIT (D5IU, formerly Lippo Malls Indonesia Retail Trust) — FY2025 board + KMP ──
   // rem_history sourced from LMIRT FY2023 AR, LMIRT FY2024 AR, Landmark REIT FY2025 AR (directors' fees exact; CEO exact FY2024/25, banded FY2023; CFO banded KMP).
   {
@@ -22517,6 +22643,7 @@ var REIT_CCY = {
   "Prime US REIT":"US$",
   "United Hampshire US REIT":"US$",
   "Digital Core REIT":"US$",
+  "KORE US REIT":"US$",
   "Sasseur REIT":"RMB",
   "EC World REIT":"RMB",
   "Elite UK REIT":"\u00a3",
@@ -22541,6 +22668,7 @@ var ENTITY_COLORS = {
   "CDL Hospitality Trusts":"#b7770d",
   "Keppel DC REIT":"#c0392b",
   "Keppel REIT":"#2874a6",
+  "KORE US REIT":"#c8102e",
   "OUE REIT":"#7d6608",
   "Paragon REIT (Delisted)":"#616a6b",
   "Lendlease Global Commercial REIT":"#884ea0",
