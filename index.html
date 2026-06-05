@@ -17592,7 +17592,7 @@ async function fetchMonthlyData(months, startDate, endDate){
       var invFilter = invSalesMode==='exclude' ? "&or=(investment_sales.is.null,investment_sales.neq.y)"
                     : invSalesMode==='only'    ? "&investment_sales=eq.y"
                     : ""; // 'all' = no filter
-      var url=SB_URL+"/rest/v1/transactions?select=sale_date,property_type,transacted_price,unit_price_psf,tenure,is_aborted&sale_date=gte."+from+"&sale_date=lte."+until+invFilter+"&is_aborted=neq.true&order=sale_date.asc";
+      var url=SB_URL+"/rest/v1/transactions_public?select=sale_date,property_type,transacted_price,unit_price_psf,tenure,is_aborted&sale_date=gte."+from+"&sale_date=lte."+until+invFilter+"&is_aborted=neq.true&order=sale_date.asc";
       var r=await fetch(url,{headers:{
         "apikey":SB_KEY,"Authorization":"Bearer "+SB_KEY,
         "Range":lo+"-"+hi,"Range-Unit":"items"
@@ -19525,7 +19525,7 @@ function renderNewsroom(){
 async function matchPendingDeals(){
   // Pull recent caveats from Supabase and try to match pending deals
   try {
-    var url = SB_URL+"/rest/v1/transactions?select=project_name,transacted_price,area_sqft,sale_date&sale_date=gte.2026-01-01&order=sale_date.desc&limit=200";
+    var url = SB_URL+"/rest/v1/transactions_public?select=project_name,transacted_price,area_sqft,sale_date&sale_date=gte.2026-01-01&order=sale_date.desc&limit=200";
     var res = await fetch(url,{headers:{"apikey":SB_KEY,"Authorization":"Bearer "+SB_KEY}});
     if(!res.ok) return;
     var caveats = await res.json();
@@ -21355,7 +21355,7 @@ async function dirOpenDetail(name, type){
       +'<div style="font-size:10px;color:var(--mut);text-transform:uppercase;letter-spacing:.04em;margin-top:2px">'+s.l+'</div></div>';
   }).join('');
 
-  var r2=await fetch(SB_URL+"/rest/v1/transactions?project_name=eq."+encodeURIComponent(name)+"&select=sale_date,unit_price_psf&limit=50000",{headers:{"apikey":SB_KEY,"Authorization":"Bearer "+SB_KEY}});
+  var r2=await fetch(SB_URL+"/rest/v1/transactions_public?project_name=eq."+encodeURIComponent(name)+"&select=sale_date,unit_price_psf&limit=50000",{headers:{"apikey":SB_KEY,"Authorization":"Bearer "+SB_KEY}});
   renderDetChart(await r2.json());
   loadDetTx(name,0);
 }
@@ -21395,7 +21395,7 @@ async function loadDetTx(name,page){
   document.getElementById("det-tx-loading").style.display="block";
   document.getElementById("det-tx-table").style.display="none";
   var offset=page*20;
-  var res=await fetch(SB_URL+"/rest/v1/transactions?project_name=eq."+encodeURIComponent(name)+"&select=sale_date,address,transacted_price,area_sqft,unit_price_psf,type_of_sale,tenure,is_aborted&order=sale_date.desc&limit=20&offset="+offset,{headers:{"apikey":SB_KEY,"Authorization":"Bearer "+SB_KEY,"Prefer":"count=exact"}});
+  var res=await fetch(SB_URL+"/rest/v1/transactions_public?project_name=eq."+encodeURIComponent(name)+"&select=sale_date,address,transacted_price,area_sqft,unit_price_psf,type_of_sale,tenure,is_aborted&order=sale_date.desc&limit=20&offset="+offset,{headers:{"apikey":SB_KEY,"Authorization":"Bearer "+SB_KEY,"Prefer":"count=exact"}});
   detTxTotal=parseInt(res.headers.get("content-range")?.split("/")[1]||"0");
   var data=await res.json();
   document.getElementById("det-tx-loading").style.display="none";
@@ -21476,7 +21476,7 @@ function ymToSliderPos(ym){
 // re-fire chart + Recent Transactions if the right edge moved.
 async function initSliderBounds(){
   try {
-    var url = SB_URL + "/rest/v1/transactions?select=sale_date&order=sale_date.desc&limit=1";
+    var url = SB_URL + "/rest/v1/transactions_public?select=sale_date&order=sale_date.desc&limit=1";
     var res = await fetch(url, {headers:{"apikey":SB_KEY,"Authorization":"Bearer "+SB_KEY}});
     if(!res.ok) return; // silent fail — keep hardcoded ceiling on network error
     var rows = await res.json();
@@ -21594,7 +21594,7 @@ var TX_TOTAL = 0;
 var TX_LAST_QUERY = {};
 
 async function sbFetch(params){
-  var url = SB_URL + "/rest/v1/transactions?" + params + "&order=sale_date.desc";
+  var url = SB_URL + "/rest/v1/transactions_public?" + params + "&order=sale_date.desc";
   var res = await fetch(url, {
     headers: {
       "apikey": SB_KEY,
@@ -21763,7 +21763,7 @@ async function ovFetchAgg(q){
     filter = "or=(project_name.ilike.*" + encSQ(detected.val) + "*,address.ilike.*" + encSQ(detected.val) + "*)";
   }
   // Fetch up to 50000 rows for chart aggregation
-  var url = SB_URL + "/rest/v1/transactions?select=sale_date,property_type,transacted_price&" + filter + "&limit=50000";
+  var url = SB_URL + "/rest/v1/transactions_public?select=sale_date,property_type,transacted_price&" + filter + "&limit=50000";
   var res = await fetch(url, {headers:{"apikey":SB_KEY,"Authorization":"Bearer "+SB_KEY}});
   return await res.json();
 }
@@ -21780,7 +21780,7 @@ async function ovFetchRows(q, page){
   }
   var dateFilter = "&sale_date=gte." + getSliderStartDate() + "&sale_date=lte." + getSliderEndDate();
   // Fetch all rows for the period — client-side pagination via ovRenderFiltered
-  var url = SB_URL + "/rest/v1/transactions?select=id,project_name,address,property_type,transacted_price,area_sqft,unit_price_psf,sale_date,tenure,planning_region,postal_district,type_of_sale,type_of_area,is_aborted&"
+  var url = SB_URL + "/rest/v1/transactions_public?select=id,project_name,address,property_type,transacted_price,area_sqft,unit_price_psf,sale_date,tenure,planning_region,postal_district,type_of_sale,type_of_area,is_aborted&"
     + filter + dateFilter + "&order=sale_date.desc&limit=2000";
   var res = await fetch(url, {
     headers:{"apikey":SB_KEY,"Authorization":"Bearer "+SB_KEY,"Prefer":"count=exact"}
@@ -22209,7 +22209,7 @@ async function loadDefaultTransactions(page){
                 : invSalesMode==='only'    ? "&investment_sales=eq.y"
                 : ""; // 'all' = no filter
 
-  var url = SB_URL + "/rest/v1/transactions?select=id,project_name,address,property_type,transacted_price,area_sqft,unit_price_psf,sale_date,tenure,planning_region,postal_district,type_of_sale,type_of_area,is_aborted,investment_sales&"
+  var url = SB_URL + "/rest/v1/transactions_public?select=id,project_name,address,property_type,transacted_price,area_sqft,unit_price_psf,sale_date,tenure,planning_region,postal_district,type_of_sale,type_of_area,is_aborted,investment_sales&"
     + dateFilter + typeFilter + invFilter + "&order=sale_date.desc&limit="+fetchLimit+"&offset=0";
   var res = await fetch(url, {
     headers:{"apikey":SB_KEY,"Authorization":"Bearer "+SB_KEY,"Prefer":"count=exact"}
@@ -22260,7 +22260,7 @@ async function ovEnrichBuyData(rows){
 
   var batchResults = await Promise.all(batches.map(function(batch){
     var inList = batch.map(function(a){ return '"'+a.replace(/"/g,'\\"')+'"'; }).join(',');
-    var url = SB_URL + '/rest/v1/transactions?select=address,sale_date,transacted_price,unit_price_psf,type_of_sale'
+    var url = SB_URL + '/rest/v1/transactions_public?select=address,sale_date,transacted_price,unit_price_psf,type_of_sale'
       + '&address=in.('+encodeURIComponent(inList)+')&order=sale_date.asc&limit=5000';
     return fetch(url, {headers:hdr})
       .then(function(r){ return r.ok ? r.json() : []; })
@@ -22355,7 +22355,7 @@ function initOvAutocomplete(){
     if(/^\d+$/.test(q)){ dd.style.display="none"; return; }
     if(q.length < 2){ dd.style.display="none"; return; }
     ovTimer = setTimeout(async function(){
-      var url = SB_URL + "/rest/v1/transactions?select=project_name,address&or=(project_name.ilike.*"
+      var url = SB_URL + "/rest/v1/transactions_public?select=project_name,address&or=(project_name.ilike.*"
         + encSQ(q) + "*,address.ilike.*" + encSQ(q) + "*)&limit=200";
       var res = await fetch(url, {headers:{"apikey":SB_KEY,"Authorization":"Bearer "+SB_KEY}});
       var data = await res.json();
@@ -22410,7 +22410,7 @@ var acTimer = null;
 var acIndex = -1;
 
 async function fetchSuggestions(query){
-  var url = SB_URL + "/rest/v1/transactions?select=project_name&project_name=ilike.*"
+  var url = SB_URL + "/rest/v1/transactions_public?select=project_name&project_name=ilike.*"
     + encodeURIComponent(query) + "*&limit=200&order=project_name.asc";
   var res = await fetch(url, {
     headers: {"apikey": SB_KEY, "Authorization": "Bearer " + SB_KEY}
@@ -24382,7 +24382,7 @@ async function sophiaLoadCaveats() {
   try {
     // Query transactions: project_name OR address contains "sophia", since 2024
     var url = SB_URL +
-      "/rest/v1/transactions" +
+      "/rest/v1/transactions_public" +
       "?or=(project_name.ilike.*sophia*,address.ilike.*sophia*)" +
       "&sale_date=gte.2024-01-01" +
       "&select=sale_date,project_name,address,transacted_price,area_sqft,unit_price_psf,type_of_sale,tenure,property_type" +
@@ -28410,7 +28410,7 @@ document.addEventListener('DOMContentLoaded', function() {
 // Counts non-aborted commercial + industrial rows (matches dashboard scope).
 async function loadDbTotals(){
   try {
-    var url = SB_URL + "/rest/v1/transactions"
+    var url = SB_URL + "/rest/v1/transactions_public"
       + "?select=id"
       + "&property_type=in.(office,retail,shop%20house,multiple-user%20factory,single-user%20factory,warehouse,business%20park)"
       + "&is_aborted=is.false"
