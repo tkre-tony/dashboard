@@ -1455,7 +1455,7 @@ html,body{background:var(--bg);color:var(--txt);font-family:'DM Sans',sans-serif
 .ptable tbody tr:nth-child(even) td{background:#f9fbfa}
 .ptable tbody tr:hover td{background:var(--glt)!important}
 .ptable tbody tr:last-child td{border-bottom:none}
-.ptable .mono{font-family:'DM Mono',monospace;font-size:11px}
+.ptable .mono{font-family:'DM Mono',monospace;font-size:11px}#pnl-tbl-profit th,#pnl-tbl-loss th{white-space:normal;line-height:1.25}
 
 /* ── INPUT / SELECT ── */
 .cs-input{padding:8px 13px;border:1px solid var(--bdr);border-radius:6px;font-size:12px;font-family:'DM Sans',sans-serif;outline:none;color:var(--txt);background:var(--srf);transition:border-color .12s;width:100%}
@@ -21078,8 +21078,8 @@ function pnlRenderTable(sec, rows, page){
         +'<div style="font-size:11px;color:var(--mut)">'+r.buy_date+'</div>'
       +'</td>'
       // 2. Project / Address (with tenure stacked underneath when classifiable -- v48.112)
-      +'<td style="vertical-align:top;max-width:180px">'
-        +'<div style="font-weight:600;font-size:12px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis" title="'+(r.project_name||'')+'">'+( r.project_name||'—')+'</div>'
+      +'<td style="vertical-align:top;max-width:230px">'
+        +'<div style="font-weight:600;font-size:12px;white-space:normal;overflow-wrap:anywhere" title="'+(r.project_name||'')+'">'+( r.project_name||'—')+'</div>'
         +'<div style="font-size:10px;color:var(--mut);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-top:2px" title="'+(maskAddress(r.address)||'')+'">'+(maskAddress(r.address)||'—')+'</div>'
         +(r.sell_tenure ? '<div style="font-size:9.5px;color:var(--mut2);margin-top:3px;line-height:1.3;white-space:normal">'+r.sell_tenure+'</div>' : '')
       +'</td>'
