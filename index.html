@@ -2,6 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8"/>
+<!-- v48.216 (7 Jun 2026, S93 Stage 2): Listings payoff — floor-loading (kN/m²) + ceiling-height (m) filters (dynamically populated from structured loading_kn_m2 / ceiling_height_m; threshold "≥ X" options built from distinct values present). Master cards now surface PDF spec detail: floor-load + ceiling pills (teal) and the per-building description block. Filters exclude null-spec rows when active. -->
 <!-- v48.215 (7 Jun 2026, S93): Listings/Inventory tab cutover to runtime fetch from public.vacancy_listings (RLS master/broker via atlasSb JWT). Removed inline VACANCY_DATA (all pilot REITs) + CLIFTON_VAC arrays — table is single source of truth (394 rows: ESR/AIMS/MIT/AI REIT May 2026 + Clifton Apr 2026); monthly refreshes render with no redeploy. Month chip from data_month; rent from rent_raw; public payload SWR-cached, vacancy_listing_private sidecar never cached/fetched here. Display labels AI-REIT->AI REIT (Listings chips). CLIFTON_SALE (for-sale) unchanged. -->
 <!-- v48.214 (4 Jun 2026, S84): UI Boustead REIT (SGX:UIBU) backfill. STORE: 23 assets into reit_assets (1,643 rows / 59 entities); type split — new Hi-Specs Industrial chip (5 assets), 4 business-space mapped to Business Park. DISPLAY: ENTITY_COLORS "UI Boustead REIT" #0d6e72; Hi-Specs directory chip + table option; NEWS id:107 inserted (date 2026-06-04). Landing cascade: hero 105->107; cards [105,104,103]; feed prepend 102, drop 95; NR_STATIC_IDS [105..96]. id:106 KORE stays off-landing (back-dated 2026-04-18) so landing ids read 107,105,... (106 hole is intentional). Static /news/<slug>/ + sitemap added. -->
 <!-- v48.213 (4 Jun 2026, S83): Share/copy URL + browser bar now emit canonical /news/<slug>/ instead of ?article=N; fixes LinkedIn og:image preview bug (L258). -->
@@ -4980,6 +4981,12 @@ body.article-takeover .ed-foot{display:none!important}
       <option value="Bare">Bare condition</option>
       <option value="Partial">Partially fitted</option>
       <option value="Fitted">Fitted / As-is</option>
+    </select>
+    <select class="inv-sel" id="inv-loading" onchange="invRender()">
+      <option value="">Any floor load</option>
+    </select>
+    <select class="inv-sel" id="inv-ceiling" onchange="invRender()">
+      <option value="">Any ceiling ht</option>
     </select>
     <div class="inv-view-toggle">
       <button class="inv-view-btn on" id="inv-vbtn-card" onclick="invSetView('card')">Cards</button>
@@ -27288,6 +27295,31 @@ function cliftonRenderSale() {
   }).join('');
 }
 
+function invPopulateSpecFilters(){
+  // v48.216 (S93 Stage 2): build "≥ X" threshold options from the DISTINCT
+  // structured spec values present in the loaded data (no dead options). Idempotent:
+  // only populates when the select still holds just its default option, so a user
+  // selection is never clobbered on re-render.
+  try {
+    if(typeof VACANCY_DATA === 'undefined' || !VACANCY_DATA.length) return;
+    var ls = document.getElementById('inv-loading');
+    if(ls && ls.options.length <= 1){
+      var lset = {};
+      VACANCY_DATA.forEach(function(d){ var v = parseFloat(d.loading_kn_m2); if(d.loading_kn_m2 != null && !isNaN(v)) lset[v] = 1; });
+      Object.keys(lset).map(Number).sort(function(a,b){return a-b;}).forEach(function(v){
+        var o = document.createElement('option'); o.value = v; o.textContent = '≥ ' + v + ' kN/m²'; ls.appendChild(o);
+      });
+    }
+    var cs = document.getElementById('inv-ceiling');
+    if(cs && cs.options.length <= 1){
+      var cset = {};
+      VACANCY_DATA.forEach(function(d){ var v = parseFloat(d.ceiling_height_m); if(d.ceiling_height_m != null && !isNaN(v)) cset[v] = 1; });
+      Object.keys(cset).map(Number).sort(function(a,b){return a-b;}).forEach(function(v){
+        var o = document.createElement('option'); o.value = v; o.textContent = '≥ ' + v + ' m'; cs.appendChild(o);
+      });
+    }
+  } catch(e){}
+}
 function invRender() {
   // Filter reads — null-guarded. Any of these elements may be null if
   // invRender is called before the inventory sub-view is fully rendered
@@ -27299,6 +27331,9 @@ function invRender() {
   var af = _v('inv-avail');
   var sf = _v('inv-size');
   var ff = _v('inv-fit');
+  var lf = _v('inv-loading');
+  var hf = _v('inv-ceiling');
+  invPopulateSpecFilters();
 
   var filtered = VACANCY_DATA.filter(function(d) {
     if(INV_REIT !== 'all' && d.reit !== INV_REIT) return false;
@@ -27314,6 +27349,8 @@ function invRender() {
     if(zf && d.zone !== zf) return false;
     if(cf && d.cluster !== cf) return false;
     if(ff && d.fit !== ff) return false;
+    if(lf){ var _lv = parseFloat(d.loading_kn_m2); if(isNaN(_lv) || _lv < parseFloat(lf)) return false; }
+    if(hf){ var _hv = parseFloat(d.ceiling_height_m); if(isNaN(_hv) || _hv < parseFloat(hf)) return false; }
     if(af) {
       if(d.status === 'Absorbed') return true; // don't filter absorbed by avail
       if(af==='Immediate' && !/immediate/i.test(d.avail)) return false;
@@ -27410,6 +27447,12 @@ function invRender() {
           rentPill = '<span class="inv-pill">'+d.rent+' psf/mth</span>';
         }
       }
+      var loadTxt = (d.loading_raw ? d.loading_raw : (d.loading_kn_m2 != null ? d.loading_kn_m2 + ' kN/m²' : ''));
+      var ceilTxt = (d.ceiling_height_raw ? d.ceiling_height_raw : (d.ceiling_height_m != null ? d.ceiling_height_m + ' m' : ''));
+      var specStyle = 'background:rgba(13,110,114,.08);color:#0d6e72;border-color:rgba(13,110,114,.28)';
+      var specPills = (loadTxt ? '<span class="inv-pill" style="'+specStyle+'" title="Floor loading capacity">Floor load · '+loadTxt+'</span>' : '')
+                    + (ceilTxt ? '<span class="inv-pill" style="'+specStyle+'" title="Floor-to-ceiling height">Ceiling · '+ceilTxt+'</span>' : '');
+      var bldgDesc = d.building_description ? '<div class="inv-bldg-desc" style="font-size:11px;color:var(--mut);margin-top:7px;line-height:1.45;padding-top:7px;border-top:1px dashed var(--bdr)">'+d.building_description+'</div>' : '';
       var matterportBtn = isClifton && d.matterport
         ? '<a href="'+d.matterport+'" target="_blank" rel="noopener" style="display:inline-flex;align-items:center;gap:5px;font-size:11px;font-weight:600;color:#9b7de0;text-decoration:none;margin-top:6px">🏠 3D Virtual Tour ↗</a>'
         : '';
@@ -27431,8 +27474,10 @@ function invRender() {
           availPill+
           '<span class="inv-pill">'+d.fit+'</span>'+
           rentPill+
+          specPills+
         '</div>'+
         (d.remarks ? '<div class="inv-remarks">'+d.remarks+'</div>' : '')+
+        bldgDesc+
         couNote+
         matterportBtn+
         '<div class="inv-reit-tag" style="color:'+d.reit_color+'"><span class="inv-reit-dot" style="background:'+d.reit_color+'"></span>'+d.reit+' · '+d.month+'</div>'+
