@@ -271,14 +271,30 @@ function heroAbs(a) {
   return SITE + '/' + a.image.replace(/^\.\//, '').replace(/^\//, '');
 }
 
+// Gap 2/3 (S97): the SERP/social image (og:image, twitter:image, JSON-LD image)
+// falls back to a branded title card when an article has no usable hero photo.
+// CARD_OVERRIDE lists ids whose hero photo is under ~696px wide and therefore
+// cannot render as a search thumbnail — these are superseded by a card for
+// social meta only; the in-article hero photo is left untouched.
+// To restore a photo: drop the id here AND set a >=1200px-wide image in NEWS.
+const CARD_OVERRIDE = new Set([78, 79, 84, 86, 91, 92, 93, 98, 99, 101, 106]);
+function socialImage(a, img) {
+  if (img && !CARD_OVERRIDE.has(a.id)) return img;
+  const f = 'news_' + a.id + '_card.png';
+  return fs.existsSync(path.join(IMAGES_DIR, f))
+    ? SITE + '/images/' + f
+    : SITE + '/images/og-default.png';
+}
+
 function buildHead(a, canonical) {
   const title = stripTags(a.display_headline || a.display_title || a.title);
   const desc  = stripTags(a.standfirst || a.summary).slice(0, 200);
-  const img   = heroAbs(a);
+  const img    = heroAbs(a);
+  const social = socialImage(a, img);
   const ld = {
     '@context': 'https://schema.org', '@type': 'NewsArticle',
     headline: title, datePublished: a.date, dateModified: a.date,
-    image: img ? [img] : undefined,
+    image: [social],
     author: { '@type': 'Organization', name: 'PropertyAtlas' },
     publisher: { '@type': 'Organization', name: 'PropertyAtlas',
       logo: { '@type': 'ImageObject', url: SITE + '/images/logo.png' } },
@@ -302,11 +318,11 @@ function buildHead(a, canonical) {
     '<meta property="og:title" content="' + esc(title) + '">',
     '<meta property="og:description" content="' + esc(desc) + '">',
     '<meta property="og:url" content="' + esc(canonical) + '">',
-    img ? '<meta property="og:image" content="' + esc(img) + '">' : '',
+    '<meta property="og:image" content="' + esc(social) + '">',
     '<meta name="twitter:card" content="summary_large_image">',
     '<meta name="twitter:title" content="' + esc(title) + '">',
     '<meta name="twitter:description" content="' + esc(desc) + '">',
-    img ? '<meta name="twitter:image" content="' + esc(img) + '">' : '',
+    '<meta name="twitter:image" content="' + esc(social) + '">',
     '<script type="application/ld+json">' + JSON.stringify(ld) + '</script>',
   ].filter(Boolean).join('\n');
 }
