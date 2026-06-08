@@ -317,8 +317,8 @@ function buildPage(a) {
   let fragment = sandbox.edRenderArticlePage(a);
   fragment = rewriteLinks(fragment);
   const usedClasses = new Set();
-  (fragment.match(/class="([^"]*)"/g) || []).forEach(m => {
-    m.replace(/class="([^"]*)"/, (x, cl) => cl.split(/\s+/).forEach(c => c && usedClasses.add(c)));
+  (fragment.match(/class=["']([^"']*)["']/g) || []).forEach(m => {
+    m.replace(/class=["']([^"']*)["']/, (x, cl) => cl.split(/\s+/).forEach(c => c && usedClasses.add(c)));
   });
   const css  = extractArticleCss(usedClasses);
   // SOP-required rule absent from the index's article CSS: grey, no-direction
