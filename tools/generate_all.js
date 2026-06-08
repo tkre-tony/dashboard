@@ -17,7 +17,7 @@
  *     match -> every body class resolves to a rule (L-SEO-8 by construction).
  *   - ?article=N rewritten to /news/<slug>/  (zero ?article= in output).
  *   - image paths made root-absolute (/images/...).
- *   - self-canonical + OG + Twitter + JSON-LD NewsArticle in <head>.
+ *   - self-canonical + favicon set + OG + Twitter + JSON-LD NewsArticle in <head>.
  *
  * Usage:
  *   node generate_all.js [indexPath] [outDir] [--only <id>] [--dry]
@@ -288,6 +288,11 @@ function buildHead(a, canonical) {
   return [
     '<meta charset="utf-8">',
     '<meta name="viewport" content="width=device-width,initial-scale=1">',
+    '<link rel="icon" href="/favicon.ico" sizes="any">',
+    '<link rel="icon" type="image/svg+xml" href="/favicon.svg">',
+    '<link rel="icon" type="image/png" sizes="96x96" href="/images/favicon-96x96.png">',
+    '<link rel="icon" type="image/png" sizes="192x192" href="/images/favicon-192x192.png">',
+    '<link rel="apple-touch-icon" href="/images/apple-touch-icon.png">',
     '<title>' + esc(title) + ' | PropertyAtlas</title>',
     '<meta name="description" content="' + esc(desc) + '">',
     '<link rel="canonical" href="' + esc(canonical) + '">',
