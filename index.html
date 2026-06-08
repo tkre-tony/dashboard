@@ -19331,7 +19331,12 @@ function nrEligibleArticles(){
     .filter(function(n){ return n && n.date; })
     .slice()
     .sort(function(a, b){ return b.date.localeCompare(a.date); });
-  var heroId = sorted.length ? sorted[0].id : null;
+  // v48.217 fix: read heroId from the actual static hero element's data-article-id,
+  // not from the newest NEWS entry. This prevents duplication when a new NEWS entry
+  // is added before the L243 landing cascade runs (the "Sasseur cascade duplicate"
+  // class of bug — L196 / S94). Falls back to sorted[0] only if no static hero found.
+  var heroEl = document.querySelector('[data-article-id]');
+  var heroId = heroEl ? parseInt(heroEl.getAttribute('data-article-id'), 10) : (sorted.length ? sorted[0].id : null);
   return sorted.filter(function(n){
     return NR_STATIC_IDS.indexOf(n.id) === -1 && n.id !== heroId;
   });
