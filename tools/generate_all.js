@@ -296,7 +296,7 @@ function buildHead(a, canonical) {
     '<title>' + esc(title) + ' | PropertyAtlas</title>',
     '<meta name="description" content="' + esc(desc) + '">',
     '<link rel="canonical" href="' + esc(canonical) + '">',
-    '<meta name="robots" content="index,follow">',
+    '<meta name="robots" content="index,follow,max-image-preview:large,max-snippet:-1,max-video-preview:-1">',
     '<meta property="og:type" content="article">',
     '<meta property="og:site_name" content="PropertyAtlas">',
     '<meta property="og:title" content="' + esc(title) + '">',

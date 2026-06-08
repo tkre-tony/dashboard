@@ -1,0 +1,13 @@
+# PropertyAtlas line-ending policy
+#
+# Root index.html intentionally uses CRLF — DO NOT normalize it.
+# (No rule below targets it, so Git leaves its line endings alone.)
+#
+# Generated news pages and tooling scripts are LF. Pin them so a
+# Windows working-tree (download/extract/OneDrive) cannot flip them
+# to CRLF on commit.
+
+news/**/*.html  text eol=lf
+news/*.html     text eol=lf
+tools/*.js      text eol=lf
+tools/*.py      text eol=lf
