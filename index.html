@@ -2,6 +2,11 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8"/>
+<link rel="icon" href="/favicon.ico" sizes="any">
+<link rel="icon" type="image/svg+xml" href="/favicon.svg">
+<link rel="icon" type="image/png" sizes="96x96" href="/images/favicon-96x96.png">
+<link rel="icon" type="image/png" sizes="192x192" href="/images/favicon-192x192.png">
+<link rel="apple-touch-icon" href="/images/apple-touch-icon.png">
 <!-- v48.216 (7 Jun 2026, S93 Stage 2): Listings payoff — floor-loading (kN/m²) + ceiling-height (m) filters (dynamically populated from structured loading_kn_m2 / ceiling_height_m; threshold "≥ X" options built from distinct values present). Master cards now surface PDF spec detail: floor-load + ceiling pills (teal) and the per-building description block. Filters exclude null-spec rows when active. -->
 <!-- v48.215 (7 Jun 2026, S93): Listings/Inventory tab cutover to runtime fetch from public.vacancy_listings (RLS master/broker via atlasSb JWT). Removed inline VACANCY_DATA (all pilot REITs) + CLIFTON_VAC arrays — table is single source of truth (394 rows: ESR/AIMS/MIT/AI REIT May 2026 + Clifton Apr 2026); monthly refreshes render with no redeploy. Month chip from data_month; rent from rent_raw; public payload SWR-cached, vacancy_listing_private sidecar never cached/fetched here. Display labels AI-REIT->AI REIT (Listings chips). CLIFTON_SALE (for-sale) unchanged. -->
 <!-- v48.214 (4 Jun 2026, S84): UI Boustead REIT (SGX:UIBU) backfill. STORE: 23 assets into reit_assets (1,643 rows / 59 entities); type split — new Hi-Specs Industrial chip (5 assets), 4 business-space mapped to Business Park. DISPLAY: ENTITY_COLORS "UI Boustead REIT" #0d6e72; Hi-Specs directory chip + table option; NEWS id:107 inserted (date 2026-06-04). Landing cascade: hero 105->107; cards [105,104,103]; feed prepend 102, drop 95; NR_STATIC_IDS [105..96]. id:106 KORE stays off-landing (back-dated 2026-04-18) so landing ids read 107,105,... (106 hole is intentional). Static /news/<slug>/ + sitemap added. -->
@@ -2990,6 +2995,7 @@ body.article-takeover .ed-foot{display:none!important}
      as a discovery cue; gating happens at content layer not strip layer. */
   .navtab.navtab-hidden { display: flex; align-items: center; gap: 6px; }
 </style>
+<!-- v48.218 (8 Jun 2026, S95): favicon set wired into head (ico/svg/96/192/apple-touch) - fixes generic-globe in Google SERP. -->
 </head>
 <body>
 <script>
