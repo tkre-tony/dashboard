@@ -2995,7 +2995,7 @@ body.article-takeover .ed-foot{display:none!important}
      as a discovery cue; gating happens at content layer not strip layer. */
   .navtab.navtab-hidden { display: flex; align-items: center; gap: 6px; }
 </style>
-<!-- v48.220 (10 Jun 2026, S99): L243 landing cascade for id:110 (hero+cards+feed+NR_STATIC_IDS); removed Funding-source headline. -->
+<!-- v48.221 (10 Jun 2026, S99): restored id:106 (KORE US REIT) to landing feed; was missing from cascade. -->
 </head>
 <body>
 <script>
@@ -4174,6 +4174,28 @@ body.article-takeover .ed-foot{display:none!important}
 
       <div class="feed-month">June 2026</div>
 
+      <a class="feed-row" href="/news/kore-us-reit-1q-2026-adjusted-npi-up-15-9-occupancy-eases-to-85-1/" data-article-id="106">
+        <div class="feed-row-image-col">
+          <div class="feed-row-image">
+            <img src="images/news_106_kore_great_hills_plaza.jpg"
+                 alt="Great Hills Plaza, Austin, Texas — one of KORE US REIT&#x27;s 13 freehold US office assets. Credit: KORE US REIT."
+                 class="feed-row-image-photo"
+                 loading="lazy" />
+          </div>
+          <p class="feed-row-credit">Great Hills Plaza, Austin, Texas — one of KORE US REIT&#x27;s 13 freehold US office assets. Credit: KORE US REIT.</p>
+        </div>
+        <div class="feed-row-text">
+          <p class="feed-row-cat">REIT Results</p>
+          <h3 class="feed-row-headline">KORE US REIT 1Q 2026: Adjusted NPI +15.9% To US$23.4M, Distributable Income +4.3%, Occupancy Eases To 85.1% On A Known Westpark Vacate</h3>
+          <p class="feed-row-teaser">KORE&#x27;s first operational update under its new name delivered double-digit NPI growth and a stronger balance sheet, but headline occupancy slipped on a single large Redmond move-out the manager is already working to backfill.</p>
+          <p class="feed-row-meta">
+            <span>18 Apr 2026</span>
+            <span class="sep">&middot;</span>
+            <span>3 min read</span>
+          </p>
+        </div>
+      </a>
+
       <a class="feed-row" href="/news/2h2026-gls-town-hall-link-confirmed/" data-article-id="105">
         <div class="feed-row-image-col">
           <div class="feed-row-image">
@@ -4304,28 +4326,6 @@ body.article-takeover .ed-foot{display:none!important}
             <span>28 May 2026</span>
             <span class="sep">&middot;</span>
             <span>6 min read</span>
-          </p>
-        </div>
-      </a>
-
-      <a class="feed-row" href="/news/manulife-us-reit-1q-2026-figueroa-divestment-de-risked-with-psa-signed/" data-article-id="99">
-        <div class="feed-row-image-col">
-          <div class="feed-row-image">
-            <img src="./images/news_99_manulife_us_reit_figueroa.jpg"
-                 alt="865 South Figueroa Street, Los Angeles — interior lobby of the 35-storey Class A office property pending sale to the City of Los Angeles, Department of Water and Power for US$92.5 million gross / US$85.7 million net consideration. Photo: Manulife US REIT"
-                 class="feed-row-image-photo"
-                 loading="lazy" />
-          </div>
-          <p class="feed-row-credit">865 South Figueroa Street, Los Angeles — interior lobby of the 35-storey Class A office property pending sale to the City of Los Angeles, Department of Water and Power for US$92.5 million gross / US$85.7 million net consideration. Photo: Manulife US REIT</p>
-        </div>
-        <div class="feed-row-text">
-          <p class="feed-row-cat">Office</p>
-          <h3 class="feed-row-headline">Manulife US REIT 1Q 2026: Figueroa Sale De-Risked — PSA Signed 6 May, US$1.85M Deposit Received 12 May, City Of LA DWP As Buyer At US$92.5M Gross — Proforma Leverage 55.4%, Occupancy 73.2%, MRA Exit Pathway Mechanical</h3>
-          <p class="feed-row-teaser">Manulife US REIT released its 1Q 2026 Operational Update on Tuesday 6 May 2026, and the central piece of the disposition mandate became materially less conditional the same day. The City of Los Angeles, acting through its Department of Water and...</p>
-          <p class="feed-row-meta">
-            <span>27 May 2026</span>
-            <span class="sep">&middot;</span>
-            <span>9 min read</span>
           </p>
         </div>
       </a>
@@ -19291,7 +19291,7 @@ function formatNewsSummary(text, mode){
 // cover all visible static slots, not just the feed rows.
 // Static rows are authored HTML; the dynamic NEWS-array injector
 // must exclude exactly these IDs so each article appears once.
-var NR_STATIC_IDS = [109, 108, 107, 105, 104, 103, 102, 101, 100, 99];
+var NR_STATIC_IDS = [109, 108, 107, 106, 105, 104, 103, 102, 101, 100];
 var NR_PAGE_SIZE = 10;
 var NR_INJECTED_COUNT = 0;
 function nrEscapeHtml(s){
