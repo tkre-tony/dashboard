@@ -2995,6 +2995,7 @@ body.article-takeover .ed-foot{display:none!important}
      as a discovery cue; gating happens at content layer not strip layer. */
   .navtab.navtab-hidden { display: flex; align-items: center; gap: 6px; }
 </style>
+<!-- v48.224 (14 Jun 2026, S107): Boot-path performance + chart bug fixes. (1) Lazy/tab-gated fetching: loadReitAssets() deferred from DOMContentLoaded to first tab that needs it (assetdir/forsale/pulse); Market Analysis init (renderAll, loadAndRenderChart, loadDefaultTransactions, matchPendingDeals, initSliderBounds) deferred from boot to first atlasShowTab('overview') visit via new marketAnalysisInit(). Newsroom cold-load no longer fires any Supabase fetches except loadDbTotals (count-only). (2) Resize handler fix: both window resize handlers now route to the correct chart renderer (renderMoMChart/renderQoQChart/renderMonthlyChart/renderBarChart) based on active chart mode; previously always called renderMonthlyChart when cache existed, causing MoM stacked bars to redraw as side-by-side on hover/resize. No-ops when monthly cache is pending (fixes two-bar yearly flash during async fetch). (3) renderMonthlyChart() now respects stackedView toggle, consistent with renderMoMChart and renderBarChart. -->
 <!-- v48.223 (11 Jun 2026, S100): First REIT Indonesia Divestment EGM (id:111). Full L243/L-DEPLOY-2 cascade: hero=111, cards=[110,109,108], feed=[107..101], NR_STATIC_IDS=[110..101]. -->
 <!-- v48.221 (10 Jun 2026, S99): restored id:106 (KORE US REIT) to landing feed; was missing from cascade. -->
 </head>
@@ -17858,10 +17859,23 @@ function renderMonthlyChart(data){
 
   // Bars
   var bGW=cW/labels.length;
-  var bW=Math.max(2,bGW*0.82/actT.length);
+  var bW=stackedView?Math.max(2,bGW*0.82):Math.max(2,bGW*0.82/actT.length);
   labels.forEach(function(mo,gi){
     var gx=P.l+gi*bGW+bGW*0.09;
     var yBase=P.t+cH;
+    if(stackedView){
+      var stackY=yBase;
+      actT.forEach(function(t){
+        var d=data.agg[mo]&&data.agg[mo][t];
+        var val=d?(chartMode==="val"?d.val:d.cnt):0;
+        if(!val) return;
+        var bh=(val/mx)*cH; stackY-=bh;
+        var vs=chartMode==="val"?fmtV(val):fmtC(val)+" deals";
+        svg+='<rect x="'+gx.toFixed(1)+'" y="'+stackY.toFixed(1)+'" width="'+bW.toFixed(1)+'" height="'+Math.max(bh,0).toFixed(1)+'"'
+            +' fill="'+TCOLOR[t]+'" rx="2" style="cursor:pointer"'
+            +' onmouseenter="sT(event,\''+fmtMo(mo)+'\',\''+t+'\',\''+vs+'\')" onmouseleave="hT()"/>';
+      });
+    } else {
     actT.forEach(function(t,ai){
       var d=data.agg[mo]&&data.agg[mo][t];
       var val=d?(chartMode==="val"?d.val:d.cnt):0;
@@ -17873,6 +17887,7 @@ function renderMonthlyChart(data){
           +' fill="'+TCOLOR[t]+'" rx="2" style="cursor:pointer"'
           +' onmouseenter="sT(event,\''+fmtMo(mo)+'\',\''+t+'\',\''+vs+'\')" onmouseleave="hT()"/>';
     });
+    }
     // X labels — limit density for long ranges
     var step=labels.length<=12?1:labels.length<=24?2:labels.length<=48?3:6;
     if(gi%step===0||gi===labels.length-1){
@@ -18164,6 +18179,7 @@ function atlasShowTab(tab) {
   }
 
   // 4. Tab-specific init/load
+  if(tab === "overview"){ marketAnalysisInit(); }
   if(tab === "assetdir"){ loadReitAssets(function(){ reitSearch(0); }); loadARTracker(); }
   if(tab === "analytics"){ renderAnalytics(); if(!pnlLoaded) pnlLoadData(); }
   if(tab === "directory"){ dirSearch(0); }
@@ -18185,6 +18201,7 @@ function atlasShowTab(tab) {
     }
   }
   if(tab === "forsale"){
+    loadReitAssets(); // v48.224: ensure REIT_DATA ready for inventory chips
     var fsv = document.getElementById('forsale-view');
     if(fsv && fsv.value==='projects'){
       if(!projLoaded) projLoadUnits();
@@ -19640,7 +19657,7 @@ function renderAll(){
   var topSec = Object.entries(TYPETOT).sort(function(a,b){return b[1]-a[1];})[0];
   var anS = document.getElementById("an-topsec"); if(anS && topSec) anS.textContent = TLABEL[topSec[0]];
 }
-window.addEventListener("resize",function(){if(isMonthlyMode()&&MONTHLY_CACHE)renderMonthlyChart(MONTHLY_CACHE);else renderBarChart();});
+window.addEventListener("resize",function(){if(chartMoM&&MONTHLY_CACHE)renderMoMChart(MONTHLY_CACHE);else if(chartQoQ&&MONTHLY_CACHE)renderQoQChart(MONTHLY_CACHE);else if(isMonthlyMode()&&!chartYoY&&MONTHLY_CACHE)renderMonthlyChart(MONTHLY_CACHE);else if(!isMonthlyMode()||chartYoY)renderBarChart();});
 
 // ─── PNL: PROFITABLE / UNPROFITABLE TRANSACTIONS ─────────────────────
 var PNL_PAIRS = [];        // all matched pairs after load
@@ -22500,7 +22517,7 @@ function initAutocomplete(){
 
 // INIT — default: MoM, Last 12 Months. Slider right = MAX_SLIDER_POS, left = right - 12.
 // MAX_SLIDER_POS defaults to 375 (Mar 2026) on initial render so first paint is correct;
-// initSliderBounds() (called from the rAF below) re-rebases live from MAX(sale_date).
+// initSliderBounds() (called from marketAnalysisInit below) re-rebases live from MAX(sale_date).
 sliderEndMonth   = MAX_SLIDER_POS;
 sliderStartMonth = Math.max(0, MAX_SLIDER_POS - 12);
 sliderMonths     = 12;
@@ -22510,24 +22527,32 @@ document.querySelector(".rbtn[data-range='L12']").classList.add("on");
 document.getElementById("m-mom").classList.add("on");
 syncDualSliderUI();
 renderNewsroom();
-renderPendingDeals();
-matchPendingDeals();
 // v48.25: renderPipeline() call removed (panel deleted; function definition orphaned but harmless).
 initAutocomplete();
 initOvAutocomplete();
 pnlInitAutocomplete();
-loadDefaultTransactions(0);
-requestAnimationFrame(function(){
+// v48.224 (S107): Market Analysis data fetches deferred to first tab visit.
+// Previously: renderPendingDeals, matchPendingDeals, loadDefaultTransactions(0),
+// renderAll, loadAndRenderChart, initSliderBounds all fired unconditionally on boot.
+// Now wrapped in marketAnalysisInit() — called from atlasShowTab('overview').
+// This eliminates ~6 concurrent Supabase fetch chains on cold load when the user
+// lands on Newsroom (which needs zero Supabase data).
+var _marketAnalysisInited = false;
+function marketAnalysisInit(){
+  if(_marketAnalysisInited) return;
+  _marketAnalysisInited = true;
+  renderPendingDeals();
+  matchPendingDeals();
+  loadDefaultTransactions(0);
   renderAll();
   loadAndRenderChart();
-  window.addEventListener("resize", function(){ if(isMonthlyMode()&&MONTHLY_CACHE)renderMonthlyChart(MONTHLY_CACHE);else renderBarChart(); renderAnalytics && renderAnalytics(); });
-  // S50: live-MAX rebase for transactions slider. Non-blocking. Runs after first chart paint.
-  // v48.150 (S51): initPulseBounds() moved to Pulse tab activation handler (see atlasShowTab).
-  // Rationale: Pulse ACRA tab uses tenant_registry; firing on every page load (incl. Market
-  // Pulse landing where tenant_registry is irrelevant) wasted ~4.5s on the 500-erroring query
-  // before the idx_tenant_registry_reg_date DESC NULLS LAST index was added. New L308 candidate:
-  // defer tab-specific initialization to tab activation, not page load.
   initSliderBounds();
+}
+requestAnimationFrame(function(){
+  window.addEventListener("resize", function(){ if(chartMoM&&MONTHLY_CACHE)renderMoMChart(MONTHLY_CACHE);else if(chartQoQ&&MONTHLY_CACHE)renderQoQChart(MONTHLY_CACHE);else if(isMonthlyMode()&&!chartYoY&&MONTHLY_CACHE)renderMonthlyChart(MONTHLY_CACHE);else if(!isMonthlyMode()||chartYoY)renderBarChart(); renderAnalytics && renderAnalytics(); });
+  // S50: live-MAX rebase for transactions slider — now deferred to marketAnalysisInit (v48.224).
+  // v48.150 (S51): initPulseBounds() moved to Pulse tab activation handler (see atlasShowTab).
+  // v48.224 (S107): initSliderBounds() moved to marketAnalysisInit — same principle.
 });
 
 // ─── REIT DIRECTORY ──────────────────────────────────────────────────
@@ -22645,7 +22670,9 @@ async function loadReitAssets(cb){
     var cbs = _reitCbs.slice(); _reitCbs = []; cbs.forEach(function(f){ try { f(); } catch(_e){} });
   }
 }
-if(document.readyState === 'loading'){ document.addEventListener('DOMContentLoaded', function(){ loadReitAssets(); }); } else { loadReitAssets(); }
+// v48.224 (S107): loadReitAssets() deferred from DOMContentLoaded to first tab that needs it
+// (assetdir, forsale, pulse). Idempotent — safe to call from multiple paths.
+// Previously: if(document.readyState === 'loading'){ document.addEventListener('DOMContentLoaded', function(){ loadReitAssets(); }); } else { loadReitAssets(); }
 
 // Per-entity valuation currency. Default = S$ (SG-functional REITs/devs report whole
 // book in SGD even for overseas assets). Only entities whose AR/quarterly PRESENTS in a
@@ -28313,6 +28340,7 @@ function pulsePickerSetMo(side, m) {
 function pulseInit() {
   if(pulseInited) return;
   pulseInited = true;
+  loadReitAssets(); // v48.224: trigger REIT_DATA load for portfolio index (idempotent)
   PULSE_PORTFOLIO_IDX = buildPortfolioIndex();
   pulsePickerUpdateBtns();
   pulseLoad();
