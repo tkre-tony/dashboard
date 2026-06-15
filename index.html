@@ -7,6 +7,7 @@
 <link rel="icon" type="image/png" sizes="96x96" href="/images/favicon-96x96.png">
 <link rel="icon" type="image/png" sizes="192x192" href="/images/favicon-192x192.png">
 <link rel="apple-touch-icon" href="/images/apple-touch-icon.png">
+<!-- v48.225 (15 Jun 2026, S110): Directory 2.0 deep-links — project names across Market Pulse/Analysis (renderTxRows, renderProjRows, pnlRenderAbort, renderOvTable) and Newsroom article tables are now click-through to the Directory building detail. New paProjLink()/paGotoProject() helpers resolve raw caveat names to the current building_id via directory_txns (merge-aware: old/renamed names land on the current building). Deep-link sets window.dirSkipAutoSearch to suppress the auto dirSearch so it cannot clobber the detail; dirCloseDetail lazy-loads the list if empty. Frontend-only, no DB change. -->
 <!-- v48.218 (15 Jun 2026, S109): Directory count label "buildings" -> "results" (header + pagination), with singular/plural ("1 result"). The MV grain is building x property_type so the count is rows not distinct buildings; "results" is accurate and fixes the "1 buildings" grammar. -->
 <!-- v48.217 (15 Jun 2026, S109): Directory tab cutover from properties (922) to project_directory_mv v2 (4,047 buildings). List/grid + sort + filters repointed to MV columns (display_name/street/txn_count/total_transacted/median_psf/low_psf/high_psf/first_sale_date/last_sale_date); ownership filter -> title_type (Strata / Whole-building). Detail keys by building_id (handles merged redevelopments + unnamed addr-keyed buildings); stats from MV row, chart from directory_txns current-era only (is_old_era=false), history from directory_txns by building_id with old-era rows asterisked + "formerly X" badge/banner. New read-only view directory_txns (per-txn building_id + is_old_era) grants anon/authenticated. -->
 <!-- v48.216 (7 Jun 2026, S93 Stage 2): Listings payoff — floor-loading (kN/m²) + ceiling-height (m) filters (dynamically populated from structured loading_kn_m2 / ceiling_height_m; threshold "≥ X" options built from distinct values present). Master cards now surface PDF spec detail: floor-load + ceiling pills (teal) and the per-building description block. Filters exclude null-spec rows when active. -->
@@ -18184,7 +18185,7 @@ function atlasShowTab(tab) {
   if(tab === "overview"){ marketAnalysisInit(); }
   if(tab === "assetdir"){ loadReitAssets(function(){ reitSearch(0); }); loadARTracker(); }
   if(tab === "analytics"){ renderAnalytics(); if(!pnlLoaded) pnlLoadData(); }
-  if(tab === "directory"){ dirSearch(0); }
+  if(tab === "directory"){ if(window.dirSkipAutoSearch){ window.dirSkipAutoSearch=false; } else { dirSearch(0); } }
   // v48.125 (session 43): 'transactions' legacy-alias inner branch removed. ATLAS_TAB_MAP
   // now resolves the alias directly to tab-overview (Market Pulse) at L17103, so the
   // sub-lens activation that lived here is no longer needed and would recurse.
@@ -20563,7 +20564,7 @@ function txRender(){
       var aColor = r.ann_return >= 0 ? pc : lc;
       return '<tr>'
         +'<td style="font-size:11px;font-weight:600;color:var(--txt);white-space:normal;line-height:1.3;vertical-align:top">'
-          +'<span style="font-size:10px;color:var(--mut);margin-right:3px">'+(i+1)+'.</span>'+(r.project_name||'—')
+          +'<span style="font-size:10px;color:var(--mut);margin-right:3px">'+(i+1)+'.</span>'+paProjLink(r.project_name)
         +'</td>'
         // v48.124: address font lifted (11px/600 var(--txt)) to stand out from tenure (9.5px var(--mut2))
         +'<td style="vertical-align:top;white-space:normal">'
@@ -21143,7 +21144,7 @@ function pnlRenderAbort(rows, page){
     var fmtFull  = function(v){ return v ? 'S$'+Math.round(v).toLocaleString() : '—'; };
     var fmtPsf   = function(v){ return v ? 'S$'+Math.round(v).toLocaleString() : '—'; };
     return '<tr>'
-      +'<td style="font-weight:600;font-size:12px;max-width:150px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis" title="'+(r.project_name||'')+'">'+( r.project_name||'—')+'</td>'
+      +'<td style="font-weight:600;font-size:12px;max-width:150px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis" title="'+(r.project_name||'')+'">'+paProjLink(r.project_name)+'</td>'
       +'<td style="font-size:11px;color:var(--mut);max-width:150px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis" title="'+(maskAddress(r.address)||'')+'">'+(maskAddress(r.address)||'—')+'</td>'
       +'<td style="font-size:10px;line-height:1.25">'+fmtPropTypeHtml(r.property_type||'—')+'</td>'
       +'<td class="mono" style="white-space:nowrap">'+r.first_date+'</td>'
@@ -21470,10 +21471,72 @@ function dirCloseDetail(){
   document.getElementById("dir-pagination").style.display="flex";
   if(dirViewMode==='grid'){document.getElementById("dir-grid").style.display="grid";document.getElementById("dir-list").style.display="none";}
   else{document.getElementById("dir-list").style.display="block";document.getElementById("dir-grid").style.display="none";}
+  try{ var _g=document.getElementById("dir-grid"), _l=document.getElementById("dir-list"); if((!_g||!_g.children.length)&&(!_l||!_l.children.length)&&typeof dirSearch==="function") dirSearch(0); }catch(e){}
 }
 
 // directory tab handler consolidated into unified tab switcher above
 document.addEventListener("keydown",function(e){ if(e.key==="Enter"&&document.activeElement.id==="dir-search") dirSearch(0); });
+// ─── S110: Directory 2.0 project-name deep-links ───
+// Any project name across the app links to its Directory building detail. Names resolve
+// through directory_txns (merge-aware: old/renamed caveat names map to the current building_id).
+window.dirSkipAutoSearch = false;
+(function(){ try{ var st=document.createElement("style");
+  st.textContent=".pa-projlink{color:#3b82f6;cursor:pointer;text-decoration:underline;text-decoration-style:dotted;text-underline-offset:2px;transition:color .12s}.pa-projlink:hover{color:#1A4F9C;text-decoration-style:solid}.pa-projlink:focus-visible{outline:2px solid #3b82f6;outline-offset:1px;border-radius:2px}";
+  (document.head||document.documentElement).appendChild(st); }catch(e){} })();
+function paEsc(s){ return String(s==null?"":s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/\"/g,"&quot;").replace(/'/g,"&#39;"); }
+function paProjBad(raw){ var u=raw.toUpperCase(); return !raw||raw==="\u2014"||raw==="-"||raw==="—"||u==="N.A."||u==="NA"; }
+function paProjLink(name){
+  var raw=(name==null?"":String(name)).trim();
+  if(paProjBad(raw)) return paEsc(name==null?"—":String(name));
+  var e=paEsc(raw);
+  return '<span class="pa-projlink" data-proj="'+e+'" role="link" tabindex="0" title="View in Directory"'
+    +' onclick="paGotoProject(this.getAttribute(\'data-proj\'));if(event)event.stopPropagation();"'
+    +' onkeydown="if(event.key===\'Enter\'){paGotoProject(this.getAttribute(\'data-proj\'));}">'+e+'</span>';
+}
+// Post-render pass: linkify the Project column of any .ptable inside a container (Newsroom articles).
+function paLinkifyTables(root){
+  if(!root) return;
+  try{
+    var tables=root.querySelectorAll("table.ptable");
+    for(var t=0;t<tables.length;t++){
+      var tbl=tables[t], ths=tbl.querySelectorAll("thead th"), idx=-1;
+      for(var h=0;h<ths.length;h++){ if((ths[h].textContent||"").trim().toLowerCase()==="project"){ idx=h; break; } }
+      if(idx<0) continue;
+      var rows=tbl.querySelectorAll("tbody tr");
+      for(var r=0;r<rows.length;r++){
+        var cell=rows[r].children[idx]; if(!cell||cell.getAttribute("data-pa-linked")) continue;
+        var nm=(cell.textContent||"").trim();
+        if(paProjBad(nm)) continue;
+        cell.setAttribute("data-pa-linked","1"); cell.innerHTML=paProjLink(nm);
+      }
+    }
+  }catch(e){}
+}
+// Switch to Directory and open the building detail for a clicked project name.
+async function paGotoProject(name){
+  var n=(name==null?"":String(name)).trim(); if(!n) return;
+  window.dirSkipAutoSearch=true;
+  if(typeof atlasShowTab==="function") atlasShowTab("directory");
+  try{ window.scrollTo({top:0,behavior:"smooth"}); }catch(e){ try{window.scrollTo(0,0);}catch(_){} }
+  try{
+    ["dir-grid","dir-list","dir-pagination","dir-type-btns","dir-own-btns"].forEach(function(id){ var el=document.getElementById(id); if(el) el.style.display="none"; });
+    var det=document.getElementById("dir-detail"); if(det) det.style.display="block";
+    var dn=document.getElementById("det-name"); if(dn) dn.textContent="Loading "+n+"…";
+  }catch(e){}
+  var bid=null, ptype=null;
+  try{
+    var url=SB_URL+"/rest/v1/directory_txns?txn_name=eq."+encodeURIComponent(n)+"&is_aborted=is.false&select=building_id,property_type,is_old_era&order=is_old_era.asc,sale_date.desc&limit=1";
+    var resp=await fetch(url,{headers:{"apikey":SB_KEY,"Authorization":"Bearer "+SB_KEY}});
+    var rows=await resp.json();
+    if(rows&&rows.length&&rows[0].building_id){ bid=rows[0].building_id; ptype=rows[0].property_type; }
+  }catch(e){}
+  if(bid && typeof dirOpenDetail==="function"){ dirOpenDetail(bid, ptype); return; }
+  window.dirSkipAutoSearch=false;
+  try{ var det2=document.getElementById("dir-detail"); if(det2) det2.style.display="none"; }catch(e){}
+  var box=document.getElementById("dir-search"); if(box) box.value=n;
+  if(typeof dirSearch==="function") dirSearch(0);
+}
+// ─── end S110 deep-links ───
 
 // ─── SUPABASE ─────────────────────────────────────────────────────────
 var SB_URL = "https://xywgocvjuygudzrduvwr.supabase.co";
@@ -22192,7 +22255,7 @@ function renderOvTable(rows){
     return "<tr style='"+rowStyle+"'>"
       +"<td class='mono' style='white-space:nowrap;vertical-align:top;font-size:10.5px'>"+dateCell+"</td>"
       +"<td class='mono' style='font-size:10.5px;white-space:nowrap;vertical-align:top'>"+dist+"</td>"
-      +"<td style='font-weight:600;font-size:10.5px;vertical-align:top;word-break:break-word'>"+(r.project_name||"-")+abortedBadge+"</td>"
+      +"<td style='font-weight:600;font-size:10.5px;vertical-align:top;word-break:break-word'>"+paProjLink(r.project_name)+abortedBadge+"</td>"
       +"<td style='font-size:12px;color:var(--txt);vertical-align:top;overflow-wrap:break-word;word-break:keep-all'>"+((maskAddress(r.address)||"-").replace(/\s*(#\S+)/g,"<span style=\"display:block;white-space:nowrap;color:var(--mut2);font-size:11.5px\">$1</span>"))+"</td>"
       +"<td style='font-size:10px;color:var(--mut);vertical-align:top'>"+tos+(r.buy_tos ? boughtLabel+"<div style='"+mutStyle+"'>"+r.buy_tos+"</div>" : "")+"</td>"
       +"<td style='vertical-align:top;text-align:center;font-size:10.5px;line-height:1.25'>"+fmtPropTypeHtml(r.property_type||"-")+"</td>"
@@ -30729,6 +30792,7 @@ html.article-takeover .ed-article-page,body.article-takeover .ed-article-page{di
       var mount = document.getElementById('ed-article-page');
       if(!mount) return;
       mount.innerHTML = edRenderArticlePage(article);
+      try{ paLinkifyTables(mount); }catch(e){}
       // Update browser title
       try { document.title = (article.display_headline || article.display_title || article.title || 'Article')+' · PropertyAtlas'; } catch(e) {}
       // v48.213: canonical URL in browser bar — copy/paste gives /news/<slug>/ with correct og:meta
