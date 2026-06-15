@@ -7,6 +7,7 @@
 <link rel="icon" type="image/png" sizes="96x96" href="/images/favicon-96x96.png">
 <link rel="icon" type="image/png" sizes="192x192" href="/images/favicon-192x192.png">
 <link rel="apple-touch-icon" href="/images/apple-touch-icon.png">
+<!-- v48.218 (15 Jun 2026, S109): Directory count label "buildings" -> "results" (header + pagination), with singular/plural ("1 result"). The MV grain is building x property_type so the count is rows not distinct buildings; "results" is accurate and fixes the "1 buildings" grammar. -->
 <!-- v48.217 (15 Jun 2026, S109): Directory tab cutover from properties (922) to project_directory_mv v2 (4,047 buildings). List/grid + sort + filters repointed to MV columns (display_name/street/txn_count/total_transacted/median_psf/low_psf/high_psf/first_sale_date/last_sale_date); ownership filter -> title_type (Strata / Whole-building). Detail keys by building_id (handles merged redevelopments + unnamed addr-keyed buildings); stats from MV row, chart from directory_txns current-era only (is_old_era=false), history from directory_txns by building_id with old-era rows asterisked + "formerly X" badge/banner. New read-only view directory_txns (per-txn building_id + is_old_era) grants anon/authenticated. -->
 <!-- v48.216 (7 Jun 2026, S93 Stage 2): Listings payoff — floor-loading (kN/m²) + ceiling-height (m) filters (dynamically populated from structured loading_kn_m2 / ceiling_height_m; threshold "≥ X" options built from distinct values present). Master cards now surface PDF spec detail: floor-load + ceiling pills (teal) and the per-building description block. Filters exclude null-spec rows when active. -->
 <!-- v48.215 (7 Jun 2026, S93): Listings/Inventory tab cutover to runtime fetch from public.vacancy_listings (RLS master/broker via atlasSb JWT). Removed inline VACANCY_DATA (all pilot REITs) + CLIFTON_VAC arrays — table is single source of truth (394 rows: ESR/AIMS/MIT/AI REIT May 2026 + Clifton Apr 2026); monthly refreshes render with no redeploy. Month chip from data_month; rent from rent_raw; public payload SWR-cached, vacancy_listing_private sidecar never cached/fetched here. Display labels AI-REIT->AI REIT (Listings chips). CLIFTON_SALE (for-sale) unchanged. -->
@@ -21254,7 +21255,7 @@ async function dirSearch(page){
   var data = await res.json();
 
   document.getElementById("dir-loading").style.display = "none";
-  document.getElementById("dir-count").textContent = dirTotal.toLocaleString()+" buildings";
+  document.getElementById("dir-count").textContent = dirTotal.toLocaleString()+(dirTotal===1?" result":" results");
 
   // Always reset both containers first
   document.getElementById("dir-grid").style.display = "none";
@@ -21334,7 +21335,7 @@ function renderDirPagination(){
   document.getElementById("dir-pagination").innerHTML =
     '<button onclick="dirSearch('+Math.max(0,dirPage-1)+')" '+(dirPage===0?"disabled style='opacity:.4'":"")
     +' style="padding:5px 12px;border:1px solid var(--bdr);border-radius:6px;background:var(--srf);cursor:pointer;font-size:12px">← Prev</button>'
-    +'<span style="font-size:12px;color:var(--mut)">Page '+(dirPage+1)+' of '+tp+' · '+dirTotal.toLocaleString()+' buildings</span>'
+    +'<span style="font-size:12px;color:var(--mut)">Page '+(dirPage+1)+' of '+tp+' · '+dirTotal.toLocaleString()+(dirTotal===1?" result":" results")+'</span>'
     +'<button onclick="dirSearch('+Math.min(tp-1,dirPage+1)+')" '+(dirPage>=tp-1?"disabled style='opacity:.4'":"")
     +' style="padding:5px 12px;border:1px solid var(--bdr);border-radius:6px;background:var(--srf);cursor:pointer;font-size:12px">Next →</button>';
 }
