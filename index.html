@@ -21517,6 +21517,7 @@ async function paGotoProject(name){
   var n=(name==null?"":String(name)).trim(); if(!n) return;
   window.dirSkipAutoSearch=true;
   if(typeof atlasShowTab==="function") atlasShowTab("directory");
+  try{ if(typeof dirClear==="function") dirClear(); }catch(e){}
   try{ window.scrollTo({top:0,behavior:"smooth"}); }catch(e){ try{window.scrollTo(0,0);}catch(_){} }
   try{
     ["dir-grid","dir-list","dir-pagination","dir-type-btns","dir-own-btns"].forEach(function(id){ var el=document.getElementById(id); if(el) el.style.display="none"; });
