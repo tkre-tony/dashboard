@@ -7,6 +7,7 @@
 <link rel="icon" type="image/png" sizes="96x96" href="/images/favicon-96x96.png">
 <link rel="icon" type="image/png" sizes="192x192" href="/images/favicon-192x192.png">
 <link rel="apple-touch-icon" href="/images/apple-touch-icon.png">
+<!-- v48.233 (22 Jun 2026, S124): L-DIR-2 land-PSF basis labels. Directory MV select now fetches title_type; whole-building (land-basis) PSF distinguished from strata per-unit PSF on all directory surfaces: grid card tile label "Land PSF" vs "Med PSF"; list-table Med PSF cell appends muted "land" tag; detail panel prefixes "Land " on Median/Min/Max PSF. Branch on title_type='Whole-building (Land)'. JS/label-only, no DB/RPC/Edge change. -->
 <!-- v48.232 (22 Jun 2026): Add id:117 (Mapletree Industrial Trust FY25/26 Annual Report) to the NEWS JS array. Published in S121 as the landing-cascade hero (authored HTML) but was never added to NEWS, so it was absent from the newsletter admin send dropdown, the ?article=117 router, and the home news-preview widget. Object reconstructed from the live static article page; summary is pre-baked HTML (passthrough). Injector excludes it via hero data-article-id, so no feed duplication. -->
 <!-- v48.231 (22 Jun 2026, hotfix): Card content cascade fix — v48.230 shifted hrefs+ids but left visual content one position behind. -->
 <!-- v48.230 (22 Jun 2026): Newsroom id:117 — Mapletree Industrial Trust FY25/26 AR (DPU 12.71c; −6.3% headline / −3.2% ex-gains; revenue S$673.0M; NPI S$500.4M; 136 properties S$8.3B AUM; leverage 34.0%). Landing cascade: 117 hero, cards [116,115,114], feed prepend 113 / drop 105; NR_STATIC_IDS [116..107]. -->
@@ -21249,7 +21250,7 @@ async function dirSearch(page){
   if(region) filters.push("planning_region=eq."+encodeURIComponent(region));
 
   var offset = page * dirPageSize;
-  var qs = "select=building_id,display_name,street,property_type,planning_area,planning_region,txn_count,total_transacted,median_psf,low_psf,high_psf,first_sale_date,last_sale_date,tenure,former_txn_count,former_name"
+  var qs = "select=building_id,display_name,street,property_type,planning_area,planning_region,txn_count,total_transacted,median_psf,low_psf,high_psf,first_sale_date,last_sale_date,tenure,former_txn_count,former_name,title_type"
     + (filters.length ? "&" + filters.join("&") : "")
     + "&order=" + sortCol + "." + sortDir
     + "&limit=" + dirPageSize + "&offset=" + offset;
@@ -21305,7 +21306,7 @@ function renderDirGrid(rows){
       +'<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:5px">'
       +'<div style="text-align:center;background:var(--srf2);border-radius:6px;padding:7px 4px"><div style="font-size:15px;font-weight:700;color:var(--g1)">'+(r.txn_count||0).toLocaleString()+'</div><div style="font-size:9px;color:var(--mut);text-transform:uppercase;letter-spacing:.04em">Deals</div></div>'
       +'<div style="text-align:center;background:var(--srf2);border-radius:6px;padding:7px 4px"><div style="font-size:12px;font-weight:700;color:var(--txt)">'+fmtVal(r.total_transacted)+'</div><div style="font-size:9px;color:var(--mut);text-transform:uppercase;letter-spacing:.04em">Total Value</div></div>'
-      +'<div style="text-align:center;background:var(--srf2);border-radius:6px;padding:7px 4px"><div style="font-size:12px;font-weight:700;color:var(--txt)">'+(r.median_psf?"S$"+Math.round(r.median_psf):"—")+'</div><div style="font-size:9px;color:var(--mut);text-transform:uppercase;letter-spacing:.04em">Med PSF</div></div>'
+      +'<div style="text-align:center;background:var(--srf2);border-radius:6px;padding:7px 4px"><div style="font-size:12px;font-weight:700;color:var(--txt)">'+(r.median_psf?"S$"+Math.round(r.median_psf):"—")+'</div><div style="font-size:9px;color:var(--mut);text-transform:uppercase;letter-spacing:.04em">'+(r.title_type==='Whole-building (Land)'?'Land PSF':'Med PSF')+'</div></div>'
       +'</div>'
       +former
       +'<div style="margin-top:8px;font-size:10px;color:var(--mut)">Last deal: '+(r.last_sale_date?r.last_sale_date.substring(0,7):"—")+'</div>'
@@ -21328,7 +21329,7 @@ function renderDirList(rows){
       +'<td style="font-size:11px;color:var(--mut)">'+(r.tenure?r.tenure.substring(0,20):"—")+'</td>'
       +'<td style="font-family:\'DM Mono\',monospace;font-size:12px;text-align:right;font-weight:600;color:var(--g1)">'+(r.txn_count||0).toLocaleString()+'</td>'
       +'<td style="font-family:\'DM Mono\',monospace;font-size:12px;text-align:right;font-weight:600">'+fmtVal(r.total_transacted)+'</td>'
-      +'<td style="font-family:\'DM Mono\',monospace;font-size:12px;text-align:right">'+(r.median_psf?"S$"+Math.round(r.median_psf):"—")+'</td>'
+      +'<td style="font-family:\'DM Mono\',monospace;font-size:12px;text-align:right">'+(r.median_psf?"S$"+Math.round(r.median_psf):"—")+(r.title_type==='Whole-building (Land)'?' <span style="font-size:9px;color:var(--mut)">land</span>':'')+'</td>'
       +'<td style="font-family:\'DM Mono\',monospace;font-size:11px;text-align:right;color:var(--mut)">'+(r.low_psf?"S$"+Math.round(r.low_psf):"—")+'</td>'
       +'<td style="font-family:\'DM Mono\',monospace;font-size:11px;text-align:right;color:var(--mut)">'+(r.high_psf?"S$"+Math.round(r.high_psf):"—")+'</td>'
       +'<td style="font-size:11px;color:var(--mut)">'+(r.last_sale_date?r.last_sale_date.substring(0,7):"—")+'</td>'
@@ -21382,9 +21383,9 @@ async function dirOpenDetail(bid, type){
   var stats=[
     {l:"Total Deals",v:(p.txn_count||0).toLocaleString()},
     {l:"Total Value",v:fmtVal(p.total_transacted)},
-    {l:"Median PSF",v:p.median_psf?"S$"+Math.round(p.median_psf):"—"},
-    {l:"Min PSF",v:p.low_psf?"S$"+Math.round(p.low_psf):"—"},
-    {l:"Max PSF",v:p.high_psf?"S$"+Math.round(p.high_psf):"—"},
+    {l:(p.title_type==='Whole-building (Land)'?'Land ':'')+"Median PSF",v:p.median_psf?"S$"+Math.round(p.median_psf):"—"},
+    {l:(p.title_type==='Whole-building (Land)'?'Land ':'')+"Min PSF",v:p.low_psf?"S$"+Math.round(p.low_psf):"—"},
+    {l:(p.title_type==='Whole-building (Land)'?'Land ':'')+"Max PSF",v:p.high_psf?"S$"+Math.round(p.high_psf):"—"},
     {l:"First Deal",v:p.first_sale_date?p.first_sale_date.substring(0,7):"—"},
     {l:"Last Deal",v:p.last_sale_date?p.last_sale_date.substring(0,7):"—"},
     {l:"Location",v:(p.planning_area||"—")+", "+(p.planning_region||"").replace(" Region","")},
