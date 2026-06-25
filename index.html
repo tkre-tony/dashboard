@@ -21832,6 +21832,7 @@ function clearSearch(){
 // ─── OVERVIEW SMART SEARCH ────────────────────────────────────────────
 var ovPage = 0;
 var ovTotal = 0;
+var ovGrandTotalCache = null;
 var ovQuery = "";
 var ovTimer = null;
 var ovAcIndex = -1;
@@ -22319,13 +22320,24 @@ async function loadDefaultTransactions(page){
                 : invSalesMode==='only'    ? "&investment_sales=eq.y"
                 : ""; // 'all' = no filter
 
+  var fullUniverse = (activeRange==='ALL' && allActive && invSalesMode==='all');
   var url = SB_URL + "/rest/v1/transactions_public?select=id,project_name,address,property_type,transacted_price,area_sqft,unit_price_psf,sale_date,tenure,planning_region,postal_district,type_of_sale,type_of_area,is_aborted,investment_sales&"
     + dateFilter + typeFilter + invFilter + "&order=sale_date.desc&limit="+fetchLimit+"&offset=0";
   var res = await fetch(url, {
-    headers:{"apikey":SB_KEY,"Authorization":"Bearer "+SB_KEY,"Prefer":"count=exact"}
+    headers:{"apikey":SB_KEY,"Authorization":"Bearer "+SB_KEY,"Prefer": fullUniverse ? "count=none" : "count=exact"}
   });
   var total = parseInt(res.headers.get("content-range")?.split("/")[1]||"0");
   var data = await res.json();
+  if(fullUniverse){
+    if(ovGrandTotalCache == null){
+      try {
+        var sres = await fetch(SB_URL + "/rest/v1/transactions_stats?select=total", { headers:{"apikey":SB_KEY,"Authorization":"Bearer "+SB_KEY,"Prefer":"count=none"} });
+        var sjson = await sres.json();
+        if(Array.isArray(sjson) && sjson[0] && sjson[0].total) ovGrandTotalCache = parseInt(sjson[0].total);
+      } catch(_e){}
+    }
+    if(ovGrandTotalCache) total = ovGrandTotalCache;
+  }
   ovTotal = total;
   ovFilteredCache = data || []; ovCurPage = 0;
   ovSortCol = "sale_date"; ovSortDir = "desc";
