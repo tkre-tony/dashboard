@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- v48.244 (26 Jun 2026, S134): image credit corrected for id117 (Mapletree Industrial Trust) and id115 (Mapletree Logistics Trust) across imageCredit + landing_credit + feed. -->
+<!-- v48.245 (27 Jun 2026, S136): lead-capture migrated server-side to lead-capture Edge Function (RESEND_LEAD_KEY); removed dead client-side Resend key + recipient; rewired enqSubmit alert endpoint bright-worker -> lead-capture. -->
 <html lang="en">
 <head>
 <meta charset="UTF-8"/>
@@ -29048,8 +29048,8 @@ function pulseExportCSV() {
 // ═══════════════════════════════════════════════════════════
 
 // ── Config ──────────────────────────────────────────────────
-var RESEND_API_KEY = 're_98Ak9ika_Dehv84nFfgCwVgJDuSi3MJk2';
-var LEAD_ALERT_TO  = 'tonykoe@gmail.com';
+// Resend key + alert recipient now live server-side in the lead-capture
+// Edge Function (RESEND_LEAD_KEY secret). Nothing sensitive in the client.
 
 // ── Modal state ──────────────────────────────────────────────
 var ENQ_CONTEXT = { reit: '', addr: '', unit: '' };
@@ -29147,7 +29147,7 @@ async function enqSubmit() {
 
     // 2. Send email alert via Supabase Edge Function (avoids browser CORS on Resend)
     try {
-      await fetch(PROJ_SUPABASE_URL + '/functions/v1/bright-worker', {
+      await fetch(PROJ_SUPABASE_URL + '/functions/v1/lead-capture', {
         method: 'POST',
         headers: {
           'Content-Type':  'application/json',
