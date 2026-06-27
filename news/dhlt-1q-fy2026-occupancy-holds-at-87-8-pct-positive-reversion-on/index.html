@@ -218,6 +218,28 @@ html.article-takeover .ed-art-masthead,body.article-takeover .ed-art-masthead{di
 .ed-art-newsletter-cta-btn .arrow{font-size:14px;line-height:1}
 @media(max-width:520px){.ed-art-newsletter-cta{padding:18px 18px;gap:14px}.ed-art-newsletter-cta-headline{font-size:15.5px}.ed-art-newsletter-cta-sub{font-size:13px}.ed-art-newsletter-cta-btn{padding:9px 16px;font-size:12.5px;width:100%;justify-content:center}}
 .ed-art-fh-delta.neutral{color:var(--ed-muted)}
+.pa-sub-overlay{display:none;position:fixed;inset:0;background:rgba(13,31,60,.55);z-index:3000}
+.pa-sub-modal{display:none;position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);z-index:3001;width:min(440px,94vw);max-height:92vh;overflow-y:auto;background:#fff;border-radius:14px;box-shadow:0 12px 48px rgba(13,31,60,.32);font-family:inherit}
+.pa-sub-head{background:#0d1f3c;color:#fff;padding:22px 24px 18px;border-radius:14px 14px 0 0;position:relative}
+.pa-sub-close{position:absolute;top:12px;right:12px;width:28px;height:28px;border:none;border-radius:7px;background:rgba(255,255,255,.14);color:#fff;font-size:18px;line-height:1;cursor:pointer}
+.pa-sub-close:hover{background:rgba(255,255,255,.26)}
+.pa-sub-title{font-size:17px;font-weight:700;line-height:1.3}
+.pa-sub-sub{font-size:12px;color:rgba(255,255,255,.7);line-height:1.5;margin-top:6px}
+.pa-sub-body{padding:20px 24px 22px}
+.pa-sub-field{margin-bottom:14px}
+.pa-sub-field label{display:block;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.03em;color:#475569;margin-bottom:6px}
+.pa-sub-field label span{font-weight:500;text-transform:none;letter-spacing:0;color:#94a3b8}
+.pa-sub-field input{width:100%;height:40px;padding:0 12px;border:1px solid #cbd5e1;border-radius:8px;font-size:14px;font-family:inherit;color:#1e293b;box-sizing:border-box;outline:none}
+.pa-sub-field input:focus{border-color:#0d1f3c}
+.pa-sub-submit{width:100%;height:44px;background:#0d1f3c;color:#fff;border:none;border-radius:9px;font-size:14px;font-weight:700;font-family:inherit;cursor:pointer;transition:opacity .15s}
+.pa-sub-submit:hover:not(:disabled){opacity:.9}
+.pa-sub-submit:disabled{opacity:.55;cursor:not-allowed}
+.pa-sub-error{display:none;background:#fef2f2;border:1px solid #fecaca;border-radius:8px;padding:10px 12px;font-size:12.5px;color:#b91c1c;line-height:1.5;margin-bottom:14px}
+.pa-sub-privacy{margin-top:12px;font-size:10.5px;color:#94a3b8;line-height:1.5;text-align:center}
+.pa-sub-success{padding:8px 24px 24px;text-align:center}
+.pa-sub-success-icon{width:48px;height:48px;margin:8px auto 14px;border-radius:50%;background:#dcfce7;color:#16a34a;font-size:24px;line-height:48px;font-weight:700}
+.pa-sub-success-title{font-size:16px;font-weight:700;color:#1e293b;margin-bottom:8px}
+.pa-sub-success-msg{font-size:13px;color:#64748b;line-height:1.6;margin-bottom:18px}
 </style>
 </head>
 <body>
@@ -246,5 +268,71 @@ html.article-takeover .ed-art-masthead,body.article-takeover .ed-art-masthead{di
 <p><strong>2. POSITIVE REVERSION IS THE LEADING INDICATOR.</strong> NPI is a lagging number — it reflects today's vacancy. Rent reversion is a leading number — it tells you the direction of rents on space that is leasing. Nine for nine at +11.1% weighted average in FY2025, and now 2Q FY2026 renewals tracking positive again. The Japan logistics market structure (moderating new supply, sticky 3PL demand, labour-shortage-driven demand for modern specification facilities with worker amenities) supports continued positive reversion even into a higher-rate environment.</p>
 
 <p><strong>3. THE FX DRAG IS REAL BUT THE BALANCE SHEET IS INSULATED.</strong> SGD NPI -12.4% against JPY NPI -4.9% — the gap is pure FX translation. But 100% of borrowings are also JPY-denominated, providing a natural asset-liability hedge. Unitholders feel FX on the income line; NAV/unit is better protected because both sides move together. 99.3% fixed-rate borrowings means near-term earnings are insulated from BOJ rate path. Eight leases expire in FY2026 (12.2% of GRI), with three in 1H FY2026 largely resolved. The 2H expiries (approximately 9.0% of GRI) are the next leasing test.</p></div><div class="ed-art-section-eyebrow">Financial headlines</div><div class="ed-art-fh-panel"><div class="ed-art-fh-row"><span class="ed-art-fh-label">NPI — Japan (JPY terms)</span><span class="ed-art-fh-val">JPY4,787M equivalent<span class="ed-art-fh-delta down">-4.9% YoY</span></span></div><div class="ed-art-fh-row"><span class="ed-art-fh-label">NPI — Vietnam (VND, cash basis)</span><span class="ed-art-fh-val">VND terms stable<span class="ed-art-fh-delta up">+2.7% YoY cash basis</span></span></div><div class="ed-art-fh-row"><span class="ed-art-fh-label">NPI — Overall (SGD)</span><span class="ed-art-fh-val">SGD terms<span class="ed-art-fh-delta down">-12.4% YoY (FX drag)</span></span></div><div class="ed-art-fh-row"><span class="ed-art-fh-label">Portfolio occupancy</span><span class="ed-art-fh-val">87.8%<span class="ed-art-fh-delta flat">unchanged QoQ</span></span></div><div class="ed-art-fh-row"><span class="ed-art-fh-label">Properties at full occupancy</span><span class="ed-art-fh-val">16 of 19</span></div><div class="ed-art-fh-row"><span class="ed-art-fh-label">WALE (by GRI)</span><span class="ed-art-fh-val">6.3 years<span class="ed-art-fh-delta down">vs 6.6y at FY2025 close</span></span></div><div class="ed-art-fh-row"><span class="ed-art-fh-label">Aggregate leverage</span><span class="ed-art-fh-val">40.6%<span class="ed-art-fh-delta up">+40bps QoQ (distribution timing)</span></span></div><div class="ed-art-fh-row"><span class="ed-art-fh-label">Interest coverage ratio</span><span class="ed-art-fh-val">5.1x<span class="ed-art-fh-delta down">vs 5.5x at FY2025 close</span></span></div><div class="ed-art-fh-row"><span class="ed-art-fh-label">Fixed-rate borrowings</span><span class="ed-art-fh-val">99.3%</span></div><div class="ed-art-fh-row"><span class="ed-art-fh-label">Unencumbered portfolio</span><span class="ed-art-fh-val">100%</span></div><div class="ed-art-fh-row"><span class="ed-art-fh-label">Undrawn facilities</span><span class="ed-art-fh-val">S$100M<span class="ed-art-fh-delta up">S$60M at Dec-25 + S$40M added Jan-26</span></span></div><div class="ed-art-fh-row"><span class="ed-art-fh-label">2Q FY2026 renewals (of 3 expiring)</span><span class="ed-art-fh-val">1 renewed, 1 expected<span class="ed-art-fh-delta up">both at higher rent</span></span></div></div><div class="ed-art-source">Source: PropertyAtlas.sg Analysis · Daiwa House Logistics Trust 1Q FY2026 Business Update dated 13 May 2026</div><aside class="ed-art-newsletter-cta" aria-label="Newsletter sign-up"><div class="ed-art-newsletter-cta-text"><p class="ed-art-newsletter-cta-eyebrow">Like what you read?</p><p class="ed-art-newsletter-cta-headline">Get the brief in your inbox</p><p class="ed-art-newsletter-cta-sub">Weekly newsroom highlights, REIT earnings coverage, and Singapore commercial-property market signal.</p></div><button type="button" class="ed-art-newsletter-cta-btn" onclick="nlSubOpen('article-end')">Subscribe<span class="arrow" aria-hidden="true">→</span></button></aside><div class="ed-art-share-block" role="group" aria-label="Share this article"><span class="ed-art-share-label">Share</span><div class="ed-art-share-btns"><a class="ed-art-share-btn" href="https://www.linkedin.com/sharing/share-offsite/?url=https%3A%2F%2Ftkre-tony.github.io%2Fdashboard%2Fnews%2Fdhlt-1q-fy2026-occupancy-holds-at-87-8-pct-positive-reversion-on%2F" target="_blank" rel="noopener noreferrer" aria-label="Share on LinkedIn" data-share-platform="linkedin" data-share-url="https://tkre-tony.github.io/dashboard/news/dhlt-1q-fy2026-occupancy-holds-at-87-8-pct-positive-reversion-on/" data-share-text="DHLT 1Q FY2026: Occupancy Holds At 87.8%, Positive Reversion On 2Q Renewals, NPI -4.9% JPY On Vacancy Drag — Three Signals Beyond The Headline" onclick="return atlasArticleShare(event, this)"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20.45 20.45h-3.55v-5.57c0-1.33-.03-3.04-1.85-3.04-1.85 0-2.13 1.45-2.13 2.94v5.67H9.36V9h3.41v1.56h.05c.47-.9 1.63-1.85 3.36-1.85 3.6 0 4.26 2.37 4.26 5.45v6.29zM5.34 7.43a2.06 2.06 0 1 1 0-4.12 2.06 2.06 0 0 1 0 4.12zM7.12 20.45H3.55V9h3.57v11.45zM22.23 0H1.77C.79 0 0 .77 0 1.72v20.56C0 23.23.79 24 1.77 24h20.46c.98 0 1.77-.77 1.77-1.72V1.72C24 .77 23.21 0 22.23 0z"/></svg></a><a class="ed-art-share-btn" href="https://www.facebook.com/sharer/sharer.php?u=https%3A%2F%2Ftkre-tony.github.io%2Fdashboard%2Fnews%2Fdhlt-1q-fy2026-occupancy-holds-at-87-8-pct-positive-reversion-on%2F" target="_blank" rel="noopener noreferrer" aria-label="Share on Facebook" data-share-platform="facebook" data-share-url="https://tkre-tony.github.io/dashboard/news/dhlt-1q-fy2026-occupancy-holds-at-87-8-pct-positive-reversion-on/" data-share-text="DHLT 1Q FY2026: Occupancy Holds At 87.8%, Positive Reversion On 2Q Renewals, NPI -4.9% JPY On Vacancy Drag — Three Signals Beyond The Headline" onclick="return atlasArticleShare(event, this)"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M24 12.07C24 5.4 18.63 0 12 0S0 5.4 0 12.07C0 18.1 4.39 23.1 10.13 24v-8.44H7.08v-3.49h3.05V9.41c0-3.02 1.79-4.69 4.53-4.69 1.31 0 2.69.23 2.69.23v2.97H15.83c-1.49 0-1.96.93-1.96 1.88v2.26h3.33l-.53 3.49h-2.8V24C19.61 23.1 24 18.1 24 12.07z"/></svg></a><a class="ed-art-share-btn" href="https://api.whatsapp.com/send?text=DHLT%201Q%20FY2026%3A%20Occupancy%20Holds%20At%2087.8%25%2C%20Positive%20Reversion%20On%202Q%20Renewals%2C%20NPI%20-4.9%25%20JPY%20On%20Vacancy%20Drag%20%E2%80%94%20Three%20Signals%20Beyond%20The%20Headline%20https%3A%2F%2Ftkre-tony.github.io%2Fdashboard%2Fnews%2Fdhlt-1q-fy2026-occupancy-holds-at-87-8-pct-positive-reversion-on%2F" target="_blank" rel="noopener noreferrer" aria-label="Share on WhatsApp" data-share-platform="whatsapp" data-share-url="https://tkre-tony.github.io/dashboard/news/dhlt-1q-fy2026-occupancy-holds-at-87-8-pct-positive-reversion-on/" data-share-text="DHLT 1Q FY2026: Occupancy Holds At 87.8%, Positive Reversion On 2Q Renewals, NPI -4.9% JPY On Vacancy Drag — Three Signals Beyond The Headline" onclick="return atlasArticleShare(event, this)"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M17.47 14.38c-.3-.15-1.76-.87-2.04-.97-.27-.1-.47-.15-.67.15-.2.3-.77.97-.95 1.17-.17.2-.35.22-.65.07-.3-.15-1.25-.46-2.39-1.47-.88-.79-1.48-1.76-1.65-2.06-.17-.3-.02-.46.13-.61.13-.13.3-.35.45-.52.15-.17.2-.3.3-.5.1-.2.05-.37-.02-.52-.07-.15-.67-1.62-.92-2.21-.24-.58-.49-.5-.67-.51-.17-.01-.37-.01-.57-.01-.2 0-.52.07-.79.37-.27.3-1.04 1.02-1.04 2.49 0 1.47 1.07 2.89 1.22 3.09.15.2 2.1 3.21 5.1 4.5.71.31 1.27.49 1.7.63.71.23 1.36.2 1.87.12.57-.08 1.76-.72 2-1.41.25-.69.25-1.29.17-1.41-.07-.13-.27-.2-.57-.35M12.04 21.83h-.01c-1.96 0-3.89-.53-5.58-1.52l-.4-.24-4.15 1.09 1.11-4.04-.26-.41C1.72 15.04 1.12 13.05 1.12 11c0-6.02 4.91-10.92 10.94-10.92 2.92 0 5.66 1.14 7.73 3.2 2.06 2.07 3.2 4.81 3.2 7.73-.01 6.02-4.91 10.92-10.95 10.92M20.5 2.5C18.24.24 15.24-1 12.04-1 5.45-1 .09 4.36.09 10.94c0 2.1.55 4.16 1.59 5.97L0 24l7.27-1.9a11.91 11.91 0 0 0 4.76.98h.01c6.58 0 11.94-5.36 11.95-11.94 0-3.19-1.24-6.19-3.5-8.45"/></svg></a><button type="button" class="ed-art-share-btn" aria-label="Copy article link" data-share-platform="copy" data-share-url="https://tkre-tony.github.io/dashboard/news/dhlt-1q-fy2026-occupancy-holds-at-87-8-pct-positive-reversion-on/" onclick="return atlasArticleShare(event, this)"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M10.59 13.41a1 1 0 0 0 1.41 0l5-5a1 1 0 0 0-1.41-1.41l-5 5a1 1 0 0 0 0 1.41zm-2.83 5.66a3 3 0 0 1-4.24-4.24l3.18-3.18a1 1 0 1 0-1.41-1.41l-3.18 3.18a5 5 0 0 0 7.07 7.07l3.18-3.18a1 1 0 1 0-1.41-1.41l-3.19 3.17zM21.49 2.51a5 5 0 0 0-7.07 0l-3.18 3.18a1 1 0 1 0 1.41 1.41l3.18-3.18a3 3 0 0 1 4.24 4.24l-3.18 3.18a1 1 0 1 0 1.41 1.41l3.18-3.18a5 5 0 0 0 .01-7.06z"/></svg><span class="ed-art-share-toast" role="status" aria-live="polite">Copied</span></button></div></div></article><aside class="ed-art-related"><div class="ed-art-related-title">More from PropertyAtlas</div><div class="ed-art-related-grid"><a class="ed-art-related-card" href="/news/weekly-ura-realis-updates-week-of-25-may-2026-keong-saik-shophouse/"><div class="ed-art-related-eyebrow">Transactions</div><h4 class="ed-art-related-headline">Weekly URA Realis Updates — Week of 25 May 2026: Keong Saik Shophouse Doubles To S$22M; S$109M Across 53 Commercial & Industrial Caveats</h4><div class="ed-art-related-meta">29 May 2026 · 4 min</div></a><a class="ed-art-related-card" href="/news/ksh-fy2026-construction-margins-drive-loss-to-profit-turnaround-s-965m-order/"><div class="ed-art-related-eyebrow">Developer</div><h4 class="ed-art-related-headline">KSH FY2026: Construction Margins Drive Loss-To-Profit Turnaround, S$965M Order Book To FY2030, Three New Industrial JVs — Tianjin S$7.4M Fair Value Drag Persists</h4><div class="ed-art-related-meta">29 May 2026 · 8 min</div></a><a class="ed-art-related-card" href="/news/manulife-us-reit-1q-2026-figueroa-divestment-de-risked-with-psa-signed/"><div class="ed-art-related-eyebrow">Office</div><h4 class="ed-art-related-headline">Manulife US REIT 1Q 2026: Figueroa Divestment De-Risked With PSA Signed 6 May And US$1.85M Non-Refundable Deposit Received 12 May For US$92.5M Gross Sale To City Of Los Angeles Department Of Water And Power, Proforma Leverage 55.4% And Occupancy 73.2% Unlock MRA Exit Pathway</h4><div class="ed-art-related-meta">27 May 2026 · 9 min</div></a></div></aside><footer class="ed-art-footer">© 2026 PropertyAtlas · TK Real Estate · <a href="./">Back to Dashboard</a></footer>
+<div id="pa-sub-overlay" class="pa-sub-overlay"></div>
+<div id="pa-sub-modal" class="pa-sub-modal" role="dialog" aria-modal="true" aria-labelledby="pa-sub-title">
+<div class="pa-sub-head">
+<button type="button" class="pa-sub-close" aria-label="Close" onclick="paSubClose()">&times;</button>
+<div id="pa-sub-title" class="pa-sub-title">Get the brief in your inbox</div>
+<div class="pa-sub-sub">Weekly newsroom highlights, REIT earnings coverage, and Singapore commercial-property market signal.</div>
+</div>
+<div class="pa-sub-body" id="pa-sub-formwrap">
+<div id="pa-sub-error" class="pa-sub-error"></div>
+<div class="pa-sub-field"><label for="pa-sub-name">Name <span>(optional)</span></label><input id="pa-sub-name" type="text" autocomplete="name"></div>
+<div class="pa-sub-field"><label for="pa-sub-email">Email</label><input id="pa-sub-email" type="email" autocomplete="email"></div>
+<button type="button" id="pa-sub-submit" class="pa-sub-submit" onclick="paSubSubmit()">Subscribe</button>
+<div class="pa-sub-privacy">Double opt-in: we will email a confirmation link. Unsubscribe anytime.</div>
+</div>
+<div class="pa-sub-success" id="pa-sub-success" style="display:none">
+<div class="pa-sub-success-icon">&#10003;</div>
+<div class="pa-sub-success-title">Almost there</div>
+<div class="pa-sub-success-msg">Check your inbox to confirm your subscription.</div>
+<button type="button" class="pa-sub-submit" onclick="paSubClose()">Done</button>
+</div>
+</div>
+<script>
+(function(){
+var SB_URL="https://xywgocvjuygudzrduvwr.supabase.co";
+var SB_ANON="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inh5d2dvY3ZqdXlndWR6cmR1dndyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzI5MTE5OTgsImV4cCI6MjA4ODQ4Nzk5OH0.lGQ0utJV1E00ug-Sf0ZXh9lEYfhGHSONQpPkBblDLTM";
+var src='article-end';
+function g(id){return document.getElementById(id);}
+function looksEmail(s){if(!s||s.indexOf(' ')>=0)return false;var at=s.indexOf('@');if(at<1)return false;var dot=s.indexOf('.',at);return dot>at+1&&dot<s.length-1;}
+window.nlSubOpen=function(sourcePage){
+src=sourcePage||'article-end';
+g('pa-sub-error').style.display='none';
+g('pa-sub-formwrap').style.display='';
+g('pa-sub-success').style.display='none';
+var b=g('pa-sub-submit');b.disabled=false;b.textContent='Subscribe';
+g('pa-sub-overlay').style.display='block';
+g('pa-sub-modal').style.display='block';
+setTimeout(function(){try{g('pa-sub-email').focus();}catch(e){}},60);
+};
+window.paSubClose=function(){g('pa-sub-overlay').style.display='none';g('pa-sub-modal').style.display='none';};
+window.paSubSubmit=async function(){
+var name=g('pa-sub-name').value.trim();
+var email=g('pa-sub-email').value.trim();
+var err=g('pa-sub-error');
+if(!looksEmail(email)){err.textContent='Please enter a valid email address.';err.style.display='block';return;}
+err.style.display='none';
+var b=g('pa-sub-submit');b.disabled=true;b.textContent='Subscribing...';
+try{
+var res=await fetch(SB_URL+'/functions/v1/newsletter-subscribe',{
+method:'POST',
+headers:{'Content-Type':'application/json','Authorization':'Bearer '+SB_ANON},
+body:JSON.stringify({email:email,name:name||null,categories:['All'],cadence:'weekly',source_page:src})
+});
+var data=null;try{data=await res.json();}catch(e){}
+if(!res.ok||(data&&data.ok===false)){throw new Error((data&&data.error)||'Subscription failed. Please try again.');}
+g('pa-sub-formwrap').style.display='none';
+g('pa-sub-success').style.display='block';
+}catch(ex){
+err.textContent=(ex&&ex.message)?ex.message:'Something went wrong. Please try again.';
+err.style.display='block';
+b.disabled=false;b.textContent='Subscribe';
+}
+};
+document.addEventListener('keydown',function(e){if(e.key==='Escape'&&typeof window.paSubClose==='function')window.paSubClose();});
+document.addEventListener('click',function(e){if(e.target&&e.target.id==='pa-sub-overlay')window.paSubClose();});
+})();
+</script>
 </body>
 </html>
