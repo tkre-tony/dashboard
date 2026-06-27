@@ -66,6 +66,119 @@ const L282 = [path.join(__dirname, 'html_balance_check.js'),
 
 const html = fs.readFileSync(INDEX, 'utf8');
 
+// ─── v48.245 (S136): static-page newsletter subscribe ───────────────────────
+// The article-end CTA button (onclick="nlSubOpen('article-end')") is rendered
+// by the lifted SPA renderer, but nlSubOpen only exists in the SPA — on static
+// pages it was a dead button. We inject a self-contained subscribe modal that
+// defines window.nlSubOpen and POSTs straight to the newsletter-subscribe Edge
+// Function (CORS already configured). The public anon JWT + project URL are
+// pulled from the same index we're parsing, so there is one source of truth.
+const SB_URL  = (html.match(/PROJ_SUPABASE_URL\s*=\s*["']([^"']+)["']/) || [])[1] || '';
+const SB_ANON = (html.match(/PROJ_SUPABASE_KEY\s*=\s*["']([^"']+)["']/) || [])[1] || '';
+if (!SB_URL || !SB_ANON) {
+  console.error('FATAL: could not extract PROJ_SUPABASE_URL/KEY from index for the static subscribe handler.');
+  process.exit(1);
+}
+
+// pa-sub-* CSS — appended into the page HEAD <style> so L-SEO-8 class coverage
+// resolves every class (the gate reads only the first <style> block).
+const SUBSCRIBE_CSS = [
+  '.pa-sub-overlay{display:none;position:fixed;inset:0;background:rgba(13,31,60,.55);z-index:3000}',
+  '.pa-sub-modal{display:none;position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);z-index:3001;width:min(440px,94vw);max-height:92vh;overflow-y:auto;background:#fff;border-radius:14px;box-shadow:0 12px 48px rgba(13,31,60,.32);font-family:inherit}',
+  '.pa-sub-head{background:#0d1f3c;color:#fff;padding:22px 24px 18px;border-radius:14px 14px 0 0;position:relative}',
+  '.pa-sub-close{position:absolute;top:12px;right:12px;width:28px;height:28px;border:none;border-radius:7px;background:rgba(255,255,255,.14);color:#fff;font-size:18px;line-height:1;cursor:pointer}',
+  '.pa-sub-close:hover{background:rgba(255,255,255,.26)}',
+  '.pa-sub-title{font-size:17px;font-weight:700;line-height:1.3}',
+  '.pa-sub-sub{font-size:12px;color:rgba(255,255,255,.7);line-height:1.5;margin-top:6px}',
+  '.pa-sub-body{padding:20px 24px 22px}',
+  '.pa-sub-field{margin-bottom:14px}',
+  '.pa-sub-field label{display:block;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.03em;color:#475569;margin-bottom:6px}',
+  '.pa-sub-field label span{font-weight:500;text-transform:none;letter-spacing:0;color:#94a3b8}',
+  '.pa-sub-field input{width:100%;height:40px;padding:0 12px;border:1px solid #cbd5e1;border-radius:8px;font-size:14px;font-family:inherit;color:#1e293b;box-sizing:border-box;outline:none}',
+  '.pa-sub-field input:focus{border-color:#0d1f3c}',
+  '.pa-sub-submit{width:100%;height:44px;background:#0d1f3c;color:#fff;border:none;border-radius:9px;font-size:14px;font-weight:700;font-family:inherit;cursor:pointer;transition:opacity .15s}',
+  '.pa-sub-submit:hover:not(:disabled){opacity:.9}',
+  '.pa-sub-submit:disabled{opacity:.55;cursor:not-allowed}',
+  '.pa-sub-error{display:none;background:#fef2f2;border:1px solid #fecaca;border-radius:8px;padding:10px 12px;font-size:12.5px;color:#b91c1c;line-height:1.5;margin-bottom:14px}',
+  '.pa-sub-privacy{margin-top:12px;font-size:10.5px;color:#94a3b8;line-height:1.5;text-align:center}',
+  '.pa-sub-success{padding:8px 24px 24px;text-align:center}',
+  '.pa-sub-success-icon{width:48px;height:48px;margin:8px auto 14px;border-radius:50%;background:#dcfce7;color:#16a34a;font-size:24px;line-height:48px;font-weight:700}',
+  '.pa-sub-success-title{font-size:16px;font-weight:700;color:#1e293b;margin-bottom:8px}',
+  '.pa-sub-success-msg{font-size:13px;color:#64748b;line-height:1.6;margin-bottom:18px}'
+].join('\n');
+
+// pa-sub-* markup + self-contained script, injected before </body>.
+// No regex/backslashes in the script (avoids generator-escaping traps); the
+// Edge Function does authoritative validation server-side. No HTML comments.
+const SUBSCRIBE_BODY =
+'<div id="pa-sub-overlay" class="pa-sub-overlay"></div>\n' +
+'<div id="pa-sub-modal" class="pa-sub-modal" role="dialog" aria-modal="true" aria-labelledby="pa-sub-title">\n' +
+'<div class="pa-sub-head">\n' +
+'<button type="button" class="pa-sub-close" aria-label="Close" onclick="paSubClose()">&times;</button>\n' +
+'<div id="pa-sub-title" class="pa-sub-title">Get the brief in your inbox</div>\n' +
+'<div class="pa-sub-sub">Weekly newsroom highlights, REIT earnings coverage, and Singapore commercial-property market signal.</div>\n' +
+'</div>\n' +
+'<div class="pa-sub-body" id="pa-sub-formwrap">\n' +
+'<div id="pa-sub-error" class="pa-sub-error"></div>\n' +
+'<div class="pa-sub-field"><label for="pa-sub-name">Name <span>(optional)</span></label><input id="pa-sub-name" type="text" autocomplete="name"></div>\n' +
+'<div class="pa-sub-field"><label for="pa-sub-email">Email</label><input id="pa-sub-email" type="email" autocomplete="email"></div>\n' +
+'<button type="button" id="pa-sub-submit" class="pa-sub-submit" onclick="paSubSubmit()">Subscribe</button>\n' +
+'<div class="pa-sub-privacy">Double opt-in: we will email a confirmation link. Unsubscribe anytime.</div>\n' +
+'</div>\n' +
+'<div class="pa-sub-success" id="pa-sub-success" style="display:none">\n' +
+'<div class="pa-sub-success-icon">&#10003;</div>\n' +
+'<div class="pa-sub-success-title">Almost there</div>\n' +
+'<div class="pa-sub-success-msg">Check your inbox to confirm your subscription.</div>\n' +
+'<button type="button" class="pa-sub-submit" onclick="paSubClose()">Done</button>\n' +
+'</div>\n' +
+'</div>\n' +
+'<script>\n' +
+'(function(){\n' +
+'var SB_URL=' + JSON.stringify(SB_URL) + ';\n' +
+'var SB_ANON=' + JSON.stringify(SB_ANON) + ';\n' +
+"var src='article-end';\n" +
+'function g(id){return document.getElementById(id);}\n' +
+"function looksEmail(s){if(!s||s.indexOf(' ')>=0)return false;var at=s.indexOf('@');if(at<1)return false;var dot=s.indexOf('.',at);return dot>at+1&&dot<s.length-1;}\n" +
+'window.nlSubOpen=function(sourcePage){\n' +
+"src=sourcePage||'article-end';\n" +
+"g('pa-sub-error').style.display='none';\n" +
+"g('pa-sub-formwrap').style.display='';\n" +
+"g('pa-sub-success').style.display='none';\n" +
+"var b=g('pa-sub-submit');b.disabled=false;b.textContent='Subscribe';\n" +
+"g('pa-sub-overlay').style.display='block';\n" +
+"g('pa-sub-modal').style.display='block';\n" +
+"setTimeout(function(){try{g('pa-sub-email').focus();}catch(e){}},60);\n" +
+'};\n' +
+"window.paSubClose=function(){g('pa-sub-overlay').style.display='none';g('pa-sub-modal').style.display='none';};\n" +
+'window.paSubSubmit=async function(){\n' +
+"var name=g('pa-sub-name').value.trim();\n" +
+"var email=g('pa-sub-email').value.trim();\n" +
+"var err=g('pa-sub-error');\n" +
+"if(!looksEmail(email)){err.textContent='Please enter a valid email address.';err.style.display='block';return;}\n" +
+"err.style.display='none';\n" +
+"var b=g('pa-sub-submit');b.disabled=true;b.textContent='Subscribing...';\n" +
+'try{\n' +
+"var res=await fetch(SB_URL+'/functions/v1/newsletter-subscribe',{\n" +
+"method:'POST',\n" +
+"headers:{'Content-Type':'application/json','Authorization':'Bearer '+SB_ANON},\n" +
+"body:JSON.stringify({email:email,name:name||null,categories:['All'],cadence:'weekly',source_page:src})\n" +
+'});\n' +
+'var data=null;try{data=await res.json();}catch(e){}\n' +
+"if(!res.ok||(data&&data.ok===false)){throw new Error((data&&data.error)||'Subscription failed. Please try again.');}\n" +
+"g('pa-sub-formwrap').style.display='none';\n" +
+"g('pa-sub-success').style.display='block';\n" +
+'}catch(ex){\n' +
+"err.textContent=(ex&&ex.message)?ex.message:'Something went wrong. Please try again.';\n" +
+"err.style.display='block';\n" +
+"b.disabled=false;b.textContent='Subscribe';\n" +
+'}\n' +
+'};\n' +
+"document.addEventListener('keydown',function(e){if(e.key==='Escape'&&typeof window.paSubClose==='function')window.paSubClose();});\n" +
+"document.addEventListener('click',function(e){if(e.target&&e.target.id==='pa-sub-overlay')window.paSubClose();});\n" +
+'})();\n' +
+'<\/script>';
+// ─── end v48.245 static-page subscribe block ────────────────────────────────
+
 // ───────────────── JS region lifters (brace/bracket aware) ─────────────────
 // Walk from an anchor to the matching close delimiter, ignoring strings and
 // comments, so we can extract balanced source no matter the line layout.
@@ -343,7 +456,7 @@ function buildPage(a) {
   const injected = '.ed-art-fh-delta.neutral{color:var(--ed-muted)}';
   const head = buildHead(a, canonical);
   return '<!DOCTYPE html>\n<html lang="en" data-ready>\n<head>\n' + head +
-    '\n<style>\n' + css + '\n' + injected + '\n</style>\n</head>\n<body>\n' + fragment + '\n</body>\n</html>\n';
+    '\n<style>\n' + css + '\n' + injected + '\n' + SUBSCRIBE_CSS + '\n</style>\n</head>\n<body>\n' + fragment + '\n' + SUBSCRIBE_BODY + '\n</body>\n</html>\n';
 }
 
 // ───────────────── per-page gates ─────────────────
