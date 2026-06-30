@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- v48.252 (26 Jun 2026, S134): landing cascade regenerated from NEWS (hero+cards+feed teaser/alt/tag/meta drift fixed); display_teaser+landing_credit+landing_headline backfilled. -->
+<!-- v48.253 (26 Jun 2026, S134): landing cascade regenerated from NEWS (hero+cards+feed teaser/alt/tag/meta drift fixed); display_teaser+landing_credit+landing_headline backfilled. -->
 <html lang="en">
 <head>
 <meta charset="UTF-8"/>
@@ -17002,7 +17002,9 @@ function talentInitSummary(){
     });
   }
   var c2pool = TALENT_DATA.filter(function(p){
-    return typeof p.rem_exact==='number' && p.rem_exact>0 && p.role_type==='CEO' && reitEntities[p.entity];
+    // v48.253: REIT_DATA loads async (often empty at summary render) — fall back to the curated 'REIT CEO' tag so this card never blanks.
+    if(typeof p.rem_exact!=='number' || p.rem_exact<=0 || p.role_type!=='CEO') return false;
+    return reitEntities[p.entity] || (Array.isArray(p.tags) && p.tags.indexOf('REIT CEO')>=0);
   });
   var c2top = c2pool.reduce(function(a,b){return (b.rem_exact > (a?a.rem_exact:0)) ? b : a;}, null);
   var c2 = c2top
