@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- v48.251 (26 Jun 2026, S134): landing cascade regenerated from NEWS (hero+cards+feed teaser/alt/tag/meta drift fixed); display_teaser+landing_credit+landing_headline backfilled. -->
+<!-- v48.252 (26 Jun 2026, S134): landing cascade regenerated from NEWS (hero+cards+feed teaser/alt/tag/meta drift fixed); display_teaser+landing_credit+landing_headline backfilled. -->
 <html lang="en">
 <head>
 <meta charset="UTF-8"/>
@@ -2911,9 +2911,9 @@ body.article-takeover .ed-foot{display:none!important}
   /* v48.94 (session 35): Coming Soon overlay rules.
      When .pa-coming-soon-wrap is present inside a panel, hide all sibling content.
      body.dev-mode bypasses: hides the overlay itself, restores siblings for preview. */
-  .panel > .pa-coming-soon-wrap ~ * { display: none !important; }
+  body:not(.dev-mode) .panel > .pa-coming-soon-wrap ~ * { display: none !important; }
   body.dev-mode .panel > .pa-coming-soon-wrap { display: none !important; }
-  body.dev-mode .panel > .pa-coming-soon-wrap ~ * { display: revert !important; }
+  /* v48.252: hide rule scoped to :not(.dev-mode) and revert-restore removed — dev-mode now keeps each panel’s native display (grid/flex) instead of clobbering to block. */
 
   /* v48.97 (session 35): Viewport-breakout for data-heavy panels.
      Six panels (Market Pulse, Transactions, Analytics, Listings, Directory, Asset Directory)
