@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- v48.261 (3 Jul 2026, S150): Newsroom drop — id:129 Weekly URA REALIS Updates (week of 29 June 2026): Suntec Tower One office floor at S$2,400 psf, softest since Jul 2023; eight-lot One@Redhill bulk sale; S$109.6M across 56 caveats. -->
+<!-- v48.262 (3 Jul 2026, S150): id:129 Weekly URA REALIS drop (week of 29 Jun 2026) — Suntec Tower One office unit at S$2,400 psf (softest since Jul 2023), eight-lot One@Redhill bulk sale, S$109.6M / 56 caveats; + L-PNL-2: recent-transactions prior-sale match now area-aware (rejects >15% area mismatch) so a sub-unit no longer pairs against a whole-floor caveat sharing the same address string (fixes Suntec #11-01 false S$12.4M loss). -->
 <html lang="en">
 <head>
 <meta charset="UTF-8"/>
@@ -4031,7 +4031,7 @@ body.article-takeover .ed-foot{display:none!important}
       <section class="hero" aria-labelledby="hero-h">
   <div class="wrap hero-grid">
 
-    <!-- Image — id:129 Transactions hero. v48.261 cascade. -->
+    <!-- Image — id:129 Transactions hero. v48.262 cascade. -->
     <div class="hero-image-col">
       <a class="hero-image" href="/news/weekly-ura-realis-updates-week-of-29-june-2026-suntec-tower-one-one-redhill-bulk-sale/" data-article-id="129" aria-label="Read full story: Suntec City office towers, Marina Centre">
         <img src="./images/news_116_suntec_city_commercial.jpg" alt="Suntec City office towers, Marina Centre" class="hero-image-photo" loading="eager" fetchpriority="high" />
@@ -22518,7 +22518,7 @@ async function ovEnrichBuyData(rows){
 
   var batchResults = await Promise.all(batches.map(function(batch){
     var inList = batch.map(function(a){ return '"'+a.replace(/"/g,'\\"')+'"'; }).join(',');
-    var url = SB_URL + '/rest/v1/transactions_public?select=address,sale_date,transacted_price,unit_price_psf,type_of_sale'
+    var url = SB_URL + '/rest/v1/transactions_public?select=address,sale_date,transacted_price,unit_price_psf,type_of_sale,area_sqft'
       + '&address=in.('+encodeURIComponent(inList)+')&order=sale_date.asc&limit=5000';
     return fetch(url, {headers:hdr})
       .then(function(r){ return r.ok ? r.json() : []; })
@@ -22542,12 +22542,14 @@ async function ovEnrichBuyData(rows){
     // Find the most recent transaction BEFORE this sell date
     var sellDate = r.sale_date || "";
     var prior = null;
+    var rArea = (r.area_sqft && r.area_sqft > 0) ? r.area_sqft : null;
     txs.forEach(function(tx){
-      if(tx.sale_date < sellDate && tx.type_of_sale !== "New Sale"){
-        if(!prior || tx.sale_date > prior.sale_date) prior = tx;
-      }
-      // Also accept New Sale as the buy leg
       if(tx.sale_date < sellDate){
+        // L-PNL-2: do not pair a sub-unit against a whole-floor caveat that shares the
+        // same address string (e.g. Suntec #11-01 4,295sf vs the 1995 whole-floor 14,380sf).
+        // Reject a prior sale whose area differs by more than 15% — not the same physical unit.
+        if(rArea && tx.area_sqft && tx.area_sqft > 0 &&
+           Math.abs(tx.area_sqft - rArea) / Math.max(tx.area_sqft, rArea) > 0.15) return;
         if(!prior || tx.sale_date > prior.sale_date) prior = tx;
       }
     });
