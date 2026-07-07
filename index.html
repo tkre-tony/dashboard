@@ -1,4 +1,17 @@
 <!DOCTYPE html>
+<!-- v48.266 (7 Jul 2026, S154): PERF-2 Phase C. Recent Transactions server-side pagination via new
+     mp_transactions_paged RPC (+mp_match_tenure_dd helper, both live-committed this session; p_q '='
+     sentinel = exact project match, v1.1). Count and rows now derive from ONE query state
+     (COUNT(*) OVER() in-RPC): fixes (1) page-cap bug (pagination formerly over a <=2,000-row client
+     sample; all pages of the true filtered set now reachable) and (2) chip-decoupled headline count
+     (e.g. 82,551 shown with Freehold off / the S152 Warehouse-excluded 78,846). Client: new shared
+     engine mpBuildParams/mpFetchPage (filter-signature cache: count only on state change, skipped on
+     page flips) + mpRenderPage; loadDefaultTransactions + ovFetchRows + ovSearch rewired; sort now
+     server-side on all 5 columns and persists (legacy per-load reset removed); quick-search chart agg
+     only on page 0. ovEnrichBuyData now per-page (25 rows). Column filters, tenure dropdown
+     (mp_match_tenure_dd 1:1 port, L272 canonical-port rule), chips, inv mode all server-side.
+     Parity: 17-state local-Postgres harness 0 diffs (perf2 Phase C rehearsal). No cascade, NEWS,
+     TALENT_DATA, or NR_STATIC_IDS changes. -->
 <!-- v48.265 (7 Jul 2026, S154): PERF-2 Phase B production promote. Client chart fetch rewrites
      re-applied onto v48.264 base (staging index_perf2.html was cut from v48.262; newsroom cascade
      v48.263/264 preserved). Three regions: (1) fetchMonthlyData -> single chart_agg RPC replaces
@@ -22016,26 +22029,82 @@ async function ovFetchAgg(q){
   return Array.isArray(out) ? out : [];
 }
 
-async function ovFetchRows(q, page){
-  var detected = ovDetectType(q);
-  var filter;
-  if(detected.type === 'district'){
-    filter = "postal_district=eq." + detected.val;
-  } else if(ovExactProject){
-    filter = "project_name=eq." + encSQ(detected.val);
-  } else {
-    filter = "or=(project_name.ilike.*" + encSQ(detected.val) + "*,address.ilike.*" + encSQ(detected.val) + "*)";
-  }
-  var dateFilter = "&sale_date=gte." + getSliderStartDate() + "&sale_date=lte." + getSliderEndDate();
-  // Fetch all rows for the period — client-side pagination via ovRenderFiltered
-  var url = SB_URL + "/rest/v1/transactions_public?select=id,project_name,address,property_type,transacted_price,area_sqft,unit_price_psf,sale_date,tenure,planning_region,postal_district,type_of_sale,type_of_area,is_aborted&"
-    + filter + dateFilter + "&order=sale_date.desc&limit=2000";
-  var res = await fetch(url, {
-    headers:{"apikey":SB_KEY,"Authorization":"Bearer "+SB_KEY,"Prefer":"count=exact"}
+// ── PERF-2 PHASE C: shared server-side pagination engine ──
+// Count and rows derive from ONE query state via mp_transactions_paged
+// (COUNT(*) OVER() inside the RPC). Fixes the page-cap bug and the
+// chip-decoupled headline count. mpLastSig caches the filter signature so
+// count runs only when state changes (page flips skip it, p_with_count=false).
+var mpTotal = 0, mpLastSig = null;
+
+function mpBuildParams(page){
+  var f = ovGetFilters();
+  var activeP = TYPES.filter(function(t){ return activeTypes[t]; });
+  var activeT = TENURE_CATS.filter(function(k){ return activeTenures[k]; });
+  return {
+    p_from: getSliderStartDate(), p_to: getSliderEndDate(),
+    p_inv_mode: invSalesMode,
+    p_type_buckets: activeP.length===TYPES.length ? null : activeP,
+    p_tenure_cats:  activeT.length===TENURE_CATS.length ? null : activeT,
+    p_q: null,
+    p_districts: (f.dist && f.dist.length) ? f.dist.map(function(d){ return parseInt(d,10); }) : null,
+    p_project: f.project || null,
+    p_address: f.address || null,
+    p_type_sub: (f.type && f.type.length) ? f.type.map(function(t){ return t.toLowerCase(); }) : null,
+    p_tos: (f.tos && f.tos.length) ? f.tos : null,
+    p_toa: (f.dbtype && f.dbtype.length) ? f.dbtype : null,
+    p_price_min: f.priceMin > 0 ? f.priceMin : null,
+    p_price_max: isFinite(f.priceMax) ? f.priceMax : null,
+    p_area_min:  f.areaMin > 0 ? f.areaMin : null,
+    p_area_max:  isFinite(f.areaMax) ? f.areaMax : null,
+    p_psf_min:   f.psfMin > 0 ? f.psfMin : null,
+    p_psf_max:   isFinite(f.psfMax) ? f.psfMax : null,
+    p_tenure_dd: (f.tenure && f.tenure.length) ? f.tenure : null,
+    p_sort_col: ovSortCol, p_sort_dir: ovSortDir,
+    p_limit: ovPageSize, p_offset: (page||0) * ovPageSize
+  };
+}
+
+async function mpFetchPage(p){
+  var sig = JSON.stringify([p.p_from,p.p_to,p.p_inv_mode,p.p_type_buckets,
+    p.p_tenure_cats,p.p_q,p.p_districts,p.p_project,p.p_address,p.p_type_sub,
+    p.p_tos,p.p_toa,p.p_price_min,p.p_price_max,p.p_area_min,p.p_area_max,
+    p.p_psf_min,p.p_psf_max,p.p_tenure_dd]);
+  p.p_with_count = (sig !== mpLastSig);
+  var res = await fetch(SB_URL + "/rest/v1/rpc/mp_transactions_paged", {
+    method:"POST",
+    headers:{"apikey":SB_KEY,"Authorization":"Bearer "+SB_KEY,"Content-Type":"application/json"},
+    body: JSON.stringify(p)
   });
-  var total = parseInt(res.headers.get("content-range")?.split("/")[1]||"0");
-  var data = await res.json();
-  return {data:data, total:total};
+  if(!res.ok) throw new Error("mp_transactions_paged HTTP " + res.status);
+  var out = await res.json();
+  if(p.p_with_count){
+    mpTotal = (out && typeof out.total === "number") ? out.total : 0;
+    mpLastSig = sig;
+  }
+  return { data:(out && out.rows) || [], total: mpTotal };
+}
+
+async function ovFetchRows(q, page){
+  // PERF-2 Phase C: quick search rides the same shared engine — the
+  // column filters, chips, and inv mode all apply server-side in the
+  // SAME query state as the count.
+  var detected = ovDetectType(q);
+  var p = mpBuildParams(page);
+  if(detected.type === 'district'){
+    var d = parseInt(detected.val, 10);
+    // Intersect with any column district filter (legacy AND semantics)
+    if(p.p_districts){
+      p.p_districts = p.p_districts.filter(function(x){ return x === d; });
+      if(!p.p_districts.length) p.p_districts = [-1]; // disjoint → empty set
+    } else {
+      p.p_districts = [d];
+    }
+  } else if(ovExactProject){
+    p.p_q = '=' + detected.val;  // '=' sentinel: exact project match (RPC v1.1)
+  } else {
+    p.p_q = detected.val;
+  }
+  return mpFetchPage(p);
 }
 
 async function ovSearch(page){
@@ -22061,30 +22130,24 @@ async function ovSearch(page){
     : "Showing results for: \"" + q + "\"";
 
   try {
-    // Fetch aggregated data for chart + transaction rows in parallel
+    // PERF-2 Phase C: chart agg only on page 0 (chart depends on the filter
+    // state, not the page); rows are one server page from the shared engine.
     var [aggData, rowResult] = await Promise.all([
-      ovFetchAgg(q),
+      page === 0 ? ovFetchAgg(q) : Promise.resolve(null),
       ovFetchRows(q, page)
     ]);
 
-    // Update chart with filtered data
-    updateChartFromSearch(aggData, q);
+    if(aggData) updateChartFromSearch(aggData, q);
 
-    // Store ALL fetched rows in cache — ovRenderFiltered handles client-side pagination
     ovTotal = rowResult.total;
     ovFilteredCache = rowResult.data || [];
-    ovCurPage = 0;
+    ovCurPage = page;
 
     document.getElementById("ov-tx-loading").style.display = "none";
     document.getElementById("ov-tx-title").textContent = "Transactions — " + getActiveRangeLabel();
-    document.getElementById("ov-tx-count").textContent = ovTotal.toLocaleString() + " transactions found";
 
-    if(!ovFilteredCache.length){
-      document.getElementById("ov-tx-empty").style.display = "block";
-    } else {
-      ovRenderFiltered(ovFilteredCache);
-      ovEnrichBuyData(ovFilteredCache);
-    }
+    mpRenderPage(ovFilteredCache, ovTotal);
+    if(ovFilteredCache.length) ovEnrichBuyData(ovFilteredCache);
   } catch(e){
     document.getElementById("ov-tx-loading").style.display = "none";
     console.error(e);
@@ -22219,97 +22282,52 @@ function ovMatchTenureFilter(tenureVal, filt){
 }
 
 function ovRenderFiltered(rows){
-  var f = ovGetFilters();
-  var filtered = rows.filter(function(r){
-    if(f.dist && f.dist.length>0){
-      if(!f.dist.some(function(d){return String(r.postal_district||"")===String(d);})) return false;
-    }
-    if(f.project && (r.project_name||"").toLowerCase().indexOf(f.project)<0) return false;
-    if(f.address && (r.address||"").toLowerCase().indexOf(f.address)<0) return false;
-    if(f.type && f.type.length>0){
-      var pt=(r.property_type||"").toLowerCase();
-      var typeMatch=f.type.some(function(t){return pt.indexOf(t.toLowerCase())>=0;});
-      if(!typeMatch) return false;
-    }
-    // Tenure chip filter
-    var allTenOn=TENURE_CATS.every(function(k){return activeTenures[k];});
-    if(!allTenOn){
-      var rc=classifyTenure(r.tenure);
-      if(!rc||!activeTenures[rc]) return false;
-    }
-    var price=r.transacted_price||0;
-    if(price < f.priceMin || price > f.priceMax) return false;
-    if(f.tos && f.tos.length>0){
-      var tosVal=(r.type_of_sale||"").toLowerCase();
-      if(!f.tos.some(function(t){return tosVal.indexOf(t)>=0;})) return false;
-    }
-    if(f.dbtype && f.dbtype.length>0){
-      var dbt=(r.type_of_area||"").toLowerCase();
-      if(!f.dbtype.some(function(t){return dbt.indexOf(t)>=0;})) return false;
-    }
-    var area=parseFloat(r.area_sqft)||0;
-    if(area < f.areaMin || area > f.areaMax) return false;
-    var psf=parseFloat(r.unit_price_psf)||0;
-    if(psf < f.psfMin || psf > f.psfMax) return false;
-    if(f.tenure && f.tenure.length>0){
-      if(!f.tenure.some(function(t){return ovMatchTenureFilter(r.tenure,t);})) return false;
-    }
-    return true;
-  });
+  // PERF-2 Phase C: all filtering, sorting, and pagination now run
+  // server-side in ONE query state (mp_transactions_paged). Legacy call
+  // sites — ovApplyFilters, ovClearFilters, ovSortBy, dropdowns, chips —
+  // land here on any state change: reset to page 0 and refetch through
+  // the active mode. The rows argument is ignored (kept for call-site
+  // compatibility).
+  ovCurPage = 0;
+  if(ovQuery){ ovSearch(0); } else { loadDefaultTransactions(0); }
+}
 
-  // Sort
-  filtered.sort(function(a,b){
-    var av, bv;
-    if(ovSortCol==="sale_date"){ av=a.sale_date||""; bv=b.sale_date||""; }
-    else if(ovSortCol==="postal_district"){ av=parseInt(a.postal_district)||0; bv=parseInt(b.postal_district)||0; }
-    else if(ovSortCol==="transacted_price"){ av=a.transacted_price||0; bv=b.transacted_price||0; }
-    else if(ovSortCol==="area_sqft"){ av=parseFloat(a.area_sqft)||0; bv=parseFloat(b.area_sqft)||0; }
-    else if(ovSortCol==="unit_price_psf"){ av=parseFloat(a.unit_price_psf)||0; bv=parseFloat(b.unit_price_psf)||0; }
-    else { av=a.sale_date||""; bv=b.sale_date||""; }
-    if(av<bv) return ovSortDir==="asc"?-1:1;
-    if(av>bv) return ovSortDir==="asc"?1:-1;
-    return 0;
-  });
-
-  // Count display
+function mpRenderPage(pageRows, total){
+  // Pure page renderer: count line, table, pagination — all fed by the
+  // server total from the SAME query as the rows.
   var countEl = document.getElementById("ov-tx-count");
-  var totalTx = ovTotal || filtered.length;
-  var totalPages = Math.max(1, Math.ceil(filtered.length / ovPageSize));
-  if(ovCurPage >= totalPages) ovCurPage = 0;
-  var pageStart = ovCurPage * ovPageSize;
-  var pageRows = filtered.slice(pageStart, pageStart + ovPageSize);
-  var countTxt = totalTx.toLocaleString() + " transactions · Page " + (ovCurPage+1) + " of " + totalPages;
-  if(filtered.length < (ovFilteredCache||[]).length) countTxt += " (" + filtered.length + " filtered)";
-  if(countEl) countEl.textContent = countTxt;
+  var totalPages = Math.max(1, Math.ceil((total || 0) / ovPageSize));
+  if(ovCurPage >= totalPages) ovCurPage = totalPages - 1;
+  if(countEl) countEl.textContent = (total || 0).toLocaleString()
+    + " transactions · Page " + (ovCurPage + 1) + " of " + totalPages;
 
-  if(filtered.length===0){
-    document.getElementById("ov-tx-empty").style.display="block";
-    document.getElementById("ov-tx-table").style.display="none";
-    document.getElementById("ov-tx-pagination").innerHTML="";
+  var pgEl = document.getElementById("ov-tx-pagination");
+  if(!pageRows || pageRows.length === 0){
+    document.getElementById("ov-tx-empty").style.display = "block";
+    document.getElementById("ov-tx-table").style.display = "none";
+    if(pgEl) pgEl.innerHTML = "";
     return;
   }
-  document.getElementById("ov-tx-empty").style.display="none";
+  document.getElementById("ov-tx-empty").style.display = "none";
   renderOvTable(pageRows);
-  document.getElementById("ov-tx-table").style.display="table";
+  document.getElementById("ov-tx-table").style.display = "table";
 
-  // Pagination
-  var pgEl = document.getElementById("ov-tx-pagination");
-  if(totalPages <= 1){ pgEl.innerHTML=""; return; }
-  var pgHtml = "<button onclick='ovGoPage("+(ovCurPage-1)+",null)' "+(ovCurPage===0?"disabled style='opacity:.4'":"")+" style='padding:4px 10px;border:1px solid var(--bdr);border-radius:5px;background:var(--srf);cursor:pointer;font-size:11px'>← Prev</button>";
-  // Page number buttons — show up to 5 around current
+  if(totalPages <= 1){ pgEl.innerHTML = ""; return; }
+  var pgHtml = "<button onclick='ovGoPage(" + (ovCurPage-1) + ",null)' " + (ovCurPage===0 ? "disabled style='opacity:.4'" : "") + " style='padding:4px 10px;border:1px solid var(--bdr);border-radius:5px;background:var(--srf);cursor:pointer;font-size:11px'>← Prev</button>";
   var pStart = Math.max(0, ovCurPage-2), pEnd = Math.min(totalPages-1, ovCurPage+2);
-  for(var pi=pStart; pi<=pEnd; pi++){
-    var active = pi===ovCurPage;
-    pgHtml += "<button onclick='ovGoPage("+pi+",null)' style='padding:4px 9px;border:1px solid var(--bdr);border-radius:5px;background:"+(active?"var(--g1)":"var(--srf)")+";color:"+(active?"#fff":"var(--txt)")+";cursor:pointer;font-size:11px'>"+(pi+1)+"</button>";
+  for(var pi = pStart; pi <= pEnd; pi++){
+    var active = pi === ovCurPage;
+    pgHtml += "<button onclick='ovGoPage(" + pi + ",null)' style='padding:4px 9px;border:1px solid var(--bdr);border-radius:5px;background:" + (active ? "var(--g1)" : "var(--srf)") + ";color:" + (active ? "#fff" : "var(--txt)") + ";cursor:pointer;font-size:11px'>" + (pi+1) + "</button>";
   }
-  pgHtml += "<button onclick='ovGoPage("+(ovCurPage+1)+",null)' "+(ovCurPage>=totalPages-1?"disabled style='opacity:.4'":"")+" style='padding:4px 10px;border:1px solid var(--bdr);border-radius:5px;background:var(--srf);cursor:pointer;font-size:11px'>Next →</button>";
+  pgHtml += "<button onclick='ovGoPage(" + (ovCurPage+1) + ",null)' " + (ovCurPage >= totalPages-1 ? "disabled style='opacity:.4'" : "") + " style='padding:4px 10px;border:1px solid var(--bdr);border-radius:5px;background:var(--srf);cursor:pointer;font-size:11px'>Next →</button>";
   pgEl.innerHTML = pgHtml;
 }
 
 function ovGoPage(page, rows){
-  if(!ovFilteredCache) return;
+  // PERF-2 Phase C: page flips refetch one server page. Filter signature
+  // is unchanged so mpFetchPage skips the count (p_with_count=false).
   ovCurPage = Math.max(0, page);
-  ovRenderFiltered(ovFilteredCache);
+  if(ovQuery){ ovSearch(ovCurPage); } else { loadDefaultTransactions(ovCurPage); }
 }
 
 function ovClearFilters(){
@@ -22410,77 +22428,31 @@ function renderOvTable(rows){
 }
 
 async function loadDefaultTransactions(page){
+  // PERF-2 Phase C: one mp_transactions_paged call per page. The count and
+  // the rows come from the SAME server-side query state — date window,
+  // property-type chips (bucket_property_type), tenure chips
+  // (classify_tenure), investment-sales mode, and every column filter all
+  // apply inside the RPC. Fixes: (1) the page-cap bug (pagination was over
+  // a ≤2,000-row client sample; every page is now reachable) and (2) the
+  // chip-decoupled headline count (82,551 shown while rows were filtered).
+  // Sort is server-side and PERSISTS across loads (the legacy reset to
+  // sale_date/desc here fought ovSortBy — deliberately removed).
   page = page||0;
-  ovPage = page;
-  var dateFilter = "sale_date=gte." + getSliderStartDate() + "&sale_date=lte." + getSliderEndDate();
-  var offset = page * 10;
-
-  // Build property_type filter from activeTypes
-  var typeDbMap={
-    "office":"Office",
-    "retail":"Retail",
-    "shophouse":"Shop House",
-    "multiUser":"Multiple-User Factory",
-    "singleUser":"Single-User",
-    "bizPark":"Business Park",
-    "warehouse":"Warehouse"
-  };
-  var activePtypes=TYPES.filter(function(t){return activeTypes[t];}).map(function(t){return typeDbMap[t];});
-  var allActive=activePtypes.length===TYPES.length;
-  var typeFilter="";
-  if(!allActive && activePtypes.length>0){
-    typeFilter="&or=("+activePtypes.map(function(p){return"property_type.ilike.*"+encodeURIComponent(p)+"*";}).join(",")+")";
-  }
-
-    // Build tenure filter
-  var activeTenList=TENURE_CATS.filter(function(k){return activeTenures[k];});
-  var allTenActive=activeTenList.length===TENURE_CATS.length;
-  var tenureFilter="";
-  // We filter client-side via classifyTenure after fetch (tenure bucketing is complex)
-
-  var fetchLimit = 200;
-  if(activeRange==="5Y") fetchLimit=500;
-  if(activeRange==="10Y") fetchLimit=1000;
-  if(activeRange==="ALL") fetchLimit=2000;
-
-  // Investment sales filter — keeps Recent Transactions in sync with the chart toggle
-  var invFilter = invSalesMode==='exclude' ? "&or=(investment_sales.is.null,investment_sales.neq.y)"
-                : invSalesMode==='only'    ? "&investment_sales=eq.y"
-                : ""; // 'all' = no filter
-
-  var fullUniverse = (activeRange==='ALL' && allActive && invSalesMode==='all');
-  var url = SB_URL + "/rest/v1/transactions_public?select=id,project_name,address,property_type,transacted_price,area_sqft,unit_price_psf,sale_date,tenure,planning_region,postal_district,type_of_sale,type_of_area,is_aborted,investment_sales&"
-    + dateFilter + typeFilter + invFilter + "&order=sale_date.desc&limit="+fetchLimit+"&offset=0";
-  var res = await fetch(url, {
-    headers:{"apikey":SB_KEY,"Authorization":"Bearer "+SB_KEY,"Prefer":"count=exact"}
-  });
-  var total = parseInt(res.headers.get("content-range")?.split("/")[1]||"0");
-  var data = await res.json();
-  if(fullUniverse && !total){
-    if(ovGrandTotalCache == null){
-      try {
-        var sres = await fetch(SB_URL + "/rest/v1/transactions_stats?select=total", { headers:{"apikey":SB_KEY,"Authorization":"Bearer "+SB_KEY,"Prefer":"count=none"} });
-        var sjson = await sres.json();
-        if(Array.isArray(sjson) && sjson[0] && sjson[0].total) ovGrandTotalCache = parseInt(sjson[0].total);
-      } catch(_e){}
-    }
-    if(ovGrandTotalCache) total = ovGrandTotalCache;
-  }
-  ovTotal = total;
-  ovFilteredCache = data || []; ovCurPage = 0;
-  ovSortCol = "sale_date"; ovSortDir = "desc";
-  ovUpdateSortIndicators();
-  document.getElementById("ov-tx-loading").style.display = "none";
-  var typeLabel = allActive ? "all types" : activePtypes.join(", ");
-  document.getElementById("ov-tx-title").textContent = "Recent Transactions — " + getActiveRangeLabel();
-  document.getElementById("ov-tx-count").textContent = total.toLocaleString() + " transactions — " + typeLabel + (total > fetchLimit ? " (showing latest "+fetchLimit+")" : "");
-  if(data && data.length > 0){
-    ovRenderFiltered(data);
-    // Async enrich resale/sub-sale rows with prior buy data (batch by address)
-    ovEnrichBuyData(data);
-  } else {
-    document.getElementById("ov-tx-empty").style.display = "block";
-    document.getElementById("ov-tx-table").style.display = "none";
+  ovPage = page; ovCurPage = page;
+  document.getElementById("ov-tx-loading").style.display = "block";
+  document.getElementById("ov-tx-empty").style.display = "none";
+  try {
+    var result = await mpFetchPage(mpBuildParams(page));
+    ovTotal = result.total;
+    ovFilteredCache = result.data;
+    ovUpdateSortIndicators();
+    document.getElementById("ov-tx-loading").style.display = "none";
+    document.getElementById("ov-tx-title").textContent = "Recent Transactions — " + getActiveRangeLabel();
+    mpRenderPage(result.data, ovTotal);
+    if(result.data.length) ovEnrichBuyData(result.data);
+  } catch(e){
+    document.getElementById("ov-tx-loading").style.display = "none";
+    console.error("loadDefaultTransactions:", e);
   }
 }
 
