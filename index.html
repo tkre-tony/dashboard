@@ -1,4 +1,11 @@
 <!DOCTYPE html>
+<!-- v48.265 (7 Jul 2026, S154): PERF-2 Phase B production promote. Client chart fetch rewrites
+     re-applied onto v48.264 base (staging index_perf2.html was cut from v48.262; newsroom cascade
+     v48.263/264 preserved). Three regions: (1) fetchMonthlyData -> single chart_agg RPC replaces
+     1,000-row paginated loop (fixes 61,000-row All-Time truncation: true ALL S$214.8B / 82,551 deals);
+     (2) ovFetchAgg -> chart_agg RPC with p_district/p_project/p_query, p_inv_mode=all (kills 50k-row
+     search-chart cap); (3) updateChartFromSearch consumes RPC elements {mo,tb,v}. No cascade, NEWS,
+     TALENT_DATA, or NR_STATIC_IDS changes. Parity record: PERF2_phaseA_parity_record.md (S152). -->
 <!-- v48.264 (6 Jul 2026, S153): id:130 NTT DC REIT first Annual Report FY25/26 drop (AR-class).
      NEWS ARRAY: id=130 inserted at top (maiden AGM 28 Jul, CEO pay S$388,425, directors' fees,
      GIC 9.76% vs 9.8% Unit Ownership Limit, buy-back mandate renewal ~US$105M). Entries 71+? -> +1.
@@ -17737,51 +17744,27 @@ async function fetchMonthlyData(months, startDate, endDate){
     from=d.toISOString().substring(0,10);
     until=getSliderEndDate();
   }
-  var typeMap={
-    "multiple-user factory":"multiUser","multi-user factory":"multiUser",
-    "single-user factory":"singleUser",
-    "warehouse":"warehouse",
-    "business park":"bizPark",
-    "office":"office",
-    "retail":"retail",
-    "shop house":"shophouse","shophouse":"shophouse"
-  };
   try{
-    var allRows=[],page=0,pageSize=1000;
-    while(true){
-      var lo=page*pageSize,hi=lo+pageSize-1;
-      var invFilter = invSalesMode==='exclude' ? "&or=(investment_sales.is.null,investment_sales.neq.y)"
-                    : invSalesMode==='only'    ? "&investment_sales=eq.y"
-                    : ""; // 'all' = no filter
-      var url=SB_URL+"/rest/v1/transactions_public?select=sale_date,property_type,transacted_price,unit_price_psf,tenure,is_aborted&sale_date=gte."+from+"&sale_date=lte."+until+invFilter+"&is_aborted=neq.true&order=sale_date.asc";
-      var r=await fetch(url,{headers:{
-        "apikey":SB_KEY,"Authorization":"Bearer "+SB_KEY,
-        "Range":lo+"-"+hi,"Range-Unit":"items"
-      }});
-      var batch=await r.json();
-      if(!Array.isArray(batch)||batch.length===0)break;
-      allRows=allRows.concat(batch);
-      if(batch.length<pageSize)break;
-      page++;
-      if(page>60)break;
-    }
-    if(allRows.length===0)return null;
+    // PERF-2: single chart_agg RPC replaces the 1,000-row paginated loop.
+    // Server groups by month x type x tenure (parity-verified 4 Jul 2026);
+    // tenure chips filtered client-side below, same semantics as before.
+    var res=await fetch(SB_URL+"/rest/v1/rpc/chart_agg",{
+      method:"POST",
+      headers:{"apikey":SB_KEY,"Authorization":"Bearer "+SB_KEY,"Content-Type":"application/json"},
+      body:JSON.stringify({p_from:from,p_to:until,p_inv_mode:invSalesMode})
+    });
+    var rows=await res.json();
+    if(!Array.isArray(rows)||rows.length===0)return null;
     var agg={};
-    allRows.forEach(function(row){
-      if(!row.sale_date||!row.transacted_price)return;
-      var mo=row.sale_date.substring(0,7);
-      var pt=(row.property_type||"").toLowerCase();
-      var t=null;
-      Object.keys(typeMap).forEach(function(k){if(pt.indexOf(k)>=0)t=typeMap[k];});
-      if(!t)return;
-      var tc=classifyTenure(row.tenure);
-      if(tc&&!activeTenures[tc])return;
-      if(!agg[mo])agg[mo]={};
-      if(!agg[mo][t])agg[mo][t]={val:0,cnt:0,psfSum:0,psfCnt:0};
-      agg[mo][t].val+=(parseFloat(row.transacted_price)/1e6);
-      agg[mo][t].cnt+=1;
-      var psf=parseFloat(row.unit_price_psf);
-      if(!isNaN(psf)&&psf>0){agg[mo][t].psfSum+=psf;agg[mo][t].psfCnt+=1;}
+    rows.forEach(function(e){
+      if(!e.tb)return;
+      if(e.tc&&!activeTenures[e.tc])return; // null tc always kept (unclassifiable tenure)
+      if(!agg[e.mo])agg[e.mo]={};
+      if(!agg[e.mo][e.tb])agg[e.mo][e.tb]={val:0,cnt:0,psfSum:0,psfCnt:0};
+      agg[e.mo][e.tb].val+=e.v;
+      agg[e.mo][e.tb].cnt+=e.c;
+      agg[e.mo][e.tb].psfSum+=e.ps;
+      agg[e.mo][e.tb].psfCnt+=e.pc;
     });
     var labels=Object.keys(agg).sort();
     if(!labels.length)return null;
@@ -22014,18 +21997,23 @@ function getDateForActiveRange(){
 
 async function ovFetchAgg(q){
   var detected = ovDetectType(q);
-  var filter;
+  // PERF-2: server-side aggregation via chart_agg — kills the 50k-row cap.
+  // p_inv_mode 'all' preserves prior behavior (search chart never inv-filtered).
+  var params = {p_from:"1995-01-01", p_to:"2099-12-31", p_inv_mode:"all"};
   if(detected.type === 'district'){
-    filter = "postal_district=eq." + detected.val;
+    params.p_district = String(detected.val);
   } else if(ovExactProject){
-    filter = "project_name=eq." + encSQ(detected.val);
+    params.p_project = detected.val;
   } else {
-    filter = "or=(project_name.ilike.*" + encSQ(detected.val) + "*,address.ilike.*" + encSQ(detected.val) + "*)";
+    params.p_query = detected.val;
   }
-  // Fetch up to 50000 rows for chart aggregation
-  var url = SB_URL + "/rest/v1/transactions_public?select=sale_date,property_type,transacted_price&" + filter + "&limit=50000";
-  var res = await fetch(url, {headers:{"apikey":SB_KEY,"Authorization":"Bearer "+SB_KEY}});
-  return await res.json();
+  var res = await fetch(SB_URL + "/rest/v1/rpc/chart_agg", {
+    method:"POST",
+    headers:{"apikey":SB_KEY,"Authorization":"Bearer "+SB_KEY,"Content-Type":"application/json"},
+    body: JSON.stringify(params)
+  });
+  var out = await res.json();
+  return Array.isArray(out) ? out : [];
 }
 
 async function ovFetchRows(q, page){
@@ -22109,21 +22097,12 @@ function updateChartFromSearch(rows, q){
   var agg = {};
   YEARS.forEach(function(y){ agg[y] = {}; TYPES.forEach(function(t){ agg[y][t]=0; }); });
 
-  var typeMap = {
-    "multiple-user factory":"multiUser","single-user factory":"singleUser",
-    "warehouse":"warehouse","business park":"bizPark",
-    "office":"office","retail":"retail","shop house":"shophouse","shophouse":"shophouse"
-  };
-
-  rows.forEach(function(r){
-    if(!r.sale_date || !r.transacted_price) return;
-    var yr = parseInt(r.sale_date.substring(0,4));
+  // PERF-2: rows are chart_agg elements {mo,tb,tc,v,c,ps,pc}, pre-bucketed server-side.
+  rows.forEach(function(e){
+    if(!e.mo || !e.tb) return;
+    var yr = parseInt(e.mo.substring(0,4));
     if(!agg[yr]) return;
-    var pt = (r.property_type||"").toLowerCase();
-    var typ = null;
-    Object.keys(typeMap).forEach(function(k){ if(pt.indexOf(k)>=0) typ=typeMap[k]; });
-    if(!typ) return;
-    agg[yr][typ] += parseFloat(r.transacted_price)/1000000;
+    agg[yr][e.tb] += e.v;
   });
 
   CHART_OVERRIDE = YEARS.map(function(y){
