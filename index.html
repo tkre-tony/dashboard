@@ -1,4 +1,9 @@
 <!DOCTYPE html>
+<!-- v48.267 (7 Jul 2026, S154): PERF-2 Phase C hotfix. ovEnrichBuyData tail called
+     ovRenderFiltered(rows) to repaint enriched rows; under the Phase C router that now REFETCHES,
+     creating an infinite fetch->render->enrich->refetch loop (flicker reported in UAT on the
+     Warehouse-off check). Fixed: enrichment repaint now calls mpRenderPage(rows, ovTotal) (pure
+     render, no refetch). Single-line functional change. -->
 <!-- v48.266 (7 Jul 2026, S154): PERF-2 Phase C. Recent Transactions server-side pagination via new
      mp_transactions_paged RPC (+mp_match_tenure_dd helper, both live-committed this session; p_q '='
      sentinel = exact project match, v1.1). Count and rows now derive from ONE query state
@@ -22527,8 +22532,11 @@ async function ovEnrichBuyData(rows){
   });
 
   if(anyEnriched){
-    // Re-render to show enriched data
-    ovRenderFiltered(rows);
+    // v48.267 hotfix: PURE re-render of the enriched page rows. Under the
+    // Phase C router, ovRenderFiltered() now REFETCHES — calling it from
+    // here created a fetch→render→enrich→refetch loop (continuous flicker,
+    // constant page-0 reset, RPC hammering). mpRenderPage repaints only.
+    mpRenderPage(rows, ovTotal);
   }
 }
 
