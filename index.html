@@ -1,4 +1,8 @@
 <!DOCTYPE html>
+<!-- v48.271 (9 Jul 2026, S157): Financial-headlines wrap fix. .ed-art-fh-val dropped
+     white-space:nowrap (value+delta span could not break, forcing horizontal overflow on
+     long sub-metrics, first seen on id:133); min-width:0 added so the flex child wraps
+     inside the standard column width. Static page id:133 regenerated with same CSS. -->
 <!-- v48.270 (9 Jul 2026, S157): Newsroom drop id:133 AIMS APAC REIT Hazelmere Perth acquisition
      (A$42.70M / S$38.43M freehold 9.15ha at ~A$467 psm land, 5.3% NPI yield, +0.3% DPU accretive,
      10-yr NNN to Swan Materials, data-centre optionality near 550MVA Guildford substation).
@@ -29652,7 +29656,7 @@ html.article-takeover .ed-article-page,body.article-takeover .ed-article-page{di
 @media(max-width:580px){.ed-art-fh-panel{grid-template-columns:1fr}}
 .ed-art-fh-row{display:flex;justify-content:space-between;align-items:baseline;border-bottom:1px dotted var(--ed-bronze-lt);padding:7px 0;font-size:14.5px;gap:8px}
 .ed-art-fh-label{color:var(--ed-muted)}
-.ed-art-fh-val{color:var(--ed-ink);font-weight:700;text-align:right;white-space:nowrap}
+.ed-art-fh-val{color:var(--ed-ink);font-weight:700;text-align:right;min-width:0}
 .ed-art-fh-delta{font-size:12px;font-weight:600;margin-left:8px;font-family:'DM Sans',sans-serif}
 .ed-art-fh-delta.up{color:var(--ed-pos)}
 .ed-art-fh-delta.down{color:var(--ed-neg)}
