@@ -1,4 +1,5 @@
 <!DOCTYPE html>
+<!-- v48.277 (11 Jul 2026, S162): PUBLIC_TAB_HASHES gains #asset-directory (assetdir) and #listings (forsale) so map-root bucket deep links activate the correct tab without dev-mode. Two-line whitelist edit; no other surfaces touched. NEWSROOM VARIANT. -->
 <!-- v48.276 (11 Jul 2026, S161): Vacancy entity chips reordered alphabetically (AI REIT, AIMS, Clifton, ESR-REIT, MIT, Perennial; All REITs unchanged first). NEWSROOM VARIANT. Pending deploy — rides next upload. -->
 <!-- v48.275 (11 Jul 2026, S161): Divested status support in Vacancy Inventory (NEWSROOM VARIANT) — active views/stats exclude Divested; Absorbed toggle shows Absorbed+Divested with distinct ◈ Divested badge; invLatestMonth and Directory lens updated. Fixes ESR 112-vs-102 overcount and Divested rows rendering as live listings with Enquire CTAs. -->
 <!-- v48.274 (10 Jul 2026, S160): Perennial (Perennial Business City) vacancy chip + hero ticker pill; NEWSROOM VARIANT — canonical/og:url /newsroom/ retained. Deploy at newsroom/index.html. -->
@@ -30549,6 +30550,8 @@ html.article-takeover .ed-article-page,body.article-takeover .ed-article-page{di
 (function atlasPublicTabHashes(){
   // PUBLIC: 3 always-visible tabs. Hash → data-tab activates on cold load.
   var PUBLIC_TAB_HASHES = {
+    '#asset-directory': 'assetdir',  // v48.277: map-root bucket deep link (Entities)
+    '#listings':     'forsale',   // v48.277: map-root bucket deep link (Listings)
     '#overview':     'overview',
     '#transactions': 'overview',  // v48.125b: legacy alias routes to Market Pulse (sub-tab removed in v48.125)
     '#analytics':    'analytics',
