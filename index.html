@@ -1047,8 +1047,8 @@ function renderBuildingPanel(p){
       ${isMember()&&p.lat!=null?`<div class="kv">Lat/Lng \u00b7 <b>${p.lat}, ${p.lng}</b> <span style="opacity:.7">(OneMap)</span></div>`:''}
       ${lockNote()}
       ${detailCTA()}
-      ${enqBlock('pin')}
-    </div>`;
+    </div>
+    ${enqBlock('pin')}`;
   loadBuildingTxns(p.n);
 }
 function setDetailTab(t){
