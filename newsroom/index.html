@@ -1,4 +1,5 @@
 <!DOCTYPE html>
+<!-- v48.275 (11 Jul 2026, S161): Divested status support in Vacancy Inventory (NEWSROOM VARIANT) — active views/stats exclude Divested; Absorbed toggle shows Absorbed+Divested with distinct ◈ Divested badge; invLatestMonth and Directory lens updated. Fixes ESR 112-vs-102 overcount and Divested rows rendering as live listings with Enquire CTAs. -->
 <!-- v48.274 (10 Jul 2026, S160): Perennial (Perennial Business City) vacancy chip + hero ticker pill; NEWSROOM VARIANT — canonical/og:url /newsroom/ retained. Deploy at newsroom/index.html. -->
 <!-- v48.273 (10 Jul 2026, S159): Newsroom monolith port (image/terms/privacy refs root-absolute, canonical+og:url -> /newsroom/, Map nav link .navtab-maplink) + Newsroom drop id:134 Weekly URA REALIS Pratt & Whitney Seletar S$70M caveat. Cascade regenerated. -->
 <!-- v48.270 (9 Jul 2026, S157): Newsroom drop id:133 AIMS APAC REIT Hazelmere Perth acquisition
@@ -5005,7 +5006,7 @@ body.article-takeover .ed-foot{display:none!important}
       <button class="inv-view-btn on" id="inv-vbtn-card" onclick="invSetView('card')">Cards</button>
       <button class="inv-view-btn" id="inv-vbtn-table" onclick="invSetView('table')">Table</button>
     </div>
-    <button class="inv-absorbed-toggle" id="inv-absorbed-btn" onclick="invToggleAbsorbed(this)" title="Show units leased between Feb and Mar 2026">⬜ Absorbed</button>
+    <button class="inv-absorbed-toggle" id="inv-absorbed-btn" onclick="invToggleAbsorbed(this)" title="Show leased and divested units">⬜ Absorbed</button>
   </div>
 
   <!-- Summary stats -->
@@ -24077,9 +24078,9 @@ function rdetLoadVacancy(p) {
 
   panel.style.display = 'block';
 
-  var active  = matches.filter(function(v){ return v.status !== 'Absorbed'; });
+  var active  = matches.filter(function(v){ return v.status !== 'Absorbed' && v.status !== 'Divested'; });
   var newList = matches.filter(function(v){ return v.status === 'New'; });
-  var absorbed= matches.filter(function(v){ return v.status === 'Absorbed'; });
+  var absorbed= matches.filter(function(v){ return v.status === 'Absorbed' || v.status === 'Divested'; });
 
   var reit = matches[0].reit;
   var reitColor = matches[0].reit_color || '#888';
@@ -27227,7 +27228,7 @@ function invLatestMonthFor(reit){
   for(var i=0; i<VACANCY_DATA.length; i++){
     var v = VACANCY_DATA[i];
     if(v.reit !== reit) continue;
-    if(v.status === 'Absorbed') continue;
+    if(v.status === 'Absorbed' || v.status === 'Divested') continue;
     var k = invMonthKey(v.month);
     if(k && k > bestKey){ bestKey = k; best = v.month; }
   }
@@ -27598,10 +27599,11 @@ function invRender() {
     // Absorbed toggle = mutually exclusive view (per L227):
     //   ON  → show ONLY absorbed records (active hidden)
     //   OFF → show ONLY active records (absorbed hidden)
+    var _inactive = (d.status === 'Absorbed' || d.status === 'Divested');
     if(INV_SHOW_ABSORBED) {
-      if(d.status !== 'Absorbed') return false;
+      if(!_inactive) return false;
     } else {
-      if(d.status === 'Absorbed') return false;
+      if(_inactive) return false;
     }
     if(q && !(d.addr.toLowerCase().includes(q)||d.unit.toLowerCase().includes(q)||(d.remarks||'').toLowerCase().includes(q)||(d.addrFull||'').toLowerCase().includes(q)||(d.cluster||'').toLowerCase().includes(q))) return false;
     if(zf && d.zone !== zf) return false;
@@ -27610,7 +27612,7 @@ function invRender() {
     if(lf){ var _lv = parseFloat(d.loading_kn_m2); if(isNaN(_lv) || _lv < parseFloat(lf)) return false; }
     if(hf){ var _hv = parseFloat(d.ceiling_height_m); if(isNaN(_hv) || _hv < parseFloat(hf)) return false; }
     if(af) {
-      if(d.status === 'Absorbed') return true; // don't filter absorbed by avail
+      if(d.status === 'Absorbed' || d.status === 'Divested') return true; // don't filter absorbed/divested by avail
       if(af==='Immediate' && !/immediate/i.test(d.avail)) return false;
       if(af==='Soon' && (/immediate/i.test(d.avail)||/negotiation/i.test(d.avail)||/offer/i.test(d.avail))) return false;
       if(af==='Negotiation' && !/negotiation|offer/i.test(d.avail)) return false;
@@ -27625,8 +27627,8 @@ function invRender() {
   // Stats — KPI band toggles with Absorbed view (per L226):
   // • Absorbed toggle OFF: show active inventory KPIs (Listings/Sqft/Immediate/Properties/Lo/Hi rent)
   // • Absorbed toggle ON:  show absorbed-tail KPIs (count/sqft/recently-leased/properties; rent tiles hidden)
-  var active   = filtered.filter(function(d){ return d.status !== 'Absorbed'; });
-  var absorbed = filtered.filter(function(d){ return d.status === 'Absorbed'; });
+  var active   = filtered.filter(function(d){ return d.status !== 'Absorbed' && d.status !== 'Divested'; });
+  var absorbed = filtered.filter(function(d){ return d.status === 'Absorbed' || d.status === 'Divested'; });
   var statsSet = INV_SHOW_ABSORBED ? absorbed : active;
   var totalSqft = statsSet.reduce(function(s,d){return s+d.sqft},0);
   var props = [...new Set(statsSet.map(function(d){return d.addr}))].length;
@@ -27677,14 +27679,15 @@ function invRender() {
       return;
     }
     grid.innerHTML = filtered.map(function(d) {
-      var isAbsorbed = d.status === 'Absorbed';
+      var isDivested = d.status === 'Divested';
+      var isAbsorbed = d.status === 'Absorbed' || isDivested;
       var isNew = d.status === 'New';
       var cardClass = 'inv-card' + (isAbsorbed ? ' inv-card-absorbed' : '');
       var addrClass = 'inv-card-addr' + (isAbsorbed ? ' inv-addr-absorbed' : '');
       var badge = isNew
         ? '<span class="inv-badge-new">🆕 New</span>'
         : isAbsorbed
-        ? '<span class="inv-badge-absorbed">✓ Leased</span>'
+        ? (isDivested ? '<span class="inv-badge-absorbed">◈ Divested</span>' : '<span class="inv-badge-absorbed">✓ Leased</span>')
         : '';
       var availPill = isAbsorbed
         ? '<span class="inv-pill p-leased">Removed in '+invLatestMonth(d.reit, d.month)+'</span>'
@@ -27752,14 +27755,15 @@ function invRender() {
       return;
     }
     body.innerHTML = filtered.map(function(d) {
-      var isAbsorbed = d.status === 'Absorbed';
+      var isDivested = d.status === 'Divested';
+      var isAbsorbed = d.status === 'Absorbed' || isDivested;
       var isNew = d.status === 'New';
       var rowStyle = isAbsorbed ? 'opacity:.55' : '';
       var addrStyle = isAbsorbed ? 'font-weight:600;min-width:150px;text-decoration:line-through;color:var(--mut)' : 'font-weight:600;min-width:150px';
       var badge = isNew
         ? ' <span class="inv-badge-new">🆕 New</span>'
         : isAbsorbed
-        ? ' <span class="inv-badge-absorbed">✓ Leased</span>'
+        ? (isDivested ? ' <span class="inv-badge-absorbed">◈ Divested</span>' : ' <span class="inv-badge-absorbed">✓ Leased</span>')
         : '';
       var availCell = isAbsorbed
         ? '<span class="inv-pill p-leased" style="font-size:10px">Removed in '+invLatestMonth(d.reit, d.month)+'</span>'
