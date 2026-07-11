@@ -250,7 +250,9 @@ body{background:var(--bg);color:var(--txt);font-family:Inter,system-ui,-apple-sy
 .maplibregl-popup-content{font-family:Inter,sans-serif;font-size:12px;padding:6px 9px;border-radius:7px}
 @media(max-width:760px){
   .main{flex-direction:column;height:auto}
-  .sidebar{width:100%;height:340px;border-right:none;border-bottom:1px solid var(--bdr)}
+  .sidebar{width:100%;height:auto;border-right:none;border-bottom:1px solid var(--bdr)}
+  .sb-filters{flex:none}
+  .sb-list{flex:none;height:auto;max-height:65vh;min-height:220px;overflow-y:auto}
   .mapcol{height:420px}
   .detail{width:calc(100% - 20px)}
   .topbar .pagenav a{font-size:11px;padding:4px 6px}
