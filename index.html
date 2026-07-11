@@ -722,6 +722,7 @@ function detectSession(){
       window.currentUserTier='free';
       var a=document.getElementById('authlink');
       if(a){a.textContent='Signed in ✓';a.removeAttribute('onclick');a.setAttribute('href','/newsroom/');}
+      if(typeof apply==='function'){try{apply();}catch(_){}}
     }
   }catch(e){}
 }
@@ -1513,8 +1514,8 @@ function init(){
   buildDistricts();seedCaveats();
 }
 window.addEventListener('load',()=>{
-  window.currentUserTier=undefined; // staging default: public (masked). Sign in link toggles to 'free' for preview.
-  refreshTier();
+  refreshTier();    // public default label (Sign in)
+  detectSession();  // auth bridge: /newsroom/ session unmasks + 'Signed in ✓'
   if(window.maplibregl){init();}
   else{document.getElementById('map').innerHTML='<div style="padding:30px;color:#6B5B3E">MapLibre failed to load — confirm maplibre-gl.js and maplibre-gl.css are in the same folder as this page. List, filters and district browse still work.</div>';buildDistricts();seedCaveats();}
 });
