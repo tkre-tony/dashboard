@@ -64,7 +64,9 @@ const L282 = [path.join(__dirname, 'html_balance_check.js'),
   .find(p => { try { return fs.existsSync(p); } catch (_) { return false; } })
   || path.join(__dirname, 'html_balance_check.js');
 
-const html = fs.readFileSync(INDEX, 'utf8');
+// NAV-1/S164: normalise input EOLs — the newsroom monolith is CRLF but
+// static article pages are LF-only (L-EOL-1). Lifted CSS/JS must not leak \r.
+const html = fs.readFileSync(INDEX, 'utf8').replace(/\r\n/g, '\n');
 
 // ─── v48.245 (S136): static-page newsletter subscribe ───────────────────────
 // The article-end CTA button (onclick="nlSubOpen('article-end')") is rendered
@@ -178,6 +180,46 @@ const SUBSCRIBE_BODY =
 '})();\n' +
 '<\/script>';
 // ─── end v48.245 static-page subscribe block ────────────────────────────────
+
+
+// ─── NAV-1 Phase 1 (S164): navy global topbar on static article pages ───────
+// Mirrors the map root's .topbar visually; self-contained pa-tb-* namespace
+// (no collision with ed-art-* / monolith classes). Bucket hrefs use the map's
+// canonical showBucket() destinations. Replaces the legacy ed-art-masthead in
+// buildPage; the inline "← PropertyAtlas" back link in the body is retained.
+// Colors hardcoded (article :root does not define the map's --navy/--gold).
+const NAVY_TOPBAR_CSS = [
+'.pa-tb{background:#15233f;display:flex;align-items:center;padding:0 20px;height:44px}',
+'.pa-tb-home{display:flex;align-items:center;text-decoration:none}',
+'.pa-tb-logo{width:26px;height:26px;border-radius:6px;background:rgba(200,145,42,.15);display:flex;align-items:center;justify-content:center;color:#C8912A;font-weight:800;font-family:Georgia,"Times New Roman",serif;font-size:13px}',
+'.pa-tb-brand{font-family:Georgia,"Times New Roman",serif;font-size:17px;font-weight:700;color:#fff;margin-left:8px}',
+'.pa-tb-brand i{color:#C8912A;font-style:normal}',
+'.pa-tb-buckets{display:flex;gap:2px;margin-left:32px}',
+'.pa-tb-bucket{color:rgba(255,255,255,.55);font-size:13px;font-weight:600;text-decoration:none;padding:6px 14px;border-radius:6px;transition:.15s;letter-spacing:.01em}',
+'.pa-tb-bucket:hover{color:#fff;background:rgba(255,255,255,.08)}',
+'.pa-tb-bucket.on{color:#fff;background:#1a4f9c}',
+'.pa-tb-pagenav{margin-left:auto;display:flex;gap:6px}',
+'.pa-tb-pagenav a{color:rgba(255,255,255,.65);font-size:12px;text-decoration:none;padding:5px 10px;border-radius:5px;transition:.12s}',
+'.pa-tb-pagenav a:hover{color:#fff;background:rgba(255,255,255,.08)}',
+'@media(max-width:760px){.pa-tb{padding:0 10px}.pa-tb-buckets{margin-left:14px;overflow-x:auto;-webkit-overflow-scrolling:touch}.pa-tb-pagenav a{font-size:11px;padding:4px 6px}.pa-tb-pagenav a.pa-tb-static{display:none}}'
+].join('\n');
+
+const NAVY_TOPBAR_HTML =
+'<div class="pa-tb">' +
+'<a class="pa-tb-home" href="/" aria-label="PropertyAtlas home"><span class="pa-tb-logo">P</span><span class="pa-tb-brand">Property<i>Atlas</i></span></a>' +
+'<nav class="pa-tb-buckets" aria-label="Primary">' +
+'<a href="/" class="pa-tb-bucket">Market</a>' +
+'<a href="/newsroom/#asset-directory" class="pa-tb-bucket">Entities</a>' +
+'<a href="/newsroom/" class="pa-tb-bucket on">Newsroom</a>' +
+'<a href="/newsroom/#listings" class="pa-tb-bucket">Listings</a>' +
+'</nav>' +
+'<div class="pa-tb-pagenav">' +
+'<a href="/terms.html" class="pa-tb-static">Terms</a>' +
+'<a href="/privacy.html" class="pa-tb-static">Privacy</a>' +
+'<a href="/about.html" class="pa-tb-static">About</a>' +
+'<a href="/newsroom/">Sign in</a>' +
+'</div>' +
+'</div>';
 
 // ───────────────── JS region lifters (brace/bracket aware) ─────────────────
 // Walk from an anchor to the matching close delimiter, ignoring strings and
@@ -445,6 +487,11 @@ function buildPage(a) {
   const canonical = SITE + '/news/' + a.slug + '/';
   let fragment = sandbox.edRenderArticlePage(a);
   fragment = rewriteLinks(fragment);
+  // NAV-1 Phase 1: replace legacy ed-art-masthead with the navy global topbar.
+  const mastRe = /<header class="ed-art-masthead">[\s\S]*?<\/header>/;
+  const mastHits = (fragment.match(new RegExp(mastRe.source, 'g')) || []).length;
+  if (mastHits !== 1) throw new Error('NAV-1: expected exactly 1 ed-art-masthead, found ' + mastHits + ' (id:' + a.id + ')');
+  fragment = fragment.replace(mastRe, NAVY_TOPBAR_HTML);
   const usedClasses = new Set();
   (fragment.match(/class=["']([^"']*)["']/g) || []).forEach(m => {
     m.replace(/class=["']([^"']*)["']/, (x, cl) => cl.split(/\s+/).forEach(c => c && usedClasses.add(c)));
@@ -453,7 +500,7 @@ function buildPage(a) {
   // SOP-required rule absent from the index's article CSS: grey, no-direction
   // deltas. The index ships only .up/.down; injecting .neutral keeps neutral
   // financial-headline deltas covered (L-SEO-8) and correctly coloured.
-  const injected = '.ed-art-fh-delta.neutral{color:var(--ed-muted)}';
+  const injected = '.ed-art-fh-delta.neutral{color:var(--ed-muted)}' + '\n' + NAVY_TOPBAR_CSS;
   const head = buildHead(a, canonical);
   return '<!DOCTYPE html>\n<html lang="en" data-ready>\n<head>\n' + head +
     '\n<style>\n' + css + '\n' + injected + '\n' + SUBSCRIBE_CSS + '\n</style>\n</head>\n<body>\n' + fragment + '\n' + SUBSCRIBE_BODY + '\n</body>\n</html>\n';

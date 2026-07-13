@@ -458,35 +458,28 @@ body{
   .direct-contact{padding:18px 20px}
   .direct-contact-links{gap:12px}
 }
+
+/* NAV-1 Phase 1 (S164): navy global topbar */
+.pa-tb{background:#15233f;display:flex;align-items:center;padding:0 20px;height:44px}
+.pa-tb-home{display:flex;align-items:center;text-decoration:none}
+.pa-tb-logo{width:26px;height:26px;border-radius:6px;background:rgba(200,145,42,.15);display:flex;align-items:center;justify-content:center;color:#C8912A;font-weight:800;font-family:Georgia,"Times New Roman",serif;font-size:13px}
+.pa-tb-brand{font-family:Georgia,"Times New Roman",serif;font-size:17px;font-weight:700;color:#fff;margin-left:8px}
+.pa-tb-brand i{color:#C8912A;font-style:normal}
+.pa-tb-buckets{display:flex;gap:2px;margin-left:32px}
+.pa-tb-bucket{color:rgba(255,255,255,.55);font-size:13px;font-weight:600;text-decoration:none;padding:6px 14px;border-radius:6px;transition:.15s;letter-spacing:.01em}
+.pa-tb-bucket:hover{color:#fff;background:rgba(255,255,255,.08)}
+.pa-tb-bucket.on{color:#fff;background:#1a4f9c}
+.pa-tb-pagenav{margin-left:auto;display:flex;gap:6px}
+.pa-tb-pagenav a{color:rgba(255,255,255,.65);font-size:12px;text-decoration:none;padding:5px 10px;border-radius:5px;transition:.12s}
+.pa-tb-pagenav a:hover{color:#fff;background:rgba(255,255,255,.08)}
+.pa-tb-pagenav a.pa-tb-cur{color:#C8912A}
+@media(max-width:760px){.pa-tb{padding:0 10px}.pa-tb-buckets{margin-left:14px;overflow-x:auto;-webkit-overflow-scrolling:touch}.pa-tb-pagenav a{font-size:11px;padding:4px 6px}.pa-tb-pagenav a.pa-tb-static{display:none}}
 </style>
 </head>
 <body>
 
 <!-- ── Masthead (parallel to index.html ed-mast) ─────────────────── -->
-<header class="ed-mast" role="banner">
-  <div class="ed-mast-inner">
-    <a class="ed-mast-brand" href="./" aria-label="PropertyAtlas — Home">
-      <span class="ed-mast-brand-mark" aria-hidden="true">
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32">
-          <rect width="32" height="32" rx="5" fill="#0B2B5C"/>
-          <rect x="2.5" y="2.5" width="27" height="27" rx="3.5" fill="none" stroke="#C99B5A" stroke-width="0.7"/>
-          <text x="11" y="22" font-family="Georgia,'Times New Roman',serif" font-size="17" font-weight="700" fill="#F7F3EB" text-anchor="middle">P</text>
-          <g transform="translate(22 16)">
-            <polygon points="0,-7 2,-1 0,0 -2,-1" fill="#C99B5A"/>
-            <polygon points="0,7 -2,1 0,0 2,1" fill="#C99B5A" opacity="0.55"/>
-            <polygon points="-7,0 -1,-2 0,0 -1,2" fill="#C99B5A" opacity="0.55"/>
-            <polygon points="7,0 1,2 0,0 1,-2" fill="#C99B5A" opacity="0.55"/>
-          </g>
-        </svg>
-      </span>
-      <span class="ed-mast-brand-word">Property<em>Atlas</em></span>
-    </a>
-    <nav class="ed-mast-nav" aria-label="Primary">
-      <a href="./about.html" class="is-current">About Us</a>
-      <a href="./" aria-label="Back to newsroom">Newsroom</a>
-    </nav>
-  </div>
-</header>
+<div class="pa-tb"><a class="pa-tb-home" href="/" aria-label="PropertyAtlas home"><span class="pa-tb-logo">P</span><span class="pa-tb-brand">Property<i>Atlas</i></span></a><nav class="pa-tb-buckets" aria-label="Primary"><a href="/" class="pa-tb-bucket">Market</a><a href="/newsroom/#asset-directory" class="pa-tb-bucket">Entities</a><a href="/newsroom/" class="pa-tb-bucket">Newsroom</a><a href="/newsroom/#listings" class="pa-tb-bucket">Listings</a></nav><div class="pa-tb-pagenav"><a href="/terms.html" class="pa-tb-static">Terms</a><a href="/privacy.html" class="pa-tb-static">Privacy</a><a href="/about.html" class="pa-tb-static pa-tb-cur">About</a><a href="/newsroom/">Sign in</a></div></div>
 
 <!-- ── HERO BAND ──────────────────────────────────────────────────── -->
 <div class="page">

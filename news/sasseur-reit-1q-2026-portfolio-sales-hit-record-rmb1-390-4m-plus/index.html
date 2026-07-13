@@ -39,6 +39,35 @@ html:not([data-ready]) > body{visibility:hidden!important}
 }
 th{font-family:Georgia,'Times New Roman',serif;font-style:italic;font-weight:600;letter-spacing:0!important}
 html,body{background:var(--bg);color:var(--txt);font-family:'DM Sans',sans-serif;font-size:14px;min-height:100vh;-webkit-font-smoothing:antialiased}
+.navtab.on{color:#fff;border-bottom-color:var(--g3);font-weight:600}
+@media (max-width:760px){.navtabs.navtabs-drawer-open .navtab.on{border-left-color:var(--g3);border-bottom-color:rgba(255,255,255,.04);background:rgba(255,255,255,.04)}}
+.panel.on{display:block}
+.fchip.on{background:var(--g1);border-color:var(--g1);color:#fff;font-weight:600}
+.rbtn.on{background:var(--g1);color:#fff;font-weight:600}
+.mbtn.on{background:var(--g1);color:#fff;font-weight:600}
+.nr-chip.on{background:var(--g1);border-color:var(--g1);color:#fff}
+.nr-chip:hover:not(.on){border-color:var(--g2);color:var(--g2)}
+.dir-tbtn.on{background:var(--g1);color:#fff;border-color:var(--g1);font-weight:700}
+.dir-tbtn:hover:not(.on){border-color:var(--g2);color:var(--g1);background:var(--glt)}
+.rcol-tog.on{background:var(--g1);color:#fff;border-color:var(--g1);font-weight:700}
+.rcol-tog:hover:not(.on){border-color:var(--g2);color:var(--g1)}
+.pnl-stab.on{color:var(--g1);border-bottom-color:var(--g1);font-weight:700}
+.pnl-stab:hover:not(.on){color:var(--txt)}
+.anal-stab.on{color:var(--g1);border-bottom-color:var(--g1);font-weight:700}
+.anal-stab:hover:not(.on){color:var(--txt);background:var(--srf2)}
+.proj-sort-chip.on{background:var(--g1);color:#fff;border-color:var(--g1);font-weight:700}
+.proj-sort-chip:hover:not(.on){color:var(--txt);border-color:var(--txt)}
+.pnl-pg-btn.on{background:var(--g1);color:#fff;border-color:var(--g1);font-weight:700}
+.pnl-pg-btn:hover:not(.on){border-color:var(--g2);color:var(--g1)}
+.inv-absorbed-toggle.on{background:rgba(100,100,100,.12);border-color:var(--bdr2);color:var(--txt)}
+.inv-reit-btn.on{background:var(--g1);border-color:var(--g1);color:#fff}
+.inv-view-btn.on{background:var(--g1);color:#fff}
+.talent-filter-btn.on{background:var(--g1);color:#fff;border-color:var(--g1)}
+.talent-filter-btn.role-ceo.on{background:#7c3aed;border-color:#7c3aed}
+.talent-filter-btn.role-cfo.on{background:#0891b2;border-color:#0891b2}
+.talent-filter-btn.role-cio.on{background:#16a34a;border-color:#16a34a}
+.talent-filter-btn.role-board.on{background:#d97706;border-color:#d97706}
+.talent-filter-btn.role-mgmt.on{background:#2563bc;border-color:#2563bc}
 :root{
     --navy:       #1A4F9C;
     --navy-deep:  #0F3775;
@@ -97,6 +126,17 @@ img{ display: block; max-width: 100%; }
 .see-all-btn .arrow{ transition: transform 160ms ease; }
 .see-all-btn:hover .arrow{ transform: translateX(3px); }
 @media (max-width: 640px){:root{ --gutter: 18px; }}
+.pa-anal-pill-btn:hover:not(.on){
+    color: #F7F3EB;
+    background: rgba(247,243,235,.06);
+  }
+.pa-anal-pill-btn.on{
+    background: #C99B5A;
+    color: #0B2B5C;
+    font-weight: 700;
+  }
+.atlas-auth-tab.on{color:#1A4F9C; background:#FAF7F0; border-bottom-color:#A67C3A;}
+.atlas-auth-method.on{background:#1A4F9C; color:#FAF7F0;}
 .ed-eyebrow .ed-eyebrow-sep{color:var(--ed-muted);opacity:.6;font-weight:400}
 .ed-eyebrow .ed-cat-tag{color:var(--ed-bronze)}
 .ed-fh-delta.up{color:var(--ed-pos)}
@@ -104,17 +144,10 @@ img{ display: block; max-width: 100%; }
 .ed-fh-delta.flat{color:var(--ed-muted)}
 .ed-read-full .arrow{transition:transform .15s}
 .ed-read-full:hover .arrow{transform:translateX(3px)}
-html.article-takeover .ed-art-masthead,body.article-takeover .ed-art-masthead{display:none!important}
-.ed-art-masthead{position:sticky;top:0;z-index:50;background:var(--ed-cream-lt);border-bottom:1px solid var(--ed-hairline);padding:14px 28px;display:flex;align-items:center;gap:18px}
-.ed-art-back{font-family:'DM Sans',sans-serif;font-size:12px;color:var(--ed-navy-ink);text-decoration:none;font-weight:600;letter-spacing:.02em;display:inline-flex;align-items:center;gap:6px;padding:6px 10px;border-radius:4px;transition:background .12s}
-.ed-art-back:hover{background:rgba(11,43,92,0.06)}
 .ed-art-back-inline{position:fixed;top:120px;left:24px;z-index:40;display:inline-flex;align-items:center;gap:6px;font-family:'DM Sans',sans-serif;font-size:12px;font-weight:600;color:var(--ed-navy-ink);text-decoration:none;letter-spacing:.02em;margin:0;padding:8px 12px;border-radius:4px;background:var(--ed-cream-lt);box-shadow:0 2px 8px -4px rgba(11,43,92,0.12);transition:background .12s}
 .ed-art-back-inline:hover{background:rgba(11,43,92,0.06);text-decoration:none}
 @media(max-width:1280px){.ed-art-back-inline{top:108px;left:16px;font-size:11px;padding:6px 10px}}
 @media(max-width:768px){.ed-art-back-inline{top:96px;left:12px;font-size:10.5px;padding:5px 8px}}
-.ed-art-brand{font-family:var(--ed-body-serif);font-size:18px;font-weight:700;color:var(--ed-navy-ink);margin:0 auto;letter-spacing:.005em}
-.ed-art-brand em{font-style:italic;color:var(--ed-bronze)}
-.ed-art-share{font-family:'DM Sans',sans-serif;font-size:11px;color:var(--ed-muted);letter-spacing:.06em;text-transform:uppercase}
 .ed-art-datestrip{padding:12px 28px;border-bottom:1px solid var(--ed-hairline);font-family:'DM Sans',sans-serif;font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--ed-bronze);font-weight:700;text-align:center}
 .ed-art-content{max-width:720px;margin:0 auto;padding:36px 28px 64px}
 @media(min-width:1024px){.ed-art-content{padding:48px 28px 80px}}
@@ -151,7 +184,7 @@ html.article-takeover .ed-art-masthead,body.article-takeover .ed-art-masthead{di
 @media(max-width:580px){.ed-art-fh-panel{grid-template-columns:1fr}}
 .ed-art-fh-row{display:flex;justify-content:space-between;align-items:baseline;border-bottom:1px dotted var(--ed-bronze-lt);padding:7px 0;font-size:14.5px;gap:8px}
 .ed-art-fh-label{color:var(--ed-muted)}
-.ed-art-fh-val{color:var(--ed-ink);font-weight:700;text-align:right;white-space:nowrap}
+.ed-art-fh-val{color:var(--ed-ink);font-weight:700;text-align:right;min-width:0}
 .ed-art-fh-delta{font-size:12px;font-weight:600;margin-left:8px;font-family:'DM Sans',sans-serif}
 .ed-art-fh-delta.up{color:var(--ed-pos)}
 .ed-art-fh-delta.down{color:var(--ed-neg)}
@@ -218,6 +251,19 @@ html.article-takeover .ed-art-masthead,body.article-takeover .ed-art-masthead{di
 .ed-art-newsletter-cta-btn .arrow{font-size:14px;line-height:1}
 @media(max-width:520px){.ed-art-newsletter-cta{padding:18px 18px;gap:14px}.ed-art-newsletter-cta-headline{font-size:15.5px}.ed-art-newsletter-cta-sub{font-size:13px}.ed-art-newsletter-cta-btn{padding:9px 16px;font-size:12.5px;width:100%;justify-content:center}}
 .ed-art-fh-delta.neutral{color:var(--ed-muted)}
+.pa-tb{background:#15233f;display:flex;align-items:center;padding:0 20px;height:44px}
+.pa-tb-home{display:flex;align-items:center;text-decoration:none}
+.pa-tb-logo{width:26px;height:26px;border-radius:6px;background:rgba(200,145,42,.15);display:flex;align-items:center;justify-content:center;color:#C8912A;font-weight:800;font-family:Georgia,"Times New Roman",serif;font-size:13px}
+.pa-tb-brand{font-family:Georgia,"Times New Roman",serif;font-size:17px;font-weight:700;color:#fff;margin-left:8px}
+.pa-tb-brand i{color:#C8912A;font-style:normal}
+.pa-tb-buckets{display:flex;gap:2px;margin-left:32px}
+.pa-tb-bucket{color:rgba(255,255,255,.55);font-size:13px;font-weight:600;text-decoration:none;padding:6px 14px;border-radius:6px;transition:.15s;letter-spacing:.01em}
+.pa-tb-bucket:hover{color:#fff;background:rgba(255,255,255,.08)}
+.pa-tb-bucket.on{color:#fff;background:#1a4f9c}
+.pa-tb-pagenav{margin-left:auto;display:flex;gap:6px}
+.pa-tb-pagenav a{color:rgba(255,255,255,.65);font-size:12px;text-decoration:none;padding:5px 10px;border-radius:5px;transition:.12s}
+.pa-tb-pagenav a:hover{color:#fff;background:rgba(255,255,255,.08)}
+@media(max-width:760px){.pa-tb{padding:0 10px}.pa-tb-buckets{margin-left:14px;overflow-x:auto;-webkit-overflow-scrolling:touch}.pa-tb-pagenav a{font-size:11px;padding:4px 6px}.pa-tb-pagenav a.pa-tb-static{display:none}}
 .pa-sub-overlay{display:none;position:fixed;inset:0;background:rgba(13,31,60,.55);z-index:3000}
 .pa-sub-modal{display:none;position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);z-index:3001;width:min(440px,94vw);max-height:92vh;overflow-y:auto;background:#fff;border-radius:14px;box-shadow:0 12px 48px rgba(13,31,60,.32);font-family:inherit}
 .pa-sub-head{background:#0d1f3c;color:#fff;padding:22px 24px 18px;border-radius:14px 14px 0 0;position:relative}
@@ -243,7 +289,7 @@ html.article-takeover .ed-art-masthead,body.article-takeover .ed-art-masthead{di
 </style>
 </head>
 <body>
-<header class="ed-art-masthead"><a class="ed-art-back" href="/" onclick="return atlasArticleBack(event)">← PropertyAtlas</a><div class="ed-art-brand">Property<em>Atlas</em></div><span class="ed-art-share">·</span></header><div class="ed-art-datestrip">Sunday · 31 May 2026 · Singapore</div><article class="ed-art-content"><a class="ed-art-back-inline" href="/" onclick="return atlasArticleBack(event)">← PropertyAtlas</a><div class="ed-art-eyebrow"><span class="ed-cat-tag">Retail</span><span class="ed-eyebrow-sep">·</span><span class="ed-cat-tag">Earnings</span><span class="ed-eyebrow-sep">·</span><span class="ed-cat-tag">REIT Update</span><span class="ed-eyebrow-sep">·</span><span class="ed-cat-tag">Quarterly</span><span class="ed-eyebrow-sep">·</span><span class="ed-cat-tag">China</span><span class="ed-eyebrow-sep">·</span><span class="ed-cat-tag">Outlet Mall</span><span class="ed-eyebrow-sep">·</span><span class="ed-cat-tag">Outlet Sales</span><span class="ed-eyebrow-sep">·</span><span class="ed-cat-tag">EMA Model</span><span class="ed-eyebrow-sep">·</span><span class="ed-cat-tag">Capital Management</span></div><h1 class="ed-art-headline">Sasseur REIT 1Q 2026: Portfolio Sales Hit Record RMB1,390.4M (+11.4%), EMA Rental +5.7% RMB / +5.1% S$, Cost Of Debt Cut To 3.9% — But 1.6-Year WALE And A Kunming Soft Spot Name The Tenant-Mix Reset Beneath A Record Quarter</h1><p class="ed-art-standfirst">Sasseur REIT released its 1Q FY2026 business and operational update on 14 May 2026 for the quarter ended 31 March 2026. Portfolio outlet sales hit an all-time high of RMB1,390.4 million, up 11.4% YoY (+RMB142.7m) — the highest first quarter since listing,…</p><div class="ed-art-byline"><span class="ed-art-byline-by">By PropertyAtlas</span><span class="ed-art-byline-sep">·</span><span>31 May 2026</span><span class="ed-art-byline-sep">·</span><span>7 min read</span></div><img src="/images/news_104_sasseur_chongqing_liangjiang.jpg" class="ed-art-photo" alt="" /><div class="ed-art-photo-credit">Photo: Sasseur (Chongqing Liangjiang) Outlet — Sasseur REIT flagship, 39% of portfolio valuation. 100% occupancy and record 1Q 2026 sales of RMB732.2M (+11.1% YoY).</div><div class="ed-art-body"><p class="lede"><strong>Sasseur REIT (SGX: CRPU)</strong> released its 1Q FY2026 business and operational update on 14 May 2026 for the quarter ended 31 March 2026. Portfolio outlet sales hit an all-time high of RMB1,390.4 million, up 11.4% YoY (+RMB142.7m) — the highest first quarter since listing. EMA rental income rose 5.7% in RMB to RMB185.5m and 5.1% in SGD to S$34.2m. Portfolio occupancy held at 98.5%, VIP membership crossed 5 million, and weighted average cost of debt fell 50bps to 3.9%. Aggregate leverage a sector-low 25.4%. Three signals beyond the headline.</p>
+<div class="pa-tb"><a class="pa-tb-home" href="/" aria-label="PropertyAtlas home"><span class="pa-tb-logo">P</span><span class="pa-tb-brand">Property<i>Atlas</i></span></a><nav class="pa-tb-buckets" aria-label="Primary"><a href="/" class="pa-tb-bucket">Market</a><a href="/newsroom/#asset-directory" class="pa-tb-bucket">Entities</a><a href="/newsroom/" class="pa-tb-bucket on">Newsroom</a><a href="/newsroom/#listings" class="pa-tb-bucket">Listings</a></nav><div class="pa-tb-pagenav"><a href="/terms.html" class="pa-tb-static">Terms</a><a href="/privacy.html" class="pa-tb-static">Privacy</a><a href="/about.html" class="pa-tb-static">About</a><a href="/newsroom/">Sign in</a></div></div><div class="ed-art-datestrip">Sunday · 31 May 2026 · Singapore</div><article class="ed-art-content"><a class="ed-art-back-inline" href="/" onclick="return atlasArticleBack(event)">← PropertyAtlas</a><div class="ed-art-eyebrow"><span class="ed-cat-tag">Retail</span><span class="ed-eyebrow-sep">·</span><span class="ed-cat-tag">Earnings</span><span class="ed-eyebrow-sep">·</span><span class="ed-cat-tag">REIT Update</span><span class="ed-eyebrow-sep">·</span><span class="ed-cat-tag">Quarterly</span><span class="ed-eyebrow-sep">·</span><span class="ed-cat-tag">China</span><span class="ed-eyebrow-sep">·</span><span class="ed-cat-tag">Outlet Mall</span><span class="ed-eyebrow-sep">·</span><span class="ed-cat-tag">Outlet Sales</span><span class="ed-eyebrow-sep">·</span><span class="ed-cat-tag">EMA Model</span><span class="ed-eyebrow-sep">·</span><span class="ed-cat-tag">Capital Management</span></div><h1 class="ed-art-headline">Sasseur REIT 1Q 2026: Portfolio Sales Hit Record RMB1,390.4M (+11.4%), EMA Rental +5.7% RMB / +5.1% S$, Cost Of Debt Cut To 3.9% — But 1.6-Year WALE And A Kunming Soft Spot Name The Tenant-Mix Reset Beneath A Record Quarter</h1><p class="ed-art-standfirst">Sasseur REIT released its 1Q FY2026 business and operational update on 14 May 2026 for the quarter ended 31 March 2026. Portfolio outlet sales hit an all-time high of RMB1,390.4 million, up 11.4% YoY (+RMB142.7m) — the highest first quarter since listing,…</p><div class="ed-art-byline"><span class="ed-art-byline-by">By PropertyAtlas</span><span class="ed-art-byline-sep">·</span><span>31 May 2026</span><span class="ed-art-byline-sep">·</span><span>7 min read</span></div><img src="/images/news_104_sasseur_chongqing_liangjiang.jpg" class="ed-art-photo" alt="" /><div class="ed-art-photo-credit">Photo: Sasseur (Chongqing Liangjiang) Outlet — Sasseur REIT flagship, 39% of portfolio valuation. 100% occupancy and record 1Q 2026 sales of RMB732.2M (+11.1% YoY).</div><div class="ed-art-body"><p class="lede"><strong>Sasseur REIT (SGX: CRPU)</strong> released its 1Q FY2026 business and operational update on 14 May 2026 for the quarter ended 31 March 2026. Portfolio outlet sales hit an all-time high of RMB1,390.4 million, up 11.4% YoY (+RMB142.7m) — the highest first quarter since listing. EMA rental income rose 5.7% in RMB to RMB185.5m and 5.1% in SGD to S$34.2m. Portfolio occupancy held at 98.5%, VIP membership crossed 5 million, and weighted average cost of debt fell 50bps to 3.9%. Aggregate leverage a sector-low 25.4%. Three signals beyond the headline.</p>
 
 <h2>Financial Headlines</h2>
 

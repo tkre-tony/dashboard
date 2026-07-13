@@ -39,6 +39,35 @@ html:not([data-ready]) > body{visibility:hidden!important}
 }
 th{font-family:Georgia,'Times New Roman',serif;font-style:italic;font-weight:600;letter-spacing:0!important}
 html,body{background:var(--bg);color:var(--txt);font-family:'DM Sans',sans-serif;font-size:14px;min-height:100vh;-webkit-font-smoothing:antialiased}
+.navtab.on{color:#fff;border-bottom-color:var(--g3);font-weight:600}
+@media (max-width:760px){.navtabs.navtabs-drawer-open .navtab.on{border-left-color:var(--g3);border-bottom-color:rgba(255,255,255,.04);background:rgba(255,255,255,.04)}}
+.panel.on{display:block}
+.fchip.on{background:var(--g1);border-color:var(--g1);color:#fff;font-weight:600}
+.rbtn.on{background:var(--g1);color:#fff;font-weight:600}
+.mbtn.on{background:var(--g1);color:#fff;font-weight:600}
+.nr-chip.on{background:var(--g1);border-color:var(--g1);color:#fff}
+.nr-chip:hover:not(.on){border-color:var(--g2);color:var(--g2)}
+.dir-tbtn.on{background:var(--g1);color:#fff;border-color:var(--g1);font-weight:700}
+.dir-tbtn:hover:not(.on){border-color:var(--g2);color:var(--g1);background:var(--glt)}
+.rcol-tog.on{background:var(--g1);color:#fff;border-color:var(--g1);font-weight:700}
+.rcol-tog:hover:not(.on){border-color:var(--g2);color:var(--g1)}
+.pnl-stab.on{color:var(--g1);border-bottom-color:var(--g1);font-weight:700}
+.pnl-stab:hover:not(.on){color:var(--txt)}
+.anal-stab.on{color:var(--g1);border-bottom-color:var(--g1);font-weight:700}
+.anal-stab:hover:not(.on){color:var(--txt);background:var(--srf2)}
+.proj-sort-chip.on{background:var(--g1);color:#fff;border-color:var(--g1);font-weight:700}
+.proj-sort-chip:hover:not(.on){color:var(--txt);border-color:var(--txt)}
+.pnl-pg-btn.on{background:var(--g1);color:#fff;border-color:var(--g1);font-weight:700}
+.pnl-pg-btn:hover:not(.on){border-color:var(--g2);color:var(--g1)}
+.inv-absorbed-toggle.on{background:rgba(100,100,100,.12);border-color:var(--bdr2);color:var(--txt)}
+.inv-reit-btn.on{background:var(--g1);border-color:var(--g1);color:#fff}
+.inv-view-btn.on{background:var(--g1);color:#fff}
+.talent-filter-btn.on{background:var(--g1);color:#fff;border-color:var(--g1)}
+.talent-filter-btn.role-ceo.on{background:#7c3aed;border-color:#7c3aed}
+.talent-filter-btn.role-cfo.on{background:#0891b2;border-color:#0891b2}
+.talent-filter-btn.role-cio.on{background:#16a34a;border-color:#16a34a}
+.talent-filter-btn.role-board.on{background:#d97706;border-color:#d97706}
+.talent-filter-btn.role-mgmt.on{background:#2563bc;border-color:#2563bc}
 :root{
     --navy:       #1A4F9C;
     --navy-deep:  #0F3775;
@@ -97,21 +126,25 @@ img{ display: block; max-width: 100%; }
 .see-all-btn .arrow{ transition: transform 160ms ease; }
 .see-all-btn:hover .arrow{ transform: translateX(3px); }
 @media (max-width: 640px){:root{ --gutter: 18px; }}
+.pa-anal-pill-btn:hover:not(.on){
+    color: #F7F3EB;
+    background: rgba(247,243,235,.06);
+  }
+.pa-anal-pill-btn.on{
+    background: #C99B5A;
+    color: #0B2B5C;
+    font-weight: 700;
+  }
+.atlas-auth-tab.on{color:#1A4F9C; background:#FAF7F0; border-bottom-color:#A67C3A;}
+.atlas-auth-method.on{background:#1A4F9C; color:#FAF7F0;}
 .ed-eyebrow .ed-eyebrow-sep{color:var(--ed-muted);opacity:.6;font-weight:400}
 .ed-eyebrow .ed-cat-tag{color:var(--ed-bronze)}
 .ed-read-full .arrow{transition:transform .15s}
 .ed-read-full:hover .arrow{transform:translateX(3px)}
-html.article-takeover .ed-art-masthead,body.article-takeover .ed-art-masthead{display:none!important}
-.ed-art-masthead{position:sticky;top:0;z-index:50;background:var(--ed-cream-lt);border-bottom:1px solid var(--ed-hairline);padding:14px 28px;display:flex;align-items:center;gap:18px}
-.ed-art-back{font-family:'DM Sans',sans-serif;font-size:12px;color:var(--ed-navy-ink);text-decoration:none;font-weight:600;letter-spacing:.02em;display:inline-flex;align-items:center;gap:6px;padding:6px 10px;border-radius:4px;transition:background .12s}
-.ed-art-back:hover{background:rgba(11,43,92,0.06)}
 .ed-art-back-inline{position:fixed;top:120px;left:24px;z-index:40;display:inline-flex;align-items:center;gap:6px;font-family:'DM Sans',sans-serif;font-size:12px;font-weight:600;color:var(--ed-navy-ink);text-decoration:none;letter-spacing:.02em;margin:0;padding:8px 12px;border-radius:4px;background:var(--ed-cream-lt);box-shadow:0 2px 8px -4px rgba(11,43,92,0.12);transition:background .12s}
 .ed-art-back-inline:hover{background:rgba(11,43,92,0.06);text-decoration:none}
 @media(max-width:1280px){.ed-art-back-inline{top:108px;left:16px;font-size:11px;padding:6px 10px}}
 @media(max-width:768px){.ed-art-back-inline{top:96px;left:12px;font-size:10.5px;padding:5px 8px}}
-.ed-art-brand{font-family:var(--ed-body-serif);font-size:18px;font-weight:700;color:var(--ed-navy-ink);margin:0 auto;letter-spacing:.005em}
-.ed-art-brand em{font-style:italic;color:var(--ed-bronze)}
-.ed-art-share{font-family:'DM Sans',sans-serif;font-size:11px;color:var(--ed-muted);letter-spacing:.06em;text-transform:uppercase}
 .ed-art-datestrip{padding:12px 28px;border-bottom:1px solid var(--ed-hairline);font-family:'DM Sans',sans-serif;font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--ed-bronze);font-weight:700;text-align:center}
 .ed-art-content{max-width:720px;margin:0 auto;padding:36px 28px 64px}
 @media(min-width:1024px){.ed-art-content{padding:48px 28px 80px}}
@@ -204,6 +237,19 @@ html.article-takeover .ed-art-masthead,body.article-takeover .ed-art-masthead{di
 .ed-art-newsletter-cta-btn .arrow{font-size:14px;line-height:1}
 @media(max-width:520px){.ed-art-newsletter-cta{padding:18px 18px;gap:14px}.ed-art-newsletter-cta-headline{font-size:15.5px}.ed-art-newsletter-cta-sub{font-size:13px}.ed-art-newsletter-cta-btn{padding:9px 16px;font-size:12.5px;width:100%;justify-content:center}}
 .ed-art-fh-delta.neutral{color:var(--ed-muted)}
+.pa-tb{background:#15233f;display:flex;align-items:center;padding:0 20px;height:44px}
+.pa-tb-home{display:flex;align-items:center;text-decoration:none}
+.pa-tb-logo{width:26px;height:26px;border-radius:6px;background:rgba(200,145,42,.15);display:flex;align-items:center;justify-content:center;color:#C8912A;font-weight:800;font-family:Georgia,"Times New Roman",serif;font-size:13px}
+.pa-tb-brand{font-family:Georgia,"Times New Roman",serif;font-size:17px;font-weight:700;color:#fff;margin-left:8px}
+.pa-tb-brand i{color:#C8912A;font-style:normal}
+.pa-tb-buckets{display:flex;gap:2px;margin-left:32px}
+.pa-tb-bucket{color:rgba(255,255,255,.55);font-size:13px;font-weight:600;text-decoration:none;padding:6px 14px;border-radius:6px;transition:.15s;letter-spacing:.01em}
+.pa-tb-bucket:hover{color:#fff;background:rgba(255,255,255,.08)}
+.pa-tb-bucket.on{color:#fff;background:#1a4f9c}
+.pa-tb-pagenav{margin-left:auto;display:flex;gap:6px}
+.pa-tb-pagenav a{color:rgba(255,255,255,.65);font-size:12px;text-decoration:none;padding:5px 10px;border-radius:5px;transition:.12s}
+.pa-tb-pagenav a:hover{color:#fff;background:rgba(255,255,255,.08)}
+@media(max-width:760px){.pa-tb{padding:0 10px}.pa-tb-buckets{margin-left:14px;overflow-x:auto;-webkit-overflow-scrolling:touch}.pa-tb-pagenav a{font-size:11px;padding:4px 6px}.pa-tb-pagenav a.pa-tb-static{display:none}}
 .pa-sub-overlay{display:none;position:fixed;inset:0;background:rgba(13,31,60,.55);z-index:3000}
 .pa-sub-modal{display:none;position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);z-index:3001;width:min(440px,94vw);max-height:92vh;overflow-y:auto;background:#fff;border-radius:14px;box-shadow:0 12px 48px rgba(13,31,60,.32);font-family:inherit}
 .pa-sub-head{background:#0d1f3c;color:#fff;padding:22px 24px 18px;border-radius:14px 14px 0 0;position:relative}
@@ -229,7 +275,7 @@ html.article-takeover .ed-art-masthead,body.article-takeover .ed-art-masthead{di
 </style>
 </head>
 <body>
-<header class="ed-art-masthead"><a class="ed-art-back" href="/" onclick="return atlasArticleBack(event)">← PropertyAtlas</a><div class="ed-art-brand">Property<em>Atlas</em></div><span class="ed-art-share">·</span></header><div class="ed-art-datestrip">Tuesday · 12 May 2026 · Singapore</div><article class="ed-art-content"><a class="ed-art-back-inline" href="/" onclick="return atlasArticleBack(event)">← PropertyAtlas</a><div class="ed-art-eyebrow"><span class="ed-cat-tag">Commercial</span><span class="ed-eyebrow-sep">·</span><span class="ed-cat-tag">Earnings</span><span class="ed-eyebrow-sep">·</span><span class="ed-cat-tag">REIT Update</span><span class="ed-eyebrow-sep">·</span><span class="ed-cat-tag">Maiden Year</span><span class="ed-eyebrow-sep">·</span><span class="ed-cat-tag">Data Centre</span><span class="ed-eyebrow-sep">·</span><span class="ed-cat-tag">Cross-Border</span><span class="ed-eyebrow-sep">·</span><span class="ed-cat-tag">Valuation Uplift</span><span class="ed-eyebrow-sep">·</span><span class="ed-cat-tag">Capital Management</span></div><h1 class="ed-art-headline">NTT DC REIT FY25/26 Maiden Reading: Portfolio Independently Valued At US$1,670.2M (+11.3%) — Six Properties, US$170M Revaluation Gain, And A 23% SG1 MSA Reversion That Priced Above The Singapore Market Band</h1><p class="ed-art-standfirst">Ten months after listing as Singapore's first global data centre REIT, NTT DC REIT has delivered its maiden full-year reading — and the more telling number sits in a separate SGX filing dated the same day.</p><div class="ed-art-byline"><span class="ed-art-byline-by">By PropertyAtlas</span><span class="ed-art-byline-sep">·</span><span>12 May 2026</span><span class="ed-art-byline-sep">·</span><span>7 min read</span></div><img src="/images/news_90_ntt_dc_reit_sg1.jpg" class="ed-art-photo" alt="" /><div class="ed-art-photo-credit">Photo: PropertyAtlas (via Google Street View) | 51 Serangoon North Avenue 4, Singapore — SG1</div><div class="ed-art-body"><p class="lede"><strong>Ten months after listing as Singapore's first global data centre REIT, NTT DC REIT has delivered its maiden full-year reading — and the more telling number sits in a separate SGX filing dated the same day.</strong> Independent valuers Newmark Valuation & Advisory and Cushman & Wakefield Regional appraised the six-property portfolio at US$1,670.2 million as at 31 March 2026, lifting the carrying value 11.3% above the US$1,500 million in purchase consideration paid at IPO on 14 July 2025. NAV per unit grew from US$0.95 at IPO to US$1.14 — a 20.0% increase; adjusted NAV per unit US$1.08.</p>
+<div class="pa-tb"><a class="pa-tb-home" href="/" aria-label="PropertyAtlas home"><span class="pa-tb-logo">P</span><span class="pa-tb-brand">Property<i>Atlas</i></span></a><nav class="pa-tb-buckets" aria-label="Primary"><a href="/" class="pa-tb-bucket">Market</a><a href="/newsroom/#asset-directory" class="pa-tb-bucket">Entities</a><a href="/newsroom/" class="pa-tb-bucket on">Newsroom</a><a href="/newsroom/#listings" class="pa-tb-bucket">Listings</a></nav><div class="pa-tb-pagenav"><a href="/terms.html" class="pa-tb-static">Terms</a><a href="/privacy.html" class="pa-tb-static">Privacy</a><a href="/about.html" class="pa-tb-static">About</a><a href="/newsroom/">Sign in</a></div></div><div class="ed-art-datestrip">Tuesday · 12 May 2026 · Singapore</div><article class="ed-art-content"><a class="ed-art-back-inline" href="/" onclick="return atlasArticleBack(event)">← PropertyAtlas</a><div class="ed-art-eyebrow"><span class="ed-cat-tag">Commercial</span><span class="ed-eyebrow-sep">·</span><span class="ed-cat-tag">Earnings</span><span class="ed-eyebrow-sep">·</span><span class="ed-cat-tag">REIT Update</span><span class="ed-eyebrow-sep">·</span><span class="ed-cat-tag">Maiden Year</span><span class="ed-eyebrow-sep">·</span><span class="ed-cat-tag">Data Centre</span><span class="ed-eyebrow-sep">·</span><span class="ed-cat-tag">Cross-Border</span><span class="ed-eyebrow-sep">·</span><span class="ed-cat-tag">Valuation Uplift</span><span class="ed-eyebrow-sep">·</span><span class="ed-cat-tag">Capital Management</span></div><h1 class="ed-art-headline">NTT DC REIT FY25/26 Maiden Reading: Portfolio Independently Valued At US$1,670.2M (+11.3%) — Six Properties, US$170M Revaluation Gain, And A 23% SG1 MSA Reversion That Priced Above The Singapore Market Band</h1><p class="ed-art-standfirst">Ten months after listing as Singapore's first global data centre REIT, NTT DC REIT has delivered its maiden full-year reading — and the more telling number sits in a separate SGX filing dated the same day.</p><div class="ed-art-byline"><span class="ed-art-byline-by">By PropertyAtlas</span><span class="ed-art-byline-sep">·</span><span>12 May 2026</span><span class="ed-art-byline-sep">·</span><span>7 min read</span></div><img src="/images/news_90_ntt_dc_reit_sg1.jpg" class="ed-art-photo" alt="" /><div class="ed-art-photo-credit">Photo: PropertyAtlas (via Google Street View) | 51 Serangoon North Avenue 4, Singapore — SG1</div><div class="ed-art-body"><p class="lede"><strong>Ten months after listing as Singapore's first global data centre REIT, NTT DC REIT has delivered its maiden full-year reading — and the more telling number sits in a separate SGX filing dated the same day.</strong> Independent valuers Newmark Valuation & Advisory and Cushman & Wakefield Regional appraised the six-property portfolio at US$1,670.2 million as at 31 March 2026, lifting the carrying value 11.3% above the US$1,500 million in purchase consideration paid at IPO on 14 July 2025. NAV per unit grew from US$0.95 at IPO to US$1.14 — a 20.0% increase; adjusted NAV per unit US$1.08.</p>
 
 <p>This is a US$170 million accounting gain crystallised inside a single financial year, against zero acquisitions and one renewed master services agreement. It is the kind of result that quietly answers the structural question every cross-border S-REIT IPO faces in year one: did the assets price correctly, or did the underwriters hand investors a discount?</p>
 
