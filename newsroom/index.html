@@ -1,4 +1,5 @@
 <!DOCTYPE html>
+<!-- v48.278 (13 Jul 2026, S164): About link root-absolute (/about.html) - fixes 404 from /newsroom/ (S158 rewrite missed it; terms/privacy were done).
 <!-- v48.277 (11 Jul 2026, S162): PUBLIC_TAB_HASHES gains #asset-directory (assetdir) and #listings (forsale) so map-root bucket deep links activate the correct tab without dev-mode. Two-line whitelist edit; no other surfaces touched. NEWSROOM VARIANT. -->
 <!-- v48.276 (11 Jul 2026, S161): Vacancy entity chips reordered alphabetically (AI REIT, AIMS, Clifton, ESR-REIT, MIT, Perennial; All REITs unchanged first). NEWSROOM VARIANT. Pending deploy — rides next upload. -->
 <!-- v48.275 (11 Jul 2026, S161): Divested status support in Vacancy Inventory (NEWSROOM VARIANT) — active views/stats exclude Divested; Absorbed toggle shows Absorbed+Divested with distinct ◈ Divested badge; invLatestMonth and Directory lens updated. Fixes ESR 112-vs-102 overcount and Divested rows rendering as live listings with Enquire CTAs. -->
@@ -3125,7 +3126,7 @@ body.article-takeover .ed-foot{display:none!important}
            Market Analysis links — they duplicated the navtab row below. The
            PropertyAtlas wordmark above acts as Home (href="./"). Sign in / Sign
            out remain. POST-BETA: an About / Founder page may slot in here. -->
-      <a href="./about.html" class="ed-mast-nav-external">About Us</a>
+      <a href="/about.html" class="ed-mast-nav-external">About Us</a>
       <a href="javascript:void(0)" id="atlas-signin-link" class="ed-mast-nav-signin"
          onclick="if(window.atlasOpenLoginModal){window.atlasOpenLoginModal();}return false;">Sign in</a>
       <a href="javascript:void(0)" id="atlas-signout-btn" class="ed-mast-nav-signout"
