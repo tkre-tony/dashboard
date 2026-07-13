@@ -1,4 +1,5 @@
 <!DOCTYPE html>
+<!-- v48.279 (13 Jul 2026, S165): Listings tab fixes - (1) #listings deep link / post-auth re-show now calls loadVacancyListings() (v48.277 hash whitelist exposed a render-without-fetch path: 0 rows + stale fallback chip months on hard refresh); (2) inv-search gains type=search name=inv-filter autocomplete=off (Chrome credential autofill was injecting the master email into the filter). -->
 <!-- v48.278 (13 Jul 2026, S164): About link root-absolute (/about.html) - fixes 404 from /newsroom/ (S158 rewrite missed it; terms/privacy were done).
 <!-- v48.277 (11 Jul 2026, S162): PUBLIC_TAB_HASHES gains #asset-directory (assetdir) and #listings (forsale) so map-root bucket deep links activate the correct tab without dev-mode. Two-line whitelist edit; no other surfaces touched. NEWSROOM VARIANT. -->
 <!-- v48.276 (11 Jul 2026, S161): Vacancy entity chips reordered alphabetically (AI REIT, AIMS, Clifton, ESR-REIT, MIT, Perennial; All REITs unchanged first). NEWSROOM VARIANT. Pending deploy — rides next upload. -->
@@ -4957,7 +4958,7 @@ body.article-takeover .ed-foot{display:none!important}
   <div class="inv-controls">
     <div class="inv-search-wrap">
       <span class="inv-search-icon">🔍</span>
-      <input class="inv-search" id="inv-search" placeholder="Search address, unit, remarks…" oninput="invRender()">
+      <input class="inv-search" id="inv-search" type="search" name="inv-filter" autocomplete="off" placeholder="Search address, unit, remarks…" oninput="invRender()">
     </div>
     <select class="inv-sel" id="inv-zone" onchange="invRender()">
       <option value="">All zones</option>
@@ -18395,7 +18396,7 @@ function atlasShowTab(tab) {
       if(!projLoaded) projLoadUnits();
       if(!sophiaCaveatsLoaded) sophiaLoadCaveats();
     } else {
-      setTimeout(invRender, 50);
+      if(vacancyLoaded){ setTimeout(invRender, 50); } else { loadVacancyListings(); } /* v48.279: deep-link (#listings) + post-auth re-show must trigger the runtime fetch, not just render an empty array */
     }
   }
   if(tab === "pulse"){
