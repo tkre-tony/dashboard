@@ -1095,6 +1095,10 @@ function caveatTableHTML(items){
       const qStr='S$'+(qa>=1e6?(qa/1e6).toFixed(qa>=1e7?0:1)+'M':qa>=1e3?Math.round(qa/1e3)+'K':String(Math.round(qa)));
       const pctStr=(pct==null)?'':' · '+sign+Math.abs(pct).toFixed(Math.abs(pct)>=100?0:1)+'%';
       pnlBadge=`<div class="pnl ${up?'pnl-up':'pnl-dn'}">${up?'▲':'▼'} ${sign}${qStr}${pctStr}</div>`;
+      if(fSeg==='landed'&&pr2.buy_date&&c.sdRaw){
+        const _hd=Math.round((new Date(c.sdRaw+'T00:00:00')-new Date(pr2.buy_date+'T00:00:00'))/864e5);
+        if(_hd>0&&_hd<=1095) pnlBadge+=`<div class="bought-lbl" style="color:#B5683E;cursor:help" title="Sold within ~3 years of purchase \u2014 the window in which licensed developers of up to 4 housing units must complete and sell to retain ABSD remission (IRAS). Typical of demolish-and-rebuild: the headline gain is GROSS and excludes construction costs, professional fees and stamp duties.">\u21bb \u22643-yr hold \u00b7 likely rebuild \u2014 gain is gross</div>`;
+      }
       bDate=pr2.buy_date?`<div class="bought-lbl">Bought</div><div class="bought-val">${fmtSD(pr2.buy_date)}</div>`:'';
       bPrice=`<div class="bought-lbl">Bought</div><div class="bought-val">S$${Number(pr2.buy_price).toLocaleString()}</div>`;
       bPsf=pr2.psf_buy!=null?`<div class="bought-lbl">Bought</div><div class="bought-val">S$${Math.round(pr2.psf_buy).toLocaleString()}</div>`:'';
