@@ -453,7 +453,7 @@ body{background:var(--bg);color:var(--txt);font-family:Inter,system-ui,-apple-sy
       <span><span class="dot" style="background:#0000CD"></span> Commercial</span>
       <span><span class="dot" style="background:#7030A0"></span> Industrial</span>
       <span><span class="dot" style="background:#B5683E"></span> Shophouse</span>
-      <span id="legLanded" style="display:none"><span class="dot" style="background:#1E7A46"></span> Landed</span>
+      <span id="legLanded" style="display:none;gap:10px"><span><span class="dot" style="background:#1B5E20"></span> Detached</span><span><span class="dot" style="background:#2E9E63"></span> Semi-D</span><span><span class="dot" style="background:#7FC97F"></span> Terrace</span></span>
         <label class="mrt-leg"><input type="checkbox" id="mrtChk" checked onchange="toggleMRT(this.checked)"><span class="mrt-pin"></span> MRT</label>
     </div>
     <div class="detail" id="detail"></div>
@@ -667,6 +667,7 @@ async function runLandedSearch(){
     cavTotal=(cr&&cr.indexOf('/')>=0)?(parseInt(cr.split('/')[1],10)||CAVEATS.length):CAVEATS.length;
     selIdx=null; closeDetail();
     buildDistricts(); renderCaveats();
+    loadLandedPairs(_seq);   // BOUGHT pairing — async, non-blocking
     if(cavTotal<=CAVEATS.length){ LANDED_PINS=CAVEATS.slice(); landedPinsToMap(); }
     else{
       fetch(buildLandedURL(true),{headers:{'apikey':SUPA_ANON,'Authorization':'Bearer '+SUPA_ANON}})
@@ -675,6 +676,28 @@ async function runLandedSearch(){
         .catch(()=>{});
     }
   }catch(e){ console.error('landed search failed:',e); if(document.getElementById('count'))document.getElementById('count').textContent='Could not load \u2014 retry'; }
+}
+async function loadLandedPairs(seq){
+  // BOUGHT enrichment for landed — mirrors loadPairsForCaveats, sourced from landed_pnl_pairs_mv.
+  // New Sale never pairs and bulk deals are excluded at MV level; psf_buy derived from buy area.
+  try{
+    const ids=CAVEATS.map(c=>c.id).filter(x=>x!=null);
+    if(!ids.length) return;
+    const map={}, CHUNK=200;
+    for(let i=0;i<ids.length;i+=CHUNK){
+      if(seq!==cavSeq) return;
+      const slice=ids.slice(i,i+CHUNK);
+      const url=SUPA_REST+'/landed_pnl_pairs_mv?select=sell_id,buy_date,buy_price,buy_area_sqft&sell_id=in.('+slice.join(',')+')';
+      const res=await fetch(url,{headers:{'apikey':SUPA_ANON,'Authorization':'Bearer '+SUPA_ANON}});
+      if(!res.ok) return;
+      const rows=await res.json();
+      if(Array.isArray(rows)) rows.forEach(r=>{ map[r.sell_id]={buy_date:r.buy_date,buy_price:r.buy_price,
+        psf_buy:(r.buy_price!=null&&r.buy_area_sqft>0)?Math.round(r.buy_price/r.buy_area_sqft):null}; });
+    }
+    if(seq!==cavSeq) return;
+    PAIR_BY_SELL=map;
+    renderCaveats();
+  }catch(e){ /* enhancement only */ }
 }
 function landedPinsToMap(){
   if(map&&map.getSource('cav')) map.getSource('cav').setData(caveatGeojson(LANDED_PINS.map((c,i)=>({c,i,lp:1}))));
@@ -822,7 +845,7 @@ function cavNext(){ if(cavOffset+cavPageSize<cavTotal){ cavOffset+=cavPageSize; 
 function cavLast(){ cavOffset=Math.max(0,(Math.ceil(cavTotal/cavPageSize)-1)*cavPageSize); searchCaveats(); }
 function cavSetSort(s){ if(s!==cavSort){ cavSort=s; cavOffset=0; searchCaveats(); } }
 function cavSetPageSize(n){ n=parseInt(n,10)||100; if(n!==cavPageSize){ cavPageSize=n; cavOffset=0; searchCaveats(); } }
-const TYPE_COLORS={'Office':'#0000CD','Retail':'#0000CD','Shophouse':'#B5683E','Multi-User Factory':'#7030A0','Single-User Factory':'#7030A0','Business Park':'#7030A0','Warehouse':'#7030A0','Detached House':'#1E7A46','Semi-Detached House':'#1E7A46','Terrace House':'#1E7A46','—':'#888888'};
+const TYPE_COLORS={'Office':'#0000CD','Retail':'#0000CD','Shophouse':'#B5683E','Multi-User Factory':'#7030A0','Single-User Factory':'#7030A0','Business Park':'#7030A0','Warehouse':'#7030A0','Detached House':'#1B5E20','Semi-Detached House':'#2E9E63','Terrace House':'#7FC97F','—':'#888888'};
 let fType='all',fRegion='',fDist=null,fQ='',fTenure=[],selIdx=null,map,hoverPopup;
 let fSeg='all',fLType='all';
 let LANDED_PINS=[];   // full filtered pin universe for landed (capped 2,000); list stays server-paginated
@@ -1598,7 +1621,7 @@ function init(){
   map.on('load',()=>{
     var typeColor=['match',['get','t'],'Office','#0000CD','Retail','#0000CD','Shophouse','#B5683E',
       'Multi-User Factory','#7030A0','Single-User Factory','#7030A0','Business Park','#7030A0','Warehouse','#7030A0',
-      'Detached House','#1E7A46','Semi-Detached House','#1E7A46','Terrace House','#1E7A46','#888'];
+      'Detached House','#1B5E20','Semi-Detached House','#2E9E63','Terrace House','#7FC97F','#888'];
 
     // CAVEAT source — unclustered points (proven 3a render path)
     map.addSource('cav',{type:'geojson',data:caveatGeojson([])});
