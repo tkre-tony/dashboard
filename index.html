@@ -635,7 +635,7 @@ function landedNoMapNote(c){
   if(!c.pc) return 'Location not mappable \u2014 no postal code in caveat record';
   return 'Location not mappable \u2014 postal code retired/superseded';
 }
-function buildLandedURL(){
+function buildLandedURL(forPins){
   const P=['select=id,project_name,transacted_price,area_sqft,unit_price_psf,sale_date,address,type_of_sale,type_of_area,property_type,tenure,postal_district,planning_region,planning_area,postal_code,number_of_units,nett_price,lat,lng,side_note'];
   if(fLType!=='all') P.push('property_type=eq.'+encodeURIComponent(fLType));
   if(fRegion) P.push('planning_region=eq.'+encodeURIComponent(regionToDb(fRegion)));
@@ -647,7 +647,8 @@ function buildLandedURL(){
           if(q) P.push('or=(address.ilike.*'+encodeURIComponent(q)+'*,project_name.ilike.*'+encodeURIComponent(q)+'*)'); }
   const dir=(cavSort==='asc')?'asc':'desc';
   P.push('order=sale_date.'+dir+',id.'+dir);
-  P.push('limit='+cavPageSize); P.push('offset='+cavOffset);
+  if(forPins){ P.push('limit=2000'); }
+  else { P.push('limit='+cavPageSize); P.push('offset='+cavOffset); }
   return LANDED_REST+'?'+P.join('&');
 }
 async function runLandedSearch(){
@@ -666,7 +667,24 @@ async function runLandedSearch(){
     cavTotal=(cr&&cr.indexOf('/')>=0)?(parseInt(cr.split('/')[1],10)||CAVEATS.length):CAVEATS.length;
     selIdx=null; closeDetail();
     buildDistricts(); renderCaveats();
+    if(cavTotal<=CAVEATS.length){ LANDED_PINS=CAVEATS.slice(); landedPinsToMap(); }
+    else{
+      fetch(buildLandedURL(true),{headers:{'apikey':SUPA_ANON,'Authorization':'Bearer '+SUPA_ANON}})
+        .then(r=>r.ok?r.json():[])
+        .then(rows=>{ if(_seq!==cavSeq) return; LANDED_PINS=(rows||[]).map(rowToCaveat); landedPinsToMap(); })
+        .catch(()=>{});
+    }
   }catch(e){ console.error('landed search failed:',e); if(document.getElementById('count'))document.getElementById('count').textContent='Could not load \u2014 retry'; }
+}
+function landedPinsToMap(){
+  if(map&&map.getSource('cav')) map.getSource('cav').setData(caveatGeojson(LANDED_PINS.map((c,i)=>({c,i,lp:1}))));
+}
+function selectLandedPin(i){
+  const c=LANDED_PINS[i]; if(!c) return;
+  selIdx=null;
+  document.getElementById('detail').innerHTML=cavDetailHTML(c);
+  document.getElementById('detail').classList.add('show');
+  if(map&&map.getSource('sel'))map.getSource('sel').setData({type:'FeatureCollection',features:c.nomap?[]:[{type:'Feature',geometry:{type:'Point',coordinates:[c.lng,c.lat]},properties:{}}]});
 }
 const _SEG_C=['Office','Retail','Shophouse'], _SEG_I=['Multi-User Factory','Single-User Factory','Business Park','Warehouse'];
 function syncSegmentUI(){
@@ -694,7 +712,7 @@ function syncSegmentUI(){
 }
 function setSegment(s,force){
   if(fSeg===s && !force) return;
-  fSeg=s; fType='all'; fLType='all'; cavOffset=0;
+  fSeg=s; fType='all'; fLType='all'; cavOffset=0; LANDED_PINS=[];
   if(fSeg==='landed' && (cavMode==='release'||cavPeriod==='this_week')){
     cavPeriod='1y'; cavMode='master';
     document.querySelectorAll('#periods .chip,#mtPeriods .chip').forEach(x=>x.classList.toggle('on',x.dataset.period==='1y'));
@@ -775,13 +793,13 @@ function renderCaveats(){   // current page render; server paginates; fQ/fTenure
   if(splitMode==='list') caveatTableHTML(items); else caveatListHTML(items);
   const lbl=(cavMode==='release')?('Week of '+cavWeekLabel+' release'):periodLabel(cavPeriod);
   document.getElementById('list').insertAdjacentHTML('afterbegin','<div class="list-banner">'+cavPagerHTML(page,pages)+'</div>');
-  if(map&&map.getSource('cav')) map.getSource('cav').setData(caveatGeojson(items));
+  if(map&&map.getSource('cav')) map.getSource('cav').setData((fSeg==='landed'&&LANDED_PINS.length)?caveatGeojson(LANDED_PINS.map((c,i)=>({c,i,lp:1}))):caveatGeojson(items));
   [...document.querySelectorAll('.dchip')].forEach(x=>{const n=x.textContent.match(/^D(\d+)/);x.classList.toggle('on',n&&+n[1]===fDist);});
   renderMktVol();
 }
 function cavPagerHTML(page,pages){
   const lbl=(cavMode==='release')?('Week of '+cavWeekLabel+' release'):periodLabel(cavPeriod);
-  const head='<span><span style="opacity:.6">'+(cavMode==='release'?'📅':'🔎')+'</span> '+lbl+' \u00b7 <b>'+(cavTotal||0).toLocaleString()+'</b> '+(fSeg==='landed'?'transactions':'caveats')+'</span>';
+  const head='<span><span style="opacity:.6">'+(cavMode==='release'?'📅':'🔎')+'</span> '+lbl+' \u00b7 <b>'+(cavTotal||0).toLocaleString()+'</b> '+(fSeg==='landed'?('transactions'+(((cavTotal||0)>2000)?' \u00b7 map shows latest 2,000':'')):'caveats')+'</span>';
   if((cavTotal||0)<=cavPageSize) return '<div style="font-size:12px;color:var(--ink,#1a2332)">'+head+'</div>';
   const atFirst=cavOffset<=0, atLast=page>=pages;
   const bs='display:inline-flex;align-items:center;padding:3px 8px;margin:0 1px;border:1px solid var(--bd,#d6d9e0);border-radius:6px;background:var(--srf,#fff);color:var(--ink,#1a2332);font:inherit;font-size:12px;cursor:pointer;';
@@ -807,6 +825,7 @@ function cavSetPageSize(n){ n=parseInt(n,10)||100; if(n!==cavPageSize){ cavPageS
 const TYPE_COLORS={'Office':'#0000CD','Retail':'#0000CD','Shophouse':'#B5683E','Multi-User Factory':'#7030A0','Single-User Factory':'#7030A0','Business Park':'#7030A0','Warehouse':'#7030A0','Detached House':'#1E7A46','Semi-Detached House':'#1E7A46','Terrace House':'#1E7A46','—':'#888888'};
 let fType='all',fRegion='',fDist=null,fQ='',fTenure=[],selIdx=null,map,hoverPopup;
 let fSeg='all',fLType='all';
+let LANDED_PINS=[];   // full filtered pin universe for landed (capped 2,000); list stays server-paginated
 let lens='caveats';
 let acItems=[],acActive=-1;
 
@@ -828,6 +847,12 @@ function maskAddress(addr){
   var leadRe=/^(\d+[A-Za-z]?(?:\s*[,/-]\s*\d+[A-Za-z]?)*)(\s)/; // whole-building: mask leading street number
   if(leadRe.test(addr))return addr.replace(leadRe,'***$2');
   return addr;
+}
+function maskNote(t){
+  if(!t||typeof t!=='string')return t||'';
+  if(window.currentUserTier==='free'||window.currentUserTier==='salesperson'||
+     window.currentUserTier==='subscriber'||window.currentUserTier==='master')return t;
+  return t.replace(/\b\d+[A-Za-z]?(?=\s+[A-Z]{2})/g,'***');   // mask house numbers embedded in lineage notes
 }
 function isMember(){return window.currentUserTier==='free'||window.currentUserTier==='salesperson'||window.currentUserTier==='subscriber'||window.currentUserTier==='master';}
 function sameAddr(a,b){return (a||'').toUpperCase().replace(/\s+/g,' ').trim()===(b||'').toUpperCase().replace(/\s+/g,' ').trim();} // case/space-insensitive: detects when project name IS the address
@@ -940,9 +965,9 @@ function geojson(items){
     properties:{i,t:p.t,d:p.d,p:p.p,n:p.n}}))};
 }
 function caveatGeojson(items){
-  return {type:'FeatureCollection',features:items.filter(({c})=>c.lat!=null&&c.lng!=null).map(({c,i})=>({
+  return {type:'FeatureCollection',features:items.filter(({c})=>c.lat!=null&&c.lng!=null).map(({c,i,lp})=>({
     type:'Feature',geometry:{type:'Point',coordinates:[c.lng,c.lat]},
-    properties:{i,t:c.t,pr:c.pr,psf:c.psf,n:((c.n&&c.n!=='N.A.')?c.n:c.addr),sd:c.sd}}))};
+    properties:{i,lp:lp?1:0,t:c.t,pr:c.pr,psf:c.psf,n:((c.n&&c.n!=='N.A.')?c.n:c.addr),sd:c.sd}}))};
 }
 
 function showBucket(b){
@@ -1002,7 +1027,7 @@ function caveatListHTML(items){
       </div>
       <div class="str">${[(sameAddr(c.n,c.addr)||c.n==='N.A.')?'':esc(maskAddress(c.addr)),c.rg||'',c.di?('D'+c.di):''].filter(Boolean).join(' · ')}</div>
       ${c.nomap?('<div class="str" style="color:#B5683E;margin-top:2px">📍 '+(fSeg==='landed'?landedNoMapNote(c):'Location not shown — building redeveloped or no postal on record')+'</div>'):''}
-      ${c.note?('<div class="str" style="color:var(--mut);margin-top:2px">\u21b3 '+esc(c.note)+'</div>'):''}
+      ${c.note?('<div class="str" style="color:var(--mut);margin-top:2px">\u21b3 '+esc(maskNote(c.note))+'</div>'):''}
       <div style="display:flex;gap:4px;flex-wrap:wrap;margin-bottom:6px">
         <span class="pill" style="background:${col}22;color:${col}">${c.t}</span>
         ${c.tos?`<span class="pill" style="background:var(--srf2);color:var(--mut)">${c.tos}</span>`:''}
@@ -1057,7 +1082,7 @@ function caveatTableHTML(items){
       `<td class="mono nowrap">${c.sd}${bDate}</td>`+
       `<td class="mono">${c.di?('D'+c.di):'—'}</td>`+
       `<td class="proj">${projCell}${c.nomap?(' <span class="nopin" title="'+(fSeg==='landed'?landedNoMapNote(c):'Location not shown — building redeveloped or no postal on record')+'">📍</span>'):''}</td>`+
-      `<td class="addr">${addrCell}${c.note?('<div style="color:var(--mut);font-size:10px">\u21b3 '+esc(c.note)+'</div>'):''}</td>`+
+      `<td class="addr">${addrCell}${c.note?('<div style="color:var(--mut);font-size:10px">\u21b3 '+esc(maskNote(c.note))+'</div>'):''}</td>`+
       `<td class="sub">${esc(c.tos)||'—'}${(c.nu>1)?('<div style="color:#B5683E;font-size:10px;font-weight:700">Bulk · '+c.nu+' units</div>'):''}</td>`+
       `<td><span class="tpill" style="background:${col}22;color:${col}">${c.t}</span></td>`+
       `<td class="sub">${esc(c.toa)||'—'}</td>`+
@@ -1080,11 +1105,9 @@ function caveatTableHTML(items){
     `</tr></thead><tbody>`+rows+`</tbody></table>`;
 }
 
-function selectCaveat(i,fly){
-  const _c0=CAVEATS[i];
-  if(fSeg!=='landed' && _c0 && _c0.n && _c0.n!=='N.A.'){ gotoDirectory(_c0.n); return; }   // unified panel via directory lens (landed stays on caveat card)
-  selIdx=i;const c=CAVEATS[i];const col=TYPE_COLORS[c.t]||'#888';
-  document.getElementById('detail').innerHTML=`<span class="x" onclick="closeDetail()">×</span>
+function cavDetailHTML(c){
+  const col=TYPE_COLORS[c.t]||'#888';
+  return `<span class="x" onclick="closeDetail()">×</span>
     <h3>${esc(maskAddress((c.n&&c.n!=='N.A.')?c.n:c.addr))}</h3>
     <div class="badges"><span class="badge" style="background:${col}22;color:${col}">${c.t}</span>
       ${c.rg?`<span class="badge">${c.rg}</span>`:''}${c.ar?`<span class="badge">${esc(c.ar)}</span>`:''}
@@ -1100,11 +1123,17 @@ function selectCaveat(i,fly){
     ${c.toa?`<div class="kv">Title · <b>${c.toa}</b></div>`:''}
     ${(sameAddr(c.n,c.addr)||c.n==='N.A.')?'':`<div class="kv">Address · <b>${esc(maskAddress(c.addr))}</b></div>`}
     ${(c.nu>1)?`<div class="kv">Bulk deal · <b>${c.nu} units</b></div>`:''}
-    ${c.note?`<div class="kv" style="color:var(--mut)">\u21b3 ${esc(c.note)}</div>`:''}
+    ${c.note?`<div class="kv" style="color:var(--mut)">\u21b3 ${esc(maskNote(c.note))}</div>`:''}
     ${(c.nomap&&fSeg==='landed')?`<div class="kv" style="color:#B5683E">📍 ${landedNoMapNote(c)}</div>`:''}
     ${lockNote()}
     ${detailCTA()}
     ${enqBlock('cav')}`;
+}
+function selectCaveat(i,fly){
+  const _c0=CAVEATS[i];
+  if(fSeg!=='landed' && _c0 && _c0.n && _c0.n!=='N.A.'){ gotoDirectory(_c0.n); return; }   // unified panel via directory lens (landed stays on caveat card)
+  selIdx=i;const c=CAVEATS[i];
+  document.getElementById('detail').innerHTML=cavDetailHTML(c);
   document.getElementById('detail').classList.add('show');
   if(lens==='caveats')renderCaveats();
   if(map&&map.getSource('sel'))map.getSource('sel').setData({type:'FeatureCollection',features:c.nomap?[]:[{type:'Feature',geometry:{type:'Point',coordinates:[c.lng,c.lat]},properties:{}}]});
@@ -1364,7 +1393,7 @@ function apply(){
   [...document.querySelectorAll('.dchip')].forEach(x=>{const n=x.textContent.match(/^D(\d+)/);x.classList.toggle('on',n&&+n[1]===fDist);});
   syncLocCur();
 }
-function clearAll(){fSeg='all';fLType='all';fType='all';fRegion='';fDist=null;fQ='';fTenure=[];lens='caveats';cavPeriod='this_week';cavMode='release';
+function clearAll(){fSeg='all';fLType='all';LANDED_PINS=[];fType='all';fRegion='';fDist=null;fQ='';fTenure=[];lens='caveats';cavPeriod='this_week';cavMode='release';
   if(typeof syncSegmentUI==='function') syncSegmentUI();
   document.querySelectorAll('#periods .chip').forEach(x=>x.classList.toggle('on',x.dataset.period==='this_week'));
   document.getElementById('q').value='';document.querySelectorAll('#regions .chip').forEach(c=>c.classList.toggle('on',c.dataset.region===''));
@@ -1616,7 +1645,7 @@ function init(){
       window.toggleMRT=function(on){var v=on?'visible':'none';['mrt-dot','mrt-label'].forEach(function(id){if(map.getLayer(id))map.setLayoutProperty(id,'visibility',v);});};
 
     // Click handlers for both layers
-    map.on('click','cav-pts',e=>{selectCaveat(e.features[0].properties.i,false);});
+    map.on('click','cav-pts',e=>{var p=e.features[0].properties; if(p.lp){selectLandedPin(p.i);}else{selectCaveat(p.i,false);}});
     map.on('click','dir-pts',e=>{select(e.features[0].properties.i,false);});
     map.on('click','dir-clusters',e=>{
       var f=map.queryRenderedFeatures(e.point,{layers:['dir-clusters']})[0];
