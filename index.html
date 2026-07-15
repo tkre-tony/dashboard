@@ -335,6 +335,13 @@ body{background:var(--bg);color:var(--txt);font-family:Inter,system-ui,-apple-sy
         <div class="chip" data-period="5y">5Y</div>
         <div class="chip" data-period="since1995">Since 1995</div>
       </div></div>
+      <div class="fgroup"><div class="lbl">Segment</div>
+      <div class="chiprow" id="segments">
+        <div class="chip on" data-seg="all">All C&amp;I</div>
+        <div class="chip" data-seg="commercial">Commercial</div>
+        <div class="chip" data-seg="industrial">Industrial</div>
+        <div class="chip" data-seg="landed">Landed</div>
+      </div></div>
       <div class="fgroup"><div class="lbl">Property type</div>
       <div class="chiprow" id="types">
         <div class="chip on" data-type="all">All</div>
@@ -345,6 +352,12 @@ body{background:var(--bg);color:var(--txt);font-family:Inter,system-ui,-apple-sy
         <div class="chip" data-type="Single-User Factory">Single-User</div>
         <div class="chip" data-type="Business Park">Biz Park</div>
         <div class="chip" data-type="Warehouse">Warehouse</div>
+      </div>
+      <div class="chiprow" id="typesLanded" style="display:none">
+        <div class="chip on" data-ltype="all">All</div>
+        <div class="chip" data-ltype="Detached House">Detached</div>
+        <div class="chip" data-ltype="Semi-Detached House">Semi-D</div>
+        <div class="chip" data-ltype="Terrace House">Terrace</div>
       </div></div>
       <div class="fgroup"><div class="lbl">Tenure</div>
       <div class="chiprow" id="tenures">
@@ -399,6 +412,13 @@ body{background:var(--bg);color:var(--txt);font-family:Inter,system-ui,-apple-sy
         <div class="chip" data-period="5y">5Y</div>
         <div class="chip" data-period="since1995">Since 1995</div>
       </div></div>
+      <div class="fgroup"><div class="lbl">Segment</div>
+      <div class="mt-pchips" id="mtSegments">
+        <div class="chip on" data-seg="all">All C&amp;I</div>
+        <div class="chip" data-seg="commercial">Commercial</div>
+        <div class="chip" data-seg="industrial">Industrial</div>
+        <div class="chip" data-seg="landed">Landed</div>
+      </div></div>
       <div class="fgroup"><div class="lbl">Property type</div>
       <div class="mt-chips" id="mtChips">
         <div class="chip on" data-type="all">All</div>
@@ -409,6 +429,12 @@ body{background:var(--bg);color:var(--txt);font-family:Inter,system-ui,-apple-sy
         <div class="chip" data-type="Single-User Factory">Single-User</div>
         <div class="chip" data-type="Business Park">Biz Park</div>
         <div class="chip" data-type="Warehouse">Warehouse</div>
+      </div>
+      <div class="mt-chips" id="mtChipsLanded" style="display:none">
+        <div class="chip on" data-ltype="all">All</div>
+        <div class="chip" data-ltype="Detached House">Detached</div>
+        <div class="chip" data-ltype="Semi-Detached House">Semi-D</div>
+        <div class="chip" data-ltype="Terrace House">Terrace</div>
       </div></div>
       <div class="fgroup"><div class="lbl">Tenure</div>
       <div class="mt-pchips" id="mtTenures">
@@ -427,6 +453,7 @@ body{background:var(--bg);color:var(--txt);font-family:Inter,system-ui,-apple-sy
       <span><span class="dot" style="background:#0000CD"></span> Commercial</span>
       <span><span class="dot" style="background:#7030A0"></span> Industrial</span>
       <span><span class="dot" style="background:#B5683E"></span> Shophouse</span>
+      <span id="legLanded" style="display:none"><span class="dot" style="background:#1E7A46"></span> Landed</span>
         <label class="mrt-leg"><input type="checkbox" id="mrtChk" checked onchange="toggleMRT(this.checked)"><span class="mrt-pin"></span> MRT</label>
     </div>
     <div class="detail" id="detail"></div>
@@ -479,7 +506,9 @@ function rowToCaveat(r){
     n:name, t:normType(r.property_type), pr:r.transacted_price, psf:r.unit_price_psf,
     area:(r.area_sqft!=null?Math.round(r.area_sqft):null), sd:fmtSD(r.sale_date), sdRaw:r.sale_date,
     rg:r.planning_region||'', ar:r.planning_area||'', di:r.postal_district||null,
-    addr:r.address||'', tn:r.tenure||'', tos:r.type_of_sale||'', toa:r.type_of_area||'', rel:r.release_date };
+    addr:r.address||'', tn:r.tenure||'', tos:r.type_of_sale||'', toa:r.type_of_area||'', rel:r.release_date,
+    pc:((r.postal_code!=null&&r.postal_code!=='')?String(r.postal_code):null),
+    nu:(r.number_of_units!=null?Number(r.number_of_units):null), note:r.side_note||'' };
 }
 let CAVEATS = [];          // current result set (live)
 let PAIR_BY_SELL = {};     // sell_id -> BOUGHT pair from pnl_pairs_mv (progressive enhancement)
@@ -554,6 +583,7 @@ function mktVolSVG(W){
 function renderMktVol(){
   const el=document.getElementById('mktVol'); if(!el) return;
   if(lens!=='caveats'){ el.style.display='none'; mvTipHide(); return; }
+  if(typeof fSeg!=='undefined' && fSeg==='landed'){ el.style.display='none'; mvTipHide(); return; }
   el.style.display='block';
   const type=mvType(), gran=mvGran(), W=Math.max(320,(el.clientWidth||720)-20);
   const arr=(type==='all')?mvArr('all'):mvArr(type);
@@ -585,6 +615,8 @@ function weekOf(iso){ if(!iso) return '—'; const d=new Date(iso+'T00:00:00'); 
 function buildBody(){
   const body={limit:cavPageSize, offset:cavOffset, sort:cavSort};
   if(fType && fType!=='all') body.types = CHIP_TO_DB[fType] || [fType];
+  else if(fSeg==='commercial') body.types = SEG_TO_DB.commercial;
+  else if(fSeg==='industrial') body.types = SEG_TO_DB.industrial;
   if(fRegion) body.region = regionToDb(fRegion);
   if(fDist)   body.district = fDist;
   if(cavMode==='release'){ body.latest_release=true; }
@@ -593,6 +625,90 @@ function buildBody(){
   if(fQ) body.q=fQ;
   return body;
 }
+
+// ===== LANDED-1 v9: segment lens + toggle-load from landed_transactions_geo (L-GEO-2 compliant) =====
+const SEG_TO_DB={commercial:['Office','Retail','Shop House'],
+  industrial:['Multiple-user Factory','Multi-user Factory','Single-user Factory','Business park','Business Park','Warehouse']};
+const LANDED_REST=SUPA_REST+'/landed_transactions_geo';
+function landedNoMapNote(c){
+  if(/\bENBLOC\b/i.test(c.addr||'')) return 'Location not mappable \u2014 en bloc sale spanning multiple properties';
+  if(!c.pc) return 'Location not mappable \u2014 no postal code in caveat record';
+  return 'Location not mappable \u2014 postal code retired/superseded';
+}
+function buildLandedURL(){
+  const P=['select=id,project_name,transacted_price,area_sqft,unit_price_psf,sale_date,address,type_of_sale,type_of_area,property_type,tenure,postal_district,planning_region,planning_area,postal_code,number_of_units,nett_price,lat,lng,side_note'];
+  if(fLType!=='all') P.push('property_type=eq.'+encodeURIComponent(fLType));
+  if(fRegion) P.push('planning_region=eq.'+encodeURIComponent(regionToDb(fRegion)));
+  if(fDist)   P.push('postal_district=eq.'+fDist);
+  if(cavPeriod==='since1995'){ /* no date filter */ }
+  else{ const days=PERIOD_DAYS[cavPeriod]||365;
+        P.push('sale_date=gte.'+new Date(Date.now()-days*864e5).toISOString().slice(0,10)); }
+  if(fQ){ const q=fQ.replace(/[(),.\\]/g,' ').replace(/\s+/g,' ').trim();
+          if(q) P.push('or=(address.ilike.*'+encodeURIComponent(q)+'*,project_name.ilike.*'+encodeURIComponent(q)+'*)'); }
+  const dir=(cavSort==='asc')?'asc':'desc';
+  P.push('order=sale_date.'+dir+',id.'+dir);
+  P.push('limit='+cavPageSize); P.push('offset='+cavOffset);
+  return LANDED_REST+'?'+P.join('&');
+}
+async function runLandedSearch(){
+  try{
+    if(document.getElementById('count'))document.getElementById('count').textContent='Loading\u2026';
+    const _t0=performance.now(); const _seq=++cavSeq;
+    const res=await fetch(buildLandedURL(),{headers:{'apikey':SUPA_ANON,'Authorization':'Bearer '+SUPA_ANON,'Prefer':'count=exact'}});
+    if(!res.ok) throw new Error('HTTP '+res.status);
+    const rows=await res.json();
+    _tLoad=Math.round(performance.now()-_t0);
+    if(_seq!==cavSeq) return;
+    PAIR_BY_SELL={};                       // CI P&L pairs must never badge landed ids (id collision guard)
+    CAVEATS=(rows||[]).map(rowToCaveat);
+    cavCapped=false; cavMode='master';
+    const cr=res.headers.get('content-range');
+    cavTotal=(cr&&cr.indexOf('/')>=0)?(parseInt(cr.split('/')[1],10)||CAVEATS.length):CAVEATS.length;
+    selIdx=null; closeDetail();
+    buildDistricts(); renderCaveats();
+  }catch(e){ console.error('landed search failed:',e); if(document.getElementById('count'))document.getElementById('count').textContent='Could not load \u2014 retry'; }
+}
+const _SEG_C=['Office','Retail','Shophouse'], _SEG_I=['Multi-User Factory','Single-User Factory','Business Park','Warehouse'];
+function syncSegmentUI(){
+  const landed=(fSeg==='landed');
+  document.querySelectorAll('#segments .chip,#mtSegments .chip').forEach(x=>x.classList.toggle('on',x.dataset.seg===fSeg));
+  const tRow=document.getElementById('types'), lRow=document.getElementById('typesLanded');
+  const mtT=document.getElementById('mtChips'), mtL=document.getElementById('mtChipsLanded');
+  if(tRow) tRow.style.display=landed?'none':'';
+  if(lRow) lRow.style.display=landed?'':'none';
+  if(mtT)  mtT.style.display=landed?'none':'';
+  if(mtL)  mtL.style.display=landed?'':'none';
+  document.querySelectorAll('#types .chip,#mtChips .chip').forEach(x=>{
+    const t=x.dataset.type;
+    x.classList.toggle('on',t===fType);
+    let show=true;
+    if(t!=='all'){
+      if(fSeg==='commercial') show=_SEG_C.indexOf(t)>=0;
+      else if(fSeg==='industrial') show=_SEG_I.indexOf(t)>=0;
+    }
+    x.style.display=show?'':'none';
+  });
+  document.querySelectorAll('#typesLanded .chip,#mtChipsLanded .chip').forEach(x=>x.classList.toggle('on',x.dataset.ltype===fLType));
+  document.querySelectorAll('#periods .chip[data-period="this_week"],#mtPeriods .chip[data-period="this_week"]').forEach(x=>x.classList.toggle('ghost',landed));
+  const lg=document.getElementById('legLanded'); if(lg) lg.style.display=landed?'':'none';
+}
+function setSegment(s,force){
+  if(fSeg===s && !force) return;
+  fSeg=s; fType='all'; fLType='all'; cavOffset=0;
+  if(fSeg==='landed' && (cavMode==='release'||cavPeriod==='this_week')){
+    cavPeriod='1y'; cavMode='master';
+    document.querySelectorAll('#periods .chip,#mtPeriods .chip').forEach(x=>x.classList.toggle('on',x.dataset.period==='1y'));
+  }
+  syncSegmentUI();
+  if(typeof renderMktVol==='function') renderMktVol();
+  searchCaveats();
+}
+document.querySelectorAll('#segments .chip,#mtSegments .chip').forEach(c=>c.onclick=()=>setSegment(c.dataset.seg));
+document.querySelectorAll('#typesLanded .chip,#mtChipsLanded .chip').forEach(c=>c.onclick=()=>{
+  fLType=c.dataset.ltype; cavOffset=0;
+  document.querySelectorAll('#typesLanded .chip,#mtChipsLanded .chip').forEach(x=>x.classList.toggle('on',x.dataset.ltype===fLType));
+  apply();
+});
 
 let _cavTimer=null;
 function searchCaveats(){ clearTimeout(_cavTimer); _cavTimer=setTimeout(runCaveatSearch,250); }
@@ -620,6 +736,7 @@ async function loadPairsForCaveats(seq){
   }catch(e){ /* BOUGHT is an enhancement; ignore on failure */ }
 }
 async function runCaveatSearch(){
+  if(fSeg==='landed'){ return runLandedSearch(); }
   try{
     if(document.getElementById('count'))document.getElementById('count').textContent='Loading…';
     const _t0=performance.now();
@@ -664,7 +781,7 @@ function renderCaveats(){   // current page render; server paginates; fQ/fTenure
 }
 function cavPagerHTML(page,pages){
   const lbl=(cavMode==='release')?('Week of '+cavWeekLabel+' release'):periodLabel(cavPeriod);
-  const head='<span><span style="opacity:.6">'+(cavMode==='release'?'📅':'🔎')+'</span> '+lbl+' \u00b7 <b>'+(cavTotal||0).toLocaleString()+'</b> caveats</span>';
+  const head='<span><span style="opacity:.6">'+(cavMode==='release'?'📅':'🔎')+'</span> '+lbl+' \u00b7 <b>'+(cavTotal||0).toLocaleString()+'</b> '+(fSeg==='landed'?'transactions':'caveats')+'</span>';
   if((cavTotal||0)<=cavPageSize) return '<div style="font-size:12px;color:var(--ink,#1a2332)">'+head+'</div>';
   const atFirst=cavOffset<=0, atLast=page>=pages;
   const bs='display:inline-flex;align-items:center;padding:3px 8px;margin:0 1px;border:1px solid var(--bd,#d6d9e0);border-radius:6px;background:var(--srf,#fff);color:var(--ink,#1a2332);font:inherit;font-size:12px;cursor:pointer;';
@@ -687,8 +804,9 @@ function cavNext(){ if(cavOffset+cavPageSize<cavTotal){ cavOffset+=cavPageSize; 
 function cavLast(){ cavOffset=Math.max(0,(Math.ceil(cavTotal/cavPageSize)-1)*cavPageSize); searchCaveats(); }
 function cavSetSort(s){ if(s!==cavSort){ cavSort=s; cavOffset=0; searchCaveats(); } }
 function cavSetPageSize(n){ n=parseInt(n,10)||100; if(n!==cavPageSize){ cavPageSize=n; cavOffset=0; searchCaveats(); } }
-const TYPE_COLORS={'Office':'#0000CD','Retail':'#0000CD','Shophouse':'#B5683E','Multi-User Factory':'#7030A0','Single-User Factory':'#7030A0','Business Park':'#7030A0','Warehouse':'#7030A0','—':'#888888'};
+const TYPE_COLORS={'Office':'#0000CD','Retail':'#0000CD','Shophouse':'#B5683E','Multi-User Factory':'#7030A0','Single-User Factory':'#7030A0','Business Park':'#7030A0','Warehouse':'#7030A0','Detached House':'#1E7A46','Semi-Detached House':'#1E7A46','Terrace House':'#1E7A46','—':'#888888'};
 let fType='all',fRegion='',fDist=null,fQ='',fTenure=[],selIdx=null,map,hoverPopup;
+let fSeg='all',fLType='all';
 let lens='caveats';
 let acItems=[],acActive=-1;
 
@@ -824,7 +942,7 @@ function geojson(items){
 function caveatGeojson(items){
   return {type:'FeatureCollection',features:items.filter(({c})=>c.lat!=null&&c.lng!=null).map(({c,i})=>({
     type:'Feature',geometry:{type:'Point',coordinates:[c.lng,c.lat]},
-    properties:{i,t:c.t,pr:c.pr,psf:c.psf,n:c.n,sd:c.sd}}))};
+    properties:{i,t:c.t,pr:c.pr,psf:c.psf,n:((c.n&&c.n!=='N.A.')?c.n:c.addr),sd:c.sd}}))};
 }
 
 function showBucket(b){
@@ -879,15 +997,18 @@ function caveatListHTML(items){
     const col=TYPE_COLORS[c.t]||'#888';
     return `<div class="lcard${selIdx===i?' sel':''}" style="border-left-color:${col}" onclick="selectCaveat(${i},true)">
       <div style="display:flex;justify-content:space-between;align-items:start">
-        <h4 style="margin:0 0 2px;flex:1">${esc(maskAddress(c.n))}</h4>
+        <h4 style="margin:0 0 2px;flex:1">${esc(maskAddress((c.n&&c.n!=='N.A.')?c.n:c.addr))}</h4>
         <span style="font-family:'DM Mono',monospace;font-size:14px;font-weight:700;color:var(--g1);white-space:nowrap">${fmtVal(c.pr)}</span>
       </div>
-      <div class="str">${[sameAddr(c.n,c.addr)?'':esc(maskAddress(c.addr)),c.rg||'',c.di?('D'+c.di):''].filter(Boolean).join(' · ')}</div>
-      ${c.nomap?'<div class="str" style="color:#B5683E;margin-top:2px">📍 Location not shown — building redeveloped or no postal on record</div>':''}
+      <div class="str">${[(sameAddr(c.n,c.addr)||c.n==='N.A.')?'':esc(maskAddress(c.addr)),c.rg||'',c.di?('D'+c.di):''].filter(Boolean).join(' · ')}</div>
+      ${c.nomap?('<div class="str" style="color:#B5683E;margin-top:2px">📍 '+(fSeg==='landed'?landedNoMapNote(c):'Location not shown — building redeveloped or no postal on record')+'</div>'):''}
+      ${c.note?('<div class="str" style="color:var(--mut);margin-top:2px">\u21b3 '+esc(c.note)+'</div>'):''}
       <div style="display:flex;gap:4px;flex-wrap:wrap;margin-bottom:6px">
         <span class="pill" style="background:${col}22;color:${col}">${c.t}</span>
         ${c.tos?`<span class="pill" style="background:var(--srf2);color:var(--mut)">${c.tos}</span>`:''}
         ${c.toa?`<span class="pill" style="background:var(--srf2);color:var(--mut)">${c.toa}</span>`:''}
+        ${(c.nu>1)?`<span class="pill" style="background:#B5683E22;color:#B5683E;font-weight:700">Bulk · ${c.nu} units</span>`:''}
+        ${(fSeg==='landed'&&c.tn)?`<span class="pill" style="background:var(--srf2);color:var(--mut)">${esc(tenureCat(c.tn))}</span>`:''}
       </div>
       <div class="stats">
         <div class="stat"><b>${c.psf?'S$'+c.psf:'—'}</b><span>PSF</span></div>
@@ -935,9 +1056,9 @@ function caveatTableHTML(items){
     return `<tr>`+
       `<td class="mono nowrap">${c.sd}${bDate}</td>`+
       `<td class="mono">${c.di?('D'+c.di):'—'}</td>`+
-      `<td class="proj">${projCell}${c.nomap?' <span class="nopin" title="Location not shown — building redeveloped or no postal on record">📍</span>':''}</td>`+
-      `<td class="addr">${addrCell}</td>`+
-      `<td class="sub">${esc(c.tos)||'—'}</td>`+
+      `<td class="proj">${projCell}${c.nomap?(' <span class="nopin" title="'+(fSeg==='landed'?landedNoMapNote(c):'Location not shown — building redeveloped or no postal on record')+'">📍</span>'):''}</td>`+
+      `<td class="addr">${addrCell}${c.note?('<div style="color:var(--mut);font-size:10px">\u21b3 '+esc(c.note)+'</div>'):''}</td>`+
+      `<td class="sub">${esc(c.tos)||'—'}${(c.nu>1)?('<div style="color:#B5683E;font-size:10px;font-weight:700">Bulk · '+c.nu+' units</div>'):''}</td>`+
       `<td><span class="tpill" style="background:${col}22;color:${col}">${c.t}</span></td>`+
       `<td class="sub">${esc(c.toa)||'—'}</td>`+
       `<td class="mono num">${price}${pnlBadge}${bPrice}</td>`+
@@ -961,10 +1082,10 @@ function caveatTableHTML(items){
 
 function selectCaveat(i,fly){
   const _c0=CAVEATS[i];
-  if(_c0 && _c0.n && _c0.n!=='N.A.'){ gotoDirectory(_c0.n); return; }   // unified panel via directory lens
+  if(fSeg!=='landed' && _c0 && _c0.n && _c0.n!=='N.A.'){ gotoDirectory(_c0.n); return; }   // unified panel via directory lens (landed stays on caveat card)
   selIdx=i;const c=CAVEATS[i];const col=TYPE_COLORS[c.t]||'#888';
   document.getElementById('detail').innerHTML=`<span class="x" onclick="closeDetail()">×</span>
-    <h3>${esc(maskAddress(c.n))}</h3>
+    <h3>${esc(maskAddress((c.n&&c.n!=='N.A.')?c.n:c.addr))}</h3>
     <div class="badges"><span class="badge" style="background:${col}22;color:${col}">${c.t}</span>
       ${c.rg?`<span class="badge">${c.rg}</span>`:''}${c.ar?`<span class="badge">${esc(c.ar)}</span>`:''}
       ${c.di?`<span class="badge dist">D${c.di}</span>`:''}</div>
@@ -977,7 +1098,10 @@ function selectCaveat(i,fly){
     </div>
     ${c.tn?`<div class="kv">Tenure · <b>${esc(c.tn)}</b></div>`:''}
     ${c.toa?`<div class="kv">Title · <b>${c.toa}</b></div>`:''}
-    ${sameAddr(c.n,c.addr)?'':`<div class="kv">Address · <b>${esc(maskAddress(c.addr))}</b></div>`}
+    ${(sameAddr(c.n,c.addr)||c.n==='N.A.')?'':`<div class="kv">Address · <b>${esc(maskAddress(c.addr))}</b></div>`}
+    ${(c.nu>1)?`<div class="kv">Bulk deal · <b>${c.nu} units</b></div>`:''}
+    ${c.note?`<div class="kv" style="color:var(--mut)">\u21b3 ${esc(c.note)}</div>`:''}
+    ${(c.nomap&&fSeg==='landed')?`<div class="kv" style="color:#B5683E">📍 ${landedNoMapNote(c)}</div>`:''}
     ${lockNote()}
     ${detailCTA()}
     ${enqBlock('cav')}`;
@@ -1240,7 +1364,8 @@ function apply(){
   [...document.querySelectorAll('.dchip')].forEach(x=>{const n=x.textContent.match(/^D(\d+)/);x.classList.toggle('on',n&&+n[1]===fDist);});
   syncLocCur();
 }
-function clearAll(){fType='all';fRegion='';fDist=null;fQ='';fTenure=[];lens='caveats';cavPeriod='this_week';cavMode='release';
+function clearAll(){fSeg='all';fLType='all';fType='all';fRegion='';fDist=null;fQ='';fTenure=[];lens='caveats';cavPeriod='this_week';cavMode='release';
+  if(typeof syncSegmentUI==='function') syncSegmentUI();
   document.querySelectorAll('#periods .chip').forEach(x=>x.classList.toggle('on',x.dataset.period==='this_week'));
   document.getElementById('q').value='';document.querySelectorAll('#regions .chip').forEach(c=>c.classList.toggle('on',c.dataset.region===''));
   document.querySelectorAll('#types .chip').forEach(c=>c.classList.toggle('on',c.dataset.type==='all'));
@@ -1368,7 +1493,7 @@ document.querySelectorAll('#tenures .chip').forEach(c=>c.onclick=()=>{
   apply();
 });
 document.getElementById('list').addEventListener('click',function(e){ var el=e.target.closest('.proj-link'); if(el) gotoDirectory(el.getAttribute('data-proj')); });
-document.querySelectorAll('#periods .chip').forEach(c=>c.onclick=()=>{document.querySelectorAll('#periods .chip').forEach(x=>x.classList.remove('on'));c.classList.add('on');cavPeriod=c.dataset.period;cavMode=(cavPeriod==='this_week')?'release':'master';cavOffset=0;searchCaveats();});
+document.querySelectorAll('#periods .chip').forEach(c=>c.onclick=()=>{if(fSeg==='landed'&&c.dataset.period==='this_week')return;document.querySelectorAll('#periods .chip').forEach(x=>x.classList.remove('on'));c.classList.add('on');cavPeriod=c.dataset.period;cavMode=(cavPeriod==='this_week')?'release':'master';cavOffset=0;searchCaveats();});
 
 // ===== REUSABLE TYPEAHEAD (in-memory, lens-aware, dedup-by-building) =====
 function acData(){return PINS;}
@@ -1443,7 +1568,8 @@ function init(){
   hoverPopup=new maplibregl.Popup({closeButton:false,closeOnClick:false,offset:10});
   map.on('load',()=>{
     var typeColor=['match',['get','t'],'Office','#0000CD','Retail','#0000CD','Shophouse','#B5683E',
-      'Multi-User Factory','#7030A0','Single-User Factory','#7030A0','Business Park','#7030A0','Warehouse','#7030A0','#888'];
+      'Multi-User Factory','#7030A0','Single-User Factory','#7030A0','Business Park','#7030A0','Warehouse','#7030A0',
+      'Detached House','#1E7A46','Semi-Detached House','#1E7A46','Terrace House','#1E7A46','#888'];
 
     // CAVEAT source — unclustered points (proven 3a render path)
     map.addSource('cav',{type:'geojson',data:caveatGeojson([])});
