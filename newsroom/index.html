@@ -1,4 +1,5 @@
 <!DOCTYPE html>
+<!-- v48.284 (16 Jul 2026, S174): KOP Limited onboarding — display layer. (1) TALENT_DATA: 9 KOP profiles appended (Ong Chih Ching S$1,153,000 exact / Suparman S$749,000 exact / 3 INED fees exact 63/53/46K / 4 KMP band S$250-500K with pct mix; rem_history FY2025+FY2024). (2) talent-entity-filter: KOP Limited (FY2026) option added before KSH. (3) ENTITY_COLORS: KOP Limited #0f766e (Montigo teal). (4) NEW: MANAGED asset treatment in Asset Directory cards — status/notes containing MANAGED render blue border #1e3a8a + full-width banner (Under Management - Asset Not Owned) + MANAGED header badge; excluded from dev status badge. First users: KOP Joo Chiat + Ellen Kensington (reit_assets rows, SQL S174). No cascade/NEWS changes. -->
 <!-- v48.283 (16 Jul 2026, S174): Newsroom drop id:138 KOP Limited FY2026 Annual Report (revenue -72% to S$19.8M post-Dalvey Haus sell-out; hospitality segment S$19.8M rev, +6.8%, swings to S$1.2M profit, now ~100% of Group revenue; LAT S$3.3M; gross margin 63.5% from 27.2%; bank borrowings fully repaid, cash S$4.4M; Montigo Serviced Residences 339 Joo Chiat Road, 22 units, opening 2H FY2027 via 100% KOP JooChiat Pte Ltd, building held privately by co-founders - asset-light management model). NEWS entry 138 inserted; cascade regenerated; NR_STATIC_IDS [137..128]; id:127 rotates off landing. Static page + sitemap generated. -->
 <!-- v48.282 (16 Jul 2026, S172): Newsroom drop id:137 KSH Holdings FY2026 Annual Report (order book 4.2x to ~S$965.0M, visibility to FY2029; total dividend +20% to 1.50c; industrial pivot formalised, 3 JVs ~S$1.0B GDV, KSH share ~S$245.0M; net cash S$40.2M, gearing 0.15x). HC pass: 7 KSH TALENT_DATA profiles updated to AR 2026 exact rem (Choo S$574k, Lim S$433k, Tok S$351k, INED fees 55/50/50k, CFO band unchanged), rem_history appended. ENTITY_COLORS KSH Holdings key added. Cascade regenerated; NR_STATIC_IDS [136..127]; id:126 rotates off landing. Static page + sitemap generated. -->
 <!-- v48.280 (15 Jul 2026, S168): Newsroom drop id:135 Boustead Singapore FY2026 (net profit +145% to S$232.6M, UI Boustead REIT listing 12 Mar 2026, 21 SG assets divested, S$126.1M gain, ~16.9% REIT stake, direct property book S$2.1M). Cascade regenerated; NR_STATIC_IDS [134..125]; id:124 rotates off landing. Static page + sitemap generated. -->
@@ -5292,6 +5293,7 @@ body.article-takeover .ed-foot{display:none!important}
       <option value="Ho Bee Land">Ho Bee Land (FY2025)</option>
       <option value="Hong Fok Corporation">Hong Fok Corporation (FY2025)</option>
       <option value="IREIT Global">iREIT Global (FY2025)</option>
+      <option value="KOP Limited">KOP Limited (FY2026)</option>
       <option value="KSH Holdings">KSH Holdings (FY2026)</option>
       <option value="Keppel DC REIT">Keppel DC REIT (FY2025)</option>
       <option value="Keppel REIT">Keppel REIT (FY2025)</option>
@@ -16582,6 +16584,154 @@ var TALENT_DATA = [
     tags:['CFO','Fellow ISCA','MBA Adelaide','27 yrs at KSH'],
     linkedin_url:null, photo_url:null
   },
+
+  // ── KOP LIMITED (SGX:5I1) — FY2026 (9 profiles) ─────────────────────────────
+  // 2 Executive Directors (co-founders), 3 Independent Directors, 4 KMP (band-only)
+  // Source: KOP Limited AR FY2026 (Principle 8 tables), added S174
+
+  {
+    id:'kop-chmn-26', name:'Ong Chih Ching', role:'Executive Chairman & Executive Director', role_type:'Chairman',
+    entity:'KOP Limited', entity_short:'KOP', ar_year:'FY2026',
+    appointed:'6 May 2014', tenure_yrs:12,
+    rem_exact:1153000, rem_fixed:934000, rem_bonus:219000, rem_other:0,
+    rem_note:'Exact remuneration S$1,153,000 disclosed in AR FY2026 (Principle 8 table): salary 81% (incl. fixed allowance and CPF), bonus 19%. No Directors\' fees for Executive Directors; no ESOS or share scheme. Service agreement (from 6 May 2014) renewed for a further three years on 6 May 2026. FY2025: S$1,019,682 exact; FY2024: band S$500,000 and above (100% salary).',
+    rem_band:null, rem_pct_fixed:81, rem_pct_bonus:19, rem_pct_other:0,
+    rem_history:[{year:'FY2025',band:null,exact:1019682,note:'Exact disclosure in AR 2025. Salary 87%, bonus 13%.'},{year:'FY2024',band:'S$500,000 and above',exact:null,note:'Band disclosure only in AR 2024. Salary 100%.'}],
+    edu:null,
+    bio:'Co-founder of KOP Group and Executive Chairman of KOP Limited since its May 2014 Catalist listing (reverse takeover of Scorpio East). Former practising lawyer — co-founding partner of Koh Ong & Partners. Drove KOP\'s landmark projects: The Ritz-Carlton Residences Singapore, Cairnhill (first Ritz-Carlton branded residences outside North America), Hamilton Scotts (sky-garage tower), Dalvey Haus (17 luxury landed homes, fully sold FY2025), and conceptualised the Montigo Resorts brand (Nongsa, Seminyak, Somerset). Named among Forbes Asia\'s 50 Power Business Women (2014, 2015). Deemed interest 44.78% of KOPL, principally via KOP Group Pte. Ltd.',
+    prev_roles:[{org:'Koh Ong & Partners', pos:'Co-founding Partner (law practice)'}],
+    cross_board_roles:[],
+    tags:['Executive Chairman','Co-Founder','Forbes 50 Power Businesswomen','44.78% deemed interest'],
+    linkedin_url:null, photo_url:null
+  },
+
+  {
+    id:'kop-ceo-26', name:'Leny Suparman', role:'Group Chief Executive Officer & Executive Director', role_type:'CEO',
+    entity:'KOP Limited', entity_short:'KOP', ar_year:'FY2026',
+    appointed:'6 May 2014', tenure_yrs:12,
+    rem_exact:749000, rem_fixed:607000, rem_bonus:142000, rem_other:0,
+    rem_note:'Exact remuneration S$749,000 disclosed in AR FY2026: salary 81% (incl. fixed allowance and CPF), bonus 19%. No Directors\' fees for Executive Directors. Service agreement renewed for a further three years on 6 May 2026. FY2025: S$652,102 exact; FY2024: band S$500,000 and above (100% salary).',
+    rem_band:null, rem_pct_fixed:81, rem_pct_bonus:19, rem_pct_other:0,
+    rem_history:[{year:'FY2025',band:null,exact:652102,note:'Exact disclosure in AR 2025. Salary 87%, bonus 13%.'},{year:'FY2024',band:'S$500,000 and above',exact:null,note:'Band disclosure only in AR 2024. Salary 100%.'}],
+    edu:'BSc Business, Indiana University Bloomington (1995)',
+    bio:'Co-founder of KOP Group and Group CEO of KOP Limited, overseeing implementation of the Group\'s development and growth plans. Previously nine years with real estate consultancy CB Richard Ellis, where she headed the retail department and worked on redevelopment projects in Singapore and Shanghai. Under her leadership KOP developed The Ritz-Carlton Residences Singapore, Cairnhill, Hamilton Scotts, Dalvey Haus and the Montigo Resorts portfolio. Deemed interest 41.45% of KOPL, principally via KOP Group Pte. Ltd.',
+    prev_roles:[{org:'CB Richard Ellis', pos:'Head of Retail Department (9 years)'}],
+    cross_board_roles:[],
+    tags:['Group CEO','Co-Founder','Ex-CBRE Retail Head','41.45% deemed interest'],
+    linkedin_url:null, photo_url:null
+  },
+
+  {
+    id:'kop-lid-26', name:'Jimmy Yim Wing Kuen', role:'Lead Independent Director', role_type:'LID',
+    entity:'KOP Limited', entity_short:'KOP', ar_year:'FY2026',
+    appointed:'1 Jul 2023', tenure_yrs:3,
+    rem_exact:63000, rem_fixed:63000, rem_bonus:0, rem_other:0,
+    rem_note:'Directors\' fees S$63,000 for FY2026 (100% fees), approved by shareholders at the 23 July 2025 AGM. FY2025: S$60,000; FY2024: below S$250,000 band (appointed 1 July 2023).',
+    rem_band:null, rem_pct_fixed:100, rem_pct_bonus:0, rem_pct_other:0,
+    rem_history:[{year:'FY2025',band:null,exact:60000,note:'Directors\' fees, 100%.'},{year:'FY2024',band:'Below S$250,000',exact:null,note:'Fees only; appointed 1 July 2023 (part year).'}],
+    edu:'Senior Counsel, Supreme Court of Singapore (appointed 1998, among the youngest below age 40)',
+    bio:'Lead Independent Director. Chairman of Drew & Napier LLC, one of Singapore\'s leading full-service law firms (est. 1889). Also holds directorships in Vanda Global Capital Pte. Ltd. and SGX-listed Stamford Land Corporation Ltd. Past directorships in the preceding five years: Low Keng Huat (Singapore) Limited and Singapore Medical Group Limited.',
+    prev_roles:[],
+    cross_board_roles:[{entity:'Stamford Land Corporation Ltd', role:'Director', listed:true},{entity:'Drew & Napier LLC', role:'Chairman', listed:false},{entity:'Vanda Global Capital Pte. Ltd.', role:'Director', listed:false}],
+    tags:['Lead ID','Senior Counsel','Chairman Drew & Napier'],
+    linkedin_url:null, photo_url:null
+  },
+
+  {
+    id:'kop-ined-ng-26', name:'Ng Hin Lee', role:'Independent Director', role_type:'INED',
+    entity:'KOP Limited', entity_short:'KOP', ar_year:'FY2026',
+    appointed:'15 Jan 2018', tenure_yrs:8,
+    rem_exact:53000, rem_fixed:53000, rem_bonus:0, rem_other:0,
+    rem_note:'Directors\' fees S$53,000 for FY2026 (100% fees). FY2025: S$50,000; FY2024: below S$250,000 band.',
+    rem_band:null, rem_pct_fixed:100, rem_pct_bonus:0, rem_pct_other:0,
+    rem_history:[{year:'FY2025',band:null,exact:50000,note:'Directors\' fees, 100%.'},{year:'FY2024',band:'Below S$250,000',exact:null,note:'Fees only.'}],
+    edu:'BAcc, University of Singapore (1980); Fellow, ISCA',
+    bio:'Independent Director with over 30 years in senior financial and managerial roles: Group CFO of Singapore Post Limited, Executive Director at Gul Technologies Singapore, Financial Controller at Data General, Audit Manager at KPMG Singapore. Singapore Corporate Awards Best CFO of the Year 2011. Also Independent Non-Executive Director of SGX-listed GSH Corporation Limited and InnoTek Limited; past directorship at FJ Benjamin Holdings Ltd.',
+    prev_roles:[{org:'Singapore Post Limited', pos:'Group Chief Financial Officer'},{org:'KPMG Singapore', pos:'Audit Manager'}],
+    cross_board_roles:[{entity:'GSH Corporation Limited', role:'Independent Non-Executive Director', listed:true},{entity:'InnoTek Limited', role:'Independent Non-Executive Director', listed:true}],
+    tags:['INED','Ex-SingPost Group CFO','Best CFO 2011','FCA ISCA'],
+    linkedin_url:null, photo_url:null
+  },
+
+  {
+    id:'kop-ined-wcg-26', name:'Wilson Christopher Geoffrey', role:'Independent Director', role_type:'INED',
+    entity:'KOP Limited', entity_short:'KOP', ar_year:'FY2026',
+    appointed:'1 Aug 2024', tenure_yrs:2,
+    rem_exact:46000, rem_fixed:46000, rem_bonus:0, rem_other:0,
+    rem_note:'Directors\' fees S$46,000 for FY2026 (100% fees). FY2025: S$29,293 (appointed 1 August 2024, part year).',
+    rem_band:null, rem_pct_fixed:100, rem_pct_bonus:0, rem_pct_other:0,
+    rem_history:[{year:'FY2025',band:null,exact:29293,note:'Directors\' fees, 100%; appointed 1 Aug 2024 (part year).'}],
+    edu:'The Royal Military Academy Sandhurst (1976, 1979)',
+    bio:'Independent Director serving on several corporate boards in Singapore. Former officer in The Royal Regiment of Fusiliers with postings in Germany, Belfast and the Sultanate of Oman. Moved to fund management in the City of London in 1987; posted to Singapore in 1990 to establish GT Management\'s office, then based in Hong Kong from 1993 to 1997.',
+    prev_roles:[{org:'GT Management', pos:'Head of Singapore office (from 1990)'},{org:'The Royal Regiment of Fusiliers', pos:'Officer'}],
+    cross_board_roles:[],
+    tags:['INED','Ex-Fund Management','Sandhurst'],
+    linkedin_url:null, photo_url:null
+  },
+
+  {
+    id:'kop-coo-26', name:'Joey Ong', role:'Chief Operating Officer', role_type:'CXO',
+    entity:'KOP Limited', entity_short:'KOP', ar_year:'FY2026',
+    appointed:'Apr 2020 (COO of KOPL; with KOP Group since 2007)', tenure_yrs:6,
+    rem_exact:null, rem_fixed:null, rem_bonus:null, rem_other:null,
+    rem_note:'KMP disclosed in band only: S$250,000 to below S$500,000 for FY2026, salary 88% (incl. fixed allowance and CPF), bonus 12%. KOP discloses KMP remuneration in bands with percentage mix, not exact quantum. Sister of Executive Chairman Ong Chih Ching (disclosed in AR).',
+    rem_band:'S$250,000–S$500,000 (est. within band)', rem_pct_fixed:88, rem_pct_bonus:12, rem_pct_other:0,
+    rem_history:[{year:'FY2025',band:'S$250,000–S$500,000',exact:null,note:'Band disclosure. Salary 82%, bonus 18%.'}],
+    edu:'Graduateship, The Plastics & Rubber Institution, UK (1987)',
+    bio:'Chief Operating Officer of KOP Limited, responsible for overall corporate and business operations. Joined KOP Group in 2007 as Senior Manager, Business Development; Deputy Director, Internal Audit & Compliance from 2008; COO of the hospitality/properties arm from August 2010; re-designated COO of KOP Limited in April 2020. Earlier career spans materials engineering (Additive Circuits), procurement (Philips Singapore), software (Clinch International) and cosmetics manufacturing. Sister of Executive Chairman Ong Chih Ching.',
+    prev_roles:[{org:'Philips Singapore', pos:'Procurement Officer (from 1991)'},{org:'Koh Ong & Partners', pos:'Office Manager (from 1996)'}],
+    cross_board_roles:[],
+    tags:['COO','19 yrs with KOP','Sister of Chairman'],
+    linkedin_url:null, photo_url:null
+  },
+
+  {
+    id:'kop-cfo-26', name:'Joe Tan', role:'Chief Financial Officer', role_type:'CFO',
+    entity:'KOP Limited', entity_short:'KOP', ar_year:'FY2026',
+    appointed:'Apr 2020 (CFO; joined Nov 2014)', tenure_yrs:6,
+    rem_exact:null, rem_fixed:null, rem_bonus:null, rem_other:null,
+    rem_note:'KMP disclosed in band only: S$250,000 to below S$500,000 for FY2026, salary 84%, bonus 16%. Resigned as Company Secretary on 1 April 2025 (remains CFO).',
+    rem_band:'S$250,000–S$500,000 (est. within band)', rem_pct_fixed:84, rem_pct_bonus:16, rem_pct_other:0,
+    rem_history:[{year:'FY2025',band:'S$250,000–S$500,000',exact:null,note:'Band disclosure. Salary 83%, bonus 17%.'}],
+    edu:'BCom (Double Major, Professional Accounting & Finance), Murdoch University; ISCA (non-practising); CPA Australia',
+    bio:'Chief Financial Officer of KOP Limited, responsible for the full spectrum of the Group\'s financial activities. Joined in November 2014 as Group Finance Manager; promoted to CFO in April 2020. Previously Group Finance Manager of Catalist-listed GKE Corporation Limited, with earlier audit roles at Ernst & Young LLP, Baker Tilly TFW LLP and Mazars.',
+    prev_roles:[{org:'GKE Corporation Limited', pos:'Group Finance Manager'},{org:'Ernst & Young LLP', pos:'Audit'}],
+    cross_board_roles:[],
+    tags:['CFO','Ex-GKE','CPA Australia','12 yrs at KOP'],
+    linkedin_url:null, photo_url:null
+  },
+
+  {
+    id:'kop-mdkpph-26', name:'Liane Ong', role:'Managing Director, KOP Properties Holdings Pte. Ltd.', role_type:'KMP',
+    entity:'KOP Limited', entity_short:'KOP', ar_year:'FY2026',
+    appointed:'1 Oct 2025 (re-designated; with Group since Jun 2017)', tenure_yrs:1,
+    rem_exact:null, rem_fixed:null, rem_bonus:null, rem_other:null,
+    rem_note:'KMP disclosed in band only: S$250,000 to below S$500,000 for FY2026, salary 85%, bonus 15%.',
+    rem_band:'S$250,000–S$500,000 (est. within band)', rem_pct_fixed:85, rem_pct_bonus:15, rem_pct_other:0,
+    rem_history:[{year:'FY2025',band:'S$250,000–S$500,000',exact:null,note:'Band disclosure (as MD, Montigo Hospitality). Salary 87%, bonus 13%.'}],
+    edu:null,
+    bio:'Managing Director of KOP Properties Holdings, responsible for executing the Group CEO\'s strategies, asset management and branding across properties, plus IT, HR and administration; Group country representative for the UK and China. Joined as MD of Wintastar Holdings in June 2017 (CEO from April 2020); MD of Montigo Hospitality from January 2023. Over 20 years across business development and international markets — previously Group Director (China Group) at IE Singapore (now Enterprise Singapore), based in Shanghai 2009–2015, concurrently Consul (Commercial) at the Singapore Consulate-General in Shanghai.',
+    prev_roles:[{org:'IE Singapore (Enterprise Singapore)', pos:'Group Director, China Group / Regional Director Shanghai (2009–2015)'},{org:'Ministry of Home Affairs', pos:'Various roles (Immigration & National Registration)'}],
+    cross_board_roles:[],
+    tags:['MD KOP Properties Holdings','Ex-IE Singapore','UK & China Rep'],
+    linkedin_url:null, photo_url:null
+  },
+
+  {
+    id:'kop-ceomrpl-26', name:'Dalip Singh', role:'Chief Executive Officer, Montigo Resorts Pte. Ltd.', role_type:'KMP',
+    entity:'KOP Limited', entity_short:'KOP', ar_year:'FY2026',
+    appointed:'FY2025 (rejoined; first tenure 2011–2016)', tenure_yrs:2,
+    rem_exact:null, rem_fixed:null, rem_bonus:null, rem_other:null,
+    rem_note:'KMP disclosed in band only: S$250,000 to below S$500,000 for FY2026, salary 90%, bonus 10%. FY2025: below S$250,000 band (rejoined during the year).',
+    rem_band:'S$250,000–S$500,000 (est. within band)', rem_pct_fixed:90, rem_pct_bonus:10, rem_pct_other:0,
+    rem_history:[{year:'FY2025',band:'Below S$250,000',exact:null,note:'Band disclosure; rejoined during FY2025. Salary 96%, bonus 4%.'}],
+    edu:'Advanced Certificate in Real Estate, École hôtelière de Lausanne; Diploma in Management Practice (Gold Award), SIM',
+    bio:'CEO of Montigo Resorts Pte. Ltd. 25-year luxury hospitality career: Executive Assistant Manager at The Ritz-Carlton, Millenia Singapore; Area General Manager for Marco Polo Hongkong Hotel, Gateway Hotel and Prince Hotel in Hong Kong; leadership roles at Shangri-La, Grand Hyatt Singapore, Dusit Residences Dubai Marina and Pangkor Laut Resort. Part of KOP\'s pioneering hospitality team 2011–2016 (MD of the hospitality arm and CEO of MRPL). Stelliers General Manager of the Year — Greater China (2019).',
+    prev_roles:[{org:'Wharf Hotels (Marco Polo HK / Gateway / Prince)', pos:'Area General Manager'},{org:'The Ritz-Carlton, Millenia Singapore', pos:'Executive Assistant Manager'}],
+    cross_board_roles:[],
+    tags:['CEO Montigo Resorts','25 yrs Hospitality','Stelliers GM of the Year 2019'],
+    linkedin_url:null, photo_url:null
+  },
 ];
 // ═══════════════════════════════════════════════════
 var talentRoleFilter = 'all';
@@ -22999,7 +23149,8 @@ var ENTITY_COLORS = {
   "BHG Retail REIT":"#a93226",
   "Centurion Accommodation REIT":"#be1e2d",
   "Landmark REIT":"#d62828",
-  "KSH Holdings":"#8a6d1f"
+  "KSH Holdings":"#8a6d1f",
+  "KOP Limited":"#0f766e"
 };
 var REIT_COLORS = ENTITY_COLORS;
 
@@ -23811,7 +23962,8 @@ function reitSearch(page){
     var isPending     = (p.status && (p.status.indexOf('DISPOSAL') >= 0 || p.status.indexOf('PENDING DIVESTMENT') >= 0)) || (p.notes && (p.notes.indexOf('PENDING DISPOSAL') >= 0 || p.notes.indexOf('PENDING DIVESTMENT') >= 0));
     var isPendingAcq  = (p.status && p.status.indexOf('PENDING ACQUISITION') >= 0) || (p.notes && p.notes.indexOf('PENDING ACQUISITION') >= 0);
     var isNewAcq      = !isPendingAcq && p.notes && (p.notes.indexOf('NEW ACQUISITION') >= 0 || p.notes.indexOf('Acquired 2025') >= 0);
-    var statusBadge = (isDev && p.status && !isDivested && !isPending && !isPendingAcq) ? '<span style="padding:2px 7px;border-radius:4px;font-size:9px;font-weight:600;background:#fff3cd;color:#7d5200;border:1px solid #f0c040">'+p.status.split(' — ').pop()+'</span>' : '';
+    var isManaged     = !isDivested && !isPending && !isPendingAcq && ((p.status && p.status.indexOf('MANAGED') >= 0) || (p.notes && p.notes.indexOf('MANAGED') >= 0));
+    var statusBadge = (isDev && p.status && !isDivested && !isPending && !isPendingAcq && !isManaged) ? '<span style="padding:2px 7px;border-radius:4px;font-size:9px;font-weight:600;background:#fff3cd;color:#7d5200;border:1px solid #f0c040">'+p.status.split(' — ').pop()+'</span>' : '';
     var countryFlag = p.country!=='Singapore' ? ' \uD83C\uDF10 '+p.country : '';
     // YoY delta badges
     var yoyVal = yoyBadge(p.val, p.prev_val, false);
@@ -23825,7 +23977,9 @@ function reitSearch(page){
         ? '<span style="font-size:8px;font-weight:700;background:#A67C3A22;color:#A67C3A;border:1px solid #A67C3A55;border-radius:3px;padding:1px 5px;margin-left:4px">PEND. ACQ</span>'
         : isPending
           ? '<span style="font-size:8px;font-weight:700;background:#78350f22;color:#78350f;border:1px solid #78350f55;border-radius:3px;padding:1px 5px;margin-left:4px">PEND. DIV</span>'
-          : '';
+          : isManaged
+            ? '<span style="font-size:8px;font-weight:700;background:#1e40af22;color:#3b82f6;border:1px solid #3b82f655;border-radius:3px;padding:1px 5px;margin-left:4px">MANAGED</span>'
+            : '';
     // Full-width callout banner at top of card
     var calloutBanner = '';
     var priceMatch, priceStr;
@@ -23843,8 +23997,10 @@ function reitSearch(page){
       calloutBanner = '<div style="background:#78350f;color:#fcd34d;font-size:10px;font-weight:700;text-align:center;padding:5px 10px;letter-spacing:.06em;text-transform:uppercase">⏳ Pending Divestment'+priceStr+'</div>';
     } else if(isNewAcq){
       calloutBanner = '<div style="background:#14532d;color:#86efac;font-size:10px;font-weight:700;text-align:center;padding:5px 10px;letter-spacing:.06em;text-transform:uppercase">✴ Newly Acquired FY2025</div>';
+    } else if(isManaged){
+      calloutBanner = '<div style="background:#1e3a8a;color:#93c5fd;font-size:10px;font-weight:700;text-align:center;padding:5px 10px;letter-spacing:.06em;text-transform:uppercase">◇ Under Management · Asset Not Owned</div>';
     }
-    var borderCol = isDivested ? '#7f1d1d' : isPendingAcq ? '#A67C3A' : isPending ? '#78350f' : isNewAcq ? '#14532d' : 'var(--bdr)';
+    var borderCol = isDivested ? '#7f1d1d' : isPendingAcq ? '#A67C3A' : isPending ? '#78350f' : isNewAcq ? '#14532d' : isManaged ? '#1e3a8a' : 'var(--bdr)';
     html += '<div data-reitkey="'+assetKey+'" style="background:var(--srf);border:1px solid '+borderCol+';border-radius:11px;padding:0;cursor:pointer;transition:box-shadow .15s,transform .15s;overflow:hidden;display:flex;flex-direction:column">'
       +calloutBanner
       +'<div style="background:'+rc+';padding:10px 14px 9px;display:flex;justify-content:space-between;align-items:flex-start">'
