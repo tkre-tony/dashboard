@@ -432,7 +432,7 @@ function heroAbs(a) {
 // cannot render as a search thumbnail — these are superseded by a card for
 // social meta only; the in-article hero photo is left untouched.
 // To restore a photo: drop the id here AND set a >=1200px-wide image in NEWS.
-const CARD_OVERRIDE = new Set([78, 79, 84, 86, 91, 92, 93, 98, 99, 101, 106]);
+const CARD_OVERRIDE = new Set([78, 79, 84, 86, 91, 92, 93, 98, 99, 101, 106, 137]);
 function socialImage(a, img) {
   if (img && !CARD_OVERRIDE.has(a.id)) return img;
   const f = 'news_' + a.id + '_card.png';
