@@ -644,7 +644,10 @@ function buildLandedURL(forPins){
   if(fDist)   P.push('postal_district=eq.'+fDist);
   if(cavPeriod==='since1995'){ /* no date filter */ }
   else if(cavPeriod==='this_week'){
-    if(LANDED_MAX_REL) P.push('release_date=eq.'+LANDED_MAX_REL);
+    if(LANDED_MAX_REL){
+      const _d=new Date(LANDED_MAX_REL+'T00:00:00Z'), _dow=(_d.getUTCDay()+6)%7;
+      P.push('release_date=gte.'+new Date(_d.getTime()-_dow*864e5).toISOString().slice(0,10));
+    }
     else P.push('sale_date=gte.'+new Date(Date.now()-7*864e5).toISOString().slice(0,10));
   }
   else{ const days=PERIOD_DAYS[cavPeriod]||365;
