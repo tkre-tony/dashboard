@@ -1,0 +1,12 @@
+# PropertyAtlas — security contact
+# https://propertyatlas.sg — Singapore commercial & industrial real estate intelligence
+# Operated by TK Real Estate, Singapore.
+
+Contact: mailto:hello@propertyatlas.sg
+Expires: 2027-07-31T00:00:00.000Z
+Preferred-Languages: en
+Canonical: https://propertyatlas.sg/.well-known/security.txt
+
+# This is a legitimate business website publishing public-record
+# real-estate transaction data (URA REALIS), REIT filings coverage,
+# and commercial property listings for Singapore.
