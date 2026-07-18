@@ -631,6 +631,7 @@ function buildBody(){
 const SEG_TO_DB={commercial:['Office','Retail','Shop House'],
   industrial:['Multiple-user Factory','Multi-user Factory','Single-user Factory','Business park','Business Park','Warehouse']};
 const LANDED_REST=SUPA_REST+'/landed_transactions_geo';
+let LANDED_MAX_REL=null;
 function landedNoMapNote(c){
   if(/\bENBLOC\b/i.test(c.addr||'')) return 'Location not mappable \u2014 en bloc sale spanning multiple properties';
   if(!c.pc) return 'Location not mappable \u2014 no postal code in caveat record';
@@ -642,6 +643,10 @@ function buildLandedURL(forPins){
   if(fRegion) P.push('planning_region=eq.'+encodeURIComponent(regionToDb(fRegion)));
   if(fDist)   P.push('postal_district=eq.'+fDist);
   if(cavPeriod==='since1995'){ /* no date filter */ }
+  else if(cavPeriod==='this_week'){
+    if(LANDED_MAX_REL) P.push('release_date=eq.'+LANDED_MAX_REL);
+    else P.push('sale_date=gte.'+new Date(Date.now()-7*864e5).toISOString().slice(0,10));
+  }
   else{ const days=PERIOD_DAYS[cavPeriod]||365;
         P.push('sale_date=gte.'+new Date(Date.now()-days*864e5).toISOString().slice(0,10)); }
   if(fQ){ const q=fQ.replace(/[(),.\\]/g,' ').replace(/\s+/g,' ').trim();
@@ -656,6 +661,10 @@ async function runLandedSearch(){
   try{
     if(document.getElementById('count'))document.getElementById('count').textContent='Loading\u2026';
     const _t0=performance.now(); const _seq=++cavSeq;
+    if(cavPeriod==='this_week'&&!LANDED_MAX_REL){
+      try{ const rr=await fetch(LANDED_REST+'?select=release_date&order=release_date.desc.nullslast&limit=1',{headers:{'apikey':SUPA_ANON,'Authorization':'Bearer '+SUPA_ANON}});
+           if(rr.ok){ const jj=await rr.json(); LANDED_MAX_REL=(jj&&jj[0]&&jj[0].release_date)||null; } }catch(e){}
+    }
     const res=await fetch(buildLandedURL(),{headers:{'apikey':SUPA_ANON,'Authorization':'Bearer '+SUPA_ANON,'Prefer':'count=exact'}});
     if(!res.ok) throw new Error('HTTP '+res.status);
     const rows=await res.json();
@@ -731,16 +740,16 @@ function syncSegmentUI(){
     x.style.display=show?'':'none';
   });
   document.querySelectorAll('#typesLanded .chip,#mtChipsLanded .chip').forEach(x=>x.classList.toggle('on',x.dataset.ltype===fLType));
-  document.querySelectorAll('#periods .chip[data-period="this_week"],#mtPeriods .chip[data-period="this_week"]').forEach(x=>x.classList.toggle('ghost',landed));
+  document.querySelectorAll('#periods .chip[data-period="this_week"],#mtPeriods .chip[data-period="this_week"]').forEach(x=>x.classList.remove('ghost'));
   const lg=document.getElementById('legLanded'); if(lg) lg.style.display=landed?'':'none';
 }
 function setSegment(s,force){
   if(fSeg===s && !force) return;
   fSeg=s; fType='all'; fLType='all'; cavOffset=0; LANDED_PINS=[];
-  if(fSeg==='landed' && (cavMode==='release'||cavPeriod==='this_week')){
-    cavPeriod='1y'; cavMode='master';
-    document.querySelectorAll('#periods .chip,#mtPeriods .chip').forEach(x=>x.classList.toggle('on',x.dataset.period==='1y'));
-  }
+  if(fSeg==='landed'){
+    cavPeriod='this_week'; cavMode='master'; LANDED_MAX_REL=null;
+    document.querySelectorAll('#periods .chip,#mtPeriods .chip').forEach(x=>x.classList.toggle('on',x.dataset.period==='this_week'));
+  } else { cavMode=(cavPeriod==='this_week')?'release':'master'; }
   syncSegmentUI();
   if(typeof renderMktVol==='function') renderMktVol();
   searchCaveats();
@@ -1550,7 +1559,7 @@ document.querySelectorAll('#tenures .chip').forEach(c=>c.onclick=()=>{
   apply();
 });
 document.getElementById('list').addEventListener('click',function(e){ var el=e.target.closest('.proj-link'); if(el) gotoDirectory(el.getAttribute('data-proj')); });
-document.querySelectorAll('#periods .chip').forEach(c=>c.onclick=()=>{if(fSeg==='landed'&&c.dataset.period==='this_week')return;document.querySelectorAll('#periods .chip').forEach(x=>x.classList.remove('on'));c.classList.add('on');cavPeriod=c.dataset.period;cavMode=(cavPeriod==='this_week')?'release':'master';cavOffset=0;searchCaveats();});
+document.querySelectorAll('#periods .chip').forEach(c=>c.onclick=()=>{document.querySelectorAll('#periods .chip').forEach(x=>x.classList.remove('on'));c.classList.add('on');cavPeriod=c.dataset.period;cavMode=(cavPeriod==='this_week')?'release':'master';cavOffset=0;searchCaveats();});
 
 // ===== REUSABLE TYPEAHEAD (in-memory, lens-aware, dedup-by-building) =====
 function acData(){return PINS;}
