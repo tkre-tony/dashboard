@@ -2004,9 +2004,9 @@ function fpTxnRender(){
     var price=c.pr?'S$'+Number(c.pr).toLocaleString():'—';
     var area=c.area?Number(c.area).toLocaleString():'—';
     var psfv=c.psf?'S$'+Math.round(c.psf).toLocaleString():'—';
-    var projName=esc(maskAddress((c.n&&c.n!=='N.A.')?c.n:c.addr));
-    var projCell=(c.n&&c.n!=='N.A.')?'<span class="proj-link" data-proj="'+esc(c.n)+'">'+projName+'</span>':projName;
-    var addrCell=(sameAddr(c.n,c.addr)||c.n==='N.A.')?'—':addrSplit(maskAddress(c.addr));
+    var hasProj=(c.n&&c.n!=='N.A.');
+    var projCell=hasProj?'<span class="proj-link" data-proj="'+esc(c.n)+'">'+esc(maskAddress(c.n))+'</span>':'<span style="color:var(--mut)">—</span>';
+    var addrCell=hasProj?(sameAddr(c.n,c.addr)?'—':addrSplit(maskAddress(c.addr))):(c.addr?addrSplit(maskAddress(c.addr)):'—');
     var pr2=FP_TXN_PAIRS[c.id];
     var pnlBadge='',bDate='',bPrice='',bPsf='';
     if(pr2&&pr2.buy_price!=null&&c.pr!=null){
@@ -2258,9 +2258,9 @@ function faPnlRender(rows){
     var up=pf>=0,sign=up?'+':'\u2212';
     var pct=(Number(r.buy_price)>0)?(pf/Number(r.buy_price)*100):null;
     var tDisp=normType(r.property_type),col=TYPE_COLORS[tDisp]||'#888';
-    var projName=(pj&&pj!=='N.A.')?esc(maskAddress(pj)):esc(maskAddress(r.address||''));
-    var projCell=(pj&&pj!=='N.A.')?'<span class="proj-link" data-proj="'+esc(pj)+'">'+projName+'</span>':projName;
-    var addrCell=(pj&&pj!=='N.A.'&&!sameAddr(pj,r.address))?addrSplit(maskAddress(r.address||'')):'\u2014';
+    var hasProj=(pj&&pj!=='N.A.');
+    var projCell=hasProj?'<span class="proj-link" data-proj="'+esc(pj)+'">'+esc(maskAddress(pj))+'</span>':'<span style="color:var(--mut)">\u2014</span>';
+    var addrCell=hasProj?(!sameAddr(pj,r.address)&&r.address?addrSplit(maskAddress(r.address)):'\u2014'):(r.address?addrSplit(maskAddress(r.address)):'\u2014');
     var pnl='<div class="pnl '+(up?'pnl-up':'pnl-dn')+'">'+(up?'\u25b2':'\u25bc')+' '+sign+faMoney(pf)+(pct!=null?' \u00b7 '+sign+Math.abs(pct).toFixed(Math.abs(pct)>=100?0:1)+'%':'')+'</div>';
     if(isL&&r.hold_days!=null&&r.hold_days>0&&r.hold_days<=1095)pnl+='<div class="bought-lbl" style="color:#B5683E;cursor:help" title="Sold within ~3 years of purchase">\u21bb \u22643-yr hold \u00b7 likely rebuild \u2014 gain is gross</div>';
     if(isL&&r.pair_flag==='area_drift')pnl+='<div class="bought-lbl" style="color:#B5683E" title="Buy and sell areas differ 3\u20135% \u2014 pairing under review">\u26a0 area drift</div>';
@@ -2364,9 +2364,9 @@ async function faTopLoadPairs(cavs){
 function faTopRender(cavs){
   var body=cavs.map(function(c,i){
     var col=TYPE_COLORS[c.t]||'#888';
-    var projName=esc(maskAddress((c.n&&c.n!=='N.A.')?c.n:c.addr));
-    var projCell=(c.n&&c.n!=='N.A.')?'<span class="proj-link" data-proj="'+esc(c.n)+'">'+projName+'</span>':projName;
-    var addrCell=(sameAddr(c.n,c.addr)||c.n==='N.A.')?'\u2014':addrSplit(maskAddress(c.addr));
+    var hasProj=(c.n&&c.n!=='N.A.');
+    var projCell=hasProj?'<span class="proj-link" data-proj="'+esc(c.n)+'">'+esc(maskAddress(c.n))+'</span>':'<span style="color:var(--mut)">\u2014</span>';
+    var addrCell=hasProj?(sameAddr(c.n,c.addr)?'\u2014':addrSplit(maskAddress(c.addr))):(c.addr?addrSplit(maskAddress(c.addr)):'\u2014');
     var pr2=FA_TOP_PAIRS[c.id],pnl='',bought='';
     if(pr2&&pr2.buy_price!=null&&c.pr!=null){
       var buy=Number(pr2.buy_price),sell=Number(c.pr),q=sell-buy;
