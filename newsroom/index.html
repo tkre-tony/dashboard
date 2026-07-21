@@ -1,4 +1,5 @@
 <!DOCTYPE html>
+<!-- v48.288 (21 Jul 2026, S185): Market Pulse + Market Analysis RETIRED from newsroom — both surfaces now live on the map root as full-width lenses (v9.8, five new Supabase RPCs). (1) navtabs data-tab="overview" and data-tab="analytics" removed from nav strip. (2) atlasShowTab intercepts 'overview'/'analytics' and redirects to propertyatlas.sg/?lens=pulse / ?lens=analysis (GA4 tab_change still fires first, so legacy-link attempts remain measurable). (3) handlePublicTabHash redirects #overview / #transactions / #analytics hash deep-links to the same lens URLs (navBtn.click() path no longer exists). data-tab="pulse" (Corporate Watch) untouched. Dormant Pulse/Analysis panel code left in place — full strip is a logged backlog cleanup. No cascade/NEWS changes. -->
 <!-- v48.287 (17 Jul 2026, S176): Newsroom id:139 — Weekly URA REALIS updates, week of 17 Jul 2026 (GATE+ launch 75 caveats S$87.28M; batch S$288.41M / 129 caveats).
      Full cascade: hero 139; cards [138,137,136]; feed prepends 135, drops 128; NR_STATIC_IDS [138..129]; id:128 rotates off landing. Static page + sitemap generated. -->
 <!-- v48.286 (17 Jul 2026, S175): Asset Directory detail-lens address fix - country suffix now appended only when addr does not already end with the country string (case-insensitive). Fixes 'Indonesia, Indonesia'-class duplication on every overseas asset whose addr ends with its country (~half the directory); Singapore rows unaffected (never appended). Data untouched - renderer-only. No cascade/NEWS changes. -->
@@ -3159,8 +3160,7 @@ body.article-takeover .ed-foot{display:none!important}
        entirely in ATLAS_GATED_TABS (↓ trimmed to talent+pulse only). -->
   <a class="navtab-maplink" href="/"><span class="navtab-icon">🗺️</span>Map</a>
   <div class="navtab on" data-tab="news"><span class="navtab-icon">📰</span>Newsroom</div>
-  <div class="navtab" data-tab="overview"><span class="navtab-icon">📊</span>Market Pulse</div>
-  <div class="navtab" data-tab="analytics"><span class="navtab-icon">📈</span>Market Analysis</div>
+  <!-- v48.288 (S185): Market Pulse + Market Analysis navtabs removed — retired to map-root lenses. -->
   <div class="navtab" data-tab="directory"><span class="navtab-icon">🏢</span>Directory</div>
   <div class="navtab" data-tab="assetdir" style="display:flex;align-items:center;gap:6px">
     <span class="navtab-icon">🗂</span>Asset Directory
@@ -18465,6 +18465,13 @@ function atlasShowTab(tab) {
   // tab attempts get logged; gives us "which surfaces do people try to visit").
   if(typeof gtag === 'function') gtag('event', 'tab_change', { tab_name: tab });
 
+  // v48.288 (S185): Market Pulse + Market Analysis retired from newsroom —
+  // both now live on the map root as full-width lenses. Any residual caller
+  // (old bookmark, stale share URL, programmatic path) redirects there.
+  // NOTE: data-tab="pulse" is Corporate Watch — intentionally NOT intercepted.
+  if(tab === 'overview'){ window.location.href = 'https://propertyatlas.sg/?lens=pulse'; return; }
+  if(tab === 'analytics'){ window.location.href = 'https://propertyatlas.sg/?lens=analysis'; return; }
+
   // 1. Update nav highlights
   document.querySelectorAll(".navtab").forEach(function(x){ x.classList.remove("on"); });
   var navBtn = document.querySelector(".navtab[data-tab='" + tab + "']");
@@ -30732,6 +30739,10 @@ html.article-takeover .ed-article-page,body.article-takeover .ed-article-page{di
   function handlePublicTabHash(){
     try {
       var h = window.location.hash;
+      // v48.288 (S185): retired-tab hash deep-links redirect to map-root
+      // lenses (#transactions was already a legacy alias of Market Pulse).
+      if(h === '#overview' || h === '#transactions'){ window.location.replace('https://propertyatlas.sg/?lens=pulse'); return; }
+      if(h === '#analytics'){ window.location.replace('https://propertyatlas.sg/?lens=analysis'); return; }
       var tab = PUBLIC_TAB_HASHES[h];
       if(!tab){
         tab = HIDDEN_TAB_HASHES[h];

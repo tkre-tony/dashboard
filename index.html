@@ -58,6 +58,43 @@ body{background:var(--bg);color:var(--txt);font-family:Inter,system-ui,-apple-sy
 .lensbar .count{font-family:'DM Mono',ui-monospace,monospace;font-weight:700;color:var(--mut);font-size:12px;white-space:nowrap}
 /* MAIN SPLIT */
 .main{display:flex;height:calc(100vh - 84px)}
+/* FULL-WIDTH LENS */
+.fw-lens{display:none;height:calc(100vh - 84px);overflow-y:auto;background:var(--bg)}
+.fw-lens.show{display:block}
+.fw-filters{padding:10px 20px;display:flex;flex-wrap:wrap;align-items:center;gap:6px;border-bottom:1px solid var(--bdr);background:var(--srf)}
+.fw-filters .lbl{font-size:10px;color:var(--mut);text-transform:uppercase;letter-spacing:.5px;margin-right:2px}
+.fw-filters .sep{width:1px;height:20px;background:var(--bdr);margin:0 4px}
+.fw-chart-zone{display:flex;gap:0;border-bottom:1px solid var(--bdr);position:sticky;top:0;z-index:5;background:var(--bg)}
+.fw-chart-main{flex:1;padding:16px 20px;min-width:0}
+.fw-chart-side{width:260px;border-left:1px solid var(--bdr);padding:14px 16px;display:flex;flex-direction:column;gap:12px}
+.fw-chart-title{font-size:13px;font-weight:600}
+.fw-chart-sub{font-size:11px;color:var(--mut)}
+.fw-bars{display:flex;align-items:flex-end;gap:2px;height:170px;border-bottom:1px solid var(--bdr);padding-top:24px;overflow-x:auto;overflow-y:hidden;justify-content:center}
+.fw-bar-g{display:flex;flex-direction:column;align-items:center;gap:2px;position:relative;cursor:pointer}
+.fw-bar-s{display:flex;flex-direction:column-reverse;align-items:center;width:100%;gap:0}
+.fw-bar{min-height:2px;width:100%}
+.fw-bar:first-child{border-radius:2px 2px 0 0}
+.fw-bar-lbl{font-size:9px;color:var(--mut);margin-top:4px;white-space:nowrap}
+.fw-bar-pct{font-size:9px;font-weight:600;white-space:nowrap;position:absolute;top:-18px;left:50%;transform:translateX(-50%)}
+.fw-bar-up{color:var(--grn)}
+.fw-bar-dn{color:var(--red)}
+.fw-bar-g:hover .fw-bar{opacity:.85}
+.fw-tip{display:none;position:absolute;bottom:100%;left:50%;transform:translateX(-50%);background:var(--fg);color:var(--bg);padding:4px 8px;border-radius:4px;font-size:10px;white-space:nowrap;z-index:10;margin-bottom:4px;pointer-events:none}
+.fw-bar-g:hover .fw-tip{display:block}
+.fw-legend{display:flex;flex-wrap:wrap;gap:10px;margin-top:8px}
+.fw-legend-i{display:flex;align-items:center;gap:4px;font-size:10px;color:var(--mut)}
+.fw-legend-d{width:8px;height:8px;border-radius:2px}
+.fw-score{background:var(--srf);border-radius:8px;padding:10px 12px}
+.fw-score-hdr{font-size:11px;color:var(--mut);margin-bottom:8px;letter-spacing:.3px}
+.fw-score-row{display:flex;gap:8px;margin-bottom:6px}
+.fw-score-cell{flex:1;text-align:center}
+.fw-score-val{font-size:16px;font-weight:600}
+.fw-score-lbl{font-size:9px;color:var(--mut);text-transform:uppercase;letter-spacing:.3px}
+.fw-score-sub{font-size:9px;color:var(--mut)}
+.fw-yoy{text-align:center;padding:6px 0;border-top:1px solid var(--bdr);margin-top:2px}
+.fw-yoy-val{font-size:14px;font-weight:600}
+.fw-yoy-lbl{font-size:9px;color:var(--mut);text-transform:uppercase}
+.fw-src{font-size:9px;color:var(--mut);text-align:center;margin-top:2px}
 /* SIDEBAR */
 .sidebar{width:360px;flex:none;background:var(--bg);border-right:1px solid var(--bdr);display:flex;flex-direction:column;overflow:hidden}
 .sb-filters{padding:8px 12px 6px;border-bottom:1px solid var(--bdr);background:var(--srf);display:flex;flex-wrap:wrap;align-items:center;gap:4px 12px}
@@ -309,8 +346,8 @@ body{background:var(--bg);color:var(--txt);font-family:Inter,system-ui,-apple-sy
 <div class="lensbar">
   <button class="lens-tab on" data-lens="caveats" onclick="setLens('caveats')">Latest caveats</button>
   <button class="lens-tab" data-lens="directory" onclick="setLens('directory')">Directory</button>
-  <button class="lens-tab" style="opacity:.45;cursor:default">Market pulse</button>
-  <button class="lens-tab" style="opacity:.45;cursor:default">Market analysis</button>
+  <button class="lens-tab" data-lens="pulse" onclick="setLens('pulse')">Market pulse</button>
+  <button class="lens-tab" data-lens="analysis" onclick="setLens('analysis')">Market analysis</button>
   <div class="spacer"></div>
 </div>
 
@@ -462,6 +499,89 @@ body{background:var(--bg);color:var(--txt);font-family:Inter,system-ui,-apple-sy
 
 </div>
 
+<!-- FULL-WIDTH LENS: MARKET PULSE -->
+<div class="fw-lens" id="fwPulse">
+  <div class="fw-filters">
+    <span class="lbl">Segment</span>
+    <div class="chip on" data-fpseg="all" onclick="fpSetSeg(this,'all')">All C&amp;I</div>
+    <div class="chip" data-fpseg="commercial" onclick="fpSetSeg(this,'commercial')">Commercial</div>
+    <div class="chip" data-fpseg="industrial" onclick="fpSetSeg(this,'industrial')">Industrial</div>
+    <div class="chip" data-fpseg="landed" onclick="fpSetSeg(this,'landed')">Landed</div>
+    <span class="sep"></span>
+    <span class="lbl">Display</span>
+    <div class="chip on" data-fpd="val" onclick="fpSetDisplay(this,'val')">$ Value</div>
+    <div class="chip" data-fpd="cnt" onclick="fpSetDisplay(this,'cnt')"># Deals</div>
+    <span class="sep"></span>
+    <span class="lbl">Period</span>
+    <div class="chip on" data-fpp="12" onclick="fpSetPeriod(this,12)">12M</div>
+    <div class="chip" data-fpp="18" onclick="fpSetPeriod(this,18)">18M</div>
+    <div class="chip" data-fpp="60" onclick="fpSetPeriod(this,60)">5Y</div>
+    <div class="chip" data-fpp="120" onclick="fpSetPeriod(this,120)">10Y</div>
+    <div class="chip" data-fpp="0" onclick="fpSetPeriod(this,0)">All</div>
+    <span class="sep"></span>
+    <span class="lbl">Mode</span>
+    <div class="chip on" data-fpm="mom" onclick="fpSetMode(this,'mom')">MoM</div>
+    <div class="chip" data-fpm="qoq" onclick="fpSetMode(this,'qoq')">QoQ</div>
+    <div class="chip" data-fpm="yoy" onclick="fpSetMode(this,'yoy')">YoY</div>
+  </div>
+  <div class="fw-chart-zone">
+    <div class="fw-chart-main">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px">
+        <div><div class="fw-chart-title" id="fpChartTitle">Month-on-month comparison</div>
+        <div class="fw-chart-sub" id="fpChartSub">Loading...</div></div>
+      </div>
+      <div class="fw-bars" id="fpBars"></div>
+      <div class="fw-legend" id="fpLegend"></div>
+    </div>
+    <div class="fw-chart-side">
+      <div class="fw-score" id="fpScore"><div class="fw-score-hdr">Loading scorecard...</div></div>
+    </div>
+  </div>
+  <div style="padding:14px 20px 24px">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px">
+      <div style="font-size:13px;font-weight:600">Recent transactions</div>
+      <div style="font-size:11px;color:var(--mut)" id="fpTxnCount"></div>
+    </div>
+    <div id="fpTxn" style="overflow-x:auto"><div style="font-size:11px;color:var(--mut)">Loading...</div></div>
+  </div>
+</div>
+<!-- FULL-WIDTH LENS: MARKET ANALYSIS (S185) -->
+<div class="fw-lens" id="fwAnalysis">
+  <div class="fw-filters">
+    <span class="lbl">View</span>
+    <div class="chip on" data-fatab="pnl" onclick="faSetTab(this,'pnl')">Profit &amp; Loss</div>
+    <div class="chip" data-fatab="active" onclick="faSetTab(this,'active')">Most Active</div>
+    <div class="chip" data-fatab="top" onclick="faSetTab(this,'top')">Top Transactions</div>
+    <span class="sep"></span>
+    <span class="lbl">Segment</span>
+    <div class="chip on" data-faseg="all" onclick="faSetSeg(this,'all')">All C&amp;I</div>
+    <div class="chip" data-faseg="commercial" onclick="faSetSeg(this,'commercial')">Commercial</div>
+    <div class="chip" data-faseg="industrial" onclick="faSetSeg(this,'industrial')">Industrial</div>
+    <div class="chip" data-faseg="landed" onclick="faSetSeg(this,'landed')">Landed</div>
+    <span class="sep"></span>
+    <span class="lbl">Period</span>
+    <div class="chip on" data-fap="12" onclick="faSetPeriod(this,12)">12M</div>
+    <div class="chip" data-fap="60" onclick="faSetPeriod(this,60)">5Y</div>
+    <div class="chip" data-fap="120" onclick="faSetPeriod(this,120)">10Y</div>
+    <div class="chip" data-fap="0" onclick="faSetPeriod(this,0)">All</div>
+  </div>
+  <div id="faPnl" style="padding:14px 20px 24px">
+    <div id="faPnlCards" style="display:flex;flex-wrap:wrap;gap:10px;margin-bottom:14px"></div>
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;flex-wrap:wrap;gap:6px">
+      <div style="font-size:13px;font-weight:600">Matched buy &#8596; sell pairs</div>
+      <div style="font-size:11px;color:var(--mut)" id="faPnlPager"></div>
+    </div>
+    <div id="faPnlTbl" style="overflow-x:auto"><div style="font-size:11px;color:var(--mut)">Loading...</div></div>
+  </div>
+  <div id="faActive" style="display:none;padding:14px 20px 24px">
+    <div style="font-size:13px;font-weight:600;margin-bottom:8px" id="faActiveTitle">Most active</div>
+    <div id="faActiveTbl" style="overflow-x:auto"><div style="font-size:11px;color:var(--mut)">Loading...</div></div>
+  </div>
+  <div id="faTop" style="display:none;padding:14px 20px 24px">
+    <div style="font-size:13px;font-weight:600;margin-bottom:8px" id="faTopTitle">Top transactions</div>
+    <div id="faTopTbl" style="overflow-x:auto"><div style="font-size:11px;color:var(--mut)">Loading...</div></div>
+  </div>
+</div>
 
 <div class="pa-enq-overlay" id="pa-enq-overlay" onclick="paEnqClose()"></div>
 <div class="pa-enq-modal" id="pa-enq-modal">
@@ -1184,19 +1304,36 @@ function setLens(l){
   lens=l;selIdx=null;
   document.querySelectorAll('.lens-tab[data-lens]').forEach(c=>c.classList.toggle('on',c.dataset.lens===l));
   closeDetail();closeAC();
-  buildDistricts();
-  if(map&&map.getLayer('cav-pts')){
-    var cv=l==='caveats'?'visible':'none', dv=l==='directory'?'visible':'none';
-    map.setLayoutProperty('cav-pts','visibility',cv);
-    map.setLayoutProperty('dir-pts','visibility',dv);
-    map.setLayoutProperty('dir-clusters','visibility',dv);
-    map.setLayoutProperty('dir-count','visibility',dv);
+  var isMap=l==='caveats'||l==='directory';
+  document.querySelector('.main').style.display=isMap?'flex':'none';
+  var fwP=document.getElementById('fwPulse'),fwA=document.getElementById('fwAnalysis');
+  if(fwP)fwP.classList.toggle('show',l==='pulse');
+  if(fwA)fwA.classList.toggle('show',l==='analysis');
+  if(isMap){
+    if(map)map.resize();
+    buildDistricts();
+    if(map&&map.getLayer('cav-pts')){
+      var cv=l==='caveats'?'visible':'none',dv=l==='directory'?'visible':'none';
+      map.setLayoutProperty('cav-pts','visibility',cv);
+      map.setLayoutProperty('dir-pts','visibility',dv);
+      map.setLayoutProperty('dir-clusters','visibility',dv);
+      map.setLayoutProperty('dir-count','visibility',dv);
+    }
+    apply();renderMktVol();
+    if(map)map.flyTo({center:[103.82,1.345],zoom:10.6,speed:1.2});
   }
-  apply();
-  renderMktVol();
-  if(map){
-    if(l==='caveats')map.flyTo({center:[103.82,1.345],zoom:10.6,speed:1.2});
-    else map.flyTo({center:[103.82,1.345],zoom:10.6,speed:1.2});
+  if(l==='pulse'){
+    var _fs=(typeof fSeg!=='undefined')?fSeg:'all';
+    if(_fs!==FP_SEG){FP_SEG=_fs;FP_CACHE=null;}
+    document.querySelectorAll('.chip[data-fpseg]').forEach(function(c){c.classList.toggle('on',c.dataset.fpseg===FP_SEG)});
+    fpLoad();
+    fpTxnLoad();
+  }
+  if(l==='analysis'){
+    var _fa=(typeof fSeg!=='undefined')?fSeg:'all';
+    if(_fa!==FA_SEG){FA_SEG=_fa;}
+    document.querySelectorAll('.chip[data-faseg]').forEach(function(c){c.classList.toggle('on',c.dataset.faseg===FA_SEG)});
+    faLoad();
   }
 }
 
@@ -1562,6 +1699,7 @@ document.querySelectorAll('#tenures .chip').forEach(c=>c.onclick=()=>{
   apply();
 });
 document.getElementById('list').addEventListener('click',function(e){ var el=e.target.closest('.proj-link'); if(el) gotoDirectory(el.getAttribute('data-proj')); });
+document.getElementById('fpTxn').addEventListener('click',function(e){ var el=e.target.closest('.proj-link'); if(el) gotoDirectory(el.getAttribute('data-proj')); });
 document.querySelectorAll('#periods .chip').forEach(c=>c.onclick=()=>{document.querySelectorAll('#periods .chip').forEach(x=>x.classList.remove('on'));c.classList.add('on');cavPeriod=c.dataset.period;cavMode=(cavPeriod==='this_week')?'release':'master';cavOffset=0;searchCaveats();});
 
 // ===== REUSABLE TYPEAHEAD (in-memory, lens-aware, dedup-by-building) =====
@@ -1715,6 +1853,559 @@ window.addEventListener('load',()=>{
   if(window.maplibregl){init();}
   else{document.getElementById('map').innerHTML='<div style="padding:30px;color:#6B5B3E">MapLibre failed to load — confirm maplibre-gl.js and maplibre-gl.css are in the same folder as this page. List, filters and district browse still work.</div>';buildDistricts();seedCaveats();}
 });
+
+/* ===== MARKET PULSE LENS (S183) ===== */
+var FP_CACHE=null,FP_DISPLAY='val',FP_PERIOD=12,FP_MODE='mom',FP_SEG='all',FP_SCORE_CACHE=null,FP_SCORE_FN='';
+var FP_COLORS={office:'#1a4f9c',retail:'#2563bc',shophouse:'#3b82d4',multiUser:'#52c98a',singleUser:'#7dd9a8',bizPark:'#a8e8c8',warehouse:'#c8e8d8',detached:'#7c6e4e',semiDetached:'#a08c5c',terrace:'#c4aa6a',other:'#aaa'};
+var FP_LABELS={office:'Office',retail:'Retail',shophouse:'Shophouse',multiUser:'Multi-User',singleUser:'Single-User',bizPark:'Biz Park',warehouse:'Warehouse',detached:'Detached',semiDetached:'Semi-D',terrace:'Terrace',other:'Other'};
+function fpSetSeg(el,s){FP_SEG=s;el.parentNode.querySelectorAll('.chip[data-fpseg]').forEach(function(c){c.classList.remove('on')});el.classList.add('on');FP_CACHE=null;FP_TXN_OFFSET=0;FP_TXN_PAIRS={};fpLoad();fpTxnLoad();}
+function fpSetDisplay(el,m){FP_DISPLAY=m;el.parentNode.querySelectorAll('.chip[data-fpd]').forEach(function(c){c.classList.remove('on')});el.classList.add('on');fpRender();}
+function fpSetPeriod(el,m){FP_PERIOD=m;el.parentNode.querySelectorAll('.chip[data-fpp]').forEach(function(c){c.classList.remove('on')});el.classList.add('on');FP_CACHE=null;fpLoad();}
+function fpSetMode(el,m){FP_MODE=m;el.parentNode.querySelectorAll('.chip[data-fpm]').forEach(function(c){c.classList.remove('on')});el.classList.add('on');fpRender();}
+function fpDateRange(){
+  var now=new Date(),to=now.toISOString().slice(0,10);
+  if(FP_PERIOD===0)return{from:'1995-01-01',to:to};
+  var fr=new Date(now);fr.setMonth(fr.getMonth()-FP_PERIOD);
+  return{from:fr.toISOString().slice(0,10),to:to};
+}
+async function fpLoad(){
+  var isLanded=(FP_SEG==='landed');
+  var fn=isLanded?'landed_chart_agg':'chart_agg';
+  fpLoadScore(fn);
+  if(FP_CACHE){fpRender();return;}
+  var dr=fpDateRange();
+  var base=SUPA_REST.replace('/rest/v1','');
+  var url=base+'/rest/v1/rpc/'+fn;
+  var body={p_from:dr.from,p_to:dr.to};
+  if(!isLanded)body.p_inv_mode='exclude';
+  try{
+    var r=await fetch(url,{method:'POST',headers:{'Content-Type':'application/json','apikey':SUPA_ANON,'Authorization':'Bearer '+SUPA_ANON},body:JSON.stringify(body)});
+    FP_CACHE=await r.json();fpRender();
+  }catch(e){console.error('fpLoad',e);}
+}
+function fpTypesFor(seg){
+  if(seg==='commercial')return['office','retail','shophouse'];
+  if(seg==='industrial')return['multiUser','singleUser','warehouse','bizPark'];
+  if(seg==='landed')return['detached','semiDetached','terrace'];
+  return null;
+}
+async function fpLoadScore(fn){
+  if(FP_SCORE_CACHE&&FP_SCORE_FN===fn){fpRenderScore();return;}
+  var now=new Date();
+  var from=(now.getFullYear()-1)+'-01-01',to=now.toISOString().slice(0,10);
+  var base=SUPA_REST.replace('/rest/v1','');
+  var body={p_from:from,p_to:to};
+  if(fn==='chart_agg')body.p_inv_mode='exclude';
+  try{
+    var r=await fetch(base+'/rest/v1/rpc/'+fn,{method:'POST',headers:{'Content-Type':'application/json','apikey':SUPA_ANON,'Authorization':'Bearer '+SUPA_ANON},body:JSON.stringify(body)});
+    FP_SCORE_CACHE=await r.json();FP_SCORE_FN=fn;fpRenderScore();
+  }catch(e){console.error('fpLoadScore',e);}
+}
+function fpRenderScore(){
+  if(!FP_SCORE_CACHE||!FP_SCORE_CACHE.length)return;
+  var tf=fpTypesFor(FP_SEG);
+  var now=new Date(),curYr=now.getFullYear(),prevYr=curYr-1,curMo=now.getMonth()+1;
+  var ytdV=0,ytdC=0,fyV=0,fyC=0,sameV=0,sameC=0;
+  FP_SCORE_CACHE.forEach(function(r){
+    if(tf&&tf.indexOf(r.type_bucket)<0)return;
+    var y=parseInt(r.mo.split('-')[0]),m=parseInt(r.mo.split('-')[1]);
+    var v=parseFloat(r.val_m)||0,c=parseInt(r.cnt)||0;
+    if(y===curYr){ytdV+=v;ytdC+=c;}
+    if(y===prevYr){fyV+=v;fyC+=c;if(m<=curMo){sameV+=v;sameC+=c;}}
+  });
+  var yoy=sameV>0?((ytdV-sameV)/sameV*100):0;
+  var MN=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+  var sL=FP_SEG==='commercial'?'Commercial':FP_SEG==='industrial'?'Industrial':FP_SEG==='landed'?'Landed':'C&I';
+  var sc='<div class="fw-score-hdr">'+sL+' market intelligence</div>';
+  sc+='<div class="fw-score-row"><div class="fw-score-cell"><div class="fw-score-val">S$'+(ytdV>=1000?(ytdV/1000).toFixed(1)+'B':Math.round(ytdV)+'M')+'</div><div class="fw-score-lbl">'+curYr+' YTD value</div><div class="fw-score-sub">'+ytdC+' txns</div></div>';
+  sc+='<div class="fw-score-cell"><div class="fw-score-val">'+ytdC+'</div><div class="fw-score-lbl">'+curYr+' YTD deals</div></div></div>';
+  sc+='<div class="fw-score-row"><div class="fw-score-cell"><div class="fw-score-val">S$'+(fyV>=1000?(fyV/1000).toFixed(1)+'B':Math.round(fyV)+'M')+'</div><div class="fw-score-lbl">'+prevYr+' FY value</div><div class="fw-score-sub">'+fyC+' deals</div></div>';
+  sc+='<div class="fw-score-cell"><div class="fw-score-val">'+fyC+'</div><div class="fw-score-lbl">'+prevYr+' total deals</div></div></div>';
+  sc+='<div class="fw-yoy"><div class="fw-yoy-val" style="color:'+(yoy>=0?'var(--grn)':'var(--red)')+'">'+(yoy>=0?'+':'')+yoy.toFixed(0)+'%</div><div class="fw-yoy-lbl">YoY \u00b7 Jan\u2013'+MN[curMo-1]+' '+curYr+' vs '+prevYr+'</div></div>';
+  sc+='<div class="fw-src">Source: URA REALIS \u00b7 TKRE Research</div>';
+  document.getElementById('fpScore').innerHTML=sc;
+}
+var FP_TXN_CACHE=null,FP_TXN_SEG='',FP_TXN_TOTAL=0,FP_TXN_OFFSET=0,FP_TXN_PAIRS={},FP_TXN_PSIZE=50,FP_TXN_SORT='desc';
+async function fpTxnLoad(){
+  var el=document.getElementById('fpTxn');
+  if(el)el.innerHTML='<div style="font-size:11px;color:var(--mut);padding:12px">Loading transactions...</div>';
+  try{
+    var rows;
+    if(FP_SEG==='landed'){
+      var url=SUPA_REST+'/landed_transactions_geo?select=id,project_name,address,property_type,transacted_price,unit_price_psf,area_sqft,sale_date,tenure,type_of_sale,type_of_area,postal_district,planning_region,number_of_units,lat,lng,release_date,side_note&order=sale_date.'+(FP_TXN_SORT==='asc'?'asc':'desc')+',id.'+(FP_TXN_SORT==='asc'?'asc':'desc')+'&limit='+FP_TXN_PSIZE+'&offset='+FP_TXN_OFFSET;
+      var res=await fetch(url,{headers:{'apikey':SUPA_ANON,'Authorization':'Bearer '+SUPA_ANON,'Prefer':'count=exact'}});
+      var ct=res.headers.get('content-range');
+      FP_TXN_TOTAL=ct?parseInt(ct.split('/')[1])||0:0;
+      rows=await res.json();
+    }else{
+      var body={limit:FP_TXN_PSIZE,offset:FP_TXN_OFFSET,sort:FP_TXN_SORT};
+      if(FP_SEG==='commercial')body.types=SEG_TO_DB.commercial;
+      else if(FP_SEG==='industrial')body.types=SEG_TO_DB.industrial;
+      var res=await fetch(SUPA_FN,{method:'POST',headers:{'Content-Type':'application/json','Authorization':'Bearer '+SUPA_ANON},body:JSON.stringify(body)});
+      var j=await res.json();
+      rows=j.rows||[];
+      FP_TXN_TOTAL=(typeof j.total==='number')?j.total:rows.length;
+    }
+    FP_TXN_CACHE=(rows||[]).map(rowToCaveat);FP_TXN_SEG=FP_SEG;
+    fpTxnRender();
+    fpTxnLoadPairs();
+  }catch(e){console.error('fpTxnLoad',e);if(el)el.innerHTML='<div style="color:var(--red);font-size:11px;padding:12px">Failed to load transactions.</div>';}
+}
+async function fpTxnLoadPairs(){
+  if(!FP_TXN_CACHE||!FP_TXN_CACHE.length)return;
+  try{
+    var ids=FP_TXN_CACHE.map(function(c){return c.id}).filter(function(x){return x!=null});
+    if(!ids.length)return;
+    var map={},mv=(FP_SEG==='landed')?'landed_pnl_pairs_mv':'pnl_pairs_mv';
+    var sel=(FP_SEG==='landed')?'sell_id,buy_date,buy_price,buy_area_sqft':'sell_id,buy_date,buy_price,psf_buy';
+    var url=SUPA_REST+'/'+mv+'?select='+sel+'&sell_id=in.('+ids.join(',')+')';
+    var res=await fetch(url,{headers:{'apikey':SUPA_ANON,'Authorization':'Bearer '+SUPA_ANON}});
+    if(!res.ok)return;
+    var rows=await res.json();
+    if(Array.isArray(rows))rows.forEach(function(r){
+      if(FP_SEG==='landed'){map[r.sell_id]={buy_date:r.buy_date,buy_price:r.buy_price,psf_buy:(r.buy_price!=null&&r.buy_area_sqft>0)?Math.round(r.buy_price/r.buy_area_sqft):null};}
+      else{map[r.sell_id]=r;}
+    });
+    FP_TXN_PAIRS=map;
+    fpTxnRender();
+  }catch(e){/* enhancement only */}
+}
+function fpTxnPager(){
+  var pages=Math.max(1,Math.ceil(FP_TXN_TOTAL/FP_TXN_PSIZE));
+  var page=Math.min(pages,Math.floor(FP_TXN_OFFSET/FP_TXN_PSIZE)+1);
+  if(FP_TXN_TOTAL<=FP_TXN_PSIZE)return '<span style="font-size:11px;color:var(--mut)">'+FP_TXN_TOTAL.toLocaleString()+' transactions</span>';
+  var bs='display:inline-flex;align-items:center;padding:3px 8px;margin:0 1px;border:1px solid var(--bdr);border-radius:6px;background:var(--srf,#fff);color:var(--txt);font:inherit;font-size:11px;cursor:pointer;';
+  var dis='opacity:.38;pointer-events:none;';
+  var atFirst=FP_TXN_OFFSET<=0,atLast=page>=pages;
+  function btn(fn,t,off){return '<button style="'+bs+(off?dis:'')+'" onclick="'+fn+'">'+t+'</button>';}
+  function sb(s,t){return '<button style="'+bs+(FP_TXN_SORT===s?'background:var(--g1);color:#fff;border-color:var(--g1);':'')+'" onclick="fpTxnSetSort(\''+s+'\')">'+t+'</button>';}
+  return '<div style="display:flex;flex-wrap:wrap;align-items:center;gap:6px 10px;font-size:11px">'
+    +'<span>'+FP_TXN_TOTAL.toLocaleString()+' transactions</span>'
+    +'<span style="display:inline-flex;align-items:center">'+btn('fpTxnFirst()','\u00ab First',atFirst)+btn('fpTxnPrev()','\u2039 Prev',atFirst)
+    +'<span style="padding:0 6px;white-space:nowrap">Page <b>'+page+'</b> / '+pages+'</span>'
+    +btn('fpTxnNext()','Next \u203a',atLast)+btn('fpTxnLast()','Last \u00bb',atLast)+'</span>'
+    +'<span style="display:inline-flex;align-items:center;gap:4px">Show '
+    +'<select style="'+bs+'padding:3px 4px" onchange="fpTxnSetSize(this.value)">'+[25,50,100].map(function(n){return '<option value="'+n+'"'+(n===FP_TXN_PSIZE?' selected':'')+'>'+n+'</option>';}).join('')+'</select></span>'
+    +'<span style="display:inline-flex">'+sb('desc','Newest')+sb('asc','Oldest')+'</span>'
+    +'</div>';
+}
+function fpTxnFirst(){FP_TXN_OFFSET=0;fpTxnLoad();}
+function fpTxnPrev(){FP_TXN_OFFSET=Math.max(0,FP_TXN_OFFSET-FP_TXN_PSIZE);fpTxnLoad();}
+function fpTxnNext(){if(FP_TXN_OFFSET+FP_TXN_PSIZE<FP_TXN_TOTAL){FP_TXN_OFFSET+=FP_TXN_PSIZE;fpTxnLoad();}}
+function fpTxnLast(){FP_TXN_OFFSET=Math.max(0,(Math.ceil(FP_TXN_TOTAL/FP_TXN_PSIZE)-1)*FP_TXN_PSIZE);fpTxnLoad();}
+function fpTxnSetSort(s){if(s!==FP_TXN_SORT){FP_TXN_SORT=s;FP_TXN_OFFSET=0;fpTxnLoad();}}
+function fpTxnSetSize(n){n=parseInt(n,10)||50;if(n!==FP_TXN_PSIZE){FP_TXN_PSIZE=n;FP_TXN_OFFSET=0;fpTxnLoad();}}
+function fpTxnRender(){
+  if(!FP_TXN_CACHE)return;
+  var cnt=document.getElementById('fpTxnCount');
+  if(cnt)cnt.innerHTML=fpTxnPager();
+  var rows=FP_TXN_CACHE.map(function(c){
+    var col=TYPE_COLORS[c.t]||'#888';
+    var price=c.pr?'S$'+Number(c.pr).toLocaleString():'—';
+    var area=c.area?Number(c.area).toLocaleString():'—';
+    var psfv=c.psf?'S$'+Math.round(c.psf).toLocaleString():'—';
+    var projName=esc(maskAddress((c.n&&c.n!=='N.A.')?c.n:c.addr));
+    var projCell=(c.n&&c.n!=='N.A.')?'<span class="proj-link" data-proj="'+esc(c.n)+'">'+projName+'</span>':projName;
+    var addrCell=(sameAddr(c.n,c.addr)||c.n==='N.A.')?'—':addrSplit(maskAddress(c.addr));
+    var pr2=FP_TXN_PAIRS[c.id];
+    var pnlBadge='',bDate='',bPrice='',bPsf='';
+    if(pr2&&pr2.buy_price!=null&&c.pr!=null){
+      var buy=Number(pr2.buy_price),sell=Number(c.pr),q=sell-buy,qa=Math.abs(q);
+      var pct=buy?(q/buy*100):null,up=q>=0,sign=up?'+':'\u2212';
+      var qStr='S$'+(qa>=1e6?(qa/1e6).toFixed(qa>=1e7?0:1)+'M':qa>=1e3?Math.round(qa/1e3)+'K':String(Math.round(qa)));
+      var pctStr=(pct==null)?'':' \u00b7 '+sign+Math.abs(pct).toFixed(Math.abs(pct)>=100?0:1)+'%';
+      pnlBadge='<div class="pnl '+(up?'pnl-up':'pnl-dn')+'">'+(up?'\u25b2':'\u25bc')+' '+sign+qStr+pctStr+'</div>';
+      if(FP_SEG==='landed'&&pr2.buy_date&&c.sdRaw){
+        var _hd=Math.round((new Date(c.sdRaw+'T00:00:00')-new Date(pr2.buy_date+'T00:00:00'))/864e5);
+        if(_hd>0&&_hd<=1095)pnlBadge+='<div class="bought-lbl" style="color:#B5683E;cursor:help" title="Sold within ~3 years of purchase">\u21bb \u22643-yr hold \u00b7 likely rebuild \u2014 gain is gross</div>';
+      }
+      bDate=pr2.buy_date?'<div class="bought-lbl">Bought</div><div class="bought-val">'+fmtSD(pr2.buy_date)+'</div>':'';
+      bPrice='<div class="bought-lbl">Bought</div><div class="bought-val">S$'+Number(pr2.buy_price).toLocaleString()+'</div>';
+      bPsf=pr2.psf_buy!=null?'<div class="bought-lbl">Bought</div><div class="bought-val">S$'+Math.round(pr2.psf_buy).toLocaleString()+'</div>':'';
+    }
+    return '<tr>'
+      +'<td class="mono nowrap">'+c.sd+bDate+'</td>'
+      +'<td class="mono">'+(c.di?('D'+c.di):'—')+'</td>'
+      +'<td class="proj">'+projCell+(c.nomap?' <span class="nopin" title="'+(FP_SEG==='landed'?'Location not mapped':'Location not shown')+'">\ud83d\udccd</span>':'')+'</td>'
+      +'<td class="addr">'+addrCell+(c.note?'<div style="color:var(--mut);font-size:10px">\u21b3 '+esc(maskNote(c.note))+'</div>':'')+'</td>'
+      +'<td class="sub">'+(esc(c.tos)||'—')+((c.nu>1)?'<div style="color:#B5683E;font-size:10px;font-weight:700">Bulk \u00b7 '+c.nu+' units</div>':'')+'</td>'
+      +'<td><span class="tpill" style="background:'+col+'22;color:'+col+'">'+c.t+'</span></td>'
+      +'<td class="sub">'+(esc(c.toa)||'—')+'</td>'
+      +'<td class="mono num">'+price+pnlBadge+bPrice+'</td>'
+      +'<td class="mono num">'+area+'</td>'
+      +'<td class="mono num">'+psfv+bPsf+'</td>'
+      +'<td class="ten">'+(esc(c.tn)||'—')+'</td>'
+      +'</tr>';
+  }).join('')||'<tr><td colspan="11" style="padding:22px;text-align:center;color:var(--mut)">No transactions found.</td></tr>';
+  var html='<table class="mptbl"><thead><tr>'
+    +'<th style="width:92px">Date</th><th style="width:50px">Dist.</th>'
+    +'<th style="width:150px">Project</th><th style="width:150px">Address</th>'
+    +'<th style="width:78px">Sale Type</th><th style="width:92px">Type</th>'
+    +'<th style="width:64px">Area Type</th>'
+    +'<th style="width:104px;text-align:right">Price</th>'
+    +'<th style="width:70px;text-align:right">Area</th>'
+    +'<th style="width:78px;text-align:right">PSF</th>'
+    +'<th style="width:110px">Tenure</th>'
+    +'</tr></thead><tbody>'+rows+'</tbody></table>';
+  var el=document.getElementById('fpTxn');if(el){el.innerHTML=html;el.style.maxHeight='500px';el.style.overflowY='auto';}
+}
+function fpRender(){
+  if(!FP_CACHE||!FP_CACHE.length)return;
+  var seg=FP_SEG;
+  var MN=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+  var QN=['Q1','Q2','Q3','Q4'];
+  /* ---- 1. aggregate months ---- */
+  var months={};
+  FP_CACHE.forEach(function(r){
+    if(!months[r.mo])months[r.mo]={};
+    if(!months[r.mo][r.type_bucket])months[r.mo][r.type_bucket]={val:0,cnt:0};
+    months[r.mo][r.type_bucket].val+=parseFloat(r.val_m)||0;
+    months[r.mo][r.type_bucket].cnt+=parseInt(r.cnt)||0;
+  });
+  var allTypes={};FP_CACHE.forEach(function(r){allTypes[r.type_bucket]=true;});
+  var types=Object.keys(allTypes).sort();
+  var ciC=['office','retail','shophouse'],ciI=['multiUser','singleUser','warehouse','bizPark'],ldT=['detached','semiDetached','terrace'];
+  if(seg==='commercial')types=types.filter(function(t){return ciC.indexOf(t)>=0;});
+  else if(seg==='industrial')types=types.filter(function(t){return ciI.indexOf(t)>=0;});
+  else if(seg==='landed')types=types.filter(function(t){return ldT.indexOf(t)>=0;});
+  /* ---- 2. bucket by mode ---- */
+  var buckets={};
+  var allMos=Object.keys(months).sort();
+  allMos.forEach(function(mo){
+    var bk;
+    if(FP_MODE==='qoq'){var pts=mo.split('-');bk=pts[0]+'-Q'+(Math.ceil(parseInt(pts[1])/3));}
+    else if(FP_MODE==='yoy'){bk=mo.split('-')[0];}
+    else{bk=mo;}
+    if(!buckets[bk])buckets[bk]={};
+    types.forEach(function(t){
+      if(!buckets[bk][t])buckets[bk][t]={val:0,cnt:0};
+      if(months[mo][t]){buckets[bk][t].val+=months[mo][t].val;buckets[bk][t].cnt+=months[mo][t].cnt;}
+    });
+  });
+  var keys=Object.keys(buckets).sort();
+  var k=FP_DISPLAY==='val'?'val':'cnt';
+  var maxV=1;
+  keys.forEach(function(bk){var tot=0;types.forEach(function(t){tot+=(buckets[bk][t]?buckets[bk][t][k]:0);});if(tot>maxV)maxV=tot;});
+  /* ---- 3. pcts ---- */
+  var pcts=[];
+  for(var i=0;i<keys.length;i++){
+    var cur=0,prev=0;
+    types.forEach(function(t){cur+=(buckets[keys[i]][t]?buckets[keys[i]][t][k]:0);});
+    if(i>0)types.forEach(function(t){prev+=(buckets[keys[i-1]][t]?buckets[keys[i-1]][t][k]:0);});
+    pcts.push(i===0||prev===0?null:((cur-prev)/prev*100));
+  }
+  /* ---- 4. labels ---- */
+  function bkLabel(bk){
+    if(FP_MODE==='yoy')return bk;
+    if(FP_MODE==='qoq'){var p=bk.split('-');return p[1]+" '"+p[0].slice(2);}
+    var pts=bk.split('-');return MN[parseInt(pts[1])-1]+" '"+pts[0].slice(2);
+  }
+  function bkTipLabel(bk){
+    if(FP_MODE==='yoy')return bk;
+    if(FP_MODE==='qoq'){var p=bk.split('-');return p[1]+' '+p[0];}
+    var pts=bk.split('-');return MN[parseInt(pts[1])-1]+' '+pts[0];
+  }
+  /* ---- 5. bar sizing ---- */
+  var nBars=keys.length;
+  var minW=nBars<=18?40:nBars<=36?28:22;
+  var maxW=nBars<=6?100:nBars<=12?80:nBars<=18?60:999;
+  var showPct=nBars<=24;
+  var labelSkip=nBars<=18?1:nBars<=36?3:6;
+  var bH=140,html='';
+  keys.forEach(function(bk,i){
+    var lbl=bkLabel(bk);
+    var tot=0;types.forEach(function(t){tot+=(buckets[bk][t]?buckets[bk][t][k]:0);});
+    var tipVal=FP_DISPLAY==='val'?'S$'+tot.toFixed(1)+'M':tot.toLocaleString()+' deals';
+    var tipPct=pcts[i]!==null?(' ('+(pcts[i]>=0?'+':'')+pcts[i].toFixed(1)+'%)'):'';
+    html+='<div class="fw-bar-g" style="min-width:'+minW+'px;max-width:'+maxW+'px;flex:1">';
+    html+='<div class="fw-tip">'+bkTipLabel(bk)+': '+tipVal+tipPct+'</div>';
+    if(showPct&&pcts[i]!==null){var pc=pcts[i].toFixed(1)+'%';html+='<div class="fw-bar-pct '+(pcts[i]>=0?'fw-bar-up':'fw-bar-dn')+'">'+(pcts[i]>=0?'+':'')+pc+'</div>';}
+    html+='<div class="fw-bar-s">';
+    types.forEach(function(t){var v=buckets[bk][t]?buckets[bk][t][k]:0;var h=v>0?Math.max(2,(v/maxV)*bH):0;html+='<div class="fw-bar" style="height:'+h+'px;background:'+(FP_COLORS[t]||'#888')+'"></div>';});
+    html+='</div>';
+    if(i%labelSkip===0||i===nBars-1){html+='<div class="fw-bar-lbl">'+lbl+'</div>';}
+    else{html+='<div class="fw-bar-lbl">&nbsp;</div>';}
+    html+='</div>';
+  });
+  document.getElementById('fpBars').innerHTML=html;
+  var legH='';types.forEach(function(t){legH+='<div class="fw-legend-i"><div class="fw-legend-d" style="background:'+(FP_COLORS[t]||'#888')+'"></div>'+(FP_LABELS[t]||t)+'</div>';});
+  document.getElementById('fpLegend').innerHTML=legH;
+  var mL=FP_MODE==='mom'?'Month-on-month':FP_MODE==='qoq'?'Quarter-on-quarter':'Year-on-year';
+  document.getElementById('fpChartTitle').textContent=mL+' comparison';
+  var sL=seg==='commercial'?'Commercial':seg==='industrial'?'Industrial':seg==='landed'?'Landed':'C&I';
+  var dL=FP_DISPLAY==='val'?'S$ Millions':'# Deals';
+  var rangeL=keys.length>1?(' \u00b7 '+bkTipLabel(keys[0])+' to '+bkTipLabel(keys[keys.length-1])):'';
+  document.getElementById('fpChartSub').textContent=sL+' \u00b7 '+dL+rangeL;
+}
+
+/* ===== MARKET ANALYSIS LENS (S185) ===== */
+var FA_TAB='pnl',FA_SEG='all',FA_PERIOD=12;
+var FA_PNL_OFFSET=0,FA_PNL_PSIZE=50,FA_PNL_TOTAL=0,FA_PNL_SORT='date';
+var FA_TOP_PAIRS={},FA_REQ=0;
+function faTypesDb(seg){
+  if(seg==='commercial')return SEG_TO_DB.commercial;
+  if(seg==='industrial')return SEG_TO_DB.industrial;
+  if(seg==='landed')return null; /* landed fns take null = all landed types */
+  return null; /* all C&I -> CI tables unfiltered */
+}
+function faFrom(){if(FA_PERIOD===0)return null;var d=new Date();d.setMonth(d.getMonth()-FA_PERIOD);return d.toISOString().slice(0,10);}
+function faSegLbl(){return FA_SEG==='commercial'?'Commercial':FA_SEG==='industrial'?'Industrial':FA_SEG==='landed'?'Landed':'C&I';}
+function faPeriodLbl(){return FA_PERIOD===12?'last 12 months':FA_PERIOD===60?'last 5 years':FA_PERIOD===120?'last 10 years':'since 1995';}
+function faMoney(v){v=Math.abs(Number(v)||0);return v>=1e9?'S$'+(v/1e9).toFixed(2)+'B':v>=1e6?'S$'+(v/1e6).toFixed(1)+'M':v>=1e3?'S$'+Math.round(v/1e3)+'K':'S$'+Math.round(v);}
+function faTypesParam(types){if(!types)return '';return '&property_type=in.('+types.map(function(t){return '%22'+encodeURIComponent(t)+'%22';}).join(',')+')';}
+async function faRpc(fn,body){
+  var base=SUPA_REST.replace('/rest/v1','');
+  var r=await fetch(base+'/rest/v1/rpc/'+fn,{method:'POST',headers:{'Content-Type':'application/json','apikey':SUPA_ANON,'Authorization':'Bearer '+SUPA_ANON},body:JSON.stringify(body)});
+  if(!r.ok)throw new Error(fn+' HTTP '+r.status);
+  return r.json();
+}
+function faSetTab(el,t){FA_TAB=t;el.parentNode.querySelectorAll('.chip[data-fatab]').forEach(function(c){c.classList.remove('on')});el.classList.add('on');faShowPanel();faLoad();}
+function faSetSeg(el,s){FA_SEG=s;el.parentNode.querySelectorAll('.chip[data-faseg]').forEach(function(c){c.classList.remove('on')});el.classList.add('on');FA_PNL_OFFSET=0;FA_TOP_PAIRS={};faLoad();}
+function faSetPeriod(el,m){FA_PERIOD=m;el.parentNode.querySelectorAll('.chip[data-fap]').forEach(function(c){c.classList.remove('on')});el.classList.add('on');FA_PNL_OFFSET=0;faLoad();}
+function faShowPanel(){
+  var p=document.getElementById('faPnl'),a=document.getElementById('faActive'),t=document.getElementById('faTop');
+  if(p)p.style.display=FA_TAB==='pnl'?'':'none';
+  if(a)a.style.display=FA_TAB==='active'?'':'none';
+  if(t)t.style.display=FA_TAB==='top'?'':'none';
+}
+function faLoad(){
+  FA_REQ++;
+  if(FA_TAB==='pnl'){faPnlLoad();}
+  else if(FA_TAB==='active'){faActiveLoad();}
+  else{faTopLoad();}
+}
+/* ---------- P&L sub-tab ---------- */
+function faCard(val,lbl,sub2,color,bg,bd){
+  return '<div style="flex:1;min-width:150px;border:1px solid '+(bd||'var(--bdr)')+';border-radius:10px;padding:12px 14px;background:'+(bg||'var(--srf,#fff)')+'">'
+    +'<div style="font-size:19px;font-weight:800'+(color?';color:'+color:'')+'">'+val+'</div>'
+    +'<div style="font-size:10px;text-transform:uppercase;letter-spacing:.06em;color:var(--mut);margin-top:2px">'+lbl+'</div>'
+    +(sub2?'<div style="font-size:10px;color:var(--mut);margin-top:2px">'+sub2+'</div>':'')+'</div>';
+}
+async function faPnlLoad(){
+  var req=FA_REQ,isL=(FA_SEG==='landed');
+  var cards=document.getElementById('faPnlCards'),tbl=document.getElementById('faPnlTbl');
+  if(cards)cards.innerHTML='<div style="font-size:11px;color:var(--mut);padding:6px 0">Loading P&L summary...</div>';
+  if(tbl)tbl.innerHTML='<div style="font-size:11px;color:var(--mut);padding:12px">Loading matched pairs...</div>';
+  try{
+    var body={p_from:faFrom(),p_types:faTypesDb(FA_SEG)};
+    var rows=await faRpc(isL?'landed_ma_pnl_summary':'ma_pnl_summary',body);
+    if(req!==FA_REQ)return;
+    var s=(rows&&rows[0])||{};
+    var tot=Number(s.total_pairs)||0,g=Number(s.gain_count)||0,l2=Number(s.loss_count)||0;
+    var wr=tot>0?Math.round(g/tot*100):0;
+    var html=faCard(tot.toLocaleString(),'Matched pairs',faSegLbl()+' \u00b7 '+faPeriodLbl());
+    html+=faCard(g.toLocaleString(),'Gains','+'+faMoney(s.sum_gains)+' total \u00b7 top +'+faMoney(s.top_gain),'var(--grn)','#e9f7ee','#cde8d6');
+    html+=faCard(l2.toLocaleString(),'Losses','\u2212'+faMoney(s.sum_losses)+' total \u00b7 worst \u2212'+faMoney(s.top_loss),'var(--red)','#fdeaee','#f2cdd3');
+    html+=faCard(wr+'%','Win rate',g.toLocaleString()+' of '+tot.toLocaleString()+' resold higher');
+    html+=faCard((s.avg_ann!=null?(Number(s.avg_ann)>=0?'+':'')+Number(s.avg_ann).toFixed(1)+'%':'\u2014'),'Avg ann. return','per matched pair');
+    html+=faCard((s.avg_yrs!=null?Number(s.avg_yrs).toFixed(1)+' yrs':'\u2014'),'Avg holding period','buy to sell');
+    if(cards)cards.innerHTML=html;
+  }catch(e){console.error('faPnlLoad summary',e);if(cards)cards.innerHTML='<div style="color:var(--red);font-size:11px">Failed to load summary.</div>';}
+  faPnlTable();
+}
+async function faPnlTable(){
+  var req=FA_REQ,isL=(FA_SEG==='landed');
+  var tbl=document.getElementById('faPnlTbl');
+  try{
+    var from=faFrom();
+    var sel=isL
+      ?'sell_id,sell_date,buy_date,address,property_type,sell_price,buy_price,gain,hold_days,ann_return,postal_district,pair_flag'
+      :'sell_id,sell_date,buy_date,project_name,address,property_type,sell_price,buy_price,profit,yrs_held,ann_return,postal_district';
+    var ordCol=isL?'gain':'profit';
+    var ord=FA_PNL_SORT==='gain'?ordCol+'.desc':FA_PNL_SORT==='loss'?ordCol+'.asc':'sell_date.desc';
+    var url=SUPA_REST+'/'+(isL?'landed_pnl_pairs_mv':'pnl_pairs_mv')+'?select='+sel
+      +(from?'&sell_date=gte.'+from:'')
+      +faTypesParam(faTypesDb(FA_SEG))
+      +'&order='+ord+',sell_id.desc&limit='+FA_PNL_PSIZE+'&offset='+FA_PNL_OFFSET;
+    var res=await fetch(url,{headers:{'apikey':SUPA_ANON,'Authorization':'Bearer '+SUPA_ANON,'Prefer':'count=exact'}});
+    if(!res.ok)throw new Error('MV HTTP '+res.status);
+    var ct=res.headers.get('content-range');
+    FA_PNL_TOTAL=ct?parseInt(ct.split('/')[1])||0:0;
+    var rows=await res.json();
+    if(req!==FA_REQ)return;
+    faPnlRender(rows||[]);
+  }catch(e){console.error('faPnlTable',e);if(tbl)tbl.innerHTML='<div style="color:var(--red);font-size:11px;padding:12px">Failed to load matched pairs.</div>';}
+}
+function faPnlPagerHtml(){
+  var pages=Math.max(1,Math.ceil(FA_PNL_TOTAL/FA_PNL_PSIZE));
+  var page=Math.min(pages,Math.floor(FA_PNL_OFFSET/FA_PNL_PSIZE)+1);
+  var bs='display:inline-flex;align-items:center;padding:3px 8px;margin:0 1px;border:1px solid var(--bdr);border-radius:6px;background:var(--srf,#fff);color:var(--txt);font:inherit;font-size:11px;cursor:pointer;';
+  var dis='opacity:.38;pointer-events:none;';
+  var atFirst=FA_PNL_OFFSET<=0,atLast=page>=pages;
+  function btn(fn,t,off){return '<button style="'+bs+(off?dis:'')+'" onclick="'+fn+'">'+t+'</button>';}
+  function sb(s,t){return '<button style="'+bs+(FA_PNL_SORT===s?'background:var(--g1);color:#fff;border-color:var(--g1);':'')+'" onclick="faPnlSort(\''+s+'\')">'+t+'</button>';}
+  return '<div style="display:flex;flex-wrap:wrap;align-items:center;gap:6px 10px;font-size:11px">'
+    +'<span>'+FA_PNL_TOTAL.toLocaleString()+' pairs</span>'
+    +'<span style="display:inline-flex;align-items:center">'+btn('faPnlFirst()','\u00ab First',atFirst)+btn('faPnlPrev()','\u2039 Prev',atFirst)
+    +'<span style="padding:0 6px;white-space:nowrap">Page <b>'+page+'</b> / '+pages+'</span>'
+    +btn('faPnlNext()','Next \u203a',atLast)+btn('faPnlLast()','Last \u00bb',atLast)+'</span>'
+    +'<span style="display:inline-flex">'+sb('date','Newest')+sb('gain','Top gains')+sb('loss','Top losses')+'</span>'
+    +'</div>';
+}
+function faPnlFirst(){FA_PNL_OFFSET=0;faPnlTable();}
+function faPnlPrev(){FA_PNL_OFFSET=Math.max(0,FA_PNL_OFFSET-FA_PNL_PSIZE);faPnlTable();}
+function faPnlNext(){if(FA_PNL_OFFSET+FA_PNL_PSIZE<FA_PNL_TOTAL){FA_PNL_OFFSET+=FA_PNL_PSIZE;faPnlTable();}}
+function faPnlLast(){FA_PNL_OFFSET=Math.max(0,(Math.ceil(FA_PNL_TOTAL/FA_PNL_PSIZE)-1)*FA_PNL_PSIZE);faPnlTable();}
+function faPnlSort(s){if(s!==FA_PNL_SORT){FA_PNL_SORT=s;FA_PNL_OFFSET=0;faPnlTable();}}
+function faPnlRender(rows){
+  var pg=document.getElementById('faPnlPager');if(pg)pg.innerHTML=faPnlPagerHtml();
+  var isL=(FA_SEG==='landed');
+  var body=rows.map(function(r){
+    var pj=isL?null:r.project_name;
+    var pf=Number(isL?r.gain:r.profit);
+    var yrs=isL?(r.hold_days!=null?r.hold_days/365.25:null):(r.yrs_held!=null?Number(r.yrs_held):null);
+    var ann=(r.ann_return!=null)?Number(r.ann_return):null;
+    var up=pf>=0,sign=up?'+':'\u2212';
+    var pct=(Number(r.buy_price)>0)?(pf/Number(r.buy_price)*100):null;
+    var tDisp=normType(r.property_type),col=TYPE_COLORS[tDisp]||'#888';
+    var projName=(pj&&pj!=='N.A.')?esc(maskAddress(pj)):esc(maskAddress(r.address||''));
+    var projCell=(pj&&pj!=='N.A.')?'<span class="proj-link" data-proj="'+esc(pj)+'">'+projName+'</span>':projName;
+    var addrCell=(pj&&pj!=='N.A.'&&!sameAddr(pj,r.address))?addrSplit(maskAddress(r.address||'')):'\u2014';
+    var pnl='<div class="pnl '+(up?'pnl-up':'pnl-dn')+'">'+(up?'\u25b2':'\u25bc')+' '+sign+faMoney(pf)+(pct!=null?' \u00b7 '+sign+Math.abs(pct).toFixed(Math.abs(pct)>=100?0:1)+'%':'')+'</div>';
+    if(isL&&r.hold_days!=null&&r.hold_days>0&&r.hold_days<=1095)pnl+='<div class="bought-lbl" style="color:#B5683E;cursor:help" title="Sold within ~3 years of purchase">\u21bb \u22643-yr hold \u00b7 likely rebuild \u2014 gain is gross</div>';
+    if(isL&&r.pair_flag==='area_drift')pnl+='<div class="bought-lbl" style="color:#B5683E" title="Buy and sell areas differ 3\u20135% \u2014 pairing under review">\u26a0 area drift</div>';
+    var hold=(yrs!=null?yrs.toFixed(1)+' yrs':'\u2014')+(ann!=null?'<div class="bought-lbl">'+(ann>=0?'+':'')+ann.toFixed(1)+'%/yr</div>':'');
+    return '<tr>'
+      +'<td class="mono nowrap">'+fmtSD(r.sell_date)+'</td>'
+      +'<td class="mono">'+(r.postal_district?('D'+r.postal_district):'\u2014')+'</td>'
+      +'<td class="proj">'+projCell+'</td>'
+      +'<td class="addr">'+addrCell+'</td>'
+      +'<td><span class="tpill" style="background:'+col+'22;color:'+col+'">'+tDisp+'</span></td>'
+      +'<td class="mono nowrap">'+fmtSD(r.buy_date)+'</td>'
+      +'<td class="mono num">S$'+Number(r.buy_price).toLocaleString()+'</td>'
+      +'<td class="mono num">S$'+Number(r.sell_price).toLocaleString()+'</td>'
+      +'<td class="mono num">'+pnl+'</td>'
+      +'<td class="mono nowrap">'+hold+'</td>'
+      +'</tr>';
+  }).join('')||'<tr><td colspan="10" style="padding:22px;text-align:center;color:var(--mut)">No matched pairs found.</td></tr>';
+  var html='<table class="mptbl"><thead><tr>'
+    +'<th style="width:92px">Sold</th><th style="width:46px">Dist.</th>'
+    +'<th style="width:150px">Project</th><th style="width:150px">Address</th>'
+    +'<th style="width:100px">Type</th><th style="width:92px">Bought</th>'
+    +'<th style="width:100px;text-align:right">Buy price</th>'
+    +'<th style="width:100px;text-align:right">Sell price</th>'
+    +'<th style="width:120px;text-align:right">P&amp;L</th>'
+    +'<th style="width:92px">Hold</th>'
+    +'</tr></thead><tbody>'+body+'</tbody></table>';
+  var el=document.getElementById('faPnlTbl');if(el){el.innerHTML=html;el.style.maxHeight='520px';el.style.overflowY='auto';}
+}
+/* ---------- Most Active sub-tab ---------- */
+async function faActiveLoad(){
+  var req=FA_REQ,isL=(FA_SEG==='landed');
+  var el=document.getElementById('faActiveTbl'),ti=document.getElementById('faActiveTitle');
+  if(ti)ti.textContent=(isL?'Most active streets':'Most active buildings')+' \u2014 '+faSegLbl()+' \u00b7 '+faPeriodLbl();
+  if(el)el.innerHTML='<div style="font-size:11px;color:var(--mut);padding:12px">Loading...</div>';
+  try{
+    var rows=await faRpc(isL?'landed_ma_most_active':'ma_most_active',{p_from:faFrom(),p_types:faTypesDb(FA_SEG),p_lim:25});
+    if(req!==FA_REQ)return;
+    var body=(rows||[]).map(function(r,i){
+      var nm=esc(r.name||'\u2014');
+      var cell=isL?nm:'<span class="proj-link" data-proj="'+esc(r.name||'')+'">'+nm+'</span>';
+      return '<tr>'
+        +'<td class="mono">'+(i+1)+'</td>'
+        +'<td class="proj">'+cell+'</td>'
+        +'<td class="mono">'+(r.district?('D'+r.district):'\u2014')+'</td>'
+        +'<td class="mono num">'+Number(r.deals).toLocaleString()+'</td>'
+        +'<td class="mono num">'+faMoney(r.total_value)+'</td>'
+        +'<td class="mono num">'+(r.median_psf!=null?'S$'+Number(r.median_psf).toLocaleString():'\u2014')+'</td>'
+        +'<td class="mono nowrap">'+fmtSD(r.latest)+'</td>'
+        +'</tr>';
+    }).join('')||'<tr><td colspan="7" style="padding:22px;text-align:center;color:var(--mut)">No transactions found.</td></tr>';
+    var html='<table class="mptbl"><thead><tr>'
+      +'<th style="width:36px">#</th><th style="width:220px">'+(isL?'Street':'Building / Project')+'</th>'
+      +'<th style="width:50px">Dist.</th><th style="width:70px;text-align:right">Deals</th>'
+      +'<th style="width:100px;text-align:right">Total value</th>'
+      +'<th style="width:96px;text-align:right">Median PSF</th>'
+      +'<th style="width:100px">Latest deal</th>'
+      +'</tr></thead><tbody>'+body+'</tbody></table>';
+    if(el){el.innerHTML=html;el.style.maxHeight='560px';el.style.overflowY='auto';}
+  }catch(e){console.error('faActiveLoad',e);if(el)el.innerHTML='<div style="color:var(--red);font-size:11px;padding:12px">Failed to load.</div>';}
+}
+/* ---------- Top Transactions sub-tab ---------- */
+async function faTopLoad(){
+  var req=FA_REQ,isL=(FA_SEG==='landed');
+  var el=document.getElementById('faTopTbl'),ti=document.getElementById('faTopTitle');
+  if(ti)ti.textContent='Top 50 transactions by value \u2014 '+faSegLbl()+' \u00b7 '+faPeriodLbl();
+  if(el)el.innerHTML='<div style="font-size:11px;color:var(--mut);padding:12px">Loading...</div>';
+  try{
+    var rows;
+    if(isL){
+      var from=faFrom();
+      var url=LANDED_REST+'?select=id,project_name,address,property_type,transacted_price,unit_price_psf,area_sqft,sale_date,tenure,type_of_sale,type_of_area,postal_district,number_of_units,lat,lng,side_note'
+        +(from?'&sale_date=gte.'+from:'')
+        +'&order=transacted_price.desc,id.desc&limit=50';
+      var res=await fetch(url,{headers:{'apikey':SUPA_ANON,'Authorization':'Bearer '+SUPA_ANON}});
+      if(!res.ok)throw new Error('landed geo HTTP '+res.status);
+      rows=await res.json();
+    }else{
+      rows=await faRpc('ma_top_transactions',{p_from:faFrom(),p_types:faTypesDb(FA_SEG),p_lim:50});
+    }
+    if(req!==FA_REQ)return;
+    var cavs=(rows||[]).map(rowToCaveat);
+    faTopRender(cavs);
+    faTopLoadPairs(cavs);
+  }catch(e){console.error('faTopLoad',e);if(el)el.innerHTML='<div style="color:var(--red);font-size:11px;padding:12px">Failed to load.</div>';}
+}
+async function faTopLoadPairs(cavs){
+  try{
+    var ids=cavs.map(function(c){return c.id}).filter(function(x){return x!=null});
+    if(!ids.length)return;
+    var isL=(FA_SEG==='landed'),map={},mv=isL?'landed_pnl_pairs_mv':'pnl_pairs_mv';
+    var sel=isL?'sell_id,buy_date,buy_price':'sell_id,buy_date,buy_price';
+    var url=SUPA_REST+'/'+mv+'?select='+sel+'&sell_id=in.('+ids.join(',')+')';
+    var res=await fetch(url,{headers:{'apikey':SUPA_ANON,'Authorization':'Bearer '+SUPA_ANON}});
+    if(!res.ok)return;
+    var rows=await res.json();
+    if(Array.isArray(rows))rows.forEach(function(r){map[r.sell_id]=r;});
+    FA_TOP_PAIRS=map;
+    faTopRender(cavs);
+  }catch(e){/* enhancement only */}
+}
+function faTopRender(cavs){
+  var body=cavs.map(function(c,i){
+    var col=TYPE_COLORS[c.t]||'#888';
+    var projName=esc(maskAddress((c.n&&c.n!=='N.A.')?c.n:c.addr));
+    var projCell=(c.n&&c.n!=='N.A.')?'<span class="proj-link" data-proj="'+esc(c.n)+'">'+projName+'</span>':projName;
+    var addrCell=(sameAddr(c.n,c.addr)||c.n==='N.A.')?'\u2014':addrSplit(maskAddress(c.addr));
+    var pr2=FA_TOP_PAIRS[c.id],pnl='',bought='';
+    if(pr2&&pr2.buy_price!=null&&c.pr!=null){
+      var buy=Number(pr2.buy_price),sell=Number(c.pr),q=sell-buy;
+      var pct=buy?(q/buy*100):null,up=q>=0,sign=up?'+':'\u2212';
+      pnl='<div class="pnl '+(up?'pnl-up':'pnl-dn')+'">'+(up?'\u25b2':'\u25bc')+' '+sign+faMoney(q)+(pct!=null?' \u00b7 '+sign+Math.abs(pct).toFixed(Math.abs(pct)>=100?0:1)+'%':'')+'</div>';
+      bought='<div class="bought-lbl">Bought '+fmtSD(pr2.buy_date)+' \u00b7 S$'+Number(pr2.buy_price).toLocaleString()+'</div>';
+    }
+    return '<tr>'
+      +'<td class="mono">'+(i+1)+'</td>'
+      +'<td class="mono nowrap">'+c.sd+'</td>'
+      +'<td class="mono">'+(c.di?('D'+c.di):'\u2014')+'</td>'
+      +'<td class="proj">'+projCell+'</td>'
+      +'<td class="addr">'+addrCell+'</td>'
+      +'<td class="sub">'+(esc(c.tos)||'\u2014')+((c.nu>1)?'<div style="color:#B5683E;font-size:10px;font-weight:700">Bulk \u00b7 '+c.nu+' units</div>':'')+'</td>'
+      +'<td><span class="tpill" style="background:'+col+'22;color:'+col+'">'+c.t+'</span></td>'
+      +'<td class="mono num">S$'+Number(c.pr).toLocaleString()+pnl+bought+'</td>'
+      +'<td class="mono num">'+(c.area?Number(c.area).toLocaleString():'\u2014')+'</td>'
+      +'<td class="mono num">'+(c.psf?'S$'+Math.round(c.psf).toLocaleString():'\u2014')+'</td>'
+      +'<td class="ten">'+(esc(c.tn)||'\u2014')+'</td>'
+      +'</tr>';
+  }).join('')||'<tr><td colspan="11" style="padding:22px;text-align:center;color:var(--mut)">No transactions found.</td></tr>';
+  var html='<table class="mptbl"><thead><tr>'
+    +'<th style="width:36px">#</th><th style="width:92px">Date</th><th style="width:46px">Dist.</th>'
+    +'<th style="width:160px">Project</th><th style="width:150px">Address</th>'
+    +'<th style="width:78px">Sale Type</th><th style="width:100px">Type</th>'
+    +'<th style="width:130px;text-align:right">Price</th>'
+    +'<th style="width:70px;text-align:right">Area</th>'
+    +'<th style="width:78px;text-align:right">PSF</th>'
+    +'<th style="width:110px">Tenure</th>'
+    +'</tr></thead><tbody>'+body+'</tbody></table>';
+  var el=document.getElementById('faTopTbl');if(el){el.innerHTML=html;el.style.maxHeight='560px';el.style.overflowY='auto';}
+}
+
+/* v9.8.3 (S185): ?lens= deep-link boot reader — newsroom v48.288 redirects
+   retired Market Pulse / Market Analysis tabs here. */
+(function(){try{
+  var m=location.search.match(/[?&]lens=(pulse|analysis)/);
+  if(m&&typeof setLens==='function'){setLens(m[1]);}
+}catch(e){}})();
 </script>
 </body>
 </html>
