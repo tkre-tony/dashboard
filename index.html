@@ -2400,6 +2400,15 @@ function faTopRender(cavs){
   var el=document.getElementById('faTopTbl');if(el){el.innerHTML=html;el.style.maxHeight='560px';el.style.overflowY='auto';}
 }
 
+/* v9.8.4 (S185): transactions-search EF warm-up. Deno edge functions cold-start
+   (1-3s) after idle; the EF is not touched at boot (caveat list renders from
+   baked SEED data), so the first Market Pulse / pagination click of any quiet
+   period paid the spin-up (measured 2.32s in prod). Fire-and-forget limit:1
+   ping 2.5s after boot keeps it hot without competing with boot fetches. */
+setTimeout(function(){try{
+  fetch(SUPA_FN,{method:'POST',headers:{'Content-Type':'application/json','apikey':SUPA_ANON,'Authorization':'Bearer '+SUPA_ANON},body:JSON.stringify({limit:1,offset:0})}).catch(function(){});
+}catch(e){}},2500);
+
 /* v9.8.3 (S185): ?lens= deep-link boot reader — newsroom v48.288 redirects
    retired Market Pulse / Market Analysis tabs here. */
 (function(){try{
