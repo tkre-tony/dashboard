@@ -2210,7 +2210,7 @@ async function faPnlTable(){
     var from=faFrom();
     var sel=isL
       ?'sell_id,sell_date,buy_date,address,property_type,sell_price,buy_price,gain,hold_days,ann_return,postal_district,pair_flag'
-      :'sell_id,sell_date,buy_date,project_name,address,property_type,sell_price,buy_price,profit,yrs_held,ann_return,postal_district';
+      :'sell_id,sell_date,buy_date,project_name,address,property_type,sell_price,buy_price,profit,yrs_held,ann_return,postal_district,pair_type';
     var ordCol=isL?'gain':'profit';
     var ord=FA_PNL_SORT==='gain'?ordCol+'.desc':FA_PNL_SORT==='loss'?ordCol+'.asc':'sell_date.desc';
     var url=SUPA_REST+'/'+(isL?'landed_pnl_pairs_mv':'pnl_pairs_mv')+'?select='+sel
@@ -2264,6 +2264,7 @@ function faPnlRender(rows){
     var pnl='<div class="pnl '+(up?'pnl-up':'pnl-dn')+'">'+(up?'\u25b2':'\u25bc')+' '+sign+faMoney(pf)+(pct!=null?' \u00b7 '+sign+Math.abs(pct).toFixed(Math.abs(pct)>=100?0:1)+'%':'')+'</div>';
     if(isL&&r.hold_days!=null&&r.hold_days>0&&r.hold_days<=1095)pnl+='<div class="bought-lbl" style="color:#B5683E;cursor:help" title="Sold within ~3 years of purchase">\u21bb \u22643-yr hold \u00b7 likely rebuild \u2014 gain is gross</div>';
     if(isL&&r.pair_flag==='area_drift')pnl+='<div class="bought-lbl" style="color:#B5683E" title="Buy and sell areas differ 3\u20135% \u2014 pairing under review">\u26a0 area drift</div>';
+    if(!isL&&r.pair_type==='area_caveat')pnl+='<div class="bought-lbl" style="color:#B5683E;cursor:help" title="The previous transaction for this unit differs in area by more than 5%, likely due to amalgamation, subdivision, or re-survey of floor area. P&amp;L is computed on transacted price, not on a per-square-foot basis.">\u26a0 area caveat*</div>';
     var hold=(yrs!=null?yrs.toFixed(1)+' yrs':'\u2014')+(ann!=null?'<div class="bought-lbl">'+(ann>=0?'+':'')+ann.toFixed(1)+'%/yr</div>':'');
     return '<tr>'
       +'<td class="mono nowrap">'+fmtSD(r.sell_date)+'</td>'
@@ -2400,6 +2401,10 @@ function faTopRender(cavs){
   var el=document.getElementById('faTopTbl');if(el){el.innerHTML=html;el.style.maxHeight='560px';el.style.overflowY='auto';}
 }
 
+/* v9.8.5 (S200): L-PNL-6 frontend. faPnlTable() now pulls pair_type on the C&I
+   branch and faPnlRender() badges pair_type==='area_caveat' rows with an asterisk
+   plus amalgamation/subdivision/re-survey disclaimer, mirroring the landed
+   area_drift badge. Ships with newsroom v48.297. */
 /* v9.8.4 (S185): transactions-search EF warm-up. Deno edge functions cold-start
    (1-3s) after idle; the EF is not touched at boot (caveat list renders from
    baked SEED data), so the first Market Pulse / pagination click of any quiet

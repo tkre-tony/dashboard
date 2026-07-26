@@ -1,4 +1,5 @@
 <!DOCTYPE html>
+<!-- v48.297 (26 Jul 2026, S200): L-PNL-6 frontend. (1) ovEnrichBuyData() 15% client-side area guard removed — pnl_pairs_mv now classifies every pair as exact/area_drift/area_caveat and ships all of them, so the client-side rejection contradicted L-PNL-6 and silently dropped legitimate pairs. (2) pair_type and lease_event added to mvCols and the PNL_PAIRS mapping; pnlRenderTable badges area_caveat rows with an asterisk + amalgamation/subdivision/re-survey disclaimer. Ships with root v9.8.5. No cascade/NEWS changes. -->
 <!-- v48.296 (26 Jun 2026, S134): landing cascade regenerated from NEWS (hero+cards+feed teaser/alt/tag/meta drift fixed); display_teaser+landing_credit+landing_headline backfilled. -->
 <!-- v48.288 (21 Jul 2026, S185): Market Pulse + Market Analysis RETIRED from newsroom — both surfaces now live on the map root as full-width lenses (v9.8, five new Supabase RPCs). (1) navtabs data-tab="overview" and data-tab="analytics" removed from nav strip. (2) atlasShowTab intercepts 'overview'/'analytics' and redirects to propertyatlas.sg/?lens=pulse / ?lens=analysis (GA4 tab_change still fires first, so legacy-link attempts remain measurable). (3) handlePublicTabHash redirects #overview / #transactions / #analytics hash deep-links to the same lens URLs (navBtn.click() path no longer exists). data-tab="pulse" (Corporate Watch) untouched. Dormant Pulse/Analysis panel code left in place — full strip is a logged backlog cleanup. No cascade/NEWS changes. -->
 <!-- v48.287 (17 Jul 2026, S176): Newsroom id:139 — Weekly URA REALIS updates, week of 17 Jul 2026 (GATE+ launch 75 caveats S$87.28M; batch S$288.41M / 129 caveats).
@@ -20097,7 +20098,7 @@ async function pnlLoadData(){
   // ── Try server-side materialized view path ──
   try {
     document.getElementById('pnl-progress').textContent = 'Loading from server-side view…';
-    var mvCols = 'sell_id,buy_id,sell_date,buy_date,project_name,address,property_type,sell_price,buy_price,sell_type,buy_type,area_sqft,psf_sell,psf_buy,postal_district,planning_region,sell_tenure,profit,yrs_held,ann_return';
+    var mvCols = 'sell_id,buy_id,sell_date,buy_date,project_name,address,property_type,sell_price,buy_price,sell_type,buy_type,area_sqft,psf_sell,psf_buy,postal_district,planning_region,sell_tenure,profit,yrs_held,ann_return,pair_type,lease_event';
     var dateFilter = fromDate ? '&sell_date=gte.'+fromDate : '';
     var mvPairs = [];
     // v48.109b: PostgREST default caps responses at 1000 rows regardless of limit query param.
@@ -20166,7 +20167,9 @@ async function pnlLoadData(){
         psf_buy:         r.psf_buy,
         postal_district: r.postal_district,
         planning_region: r.planning_region,
-        sell_tenure:     r.sell_tenure
+        sell_tenure:     r.sell_tenure,
+        pair_type:       r.pair_type,
+        lease_event:     r.lease_event
       };
     });
     // MV does not compute the Aborted (resold) set. Leave empty — UI surface for Aborted
@@ -21475,7 +21478,8 @@ function pnlRenderTable(sec, rows, page){
       // 7. Type of Sale
       +'<td style="vertical-align:top">'+tosBadge+'</td>'
       // 8. Profit / Loss
-      +'<td class="mono" style="color:'+profitCol+';font-weight:700;white-space:nowrap;vertical-align:top">'+fmtPL(r.profit)+'</td>'
+      +'<td class="mono" style="color:'+profitCol+';font-weight:700;white-space:nowrap;vertical-align:top">'+fmtPL(r.profit)
+        +(r.pair_type==='area_caveat'?'<div style="font-size:9px;font-weight:600;color:#B5683E;margin-top:2px;cursor:help" title="The previous transaction for this unit differs in area by more than 5%, likely due to amalgamation, subdivision, or re-survey of floor area. P&amp;L is computed on transacted price, not on a per-square-foot basis.">\u26a0 area caveat*</div>':'')+'</td>'
       // 9. Ann. Return
       +'<td class="mono" style="color:'+annCol+';white-space:nowrap;vertical-align:top">'+annSign+r.ann_return.toFixed(1)+'%</td>'
       // 10. Yrs Held
@@ -22703,14 +22707,11 @@ async function ovEnrichBuyData(rows){
     // Find the most recent transaction BEFORE this sell date
     var sellDate = r.sale_date || "";
     var prior = null;
-    var rArea = (r.area_sqft && r.area_sqft > 0) ? r.area_sqft : null;
     txs.forEach(function(tx){
       if(tx.sale_date < sellDate){
-        // L-PNL-2: do not pair a sub-unit against a whole-floor caveat that shares the
-        // same address string (e.g. Suntec #11-01 4,295sf vs the 1995 whole-floor 14,380sf).
-        // Reject a prior sale whose area differs by more than 15% — not the same physical unit.
-        if(rArea && tx.area_sqft && tx.area_sqft > 0 &&
-           Math.abs(tx.area_sqft - rArea) / Math.max(tx.area_sqft, rArea) > 0.15) return;
+        // L-PNL-6 (S199): no client-side area rejection. pnl_pairs_mv classifies every
+        // pair as exact / area_drift / area_caveat and ships all of them. The former 15%
+        // guard (L-PNL-2) contradicted that rule and dropped legitimate pairs here.
         if(!prior || tx.sale_date > prior.sale_date) prior = tx;
       }
     });
