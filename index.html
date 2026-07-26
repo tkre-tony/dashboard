@@ -2006,7 +2006,7 @@ function fpTxnRender(){
     var psfv=c.psf?'S$'+Math.round(c.psf).toLocaleString():'—';
     var hasProj=(c.n&&c.n!=='N.A.');
     var projCell=hasProj?'<span class="proj-link" data-proj="'+esc(c.n)+'">'+esc(maskAddress(c.n))+'</span>':'<span style="color:var(--mut)">—</span>';
-    var addrCell=hasProj?(sameAddr(c.n,c.addr)?'—':addrSplit(maskAddress(c.addr))):(c.addr?addrSplit(maskAddress(c.addr)):'—');
+    var addrCell=(c.addr?addrSplit(maskAddress(c.addr)):'—');
     var pr2=FP_TXN_PAIRS[c.id];
     var pnlBadge='',bDate='',bPrice='',bPsf='';
     if(pr2&&pr2.buy_price!=null&&c.pr!=null){
@@ -2260,7 +2260,7 @@ function faPnlRender(rows){
     var tDisp=normType(r.property_type),col=TYPE_COLORS[tDisp]||'#888';
     var hasProj=(pj&&pj!=='N.A.');
     var projCell=hasProj?'<span class="proj-link" data-proj="'+esc(pj)+'">'+esc(maskAddress(pj))+'</span>':'<span style="color:var(--mut)">\u2014</span>';
-    var addrCell=hasProj?(!sameAddr(pj,r.address)&&r.address?addrSplit(maskAddress(r.address)):'\u2014'):(r.address?addrSplit(maskAddress(r.address)):'\u2014');
+    var addrCell=(r.address?addrSplit(maskAddress(r.address)):'\u2014');
     var pnl='<div class="pnl '+(up?'pnl-up':'pnl-dn')+'">'+(up?'\u25b2':'\u25bc')+' '+sign+faMoney(pf)+(pct!=null?' \u00b7 '+sign+Math.abs(pct).toFixed(Math.abs(pct)>=100?0:1)+'%':'')+'</div>';
     if(isL&&r.hold_days!=null&&r.hold_days>0&&r.hold_days<=1095)pnl+='<div class="bought-lbl" style="color:#B5683E;cursor:help" title="Sold within ~3 years of purchase">\u21bb \u22643-yr hold \u00b7 likely rebuild \u2014 gain is gross</div>';
     if(isL&&r.pair_flag==='area_drift')pnl+='<div class="bought-lbl" style="color:#B5683E" title="Buy and sell areas differ 3\u20135% \u2014 pairing under review">\u26a0 area drift</div>';
@@ -2367,7 +2367,7 @@ function faTopRender(cavs){
     var col=TYPE_COLORS[c.t]||'#888';
     var hasProj=(c.n&&c.n!=='N.A.');
     var projCell=hasProj?'<span class="proj-link" data-proj="'+esc(c.n)+'">'+esc(maskAddress(c.n))+'</span>':'<span style="color:var(--mut)">\u2014</span>';
-    var addrCell=hasProj?(sameAddr(c.n,c.addr)?'\u2014':addrSplit(maskAddress(c.addr))):(c.addr?addrSplit(maskAddress(c.addr)):'\u2014');
+    var addrCell=(c.addr?addrSplit(maskAddress(c.addr)):'\u2014');
     var pr2=FA_TOP_PAIRS[c.id],pnl='',bought='';
     if(pr2&&pr2.buy_price!=null&&c.pr!=null){
       var buy=Number(pr2.buy_price),sell=Number(c.pr),q=sell-buy;
@@ -2401,6 +2401,12 @@ function faTopRender(cavs){
   var el=document.getElementById('faTopTbl');if(el){el.innerHTML=html;el.style.maxHeight='560px';el.style.overflowY='auto';}
 }
 
+/* v9.8.6 (S200): ADDRESS column no longer collapses to em-dash when the
+   project name equals the address. Three render sites (caveat list, faPnlRender,
+   faTopRender) suppressed ADDRESS via sameAddr() to avoid duplicate text; where a
+   building's registered name IS its address (78 SHENTON WAY) the row read as
+   though the address were missing. Suppression removed — ADDRESS always renders
+   when present. N.A. path unchanged. Affects 3 rows of 82,342. */
 /* v9.8.5 (S200): L-PNL-6 frontend. faPnlTable() now pulls pair_type on the C&I
    branch and faPnlRender() badges pair_type==='area_caveat' rows with an asterisk
    plus amalgamation/subdivision/re-survey disclaimer, mirroring the landed
