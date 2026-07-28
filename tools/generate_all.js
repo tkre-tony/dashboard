@@ -330,7 +330,7 @@ function promoLeaderboardHtml() {
     (p.kicker ? '<span class="pa-ad-kick">' + esc(p.kicker) + '</span>' : '') +
     '<span class="pa-ad-copy"><b>' + esc(p.headline) + '</b>' +
     (p.subline ? '<span class="pa-ad-sub">' + esc(p.subline) + '</span>' : '') + '</span>' +
-    '<a class="pa-ad-cta pa-ad-stretch" href="' + esc(p.href) + '">' + esc(p.cta) + '</a>' +
+    '<a class="pa-ad-cta pa-ad-stretch" href="' + esc(p.href) + '" target="_blank" rel="noopener">' + esc(p.cta) + '</a>' +
     '<button class="pa-ad-x" type="button" aria-label="Dismiss this message" ' +
     'onclick="document.getElementById(\'pa-adzone\').style.display=\'none\'">&times;</button>' +
     '</div></div></div>';
@@ -346,7 +346,7 @@ function promoRailHtml() {
     if (i === 0) out.push('<div class="pa-rail-label">From PropertyAtlas</div>');
     if (i === 1) out.push('<div class="pa-rail-label">Also on PropertyAtlas</div>');
     if (u.kind === 'mpu') {
-      out.push('<a class="pa-slot pa-slot-mpu' + tier + '" href="' + esc(u.href) + '"' + attrs + '>' +
+      out.push('<a class="pa-slot pa-slot-mpu' + tier + '" href="' + esc(u.href) + '" target="_blank" rel="noopener"' + attrs + '>' +
         '<div class="pa-slot-eyebrow">' + esc(u.eyebrow) + '</div>' +
         '<h3 class="pa-slot-h">' + esc(u.headline) + '</h3>' +
         '<p class="pa-slot-p">' + u.body + '</p>' +
@@ -354,13 +354,13 @@ function promoRailHtml() {
           '<div class="pa-slot-stat"><b>' + st.n + '</b><span>' + st.l + '</span></div>').join('') + '</div>' +
         '<span class="pa-slot-btn">' + esc(u.cta) + '</span></a>');
     } else if (u.kind === 'compact') {
-      out.push('<a class="pa-slot pa-slot-compact' + tier + '" href="' + esc(u.href) + '"' + attrs + '>' +
+      out.push('<a class="pa-slot pa-slot-compact' + tier + '" href="' + esc(u.href) + '" target="_blank" rel="noopener"' + attrs + '>' +
         '<span class="pa-slot-ico">' + (PROMO_ICONS[u.icon] || '') + '</span><span>' +
         '<h3 class="pa-slot-h">' + esc(u.headline) + '</h3>' +
         '<p class="pa-slot-p">' + u.body + '</p>' +
         '<span class="pa-slot-link">' + esc(u.cta) + ' &rarr;</span></span></a>');
     } else if (u.kind === 'native') {
-      out.push('<a class="pa-slot pa-slot-native' + tier + '" href="' + esc(u.href) + '"' + attrs + '>' +
+      out.push('<a class="pa-slot pa-slot-native' + tier + '" href="' + esc(u.href) + '" target="_blank" rel="noopener"' + attrs + '>' +
         '<div class="pa-slot-eyebrow">' + esc(u.eyebrow) + '</div>' +
         '<h3 class="pa-slot-h">' + esc(u.headline) + '</h3>' +
         '<p class="pa-slot-p">' + u.body + '</p>' +
