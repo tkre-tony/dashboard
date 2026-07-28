@@ -188,6 +188,211 @@ const SUBSCRIBE_BODY =
 // canonical showBucket() destinations. Replaces the legacy ed-art-masthead in
 // buildPage; the inline "← PropertyAtlas" back link in the body is retained.
 // Colors hardcoded (article :root does not define the map's --navy/--gold).
+// ─── PROMO-1 (S208): article-page promo slots ──────────────────────────────
+// Spec: ATLAS_PROMO-1_article_promo_slots_spec_v1.md
+// Values only — never markup or CSS in this object. `treatment` is an enum
+// resolved to a CSS class, not a style string. One place to edit copy/links.
+const PROMO_SLOTS = {
+  leaderboard: {
+    id: 'leaderboard-map',
+    active: true,
+    label: 'From PropertyAtlas',
+    kicker: 'PropertyAtlas Map',
+    headline: 'New caveats every Tuesday and Friday, the week they are released.',
+    subline: 'Singapore commercial, industrial and landed transactions \u2014 mapped, filterable, free to search.',
+    cta: 'Open the map',
+    href: '/',
+    creative: 'cadence_tue_fri',
+  },
+  rail: [
+    { id: 'rail-map', kind: 'mpu', tier: 1, active: true,
+      eyebrow: 'Transaction Map',
+      headline: 'Every caveat, on one map.',
+      body: 'Commercial, industrial and landed transactions across Singapore \u2014 with profit-and-loss pairing on resales.',
+      stats: [{ n: '82,777', l: 'C&amp;I caveats' }, { n: '80,241', l: 'Landed' }],
+      cta: 'Explore the map', href: '/', creative: 'rail_map_default' },
+    { id: 'rail-pulse', kind: 'compact', tier: 2, active: true,
+      icon: 'pulse',
+      headline: 'Market Pulse',
+      body: 'What moved this week \u2014 latest caveats, prices and volumes as they land.',
+      cta: 'Open Market Pulse', href: '/?lens=pulse', creative: 'rail_pulse_default' },
+    { id: 'rail-analysis', kind: 'compact', tier: 3, active: true,
+      icon: 'bars',
+      headline: 'Market Analysis',
+      body: 'Price and PSF trends by segment, district and property type, over time.',
+      cta: 'Open Market Analysis', href: '/?lens=analysis', creative: 'rail_analysis_default' },
+    { id: 'rail-directory', kind: 'native', tier: 4, active: true,
+      eyebrow: 'Asset Directory',
+      headline: 'S-REIT and developer portfolios, asset by asset.',
+      body: '1,670 assets across 60 listed entities \u2014 occupancy, lease expiry and valuation in one place.',
+      cta: 'Open directory', href: '/newsroom/#asset-directory', creative: 'rail_directory_default' },
+    { id: 'rail-sponsor', kind: 'reserved', tier: 5, active: true,
+      label: 'Reserved \u2014 future inventory' },
+  ],
+};
+
+const PROMO_ICONS = {
+  pulse: '<svg viewBox="0 0 24 24" aria-hidden="true"><polyline points="2 13 7 13 10 5 14 19 17 13 22 13"/></svg>',
+  bars:  '<svg viewBox="0 0 24 24" aria-hidden="true"><line x1="4" y1="20" x2="4" y2="12"/><line x1="10" y1="20" x2="10" y2="4"/><line x1="16" y1="20" x2="16" y2="9"/><line x1="22" y1="20" x2="22" y2="15"/></svg>',
+};
+
+const PROMO_CSS = [
+// leaderboard band + unit (IAB 728x90 class; fluid to 1080, 90 tall)
+'.pa-adzone{background:var(--ed-cream-lt,#F7F3E9);padding:20px 28px;border-bottom:1px solid var(--ed-hairline,#E4DCC8)}',
+'.pa-adzone-in{max-width:1080px;margin:0 auto}',
+'.pa-ad-label{font-family:"DM Sans",Arial,sans-serif;font-size:8.5px;font-weight:700;letter-spacing:.22em;text-transform:uppercase;color:var(--ed-muted,#6B6157);opacity:.55;margin:0 0 6px 2px}',
+'.pa-ad-unit{position:relative;display:flex;align-items:center;gap:20px;min-height:90px;padding:14px 20px 14px 22px;border-radius:4px;font-family:"DM Sans",Arial,sans-serif;border:1px solid #0F3775;background:linear-gradient(100deg,#0F3775 0%,#1A4F9C 62%,#2C6BC4 100%);box-shadow:0 1px 3px rgba(11,43,92,.07),0 6px 18px rgba(11,43,92,.06);transition:.15s;overflow:hidden}',
+'.pa-ad-unit:hover{box-shadow:0 2px 6px rgba(11,43,92,.10),0 10px 26px rgba(11,43,92,.10);transform:translateY(-1px)}',
+'.pa-ad-kick{flex:0 0 auto;font-size:9.5px;font-weight:700;letter-spacing:.18em;text-transform:uppercase;padding:4px 9px;border-radius:2px;white-space:nowrap;color:var(--ed-bronze-lt,#C9A264);border:1px solid rgba(201,162,100,.5);background:rgba(0,0,0,.14)}',
+'.pa-ad-copy{flex:1 1 auto;min-width:0;font-size:16px;line-height:1.28;color:#fff;position:relative;z-index:2;pointer-events:none}',
+'.pa-ad-copy b{font-weight:700;display:block}',
+'.pa-ad-copy .pa-ad-sub{display:block;font-size:12.5px;margin-top:4px;font-weight:400;color:rgba(255,255,255,.72)}',
+'.pa-ad-cta{position:relative;z-index:2;flex:0 0 auto;text-decoration:none;font-size:12.5px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;padding:12px 22px;border-radius:3px;white-space:nowrap;background:var(--ed-bronze,#A67C3A);color:#fff;box-shadow:0 1px 0 rgba(0,0,0,.2)}',
+'.pa-ad-unit:hover .pa-ad-cta{background:var(--ed-bronze-lt,#C9A264)}',
+'.pa-ad-stretch::after{content:"";position:absolute;inset:0;z-index:1}',
+'.pa-ad-x{position:absolute;top:6px;right:8px;z-index:3;background:none;border:0;cursor:pointer;font-size:15px;line-height:1;padding:2px 4px;color:rgba(255,255,255,.45)}',
+'.pa-ad-x:hover{color:#fff}',
+'@media (max-width:860px){.pa-adzone{padding:14px}.pa-ad-unit{flex-wrap:wrap;gap:10px;padding:14px 16px;min-height:0}.pa-ad-kick{display:none}.pa-ad-copy{flex:1 1 100%;font-size:14.5px}.pa-ad-copy .pa-ad-sub{font-size:11.5px}.pa-ad-cta{flex:1 1 100%;text-align:center;padding:11px 14px;font-size:11.5px}}',
+// sticky nav + banner (D8/D9/D10)
+'.pa-tb{position:sticky;top:0;z-index:200;transition:box-shadow .18s ease}',
+'body.pa-scrolled .pa-tb{box-shadow:0 2px 10px rgba(11,43,92,.20),0 1px 0 rgba(0,0,0,.10)}',
+'.pa-adzone{position:sticky;top:44px;z-index:190}',
+'body.pa-scrolled .pa-adzone{box-shadow:0 2px 10px rgba(11,43,92,.14)}',
+'body.pa-scrolled .pa-adzone{padding-top:8px;padding-bottom:8px}',
+'body.pa-scrolled .pa-ad-label{height:0;margin:0;opacity:0;overflow:hidden}',
+'body.pa-scrolled .pa-ad-unit{min-height:0;padding-top:9px;padding-bottom:9px;box-shadow:0 1px 3px rgba(11,43,92,.10)}',
+'body.pa-scrolled .pa-ad-copy{font-size:13.5px}',
+'body.pa-scrolled .pa-ad-copy .pa-ad-sub{height:0;margin:0;opacity:0;overflow:hidden}',
+'body.pa-scrolled .pa-ad-cta{padding:8px 16px;font-size:11.5px}',
+'.pa-adzone,.pa-ad-unit,.pa-ad-label,.pa-ad-copy,.pa-ad-copy .pa-ad-sub,.pa-ad-cta{transition:padding .18s ease,height .18s ease,opacity .16s ease,margin .18s ease,font-size .18s ease}',
+'@media (prefers-reduced-motion:reduce){.pa-adzone,.pa-ad-unit,.pa-ad-label,.pa-ad-copy,.pa-ad-copy .pa-ad-sub,.pa-ad-cta,.pa-tb{transition:none}}',
+'@media (max-width:760px){.pa-adzone{position:static}}',
+// two-column shell + rail
+'.pa-shell{max-width:1104px;margin:0 auto;display:grid;grid-template-columns:minmax(0,720px) 300px;gap:36px;align-items:start;justify-content:center}',
+'.pa-shell > .ed-art-content{max-width:720px;margin:0;padding-left:0;padding-right:0}',
+'.pa-rail{padding-top:56px;font-family:"DM Sans",Arial,sans-serif;display:flex;flex-direction:column;gap:20px}',
+'.pa-rail-label{font-size:9px;font-weight:700;letter-spacing:.2em;text-transform:uppercase;color:var(--ed-muted,#6B6157);opacity:.7;margin-bottom:7px}',
+'.pa-slot{border:1px solid rgba(26,79,156,.20);border-radius:6px;overflow:hidden;position:relative;text-decoration:none;color:inherit;display:block;transition:.15s;background:var(--ed-cream,#FCF9F0)}',
+'.pa-slot:hover{box-shadow:0 2px 6px rgba(11,43,92,.10),0 10px 26px rgba(11,43,92,.08)}',
+'.pa-slot::before{content:"";position:absolute;left:0;top:0;bottom:0;width:3px}',
+// graded shades (D6) — tier 4 darkened to #EAF1FB per O4 resolution
+'.pa-slot-t1{background:linear-gradient(160deg,#0B2B5C 0%,#14418A 100%);border-color:#0B2B5C}',
+'.pa-slot-t1::before{background:var(--ed-bronze,#A67C3A)}',
+'.pa-slot-t2{background:#E4EDF9}.pa-slot-t2::before{background:#1A4F9C}',
+'.pa-slot-t3{background:#EDF3FB}.pa-slot-t3::before{background:#3B82D4}',
+'.pa-slot-t4{background:#EAF1FB}.pa-slot-t4::before{background:#6C9BD6}',
+'.pa-slot-t1 .pa-slot-eyebrow{color:var(--ed-bronze-lt,#C9A264)}',
+'.pa-slot-t1 .pa-slot-h{color:#fff}',
+'.pa-slot-t1 .pa-slot-p{color:rgba(255,255,255,.78)}',
+'.pa-slot-t1 .pa-slot-stats{border-top-color:rgba(255,255,255,.24)}',
+'.pa-slot-t1 .pa-slot-stat b{color:#fff}',
+'.pa-slot-t1 .pa-slot-stat span{color:rgba(255,255,255,.78)}',
+// slot internals
+'.pa-slot-mpu{min-height:250px;padding:22px 20px 20px;display:flex;flex-direction:column}',
+'.pa-slot-eyebrow{font-size:9.5px;font-weight:700;letter-spacing:.16em;text-transform:uppercase;color:var(--ed-navy,#0B2B5C);margin-bottom:10px}',
+'.pa-slot-h{font-family:Georgia,"Times New Roman",serif;font-size:19px;line-height:1.22;font-weight:700;color:var(--ed-navy-ink,#12233f);margin:0 0 10px}',
+'.pa-slot-p{font-size:12.5px;line-height:1.5;color:var(--ed-muted,#6B6157);margin:0 0 14px}',
+'.pa-slot-stats{display:flex;gap:14px;margin:0 0 16px;padding-top:12px;border-top:1px solid rgba(26,79,156,.18)}',
+'.pa-slot-stat b{display:block;font-family:Georgia,"Times New Roman",serif;font-size:17px;color:var(--ed-navy,#0B2B5C);line-height:1}',
+'.pa-slot-stat span{display:block;font-size:9px;letter-spacing:.12em;text-transform:uppercase;color:var(--ed-muted,#6B6157);margin-top:4px}',
+'.pa-slot-btn{margin-top:auto;display:block;text-align:center;background:var(--ed-bronze,#A67C3A);color:#fff;font-size:11.5px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;padding:10px 14px;border-radius:3px}',
+'.pa-slot-compact{padding:16px 18px 16px 20px;display:flex;gap:13px;align-items:flex-start}',
+'.pa-slot-ico{flex:0 0 auto;width:34px;height:34px;border-radius:5px;background:var(--ed-navy,#0B2B5C);display:flex;align-items:center;justify-content:center;margin-top:2px}',
+'.pa-slot-ico svg{width:18px;height:18px;stroke:#fff;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}',
+'.pa-slot-compact .pa-slot-h{font-size:15px;margin:0 0 5px}',
+'.pa-slot-compact .pa-slot-p{font-size:12px;margin:0 0 8px;line-height:1.45}',
+'.pa-slot-native{padding:18px 20px}',
+'.pa-slot-native .pa-slot-h{font-size:15px;margin-bottom:8px}',
+'.pa-slot-native .pa-slot-p{margin-bottom:10px;font-size:12px}',
+'.pa-slot-link{font-size:11.5px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:var(--ed-navy,#0B2B5C)}',
+'.pa-slot-hp{min-height:600px;display:flex;align-items:center;justify-content:center;background:repeating-linear-gradient(135deg,#FCF9F0 0 12px,#F7F3E9 12px 24px);border-style:dashed}',
+'.pa-slot-hp::before{background:rgba(26,79,156,.25)}',
+'.pa-slot-hp-in{text-align:center;padding:24px}',
+'.pa-slot-hp-in b{display:block;font-family:Georgia,"Times New Roman",serif;font-size:15px;color:var(--ed-navy-ink,#12233f);margin-bottom:6px}',
+'.pa-slot-hp-in span{font-size:11px;color:var(--ed-muted,#6B6157);line-height:1.5}',
+// rail collapses; mobile/tablet layout unchanged from pre-PROMO-1
+'@media (max-width:1103px){.pa-shell{display:block;max-width:none}.pa-shell > .ed-art-content{max-width:720px;margin:0 auto;padding-left:28px;padding-right:28px}.pa-rail{display:none}}',
+].join('\n');
+
+// GA4 — L-PROMO-1: static article pages carried NO analytics before S208.
+const GA4_ID = 'G-Z2Z6HM2P8M';
+const GA4_SNIPPET =
+  '<script async src="https://www.googletagmanager.com/gtag/js?id=' + GA4_ID + '"></script>' +
+  '<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}' +
+  'gtag("js",new Date());gtag("config","' + GA4_ID + '");</script>';
+
+function promoLeaderboardHtml() {
+  const p = PROMO_SLOTS.leaderboard;
+  if (!p || !p.active) return '';
+  return '<div class="pa-adzone" id="pa-adzone"><div class="pa-adzone-in">' +
+    (p.label ? '<div class="pa-ad-label">' + esc(p.label) + '</div>' : '') +
+    '<div class="pa-ad-unit" data-promo="' + esc(p.id) + '" data-creative="' + esc(p.creative || '') + '">' +
+    (p.kicker ? '<span class="pa-ad-kick">' + esc(p.kicker) + '</span>' : '') +
+    '<span class="pa-ad-copy"><b>' + esc(p.headline) + '</b>' +
+    (p.subline ? '<span class="pa-ad-sub">' + esc(p.subline) + '</span>' : '') + '</span>' +
+    '<a class="pa-ad-cta pa-ad-stretch" href="' + esc(p.href) + '">' + esc(p.cta) + '</a>' +
+    '<button class="pa-ad-x" type="button" aria-label="Dismiss this message" ' +
+    'onclick="document.getElementById(\'pa-adzone\').style.display=\'none\'">&times;</button>' +
+    '</div></div></div>';
+}
+
+function promoRailHtml() {
+  const units = (PROMO_SLOTS.rail || []).filter(u => u.active);
+  if (!units.length) return '';
+  const out = ['<aside class="pa-rail">'];
+  units.forEach((u, i) => {
+    const tier = ' pa-slot-t' + (u.tier || 1);
+    const attrs = ' data-promo="' + esc(u.id) + '" data-creative="' + esc(u.creative || '') + '"';
+    if (i === 0) out.push('<div class="pa-rail-label">From PropertyAtlas</div>');
+    if (i === 1) out.push('<div class="pa-rail-label">Also on PropertyAtlas</div>');
+    if (u.kind === 'mpu') {
+      out.push('<a class="pa-slot pa-slot-mpu' + tier + '" href="' + esc(u.href) + '"' + attrs + '>' +
+        '<div class="pa-slot-eyebrow">' + esc(u.eyebrow) + '</div>' +
+        '<h3 class="pa-slot-h">' + esc(u.headline) + '</h3>' +
+        '<p class="pa-slot-p">' + u.body + '</p>' +
+        '<div class="pa-slot-stats">' + (u.stats || []).map(st =>
+          '<div class="pa-slot-stat"><b>' + st.n + '</b><span>' + st.l + '</span></div>').join('') + '</div>' +
+        '<span class="pa-slot-btn">' + esc(u.cta) + '</span></a>');
+    } else if (u.kind === 'compact') {
+      out.push('<a class="pa-slot pa-slot-compact' + tier + '" href="' + esc(u.href) + '"' + attrs + '>' +
+        '<span class="pa-slot-ico">' + (PROMO_ICONS[u.icon] || '') + '</span><span>' +
+        '<h3 class="pa-slot-h">' + esc(u.headline) + '</h3>' +
+        '<p class="pa-slot-p">' + u.body + '</p>' +
+        '<span class="pa-slot-link">' + esc(u.cta) + ' &rarr;</span></span></a>');
+    } else if (u.kind === 'native') {
+      out.push('<a class="pa-slot pa-slot-native' + tier + '" href="' + esc(u.href) + '"' + attrs + '>' +
+        '<div class="pa-slot-eyebrow">' + esc(u.eyebrow) + '</div>' +
+        '<h3 class="pa-slot-h">' + esc(u.headline) + '</h3>' +
+        '<p class="pa-slot-p">' + u.body + '</p>' +
+        '<span class="pa-slot-link">' + esc(u.cta) + ' &rarr;</span></a>');
+    } else if (u.kind === 'reserved') {
+      out.push('<div><div class="pa-rail-label">' + esc(u.label) + '</div>' +
+        '<div class="pa-slot pa-slot-hp"><div class="pa-slot-hp-in"><b>300 &times; 600</b>' +
+        '<span>Half-page slot.</span></div></div></div>');
+    }
+  });
+  out.push('</aside>');
+  return out.join('');
+}
+
+// Promotion tracking (GA4 view_promotion / select_promotion). No UTMs on
+// internal links (ATLAS_UTM_tagging_convention.md). Degrades silently.
+const PROMO_JS =
+'<script>(function(){' +
+'var u=document.querySelectorAll("[data-promo]");if(!u.length)return;' +
+'function t(e,el){if(typeof window.gtag!=="function")return;' +
+'var s=el.getAttribute("data-promo");window.gtag("event",e,{promotion_id:s,' +
+'promotion_name:"propertyatlas_house_promo",creative_name:el.getAttribute("data-creative")||s,' +
+'creative_slot:s,location_id:"article_page"});}' +
+'if("IntersectionObserver" in window){var seen={};var io=new IntersectionObserver(function(es){' +
+'es.forEach(function(en){var s=en.target.getAttribute("data-promo");' +
+'if(en.isIntersecting&&!seen[s]){seen[s]=1;t("view_promotion",en.target);}});},{threshold:.5});' +
+'Array.prototype.forEach.call(u,function(x){io.observe(x);});}' +
+'Array.prototype.forEach.call(u,function(x){x.addEventListener("click",function(){t("select_promotion",x);});});' +
+'var k=false;window.addEventListener("scroll",function(){if(k)return;k=true;' +
+'window.requestAnimationFrame(function(){document.body.classList.toggle("pa-scrolled",window.scrollY>8);k=false;});},' +
+'{passive:true});})();</script>';
+
 const NAVY_TOPBAR_CSS = [
 '.pa-tb{background:#15233f;display:flex;align-items:center;padding:0 20px;height:44px}',
 '.pa-tb-home{display:flex;align-items:center;text-decoration:none}',
@@ -479,6 +684,7 @@ function buildHead(a, canonical) {
     '<meta name="twitter:description" content="' + esc(desc) + '">',
     '<meta name="twitter:image" content="' + esc(social) + '">',
     '<script type="application/ld+json">' + JSON.stringify(ld) + '</script>',
+    GA4_SNIPPET,
   ].filter(Boolean).join('\n');
 }
 
@@ -491,7 +697,14 @@ function buildPage(a) {
   const mastRe = /<header class="ed-art-masthead">[\s\S]*?<\/header>/;
   const mastHits = (fragment.match(new RegExp(mastRe.source, 'g')) || []).length;
   if (mastHits !== 1) throw new Error('NAV-1: expected exactly 1 ed-art-masthead, found ' + mastHits + ' (id:' + a.id + ')');
-  fragment = fragment.replace(mastRe, NAVY_TOPBAR_HTML);
+  fragment = fragment.replace(mastRe, NAVY_TOPBAR_HTML + promoLeaderboardHtml());
+  // PROMO-1: wrap the article column + rail in the two-column shell.
+  const artOpen = '<article class="ed-art-content">';
+  const artHits = fragment.split(artOpen).length - 1;
+  const closeHits = fragment.split('</article>').length - 1;
+  if (artHits !== 1 || closeHits !== 1) throw new Error('PROMO-1: expected exactly 1 ed-art-content article, found ' + artHits + '/' + closeHits + ' (id:' + a.id + ')');
+  fragment = fragment.replace(artOpen, '<div class="pa-shell">' + artOpen);
+  fragment = fragment.replace('</article>', '</article>' + promoRailHtml() + '</div>');
   const usedClasses = new Set();
   (fragment.match(/class=["']([^"']*)["']/g) || []).forEach(m => {
     m.replace(/class=["']([^"']*)["']/, (x, cl) => cl.split(/\s+/).forEach(c => c && usedClasses.add(c)));
@@ -500,10 +713,10 @@ function buildPage(a) {
   // SOP-required rule absent from the index's article CSS: grey, no-direction
   // deltas. The index ships only .up/.down; injecting .neutral keeps neutral
   // financial-headline deltas covered (L-SEO-8) and correctly coloured.
-  const injected = '.ed-art-fh-delta.neutral{color:var(--ed-muted)}' + '\n' + NAVY_TOPBAR_CSS;
+  const injected = '.ed-art-fh-delta.neutral{color:var(--ed-muted)}' + '\n' + NAVY_TOPBAR_CSS + '\n' + PROMO_CSS;
   const head = buildHead(a, canonical);
   return '<!DOCTYPE html>\n<html lang="en" data-ready>\n<head>\n' + head +
-    '\n<style>\n' + css + '\n' + injected + '\n' + SUBSCRIBE_CSS + '\n</style>\n</head>\n<body>\n' + fragment + '\n' + SUBSCRIBE_BODY + '\n</body>\n</html>\n';
+    '\n<style>\n' + css + '\n' + injected + '\n' + SUBSCRIBE_CSS + '\n</style>\n</head>\n<body>\n' + fragment + '\n' + SUBSCRIBE_BODY + '\n' + PROMO_JS + '\n</body>\n</html>\n';
 }
 
 // ───────────────── per-page gates ─────────────────
