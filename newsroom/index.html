@@ -1,4 +1,5 @@
 <!DOCTYPE html>
+<!-- v48.306 (29 Jul 2026, S220): Hongkong Land Human Capital pass - 19 TALENT_DATA profiles appended (9 board + 10 management) from AR 2025. Fees carried in rem_band as verbatim US$ text (US$195,000 Witt / 145,000 Leong / 170,000 Mei / 100,000 Jencks / 100,000 Keswick / 28,410 Miyasaki / 22,561 Pan / 56,823 Grant prorated) because the talent render hardcodes S$ for rem_exact - HKL is the first non-SGD entity and a rem_ccy field is deferred. Executive pay not individually disclosed by HKL (aggregate US$9.0M FY2025). ENTITY_COLORS "Hongkong Land" #00594f. talent-entity-filter option added alphabetically. No cascade, NEWS or NR_STATIC_IDS changes. -->
 <!-- v48.305 (29 Jul 2026, S219): Newsroom drop id:155 Hongkong Land Holdings 1H 2026 interim results (underlying profit US$259M +11%, UEPS US-c-12.07 +14%; attributable profit US$1,259M vs US$221M on US$725.1M investment property revaluation, US$915.9M including associates; NAV US$14.71 +3%; interim DPS US-c-8.0 from US-c-6.0, c.32% of FY2025 full-year, ex 20 Aug, record 21 Aug, pay 14 Oct; net debt US$3.4B, gearing 11%, US$3.7B recycled = 93% of the US$4B by end-2027 target; adjusted FCF US$253M -37%. SINGAPORE PIVOT: MBFC Tower 3 sold Dec 2025, Singapore prime portfolio seeded into SCPREF at NAV completed Feb 2026, 10.8% of Suntec REIT acquired from ESR 19 Mar 2026 for S$541M / US$419.1M cash at S$1.70/unit - carried at fair value US$356.4M at 30 Jun, a US$62.7M gap; SG office occupancy 96.3%, rents S$11.9 psf, contributions LOWER on MBFC T3 loss, offset by SCPREF fee income + Suntec distributions. HK Central office rents HK$91 vs HK$95 psf, vacancy 11% to 9.2%, committed occ 94.2%, LANDMARK retail HK$240 vs HK$220 psf, tenant sales +11%; CIP contributions +43%; Westbund Central Phase 2 168,000 sqm). Full L243/L-CASCADE-7 cascade: hero=155, cards=[154,153,152], feed=[151..145], NR_STATIC_IDS=[154..145]. L-ART-2 binding on both ptable blocks. -->
 <!-- v48.296 (26 Jun 2026, S134): landing cascade regenerated from NEWS (hero+cards+feed teaser/alt/tag/meta drift fixed); display_teaser+landing_credit+landing_headline backfilled. -->
 <!-- v48.288 (21 Jul 2026, S185): Market Pulse + Market Analysis RETIRED from newsroom — both surfaces now live on the map root as full-width lenses (v9.8, five new Supabase RPCs). (1) navtabs data-tab="overview" and data-tab="analytics" removed from nav strip. (2) atlasShowTab intercepts 'overview'/'analytics' and redirects to propertyatlas.sg/?lens=pulse / ?lens=analysis (GA4 tab_change still fires first, so legacy-link attempts remain measurable). (3) handlePublicTabHash redirects #overview / #transactions / #analytics hash deep-links to the same lens URLs (navBtn.click() path no longer exists). data-tab="pulse" (Corporate Watch) untouched. Dormant Pulse/Analysis panel code left in place — full strip is a logged backlog cleanup. No cascade/NEWS changes. -->
@@ -5300,6 +5301,7 @@ body.article-takeover .ed-foot{display:none!important}
       <option value="IREIT Global">iREIT Global (FY2025)</option>
       <option value="KOP Limited">KOP Limited (FY2026)</option>
       <option value="KSH Holdings">KSH Holdings (FY2026)</option>
+      <option value="Hongkong Land">Hongkong Land (FY2025)</option>
       <option value="Keppel DC REIT">Keppel DC REIT (FY2025)</option>
       <option value="Keppel REIT">Keppel REIT (FY2025)</option>
       <option value="KORE US REIT">KORE US REIT (FY2025)</option>
@@ -5712,6 +5714,316 @@ body.article-takeover .ed-foot{display:none!important}
 // Source: Annual Reports (SGX-listed)
 // ═══════════════════════════════════════════════════
 var TALENT_DATA = [
+  // ── HONGKONG LAND (AR 2025, FY ended 31 Dec 2025) — 9 board + 10 management ──
+  // CURRENCY NOTE: Hongkong Land reports in US dollars. The talent render hardcodes
+  // 'S$' for rem_exact, so all HKL figures are carried in rem_band as verbatim text
+  // (e.g. 'US$195,000'). This displays correctly and correctly excludes non-SGD
+  // figures from the SGD hero-card aggregates and the rem sort. A rem_ccy field is
+  // the proper fix — deferred to its own session.
+  {
+    id:'hkl-chair-25', name:'John Witt', role:'Chairman', role_type:'Chairman',
+    entity:'Hongkong Land', entity_short:'HKL', ar_year:'FY2025',
+    appointed:'June 2020 (Chairman from October 2024)', tenure_yrs:5.7,
+    rem_exact:null, rem_fixed:null, rem_bonus:null, rem_other:null,
+    rem_band:'US$195,000',
+    rem_note:'FY2025 total directors\' fees US$195,000 — Chairman fee US$110,000, Nominations Committee US$15,000, Remuneration Committee (Chair) US$25,000, Investment Committee (Chair) US$45,000. Fees surrendered to Jardine Matheson. Chaired the Remuneration Committee until 5 March 2026, when Lincoln Pan took over. Aggregate FY2025 emoluments for all directors were US$9.0M (FY2024: US$7.8M); individual executive pay is not separately disclosed.',
+    rem_pct_fixed:100, rem_pct_bonus:0, rem_pct_other:0,
+    rem_history:[{year:'FY2025', band:'US$195,000'}],
+    edu:'Master of Business Administration (with distinction), INSEAD; Bachelor\'s degree, University of Toronto (Trinity College); Canadian Chartered Professional Accountant',
+    bio:'Chairman since October 2024, having rejoined the Board in June 2020. Previously Chief Financial Officer of Hongkong Land between 2010 and 2016. Chairs the Investment Committee. Group Managing Director of Jardine Matheson until December 2025, having joined the group in 1993, and Group Finance Director from 2016 to 2020. Board member at M+ Museum in Hong Kong and Trustee of the Asian Cultural Council.',
+    prev_roles:[{org:'Jardine Matheson',pos:'Group Managing Director'},{org:'Hongkong Land',pos:'Chief Financial Officer (2010-2016)'},{org:'DFI Retail Group',pos:'Chairman'},{org:'Jardine Cycle & Carriage',pos:'Chairman'},{org:'Mandarin Oriental International',pos:'Managing Director'}],
+    cross_board_roles:[{entity:'M+ Museum, Hong Kong',role:'Board Member',listed:false},{entity:'Asian Cultural Council',role:'Trustee',listed:false}],
+    tags:['Chairman','Investment Cttee Chair','Jardine Matheson','Former CFO','INSEAD MBA','Fees Surrendered'],
+    linkedin_url:null, photo_url:null
+  },
+  {
+    id:'hkl-ceo-25', name:'Michael T. Smith', role:'Chief Executive (Executive Director)', role_type:'CEO',
+    entity:'Hongkong Land', entity_short:'HKL', ar_year:'FY2025',
+    appointed:'April 2024', tenure_yrs:1.9,
+    rem_exact:null, rem_fixed:null, rem_bonus:null, rem_other:null,
+    rem_band:'Not individually disclosed',
+    rem_note:'Executive Directors draw no directors\' fees. Hongkong Land does not disclose individual executive remuneration — aggregate FY2025 emoluments for all directors were US$9.0M (FY2024: US$7.8M), comprising fees US$0.8M, short-term employee benefits US$8.1M and post-employment benefits US$0.1M. Share awards ARE individually disclosed: a conditional award of 1,784,500 shares granted 2024 as a joining incentive vesting over five years 2025-2029, of which 1,427,600 remained outstanding at 5 March 2026; plus a 2025 LTIP/VCP award of 1,080,000 shares vesting in three tranches 2028-2030 subject to performance. CE payout opportunity: STI 200% of base salary at target and 400% at maximum; PSU 154% at target and 478% at maximum.',
+    rem_pct_fixed:null, rem_pct_bonus:null, rem_pct_other:null,
+    rem_history:[{year:'FY2025', band:'Not individually disclosed'}],
+    edu:'Bachelor of Business in Property (Real Estate), University of South Australia',
+    bio:'Joined Hongkong Land as Chief Executive in April 2024. Previously Regional CEO of Europe and USA for Mapletree Investments, where the business grew to over a third of the group\'s US$55 billion of assets under management. A 30-year career including partner at Goldman Sachs, leading the bank\'s Southeast Asia investment banking and Asia Pacific (ex-Japan) real estate business. One of the pioneers of Asia\'s REIT industry, playing an instrumental role in numerous listings including Link REIT in Hong Kong and all four Mapletree REITs in Singapore.',
+    prev_roles:[{org:'Mapletree Investments',pos:'Regional CEO, Europe & USA'},{org:'Goldman Sachs',pos:'Partner, SE Asia Investment Banking & APAC Real Estate'}],
+    cross_board_roles:[],
+    tags:['CEO','Executive Director','Ex-Mapletree','Ex-Goldman Sachs','REIT Pioneer','Strategic Vision 2035'],
+    linkedin_url:null, photo_url:null
+  },
+  {
+    id:'hkl-cfo-25', name:'Craig Beattie', role:'Chief Financial Officer (Executive Director)', role_type:'CFO',
+    entity:'Hongkong Land', entity_short:'HKL', ar_year:'FY2025',
+    appointed:'September 2021', tenure_yrs:4.5,
+    rem_exact:null, rem_fixed:null, rem_bonus:null, rem_other:null,
+    rem_band:'Not individually disclosed',
+    rem_note:'Executive Directors draw no directors\' fees, and individual executive remuneration is not disclosed (aggregate all-director emoluments US$9.0M in FY2025). Share awards are individually disclosed: a conditional award of 117,700 shares granted 2025 vesting in 2027 subject to continued employment, plus a 2025 LTIP/VCP award of 240,000 shares vesting in three tranches 2028-2030 subject to performance. CFO payout opportunity: STI 150% of base salary at target and 300% at maximum; PSU 52% at target and 162% at maximum. Held 187,300 ordinary shares at 5 March 2026.',
+    rem_pct_fixed:null, rem_pct_bonus:null, rem_pct_other:null,
+    rem_history:[{year:'FY2025', band:'Not individually disclosed'}],
+    edu:'Chartered Accountant, Institute of Chartered Accountants of Scotland; Bachelor of Arts (with distinction), Robert Gordon University',
+    bio:'Joined Hongkong Land as Chief Financial Officer in September 2021. Previously Chief Financial Officer of Mandarin Oriental Hotel Group. First joined the Jardine Matheson group from EY in 2006 and has held a number of senior finance roles across the group, including Finance Director for South Asia of Hongkong Land based in Singapore, Group Finance Director of Jardine Motors Group in the UK, and Group Treasurer of Jardine Matheson.',
+    prev_roles:[{org:'Mandarin Oriental Hotel Group',pos:'Chief Financial Officer'},{org:'Jardine Matheson',pos:'Group Treasurer'},{org:'Jardine Motors Group UK',pos:'Group Finance Director'},{org:'Hongkong Land',pos:'Finance Director, South Asia (Singapore)'},{org:'EY',pos:'Auditor'}],
+    cross_board_roles:[],
+    tags:['CFO','Executive Director','Jardine Matheson','Ex-Mandarin Oriental','ICAS','Singapore Experience'],
+    linkedin_url:null, photo_url:null
+  },
+  {
+    id:'hkl-ned-pan-25', name:'Lincoln Pan', role:'Non-Executive Director (Remuneration & Nominations Chair)', role_type:'NED',
+    entity:'Hongkong Land', entity_short:'HKL', ar_year:'FY2025',
+    appointed:'1 November 2025', tenure_yrs:0.3,
+    rem_exact:null, rem_fixed:null, rem_bonus:null, rem_other:null,
+    rem_band:'US$22,561',
+    rem_note:'FY2025 total US$22,561, prorated from his 1 November 2025 appointment — base director fee US$16,712 and Investment Committee member fee US$5,849. Fees surrendered to Jardine Matheson. Became Chair of the Remuneration and Nominations Committees on 5 March 2026, so no chair fees appear in FY2025.',
+    rem_pct_fixed:100, rem_pct_bonus:0, rem_pct_other:0,
+    rem_history:[{year:'FY2025', band:'US$22,561 (prorated from 1 Nov 2025)'}],
+    edu:'Juris Doctor, Harvard Law School; Bachelor of Arts in History and English, Williams College',
+    bio:'Joined the Board in November 2025 and chairs the Remuneration and Nominations Committees. Chief Executive Officer of Jardine Matheson, the Company\'s parent. Joined from PAG, the largest fully diversified alternative investment business in the Asia Pacific region, where he was a partner and co-head of Private Equity and a member of the Group Executive Committee. Previously chief executive officer, Greater China at WTW, and held executive roles at Advantage Partners and GE Capital.',
+    prev_roles:[{org:'PAG',pos:'Partner & Co-head of Private Equity'},{org:'WTW (Willis Towers Watson)',pos:'CEO, Greater China'},{org:'Advantage Partners',pos:'Executive'},{org:'GE Capital',pos:'Executive'}],
+    cross_board_roles:[{entity:'Jardine Matheson Holdings Limited',role:'Chief Executive Officer',listed:true},{entity:'DFI Retail Group',role:'Chairman',listed:true},{entity:'PT Astra International',role:'Commissioner',listed:true}],
+    tags:['Non-Executive','Remuneration Chair','Nominations Chair','Jardine Matheson CEO','Ex-PAG','Harvard JD','Fees Surrendered'],
+    linkedin_url:null, photo_url:null
+  },
+  {
+    id:'hkl-dir-jencks-25', name:'Lily Jencks', role:'Director', role_type:'Board',
+    entity:'Hongkong Land', entity_short:'HKL', ar_year:'FY2025',
+    appointed:'July 2022', tenure_yrs:3.7,
+    rem_exact:null, rem_fixed:null, rem_bonus:null, rem_other:null,
+    rem_band:'US$100,000',
+    rem_note:'FY2025 base director fee US$100,000, with no committee appointments. Held 79,300 ordinary shares at 5 March 2026. The only female director on a nine-member Board — the Company disclosed that it did not meet the UK Listing Rules target of at least 40% female directors, nor the target of a female director in one of the senior Board positions.',
+    rem_pct_fixed:100, rem_pct_bonus:0, rem_pct_other:0,
+    rem_history:[{year:'FY2025', band:'US$100,000'}],
+    edu:'Master of Architecture in Landscape Architecture, University of Pennsylvania; Bachelor of Arts in Art History, Columbia University',
+    bio:'Joined the Board in July 2022. An architectural and landscape designer who ran the design company JencksSquared and the architectural and landscape practice Lily Jencks Studio. Currently founder and executive chairman of the Jencks Foundation.',
+    prev_roles:[{org:'Lily Jencks Studio',pos:'Founder & Principal'},{org:'JencksSquared',pos:'Principal'}],
+    cross_board_roles:[{entity:'Jencks Foundation',role:'Founder & Executive Chairman',listed:false}],
+    tags:['Non-Executive','Design & Architecture','Landscape Architecture','UPenn MArch','Columbia'],
+    linkedin_url:null, photo_url:null
+  },
+  {
+    id:'hkl-dir-keswick-25', name:'Adam Keswick', role:'Director', role_type:'Board',
+    entity:'Hongkong Land', entity_short:'HKL', ar_year:'FY2025',
+    appointed:'2012', tenure_yrs:14.0,
+    rem_exact:null, rem_fixed:null, rem_bonus:null, rem_other:null,
+    rem_band:'US$100,000',
+    rem_note:'FY2025 base director fee US$100,000, with no committee appointments. Fees surrendered to Jardine Matheson. Longest-serving director on the Board at approximately 14 years.',
+    rem_pct_fixed:100, rem_pct_bonus:0, rem_pct_other:0,
+    rem_history:[{year:'FY2025', band:'US$100,000'}],
+    edu:'Master of Arts, Edinburgh University',
+    bio:'Joined the Board in 2012, the longest-serving current director. Joined Jardine Matheson in 2001, was appointed to the Jardine Matheson board in 2007, served as deputy managing director from 2012 to 2016, and became chairman of Matheson & Co. in 2016.',
+    prev_roles:[{org:'Jardine Matheson',pos:'Deputy Managing Director (2012-2016)'}],
+    cross_board_roles:[{entity:'Matheson & Co.',role:'Chairman',listed:false},{entity:'Ferrari NV',role:'Director',listed:true},{entity:'Yabuli China Entrepreneurs Forum',role:'Director',listed:false}],
+    tags:['Non-Executive','Longest Tenure','Jardine Matheson','Matheson & Co Chairman','Ferrari NV','Fees Surrendered'],
+    linkedin_url:null, photo_url:null
+  },
+  {
+    id:'hkl-ined-leong-25', name:'Lincoln K.K. Leong', role:'Independent Director (Audit Committee Chair)', role_type:'INED',
+    entity:'Hongkong Land', entity_short:'HKL', ar_year:'FY2025',
+    appointed:'March 2022', tenure_yrs:4.0,
+    rem_exact:null, rem_fixed:null, rem_bonus:null, rem_other:null,
+    rem_band:'US$145,000',
+    rem_note:'FY2025 total US$145,000 — base director fee US$100,000 plus Audit Committee Chair fee US$45,000. Held 456,818 ordinary shares at 5 March 2026, the largest holding of any non-executive director apart from Ming Mei. The Audit Committee met three times in 2025 plus an additional November session, and engaged Deloitte to update the Group\'s risk register and Enterprise Risk Management framework.',
+    rem_pct_fixed:100, rem_pct_bonus:0, rem_pct_other:0,
+    rem_history:[{year:'FY2025', band:'US$145,000'}],
+    edu:'Master of Arts and Bachelor of Arts in Law, University of Cambridge; Chartered Accountant',
+    bio:'Joined the Board in March 2022 and chairs the Audit Committee. Previously chief executive officer of MTR Corporation Limited. A Chartered Accountant with extensive experience across the accountancy and investment banking industries.',
+    prev_roles:[{org:'MTR Corporation Limited',pos:'Chief Executive Officer'},{org:'Jardine Strategic Holdings',pos:'Non-Executive Director'},{org:'Mandarin Oriental International',pos:'Non-Executive Director'},{org:'Link Asset Management (manager of Link REIT)',pos:'Independent Non-Executive Director'},{org:'SUNeVision Holdings',pos:'Independent Non-Executive Director'}],
+    cross_board_roles:[{entity:'Standard Chartered PLC',role:'Independent Non-Executive Director',listed:true},{entity:'Standard Chartered Bank (Hong Kong) Limited',role:'Independent Non-Executive Director',listed:false},{entity:'China Resources Land Limited',role:'Independent Non-Executive Director',listed:true}],
+    tags:['Independent','Audit Chair','Ex-MTR CEO','Chartered Accountant','Standard Chartered','China Resources Land','Cambridge'],
+    linkedin_url:null, photo_url:null
+  },
+  {
+    id:'hkl-dir-mei-25', name:'Ming Mei', role:'Director', role_type:'Board',
+    entity:'Hongkong Land', entity_short:'HKL', ar_year:'FY2025',
+    appointed:'October 2024', tenure_yrs:1.4,
+    rem_exact:null, rem_fixed:null, rem_bonus:null, rem_other:null,
+    rem_band:'US$170,000',
+    rem_note:'FY2025 total US$170,000 — base director fee US$100,000, Nominations Committee US$15,000, Remuneration Committee member US$20,000, Investment Committee member US$35,000. The most committee-loaded non-executive director after the Chairman. Held 5,800,000 ordinary shares at 5 March 2026, by far the largest director shareholding.',
+    rem_pct_fixed:100, rem_pct_bonus:0, rem_pct_other:0,
+    rem_history:[{year:'FY2025', band:'US$170,000'}],
+    edu:'Master of Business Administration, Kellogg School of Management, Northwestern University and School of Business and Management, HKUST; Bachelor of Science in Finance, Indiana University School of Business',
+    bio:'Joined the Board in October 2024. Co-founder and CEO of GLP, a global business builder, owner, developer and operator of logistics real estate, data centres, renewable energy and related technologies. Also co-founded Eastern Bell Venture Capital and is an investor and board member of Value Retail China, which develops and operates luxury outlet shopping villages.',
+    prev_roles:[{org:'Eastern Bell Venture Capital',pos:'Co-founder'}],
+    cross_board_roles:[{entity:'GLP',role:'Co-founder & CEO',listed:false},{entity:'Value Retail China',role:'Investor & Board Member',listed:false}],
+    tags:['Non-Executive','GLP Co-founder','Logistics Real Estate','Data Centres','Largest Shareholding','Kellogg MBA'],
+    linkedin_url:null, photo_url:null
+  },
+  {
+    id:'hkl-ined-miyasaki-25', name:'Alan Miyasaki', role:'Independent Non-Executive Director', role_type:'INED',
+    entity:'Hongkong Land', entity_short:'HKL', ar_year:'FY2025',
+    appointed:'1 November 2025', tenure_yrs:0.3,
+    rem_exact:null, rem_fixed:null, rem_bonus:null, rem_other:null,
+    rem_band:'US$28,410',
+    rem_note:'FY2025 total US$28,410, prorated from his 1 November 2025 appointment — base director fee US$16,712, Audit Committee member US$5,849, Investment Committee member US$5,849. Second Blackstone-linked appointment at Hongkong Land, following Stuart Grant\'s move to an executive role.',
+    rem_pct_fixed:100, rem_pct_bonus:0, rem_pct_other:0,
+    rem_history:[{year:'FY2025', band:'US$28,410 (prorated from 1 Nov 2025)'}],
+    edu:'Bachelor of Science in Economics (cum laude), The Wharton School, University of Pennsylvania',
+    bio:'Joined the Board in November 2025 as an Independent Non-Executive Director and member of the Investment and Audit Committees. Senior Managing Director and Head of Real Estate Asia Acquisitions at Blackstone, responsible for day-to-day management of the Real Estate group\'s investment activities in Asia. Joined Blackstone in 2001 and has helped drive the establishment and growth of its Asian Real Estate business since 2007. Previously worked in acquisitions at Starwood Capital Group.',
+    prev_roles:[{org:'Starwood Capital Group',pos:'Acquisitions'}],
+    cross_board_roles:[{entity:'Blackstone',role:'Senior Managing Director, Head of Real Estate Asia Acquisitions',listed:true},{entity:'Crown Resorts Ltd',role:'Director',listed:false},{entity:'Room to Read',role:'Director',listed:false},{entity:'Wharton Alumni Executive Board',role:'Board Member',listed:false}],
+    tags:['Independent','Blackstone','Audit Cttee','Investment Cttee','Real Estate Asia','Wharton'],
+    linkedin_url:null, photo_url:null
+  },
+  {
+    id:'hkl-mgmt-grant-25', name:'Stuart Grant', role:'Chief Executive, Westbund Central', role_type:'Mgmt',
+    entity:'Hongkong Land', entity_short:'HKL', ar_year:'FY2025',
+    appointed:'30 June 2025 (executive); former Director to 2 May 2025', tenure_yrs:0.7,
+    rem_exact:null, rem_fixed:null, rem_bonus:null, rem_other:null,
+    rem_band:'US$56,823 (director fees to 2 May 2025)',
+    rem_note:'Received US$56,823 in FY2025 director fees before stepping down from the Board on 2 May 2025 — base fee US$33,425, Audit Committee US$11,699, Investment Committee US$11,699, all prorated. Executive remuneration from 30 June 2025 is not individually disclosed.',
+    rem_pct_fixed:100, rem_pct_bonus:0, rem_pct_other:0,
+    rem_history:[{year:'FY2025', band:'US$56,823 (director fees, prorated to 2 May 2025)'}],
+    edu:null,
+    bio:'Stepped down from the Board and Audit Committee on 2 May 2025 to join Hongkong Land in an executive capacity as Chief Executive, Westbund Central, based in Shanghai, from 30 June 2025. Spent 18 years at Blackstone as Senior Managing Director of their Asian real estate business. Leads the Group\'s largest development — a 23.1 hectare riverfront site in Shanghai\'s Xuhui District with over 1.1 million sq m of developable GFA, the largest commercial project underway in Asia.',
+    prev_roles:[{org:'Blackstone',pos:'Senior Managing Director, Asian Real Estate (18 years)'},{org:'Hongkong Land',pos:'Non-Executive Director (to 2 May 2025)'}],
+    cross_board_roles:[],
+    tags:['Management','Westbund Central','Shanghai','Ex-Blackstone','Board to Executive'],
+    linkedin_url:null, photo_url:null
+  },
+  {
+    id:'hkl-mgmt-foopt-25', name:'Pei Teng Foo', role:'Chief Executive, Singapore Central Private Real Estate Fund', role_type:'Mgmt',
+    entity:'Hongkong Land', entity_short:'HKL', ar_year:'FY2025',
+    appointed:'1 March 2026', tenure_yrs:0.0,
+    rem_exact:null, rem_fixed:null, rem_bonus:null, rem_other:null,
+    rem_band:null,
+    rem_note:'Joined 1 March 2026, after the FY2025 year end. Executive remuneration is not individually disclosed by Hongkong Land.',
+    rem_pct_fixed:null, rem_pct_bonus:null, rem_pct_other:null,
+    rem_history:[],
+    edu:null,
+    bio:'Chief Executive of the Singapore Central Private Real Estate Fund, joined 1 March 2026. Leads the Group\'s inaugural private real estate fund, established February 2026 with US$6.4 billion of assets under management and Qatar Investment Authority and APG Asset Management as founding investors. The fund was seeded with equity interests in One Raffles Quay, Marina Bay Financial Centre Towers 1 and 2, One Raffles Link and Asia Square Tower 1, representing 2.6 million sq ft of effective net lettable area, and targets growth in the Marina Bay and Orchard Road districts.',
+    prev_roles:[],
+    cross_board_roles:[],
+    tags:['Management','Singapore','Fund Management','Marina Bay','2026 Joiner'],
+    linkedin_url:null, photo_url:null
+  },
+  {
+    id:'hkl-mgmt-torre-25', name:'Graeme Torre', role:'Chief Executive, Hong Kong Central', role_type:'Mgmt',
+    entity:'Hongkong Land', entity_short:'HKL', ar_year:'FY2025',
+    appointed:'1 March 2026', tenure_yrs:0.0,
+    rem_exact:null, rem_fixed:null, rem_bonus:null, rem_other:null,
+    rem_band:null,
+    rem_note:'Joined 1 March 2026, after the FY2025 year end. Executive remuneration is not individually disclosed by Hongkong Land.',
+    rem_pct_fixed:null, rem_pct_bonus:null, rem_pct_other:null,
+    rem_history:[],
+    edu:null,
+    bio:'Chief Executive, Hong Kong Central, joined 1 March 2026. Leads the Central Portfolio — 12 interconnected prime commercial buildings totalling 429,000 sq m of Grade-A office and luxury retail, valued at US$23.1 billion at 31 December 2025 and contributing 74% of Prime Properties Investment operating profit.',
+    prev_roles:[],
+    cross_board_roles:[],
+    tags:['Management','Hong Kong Central','Central Portfolio','2026 Joiner'],
+    linkedin_url:null, photo_url:null
+  },
+  {
+    id:'hkl-mgmt-ling-25', name:'Michelle Ling', role:'Chief Investment Officer', role_type:'CIO',
+    entity:'Hongkong Land', entity_short:'HKL', ar_year:'FY2025',
+    appointed:'6 January 2025', tenure_yrs:1.2,
+    rem_exact:null, rem_fixed:null, rem_bonus:null, rem_other:null,
+    rem_band:null,
+    rem_note:'Executive remuneration is not individually disclosed by Hongkong Land. Aggregate FY2025 director emoluments were US$9.0M.',
+    rem_pct_fixed:null, rem_pct_bonus:null, rem_pct_other:null,
+    rem_history:[],
+    edu:null,
+    bio:'Chief Investment Officer, joined 6 January 2025 as part of the creation of the Group\'s investment management team under Strategic Vision 2035. Named contact for Hongkong Land (Singapore) Pte. Ltd. at One Raffles Quay. FY2025 saw US$3.6 billion of capital recycling initiatives announced or completed, 90% of the target to recycle at least US$4 billion by end-2027.',
+    prev_roles:[],
+    cross_board_roles:[],
+    tags:['Management','Chief Investment Officer','Capital Recycling','Singapore Contact','2025 Joiner'],
+    linkedin_url:null, photo_url:null
+  },
+  {
+    id:'hkl-mgmt-kong-25', name:'Kong Kei Yeuk', role:'Chief Executive, China Integrated Properties', role_type:'Mgmt',
+    entity:'Hongkong Land', entity_short:'HKL', ar_year:'FY2025',
+    appointed:null, tenure_yrs:null,
+    rem_exact:null, rem_fixed:null, rem_bonus:null, rem_other:null,
+    rem_band:null,
+    rem_note:'Executive remuneration is not individually disclosed by Hongkong Land.',
+    rem_pct_fixed:null, rem_pct_bonus:null, rem_pct_other:null,
+    rem_history:[],
+    edu:null,
+    bio:'Chief Executive, China Integrated Properties. Oversees commercial developments across seven mainland markets — Beijing, Chengdu, Chongqing, Hangzhou, Nanjing, Shanghai and Suzhou — expected to total 11.8 million sq ft of attributable NLA, of which 5.4 million was completed at 31 December 2025.',
+    prev_roles:[],
+    cross_board_roles:[],
+    tags:['Management','China Integrated Properties','Chinese Mainland'],
+    linkedin_url:null, photo_url:null
+  },
+  {
+    id:'hkl-mgmt-simpkins-25', name:'John Simpkins', role:'General Counsel', role_type:'Mgmt',
+    entity:'Hongkong Land', entity_short:'HKL', ar_year:'FY2025',
+    appointed:null, tenure_yrs:null,
+    rem_exact:null, rem_fixed:null, rem_bonus:null, rem_other:null,
+    rem_band:null,
+    rem_note:'Executive remuneration is not individually disclosed by Hongkong Land.',
+    rem_pct_fixed:null, rem_pct_bonus:null, rem_pct_other:null,
+    rem_history:[],
+    edu:null,
+    bio:'General Counsel of Hongkong Land.',
+    prev_roles:[],
+    cross_board_roles:[],
+    tags:['Management','General Counsel','Legal'],
+    linkedin_url:null, photo_url:null
+  },
+  {
+    id:'hkl-mgmt-wu-25', name:'Yolice Wu', role:'Chief People & Culture Officer', role_type:'Mgmt',
+    entity:'Hongkong Land', entity_short:'HKL', ar_year:'FY2025',
+    appointed:null, tenure_yrs:null,
+    rem_exact:null, rem_fixed:null, rem_bonus:null, rem_other:null,
+    rem_band:null,
+    rem_note:'Executive remuneration is not individually disclosed by Hongkong Land.',
+    rem_pct_fixed:null, rem_pct_bonus:null, rem_pct_other:null,
+    rem_history:[],
+    edu:null,
+    bio:'Chief People & Culture Officer. In FY2025 led a comprehensive redesign of the performance management system using a forced-curve distribution, introduced a new Leadership Competency Framework, and implemented the revised Short-Term Incentive Plan alongside the first share-based Long-Term Incentive Plan. Attends Remuneration Committee meetings alongside the Chief Executive.',
+    prev_roles:[],
+    cross_board_roles:[],
+    tags:['Management','People & Culture','Remuneration Framework','LTIP Launch'],
+    linkedin_url:null, photo_url:null
+  },
+  {
+    id:'hkl-mgmt-fook-25', name:'Kenneth Foo', role:'Chief Property Management Officer (stepped down 28 Feb 2026)', role_type:'Mgmt',
+    entity:'Hongkong Land', entity_short:'HKL', ar_year:'FY2025',
+    appointed:null, tenure_yrs:null,
+    rem_exact:null, rem_fixed:null, rem_bonus:null, rem_other:null,
+    rem_band:null,
+    rem_note:'Executive remuneration is not individually disclosed. Stepped down 28 February 2026, one of four senior executives departing on that date.',
+    rem_pct_fixed:null, rem_pct_bonus:null, rem_pct_other:null,
+    rem_history:[],
+    edu:null,
+    bio:'Chief Property Management Officer through FY2025, stepped down on 28 February 2026 as part of a substantial reshaping of the executive team under Strategic Vision 2035.',
+    prev_roles:[],
+    cross_board_roles:[],
+    tags:['Management','Departed Feb 2026','Property Management'],
+    linkedin_url:null, photo_url:null
+  },
+  {
+    id:'hkl-mgmt-tan-25', name:'Jacqueline Tan', role:'Chief Corporate Officer (stepped down 28 Feb 2026)', role_type:'Mgmt',
+    entity:'Hongkong Land', entity_short:'HKL', ar_year:'FY2025',
+    appointed:null, tenure_yrs:null,
+    rem_exact:null, rem_fixed:null, rem_bonus:null, rem_other:null,
+    rem_band:null,
+    rem_note:'Executive remuneration is not individually disclosed. Stepped down 28 February 2026, one of four senior executives departing on that date.',
+    rem_pct_fixed:null, rem_pct_bonus:null, rem_pct_other:null,
+    rem_history:[],
+    edu:null,
+    bio:'Chief Corporate Officer through FY2025, stepped down on 28 February 2026.',
+    prev_roles:[],
+    cross_board_roles:[],
+    tags:['Management','Departed Feb 2026','Corporate'],
+    linkedin_url:null, photo_url:null
+  },
+  {
+    id:'hkl-mgmt-wong-25', name:'Raymond Wong', role:'Chief Development Officer (stepped down 28 Feb 2026)', role_type:'Mgmt',
+    entity:'Hongkong Land', entity_short:'HKL', ar_year:'FY2025',
+    appointed:null, tenure_yrs:null,
+    rem_exact:null, rem_fixed:null, rem_bonus:null, rem_other:null,
+    rem_band:null,
+    rem_note:'Executive remuneration is not individually disclosed. Stepped down 28 February 2026, one of four senior executives departing on that date.',
+    rem_pct_fixed:null, rem_pct_bonus:null, rem_pct_other:null,
+    rem_history:[],
+    edu:null,
+    bio:'Chief Development Officer through FY2025, stepped down on 28 February 2026. Oversaw a development pipeline including Tomorrow\'s CENTRAL in Hong Kong, Westbund Central in Shanghai, Suzhou CENTRAL and Chongqing MIXC CENTRAL.',
+    prev_roles:[],
+    cross_board_roles:[],
+    tags:['Management','Departed Feb 2026','Development'],
+    linkedin_url:null, photo_url:null
+  },
   // ── KORE US REIT (CMOU, FY2025 AR) - 6 board + CEO + Head of Finance ──
   {
     id:'kore-chair-25', name:'Peter McMillan III', role:'Chairman & Non-Executive Director', role_type:'Board',
@@ -23105,6 +23417,7 @@ function fmtAssetVal(p){
 }
 
 var ENTITY_COLORS = {
+  "Hongkong Land":"#00594f",
   "UI Boustead REIT":"#0d6e72",
   "AIMS APAC REIT":"#1a5276",
   "Alpha Integrated REIT (former Sabana)":"#6e2f8a",
