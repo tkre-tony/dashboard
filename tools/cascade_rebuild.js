@@ -10,6 +10,7 @@
 const fs=require("fs");
 const FILE=process.argv[2]||"work_index.html";
 const VER_OLD="48.242", VER_NEW="48.243";
+const VER_NOTE="landing cascade regenerated from NEWS";
 const CR="\r\n";
 let s=fs.readFileSync(FILE,"utf8");
 
@@ -167,12 +168,24 @@ function replaceSpan(str,a,b,txt){ return str.slice(0,a)+txt+str.slice(b); }
   if(!re.test(s)) throw new Error("NR_STATIC_IDS not found");
   s=s.replace(re, "var NR_STATIC_IDS = ["+ids.slice(1,11).join(", ")+"];");
 }
-// 5) version bump (line-2 canonical header)
+// 5) version bump - PREPEND above the header stack.
+// L-TOOL-3 (binding): NEVER build a version header via a regex replacement string.
+// "$4" inside a replacement string is a capture-group backreference, so "S$46.3M"
+// renders as "S6.3M". This corrupted the live v48.307 and v48.308 headers.
+// Build by string concatenation only.
 {
-  const re=new RegExp("<!-- v"+VER_OLD.replace(".","\\.")+" \\([^>]*?-->");
-  if(re.test(s)){
-    s=s.replace(re, `<!-- v${VER_NEW} (26 Jun 2026, S134): landing cascade regenerated from NEWS (hero+cards+feed teaser/alt/tag/meta drift fixed); display_teaser+landing_credit+landing_headline backfilled. -->`);
-  } else { throw new Error("version header v"+VER_OLD+" not found"); }
+  const oldTag="<!-- v"+VER_OLD+" ";
+  const oldIdx=s.indexOf(oldTag);
+  if(oldIdx===-1) throw new Error("prior version header v"+VER_OLD+" not found");
+  if(s.indexOf("<!-- v"+VER_NEW+" ")!==-1) throw new Error("version header v"+VER_NEW+" already present - refusing to double-bump");
+  // DOCTYPE-offset assert: prior header must be the FIRST comment after the DOCTYPE
+  const dt=s.toUpperCase().indexOf("<!DOCTYPE");
+  if(dt===-1) throw new Error("DOCTYPE not found");
+  const dtEnd=s.indexOf(">",dt);
+  const insertAt=s.indexOf("<!--",dtEnd);
+  if(insertAt===-1) throw new Error("no header comment after DOCTYPE");
+  if(insertAt!==oldIdx) throw new Error("v"+VER_OLD+" is not top of stack (first comment at "+insertAt+", v"+VER_OLD+" at "+oldIdx+")");
+  s=s.slice(0,insertAt)+"<!-- v"+VER_NEW+" ("+VER_NOTE+") -->"+CR+s.slice(insertAt);
 }
 
 fs.writeFileSync(FILE,s);
