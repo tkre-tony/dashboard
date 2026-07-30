@@ -335,6 +335,7 @@ body{background:var(--bg);color:var(--txt);font-family:Inter,system-ui,-apple-sy
     <a href="#" class="bucket" onclick="showBucket('listings');return false;">Listings</a>
   </div>
   <div class="pagenav">
+    <a href="/?tour=1" title="Replay the site tour">Take the tour</a>
     <a href="/terms.html">Terms</a>
     <a href="/privacy.html">Privacy</a>
     <a href="/about.html" class="hi">About</a>
@@ -2401,6 +2402,8 @@ function faTopRender(cavs){
   var el=document.getElementById('faTopTbl');if(el){el.innerHTML=html;el.style.maxHeight='560px';el.style.overflowY='auto';}
 }
 
+/* v9.9 (S229): TOUR-1 first-visit onboarding tour injected before </body>.
+   7 map steps, fire-once via localStorage pa_tour_map_v1, ?tour=1 forces. */
 /* v9.8.6 (S200): ADDRESS column no longer collapses to em-dash when the
    project name equals the address. Three render sites (caveat list, faPnlRender,
    faTopRender) suppressed ADDRESS via sameAddr() to avoid duplicate text; where a
@@ -2426,6 +2429,260 @@ setTimeout(function(){try{
   var m=location.search.match(/[?&]lens=(pulse|analysis)/);
   if(m&&typeof setLens==='function'){setLens(m[1]);}
 }catch(e){}})();
+</script>
+
+<!-- TOUR-1 v9.9 (S229): first-visit onboarding tour. Fire-once via localStorage;
+     force with ?tour=1; ESC = skip. GA4 pa_tour_complete / pa_tour_skip / pa_tour_cta. -->
+<script>
+/* TOUR-1 config — MAP ROOT (7 steps). Selectors verified against live v9.8.6 DOM. */
+window.PA_TOUR_SURFACE = 'map';
+window.PA_TOUR_KEY = 'pa_tour_map_v1';
+window.PA_TOUR_STEPS = [
+  { selector: '.lens-tab[data-lens="caveats"]',
+    title: 'Latest Caveats',
+    copy:  'Every URA commercial, industrial and landed caveat from the newest weekly release, mapped the day it drops.' },
+  { selector: '.lens-tab[data-lens="directory"]',
+    title: 'Building Directory',
+    copy:  '8,000+ buildings with full transaction history \u2014 tap any pin to see what it really trades at.' },
+  { selector: '.lens-tab[data-lens="pulse"]',
+    title: 'Market Pulse',
+    copy:  'Volume, pricing and momentum across the market at a glance, refreshed with every weekly release.' },
+  { selector: '.lens-tab[data-lens="analysis"]',
+    title: 'Market Analysis',
+    copy:  'Who is making money and where: live profit-and-loss pairs, most-active projects and top transactions.' },
+  { selector: '#segments',
+    title: 'Commercial \u00b7 Industrial \u00b7 Landed',
+    copy:  'Switch the whole map between segments \u2014 including 80,000+ landed transactions with P&L on every resale.' },
+  { selector: '#periods',
+    title: 'Time Travel',
+    copy:  'Rewind the map to any window since 1995 \u2014 thirty years of caveats, one tap.' },
+  { selector: '.bucket[onclick*="newsroom"]',
+    title: 'The Newsroom',
+    copy:  'Property news, REIT asset directories and vacancy listings \u2014 the research desk behind this map.' }
+];
+window.PA_TOUR_CLOSURE = {
+  copy: 'Caveats, buildings, P&L and thirty years of history \u2014 all one tap away. Built by TK Real Estate.',
+  linkText: null, linkHref: null, linkFn: null
+};
+
+/* ============================================================
+   TOUR-1 — PropertyAtlas first-visit onboarding tour (v1)
+   Self-contained IIFE. No dependencies. House style: navy/cream/gold serif.
+   Inline near end of <body> on BOTH surfaces; only PA_TOUR_STEPS + PA_TOUR_KEY
+   differ per surface (see configs at bottom of this file).
+   Fire-once via localStorage; force with ?tour=1; ESC = skip.
+   GA4 events: pa_tour_complete / pa_tour_skip {surface, step}.
+   ============================================================ */
+(function paTour(){
+  "use strict";
+
+  /* ---- PER-SURFACE CONFIG (swap these two lines per surface) ---- */
+  var KEY     = window.PA_TOUR_KEY;    /* 'pa_tour_map_v1' | 'pa_tour_nr_v1' */
+  var STEPS   = window.PA_TOUR_STEPS;  /* array set before this IIFE */
+  var SURFACE = window.PA_TOUR_SURFACE || 'unknown';
+  var CLOSURE = window.PA_TOUR_CLOSURE || null;
+
+  if (!KEY || !STEPS || !STEPS.length) return;
+
+  /* ---- trigger gate ---- */
+  var force = false;
+  try { force = new URLSearchParams(window.location.search||'').get('tour') === '1'; } catch(e){}
+  try { if (!force && localStorage.getItem(KEY) === 'done') return; } catch(e){ return; }
+  if (document.documentElement.classList.contains('article-takeover') ||
+      document.body.classList.contains('article-takeover')) return;  /* newsroom article view: never */
+
+  var reduced = false;
+  try { reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches; } catch(e){}
+
+  var idx = 0, els = {}, active = false;
+
+  function ga(name, step){
+    try { if (typeof gtag === 'function') gtag('event', name, { surface: SURFACE, step: step }); } catch(e){}
+  }
+
+  function finish(kind){                    /* kind: 'complete' | 'skip' */
+    try { localStorage.setItem(KEY, 'done'); } catch(e){}
+    ga(kind === 'complete' ? 'pa_tour_complete' : 'pa_tour_skip', idx + 1);
+    teardown();
+  }
+
+  function teardown(){
+    active = false;
+    ['tl','tr','bl','br','ring','card'].forEach(function(k){
+      if (els[k] && els[k].parentNode) els[k].parentNode.removeChild(els[k]);
+    });
+    window.removeEventListener('resize', onResize);
+    document.removeEventListener('keydown', onKey);
+  }
+
+  function onKey(e){ if (active && e.key === 'Escape') finish('skip'); }
+  function onResize(){ if (active) render(); }
+
+  /* ---- build fixed overlay panels (4 navy panels + gold ring + card) ---- */
+  function mk(tag, css){
+    var d = document.createElement(tag);
+    d.setAttribute('style', css);
+    d.setAttribute('data-pa-tour','1');
+    document.body.appendChild(d);
+    return d;
+  }
+  var PANEL = 'position:fixed;background:rgba(20,33,61,.55);z-index:99990;' +
+              (reduced ? '' : 'transition:all .25s ease;');
+  var RING  = 'position:fixed;border:2px solid #A67C3A;border-radius:10px;' +
+              'box-shadow:0 0 0 4px rgba(166,124,58,.25);pointer-events:none;z-index:99991;' +
+              (reduced ? '' : 'transition:all .25s ease;');
+
+  function ensureEls(){
+    if (els.tl) return;
+    els.tl = mk('div', PANEL); els.tr = mk('div', PANEL);
+    els.bl = mk('div', PANEL); els.br = mk('div', PANEL);
+    els.ring = mk('div', RING);
+    els.card = mk('div', 'position:fixed;z-index:99992;');
+  }
+
+  function spotlight(r){
+    /* four panels: top strip, bottom strip, left of target, right of target */
+    var pad = 6, W = window.innerWidth, H = window.innerHeight;
+    var t = Math.max(r.top - pad, 0), b = Math.min(r.bottom + pad, H),
+        l = Math.max(r.left - pad, 0), rr = Math.min(r.right + pad, W);
+    set(els.tl, 0, 0, W, t);                 /* top */
+    set(els.tr, 0, b, W, H - b);             /* bottom */
+    set(els.bl, 0, t, l, b - t);             /* left */
+    set(els.br, rr, t, W - rr, b - t);       /* right */
+    els.ring.style.left = l + 'px'; els.ring.style.top = t + 'px';
+    els.ring.style.width = (rr - l) + 'px'; els.ring.style.height = (b - t) + 'px';
+    els.ring.style.display = 'block';
+    return { t:t, b:b, l:l, r:rr };
+  }
+  function set(el, x, y, w, h){
+    el.style.left = x+'px'; el.style.top = y+'px';
+    el.style.width = Math.max(w,0)+'px'; el.style.height = Math.max(h,0)+'px';
+  }
+  function dimAll(){
+    var W = window.innerWidth, H = window.innerHeight;
+    set(els.tl, 0, 0, W, H); set(els.tr,0,0,0,0); set(els.bl,0,0,0,0); set(els.br,0,0,0,0);
+    els.ring.style.display = 'none';
+    return null;
+  }
+
+  function cardHtml(step, isClosure){
+    var total = STEPS.length;
+    var btnBase = 'font-family:Georgia,\'Times New Roman\',serif;font-size:14px;border-radius:8px;' +
+                  'padding:10px 22px;cursor:pointer;';
+    var html =
+      '<div style="background:#F7F3EB;border:1px solid rgba(26,79,156,.18);border-radius:12px;' +
+      'box-shadow:0 12px 40px rgba(20,33,61,.35);padding:22px 24px;max-width:340px;' +
+      'font-family:Georgia,\'Times New Roman\',serif;position:relative">';
+    if (!isClosure){
+      html +=
+        '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px">' +
+          '<span style="font-size:12px;letter-spacing:.12em;color:#A67C3A;font-weight:700">' +
+            (idx+1) + '/' + total + '</span>' +
+          '<button data-pa-act="skip" style="background:none;border:none;color:#666;font-size:13px;cursor:pointer;font-family:inherit">Skip ✕</button>' +
+        '</div>' +
+        '<h3 style="margin:0 0 8px;font-size:19px;color:#1A4F9C;font-weight:700">' + step.title + '</h3>' +
+        '<p style="margin:0 0 18px;font-size:14px;line-height:1.55;color:#333">' + step.copy + '</p>' +
+        '<div style="display:flex;gap:10px;justify-content:flex-end">' +
+          (idx > 0 ? '<button data-pa-act="back" style="'+btnBase+'background:transparent;border:1px solid rgba(26,79,156,.35);color:#1A4F9C">Back</button>' : '') +
+          '<button data-pa-act="next" style="'+btnBase+'background:#1A4F9C;border:1px solid #1A4F9C;color:#fff">' +
+            (idx === total-1 ? 'Finish' : 'Next') + '</button>' +
+        '</div>';
+    } else {
+      html +=
+        '<h3 style="margin:0 0 8px;font-size:21px;color:#1A4F9C;font-weight:700;text-align:center">You\u2019re all set.</h3>' +
+        '<p style="margin:0 0 18px;font-size:14px;line-height:1.55;color:#333;text-align:center">' + CLOSURE.copy + '</p>' +
+        '<div style="display:flex;flex-direction:column;gap:10px;align-items:center">' +
+          '<button data-pa-act="done" style="'+btnBase+'background:#1A4F9C;border:1px solid #1A4F9C;color:#fff;width:100%">Start exploring</button>' +
+          (CLOSURE.linkText ?
+            '<button data-pa-act="link" style="background:none;border:none;font-family:inherit;font-size:13px;color:#A67C3A;text-decoration:underline;cursor:pointer">' + CLOSURE.linkText + '</button>' : '') +
+        '</div>';
+    }
+    html += '</div>';
+    return html;
+  }
+
+  function placeCard(bounds){
+    var c = els.card, W = window.innerWidth, H = window.innerHeight;
+    if (W < 640){                                     /* mobile: bottom sheet */
+      c.style.left = '0'; c.style.right = '0'; c.style.bottom = '0'; c.style.top = 'auto';
+      c.style.width = '100%'; c.firstChild.style.maxWidth = 'none';
+      c.firstChild.style.borderRadius = '14px 14px 0 0';
+      c.firstChild.style.maxHeight = '40vh'; c.firstChild.style.overflowY = 'auto';
+      return;
+    }
+    c.style.right = 'auto'; c.style.bottom = 'auto'; c.style.width = 'auto';
+    var cw = 340, ch = c.offsetHeight || 200;
+    if (!bounds){                                     /* closure: centre */
+      c.style.left = Math.max((W - cw)/2, 12) + 'px';
+      c.style.top  = Math.max((H - ch)/2, 12) + 'px';
+      return;
+    }
+    var below = bounds.b + 14, above = bounds.t - ch - 14;
+    c.style.top  = (below + ch < H - 12 ? below : Math.max(above, 12)) + 'px';
+    var cx = (bounds.l + bounds.r)/2 - cw/2;
+    c.style.left = Math.min(Math.max(cx, 12), W - cw - 12) + 'px';
+  }
+
+  function render(){
+    ensureEls();
+    var isClosure = idx >= STEPS.length;
+    var bounds = null;
+    if (!isClosure){
+      var step = STEPS[idx];
+      var target = document.querySelector(step.selector);
+      if (!target){ idx++; return render(); }         /* selector missing: skip step gracefully */
+      try { target.scrollIntoView({ block:'center', behavior: reduced ? 'auto' : 'smooth' }); } catch(e){}
+      /* measure after scroll settles */
+      setTimeout(function(){
+        if (!active) return;
+        bounds = spotlight(target.getBoundingClientRect());
+        els.card.innerHTML = cardHtml(step, false);
+        wire(); placeCard(bounds);
+      }, reduced ? 0 : 260);
+    } else {
+      bounds = dimAll();
+      els.card.innerHTML = cardHtml(null, true);
+      wire(); placeCard(null);
+    }
+  }
+
+  function wire(){
+    els.card.querySelectorAll('[data-pa-act]').forEach(function(btn){
+      btn.addEventListener('click', function(){
+        var act = btn.getAttribute('data-pa-act');
+        if (act === 'skip') return finish('skip');
+        if (act === 'done') return finish('complete');
+        if (act === 'back'){ idx = Math.max(idx-1, 0); return render(); }
+        if (act === 'next'){ idx++; return render(); } /* past last step → closure card */
+        if (act === 'link'){
+          finish('complete');
+          ga('pa_tour_cta', idx + 1);
+          try {
+            if (typeof CLOSURE.linkFn === 'function') { CLOSURE.linkFn(); }
+            else if (CLOSURE.linkHref) { window.location.href = CLOSURE.linkHref; }
+          } catch(e){}
+          return;
+        }
+      });
+    });
+  }
+
+  function start(){
+    /* defer if an auth modal is open — auth wins, tour waits for next visit */
+    if (document.querySelector('[data-auth-modal-open="1"]')) return;
+    active = true;
+    ensureEls();
+    window.addEventListener('resize', onResize);
+    document.addEventListener('keydown', onKey);
+    render();
+  }
+
+  if (document.readyState === 'loading'){
+    document.addEventListener('DOMContentLoaded', function(){ setTimeout(start, 900); });
+  } else {
+    setTimeout(start, 900);
+  }
+})();
 </script>
 </body>
 </html>

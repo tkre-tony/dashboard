@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- v48.311 (30 Jul 2026, S228: Starhill Global REIT Human Capital pass. TALENT_DATA - Ho Sing retired 30 Jun 2026 after 16 years; Tan Peck Mun Kemmy appointed CEO and Executive Director 1 Jul 2026; Tan Woon Hum stepped down 31 Jul 2026 after nine years; Ng Sey Ming appointed Independent Director, NRC Chairman and AC member 1 Aug 2026. SGREIT profiles 9 -> 11. No NEWS change, cascade untouched.) -->
+<!-- v48.312 (30 Jul 2026, S229: TOUR-1 first-visit onboarding tour, 6 newsroom steps + closure CTA into the enquiry modal. Prior: v48.311 (S228: Starhill Global REIT Human Capital pass. TALENT_DATA - Ho Sing retired 30 Jun 2026 after 16 years; Tan Peck Mun Kemmy appointed CEO and Executive Director 1 Jul 2026; Tan Woon Hum stepped down 31 Jul 2026 after nine years; Ng Sey Ming appointed Independent Director, NRC Chairman and AC member 1 Aug 2026. SGREIT profiles 9 -> 11. No NEWS change, cascade untouched.) -->
 <!-- v48.310 (30 Jul 2026, S228: Newsroom drop id:159 Starhill Global REIT FY2025/26 results. Landing cascade regenerated from NEWS: hero 159 x3, cards [158,157,156], feed [155..149], NR_STATIC_IDS [158..149].) -->
 <!-- v48.309 (29 Jul 2026, S224): Newsroom drop id:158 Digital Core REIT 1H 2026 results. DPU 1.80 US cents flat y-o-y - distributable income US23.328m -0.2% and units entitled 1,296.0m -0.2%, both dividing to 1.7999 cents. Gross revenue US88.572m -0.4%, property expenses US44.901m +5.4%, NPI US43.671m -5.7%, cash NPI US42.675m -7.1%, NPI margin 52.1 to 49.3 pct. Distributions received from associates US10.477m vs US3.813m less share of associate results US3.462m vs US2.853m = net contribution US7.015m vs US0.960m, 30.1 pct of distributable income from the two 20 pct held Osaka JVs (PropertyAtlas calculation). Segment: North America revenue -9.9 pct NPI -15.4 pct; EMEA revenue +15.8 pct NPI +10.7 pct, EMEA now 43.0 pct of revenue and 43.8 pct of NPI, Frankfurt 33 pct of annualised rent at 65 pct ownership. 8217 Linton Hall Road out of service, 207,002 nrsf, 9,720 kW, US18.079m pro forma rent = 15.1 pct of US119.685m portfolio total; 10-year IG cloud lease commences 1 Dec 2026, c. US14.8m NPI (US13.3m at 90 pct share), c. +35 pct over previous net rent, occupancy to 98 pct, IG rent to 83 pct, WALE 4.3 to 5.1 yrs. 2026 expiries 19 to 4 pct of nrsf, 2031 8 to 20 pct. Buyback 7,984,000 units at US0.488 cancelled vs 45,694,049 units issuable to the Manager = 3.5 pct of units in issue, 5.7x the buyback. Debt US715.892m gross, 100 pct unsecured, leverage 39.2 pct, ICR 3.2x, all-in 3.6 pct, WADM 3.3 yrs, 70 pct hedged; currency mix computed from Note 6 EUR 48.7 pct / USD 31.3 pct / JPY 20.0 pct, 68.7 pct non-USD. NAV US0.79 from US0.80 on FX translation, carrying values still on 31 Dec 2025 independent valuations. Capital component 0.88 of 1.80 cents = 48.9 pct. Cascade regenerated from NEWS: hero 158 x3, cards [157,156,155], feed [154..148], NR_STATIC_IDS [157..148]. -->
 <!-- v48.308 (29 Jul 2026, S223): Newsroom drop id:157 First REIT 1H 2026 results and Strategic Review progress. DPU 0.98 cents -13.3% y-o-y on IDR -9.3% and JPY -9.8% with units entitled +0.8% only (2,107.1M to 2,123.2M) - currency, not denominator. Rental and other income S6.3M -8.3%, NPI S5.0M -8.1%, distributable amount S0.8M -12.5%, NAV 23.00 cents -7.9%. S60.1M reclassified assets held for sale after 23 Jun 2026 EGM approved 11 Indonesia divestments (S71.5M aggregate, 2.1% premium); put options over 6 further hospitals unexercised. Gearing 45.7% on face value 469,593 / total assets 1,027,108; covenant waiver commenced May 2026, obtained Jul 2026; S61.1M Apr/May 2027 maturities reclassified to current; fixed or hedged 24.1% (bonds 100,000 + social term loan B 13,280). Singapore three nursing homes S8.8M: Bukit Merah and Bukit Panjang master leases 0.8 yrs remaining, land 30 yrs from 2002/2003; Lentor 10.9 yrs, land 99 yrs from 1938. Cascade regenerated from NEWS: hero 157 x3, cards [156,155,154], feed [153..147], NR_STATIC_IDS [156..147]. -->
@@ -3144,6 +3144,7 @@ body.article-takeover .ed-foot{display:none!important}
            Market Analysis links — they duplicated the navtab row below. The
            PropertyAtlas wordmark above acts as Home (href="./"). Sign in / Sign
            out remain. POST-BETA: an About / Founder page may slot in here. -->
+      <a href="/newsroom/?tour=1" class="ed-mast-nav-external" title="Replay the site tour">Take the tour</a>
       <a href="/about.html" class="ed-mast-nav-external">About Us</a>
       <a href="javascript:void(0)" id="atlas-signin-link" class="ed-mast-nav-signin"
          onclick="if(window.atlasOpenLoginModal){window.atlasOpenLoginModal();}return false;">Sign in</a>
@@ -29711,7 +29712,7 @@ function pulseExportCSV() {
   <!-- Header -->
   <div style="background:var(--hdr);padding:18px 22px 16px;display:flex;align-items:flex-start;justify-content:space-between;gap:12px">
     <div>
-      <div style="font-size:15px;font-weight:700;color:#fff;margin-bottom:4px">Enquire About This Space</div>
+      <div id="enq-header-title" style="font-size:15px;font-weight:700;color:#fff;margin-bottom:4px">Enquire About This Space</div>
       <div id="enq-header-detail" style="font-size:11px;color:rgba(255,255,255,.5);line-height:1.4"></div>
     </div>
     <button onclick="enqClose()" style="background:rgba(255,255,255,.1);border:none;color:rgba(255,255,255,.7);width:28px;height:28px;border-radius:6px;cursor:pointer;font-size:16px;display:flex;align-items:center;justify-content:center;flex-shrink:0">✕</button>
@@ -29794,6 +29795,10 @@ function enqOpen(reit, addr, unit) {
   if (addr) parts.push(addr);
   if (unit) parts.push(unit);
   if (reit) parts.push(reit);
+  // v48.312 (S229, TOUR-1): generic enquiry framing when no space context is supplied.
+  // Both pre-existing callers always pass a non-empty addr, so they cannot reach this branch.
+  var _eht = document.getElementById('enq-header-title');
+  if (_eht) _eht.textContent = (!reit && !addr && !unit) ? 'Get in Touch' : 'Enquire About This Space';
   document.getElementById('enq-header-detail').textContent = parts.join('  ·  ');
 
   document.getElementById('enq-overlay').style.display = 'block';
@@ -31541,5 +31546,258 @@ html.article-takeover .ed-article-page,body.article-takeover .ed-article-page{di
   </div>
 </footer>
 
+
+<!-- TOUR-1 v48.312 (S229): first-visit onboarding tour. Fire-once via localStorage;
+     force with ?tour=1; ESC = skip. GA4 pa_tour_complete / pa_tour_skip / pa_tour_cta. -->
+<script>
+/* TOUR-1 config — NEWSROOM (6 steps). Selectors verified against live v48.311 DOM. */
+window.PA_TOUR_SURFACE = 'newsroom';
+window.PA_TOUR_KEY = 'pa_tour_nr_v1';
+window.PA_TOUR_STEPS = [
+  { selector: '.navtab[data-tab="news"]',
+    title: 'Newsroom',
+    copy:  'Singapore property headlines explained with the numbers behind them \u2014 REIT results, divestments, record deals.' },
+  { selector: '.navtab[data-tab="directory"]',
+    title: 'Directory',
+    copy:  'Search 82,000+ URA commercial and industrial transactions back to 1995, building by building. Subscriber module.' },
+  { selector: '.navtab[data-tab="assetdir"]',
+    title: 'Asset Directory',
+    copy:  'Every S-REIT and developer asset \u2014 valuations, occupancy and NLA straight from annual reports. Subscriber module.' },
+  { selector: '.navtab[data-tab="forsale"]',
+    title: 'Listings',
+    copy:  'Live vacancy across the REIT portfolios we track \u2014 space you will not find on the portals.' },
+  { selector: '.navtab[data-tab="talent"]',
+    title: 'Human Capital',
+    copy:  'Who runs Singapore real estate: boards, management teams and disclosed remuneration across the sector.' },
+  { selector: '.navtab[data-tab="pulse"]',
+    title: 'Corporate Watch',
+    copy:  'Board changes, appointments and corporate actions across the listed property sector as they are announced.' }
+];
+window.PA_TOUR_CLOSURE = {
+  copy: 'Have a mandate, a space to fill, or a question about a building? Talk to us \u2014 that is what the data is for.',
+  linkText: 'Contact TK Real Estate',
+  linkHref: null,
+  linkFn: function(){ try { enqOpen('', 'General enquiry \u2014 site tour', ''); } catch(e){} }
+};
+
+/* ============================================================
+   TOUR-1 — PropertyAtlas first-visit onboarding tour (v1)
+   Self-contained IIFE. No dependencies. House style: navy/cream/gold serif.
+   Inline near end of <body> on BOTH surfaces; only PA_TOUR_STEPS + PA_TOUR_KEY
+   differ per surface (see configs at bottom of this file).
+   Fire-once via localStorage; force with ?tour=1; ESC = skip.
+   GA4 events: pa_tour_complete / pa_tour_skip {surface, step}.
+   ============================================================ */
+(function paTour(){
+  "use strict";
+
+  /* ---- PER-SURFACE CONFIG (swap these two lines per surface) ---- */
+  var KEY     = window.PA_TOUR_KEY;    /* 'pa_tour_map_v1' | 'pa_tour_nr_v1' */
+  var STEPS   = window.PA_TOUR_STEPS;  /* array set before this IIFE */
+  var SURFACE = window.PA_TOUR_SURFACE || 'unknown';
+  var CLOSURE = window.PA_TOUR_CLOSURE || null;
+
+  if (!KEY || !STEPS || !STEPS.length) return;
+
+  /* ---- trigger gate ---- */
+  var force = false;
+  try { force = new URLSearchParams(window.location.search||'').get('tour') === '1'; } catch(e){}
+  try { if (!force && localStorage.getItem(KEY) === 'done') return; } catch(e){ return; }
+  if (document.documentElement.classList.contains('article-takeover') ||
+      document.body.classList.contains('article-takeover')) return;  /* newsroom article view: never */
+
+  var reduced = false;
+  try { reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches; } catch(e){}
+
+  var idx = 0, els = {}, active = false;
+
+  function ga(name, step){
+    try { if (typeof gtag === 'function') gtag('event', name, { surface: SURFACE, step: step }); } catch(e){}
+  }
+
+  function finish(kind){                    /* kind: 'complete' | 'skip' */
+    try { localStorage.setItem(KEY, 'done'); } catch(e){}
+    ga(kind === 'complete' ? 'pa_tour_complete' : 'pa_tour_skip', idx + 1);
+    teardown();
+  }
+
+  function teardown(){
+    active = false;
+    ['tl','tr','bl','br','ring','card'].forEach(function(k){
+      if (els[k] && els[k].parentNode) els[k].parentNode.removeChild(els[k]);
+    });
+    window.removeEventListener('resize', onResize);
+    document.removeEventListener('keydown', onKey);
+  }
+
+  function onKey(e){ if (active && e.key === 'Escape') finish('skip'); }
+  function onResize(){ if (active) render(); }
+
+  /* ---- build fixed overlay panels (4 navy panels + gold ring + card) ---- */
+  function mk(tag, css){
+    var d = document.createElement(tag);
+    d.setAttribute('style', css);
+    d.setAttribute('data-pa-tour','1');
+    document.body.appendChild(d);
+    return d;
+  }
+  var PANEL = 'position:fixed;background:rgba(20,33,61,.55);z-index:99990;' +
+              (reduced ? '' : 'transition:all .25s ease;');
+  var RING  = 'position:fixed;border:2px solid #A67C3A;border-radius:10px;' +
+              'box-shadow:0 0 0 4px rgba(166,124,58,.25);pointer-events:none;z-index:99991;' +
+              (reduced ? '' : 'transition:all .25s ease;');
+
+  function ensureEls(){
+    if (els.tl) return;
+    els.tl = mk('div', PANEL); els.tr = mk('div', PANEL);
+    els.bl = mk('div', PANEL); els.br = mk('div', PANEL);
+    els.ring = mk('div', RING);
+    els.card = mk('div', 'position:fixed;z-index:99992;');
+  }
+
+  function spotlight(r){
+    /* four panels: top strip, bottom strip, left of target, right of target */
+    var pad = 6, W = window.innerWidth, H = window.innerHeight;
+    var t = Math.max(r.top - pad, 0), b = Math.min(r.bottom + pad, H),
+        l = Math.max(r.left - pad, 0), rr = Math.min(r.right + pad, W);
+    set(els.tl, 0, 0, W, t);                 /* top */
+    set(els.tr, 0, b, W, H - b);             /* bottom */
+    set(els.bl, 0, t, l, b - t);             /* left */
+    set(els.br, rr, t, W - rr, b - t);       /* right */
+    els.ring.style.left = l + 'px'; els.ring.style.top = t + 'px';
+    els.ring.style.width = (rr - l) + 'px'; els.ring.style.height = (b - t) + 'px';
+    els.ring.style.display = 'block';
+    return { t:t, b:b, l:l, r:rr };
+  }
+  function set(el, x, y, w, h){
+    el.style.left = x+'px'; el.style.top = y+'px';
+    el.style.width = Math.max(w,0)+'px'; el.style.height = Math.max(h,0)+'px';
+  }
+  function dimAll(){
+    var W = window.innerWidth, H = window.innerHeight;
+    set(els.tl, 0, 0, W, H); set(els.tr,0,0,0,0); set(els.bl,0,0,0,0); set(els.br,0,0,0,0);
+    els.ring.style.display = 'none';
+    return null;
+  }
+
+  function cardHtml(step, isClosure){
+    var total = STEPS.length;
+    var btnBase = 'font-family:Georgia,\'Times New Roman\',serif;font-size:14px;border-radius:8px;' +
+                  'padding:10px 22px;cursor:pointer;';
+    var html =
+      '<div style="background:#F7F3EB;border:1px solid rgba(26,79,156,.18);border-radius:12px;' +
+      'box-shadow:0 12px 40px rgba(20,33,61,.35);padding:22px 24px;max-width:340px;' +
+      'font-family:Georgia,\'Times New Roman\',serif;position:relative">';
+    if (!isClosure){
+      html +=
+        '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px">' +
+          '<span style="font-size:12px;letter-spacing:.12em;color:#A67C3A;font-weight:700">' +
+            (idx+1) + '/' + total + '</span>' +
+          '<button data-pa-act="skip" style="background:none;border:none;color:#666;font-size:13px;cursor:pointer;font-family:inherit">Skip ✕</button>' +
+        '</div>' +
+        '<h3 style="margin:0 0 8px;font-size:19px;color:#1A4F9C;font-weight:700">' + step.title + '</h3>' +
+        '<p style="margin:0 0 18px;font-size:14px;line-height:1.55;color:#333">' + step.copy + '</p>' +
+        '<div style="display:flex;gap:10px;justify-content:flex-end">' +
+          (idx > 0 ? '<button data-pa-act="back" style="'+btnBase+'background:transparent;border:1px solid rgba(26,79,156,.35);color:#1A4F9C">Back</button>' : '') +
+          '<button data-pa-act="next" style="'+btnBase+'background:#1A4F9C;border:1px solid #1A4F9C;color:#fff">' +
+            (idx === total-1 ? 'Finish' : 'Next') + '</button>' +
+        '</div>';
+    } else {
+      html +=
+        '<h3 style="margin:0 0 8px;font-size:21px;color:#1A4F9C;font-weight:700;text-align:center">You\u2019re all set.</h3>' +
+        '<p style="margin:0 0 18px;font-size:14px;line-height:1.55;color:#333;text-align:center">' + CLOSURE.copy + '</p>' +
+        '<div style="display:flex;flex-direction:column;gap:10px;align-items:center">' +
+          '<button data-pa-act="done" style="'+btnBase+'background:#1A4F9C;border:1px solid #1A4F9C;color:#fff;width:100%">Start exploring</button>' +
+          (CLOSURE.linkText ?
+            '<button data-pa-act="link" style="background:none;border:none;font-family:inherit;font-size:13px;color:#A67C3A;text-decoration:underline;cursor:pointer">' + CLOSURE.linkText + '</button>' : '') +
+        '</div>';
+    }
+    html += '</div>';
+    return html;
+  }
+
+  function placeCard(bounds){
+    var c = els.card, W = window.innerWidth, H = window.innerHeight;
+    if (W < 640){                                     /* mobile: bottom sheet */
+      c.style.left = '0'; c.style.right = '0'; c.style.bottom = '0'; c.style.top = 'auto';
+      c.style.width = '100%'; c.firstChild.style.maxWidth = 'none';
+      c.firstChild.style.borderRadius = '14px 14px 0 0';
+      c.firstChild.style.maxHeight = '40vh'; c.firstChild.style.overflowY = 'auto';
+      return;
+    }
+    c.style.right = 'auto'; c.style.bottom = 'auto'; c.style.width = 'auto';
+    var cw = 340, ch = c.offsetHeight || 200;
+    if (!bounds){                                     /* closure: centre */
+      c.style.left = Math.max((W - cw)/2, 12) + 'px';
+      c.style.top  = Math.max((H - ch)/2, 12) + 'px';
+      return;
+    }
+    var below = bounds.b + 14, above = bounds.t - ch - 14;
+    c.style.top  = (below + ch < H - 12 ? below : Math.max(above, 12)) + 'px';
+    var cx = (bounds.l + bounds.r)/2 - cw/2;
+    c.style.left = Math.min(Math.max(cx, 12), W - cw - 12) + 'px';
+  }
+
+  function render(){
+    ensureEls();
+    var isClosure = idx >= STEPS.length;
+    var bounds = null;
+    if (!isClosure){
+      var step = STEPS[idx];
+      var target = document.querySelector(step.selector);
+      if (!target){ idx++; return render(); }         /* selector missing: skip step gracefully */
+      try { target.scrollIntoView({ block:'center', behavior: reduced ? 'auto' : 'smooth' }); } catch(e){}
+      /* measure after scroll settles */
+      setTimeout(function(){
+        if (!active) return;
+        bounds = spotlight(target.getBoundingClientRect());
+        els.card.innerHTML = cardHtml(step, false);
+        wire(); placeCard(bounds);
+      }, reduced ? 0 : 260);
+    } else {
+      bounds = dimAll();
+      els.card.innerHTML = cardHtml(null, true);
+      wire(); placeCard(null);
+    }
+  }
+
+  function wire(){
+    els.card.querySelectorAll('[data-pa-act]').forEach(function(btn){
+      btn.addEventListener('click', function(){
+        var act = btn.getAttribute('data-pa-act');
+        if (act === 'skip') return finish('skip');
+        if (act === 'done') return finish('complete');
+        if (act === 'back'){ idx = Math.max(idx-1, 0); return render(); }
+        if (act === 'next'){ idx++; return render(); } /* past last step → closure card */
+        if (act === 'link'){
+          finish('complete');
+          ga('pa_tour_cta', idx + 1);
+          try {
+            if (typeof CLOSURE.linkFn === 'function') { CLOSURE.linkFn(); }
+            else if (CLOSURE.linkHref) { window.location.href = CLOSURE.linkHref; }
+          } catch(e){}
+          return;
+        }
+      });
+    });
+  }
+
+  function start(){
+    /* defer if an auth modal is open — auth wins, tour waits for next visit */
+    if (document.querySelector('[data-auth-modal-open="1"]')) return;
+    active = true;
+    ensureEls();
+    window.addEventListener('resize', onResize);
+    document.addEventListener('keydown', onKey);
+    render();
+  }
+
+  if (document.readyState === 'loading'){
+    document.addEventListener('DOMContentLoaded', function(){ setTimeout(start, 900); });
+  } else {
+    setTimeout(start, 900);
+  }
+})();
+</script>
 </body>
 </html>
