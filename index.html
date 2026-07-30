@@ -2402,6 +2402,7 @@ function faTopRender(cavs){
   var el=document.getElementById('faTopTbl');if(el){el.innerHTML=html;el.style.maxHeight='560px';el.style.overflowY='auto';}
 }
 
+/* v9.9.2 (S229): TOUR-1 masthead link gold on mobile + nowrap across .pagenav. */
 /* v9.9.1 (S229): TOUR-1 masthead link responsive label fix (mobile nav wrap). */
 /* v9.9 (S229): TOUR-1 first-visit onboarding tour injected before </body>.
    7 map steps, fire-once via localStorage pa_tour_map_v1, ?tour=1 forces. */
@@ -2436,8 +2437,12 @@ setTimeout(function(){try{
      nav does not wrap and push Newsroom/Listings out of view. -->
 <style>
 .pa-tour-short{display:none}
-.pa-tour-link{white-space:nowrap}
-@media(max-width:760px){.pa-tour-long{display:none}.pa-tour-short{display:inline}}
+.topbar .pagenav a{white-space:nowrap}
+@media(max-width:760px){
+  .pa-tour-long{display:none}
+  .pa-tour-short{display:inline}
+  .topbar .pagenav a.pa-tour-link{color:var(--gold);font-weight:700}
+}
 </style>
 <!-- TOUR-1 v9.9 (S229): first-visit onboarding tour. Fire-once via localStorage;
      force with ?tour=1; ESC = skip. GA4 pa_tour_complete / pa_tour_skip / pa_tour_cta. -->
