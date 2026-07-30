@@ -335,7 +335,7 @@ body{background:var(--bg);color:var(--txt);font-family:Inter,system-ui,-apple-sy
     <a href="#" class="bucket" onclick="showBucket('listings');return false;">Listings</a>
   </div>
   <div class="pagenav">
-    <a href="/?tour=1" title="Replay the site tour">Take the tour</a>
+    <a href="/?tour=1" class="pa-tour-link" title="Replay the site tour"><span class="pa-tour-long">Take the tour</span><span class="pa-tour-short">Tour</span></a>
     <a href="/terms.html">Terms</a>
     <a href="/privacy.html">Privacy</a>
     <a href="/about.html" class="hi">About</a>
@@ -2402,6 +2402,7 @@ function faTopRender(cavs){
   var el=document.getElementById('faTopTbl');if(el){el.innerHTML=html;el.style.maxHeight='560px';el.style.overflowY='auto';}
 }
 
+/* v9.9.1 (S229): TOUR-1 masthead link responsive label fix (mobile nav wrap). */
 /* v9.9 (S229): TOUR-1 first-visit onboarding tour injected before </body>.
    7 map steps, fire-once via localStorage pa_tour_map_v1, ?tour=1 forces. */
 /* v9.8.6 (S200): ADDRESS column no longer collapses to em-dash when the
@@ -2431,6 +2432,13 @@ setTimeout(function(){try{
 }catch(e){}})();
 </script>
 
+<!-- TOUR-1 v9.9.1 (S229): masthead link label collapses to "Tour" below 760px so the
+     nav does not wrap and push Newsroom/Listings out of view. -->
+<style>
+.pa-tour-short{display:none}
+.pa-tour-link{white-space:nowrap}
+@media(max-width:760px){.pa-tour-long{display:none}.pa-tour-short{display:inline}}
+</style>
 <!-- TOUR-1 v9.9 (S229): first-visit onboarding tour. Fire-once via localStorage;
      force with ?tour=1; ESC = skip. GA4 pa_tour_complete / pa_tour_skip / pa_tour_cta. -->
 <script>

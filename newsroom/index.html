@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- v48.312 (30 Jul 2026, S229: TOUR-1 first-visit onboarding tour, 6 newsroom steps + closure CTA into the enquiry modal. Prior: v48.311 (S228: Starhill Global REIT Human Capital pass. TALENT_DATA - Ho Sing retired 30 Jun 2026 after 16 years; Tan Peck Mun Kemmy appointed CEO and Executive Director 1 Jul 2026; Tan Woon Hum stepped down 31 Jul 2026 after nine years; Ng Sey Ming appointed Independent Director, NRC Chairman and AC member 1 Aug 2026. SGREIT profiles 9 -> 11. No NEWS change, cascade untouched.) -->
+<!-- v48.313 (30 Jul 2026, S229: TOUR-1 masthead link responsive label fix. Prior: v48.312 (S229: TOUR-1 first-visit onboarding tour, 6 newsroom steps + closure CTA into the enquiry modal. Prior: v48.311 (S228: Starhill Global REIT Human Capital pass. TALENT_DATA - Ho Sing retired 30 Jun 2026 after 16 years; Tan Peck Mun Kemmy appointed CEO and Executive Director 1 Jul 2026; Tan Woon Hum stepped down 31 Jul 2026 after nine years; Ng Sey Ming appointed Independent Director, NRC Chairman and AC member 1 Aug 2026. SGREIT profiles 9 -> 11. No NEWS change, cascade untouched.) -->
 <!-- v48.310 (30 Jul 2026, S228: Newsroom drop id:159 Starhill Global REIT FY2025/26 results. Landing cascade regenerated from NEWS: hero 159 x3, cards [158,157,156], feed [155..149], NR_STATIC_IDS [158..149].) -->
 <!-- v48.309 (29 Jul 2026, S224): Newsroom drop id:158 Digital Core REIT 1H 2026 results. DPU 1.80 US cents flat y-o-y - distributable income US23.328m -0.2% and units entitled 1,296.0m -0.2%, both dividing to 1.7999 cents. Gross revenue US88.572m -0.4%, property expenses US44.901m +5.4%, NPI US43.671m -5.7%, cash NPI US42.675m -7.1%, NPI margin 52.1 to 49.3 pct. Distributions received from associates US10.477m vs US3.813m less share of associate results US3.462m vs US2.853m = net contribution US7.015m vs US0.960m, 30.1 pct of distributable income from the two 20 pct held Osaka JVs (PropertyAtlas calculation). Segment: North America revenue -9.9 pct NPI -15.4 pct; EMEA revenue +15.8 pct NPI +10.7 pct, EMEA now 43.0 pct of revenue and 43.8 pct of NPI, Frankfurt 33 pct of annualised rent at 65 pct ownership. 8217 Linton Hall Road out of service, 207,002 nrsf, 9,720 kW, US18.079m pro forma rent = 15.1 pct of US119.685m portfolio total; 10-year IG cloud lease commences 1 Dec 2026, c. US14.8m NPI (US13.3m at 90 pct share), c. +35 pct over previous net rent, occupancy to 98 pct, IG rent to 83 pct, WALE 4.3 to 5.1 yrs. 2026 expiries 19 to 4 pct of nrsf, 2031 8 to 20 pct. Buyback 7,984,000 units at US0.488 cancelled vs 45,694,049 units issuable to the Manager = 3.5 pct of units in issue, 5.7x the buyback. Debt US715.892m gross, 100 pct unsecured, leverage 39.2 pct, ICR 3.2x, all-in 3.6 pct, WADM 3.3 yrs, 70 pct hedged; currency mix computed from Note 6 EUR 48.7 pct / USD 31.3 pct / JPY 20.0 pct, 68.7 pct non-USD. NAV US0.79 from US0.80 on FX translation, carrying values still on 31 Dec 2025 independent valuations. Capital component 0.88 of 1.80 cents = 48.9 pct. Cascade regenerated from NEWS: hero 158 x3, cards [157,156,155], feed [154..148], NR_STATIC_IDS [157..148]. -->
 <!-- v48.308 (29 Jul 2026, S223): Newsroom drop id:157 First REIT 1H 2026 results and Strategic Review progress. DPU 0.98 cents -13.3% y-o-y on IDR -9.3% and JPY -9.8% with units entitled +0.8% only (2,107.1M to 2,123.2M) - currency, not denominator. Rental and other income S6.3M -8.3%, NPI S5.0M -8.1%, distributable amount S0.8M -12.5%, NAV 23.00 cents -7.9%. S60.1M reclassified assets held for sale after 23 Jun 2026 EGM approved 11 Indonesia divestments (S71.5M aggregate, 2.1% premium); put options over 6 further hospitals unexercised. Gearing 45.7% on face value 469,593 / total assets 1,027,108; covenant waiver commenced May 2026, obtained Jul 2026; S61.1M Apr/May 2027 maturities reclassified to current; fixed or hedged 24.1% (bonds 100,000 + social term loan B 13,280). Singapore three nursing homes S8.8M: Bukit Merah and Bukit Panjang master leases 0.8 yrs remaining, land 30 yrs from 2002/2003; Lentor 10.9 yrs, land 99 yrs from 1938. Cascade regenerated from NEWS: hero 157 x3, cards [156,155,154], feed [153..147], NR_STATIC_IDS [156..147]. -->
@@ -3144,7 +3144,7 @@ body.article-takeover .ed-foot{display:none!important}
            Market Analysis links — they duplicated the navtab row below. The
            PropertyAtlas wordmark above acts as Home (href="./"). Sign in / Sign
            out remain. POST-BETA: an About / Founder page may slot in here. -->
-      <a href="/newsroom/?tour=1" class="ed-mast-nav-external" title="Replay the site tour">Take the tour</a>
+      <a href="/newsroom/?tour=1" class="ed-mast-nav-external pa-tour-link" title="Replay the site tour"><span class="pa-tour-long">Take the tour</span><span class="pa-tour-short">Tour</span></a>
       <a href="/about.html" class="ed-mast-nav-external">About Us</a>
       <a href="javascript:void(0)" id="atlas-signin-link" class="ed-mast-nav-signin"
          onclick="if(window.atlasOpenLoginModal){window.atlasOpenLoginModal();}return false;">Sign in</a>
@@ -31547,6 +31547,12 @@ html.article-takeover .ed-article-page,body.article-takeover .ed-article-page{di
 </footer>
 
 
+<!-- TOUR-1 v48.313 (S229): masthead link label collapses to "Tour" below 760px. -->
+<style>
+.pa-tour-short{display:none}
+.pa-tour-link{white-space:nowrap}
+@media(max-width:760px){.pa-tour-long{display:none}.pa-tour-short{display:inline}}
+</style>
 <!-- TOUR-1 v48.312 (S229): first-visit onboarding tour. Fire-once via localStorage;
      force with ?tour=1; ESC = skip. GA4 pa_tour_complete / pa_tour_skip / pa_tour_cta. -->
 <script>
