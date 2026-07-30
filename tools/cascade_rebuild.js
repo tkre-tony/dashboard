@@ -9,8 +9,8 @@
  */
 const fs=require("fs");
 const FILE=process.argv[2]||"work_index.html";
-const VER_OLD="48.242", VER_NEW="48.243";
-const VER_NOTE="landing cascade regenerated from NEWS";
+const VER_OLD="48.309", VER_NEW="48.310";
+const VER_NOTE="30 Jul 2026, S228: Newsroom drop id:159 Starhill Global REIT FY2025/26 results. Landing cascade regenerated from NEWS: hero 159 x3, cards [158,157,156], feed [155..149], NR_STATIC_IDS [158..149].";
 const CR="\r\n";
 let s=fs.readFileSync(FILE,"utf8");
 
