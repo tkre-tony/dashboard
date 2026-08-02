@@ -15,12 +15,33 @@
  */
 const fs=require("fs");
 const FILE=process.argv[2]||"work_index.html";
-// EDIT PER DROP. VER_OLD must be the CURRENT top of the header stack or the
-// script refuses to run. Set to 48.322 as at S241.
-const VER_OLD="48.322", VER_NEW="48.323";
-const VER_NOTE="<DATE>, S<N>: Newsroom drop id:<ID> <subject>. Landing cascade regenerated from NEWS: hero <ID> x3, cards [<a,b,c>], feed [<d..e>], NR_STATIC_IDS [<a..e>].";
+// S245: VER_OLD/VER_NEW are NO LONGER EDITED PER DROP. They are derived from the
+// top of the header stack, which this script already locates and asserts against
+// in step 5. Editing them by hand went stale in S243 and S244 and would have
+// thrown on this drop. VER_NOTE is now argv[3].
+// L-TOOL-3 still applies: the note is concatenated, never used as a regex
+// replacement string, so dollar signs in it are safe.
+const VER_NOTE=process.argv[3];
+if(!VER_NOTE) throw new Error("usage: node cascade_rebuild.js <file> <version-note>");
 const CR="\r\n";
 let s=fs.readFileSync(FILE,"utf8");
+
+// ---- derive VER_OLD / VER_NEW from the top of the header stack ----
+const VER_OLD=(()=>{
+  const dt=s.toUpperCase().indexOf("<!DOCTYPE");
+  if(dt===-1) throw new Error("DOCTYPE not found");
+  const dtEnd=s.indexOf(">",dt);
+  const top=s.indexOf("<!--",dtEnd);
+  if(top===-1) throw new Error("no header comment after DOCTYPE");
+  const m=/^<!-- v(\d+\.\d+) /.exec(s.slice(top,top+40));
+  if(!m) throw new Error("top-of-stack comment is not a version header: "+JSON.stringify(s.slice(top,top+60)));
+  return m[1];
+})();
+const VER_NEW=(()=>{
+  const p=VER_OLD.split(".");
+  return p[0]+"."+(parseInt(p[1],10)+1);
+})();
+console.log("Version: v"+VER_OLD+" -> v"+VER_NEW);
 
 // ---- parse NEWS ----
 const head=s.indexOf("var NEWS="); const lb=s.indexOf("[",head);
