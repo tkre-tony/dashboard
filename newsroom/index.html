@@ -1,4 +1,5 @@
 <!DOCTYPE html>
+<!-- v48.322 (2 Aug 2026, S241: L-CASCADE-9 durable fix. Landing feed injector now emits .feed-month dividers at month boundaries for rows appended below the static run; previously the last static label governed every injected row regardless of date. State (NR_FEED_LAST_MONTH) seeded from the last NR_STATIC_IDS entry and monotonic - .feed-list is append-only. Companion changes in tools/: cascade_rebuild.js now derives .week-meta and static .feed-month from NEWS, and tools/landing_label_gate.js gates both. No NEWS, NR_STATIC_IDS, cascade or sitemap change.) -->
 <!-- v48.321 (2 Aug 2026, S241: landing label correction. week-meta "Updated 19 June 2026" -> "Updated 1 August 2026" (hero id:164 release date, v48.51 precedent). feed-month "June 2026" -> "July 2026" (static feed 160..154 all dated 29-30 Jul 2026). Both labels are hardcoded and skipped by cascade_rebuild.js; see L-CASCADE-9. No NEWS, NR_STATIC_IDS, cascade or sitemap change.) -->
 <!-- v48.320 (1 Aug 2026, S240: id:164 hero image credit correction. The deployed image is the typographic number card, not a scatter of the District 19 series; all five caption surfaces rewrote to describe the card. Cascaded in lockstep per L-CASCADE-7: hero aria-label, hero img alt, hero-credit p, NEWS imageCredit, NEWS landing_credit. Article page ed-art-photo-credit updated on the same string. No cascade regeneration, no NR_STATIC_IDS change, no sitemap change.) -->
 <!-- v48.319 (1 Aug 2026, S239: Newsroom drop id:164 weekly URA REALIS landed caveats, week of 27 July 2026. Landing cascade regenerated from NEWS: hero 164 x3, cards [163,162,161], feed [160..154], NR_STATIC_IDS [163..154].) -->
@@ -20032,6 +20033,31 @@ function formatNewsSummary(text, mode){
 var NR_STATIC_IDS = [163, 162, 161, 160, 159, 158, 157, 156, 155, 154];
 var NR_PAGE_SIZE = 10;
 var NR_INJECTED_COUNT = 0;
+// L-CASCADE-9 (S241): month dividers for INJECTED rows. The static run carries its
+// own .feed-month divider(s) emitted by cascade_rebuild.js; everything appended below
+// it previously ran on with no divider at all, so the last static label silently
+// governed rows from earlier months. .feed-list is append-only (renderNewsroom writes
+// to #nr-grid, never here), so this state is monotonic and needs no reset.
+var NR_FEED_LAST_MONTH = null;
+var NR_MONTH_NAMES = ["January","February","March","April","May","June","July","August","September","October","November","December"];
+function nrMonthKey(iso){ return iso ? String(iso).slice(0,7) : ""; }
+function nrMonthLabel(iso){
+  var p = String(iso).split("-");
+  var mi = parseInt(p[1], 10) - 1;
+  return (NR_MONTH_NAMES[mi] || "") + " " + p[0];
+}
+function nrInitFeedMonth(){
+  if(NR_FEED_LAST_MONTH !== null) return;
+  NR_FEED_LAST_MONTH = "";
+  if(!Array.isArray(window.NEWS) || !NR_STATIC_IDS.length) return;
+  var lastId = NR_STATIC_IDS[NR_STATIC_IDS.length - 1];
+  for(var i = 0; i < window.NEWS.length; i++){
+    if(window.NEWS[i] && window.NEWS[i].id === lastId){
+      NR_FEED_LAST_MONTH = nrMonthKey(window.NEWS[i].date);
+      return;
+    }
+  }
+}
 function nrEscapeHtml(s){
   if(s == null) return "";
   return String(s)
@@ -20113,7 +20139,16 @@ function nrShowMore(){
     btn.style.display = "none";
     return;
   }
-  var html = nextBatch.map(nrRenderFeedRow).join("");
+  nrInitFeedMonth();
+  var html = "";
+  nextBatch.forEach(function(a){
+    var mk = nrMonthKey(a && a.date);
+    if(mk && mk !== NR_FEED_LAST_MONTH){
+      html += '<div class="feed-month">' + nrEscapeHtml(nrMonthLabel(a.date)) + '</div>';
+      NR_FEED_LAST_MONTH = mk;
+    }
+    html += nrRenderFeedRow(a);
+  });
   feedList.insertAdjacentHTML("beforeend", html);
   NR_INJECTED_COUNT += nextBatch.length;
   // Update label based on remaining count.
