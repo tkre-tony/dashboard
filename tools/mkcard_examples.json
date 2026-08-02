@@ -1,0 +1,35 @@
+[
+  {
+    "_comment": "SAMPLE VALUES ONLY — never post a card rendered from this file. Smoke test: python3 mkcard.py mkcard_examples.json",
+    "mode": "article",
+    "out": "/tmp/mkcard_smoke_article.jpg",
+    "eyebrow": "PropertyAtlas Newsroom",
+    "headline": "Sample Headline For Layout Testing Only, Long Enough To Exercise The Auto-Shrink And Wrap At Three Lines",
+    "category": "Sample",
+    "credit": "Illustration: PropertyAtlas \u00b7 Source: sample data, not for publication"
+  },
+  {
+    "mode": "number",
+    "out": "/tmp/mkcard_smoke_number.jpg",
+    "eyebrow": "PropertyAtlas Newsroom",
+    "kicker": "Sample kicker",
+    "figure": "S$0,000",
+    "unit": "per square foot",
+    "subline": "Sample subline for layout testing. Replace every value before rendering anything intended for publication.",
+    "credit": "Illustration: PropertyAtlas \u00b7 Source: sample data, not for publication"
+  },
+  {
+    "mode": "summary",
+    "out": "/tmp/mkcard_smoke_summary.jpg",
+    "eyebrow": "TK Real Estate",
+    "title": "Sample Summary Card \u2014 Layout Test",
+    "rows": [
+      ["Sample label one", "000"],
+      ["Sample label two", "S$0.0M"],
+      ["Sample label three", "S$0,000"],
+      ["Sample label four", "0"]
+    ],
+    "footer": "propertyatlas.sg",
+    "credit": "Illustration: PropertyAtlas \u00b7 Source: sample data, not for publication"
+  }
+]
