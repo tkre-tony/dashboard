@@ -6,11 +6,19 @@
  *
  * Fields consumed per id: slug, image, landing_headline, display_teaser, landing_credit,
  * category, tag (hero only), date, word_count (hero only), read_time_min.
+ *
+ * L-CASCADE-9 (S241): the two landing DATE LABELS are now derived here, not hand-held.
+ *   - .week-meta   = "Updated " + hero date        (was frozen at 19 June 2026 for 6 weeks)
+ *   - .feed-month  = month dividers over the static feed run, one per month boundary
+ * Both were previously hardcoded and skipped by this tool, so they drifted on every drop
+ * while the cascade gate passed clean. Verify with tools/landing_label_gate.js.
  */
 const fs=require("fs");
 const FILE=process.argv[2]||"work_index.html";
-const VER_OLD="48.309", VER_NEW="48.310";
-const VER_NOTE="30 Jul 2026, S228: Newsroom drop id:159 Starhill Global REIT FY2025/26 results. Landing cascade regenerated from NEWS: hero 159 x3, cards [158,157,156], feed [155..149], NR_STATIC_IDS [158..149].";
+// EDIT PER DROP. VER_OLD must be the CURRENT top of the header stack or the
+// script refuses to run. Set to 48.322 as at S241.
+const VER_OLD="48.322", VER_NEW="48.323";
+const VER_NOTE="<DATE>, S<N>: Newsroom drop id:<ID> <subject>. Landing cascade regenerated from NEWS: hero <ID> x3, cards [<a,b,c>], feed [<d..e>], NR_STATIC_IDS [<a..e>].";
 const CR="\r\n";
 let s=fs.readFileSync(FILE,"utf8");
 
@@ -33,6 +41,8 @@ const MON=["January","February","March","April","May","June","July","August","Se
 const MONA=["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
 const dFull=iso=>{const[y,m,dd]=iso.split("-").map(Number);return dd+" "+MON[m-1]+" "+y;};
 const dAbbr=iso=>{const[y,m,dd]=iso.split("-").map(Number);return dd+" "+MONA[m-1]+" "+y;};
+const dMonth=iso=>{const[y,m]=iso.split("-").map(Number);return MON[m-1]+" "+y;};
+const mKey=iso=>String(iso).slice(0,7);
 
 function need(x){for(const f of["slug","image","landing_headline","display_teaser","landing_credit","category","tag","date","read_time_min","word_count"]){if(!(f in x)||x[f]===""||x[f]==null)throw new Error("id "+x.id+" missing "+f);}}
 
@@ -127,6 +137,17 @@ function feedRow(x){
   ].join(CR);
 }
 
+// L-CASCADE-9: emit a .feed-month divider at every month boundary in the static run.
+function feedBlock(idList){
+  const out=[]; let last=null;
+  for(const id of idList){
+    const x=byId[id]; const k=mKey(x.date);
+    if(k!==last){ out.push(`<div class="feed-month">${dMonth(x.date)}</div>`+CR); last=k; }
+    out.push(feedRow(x));
+  }
+  return out.join(CR+"      ");
+}
+
 // ---- region replacement helpers ----
 function matchDivClose(str, openIdx){
   let depth=0; const re=/<\/?div\b/g; re.lastIndex=openIdx; let m;
@@ -152,15 +173,26 @@ function replaceSpan(str,a,b,txt){ return str.slice(0,a)+txt+str.slice(b); }
   const cardsTxt=[card(byId[ids[1]]),card(byId[ids[2]]),card(byId[ids[3]])].join(CR+"      ");
   s=replaceSpan(s,firstA,lastClose,cardsTxt);
 }
-// 3) FEED anchor-run (leave feed-month head + tail breadcrumb intact)
+// 3) FEED run INCLUDING month dividers (leaves tail breadcrumb intact).
+// L-CASCADE-9: the span now starts at the first .feed-month div, not the first
+// anchor, so dividers are regenerated rather than left to rot.
 {
   const fsx=s.indexOf('<div class="feed-list">');
   const fe=matchDivClose(s,fsx);
   const region=s.slice(fsx,fe);
-  const firstA=fsx+region.indexOf('<a class="feed-row"');
+  const aRel=region.indexOf('<a class="feed-row"');
+  if(aRel<0) throw new Error("feed anchor not found");
+  const mRel=region.indexOf('<div class="feed-month">');
+  const startRel=(mRel>=0 && mRel<aRel)?mRel:aRel;
+  const start=fsx+startRel;
   const lastClose=fsx+region.lastIndexOf('</a>')+4;
-  const feedTxt=ids.slice(4,11).map(id=>feedRow(byId[id])).join(CR+"      ");
-  s=replaceSpan(s,firstA,lastClose,feedTxt);
+  s=replaceSpan(s,start,lastClose,feedBlock(ids.slice(4,11)));
+}
+// 3b) WEEK-META label = hero release date (v48.51 precedent, L-CASCADE-9).
+{
+  const re=/<div class="week-meta">[^<]*<\/div>/;
+  if(!re.test(s)) throw new Error("week-meta not found");
+  s=s.replace(re, '<div class="week-meta">Updated '+dFull(byId[ids[0]].date)+'</div>');
 }
 // 4) NR_STATIC_IDS = ids[1..10]
 {
