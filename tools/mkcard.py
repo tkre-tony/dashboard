@@ -22,7 +22,11 @@ L-SOCIAL-2  1200x630 branded card is a mandatory named deliverable; carries a
 L-SOCIAL-4  Where a card carries no photograph the credit takes the form
             "Illustration: PropertyAtlas" plus the data source.
 L-FONT-1    Never fall back to ImageFont.load_default(). Assert the font path
-            and fail loudly. Poppins ships Bold/Medium/Light/Regular only.
+            and fail loudly. Poppins ships Bold/Medium/Light/Regular/Italic.
+L-SOCIAL-11 PropertyAtlas-published cards carry the PropertyAtlas mark, never
+            the TKRE mark. TKRE is opt-in via "brand": "tkre".
+L-SOCIAL-12 The photo credit mirrors the front-end treatment: italic,
+            right-aligned, muted, in the form "<Subject>. Credit: <owner>."
 """
 
 import json
@@ -56,13 +60,22 @@ FONTS = {
     "medium":  f"{FONT_DIR}/Poppins-Medium.ttf",
     "regular": f"{FONT_DIR}/Poppins-Regular.ttf",
     "light":   f"{FONT_DIR}/Poppins-Light.ttf",
+    "italic":  f"{FONT_DIR}/Poppins-Italic.ttf",
 }
 
 REPO_RAW = "https://raw.githubusercontent.com/tkre-tony/dashboard/main"
 LOGO_URLS = {
+    "pa_white":   f"{REPO_RAW}/assets/pa_logo_white.png",
+    "pa_tile":    f"{REPO_RAW}/assets/pa_logo_tile.png",
     "tkre_white": f"{REPO_RAW}/assets/tkre_logo_white.png",
     "tkre_black": f"{REPO_RAW}/assets/tkre_logo_black.png",
 }
+
+# L-SOCIAL-11 — PropertyAtlas-published cards carry the PropertyAtlas mark.
+# The TKRE mark is reserved for cards published by TK Real Estate (the weekly
+# `summary` card, eyebrow "TK Real Estate"). Default is PropertyAtlas; the
+# TKRE mark is opt-in via "brand": "tkre".
+DEFAULT_BRAND = "propertyatlas"
 
 MODES = ("article", "number", "summary")
 
@@ -183,7 +196,15 @@ def load_logo(spec):
     Resolve the TKRE mark. Local path wins; otherwise fetch from the repo so
     the script carries its own assets and cannot be orphaned again.
     """
-    key = "tkre_black" if spec.get("logo_ink") == "black" else "tkre_white"
+    brand = (spec.get("brand") or DEFAULT_BRAND).strip().lower()
+    if brand in ("pa", "propertyatlas"):
+        key = "pa_tile" if spec.get("logo_ink") == "tile" else "pa_white"
+    elif brand == "tkre":
+        key = "tkre_black" if spec.get("logo_ink") == "black" else "tkre_white"
+    else:
+        raise SystemExit(
+            f"mkcard: unknown brand {brand!r}; use \"propertyatlas\" or \"tkre\"."
+        )
     local = spec.get("logo")
     if local:
         if not os.path.exists(local):
@@ -251,8 +272,22 @@ def draw_credit(draw, spec, had_photo):
             "to begin \"Illustration:\" and name the data source.\n"
             f"  got: {credit!r}"
         )
-    f = font("light", 13)
-    draw.text((PAD_X, H - PAD_BOTTOM + 6), credit, font=f, fill=MUTED)
+    if had_photo and not (
+        credit.lower().startswith("photo:") or "credit:" in credit.lower()
+    ):
+        raise SystemExit(
+            "mkcard: card carries a photograph, so the credit must attribute it "
+            "— either the front-end form \"<Subject>. Credit: <owner>.\" "
+            "(L-SOCIAL-12, preferred) or \"Photo: <owner>\".\n"
+            f"  got: {credit!r}"
+        )
+    # L-SOCIAL-12 — mirror the front-end photo-credit treatment:
+    # italic, right-aligned, muted, sitting directly under the frame.
+    # Front-end reference: .hero-credit / .card-credit / .ed-art-photo-credit
+    # (font-style:italic; text-align:right; muted ink; letter-spacing .02em).
+    f = font("italic", 13)
+    tw = draw.textlength(credit, font=f)
+    draw.text((W - PAD_X - tw, H - PAD_BOTTOM + 6), credit, font=f, fill=MUTED)
 
 
 def draw_footer(draw, spec):

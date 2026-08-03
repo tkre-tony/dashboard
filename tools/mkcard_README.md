@@ -92,8 +92,9 @@ across two cards, rather than silently compressing to unreadable leading.
 | `photo` | all | — | cover-fit under a navy wash; omit for flat navy |
 | `eyebrow` | all | — | default `PROPERTYATLAS NEWSROOM` |
 | `footer` | all | — | default `propertyatlas.sg` |
+| `brand` | all | — | `propertyatlas` (default) or `tkre` — see below |
 | `logo` | all | — | local path; otherwise fetched from `assets/` |
-| `logo_ink` | all | — | `white` (default) or `black` |
+| `logo_ink` | all | — | PA: `white` (default) or `tile`. TKRE: `white` (default) or `black` |
 | `wash` | all | — | overlay alpha, default 172 |
 | `quality` | all | — | JPEG quality, default 92 |
 | `headline` | article | ✅ | |
@@ -103,6 +104,26 @@ across two cards, rather than silently compressing to unreadable leading.
 | `kicker`, `unit`, `subline` | number | — | |
 | `title`, `rows` | summary | ✅ | |
 
+## Which mark goes on the card (L-SOCIAL-11)
+
+**PropertyAtlas-published cards carry the PropertyAtlas mark. This is the
+default and needs no `brand` key.** The TKRE mark is reserved for cards
+published by TK Real Estate — in practice the weekly `summary` card with
+eyebrow `TK Real Estate` — and is opt-in:
+
+```json
+{ "brand": "tkre" }
+```
+
+An unknown `brand` is a hard failure rather than a silent fallback, because a
+silent fallback is how the wrong mark shipped on a live post in the first place.
+
+PA variants: `pa_logo_white.png` is the mark on transparency (cream `P` plus
+the gold sparkle, no tile) and is the default — it composites predictably over
+both flat navy and any photo under the wash. `pa_logo_tile.png` is the full
+site-header lockup including the navy tile and gold hairline; it reads *darker*
+than a washed photo, so reserve it for light surfaces.
+
 ## The credit rule is enforced, not advisory
 
 **L-SOCIAL-2** — every card carries a bottom-edge credit. A missing `credit`
@@ -111,6 +132,23 @@ is a hard failure.
 **L-SOCIAL-4** — where the card carries no photograph the credit must begin
 `Illustration:` and name the data source. Passing `"Photo: …"` on a card with
 no photo fails, because that wording would be false.
+
+**L-SOCIAL-12** — where the card *does* carry a photograph the credit must
+attribute it, and the preferred wording mirrors the front-end treatment:
+
+```
+Jem, 50 Jurong Gateway Road, Singapore. Credit: Lendlease Global Commercial REIT.
+```
+
+That is the `landing_credit` field verbatim, so the card and the site say the
+same thing about the same photograph. The older `Photo: <owner>` form is still
+accepted. A photo card whose credit does neither is a hard failure.
+
+The credit is rendered **italic, right-aligned and muted**, matching the
+front-end `.hero-credit` / `.card-credit` / `.ed-art-photo-credit` rules
+(`font-style:italic; text-align:right;` muted ink). It sits directly beneath
+`propertyatlas.sg` at the bottom-right, the way the site sets a credit
+directly beneath its image.
 
 ## Design tokens (locked to L-SOCIAL-2)
 
