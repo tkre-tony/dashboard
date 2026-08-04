@@ -366,7 +366,7 @@ body{background:var(--bg);color:var(--txt);font-family:Inter,system-ui,-apple-sy
       </div>
       <div class="fgroup"><div class="lbl">Period</div>
       <div class="chiprow" id="periods">
-        <div class="chip on" data-period="this_week">This week</div>
+        <div class="chip on" data-period="this_week">Release Week</div>
         <div class="chip" data-period="30d">30D</div>
         <div class="chip" data-period="90d">90D</div>
         <div class="chip" data-period="1y">1Y</div>
@@ -443,7 +443,7 @@ body{background:var(--bg);color:var(--txt);font-family:Inter,system-ui,-apple-sy
     <div class="mt-filterpanel" id="mtFilterPanel">
       <div class="fgroup"><div class="lbl">Period</div>
       <div class="mt-pchips" id="mtPeriods">
-        <div class="chip on" data-period="this_week">This week</div>
+        <div class="chip on" data-period="this_week">Release Week</div>
         <div class="chip" data-period="30d">30D</div>
         <div class="chip" data-period="90d">90D</div>
         <div class="chip" data-period="1y">1Y</div>
@@ -731,7 +731,7 @@ const CHIP_TO_DB = {
 };
 function regionToDb(r){ return r ? (r + ' Region') : null; }   // DB stores 'Central Region' etc.
 const PERIOD_DAYS = {'30d':30,'90d':90,'1y':365,'5y':1825};
-function periodLabel(p){ return {this_week:'This week','30d':'Last 30 days','90d':'Last 90 days','1y':'Last 1 year','5y':'Last 5 years',since1995:'Since 1995'}[p]||p; }
+function periodLabel(p){ return {this_week:'Release Week','30d':'Last 30 days','90d':'Last 90 days','1y':'Last 1 year','5y':'Last 5 years',since1995:'Since 1995'}[p]||p; }
 function weekOf(iso){ if(!iso) return '—'; const d=new Date(iso+'T00:00:00'); const dow=(d.getDay()+6)%7; d.setDate(d.getDate()-dow); return String(d.getDate()).padStart(2,'0')+' '+_MON[d.getMonth()]; }
 
 function buildBody(){
@@ -2402,7 +2402,11 @@ function faTopRender(cavs){
   var el=document.getElementById('faTopTbl');if(el){el.innerHTML=html;el.style.maxHeight='560px';el.style.overflowY='auto';}
 }
 
-/* v9.9.4 (S237): caveat-list area_caveat P&L suppression + SEED_CAVEATS re-bake - week of 27 Jul 2026, 53 caveats (4 Tue + 49 Fri), ids 82780-82832
+/* v9.9.5 (S255): period chip + periodLabel relabelled to Release Week
+     - the filter keys on release_date (latest URA release week, Mon-anchored), NOT sale_date;
+       the 4 Aug 2026 landed batch carried two May sale dates and exposed the mislabel.
+     - label text only; the data-period key is unchanged in all 14 sites. Both segments.
+   v9.9.4 (S237): caveat-list area_caveat P&L suppression + SEED_CAVEATS re-bake - week of 27 Jul 2026, 53 caveats (4 Tue + 49 Fri), ids 82780-82832
      v9.9.2 (S229): TOUR-1 masthead link gold on mobile + nowrap across .pagenav. */
 /* v9.9.1 (S229): TOUR-1 masthead link responsive label fix (mobile nav wrap). */
 /* v9.9 (S229): TOUR-1 first-visit onboarding tour injected before </body>.
