@@ -648,7 +648,15 @@ function socialImage(a, img) {
 
 function buildHead(a, canonical) {
   const title = stripTags(a.display_headline || a.display_title || a.title);
-  const desc  = stripTags(a.standfirst || a.summary).slice(0, 200);
+  // v48.336 (S262): word-boundary-aware meta description.
+  // Previously .slice(0, 200) cut mid-word with no ellipsis, which forced
+  // standfirsts to be authored under 200 chars to avoid a broken SERP snippet.
+  // Mirrors the proven deriveStandfirst() pattern (v48.75, S20). Feeds
+  // meta description, og:description, twitter:description and JSON-LD.
+  const rawDesc = stripTags(a.standfirst || a.summary);
+  const desc  = rawDesc.length <= 200
+    ? rawDesc
+    : rawDesc.slice(0, 197).replace(/\s+\S*$/, '') + '\u2026';
   const img    = heroAbs(a);
   const social = socialImage(a, img);
   const ld = {
