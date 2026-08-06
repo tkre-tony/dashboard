@@ -1,4 +1,5 @@
 <!DOCTYPE html>
+<!-- v48.336 (6 Aug 2026, S262: meta description and asset directory banner fixes. tools/generate_all.js buildHead now truncates the meta description on a word boundary with an ellipsis instead of a hard slice at 200 chars; this feeds meta description, og:description, twitter:description and JSON-LD description, and removes the constraint that standfirsts be authored under 200 chars. Asset Directory: green banner label loses the hardcoded FY2025 year (10 of CLAR's 16 green assets were acquired in 2026 and were mislabelled); card isNewAcq drops the year-stamped 'Acquired 2025' clause so it matches the table renderer (0 rows were divergent, so no render change). No NEWS, NR_STATIC_IDS, cascade or sitemap change.) -->
 <!-- v48.335 (6 Aug 2026, S261: Newsroom drop id:176 CapitaLand Ascendas REIT 1H 2026 results (DPU 7.482c +0.1% YoY, distributable income S$359.4M +8.6%, unit base +8.5%; S$300.5M of the S$903.5M March raise still unspent at 30 Jun and one intended acquisition dropped; portfolio occupancy 89.1%; 2Q reversion 5.2% from 10.6%; net income -3.5%, EPU -13.0%). Full L243/L-CASCADE-7 cascade: hero=176, cards=[175,174,173], feed=[172..166], NR_STATIC_IDS=[175..166]. Asset Directory: 11 INSERT + 3 UPDATE + q_period restamp to 1H 2026 (reit_assets 1689 to 1700 rows; CLAR 234 to 245). Human Capital: not triggered, quarterly class, CLAR carries 8 FY2025 entries. IMAGE: news_176_clar_27_ibp.jpg 27 IBP Singapore, credit CapitaLand Ascendas REIT.) -->
 <!-- v48.334 (CAREIT 1H 2026 results (id:175). Full L243/L-CASCADE-7 cascade: hero=175, cards=[174,173,172], feed=[171..165], NR_STATIC_IDS=[174..165].) -->
 <!-- v48.333 (Newsroom id 174 IREIT Global 1H2026 results. Landing cascade: hero 174, cards 173/172/171, feed 170..164, NR_STATIC_IDS 173..164.) -->
@@ -24387,7 +24388,7 @@ function reitSearch(page){
     var isDivested    = p.status && p.status.indexOf('DIVESTED') >= 0;
     var isPending     = (p.status && (p.status.indexOf('DISPOSAL') >= 0 || p.status.indexOf('PENDING DIVESTMENT') >= 0)) || (p.notes && (p.notes.indexOf('PENDING DISPOSAL') >= 0 || p.notes.indexOf('PENDING DIVESTMENT') >= 0));
     var isPendingAcq  = (p.status && p.status.indexOf('PENDING ACQUISITION') >= 0) || (p.notes && p.notes.indexOf('PENDING ACQUISITION') >= 0);
-    var isNewAcq      = !isPendingAcq && p.notes && (p.notes.indexOf('NEW ACQUISITION') >= 0 || p.notes.indexOf('Acquired 2025') >= 0);
+    var isNewAcq      = !isPendingAcq && p.notes && (p.notes.indexOf('NEW ACQUISITION') >= 0);
     var isManaged     = !isDivested && !isPending && !isPendingAcq && ((p.status && p.status.indexOf('MANAGED') >= 0) || (p.notes && p.notes.indexOf('MANAGED') >= 0));
     var statusBadge = (isDev && p.status && !isDivested && !isPending && !isPendingAcq && !isManaged) ? '<span style="padding:2px 7px;border-radius:4px;font-size:9px;font-weight:600;background:#fff3cd;color:#7d5200;border:1px solid #f0c040">'+p.status.split(' — ').pop()+'</span>' : '';
     var countryFlag = p.country!=='Singapore' ? ' \uD83C\uDF10 '+p.country : '';
@@ -24422,7 +24423,7 @@ function reitSearch(page){
       priceStr = priceMatch ? ' · '+priceMatch[0] : '';
       calloutBanner = '<div style="background:#78350f;color:#fcd34d;font-size:10px;font-weight:700;text-align:center;padding:5px 10px;letter-spacing:.06em;text-transform:uppercase">⏳ Pending Divestment'+priceStr+'</div>';
     } else if(isNewAcq){
-      calloutBanner = '<div style="background:#14532d;color:#86efac;font-size:10px;font-weight:700;text-align:center;padding:5px 10px;letter-spacing:.06em;text-transform:uppercase">✴ Newly Acquired FY2025</div>';
+      calloutBanner = '<div style="background:#14532d;color:#86efac;font-size:10px;font-weight:700;text-align:center;padding:5px 10px;letter-spacing:.06em;text-transform:uppercase">✴ Newly Acquired</div>';
     } else if(isManaged){
       calloutBanner = '<div style="background:#1e3a8a;color:#93c5fd;font-size:10px;font-weight:700;text-align:center;padding:5px 10px;letter-spacing:.06em;text-transform:uppercase">◇ Under Management · Asset Not Owned</div>';
     }
