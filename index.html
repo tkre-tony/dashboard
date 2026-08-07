@@ -899,7 +899,7 @@ async function loadPairsForCaveats(seq){
     for(let i=0;i<ids.length;i+=CHUNK){
       if(seq!==cavSeq) return;                       // superseded by a newer search
       const slice=ids.slice(i,i+CHUNK);
-      const url=SUPA_REST+'/pnl_pairs_mv?select=sell_id,buy_date,buy_price,psf_buy,pair_type&sell_id=in.('+slice.join(',')+')';
+      const url=SUPA_REST+'/pnl_pairs_mv?select=sell_id,buy_date,buy_price,psf_buy,pair_type,lease_event,buy_tenure,sell_tenure&sell_id=in.('+slice.join(',')+')';
       const res=await fetch(url,{headers:{'apikey':SUPA_ANON,'Authorization':'Bearer '+SUPA_ANON}});
       if(!res.ok) return;
       const rows=await res.json();
@@ -1227,8 +1227,12 @@ function caveatTableHTML(items){
       const buy=Number(pr2.buy_price), sell=Number(c.pr), q=sell-buy, qa=Math.abs(q);
       const pct=buy?(q/buy*100):null, up=q>=0, sign=up?'+':'−';
       const qStr='S$'+(qa>=1e6?(qa/1e6).toFixed(qa>=1e7?0:1)+'M':qa>=1e3?Math.round(qa/1e3)+'K':String(Math.round(qa)));
-      const pctStr=(pct==null)?'':' · '+sign+Math.abs(pct).toFixed(Math.abs(pct)>=100?0:1)+'%';
+      const pctStr=(pct==null||pr2.lease_event)?'':' · '+sign+Math.abs(pct).toFixed(Math.abs(pct)>=100?0:1)+'%';
       pnlBadge=(pr2.pair_type==='area_caveat')?`<div class="bought-lbl" style="color:#B5683E;cursor:help" title="Prior transaction for this unit differs in area by more than 5% — typically amalgamation, subdivision or re-survey. A price-to-price comparison is not like-for-like, so gain/loss is not shown. Compare the PSF figures instead.">⚠ area caveat · compare PSF</div>`:`<div class="pnl ${up?'pnl-up':'pnl-dn'}">${up?'▲':'▼'} ${sign}${qStr}${pctStr}</div>`;
+      if(pr2.lease_event&&pr2.pair_type!=='area_caveat'){
+        const _bt=esc(pr2.buy_tenure||'\u2014'),_st=esc(pr2.sell_tenure||'\u2014');
+        pnlBadge+=`<div class="bought-lbl" style="color:#B5683E;cursor:help" title="The lease term or commencement date differs between the two transactions, so the two prices do not reflect the same interest in the property. Any lease premium or restructuring cost is not recorded in caveat data. A percentage change would be misleading and is not shown.">\u26a0 tenure changed \u00b7 ${_bt} \u2192 ${_st}</div>`;
+      }
       if(fSeg==='landed'&&pr2.buy_date&&c.sdRaw){
         const _hd=Math.round((new Date(c.sdRaw+'T00:00:00')-new Date(pr2.buy_date+'T00:00:00'))/864e5);
         if(_hd>0&&_hd<=1095) pnlBadge+=`<div class="bought-lbl" style="color:#B5683E;cursor:help" title="Sold within ~3 years of purchase \u2014 the window in which licensed developers of up to 4 housing units must complete and sell to retain ABSD remission (IRAS). Typical of demolish-and-rebuild: the headline gain is GROSS and excludes construction costs, professional fees and stamp duties.">\u21bb \u22643-yr hold \u00b7 likely rebuild \u2014 gain is gross</div>`;
