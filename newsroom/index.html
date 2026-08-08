@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- v48.343 (S271: Coliwoo Holdings Limited (SGX: W8W) added to TALENT_DATA - 4 key management entries, board deferred pending AR 2025 per L-SRC-4. Asset Directory 29 rows committed separately as ids 1837-1865. Previously v48.342 (S269: Acrophyte Hospitality Trust display currency. REIT_CCY gains "Acrophyte Hospitality Trust":"US$" so all four valuation surfaces (fmtAssetVal, entity-header rollup, card, detail YoY table) render US$ instead of the S$ default. Pairs with the S269 SQL restatement of reit_assets ids 769-802 from SGD@1.34 to the issuer reporting currency: val loaded from AR 2025 Portfolio List (32 hotels, US$714.9M), prev_val from notes-harvested FY2024 (US$728.0M), occ advanced FY2024->FY2025, prev_occ unchanged, id 786 Auburn Hills prev_occ NULLed. No cascade, no NEWS, no sitemap change.) -->
+<!-- v48.344 (S271: talent-entity-filter option list completed - 3 entities present in TALENT_DATA but absent from the dropdown are now selectable: Coliwoo Holdings Limited (4 profiles, new), Perennial Holdings (25 profiles, pre-existing gap) and Keppel DC REIT Management Pte. Ltd. (3 profiles, pre-existing gap). Options only, no TALENT_DATA/NEWS/REIT_DATA change. Previously v48.343 (S271: Coliwoo Holdings Limited (SGX: W8W) added to TALENT_DATA - 4 key management entries, board deferred pending AR 2025 per L-SRC-4. Asset Directory 29 rows committed separately as ids 1837-1865. Previously v48.342 (S269: Acrophyte Hospitality Trust display currency. REIT_CCY gains "Acrophyte Hospitality Trust":"US$" so all four valuation surfaces (fmtAssetVal, entity-header rollup, card, detail YoY table) render US$ instead of the S$ default. Pairs with the S269 SQL restatement of reit_assets ids 769-802 from SGD@1.34 to the issuer reporting currency: val loaded from AR 2025 Portfolio List (32 hotels, US$714.9M), prev_val from notes-harvested FY2024 (US$728.0M), occ advanced FY2024->FY2025, prev_occ unchanged, id 786 Auburn Hills prev_occ NULLed. No cascade, no NEWS, no sitemap change.) -->
 <!-- v48.341 (id:179 Manulife US REIT 1H 2026 drop) -->
 <!-- v48.340 (id 178 weekly caveats week of 3 Aug 2026 - 60 caveats S170.3M, ESR-REIT Ang Mo Kio Street 65 exit and a Sims Lane freehold) -->
 <!-- v48.339 (S265: Acrophyte Hospitality Trust 1H 2026 drop, id 177. Distribution suspended to 2H 2028; US$198.5 million term loan due September 2026. Hero, three cards, seven feed rows and NR_STATIC_IDS rebuilt from NEWS.) -->
@@ -5317,6 +5317,7 @@ body.article-takeover .ed-foot{display:none!important}
       <option value="CDL Hospitality Trusts">CDLHT (FY2025)</option>
       <option value="City Developments Limited">CDL (FY2025)</option>
       <option value="Centurion Corporation">Centurion Corp (FY2025)</option>
+      <option value="Coliwoo Holdings Limited">Coliwoo (FY2026)</option>
       <option value="Daiwa House Logistics Trust">DHLT (FY2025)</option>
       <option value="Digital Core REIT">Digital Core REIT (FY2025)</option>
       <option value="Elite UK REIT">Elite UK REIT (FY2025)</option>
@@ -5337,6 +5338,7 @@ body.article-takeover .ed-foot{display:none!important}
       <option value="KSH Holdings">KSH Holdings (FY2026)</option>
       <option value="Hongkong Land">Hongkong Land (FY2025)</option>
       <option value="Keppel DC REIT">Keppel DC REIT (FY2025)</option>
+      <option value="Keppel DC REIT Management Pte. Ltd.">Keppel DC REIT Mgmt (FY2025)</option>
       <option value="Keppel REIT">Keppel REIT (FY2025)</option>
       <option value="KORE US REIT">KORE US REIT (FY2025)</option>
       <option value="Landmark REIT">Landmark REIT (FY2025)</option>
@@ -5349,6 +5351,7 @@ body.article-takeover .ed-foot{display:none!important}
       <option value="OUE REIT">OUE REIT (FY2025)</option>
       <option value="Oxley Holdings">Oxley Holdings (FY2025)</option>
       <option value="Parkway Life REIT">PLife REIT (FY2025)</option>
+      <option value="Perennial Holdings">Perennial Holdings (FY2025)</option>
       <option value="Prime US REIT">Prime US REIT (FY2025)</option>
       <option value="Sabana REIT (now AI-REIT)">Sabana / Former</option>
       <option value="Sasseur REIT">Sasseur REIT (FY2025)</option>
