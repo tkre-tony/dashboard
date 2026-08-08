@@ -1,4 +1,5 @@
 <!DOCTYPE html>
+<!-- v48.342 (S269: Acrophyte Hospitality Trust display currency. REIT_CCY gains "Acrophyte Hospitality Trust":"US$" so all four valuation surfaces (fmtAssetVal, entity-header rollup, card, detail YoY table) render US$ instead of the S$ default. Pairs with the S269 SQL restatement of reit_assets ids 769-802 from SGD@1.34 to the issuer reporting currency: val loaded from AR 2025 Portfolio List (32 hotels, US$714.9M), prev_val from notes-harvested FY2024 (US$728.0M), occ advanced FY2024->FY2025, prev_occ unchanged, id 786 Auburn Hills prev_occ NULLed. No cascade, no NEWS, no sitemap change.) -->
 <!-- v48.341 (id:179 Manulife US REIT 1H 2026 drop) -->
 <!-- v48.340 (id 178 weekly caveats week of 3 Aug 2026 - 60 caveats S170.3M, ESR-REIT Ang Mo Kio Street 65 exit and a Sims Lane freehold) -->
 <!-- v48.339 (S265: Acrophyte Hospitality Trust 1H 2026 drop, id 177. Distribution suspended to 2H 2028; US$198.5 million term loan due September 2026. Hero, three cards, seven feed rows and NR_STATIC_IDS rebuilt from NEWS.) -->
@@ -23502,6 +23503,7 @@ async function loadReitAssets(cb){
 // book in SGD even for overseas assets). Only entities whose AR/quarterly PRESENTS in a
 // foreign currency are listed here. To correct: edit one line — no logic change needed.
 var REIT_CCY = {
+  "Acrophyte Hospitality Trust":"US$",
   "Manulife US REIT":"US$",
   "Prime US REIT":"US$",
   "United Hampshire US REIT":"US$",
