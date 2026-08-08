@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- v48.342 (S269: Acrophyte Hospitality Trust display currency. REIT_CCY gains "Acrophyte Hospitality Trust":"US$" so all four valuation surfaces (fmtAssetVal, entity-header rollup, card, detail YoY table) render US$ instead of the S$ default. Pairs with the S269 SQL restatement of reit_assets ids 769-802 from SGD@1.34 to the issuer reporting currency: val loaded from AR 2025 Portfolio List (32 hotels, US$714.9M), prev_val from notes-harvested FY2024 (US$728.0M), occ advanced FY2024->FY2025, prev_occ unchanged, id 786 Auburn Hills prev_occ NULLed. No cascade, no NEWS, no sitemap change.) -->
+<!-- v48.343 (S271: Coliwoo Holdings Limited (SGX: W8W) added to TALENT_DATA - 4 key management entries, board deferred pending AR 2025 per L-SRC-4. Asset Directory 29 rows committed separately as ids 1837-1865. Previously v48.342 (S269: Acrophyte Hospitality Trust display currency. REIT_CCY gains "Acrophyte Hospitality Trust":"US$" so all four valuation surfaces (fmtAssetVal, entity-header rollup, card, detail YoY table) render US$ instead of the S$ default. Pairs with the S269 SQL restatement of reit_assets ids 769-802 from SGD@1.34 to the issuer reporting currency: val loaded from AR 2025 Portfolio List (32 hotels, US$714.9M), prev_val from notes-harvested FY2024 (US$728.0M), occ advanced FY2024->FY2025, prev_occ unchanged, id 786 Auburn Hills prev_occ NULLed. No cascade, no NEWS, no sitemap change.) -->
 <!-- v48.341 (id:179 Manulife US REIT 1H 2026 drop) -->
 <!-- v48.340 (id 178 weekly caveats week of 3 Aug 2026 - 60 caveats S170.3M, ESR-REIT Ang Mo Kio Street 65 exit and a Sims Lane freehold) -->
 <!-- v48.339 (S265: Acrophyte Hospitality Trust 1H 2026 drop, id 177. Distribution suspended to 2H 2028; US$198.5 million term loan due September 2026. Hero, three cards, seven feed rows and NR_STATIC_IDS rebuilt from NEWS.) -->
@@ -17120,6 +17120,70 @@ var TALENT_DATA = [
     prev_roles:[{org:'Wharf Hotels (Marco Polo HK / Gateway / Prince)', pos:'Area General Manager'},{org:'The Ritz-Carlton, Millenia Singapore', pos:'Executive Assistant Manager'}],
     cross_board_roles:[],
     tags:['CEO Montigo Resorts','25 yrs Hospitality','Stelliers GM of the Year 2019'],
+    linkedin_url:null, photo_url:null
+  },
+  {
+    id:'coliwoo-ceo-lim-26', name:'Kelvin Lim Lung Tieng',
+    role:'Executive Chairman and Chief Executive Officer',
+    role_type:'CEO', entity:'Coliwoo Holdings Limited', entity_short:'Coliwoo', ar_year:'FY2026',
+    appointed:null, tenure_yrs:null,
+    rem_exact:null, rem_fixed:null, rem_bonus:null, rem_other:null, rem_band:null,
+    rem_note:'Coliwoo Holdings Limited does not individually disclose executive remuneration in any document read for this pass \\u2014 neither the 1H FY2026 results announcement nor the 1Q or 1H FY2026 business updates carry a remuneration table, band disclosure or director\'s fee breakdown. Group employee benefit costs were S$5,246k in 1H FY2026 against S$2,516k in 1H FY2025, an increase the issuer attributes to higher staff and corporate overheads following the November 2025 listing. Individual disclosure is expected in the FY2025 annual report, which is not yet processed. PENDING AR 2025. Source for this entry: Coliwoo Holdings Limited 1Q FY2026 Business Updates dated 3 February 2026 (Key Management Team slide); Coliwoo Holdings Limited 1H FY2026 results announcement dated 6 May 2026.',
+    rem_pct_fixed:null, rem_pct_bonus:null, rem_pct_other:null,
+    rem_history:[],
+    edu:null,
+    bio:'Executive Chairman and Chief Executive Officer of Coliwoo Holdings Limited, which listed on the SGX Mainboard on 6 November 2025. Provides guidance to the business development and overall management of the Group. Concurrently Executive Chairman and Executive Director of LHN Limited (SGX: 41O), the SGX Mainboard-listed parent whose wholly owned subsidiary LHN Group Pte. Ltd. holds approximately 65% of Coliwoo. Over 25 years of experience across property leasing, logistics services and facilities management. Named as \\u201cMr. Kelvin Lim\\u201d in Coliwoo press releases and as \\u201cLim Lung Tieng\\u201d in SGX announcements and the interested-person transaction table \\u2014 the same person. Signed the 1H FY2026 results announcement dated 6 May 2026 in that capacity.',
+    prev_roles:[{org:'LHN Limited (SGX: 41O)', pos:'Executive Chairman and Executive Director \\u2014 concurrent appointment'}],
+    cross_board_roles:[{org:'LHN Limited (SGX: 41O)', pos:'Executive Chairman and Executive Director'}],
+    tags:['CEO','Executive Chairman','Founder-led','LHN Group','2025 IPO','Co-living'],
+    linkedin_url:null, photo_url:null
+  },
+  {
+    id:'coliwoo-coo-loh-26', name:'Darren Loh',
+    role:'Chief Operating Officer',
+    role_type:'Mgmt', entity:'Coliwoo Holdings Limited', entity_short:'Coliwoo', ar_year:'FY2026',
+    appointed:'Joined the Group in 2022 as Chief Product Officer at a subsidiary', tenure_yrs:null,
+    rem_exact:null, rem_fixed:null, rem_bonus:null, rem_other:null, rem_band:null,
+    rem_note:'Coliwoo Holdings Limited does not individually disclose executive remuneration in any document read for this pass \\u2014 neither the 1H FY2026 results announcement nor the 1Q or 1H FY2026 business updates carry a remuneration table, band disclosure or director\'s fee breakdown. Group employee benefit costs were S$5,246k in 1H FY2026 against S$2,516k in 1H FY2025, an increase the issuer attributes to higher staff and corporate overheads following the November 2025 listing. Individual disclosure is expected in the FY2025 annual report, which is not yet processed. PENDING AR 2025. Source for this entry: Coliwoo Holdings Limited 1Q FY2026 Business Updates dated 3 February 2026 (Key Management Team slide).',
+    rem_pct_fixed:null, rem_pct_bonus:null, rem_pct_other:null,
+    rem_history:[],
+    edu:'Master of Engineering in Civil Engineering, Imperial College London (2005)',
+    bio:'Chief Operating Officer of Coliwoo Holdings Limited, responsible for the overall business operations of the Group including corporate strategy development, compliance, general administrative and human resources functions. Joined the Group in 2022 as Chief Product Officer at a subsidiary. Previously held leadership roles at listed real estate companies where he spearheaded investment and asset management.',
+    prev_roles:[{org:'Listed real estate companies (not named by the issuer)', pos:'Leadership roles spearheading investment and asset management'}],
+    cross_board_roles:[],
+    tags:['COO','Operations','Imperial College London','2022 Joiner','Co-living'],
+    linkedin_url:null, photo_url:null
+  },
+  {
+    id:'coliwoo-cco-chong-26', name:'Chong Ching Yeng',
+    role:'Chief Commercial Officer',
+    role_type:'Mgmt', entity:'Coliwoo Holdings Limited', entity_short:'Coliwoo', ar_year:'FY2026',
+    appointed:'Joined the Group in 2022', tenure_yrs:null,
+    rem_exact:null, rem_fixed:null, rem_bonus:null, rem_other:null, rem_band:null,
+    rem_note:'Coliwoo Holdings Limited does not individually disclose executive remuneration in any document read for this pass \\u2014 neither the 1H FY2026 results announcement nor the 1Q or 1H FY2026 business updates carry a remuneration table, band disclosure or director\'s fee breakdown. Group employee benefit costs were S$5,246k in 1H FY2026 against S$2,516k in 1H FY2025, an increase the issuer attributes to higher staff and corporate overheads following the November 2025 listing. Individual disclosure is expected in the FY2025 annual report, which is not yet processed. PENDING AR 2025. Source for this entry: Coliwoo Holdings Limited 1Q FY2026 Business Updates dated 3 February 2026 (Key Management Team slide).',
+    rem_pct_fixed:null, rem_pct_bonus:null, rem_pct_other:null,
+    rem_history:[],
+    edu:'Bachelor of Real Estate (Property Management), National University of Singapore (2007)',
+    bio:'Chief Commercial Officer of Coliwoo Holdings Limited, overseeing strategic planning, business development, sales initiatives and market expansion for the Group\'s serviced residences and co-living businesses. Joined the Group in 2022 and serves as Chief Commercial Officer at a subsidiary. Previously held senior leadership roles overseeing regional sales and marketing across various real estate products since 2007 at LHN Group Pte. Ltd., a subsidiary of LHN Limited.',
+    prev_roles:[{org:'LHN Group Pte. Ltd. (subsidiary of LHN Limited)', pos:'Senior leadership roles in regional sales and marketing, from 2007'}],
+    cross_board_roles:[],
+    tags:['CCO','Commercial','NUS Real Estate','LHN Group','2022 Joiner','Co-living'],
+    linkedin_url:null, photo_url:null
+  },
+  {
+    id:'coliwoo-fc-teo-26', name:'Joelle Teo',
+    role:'Financial Controller',
+    role_type:'CFO', entity:'Coliwoo Holdings Limited', entity_short:'Coliwoo', ar_year:'FY2026',
+    appointed:'Joined the Group in 2023 as Senior Finance Manager at a subsidiary', tenure_yrs:null,
+    rem_exact:null, rem_fixed:null, rem_bonus:null, rem_other:null, rem_band:null,
+    rem_note:'Coliwoo Holdings Limited does not individually disclose executive remuneration in any document read for this pass \\u2014 neither the 1H FY2026 results announcement nor the 1Q or 1H FY2026 business updates carry a remuneration table, band disclosure or director\'s fee breakdown. Group employee benefit costs were S$5,246k in 1H FY2026 against S$2,516k in 1H FY2025, an increase the issuer attributes to higher staff and corporate overheads following the November 2025 listing. Individual disclosure is expected in the FY2025 annual report, which is not yet processed. PENDING AR 2025. Source for this entry: Coliwoo Holdings Limited 1Q FY2026 Business Updates dated 3 February 2026 (Key Management Team slide).',
+    rem_pct_fixed:null, rem_pct_bonus:null, rem_pct_other:null,
+    rem_history:[],
+    edu:'Bachelor of Accountancy, Nanyang Technological University (1999); member of the Institute of Singapore Chartered Accountants since 2003',
+    bio:'Financial Controller of Coliwoo Holdings Limited, responsible for overseeing the Group\'s financial operations and ensuring compliance with financial and statutory requirements. Joined the Group in 2023 as Senior Finance Manager at a subsidiary, after serving as Finance Manager at LHN Group Pte. Ltd. from 2019. The Group discloses no separately titled Chief Financial Officer in any document read for this pass; the Financial Controller is the most senior finance officer named.',
+    prev_roles:[{org:'LHN Group Pte. Ltd.', pos:'Finance Manager, from 2019'}],
+    cross_board_roles:[],
+    tags:['Financial Controller','Finance','NTU Accountancy','ISCA','LHN Group','2023 Joiner'],
     linkedin_url:null, photo_url:null
   },
 ];
