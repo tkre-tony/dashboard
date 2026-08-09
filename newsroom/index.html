@@ -1,4 +1,5 @@
 <!DOCTYPE html>
+<!-- v48.349 (display layer for TAP: L211 talent-entity-filter option + ENTITY_COLORS; Operator entity_type added to Asset Directory across filter, labels, chip row and toggle) -->
 <!-- v48.348 (article id 181 The Assembly Place 50 Jalan Harom Setangkai joint venture &mdash; landing cascade regenerated from NEWS) -->
 <!-- v48.347 (TAP Human Capital pass &mdash; 11 TALENT_DATA records for The Assembly Place, AR2025 audited remuneration; oxl-dceo-25 cross-linked to TAP) -->
 <!-- v48.344 (S271: talent-entity-filter option list completed - 3 entities present in TALENT_DATA but absent from the dropdown are now selectable: Coliwoo Holdings Limited (4 profiles, new), Perennial Holdings (25 profiles, pre-existing gap) and Keppel DC REIT Management Pte. Ltd. (3 profiles, pre-existing gap). Options only, no TALENT_DATA/NEWS/REIT_DATA change. Previously v48.343 (S271: Coliwoo Holdings Limited (SGX: W8W) added to TALENT_DATA - 4 key management entries, board deferred pending AR 2025 per L-SRC-4. Asset Directory 29 rows committed separately as ids 1837-1865. Previously v48.342 (S269: Acrophyte Hospitality Trust display currency. REIT_CCY gains "Acrophyte Hospitality Trust":"US$" so all four valuation surfaces (fmtAssetVal, entity-header rollup, card, detail YoY table) render US$ instead of the S$ default. Pairs with the S269 SQL restatement of reit_assets ids 769-802 from SGD@1.34 to the issuer reporting currency: val loaded from AR 2025 Portfolio List (32 hotels, US$714.9M), prev_val from notes-harvested FY2024 (US$728.0M), occ advanced FY2024->FY2025, prev_occ unchanged, id 786 Auburn Hills prev_occ NULLed. No cascade, no NEWS, no sitemap change.) -->
@@ -4585,6 +4586,7 @@ body.article-takeover .ed-foot{display:none!important}
           <button id="ent-all"  onclick="reitSetEntity('ALL')"  style="padding:5px 14px;border:none;border-radius:7px;font-size:12px;font-weight:700;font-family:'DM Sans',sans-serif;cursor:pointer;background:var(--g1);color:#fff">All</button>
           <button id="ent-dev"  onclick="reitSetEntity('DEV')"  style="padding:5px 14px;border:none;border-radius:7px;font-size:12px;font-weight:600;font-family:'DM Sans',sans-serif;cursor:pointer;background:transparent;color:var(--mut)">Developers</button>
           <button id="ent-reit" onclick="reitSetEntity('REIT')" style="padding:5px 14px;border:none;border-radius:7px;font-size:12px;font-weight:600;font-family:'DM Sans',sans-serif;cursor:pointer;background:transparent;color:var(--mut)">REITs</button>
+          <button id="ent-op"   onclick="reitSetEntity('OP')"   style="padding:5px 14px;border:none;border-radius:7px;font-size:12px;font-weight:600;font-family:'DM Sans',sans-serif;cursor:pointer;background:transparent;color:var(--mut)">Operators</button>
         </div>
         <div style="display:flex;gap:10px;align-items:center;background:var(--srf2);border:1px solid var(--bdr);border-radius:8px;padding:5px 12px">
           <span style="font-size:9px;color:var(--mut);font-weight:600;text-transform:uppercase;letter-spacing:.04em">AR Data</span>
@@ -4637,6 +4639,11 @@ body.article-takeover .ed-foot{display:none!important}
         <span class="fbar-label">Developer</span>
         <button class="dir-tbtn on" data-devf="" onclick="reitSetFilter(this,'dev','')">All</button>
         <span id="chip-dev-dynamic" style="display:contents"></span>
+      </div>
+      <div id="chip-op-row" style="display:flex;gap:6px;flex-wrap:wrap;align-items:center;margin-bottom:9px">
+        <span class="fbar-label">Operator</span>
+        <button class="dir-tbtn on" data-opf="" onclick="reitSetFilter(this,'op','')">All</button>
+        <span id="chip-op-dynamic" style="display:contents"></span>
       </div>
 
       <!-- Row 3: Asset type chips -->
@@ -5308,7 +5315,7 @@ body.article-takeover .ed-foot{display:none!important}
       <option value="">All Entities</option>
       <option value="Acrophyte Hospitality Trust">Acrophyte / AI-REIT (FY2025)</option>
       <option value="AIMS APAC REIT">AIMS APAC REIT (FY2026)</option>
-      <option value="Alpha Integrated REIT">AI-REIT (FY2025)</option>
+      <option value="Alpha Integrated REIT">AI-REIT (FY2025)</option><option value="The Assembly Place">Assembly Place (FY2025)</option>
       <option value="BHG Retail REIT">BHG REIT (FY2025)</option>
       <option value="Bukit Sembawang Estates">Bukit Sembawang (FY2025)</option>
       <option value="CapitaLand Ascendas REIT">CLAR (FY2025)</option>
@@ -23838,6 +23845,7 @@ function fmtAssetVal(p){
 }
 
 var ENTITY_COLORS = {
+  "The Assembly Place":"#0f1b33",
   "Hongkong Land":"#00594f",
   "UI Boustead REIT":"#0d6e72",
   "AIMS APAC REIT":"#1a5276",
@@ -24099,7 +24107,7 @@ function reitRenderTable(data){
     var entityLine1=p.entity,entityLine2='';
     if(p.entity.length>24){var wi=p.entity.lastIndexOf(' ',24);if(wi<8)wi=24;entityLine1=p.entity.substring(0,wi);entityLine2=p.entity.substring(wi).trim();}
     var entityHtml='<div style="font-size:11px;color:'+rc+';font-weight:600;line-height:1.4">'+entityLine1+(entityLine2?'<br>'+entityLine2:'')+'</div>'
-      +'<div style="font-size:9px;color:var(--mut);margin-top:1px">'+(p.entity_type==='DEV'||p.entity_type==='Developer'?'Developer':'REIT')+'</div>';
+      +'<div style="font-size:9px;color:var(--mut);margin-top:1px">'+(p.entity_type==='DEV'||p.entity_type==='Developer'?'Developer':(p.entity_type==='Operator'?'Operator':'REIT'))+'</div>';
 
     // Tenure: split after "Leasehold"
     var tenureRaw=p.tenure||'—',tenureHtml=tenureRaw;
@@ -24254,8 +24262,8 @@ function reitSetEntity(type){
   reitActiveEntType = type;
   reitActiveEntity = '';
   reitActiveDev = '';
-  var entColors = { all:'var(--g1)', reit:'var(--g1)', dev:'#475569' };
-  ['all','reit','dev'].forEach(function(k){
+  var entColors = { all:'var(--g1)', reit:'var(--g1)', dev:'#475569', op:'#0f1b33' };
+  ['all','reit','dev','op'].forEach(function(k){
     var btn = document.getElementById('ent-'+k);
     if(btn){
       var active = (k.toUpperCase()===type);
@@ -24268,6 +24276,8 @@ function reitSetEntity(type){
   var devRow = document.getElementById('chip-dev-row');
   if(reitRow) reitRow.style.display = (type==='REIT' || type==='ALL') ? 'flex' : 'none';
   if(devRow) devRow.style.display = (type==='DEV' || type==='ALL') ? 'flex' : 'none';
+  var opRow = document.getElementById('chip-op-row');
+  if(opRow) opRow.style.display = (type==='OP' || type==='ALL') ? 'flex' : 'none';
   document.querySelectorAll('[data-reitf]').forEach(function(b){ b.classList.remove('on'); });
   var a1 = document.querySelector('[data-reitf=""]'); if(a1) a1.classList.add('on');
   document.querySelectorAll('[data-devf]').forEach(function(b){ b.classList.remove('on'); });
@@ -24405,7 +24415,7 @@ function reitBuildChipRows(){
   REIT_DATA.forEach(function(r){
     var ent = r.entity; if(!ent) return;
     var et  = r.entity_type || '';
-    if(!entMap[ent]) entMap[ent] = {entity:ent, et:et, fyMax:'', isDelisted:false, isReit:false, isDev:false};
+    if(!entMap[ent]) entMap[ent] = {entity:ent, et:et, fyMax:'', isDelisted:false, isReit:false, isDev:false, isOp:false};
     var bucket = entMap[ent];
     // Track newest FY across all rows of this entity
     var fy = r.ar_year || '';
@@ -24415,6 +24425,7 @@ function reitBuildChipRows(){
     // Bucket the entity into REIT-side or Dev-side
     if(et==='REIT' || et==='Stapled REIT + Business Trust') bucket.isReit = true;
     if(et==='DEV' || et==='Developer' || et==='Dev')        bucket.isDev  = true;
+    if(et==='Operator')                                     bucket.isOp   = true;
   });
 
   // Freshness color per handoff: FY25/26 or FY2025 or Pending=green, FY2024/25 or FY24/25=amber, older or delisted=gray
@@ -24479,6 +24490,11 @@ function reitBuildChipRows(){
   var devTarget = document.getElementById('chip-dev-dynamic');
   if(devTarget) devTarget.innerHTML = devEnts.map(function(e){return buildButton(e,'dev');}).join('');
 
+  // Build Operator chip row (v48.349)
+  var opEnts = dedupeByLabel(Object.keys(entMap).filter(function(e){return entMap[e].isOp;})).sort(chipSort);
+  var opTarget = document.getElementById('chip-op-dynamic');
+  if(opTarget) opTarget.innerHTML = opEnts.map(function(e){return buildButton(e,'op');}).join('');
+
   // Reapply active-selection highlight after rebuild (chips are re-created each pass now)
   if(reitActiveEntity){
     var rb=document.querySelector('[data-reitf="'+reitActiveEntity.replace(/"/g,'&quot;')+'"]');
@@ -24517,6 +24533,9 @@ function reitSearch(page){
     if(reitActiveEntType==='REIT' && p.entity_type!=='REIT' && p.entity_type!=='Stapled REIT + Business Trust') return false;
     // v48.21d-redo: DEV filter must include all three casings: 'DEV' (legacy upper), 'Developer' (modern), 'Dev' (mixed — GuocoLand)
     if(reitActiveEntType==='DEV' && p.entity_type!=='DEV' && p.entity_type!=='Developer' && p.entity_type!=='Dev') return false;
+    // v48.349: 'Operator' is a third entity_type (L-DATA-4). Operators master-lease
+    // and manage; they own nothing. Without this branch TAP rows were unreachable.
+    if(reitActiveEntType==='OP' && p.entity_type!=='Operator') return false;
     if(reitActiveEntity && p.entity !== reitActiveEntity) return false;
     if(reitActiveDev && p.entity !== reitActiveDev) return false;
     if(reitActiveAsset){
@@ -24861,7 +24880,7 @@ function reitOpenDetail(idx){
       +'<div style="font-size:9px;color:var(--mut);text-transform:uppercase;letter-spacing:.04em;margin-top:2px">'+s.l+'</div></div>';
   }).join('');
 
-  var entityLabel = p.entity_type==='DEV' ? 'Developer' : 'REIT';
+  var entityLabel = (p.entity_type==='DEV'||p.entity_type==='Developer'||p.entity_type==='Dev') ? 'Developer' : (p.entity_type==='Operator' ? 'Operator' : 'REIT');
   var statusHtml = p.status ? '<div style="background:var(--srf2);border-radius:8px;padding:14px"><div style="font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.06em;color:var(--mut);margin-bottom:8px">Status</div><div style="font-size:13px;font-weight:500">'+p.status+'</div></div>' : '';
 
   // YoY comparison block (shown when prev_* fields exist)
