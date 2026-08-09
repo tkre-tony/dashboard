@@ -1,4 +1,5 @@
 <!DOCTYPE html>
+<!-- v48.351 (reitSetFilter: kind=&quot;op&quot; was falling through to the catch-all else and setting the asset-type filter to the entity name, returning zero rows and dimming every chip. Adds a real op branch, reitActiveOp state, predicate and chip re-highlight.) -->
 <!-- v48.350 (Asset Directory card header badge honours Operator (was binary DEV/REIT); chip labels drop &quot;Limited&quot; for Coliwoo and KOP; KOP talent dropdown label shortened) -->
 <!-- v48.349 (display layer for TAP: L211 talent-entity-filter option + ENTITY_COLORS; Operator entity_type added to Asset Directory across filter, labels, chip row and toggle) -->
 <!-- v48.348 (article id 181 The Assembly Place 50 Jalan Harom Setangkai joint venture &mdash; landing cascade regenerated from NEWS) -->
@@ -23918,6 +23919,7 @@ var REIT_TYPE_ICONS = {
 
 var reitActiveEntity = '';
 var reitActiveDev = '';
+var reitActiveOp = '';
 
 // ── AR Tracker — new AR notifications ────────────────────────────────────────
 var AR_TRACKER_DATA = [];  // loaded from Supabase ar_tracker table
@@ -24263,6 +24265,7 @@ function reitSetEntity(type){
   reitActiveEntType = type;
   reitActiveEntity = '';
   reitActiveDev = '';
+  reitActiveOp = '';
   var entColors = { all:'var(--g1)', reit:'var(--g1)', dev:'#475569', op:'#0f1b33' };
   ['all','reit','dev','op'].forEach(function(k){
     var btn = document.getElementById('ent-'+k);
@@ -24303,6 +24306,18 @@ function reitSetFilter(btn, kind, val){
   } else if(kind==='dev'){
     reitActiveDev = val;
     document.querySelectorAll('[data-devf]').forEach(function(b){ b.classList.remove('on'); });
+    if(val !== ''){
+      reitActiveGeo = 'ALL';
+      ['sg','ov','all'].forEach(function(k){
+        var gb = document.getElementById('geo-'+k);
+        if(gb){ var a=(k==='all'); gb.style.background=a?'var(--g1)':'transparent'; gb.style.color=a?'#fff':'var(--mut)'; gb.style.fontWeight=a?'700':'600'; }
+      });
+      reitActiveContinent=''; reitActiveCountry=''; reitActiveCity=''; reitActiveDistrict='';
+      ['row-district','row-continent','row-country','row-city'].forEach(function(id){ var el=document.getElementById(id); if(el) el.style.display='none'; });
+    }
+  } else if(kind==='op'){
+    reitActiveOp = val;
+    document.querySelectorAll('[data-opf]').forEach(function(b){ b.classList.remove('on'); });
     if(val !== ''){
       reitActiveGeo = 'ALL';
       ['sg','ov','all'].forEach(function(k){
@@ -24507,6 +24522,10 @@ function reitBuildChipRows(){
     var db=document.querySelector('[data-devf="'+reitActiveDev.replace(/"/g,'&quot;')+'"]');
     if(db) db.classList.add('on');
   }
+  if(reitActiveOp){
+    var ob=document.querySelector('[data-opf="'+reitActiveOp.replace(/"/g,'&quot;')+'"]');
+    if(ob) ob.classList.add('on');
+  }
   _reitChipsBuilt = true;
 }
 
@@ -24541,6 +24560,7 @@ function reitSearch(page){
     if(reitActiveEntType==='OP' && p.entity_type!=='Operator') return false;
     if(reitActiveEntity && p.entity !== reitActiveEntity) return false;
     if(reitActiveDev && p.entity !== reitActiveDev) return false;
+    if(reitActiveOp && p.entity !== reitActiveOp) return false;
     if(reitActiveAsset){
       var t = (p.type||'').toLowerCase();
       var a = reitActiveAsset.toLowerCase();
