@@ -1,4 +1,5 @@
 <!DOCTYPE html>
+<!-- v48.350 (Asset Directory card header badge honours Operator (was binary DEV/REIT); chip labels drop &quot;Limited&quot; for Coliwoo and KOP; KOP talent dropdown label shortened) -->
 <!-- v48.349 (display layer for TAP: L211 talent-entity-filter option + ENTITY_COLORS; Operator entity_type added to Asset Directory across filter, labels, chip row and toggle) -->
 <!-- v48.348 (article id 181 The Assembly Place 50 Jalan Harom Setangkai joint venture &mdash; landing cascade regenerated from NEWS) -->
 <!-- v48.347 (TAP Human Capital pass &mdash; 11 TALENT_DATA records for The Assembly Place, AR2025 audited remuneration; oxl-dceo-25 cross-linked to TAP) -->
@@ -5343,7 +5344,7 @@ body.article-takeover .ed-foot{display:none!important}
       <option value="Ho Bee Land">Ho Bee Land (FY2025)</option>
       <option value="Hong Fok Corporation">Hong Fok Corporation (FY2025)</option>
       <option value="IREIT Global">iREIT Global (FY2025)</option>
-      <option value="KOP Limited">KOP Limited (FY2026)</option>
+      <option value="KOP Limited">KOP (FY2026)</option>
       <option value="KSH Holdings">KSH Holdings (FY2026)</option>
       <option value="Hongkong Land">Hongkong Land (FY2025)</option>
       <option value="Keppel DC REIT">Keppel DC REIT (FY2025)</option>
@@ -24327,6 +24328,8 @@ function reitSetFilter(btn, kind, val){
 var REIT_CHIP_LABELS = {
   // REIT short labels — long entity name → display label
   'Acrophyte Hospitality Trust': 'Acrophyte HT',
+  'Coliwoo Holdings Limited': 'Coliwoo',
+  'KOP Limited': 'KOP',
   'AIMS APAC REIT': 'AIMS APAC',
   'Alpha Integrated REIT (former Sabana)': 'AI REIT',
   'CapitaLand China Trust': 'CLCT',
@@ -24722,7 +24725,7 @@ function reitSearch(page){
     var locLine = p.country==='Singapore'
       ? (p.addr+(p.area?' \u00b7 '+p.area:''))
       : (p.area ? p.area+', '+p.country : p.country);
-    var entBadge = '<span style="font-size:9px;font-weight:700;background:rgba(255,255,255,.22);color:#fff;border-radius:3px;padding:1px 5px;letter-spacing:.04em">'+(isDev?'DEV':'REIT')+'</span>';
+    var entBadge = '<span style="font-size:9px;font-weight:700;background:rgba(255,255,255,.22);color:#fff;border-radius:3px;padding:1px 5px;letter-spacing:.04em">'+(isDev?'DEV':(et==='Operator'?'OPERATOR':'REIT'))+'</span>';
     // Status detection for callout banners
     var isDivested    = p.status && p.status.indexOf('DIVESTED') >= 0;
     var isPending     = (p.status && (p.status.indexOf('DISPOSAL') >= 0 || p.status.indexOf('PENDING DIVESTMENT') >= 0)) || (p.notes && (p.notes.indexOf('PENDING DISPOSAL') >= 0 || p.notes.indexOf('PENDING DIVESTMENT') >= 0));
