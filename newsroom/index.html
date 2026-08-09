@@ -1,4 +1,5 @@
 <!DOCTYPE html>
+<!-- v48.355 (S278 L-YOY-1: rem_history array position was treated as a sort order. Five renderer sites assumed newest-first — yoy sort comparator, card YoY badge, detail-panel YoY badge, year-range chip and the remuneration history table. 37 records across 7 entities (Far East Orchard, First REIT, Far East Hospitality Trust, United Hampshire US REIT, Lendlease Global Commercial REIT, Sing Holdings, Frasers Property) are authored oldest-first, so all five inverted for them: Chan Hon Chew showed ▼34% against an actual +50.5%. Fix derives order from the year field via paRemFY/paRemRows/paRemSeries. NO DATA CHANGED.) -->
 <!-- v48.354 (S278: Far East Orchard Human Capital pass — 58th AGM 17 Apr 2026 applied. Ramlee Bin Buang marked retired; Ku Xian Hong to Lead ID and NRC member; Chan Hon Chew to ARC Chair; Koh Kah Sek NC to NRC; Ee Choo Lin Diana stepped down from RC; Ganu reduced to ID only. NEW record Ong Yin Suen (feo-dir-ong-25), TALENT_DATA 568 to 569. Three pre-existing defects fixed: CEO rem_note external-manager boilerplate, Chan +50.4/+50.5 self-contradiction, CFO tenure_yrs 7.0 to 8.0. id:183 imageCredit and landing_credit drop the word freehold per AR 2025 p.31 note 1 — ORH land is mixed tenure with a 50-year interest granted to FEHT.) -->
 <!-- v48.353 (id:183 Far East Orchard 1H FY2026 - revenue S$248.5M on HFS consolidation; UK now 71.4% of revenue; PBSA management segment total operating profit S$1.666M vs S$1.721M as a 49% associate; no fair value movements recognised; effective tax rate 30.1%) -->
 <!-- v48.352 (id:182 Tuan Sing 1H2026 - profit rests on S$13.2M revaluation; ex-FV pre-tax loss S$11.3M; net gearing 0.97x as liabilities rise 4% on S$110.1M associate loan; GulTech 70% of Adjusted EBIT) -->
@@ -17491,6 +17492,37 @@ function talentTblSortBy(col){
   talentRenderTable(talentSort(talentFilter()));
 }
 
+// ── L-YOY-1 (S278) ─────────────────────────────────────────
+// rem_history array POSITION is not a sort order. 37 records across 7 entities
+// are authored oldest-first; the rest are newest-first. Five call sites assumed
+// newest-first, which inverted the YoY sign, the year-range chip and the
+// history table for those 37 (e.g. Chan Hon Chew rendered ▼34% on a +50.5%
+// rise). Both helpers below derive order from the year field, so neither the
+// badge nor the table depends on how a record happens to be written.
+function paRemFY(h){
+  var m = (h && h.year != null) ? String(h.year).match(/[0-9]{4}/) : null;
+  return m ? parseInt(m[0], 10) : NaN;
+}
+function paRemRows(hist){
+  if(!Array.isArray(hist)) return [];
+  var dated = hist.filter(function(h){ return h && !isNaN(paRemFY(h)); });
+  // If any entry lacks a parseable year, do not reorder — respect the author.
+  if(dated.length !== hist.length) return hist.slice();
+  return dated.slice().sort(function(a,b){ return paRemFY(b) - paRemFY(a); });
+}
+function paRemSeries(hist){
+  var rows = paRemRows(hist);
+  if(rows.length < 2) return null;
+  var out = { firstYear: rows[rows.length-1].year, lastYear: rows[0].year,
+              curr: null, prev: null, pct: null };
+  var wt = rows.filter(function(h){ return h && h.total; });
+  if(wt.length >= 2 && wt[1].total){
+    out.curr = wt[0].total; out.prev = wt[1].total;
+    out.pct  = Math.round((out.curr - out.prev) / out.prev * 100);
+  }
+  return out;
+}
+
 function talentRenderTable(data){
   var ROLE_COLORS = {CEO:'#7c3aed',CFO:'#0891b2',CIO:'#16a34a',Board:'#d97706',Other:'#64748b'};
 
@@ -17504,8 +17536,8 @@ function talentRenderTable(data){
     else if(col==='rem'){av=a.rem_exact||0;bv=b.rem_exact||0; return dir==='asc'?av-bv:bv-av;}
     else if(col==='tenure'){av=a.tenure_yrs||0;bv=b.tenure_yrs||0; return dir==='asc'?av-bv:bv-av;}
     else if(col==='yoy'){
-      var ah=(a.rem_history&&a.rem_history.length>=2&&a.rem_history[0].total&&a.rem_history[1].total)?Math.round((a.rem_history[0].total-a.rem_history[1].total)/a.rem_history[1].total*100):null;
-      var bh=(b.rem_history&&b.rem_history.length>=2&&b.rem_history[0].total&&b.rem_history[1].total)?Math.round((b.rem_history[0].total-b.rem_history[1].total)/b.rem_history[1].total*100):null;
+      var as_=paRemSeries(a.rem_history), bs_=paRemSeries(b.rem_history);
+      var ah=(as_&&as_.pct!=null)?as_.pct:null, bh=(bs_&&bs_.pct!=null)?bs_.pct:null;
       av=ah!=null?ah:-999;bv=bh!=null?bh:-999; return dir==='asc'?av-bv:bv-av;
     }
     else {av=(a[col]||'').toString();bv=(b[col]||'').toString();}
@@ -17548,8 +17580,9 @@ function talentRenderTable(data){
     // YoY cell
     var yoyCell = '—';
     var hist = p.rem_history;
-    if(hist&&hist.length>=2&&hist[0].total&&hist[1].total){
-      var pct=Math.round((hist[0].total-hist[1].total)/hist[1].total*100);
+    var series=paRemSeries(hist);
+    if(series&&series.pct!=null){
+      var pct=series.pct;
       var up=pct>=0;
       yoyCell='<span style="font-size:11px;font-weight:700;color:'+(up?'#16a34a':'#c8364a')+'">'+(up?'▲':'▼')+Math.abs(pct)+'%</span>';
     }
@@ -17712,18 +17745,18 @@ function talentRender(){
     // YoY delta badge — shown only if rem_history has 2+ entries with totals
     var yoyHtml = '';
     var hist = p.rem_history;
-    if(hist && hist.length >= 2 && hist[0] && hist[1] && hist[0].total && hist[1].total){
-      var curr = hist[0].total, prev = hist[1].total;
-      var pct = Math.round((curr - prev) / prev * 100);
+    var series = paRemSeries(hist);
+    if(series && series.pct != null){
+      var curr = series.curr, prev = series.prev;
+      var pct = series.pct;
       var up = pct >= 0;
       yoyHtml = '<span style="font-size:10px;font-weight:700;color:'+(up?'#16a34a':'#c8364a')+';background:'+(up?'#f0fdf4':'#fef2f2')+';border:1px solid '+(up?'#bbf7d0':'#fecaca')+';border-radius:3px;padding:1px 6px;margin-left:5px">'+(up?'▲':'▼')+Math.abs(pct)+'% YoY</span>';
     }
 
     // Year range chip — show "FY2024–FY2025" if history spans multiple years
     var yearRange = p.ar_year;
-    if(hist && hist.length >= 2){
-      var years = hist.map(function(h){return h.year;}).filter(Boolean);
-      if(years.length >= 2) yearRange = years[years.length-1]+' – '+years[0];
+    if(series && series.firstYear && series.lastYear){
+      yearRange = series.firstYear+' – '+series.lastYear;
     }
 
     // History count hint
@@ -17803,6 +17836,7 @@ function talentOpenDrawer(id){
   // YoY remuneration history
   var remHistHtml = '';
   if(p.rem_history && p.rem_history.length > 1){
+    var hrows = paRemRows(p.rem_history);
     remHistHtml = '<div class="td-section">📈 Remuneration History</div>'+
       '<div style="overflow-x:auto;margin-bottom:4px">'+
       '<table style="width:100%;border-collapse:collapse;font-size:11px">'+
@@ -17813,12 +17847,12 @@ function talentOpenDrawer(id){
         '<th style="text-align:right;padding:5px 8px;color:var(--mut);font-weight:500;border-bottom:1px solid var(--bdr)">Bonus%</th>'+
         '<th style="text-align:right;padding:5px 8px;color:var(--mut);font-weight:500;border-bottom:1px solid var(--bdr)">LTP%</th>'+
       '</tr>'+
-      p.rem_history.map(function(h,i){
+      hrows.map(function(h,i){
         var bg = i===0 ? '' : 'background:var(--srf3)';
         var totalStr = h.total ? ('S$'+(h.total/1000).toFixed(0)+'K') : (h.band||'—');
         var yoyHtml = '';
-        if(i>0 && p.rem_history[i-1].total && h.total){
-          var pct = ((p.rem_history[i-1].total - h.total)/h.total*100);
+        if(i>0 && hrows[i-1].total && h.total){
+          var pct = ((hrows[i-1].total - h.total)/h.total*100);
           yoyHtml = ' <span style="color:'+(pct>0?'#16a34a':'#c8364a');
           yoyHtml += ';font-size:9px">'+(pct>0?'▲':'▼')+Math.abs(pct).toFixed(0)+'%</span>';
         }
