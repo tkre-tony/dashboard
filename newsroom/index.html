@@ -1,4 +1,5 @@
 <!DOCTYPE html>
+<!-- v48.368 (12 Aug 2026, S287): PROVENANCE FIX, COMPLETED. v48.367 fixed the Human Capital source line, but the same class of defect survived on two other surfaces; this closes all three. (1) ASSET DIRECTORY card footer and detail disclaimer hardcoded 'Figures from '+ar_year+' Annual Report', so the three rows added today (Fraser Suites Singapore id 1887, Bayshore Drive id 1888/1889) footered as FY2024/25 AR when they come from an SGXNET announcement, a business-update deck and a URA tender award. Both sites now branch on whether `source` actually names an AR; rows whose source says AR render character-identical to before. (2) HUMAN CAPITAL AR/EST badge defaulted to AR when rem_exact and rem_band were both null — 120 of 573 records showed 'AR = exact figures from published Annual Report' against blank pay. New third state ND. Banded-but-not-estimate records (94) still read AR, correctly. (3) Legend gains the ND entry. No data changed; renderer only. ROOT CAUSE: three surfaces each hardcoded an Annual Report citation instead of reading the source field that was already present and already correct. Sparse or non-AR-sourced records expose it; dense AR-sourced records hide it. -->
 <!-- v48.367 (12 Aug 2026, S287): SOURCE PROVENANCE FIX. The Human Capital detail panel hardcoded 'Annual Report '+ar_year as the source line, so the two records added at v48.366 were citing an FPL FY2025/26 annual report that does not exist — that financial year does not close until 30 Sep 2026. Both are sourced from company announcements, not an AR. Renderer now reads (p.source_label||('Annual Report '+p.ar_year)), so all 571 pre-existing records are byte-unchanged in behaviour. NEW optional field source_label on fpl-gcoo-26 ('Company announcement 9 Mar 2026') and fps-ceo-26 ('Company announcement 3 Jul 2026'); redundant '(announced ...)' suffix dropped from both appointed strings now that the source line carries the date. KNOWN AND NOT FIXED HERE: the AR/EST source badge ternary defaults to AR when rem_exact and rem_band are both null, so records with no disclosed pay display 'AR' against blank figures. Affects records beyond Frasers; needs a third 'ND' state plus a legend entry. Parked for the Human Capital display batch together with bullet-form backgrounds. -->
 <!-- v48.366 (12 Aug 2026, S287): Frasers family Human Capital + Asset Directory close-out. TALENT_DATA 571 -> 573: NEW fpl-gcoo-26 Tony Lombardo (Group COO eff 1 Oct 2026, announced 9 Mar 2026, ex-Lendlease Group CEO) and fps-ceo-26 Tan Wee Hsien (CEO Singapore eff 1 Oct 2026, CEO Designate 8 Sep 2026, ex-CapitaLand Development). AMENDED fct-dir-soon-25: bio + prev_roles restated for the 1 Oct 2026 handover and transition to Group Adviser. REM DISCLOSURE FIX: rem_note on fct-dir-soon-25 and flct-dir-reini-25 now state plainly that the figure shown is a REIT directorship fee, not executive pay, and that executive remuneration sits inside FPL’s undisclosed five-person KMP aggregate of S$8,258,693 (FY2024/25). RENDERER FIX: education block now conditional — edu:null was printing the literal word null on 78 of 573 cards. Asset Directory (SQL, no redeploy): reit_assets 1,751 -> 1,754 rows / 64 entities; INSERT Fraser Suites Singapore id 1887 (PENDING ACQUISITION S$320.0M), Bayshore Drive residential id 1888 (FPL 37.5%), Bayshore Drive retail id 1889 (FCT 50%); UPDATE White Sands id 396 to PENDING DISPOSAL S$467.0M with val held at 431.0 — an agreed price is not an appraisal. STILL OPEN: Loo Choo Leong, Cameron Leggatt, Eu Chin Fen have no TALENT_DATA record; all three need FPL AR FY2024/25. -->
 <!-- v48.365 (S286: Newsroom drop id:191 Frasers Property 9M FY26 (capital recycling ~S$2,210M vs S$424M at 1H; net debt/equity 94.2% -> 93.6%)) -->
@@ -5409,7 +5410,7 @@ body.article-takeover .ed-foot{display:none!important}
   </div>
   <div style="font-size:10px;color:var(--mut2);margin-bottom:12px;padding:6px 10px;background:var(--srf2);border-radius:5px;border:1px solid var(--bdr)">
     <span style="font-size:9px;background:#f0fdf4;color:#166534;border:1px solid #bbf7d0;border-radius:3px;padding:1px 5px;font-weight:600">AR</span> = Exact figures sourced from published Annual Report &nbsp;·&nbsp;
-    <span style="font-size:9px;background:#fffbeb;color:#92400e;border:1px solid #fde68a;border-radius:3px;padding:1px 5px;font-weight:600">EST</span> = Industry estimate — verify against entity's AR Corporate Governance section before relying on figures.
+    <span style="font-size:9px;background:#fffbeb;color:#92400e;border:1px solid #fde68a;border-radius:3px;padding:1px 5px;font-weight:600">EST</span> = Industry estimate — verify against entity's AR Corporate Governance section before relying on figures. &nbsp;·&nbsp;<span style="font-size:9px;background:#f1f5f9;color:#475569;border:1px solid #cbd5e1;border-radius:3px;padding:1px 5px;font-weight:600">ND</span> = Not disclosed by the issuer — no remuneration figure is published for this individual.
   </div>
 
   <!-- Cards grid -->
@@ -17690,7 +17691,9 @@ function talentRenderTable(data){
       ? '<span style="font-size:9px;background:#f0fdf4;color:#166534;border:1px solid #bbf7d0;border-radius:3px;padding:1px 5px;font-weight:600">AR</span>'
       : (p.rem_band&&p.rem_band.indexOf('est')>=0
         ? '<span style="font-size:9px;background:#fffbeb;color:#92400e;border:1px solid #fde68a;border-radius:3px;padding:1px 5px;font-weight:600">EST</span>'
-        : '<span style="font-size:9px;background:#f5f3ff;color:#5b21b6;border:1px solid #ddd6fe;border-radius:3px;padding:1px 5px;font-weight:600">AR</span>');
+        : (p.rem_band
+          ? '<span style="font-size:9px;background:#f5f3ff;color:#5b21b6;border:1px solid #ddd6fe;border-radius:3px;padding:1px 5px;font-weight:600">AR</span>'
+          : '<span style="font-size:9px;background:#f1f5f9;color:#475569;border:1px solid #cbd5e1;border-radius:3px;padding:1px 5px;font-weight:600">ND</span>'));
 
     // YoY cell
     var yoyCell = '—';
@@ -24989,7 +24992,7 @@ function reitSearch(page){
           var newBadge = (arRow && arRow.new_ar_flag) ? ' <span style="background:#2563bc;color:#fff;font-size:8px;font-weight:700;padding:1px 5px;border-radius:3px;vertical-align:middle">NEW AR</span>' : '';
           var hasQ = p.q_period && p.q_notes;
           var qBadge = hasQ ? ' <span title="Quarterly overlay: '+String(p.q_period).replace(/"/g,'&quot;')+(p.q_source?' · '+String(p.q_source).replace(/"/g,'&quot;'):'')+'" style="background:#7c3aed;color:#fff;font-size:8px;font-weight:700;padding:1px 5px;border-radius:3px;vertical-align:middle;cursor:help">Q</span>' : '';
-          var disclaimer = hasQ ? 'Figures from '+p.ar_year+' AR · Q overlay' : 'Figures from '+p.ar_year+' Annual Report';
+          var _isAR = /\bAR\b|Annual Report/i.test(p.source||'');           var disclaimer = hasQ ? (_isAR ? 'Figures from '+p.ar_year+' AR · Q overlay' : 'Figures from '+p.source+' · Q overlay') : (_isAR ? 'Figures from '+p.ar_year+' Annual Report' : 'Figures from '+p.source);
           return dot+disclaimer+qBadge+newBadge;
         }())
       +'</div>'
@@ -25133,7 +25136,7 @@ function reitOpenDetail(idx){
     +newsHtml
     +'<div style="background:#fffbf0;border:1px solid #f0e0a0;border-radius:8px;padding:12px">'
     +'<div style="font-size:10px;font-weight:600;color:#7d5200;margin-bottom:4px">\u26a0\ufe0f Data Disclaimer</div>'
-    +'<div style="font-size:10px;color:#7d5200">Figures sourced from '+p.source+'. Values as reported in the '+p.ar_year+' Annual Report and may not reflect current market conditions.'+(p.q_period && p.q_notes ? ' Quarterly overlay ('+p.q_period+(p.q_source?' · '+p.q_source:'')+') available below.' : '')+'</div></div>';
+    +'<div style="font-size:10px;color:#7d5200">Figures sourced from '+p.source+'.'+(/\bAR\b|Annual Report/i.test(p.source||'') ? ' Values as reported in the '+p.ar_year+' Annual Report and may not reflect current market conditions.' : ' Not an annual-report figure — values are as reported in that source and may not reflect current market conditions.')+'+(p.q_period && p.q_notes ? ' Quarterly overlay ('+p.q_period+(p.q_source?' · '+p.q_source:'')+') available below.' : '')+'</div></div>';
 
   document.getElementById('rdet-source').innerHTML = (function(){
     var base = '\uD83D\uDCCB '+p.source+' \u00b7 Figures from '+p.ar_year+' AR';
