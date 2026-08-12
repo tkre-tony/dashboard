@@ -502,7 +502,11 @@ const sandbox = {
   LANDING_URL: '/',                       // root-absolute for static pages
   getBackLabel: () => '\u2190 PropertyAtlas',
   atlasArticleBack: () => false,          // referenced only inside onclick text
-  window: { location: { href: '', search: '' }, scrollTo() {}, addEventListener() {}, innerWidth: 1200 },
+  // L-SEO: edRenderShareBlock() branches on window.location.hostname. The stub
+  // previously had no hostname, so the apex test failed at build time and every
+  // static page baked the pre-flip github.io origin into all seven share targets.
+  // Static pages are only ever served from the apex — pin it.
+  window: { location: { href: 'https://propertyatlas.sg/', search: '', hostname: 'propertyatlas.sg', origin: 'https://propertyatlas.sg', protocol: 'https:' }, scrollTo() {}, addEventListener() {}, innerWidth: 1200 },
   document: { addEventListener() {}, getElementById() { return null; } },
 };
 vm.createContext(sandbox);
