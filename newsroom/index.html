@@ -1,4 +1,5 @@
 <!DOCTYPE html>
+<!-- v48.367 (12 Aug 2026, S287): SOURCE PROVENANCE FIX. The Human Capital detail panel hardcoded 'Annual Report '+ar_year as the source line, so the two records added at v48.366 were citing an FPL FY2025/26 annual report that does not exist — that financial year does not close until 30 Sep 2026. Both are sourced from company announcements, not an AR. Renderer now reads (p.source_label||('Annual Report '+p.ar_year)), so all 571 pre-existing records are byte-unchanged in behaviour. NEW optional field source_label on fpl-gcoo-26 ('Company announcement 9 Mar 2026') and fps-ceo-26 ('Company announcement 3 Jul 2026'); redundant '(announced ...)' suffix dropped from both appointed strings now that the source line carries the date. KNOWN AND NOT FIXED HERE: the AR/EST source badge ternary defaults to AR when rem_exact and rem_band are both null, so records with no disclosed pay display 'AR' against blank figures. Affects records beyond Frasers; needs a third 'ND' state plus a legend entry. Parked for the Human Capital display batch together with bullet-form backgrounds. -->
 <!-- v48.366 (12 Aug 2026, S287): Frasers family Human Capital + Asset Directory close-out. TALENT_DATA 571 -> 573: NEW fpl-gcoo-26 Tony Lombardo (Group COO eff 1 Oct 2026, announced 9 Mar 2026, ex-Lendlease Group CEO) and fps-ceo-26 Tan Wee Hsien (CEO Singapore eff 1 Oct 2026, CEO Designate 8 Sep 2026, ex-CapitaLand Development). AMENDED fct-dir-soon-25: bio + prev_roles restated for the 1 Oct 2026 handover and transition to Group Adviser. REM DISCLOSURE FIX: rem_note on fct-dir-soon-25 and flct-dir-reini-25 now state plainly that the figure shown is a REIT directorship fee, not executive pay, and that executive remuneration sits inside FPL’s undisclosed five-person KMP aggregate of S$8,258,693 (FY2024/25). RENDERER FIX: education block now conditional — edu:null was printing the literal word null on 78 of 573 cards. Asset Directory (SQL, no redeploy): reit_assets 1,751 -> 1,754 rows / 64 entities; INSERT Fraser Suites Singapore id 1887 (PENDING ACQUISITION S$320.0M), Bayshore Drive residential id 1888 (FPL 37.5%), Bayshore Drive retail id 1889 (FCT 50%); UPDATE White Sands id 396 to PENDING DISPOSAL S$467.0M with val held at 431.0 — an agreed price is not an appraisal. STILL OPEN: Loo Choo Leong, Cameron Leggatt, Eu Chin Fen have no TALENT_DATA record; all three need FPL AR FY2024/25. -->
 <!-- v48.365 (S286: Newsroom drop id:191 Frasers Property 9M FY26 (capital recycling ~S$2,210M vs S$424M at 1H; net debt/equity 94.2% -> 93.6%)) -->
 <!-- v48.364 (S285: Newsroom drop id:190 Singapore Land Group 1H 2026 (UOB exits Novena Square consortium; SG portfolio S$7,452.1M +1.33%)) -->
@@ -11549,8 +11550,8 @@ var TALENT_DATA = [
   },
   {
     id:'fpl-gcoo-26', name:'Tony Lombardo', role:'Group Chief Operating Officer', role_type:'Mgmt',
-    entity:'Frasers Property Limited', entity_short:'Frasers Property', ar_year:'FY2025/26',
-    appointed:'1 Oct 2026 (announced 9 Mar 2026)', tenure_yrs:null,
+    entity:'Frasers Property Limited', entity_short:'Frasers Property', ar_year:'FY2025/26', source_label:'Company announcement 9 Mar 2026',
+    appointed:'1 Oct 2026', tenure_yrs:null,
     rem_exact:null, rem_fixed:null, rem_bonus:null, rem_other:null,
     rem_band:null,
     rem_note:'No remuneration disclosed. Appointment announced 9 March 2026, effective 1 October 2026 — after the FY2024/25 remuneration tables were struck, so the first disclosure falls in the FY2025/26 annual report. Not a director; would appear in KMP disclosure only if within the top five.',
@@ -11570,8 +11571,8 @@ var TALENT_DATA = [
   },
   {
     id:'fps-ceo-26', name:'Tan Wee Hsien', role:'Chief Executive Officer, Singapore', role_type:'CEO',
-    entity:'Frasers Property Limited', entity_short:'Frasers Property', ar_year:'FY2025/26',
-    appointed:'8 Sep 2026 as CEO Designate; CEO from 1 Oct 2026 (announced 3 Jul 2026)', tenure_yrs:null,
+    entity:'Frasers Property Limited', entity_short:'Frasers Property', ar_year:'FY2025/26', source_label:'Company announcement 3 Jul 2026',
+    appointed:'8 Sep 2026 as CEO Designate; CEO from 1 Oct 2026', tenure_yrs:null,
     rem_exact:null, rem_fixed:null, rem_bonus:null, rem_other:null,
     rem_band:null,
     rem_note:'No remuneration disclosed. Heads the Singapore business unit rather than the listed parent, and is not a director of Frasers Property Limited. First disclosure would fall in the FY2025/26 annual report and only if within the top five KMP.',
@@ -18014,7 +18015,7 @@ function talentOpenDrawer(id){
     '<div class="td-entity-row">'+
       '<span style="width:8px;height:8px;border-radius:50%;background:'+avatar+';display:inline-block;flex-shrink:0"></span>'+
       '<div><div style="font-size:12px;font-weight:600;color:var(--txt)">'+p.entity+'</div>'+
-      '<div style="font-size:10px;color:var(--mut)">Annual Report '+p.ar_year+' · Appointed '+(p.appointed||'—')+'</div></div>'+
+      '<div style="font-size:10px;color:var(--mut)">'+(p.source_label||('Annual Report '+p.ar_year))+' · Appointed '+(p.appointed||'—')+'</div></div>'+
     '</div>'+
     '<div class="td-section">📊 Profile</div>'+
     '<div class="td-row"><span class="td-row-lbl">Tenure (approx.)</span><span class="td-row-val">'+ten.label+'</span></div>'+
