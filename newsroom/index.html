@@ -1,4 +1,5 @@
 <!DOCTYPE html>
+<!-- v48.366 (12 Aug 2026, S287): Frasers family Human Capital + Asset Directory close-out. TALENT_DATA 571 -> 573: NEW fpl-gcoo-26 Tony Lombardo (Group COO eff 1 Oct 2026, announced 9 Mar 2026, ex-Lendlease Group CEO) and fps-ceo-26 Tan Wee Hsien (CEO Singapore eff 1 Oct 2026, CEO Designate 8 Sep 2026, ex-CapitaLand Development). AMENDED fct-dir-soon-25: bio + prev_roles restated for the 1 Oct 2026 handover and transition to Group Adviser. REM DISCLOSURE FIX: rem_note on fct-dir-soon-25 and flct-dir-reini-25 now state plainly that the figure shown is a REIT directorship fee, not executive pay, and that executive remuneration sits inside FPL’s undisclosed five-person KMP aggregate of S$8,258,693 (FY2024/25). RENDERER FIX: education block now conditional — edu:null was printing the literal word null on 78 of 573 cards. Asset Directory (SQL, no redeploy): reit_assets 1,751 -> 1,754 rows / 64 entities; INSERT Fraser Suites Singapore id 1887 (PENDING ACQUISITION S$320.0M), Bayshore Drive residential id 1888 (FPL 37.5%), Bayshore Drive retail id 1889 (FCT 50%); UPDATE White Sands id 396 to PENDING DISPOSAL S$467.0M with val held at 431.0 — an agreed price is not an appraisal. STILL OPEN: Loo Choo Leong, Cameron Leggatt, Eu Chin Fen have no TALENT_DATA record; all three need FPL AR FY2024/25. -->
 <!-- v48.365 (S286: Newsroom drop id:191 Frasers Property 9M FY26 (capital recycling ~S$2,210M vs S$424M at 1H; net debt/equity 94.2% -> 93.6%)) -->
 <!-- v48.364 (S285: Newsroom drop id:190 Singapore Land Group 1H 2026 (UOB exits Novena Square consortium; SG portfolio S$7,452.1M +1.33%)) -->
 <!-- v48.363 (10 Aug 2026, S283: Newsroom drop id:189 weekly URA REALIS landed caveats, week of 3 August 2026 (49 caveats S$311.5M across the 4 and 7 Aug releases; 34 pairs, 34 gains, 0 losses, +S$82.0M; both halves of the subdivided 50 Old Upper Thomson Road plot set consecutive District 20 99-yr semi-detached price records; Hillcrest Road S$4,505 psf D11 freehold semi-detached record against 1,198 prior sales). Landing cascade regenerated from NEWS.) -->
@@ -9075,7 +9076,7 @@ var TALENT_DATA = [
     entity:'Frasers Logistics & Commercial Trust', entity_short:'FLCT', ar_year:'FY2025',
     appointed:'30 Jul 2020', tenure_yrs:5.2,
     rem_exact:57500, rem_fixed:null, rem_bonus:null, rem_other:null,
-    rem_note:'FY2025 director\'s fee S$57,500 (paid to Frasers Property AHL Limited; not retained personally). FY2024 fee: S$54,500. Represents Frasers Property industrial/Australian interests FY2024: S$54,500 (+5.5% YoY).',
+    rem_note:'THIS FIGURE IS A REIT DIRECTORSHIP FEE, NOT EXECUTIVE PAY. FY2025 director’s fee S$57,500, paid to Frasers Property AHL Limited rather than retained personally. FY2024 fee: S$54,500 (+5.5% YoY). Represents Frasers Property industrial and Australian interests on the FLCT board. His executive remuneration within the Frasers Property group is NOT separately disclosed: Frasers Property Limited names him as one of five key management personnel excluding the Group CEO, whose FY2024/25 remuneration is published only as a combined aggregate of S$8,258,693 (the other four being Loo Choo Leong, Cameron Leggatt, Eu Chin Fen and Soon Su Lin). No individual split is available, so no executive-level figure can be shown here without inventing one.',
     rem_history:[
       {year:'FY2025', total:57500},
       {year:'FY2024', total:54500},
@@ -11423,7 +11424,7 @@ var TALENT_DATA = [
     entity:'Frasers Centrepoint Trust', entity_short:'FCT', ar_year:'FY2024/25',
     appointed:'1 Mar 2022', tenure_yrs:3.6,
     rem_exact:56500, rem_fixed:56500, rem_bonus:0, rem_other:0,
-    rem_note:'Director fees S$56,500 FY2025 exact per AR p.122. Fees paid to Frasers Property Singapore Corporate Management Pte. Ltd. (Sponsor entity). Appointed 1 Mar 2022; no Board committee memberships.',
+    rem_note:'THIS FIGURE IS A REIT DIRECTORSHIP FEE, NOT EXECUTIVE PAY. Director fees S$56,500 FY2025 exact per FCT AR p.122, paid to Frasers Property Singapore Corporate Management Pte. Ltd. (Sponsor entity) rather than retained personally. Appointed 1 Mar 2022; no Board committee memberships. Her executive remuneration as Chief Executive Officer of Frasers Property Singapore is NOT separately disclosed: Frasers Property Limited names her as one of five key management personnel excluding the Group CEO, whose FY2024/25 remuneration is published only as a combined aggregate of S$8,258,693 (the other four being Loo Choo Leong, Cameron Leggatt, Eu Chin Fen and Reinfried Otter). No individual split is available from either the FPL or FCT annual report, so no CEO-level figure can be shown here without inventing one.',
     rem_band:null, rem_pct_fixed:100, rem_pct_bonus:0, rem_pct_other:0,
     edu:'Bachelor of Science — Estate Management (Hons), NUS. Master of Business Administration, NUS.',
     bio:'Non-Executive Non-Independent Director of Frasers Centrepoint Asset Management Ltd (Sponsor representative). CEO of Frasers Property Singapore since 2022; steps down on 1 October 2026, succeeded by Tan Wee Hsien, and transitions to Adviser supporting Group CEO Panote Sirivadhanabhakdi. Retains her board seats on Frasers Centrepoint Asset Management Ltd and One Bangkok Co., Ltd. Named Real Estate Personality of the Year at the 2025 PropertyGuru Asia Property Awards. Member of Integrated Development Council, Urban Land Institute Singapore. Management Committee Member of REDAS and Chairman of REDAS\' Green/Sustainable Sub-Committee. Previously CEO (Development) at Frasers Property Holdings Thailand, TCC Assets Thailand, and CEO of Orchard Turn Developments.',
@@ -18018,8 +18019,8 @@ function talentOpenDrawer(id){
     '<div class="td-section">📊 Profile</div>'+
     '<div class="td-row"><span class="td-row-lbl">Tenure (approx.)</span><span class="td-row-val">'+ten.label+'</span></div>'+
     '<div class="td-row"><span class="td-row-lbl">Role Type</span><span class="td-row-val">'+p.role_type+'</span></div>'+
-    '<div class="td-section">🎓 Education</div>'+
-    '<div class="td-bio" style="margin-bottom:4px">'+p.edu+'</div>'+
+    (p.edu?'<div class="td-section">🎓 Education</div>'+
+    '<div class="td-bio" style="margin-bottom:4px">'+p.edu+'</div>':'')+
     '<div class="td-section">🧠 Background</div>'+
     '<div class="td-bio">'+p.bio+'</div>'+
     remSection+
