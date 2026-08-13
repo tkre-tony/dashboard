@@ -18171,16 +18171,26 @@ function talentInitSummary(){
     ? {val:fmtRem(c2top.rem_exact), lbl:'Highest REIT CEO pay', sub:c2top.name+' · '+entityShort(c2top.entity)+' '+c2top.ar_year}
     : {val:'—', lbl:'Highest REIT CEO pay', sub:''};
 
-  // Card 3: Highest internalised REIT pay — currently only AI-REIT/Sabana qualifies as internalised
-  var INTERNALISED_REITS = ['Alpha Integrated REIT (former Sabana)', 'Sabana REIT (now AI-REIT)', 'AI-REIT'];
+  // Card 3: Highest non-executive director fee — board seats only, executive roles excluded.
+  // S296: replaced 'Highest internalised REIT'. That card was mislabelled — its only
+  // qualifying record was the CEO of Sabana's EXTERNAL manager (SREIM), which unitholders
+  // voted to remove on 7 Aug 2023. Internalisation is what displaced him, so the label
+  // asserted the opposite of the fact. The internalised manager's CEO from 2025 is a
+  // different person and is not yet in TALENT_DATA with an exact figure.
+  // 'Non-Executive Director' CONTAINS the substring 'Executive Director', so the role
+  // text is neutralised before the executive test — without this, 107 of 118 exclusions
+  // were non-executives and the pool collapsed from 243 seats to 136.
+  var EXEC_ROLE = /Executive Chairman|Executive Director|Managing Director|Group CEO|Joint Chief/i;
+  function isExecRole(r){ return EXEC_ROLE.test(String(r||'').replace(/Non[- ]?Executive/ig,'NX')); }
   var c3pool = TALENT_DATA.filter(function(p){
     if(typeof p.rem_exact!=='number' || p.rem_exact<=0) return false;
-    return INTERNALISED_REITS.indexOf(p.entity)>=0;
+    if(p.role_type!=='Board') return false;
+    return !isExecRole(p.role);
   });
   var c3top = c3pool.reduce(function(a,b){return (b.rem_exact > (a?a.rem_exact:0)) ? b : a;}, null);
   var c3 = c3top
-    ? {val:fmtRem(c3top.rem_exact), lbl:'Highest internalised REIT', sub:c3top.name+' · '+entityShort(c3top.entity)+' '+c3top.ar_year}
-    : {val:'—', lbl:'Highest internalised REIT', sub:''};
+    ? {val:fmtRem(c3top.rem_exact), lbl:'Highest non-executive fee', sub:c3top.name+' · '+entityShort(c3top.entity)+' '+c3top.ar_year}
+    : {val:'—', lbl:'Highest non-executive fee', sub:''};
 
   // Card 4: Largest YoY pay jump — walk rem_history; require prev_val ≥ S$1M to avoid noise from small-base rounding
   var c4candidates = [];
