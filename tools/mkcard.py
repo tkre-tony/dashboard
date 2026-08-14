@@ -50,6 +50,15 @@ GOLD_SOLID  = (180, 155, 100)
 WHITE       = (255, 255, 255)
 MUTED       = (168, 178, 196)
 
+# L-SOCIAL-13 — the credit line must stay legible at LinkedIn feed width, where
+# a 1200x630 card renders around 550px across. 13px in MUTED failed that test on
+# the published id:196 card (14 Aug 2026) and read as a grey smear. The credit is
+# the only attribution the card carries, so it is sized to be read, not inferred.
+CREDIT_SIZE = 17
+CREDIT_MIN  = 14
+CREDIT_INK  = (226, 232, 242)
+CREDIT_SCRIM_ALPHA = 150
+
 PAD_X       = 56
 PAD_TOP     = 44
 PAD_BOTTOM  = 40
@@ -282,12 +291,34 @@ def draw_credit(draw, spec, had_photo):
             f"  got: {credit!r}"
         )
     # L-SOCIAL-12 — mirror the front-end photo-credit treatment:
-    # italic, right-aligned, muted, sitting directly under the frame.
-    # Front-end reference: .hero-credit / .card-credit / .ed-art-photo-credit
-    # (font-style:italic; text-align:right; muted ink; letter-spacing .02em).
-    f = font("italic", 13)
+    # italic, right-aligned, sitting directly under the frame.
+    # L-SOCIAL-13 — sized and backed so it survives feed-width downscaling.
+    size = CREDIT_SIZE
+    f = font("italic", size)
+    max_w = W - PAD_X * 2
+    while size > CREDIT_MIN and draw.textlength(credit, font=f) > max_w:
+        size -= 1
+        f = font("italic", size)
+
     tw = draw.textlength(credit, font=f)
-    draw.text((W - PAD_X - tw, H - PAD_BOTTOM + 6), credit, font=f, fill=MUTED)
+    if tw > max_w:
+        raise SystemExit(
+            f"mkcard: credit line is too long to render legibly at {CREDIT_MIN}px.\n"
+            f"  {len(credit)} chars, needs {tw:.0f}px of {max_w}px available.\n"
+            "  Shorten it — the card credit is a caption, not the article's."
+        )
+
+    asc, desc = f.getmetrics()
+    line_h = asc + desc
+    x = W - PAD_X - tw
+    y = H - 8 - line_h
+
+    # Scrim: the credit sits over photography whose brightness we do not control.
+    draw.rectangle(
+        [x - 14, y - 5, W - PAD_X + 14, y + line_h + 3],
+        fill=NAVY + (CREDIT_SCRIM_ALPHA,),
+    )
+    draw.text((x, y), credit, font=f, fill=CREDIT_INK)
 
 
 def draw_footer(draw, spec):
