@@ -1,6 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-  <url><loc>https://propertyatlas.sg/</loc><changefreq>daily</changefreq><priority>1.0</priority></url><url><loc>https://propertyatlas.sg/newsroom/</loc><changefreq>daily</changefreq><priority>0.9</priority></url>
+  <url><loc>https://propertyatlas.sg/</loc><changefreq>daily</changefreq><priority>1.0</priority></url>
+  <url><loc>https://propertyatlas.sg/newsroom/</loc><changefreq>daily</changefreq><priority>0.9</priority></url>
+  <url><loc>https://propertyatlas.sg/news/weekly-caveats-11-14-aug-2026-60-year-leaseholds-take-12-of-12-gains/</loc><lastmod>2026-08-14</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
   <url><loc>https://propertyatlas.sg/news/ntt-dc-reit-1q-fy2627-the-npi-beat-was-entirely-cost-and-sg1-carried-the-uplift/</loc><lastmod>2026-08-14</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
   <url><loc>https://propertyatlas.sg/news/prime-us-reit-1h-2026-the-463k-sf-rent-ramp-grew-to-492k-instead-of-converting/</loc><lastmod>2026-08-13</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
   <url><loc>https://propertyatlas.sg/news/sing-holdings-1h-2026-the-trough-is-normal-the-balance-sheet-is-not/</loc><lastmod>2026-08-13</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
