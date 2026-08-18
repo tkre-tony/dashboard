@@ -1013,6 +1013,16 @@ function maskNote(t){
 }
 function isMember(){return window.currentUserTier==='free'||window.currentUserTier==='salesperson'||window.currentUserTier==='subscriber'||window.currentUserTier==='master';}
 function sameAddr(a,b){return (a||'').toUpperCase().replace(/\s+/g,' ').trim()===(b||'').toUpperCase().replace(/\s+/g,' ').trim();} // case/space-insensitive: detects when project name IS the address
+// S316: landed inverts the name/address priority — the house address is the identity of a
+// landed property; the estate name is context. Non-landed segments keep project-name-first.
+function cavTitle(c){
+  if(typeof fSeg!=='undefined'&&fSeg==='landed') return (c.addr||((c.n&&c.n!=='N.A.')?c.n:'N.A.'));
+  return ((c.n&&c.n!=='N.A.')?c.n:c.addr);
+}
+function cavSubName(c){
+  if(typeof fSeg!=='undefined'&&fSeg==='landed') return ((c.addr&&c.n&&c.n!=='N.A.'&&!sameAddr(c.n,c.addr))?c.n:'');
+  return ((sameAddr(c.n,c.addr)||c.n==='N.A.')?'':c.addr);
+}
 function refreshTier(){var a=document.getElementById('authlink');if(!a)return;
   if(isMember()){a.textContent='Sign out';a.classList.remove('authcta');}
   else{a.textContent='Sign in';a.classList.add('authcta');}}
@@ -1124,7 +1134,7 @@ function geojson(items){
 function caveatGeojson(items){
   return {type:'FeatureCollection',features:items.filter(({c})=>c.lat!=null&&c.lng!=null).map(({c,i,lp})=>({
     type:'Feature',geometry:{type:'Point',coordinates:[c.lng,c.lat]},
-    properties:{i,lp:lp?1:0,t:c.t,pr:c.pr,psf:c.psf,n:((c.n&&c.n!=='N.A.')?c.n:c.addr),sd:c.sd}}))};
+    properties:{i,lp:lp?1:0,t:c.t,pr:c.pr,psf:c.psf,n:cavTitle(c),sd:c.sd}}))};
 }
 
 function showBucket(b){
@@ -1179,10 +1189,10 @@ function caveatListHTML(items){
     const col=TYPE_COLORS[c.t]||'#888';
     return `<div class="lcard${selIdx===i?' sel':''}" style="border-left-color:${col}" onclick="selectCaveat(${i},true)">
       <div style="display:flex;justify-content:space-between;align-items:start">
-        <h4 style="margin:0 0 2px;flex:1">${esc(maskAddress((c.n&&c.n!=='N.A.')?c.n:c.addr))}</h4>
+        <h4 style="margin:0 0 2px;flex:1">${esc(maskAddress(cavTitle(c)))}</h4>
         <span style="font-family:'DM Mono',monospace;font-size:14px;font-weight:700;color:var(--g1);white-space:nowrap">${fmtVal(c.pr)}</span>
       </div>
-      <div class="str">${[(sameAddr(c.n,c.addr)||c.n==='N.A.')?'':esc(maskAddress(c.addr)),c.rg||'',c.di?('D'+c.di):''].filter(Boolean).join(' · ')}</div>
+      <div class="str">${[cavSubName(c)?esc(maskAddress(cavSubName(c))):'',c.rg||'',c.di?('D'+c.di):''].filter(Boolean).join(' · ')}</div>
       ${c.nomap?('<div class="str" style="color:#B5683E;margin-top:2px">📍 '+(fSeg==='landed'?landedNoMapNote(c):'Location not shown — building redeveloped or no postal on record')+'</div>'):''}
       ${c.note?('<div class="str" style="color:var(--mut);margin-top:2px">\u21b3 '+esc(maskNote(c.note))+'</div>'):''}
       <div style="display:flex;gap:4px;flex-wrap:wrap;margin-bottom:6px">
@@ -1273,7 +1283,7 @@ function caveatTableHTML(items){
 function cavDetailHTML(c){
   const col=TYPE_COLORS[c.t]||'#888';
   return `<span class="x" onclick="closeDetail()">×</span>
-    <h3>${esc(maskAddress((c.n&&c.n!=='N.A.')?c.n:c.addr))}</h3>
+    <h3>${esc(maskAddress(cavTitle(c)))}</h3>
     <div class="badges"><span class="badge" style="background:${col}22;color:${col}">${c.t}</span>
       ${c.rg?`<span class="badge">${c.rg}</span>`:''}${c.ar?`<span class="badge">${esc(c.ar)}</span>`:''}
       ${c.di?`<span class="badge dist">D${c.di}</span>`:''}</div>
@@ -1286,7 +1296,7 @@ function cavDetailHTML(c){
     </div>
     ${c.tn?`<div class="kv">Tenure · <b>${esc(c.tn)}</b></div>`:''}
     ${c.toa?`<div class="kv">Title · <b>${c.toa}</b></div>`:''}
-    ${(sameAddr(c.n,c.addr)||c.n==='N.A.')?'':`<div class="kv">Address · <b>${esc(maskAddress(c.addr))}</b></div>`}
+    ${cavSubName(c)?`<div class="kv">${(typeof fSeg!=='undefined'&&fSeg==='landed')?'Project':'Address'} · <b>${esc(maskAddress(cavSubName(c)))}</b></div>`:''}
     ${(c.nu>1)?`<div class="kv">Bulk deal · <b>${c.nu} units</b></div>`:''}
     ${c.note?`<div class="kv" style="color:var(--mut)">\u21b3 ${esc(maskNote(c.note))}</div>`:''}
     ${(c.nomap&&fSeg==='landed')?`<div class="kv" style="color:#B5683E">📍 ${landedNoMapNote(c)}</div>`:''}
