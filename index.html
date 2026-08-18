@@ -38,7 +38,7 @@
 *{box-sizing:border-box;margin:0}
 body{background:var(--bg);color:var(--txt);font-family:Inter,system-ui,-apple-system,sans-serif;font-size:14px}
 /* TOP BAR — dark navy */
-.topbar{background:var(--navy);display:flex;align-items:center;padding:0 20px;height:44px}
+.topbar{background:var(--navy);display:flex;align-items:center;padding:0 20px;height:44px;position:sticky;top:0;z-index:800}
 .topbar .logo{width:26px;height:26px;border-radius:6px;background:rgba(200,145,42,.15);display:flex;align-items:center;justify-content:center;color:var(--gold);font-weight:800;font-family:var(--serif);font-size:13px}
 .topbar .brand{font-family:var(--serif);font-size:17px;font-weight:700;color:#fff;margin-left:8px}.topbar .brand i{color:var(--gold);font-style:normal}
 .topbar .pagenav{margin-left:auto;display:flex;gap:6px}
@@ -50,7 +50,7 @@ body{background:var(--bg);color:var(--txt);font-family:Inter,system-ui,-apple-sy
 .topbar .bucket:hover{color:#fff;background:rgba(255,255,255,.08)}
 .topbar .bucket.on{color:#fff;background:var(--g1)}
 /* LENS BAR — cream */
-.lensbar{background:var(--srf);border-bottom:1px solid var(--bdr);display:flex;align-items:center;padding:0 20px;height:40px;gap:3px;overflow-x:auto}
+.lensbar{background:var(--srf);border-bottom:1px solid var(--bdr);display:flex;align-items:center;padding:0 20px;height:40px;gap:3px;overflow-x:auto;position:sticky;top:44px;z-index:790}
 .lens-tab{padding:6px 13px;border-radius:6px;font-size:12.5px;color:var(--mut);cursor:pointer;white-space:nowrap;transition:.12s;border:none;background:none;font-family:inherit}
 .lens-tab:hover{background:var(--srf2)}
 .lens-tab.on{background:var(--g1);color:#fff;font-weight:600}
@@ -155,6 +155,8 @@ body{background:var(--bg);color:var(--txt);font-family:Inter,system-ui,-apple-sy
 .list-banner .sep{color:var(--bdr);font-weight:400}.list-banner .cnt{color:var(--mut)}
 /* List-mode Market Pulse table (caveats lens) — render-mode swap, mirrors production .ptable */
 .mptbl{width:100%;min-width:1000px;border-collapse:collapse;font-size:11px;margin-top:2px}
+/* S316: caveat list view only — header pins below the sticky .list-banner (banner bottom edge = 25px). */
+.mptbl.cav-tbl thead th{position:sticky;top:25px;z-index:2}
 .mptbl thead th{background:var(--srf2);color:var(--mut);text-align:left;font-weight:700;font-size:9.5px;letter-spacing:.05em;text-transform:uppercase;padding:8px;border-bottom:1px solid var(--bdr);white-space:nowrap}
 .mptbl tbody td{padding:7px 8px;border-bottom:1px solid var(--bdr);vertical-align:top;color:var(--txt)}
 .mptbl tbody tr:nth-child(even) td{background:rgba(245,239,224,.4)}
@@ -298,7 +300,7 @@ body{background:var(--bg);color:var(--txt);font-family:Inter,system-ui,-apple-sy
   .map-toolbar .mt-filters{padding:6px 9px}
   .map-toolbar.show ~ .map-legend{display:none}
   .mt-filterpanel{top:54px;left:48px;right:8px;width:auto;max-width:none;max-height:58vh;overflow-y:auto}
-  html,body{overflow-x:hidden}
+  html,body{overflow-x:clip}   /* S316: hidden creates a scroll container and breaks position:sticky on the nav */
   .topbar{padding:0 10px}
   .topbar .pagenav a[href="/terms.html"],.topbar .pagenav a[href="/privacy.html"],.topbar .pagenav a.hi{display:none}
   .buckets{overflow-x:auto;-webkit-overflow-scrolling:touch}
@@ -308,8 +310,8 @@ body{background:var(--bg);color:var(--txt);font-family:Inter,system-ui,-apple-sy
 .enq-cta{display:block;width:100%;padding:9px 12px;background:transparent;border:1px solid var(--gold);color:var(--gold);border-radius:7px;font-weight:700;font-size:13px;cursor:pointer;font-family:inherit}
 .enq-cta:hover{background:rgba(200,145,42,.08)}
 .enq-sub{margin-top:6px;font-size:11px;color:var(--mut);text-align:center}
-.pa-enq-overlay{display:none;position:fixed;inset:0;background:rgba(21,35,63,.55);z-index:400}
-.pa-enq-modal{display:none;position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);width:min(440px,92vw);max-height:88vh;overflow-y:auto;background:var(--srf);border:1px solid var(--bdr);border-radius:12px;padding:20px;z-index:401;box-shadow:0 18px 60px rgba(0,0,0,.25)}
+.pa-enq-overlay{display:none;position:fixed;inset:0;background:rgba(21,35,63,.55);z-index:900}
+.pa-enq-modal{display:none;position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);width:min(440px,92vw);max-height:88vh;overflow-y:auto;background:var(--srf);border:1px solid var(--bdr);border-radius:12px;padding:20px;z-index:901;box-shadow:0 18px 60px rgba(0,0,0,.25)}
 .pa-enq-modal h3{font-family:var(--serif);font-size:17px;margin-bottom:2px}
 .pa-enq-ctx{font-size:12px;color:var(--mut);margin-bottom:12px}
 .pa-enq-modal label{display:block;font-size:11px;font-weight:700;color:var(--mut);margin:8px 0 3px}
@@ -1268,7 +1270,7 @@ function caveatTableHTML(items){
     `</tr>`;
   }).join('')||`<tr><td colspan="11" style="padding:22px;text-align:center;color:var(--mut)">No caveats match these filters.</td></tr>`;
   document.getElementById('list').innerHTML=
-    `<table class="mptbl"><thead><tr>`+
+    `<table class="mptbl cav-tbl"><thead><tr>`+
       `<th style="width:92px">Date</th><th style="width:50px">Dist.</th>`+
       `<th style="width:150px">Project</th><th style="width:150px">Address</th>`+
       `<th style="width:78px">Sale Type</th><th style="width:92px">Type</th>`+
