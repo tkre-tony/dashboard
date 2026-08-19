@@ -1,4 +1,5 @@
 <!DOCTYPE html>
+<!-- v48.399 (Human Capital display gate: TALENT_VISIBLE derived array; pure company-secretary class tagged cosec:true / display:false — stored, not rendered. TALENT_DATA 593 -> 595 (Wee Hur Teo Ah Hiong, Yeng Shi Hui, AR 2025 p.31); visible 591 after tagging MPACT Wan Kwong Weng, See Hui Hui) -->
 <!-- v48.398 (S321 id:211 Wee Hur — disclosure framing, slug corrected) -->
 <!-- v48.397 (Human Capital display layer: Hotel Properties added to #talent-entity-filter and the entity short-name map; full option list re-sorted alphabetically by label) -->
 <!-- v48.396 (Pass 3 Human Capital: 8 Hotel Properties TALENT_DATA records, FY2025) -->
@@ -13307,7 +13308,8 @@ var TALENT_DATA = [
     prev_roles:[{org:'Mapletree Investments', pos:'Group Chief Corporate Officer & Group General Counsel'}, {org:'Infineon Technologies', pos:'Group General Counsel - Asia'}],
     rem_history:[],
     cross_board_roles:[], linkedin_url:null, photo_url:null,
-    tags:['Company Secretary','Governance','Legal','Mapletree Group']
+    tags:['Company Secretary','Governance','Legal','Mapletree Group'],
+    cosec:true, display:false
   },
   {
     id:'mpact-cosec-see-26', initials:'HH', name:'See Hui Hui', role:'Joint Company Secretary', role_type:'Management',
@@ -13321,7 +13323,8 @@ var TALENT_DATA = [
     prev_roles:[{org:'Mapletree Investments', pos:'Deputy Group General Counsel'}, {org:'WongPartnership LLP', pos:'Corporate/M&A practice'}],
     rem_history:[],
     cross_board_roles:[], linkedin_url:null, photo_url:null,
-    tags:['Company Secretary','Governance','Legal','Mapletree Group']
+    tags:['Company Secretary','Governance','Legal','Mapletree Group'],
+    cosec:true, display:false
   },
 
   // ════════════════════════════════════════════
@@ -18099,7 +18102,41 @@ var TALENT_DATA = [
     cross_board_roles:[],
     linkedin_url:null, photo_url:null,
   },
+  {
+    id:'wh-cosec-teo-25', initials:'AH', name:'Teo Ah Hiong', role:'Company Secretary', role_type:'Management',
+    entity:'Wee Hur Holdings', entity_short:'Wee Hur', ar_year:'FY2025',
+    appointed:null, tenure_yrs:null,
+    rem_exact:null, rem_fixed:null, rem_bonus:null, rem_other:null,
+    rem_note:'Remuneration not individually disclosed in Annual Report 2025.',
+    rem_band:null, rem_pct_fixed:null, rem_pct_bonus:null, rem_pct_other:null,
+    edu:'ACIS',
+    bio:'Joint Company Secretary of Wee Hur Holdings, named in the Corporate Information at page 31 of Annual Report 2025 alongside Yeng Shi Hui. Registered care of BSL Corporate Services Pte. Ltd., 220 Orchard Road, #05-01 Midpoint Orchard, Singapore 238852. Signed the interim dividend notice for the period.',
+    prev_roles:[],
+    rem_history:[],
+    cross_board_roles:[], linkedin_url:null, photo_url:null,
+    tags:['Company Secretary','Governance','Wee Hur'],
+    cosec:true, display:false
+  },
+  {
+    id:'wh-cosec-yeng-25', initials:'SH', name:'Yeng Shi Hui', role:'Company Secretary', role_type:'Management',
+    entity:'Wee Hur Holdings', entity_short:'Wee Hur', ar_year:'FY2025',
+    appointed:null, tenure_yrs:null,
+    rem_exact:null, rem_fixed:null, rem_bonus:null, rem_other:null,
+    rem_note:'Remuneration not individually disclosed in Annual Report 2025.',
+    rem_band:null, rem_pct_fixed:null, rem_pct_bonus:null, rem_pct_other:null,
+    edu:'BBM, ACIS',
+    bio:'Joint Company Secretary of Wee Hur Holdings, named in the Corporate Information at page 31 of Annual Report 2025 alongside Teo Ah Hiong. Registered care of BSL Corporate Services Pte. Ltd., 220 Orchard Road, #05-01 Midpoint Orchard, Singapore 238852.',
+    prev_roles:[],
+    rem_history:[],
+    cross_board_roles:[], linkedin_url:null, photo_url:null,
+    tags:['Company Secretary','Governance','Wee Hur'],
+    cosec:true, display:false
+  },
 ];
+// v48.399: display gate. Records carrying display:false are STORED but not
+// rendered, counted or filtered. Used for the pure company-secretary class
+// (cosec:true). To surface them, delete the display:false fields.
+var TALENT_VISIBLE = TALENT_DATA.filter(function(p){ return p.display !== false; });
 // ═══════════════════════════════════════════════════
 var talentRoleFilter = 'all';
 var talentViewMode = 'grid';
@@ -18309,7 +18346,7 @@ function talentTenureTag(yrs){
 function talentFilter(){
   var q = (document.getElementById('talent-search').value||'').toLowerCase();
   var entityF = document.getElementById('talent-entity-filter') ? document.getElementById('talent-entity-filter').value : '';
-  return TALENT_DATA.filter(function(p){
+  return TALENT_VISIBLE.filter(function(p){
     var roleOk = talentRoleFilter==='all' || p.role_type===talentRoleFilter;
     var entityOk = !entityF || p.entity===entityF;
     var qOk = !q || (p.name||'').toLowerCase().indexOf(q)>=0
@@ -18567,9 +18604,9 @@ function talentCloseDrawer(e){
 }
 
 function talentInitSummary(){
-  var total = TALENT_DATA.length;
-  var entities = [...new Set(TALENT_DATA.map(function(p){return p.entity;}))].length;
-  var ceos = TALENT_DATA.filter(function(p){return p.role_type==='CEO';}).length;
+  var total = TALENT_VISIBLE.length;
+  var entities = [...new Set(TALENT_VISIBLE.map(function(p){return p.entity;}))].length;
+  var ceos = TALENT_VISIBLE.filter(function(p){return p.role_type==='CEO';}).length;
   document.getElementById('thc-total').textContent = total;
   document.getElementById('thc-entities').textContent = entities;
   document.getElementById('thc-ceos').textContent = ceos;
