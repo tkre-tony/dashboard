@@ -68,9 +68,23 @@ const mKey=iso=>String(iso).slice(0,7);
 function need(x){for(const f of["slug","image","landing_headline","display_teaser","landing_credit","category","tag","date","read_time_min","word_count"]){if(!(f in x)||x[f]===""||x[f]==null)throw new Error("id "+x.id+" missing "+f);}}
 
 // ---- order: top 11 by id desc ----
+// L-CASCADE-10 (S329): NEWS ids are contiguous ONLY while nothing has ever been
+// withdrawn. A withdrawn article leaves a permanent, legitimate gap. The guard below
+// still fires on an UNDECLARED gap (a silently dropped or mis-parsed entry) — the
+// caller must name every withdrawn id explicitly via --withdrawn=<csv>.
+const WITHDRAWN=new Set(
+  (process.argv.filter(a=>a.startsWith("--withdrawn="))[0]||"").replace("--withdrawn=","")
+    .split(",").map(x=>parseInt(x,10)).filter(Number.isFinite)
+);
+if(WITHDRAWN.size) console.log("Withdrawn ids declared:", [...WITHDRAWN].join(","));
 const ids=NEWS.map(x=>x.id).sort((a,b)=>b-a).slice(0,11);
-// assert contiguity (cascade gate expects [N..N-10])
-for(let k=1;k<ids.length;k++) if(ids[k]!==ids[0]-k) throw new Error("ids not contiguous: "+ids.join(","));
+// assert contiguity allowing ONLY declared withdrawals (cascade gate expects 11 slots)
+(function(){
+  const expect=[]; let n=ids[0];
+  while(expect.length<ids.length){ if(!WITHDRAWN.has(n)) expect.push(n); n--; }
+  if(expect.join(",")!==ids.join(","))
+    throw new Error("ids not contiguous: got "+ids.join(",")+" expected "+expect.join(","));
+})();
 ids.forEach(id=>need(byId[id]));
 console.log("Landing order:", ids.join(","));
 
