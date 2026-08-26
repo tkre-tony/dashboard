@@ -1,4 +1,5 @@
 <!DOCTYPE html>
+<!-- v48.414 (id:222 OUE Healthcare scheme of arrangement — Treasure International Holdings proposes to privatise OUE Healthcare at S$0.050 per share. Five disclosed premiums 28.2-51.1% vs 2.5% to NAV; convertible perpetuals struck at S$0.070; SIC confirms no chain offer for First REIT. Branded figure card hero. No undisclosed derived totals used.) -->
 <!-- v48.413 (26 Aug 2026, S336): YoY pay badges suppressed where the prior year was prorated from an appointment date. paRemSeries() computed the badge from the two most recent rem_history entries with a truthy total, without regard to whether the base covered a full year — Gan Chee Yen and Ong Tze Guan (BHG Retail REIT) each rendered +622% against ~50 days of FY2024; also Quek See Tiat (FEHT) +144%, Penelope Ransom (LLREIT) +67%, Wilson Christopher Geoffrey (KOP) +57%, Lui Chong Chee (CLAS) +29%, George Quek (BHG) +15%. DATA-ONLY fix using the existing kore-id-* convention: prorated year total set to null with the figure preserved in the entry note, so the badge self-suppresses and the year still renders in the history table. NO RENDERER CHANGE. No annualised substitute figure is written — annualisation would be our assumption, not an issuer disclosure (L-SRC-1). kore-lid-25 excluded deliberately: full year of service, fee-composition change only, caveat already in rem_note. No NEWS, no cascade, no NR_STATIC_IDS, no sitemap, no reit_assets change. -->
 <!-- v48.412 (26 Aug 2026, S336): KOP Limited Human Capital pass from the Minutes of AGM held 31 July 2026 (filed 18 Aug 2026). Pass 1 assessed and declined — all seven resolutions carried 100.00% with zero votes against, no shareholder questions submitted by the 23 July cut-off and none from the floor; no article. Pass 2 closed as no-change — no acquisition, divestment or revaluation, L-AD-10 not triggered. Pass 3: kop-ined-ng-26 role enriched to Audit and Risk Committee Chairman with Nominating and Remuneration Committee membership and the Rule 704(7) independence determination; re-elections of Leny Suparman and Ng Hin Lee under Regulation 112 recorded; FY2027 approved aggregate Directors’ fees of S$197,808 recorded on the three non-executive directors, labelled as a Board aggregate. The derived year-on-year fee movement is deliberately NOT written — the FY2026 base is a carried extraction, not read at source (L-FACT-1). No NEWS, no cascade, no NR_STATIC_IDS, no sitemap, no reit_assets change. -->
 <!-- v48.411 (25 Aug 2026, S336): Asset Directory counts strip. New tally line above the card grid counting the FILTERED set, so it recalculates per entity and acts as a standing reconciliation check on the render tokens. ROOT-CAUSE: the L-AD-9 token predicates (DIVESTED / DISPOSAL / PENDING DIVESTMENT / PENDING ACQUISITION / NEW ACQUISITION / MANAGED) were duplicated across the table and card renderers; both now call a single reitClassify(p) helper, and the strip counts from that same helper. Renderer-only: no NEWS, no cascade, no NR_STATIC_IDS, no sitemap, no REIT_DATA change. -->
@@ -4204,33 +4205,33 @@ body.article-takeover .ed-foot{display:none!important}
       <section class="hero" aria-labelledby="hero-h">
   <div class="wrap hero-grid">
 
-    <!-- Image — id:221 Residential hero. v48.410 cascade. -->
+    <!-- Image — id:222 Healthcare hero. v48.414 cascade. -->
     <div class="hero-image-col">
-      <a class="hero-image" href="/news/weekly-landed-caveats-18-21-aug-2026-district-28-five-highest-rates-all-set-this-year/" data-article-id="221" aria-label="Read full story: Illustration: PropertyAtlas. A 999-year terrace on Luxus Hill Drive struck S$3,239 per square foot, the highest rate District 28 has recorded across 6,274 prior landed sales. Source: URA REALIS, releases dated 18th and 21st August 2026.">
-        <img src="/images/news_221_landed_district28_record.jpg" alt="Illustration: PropertyAtlas. A 999-year terrace on Luxus Hill Drive struck S$3,239 per square foot, the highest rate District 28 has recorded across 6,274 prior landed sales. Source: URA REALIS, releases dated 18th and 21st August 2026." class="hero-image-photo" loading="eager" fetchpriority="high" />
+      <a class="hero-image" href="/news/oue-healthcare-privatisation-scheme-fifty-one-per-cent-to-vwap-two-point-five-to-book/" data-article-id="222" aria-label="Read full story: Against the last traded price and four volume weighted averages, the offer is a premium of between 28.2 and 51.1 per cent. Against OUE Healthcare’s own unaudited net asset value per share of S$0.0488 at 30th June 2026, it is a premium of 2.5 per cent. All figures as disclosed in the Joint Announcement of 24th August 2026">
+        <img src="/images/news_222_oue_healthcare_scheme.jpg" alt="Against the last traded price and four volume weighted averages, the offer is a premium of between 28.2 and 51.1 per cent. Against OUE Healthcare’s own unaudited net asset value per share of S$0.0488 at 30th June 2026, it is a premium of 2.5 per cent. All figures as disclosed in the Joint Announcement of 24th August 2026" class="hero-image-photo" loading="eager" fetchpriority="high" />
       </a>
-      <p class="hero-credit">Illustration: PropertyAtlas. A 999-year terrace on Luxus Hill Drive struck S$3,239 per square foot, the highest rate District 28 has recorded across 6,274 prior landed sales. Source: URA REALIS, releases dated 18th and 21st August 2026.</p>
+      <p class="hero-credit">Against the last traded price and four volume weighted averages, the offer is a premium of between 28.2 and 51.1 per cent. Against OUE Healthcare’s own unaudited net asset value per share of S$0.0488 at 30th June 2026, it is a premium of 2.5 per cent. All figures as disclosed in the Joint Announcement of 24th August 2026. Credit: PropertyAtlas</p>
     </div>
     <div class="hero-text">
       <div class="hero-eyebrow">
         <span class="pill">Latest</span>
-        <span class="cat-tag">Residential</span>
-        <span class="cat-tag">Weekly Caveats · URA REALIS · Landed · District 28 · District 11 · Luxus Hills · Leasehold Tenure · New Sale · Terrace House</span>
+        <span class="cat-tag">Healthcare</span>
+        <span class="cat-tag">Scheme Of Arrangement · Privatisation · OUE Limited · OUE Healthcare · SGX:LJ3 · Catalist · First REIT · Take-overs Code · Minority Shareholders · Singapore</span>
       </div>
       <h1 id="hero-h" class="hero-headline">
-        <a href="/news/weekly-landed-caveats-18-21-aug-2026-district-28-five-highest-rates-all-set-this-year/" data-article-id="221">Weekly Landed Caveats, Releases of 18th and 21st August 2026: District 28’s Five Highest Rates Were All Set This Year as a Luxus Hill Drive Terrace Reaches S$3,239 Per Square Foot</a>
+        <a href="/news/oue-healthcare-privatisation-scheme-fifty-one-per-cent-to-vwap-two-point-five-to-book/" data-article-id="222">OUE Healthcare Privatisation: The Premium To Trading History Runs To 51.1 Per Cent. The Premium To Book Is 2.5 Per Cent.</a>
       </h1>
     </div>
     <div class="hero-body">
-      <p class="hero-teaser">Every one of the district’s five highest recorded rates was struck in 2026, all on identical 1,614.6 square foot plots, while twenty-four matched resales turned S$83.59 million into S$165.64 million without a single loss.</p>
+      <p class="hero-teaser">Treasure International Holdings, wholly owned by OUE Limited, has proposed to take OUE Healthcare private at S$0.050 a share by scheme of arrangement. The offeror already holds 89.68 per cent. Five premium measures are quoted between 28.2 and 51.1 per cent against a stock that did not trade on sixteen days of the past year; the sixth, against net asset value, is 2.5 per cent. The Securities Industry Council has confirmed no chain offer is required for First REIT.</p>
       <div class="hero-meta">
-        <span>24 August 2026</span>
+        <span>26 August 2026</span>
         <span class="sep">&middot;</span>
-        <span>2570 words</span>
+        <span>1414 words</span>
         <span class="sep">&middot;</span>
-        <span>12 min read</span>
+        <span>7 min read</span>
       </div>
-      <a class="btn-primary" href="/news/weekly-landed-caveats-18-21-aug-2026-district-28-five-highest-rates-all-set-this-year/" data-article-id="221">
+      <a class="btn-primary" href="/news/oue-healthcare-privatisation-scheme-fifty-one-per-cent-to-vwap-two-point-five-to-book/" data-article-id="222">
         Read full story
         <span class="arrow" aria-hidden="true">&#8594;</span>
       </a>
@@ -4281,12 +4282,29 @@ body.article-takeover .ed-foot{display:none!important}
   <div class="wrap">
     <div class="week-head">
       <h2 id="week-h" class="week-title">More from this week</h2>
-      <div class="week-meta">Updated 24 August 2026</div>
+      <div class="week-meta">Updated 26 August 2026</div>
     </div>
 
     <div class="cards">
 
       <!-- Card 1 — id:118 FPL FHT Optimisation / Valley Point (demoted from hero, v48.236) -->
+      <a class="card" href="/news/weekly-landed-caveats-18-21-aug-2026-district-28-five-highest-rates-all-set-this-year/" data-article-id="221">
+        <div class="card-image">
+          <img src="/images/news_221_landed_district28_record.jpg"
+               alt="Illustration: PropertyAtlas. A 999-year terrace on Luxus Hill Drive struck S$3,239 per square foot, the highest rate District 28 has recorded across 6,274 prior landed sales. Source: URA REALIS, releases dated 18th and 21st August 2026."
+               class="card-image-photo"
+               loading="lazy" />
+        </div>
+        <p class="card-credit">Illustration: PropertyAtlas. A 999-year terrace on Luxus Hill Drive struck S$3,239 per square foot, the highest rate District 28 has recorded across 6,274 prior landed sales. Source: URA REALIS, releases dated 18th and 21st August 2026.</p>
+        <p class="card-cat">Residential</p>
+        <h3 class="card-headline">Weekly Landed Caveats, Releases of 18th and 21st August 2026: District 28’s Five Highest Rates Were All Set This Year as a Luxus Hill Drive Terrace Reaches S$3,239 Per Square Foot</h3>
+        <p class="card-teaser">Every one of the district’s five highest recorded rates was struck in 2026, all on identical 1,614.6 square foot plots, while twenty-four matched resales turned S$83.59 million into S$165.64 million without a single loss.</p>
+        <p class="card-meta">
+          <span>24 Aug 2026</span>
+          <span class="sep">&middot;</span>
+          <span>12 min read</span>
+        </p>
+      </a>
       <a class="card" href="/news/elite-uk-reit-1h2026-dpu-three-year-high-and-197-2m-tied-to-manager-control/" data-article-id="220">
         <div class="card-image">
           <img src="/images/news_220_elite_uk_reit_queensway_house.jpg"
@@ -4321,23 +4339,6 @@ body.article-takeover .ed-foot{display:none!important}
           <span>6 min read</span>
         </p>
       </a>
-      <a class="card" href="/news/weekly-caveats-18-21-aug-2026-five-trades-carry-58-per-cent-of-s215m-week/" data-article-id="218">
-        <div class="card-image">
-          <img src="/images/news_218_weekly_caveats_concentration.jpg"
-               alt="Illustration: PropertyAtlas. Five caveats above S$10 million carried 57.7 per cent of the week's S$215.01 million. Source: URA REALIS, releases dated 18th and 21st August 2026."
-               class="card-image-photo"
-               loading="lazy" />
-        </div>
-        <p class="card-credit">Illustration: PropertyAtlas. Five caveats above S$10 million carried 57.7 per cent of the week's S$215.01 million. Source: URA REALIS, releases dated 18th and 21st August 2026.</p>
-        <p class="card-cat">Transactions</p>
-        <h3 class="card-headline">Weekly Caveats, Week of 18th August 2026: Five Trades Carry 58 Per Cent of a S$215M Week as ESR-REIT Exits a Short-Lease Jurong Warehouse</h3>
-        <p class="card-teaser">Five caveats above S$10 million took 57.7 per cent of the week's value on 12 per cent of its deals, while the median deal held at S$1.40 million.</p>
-        <p class="card-meta">
-          <span>21 Aug 2026</span>
-          <span class="sep">&middot;</span>
-          <span>14 min read</span>
-        </p>
-      </a>
 
       </div>
   </div>
@@ -4367,6 +4368,20 @@ body.article-takeover .ed-foot{display:none!important}
 
       <div class="feed-month">August 2026</div>
 
+      <a class="feed-row" href="/news/weekly-caveats-18-21-aug-2026-five-trades-carry-58-per-cent-of-s215m-week/" data-article-id="218">
+        <div class="feed-row-image-col">
+          <div class="feed-row-image">
+            <img src="/images/news_218_weekly_caveats_concentration.jpg" alt="Illustration: PropertyAtlas. Five caveats above S$10 million carried 57.7 per cent of the week's S$215.01 million. Source: URA REALIS, releases dated 18th and 21st August 2026." class="feed-row-image-photo" loading="lazy" />
+          </div>
+          <p class="feed-row-credit">Illustration: PropertyAtlas. Five caveats above S$10 million carried 57.7 per cent of the week's S$215.01 million. Source: URA REALIS, releases dated 18th and 21st August 2026.</p>
+        </div>
+        <div class="feed-row-text">
+          <p class="feed-row-cat">Transactions</p>
+          <h3 class="feed-row-headline">Weekly Caveats, Week of 18th August 2026: Five Trades Carry 58 Per Cent of a S$215M Week as ESR-REIT Exits a Short-Lease Jurong Warehouse</h3>
+          <p class="feed-row-teaser">Five caveats above S$10 million took 57.7 per cent of the week's value on 12 per cent of its deals, while the median deal held at S$1.40 million.</p>
+          <p class="feed-row-meta"><span>21 Aug 2026</span><span class="sep">&middot;</span><span>14 min read</span></p>
+        </div>
+      </a>
       <a class="feed-row" href="/news/tap-gather-house-eighth-brand-72-of-132-beds-trading/" data-article-id="217">
         <div class="feed-row-image-col">
           <div class="feed-row-image">
@@ -4449,20 +4464,6 @@ body.article-takeover .ed-foot{display:none!important}
           <h3 class="feed-row-headline">OUE's Revenue Rose 5.3% And It Lost S$114.6m. One Segment Earning S$138,000 Produced S$107.7m Of The Damage</h3>
           <p class="feed-row-teaser">The company says the loss is non-cash, and the cash flow statement agrees — operating cash rose 1.4 per cent. What moved instead was the funding profile: cash and committed undrawn facilities now cover borrowings due within twelve months 0.62 times, against 1.19 a half earlier. And the cumulative writedown against Gemdale is S$67.0 million, not the S$47.0 million the release names.</p>
           <p class="feed-row-meta"><span>19 Aug 2026</span><span class="sep">&middot;</span><span>11 min read</span></p>
-        </div>
-      </a>
-      <a class="feed-row" href="/news/hotel-properties-swung-to-a-39-million-loss-but-four-fifths-of-it-was-last-year-not-repeating/" data-article-id="210">
-        <div class="feed-row-image-col">
-          <div class="feed-row-image">
-            <img src="/images/news_210_hpl_arbor_london.jpg" alt="Arbor at Bankside Yards, London, the first completed building in Hotel Properties' 5.5-acre South Bank development. The group's share of results of associates and jointly controlled entities swung S$17.88 million against the first half of 2025 — 32 per cent of the swing in pre-tax result" class="feed-row-image-photo" loading="lazy" />
-          </div>
-          <p class="feed-row-credit">Arbor at Bankside Yards, London, the first completed building in Hotel Properties' 5.5-acre South Bank development. The group's share of results of associates and jointly controlled entities swung S$17.88 million against the first half of 2025 — 32 per cent of the swing in pre-tax result. Credit: Hotel Properties Limited Annual Report 2025.</p>
-        </div>
-        <div class="feed-row-text">
-          <p class="feed-row-cat">Developer Results</p>
-          <h3 class="feed-row-headline">Hotel Properties Swung To A S$39.1 Million Loss. Four-Fifths Of It Was Last Year Not Repeating.</h3>
-          <p class="feed-row-teaser">The loss attributable to owners was S$39.07 million against an S$11.44 million profit, but 81 per cent of the S$55.5 million pre-tax swing was the absent Concorde revaluation and an associates gain that did not recur. The new facts are narrower: hotel margin fell from 10.78 to 8.08 per cent, the group moved to net current liabilities of S$128.7 million, and the fair value of its fixed-rate debt now stands 8.7 per cent above carrying against 1.7 per cent in December.</p>
-          <p class="feed-row-meta"><span>19 Aug 2026</span><span class="sep">&middot;</span><span>12 min read</span></p>
         </div>
       </a>
       <!-- Row id 69 First REIT dropped off in v48.17 cascade; Row id 70 ESR-REIT dropped off in v48.20b cascade for id:79 IREIT hero; Row id 71 CICT dropped off in v48.20d cascade for id:80 Stoneweg hero; Row id 72 Elite UK dropped off in v48.20d second drop for id:81 Landmark hero; Row id 73 FCT dropped off in v48.20h cascade for id:82 Starhill hero; Row id 74 Suntec dropped off in v48.20k cascade for id:83 CDLHT hero; Row id 75 CLAS dropped off in v48.20l cascade for id:84 FEHT hero; Row id 76 CLAR dropped off in v48.23 cascade for id:85 FLCT hero; Row id 77 MPACT dropped off in v48.24 cascade for id:86 Centurion hero; Row id 78 MIT dropped off in v48.27 cascade for id:87 AIMS APAC hero; Row id 79 IREIT dropped off in v48.38 cascade for id:88 Frasers Property hero; Row id 80 SERT dropped off in v48.51 cascade for id:89 Prime US REIT hero; Row id 81 Landmark dropped off in v48.58 cascade for id:90 NTT DC REIT hero; Row id 82 Starhill dropped off in v48.68 cascade for id:91 UHREIT hero; Row id 83 CDLHT dropped off in v48.73 cascade for id:92 Centurion Corp hero; Row id 84 FEHT dropped off in v48.81 cascade for id:93 MLT hero; Row id 85 FLCT dropped off in v48.92 cascade for id:94 Lendlease REIT hero; Row id 86 CAREIT dropped off in v48.117 cascade for id:95 PLife REIT hero ; Row id 87 AIMS APAC REIT dropped off in v48.119 cascade for id:96 BHG REIT hero ; Row id 88 Frasers Property Limited dropped off in v48.120 cascade for id:97 CapitaLand Investment hero ; Row id 89 Prime US REIT dropped off in v48.152 cascade for id:98 Acrophyte Hospitality Trust hero ; Row id 90 NTT DC REIT dropped off in v48.159 cascade for id:99 Manulife US REIT hero -->
@@ -18995,6 +18996,67 @@ var TYPETOT={"office":57330.6,"retail":35459.5,"shophouse":23504.1,"multiUser":3
 <!-- v48.217 (8 Jun 2026, S94): NEWS id:109 Singapore Industrial REIT Scorecard added as newest; /news/singapore-industrial-reit-scorecard-where-the-eight-names-stand/ + sitemap generated. Landing L243 cascade pending (separate pass per SOP §6). -->
 var NEWS=[
   {
+ "id": 222,
+ "slug": "oue-healthcare-privatisation-scheme-fifty-one-per-cent-to-vwap-two-point-five-to-book",
+ "image": "/images/news_222_oue_healthcare_scheme.jpg",
+ "imageCredit": "Against the last traded price and four volume weighted averages, the offer is a premium of between 28.2 and 51.1 per cent. Against OUE Healthcare’s own unaudited net asset value per share of S$0.0488 at 30th June 2026, it is a premium of 2.5 per cent. All figures as disclosed in the Joint Announcement of 24th August 2026. Credit: PropertyAtlas",
+ "landing_credit": "Against the last traded price and four volume weighted averages, the offer is a premium of between 28.2 and 51.1 per cent. Against OUE Healthcare’s own unaudited net asset value per share of S$0.0488 at 30th June 2026, it is a premium of 2.5 per cent. All figures as disclosed in the Joint Announcement of 24th August 2026. Credit: PropertyAtlas",
+ "date": "2026-08-26",
+ "title": "OUE Limited Has Proposed To Take OUE Healthcare Private At S$0.050 A Share, A Premium Of Between 28.2 And 51.1 Per Cent To A Stock That Did Not Trade At All On Sixteen Days Of The Past Year, But Of Only 2.5 Per Cent To The Company’s Own Net Asset Value, While The Convertible Perpetual Securities The Offeror Itself Holds Carry A Conversion Price Of S$0.070",
+ "display_title": "OUE Healthcare Privatisation: Five Premiums Point Up, The Sixth Is 2.5 Per Cent",
+ "display_headline": "Treasure International Holdings Has Offered S$0.050 In Cash For The 10.32 Per Cent Of OUE Healthcare It Does Not Own — A Premium Of 28.2 Per Cent To The Last Traded Price And 51.1 Per Cent To The Twelve-Month Volume Weighted Average, But 2.5 Per Cent To Net Asset Value, And Two Cents Below The Conversion Price Of The Offeror’s Own Perpetual Securities",
+ "landing_headline": "OUE Healthcare Privatisation: The Premium To Trading History Runs To 51.1 Per Cent. The Premium To Book Is 2.5 Per Cent.",
+ "category": "Healthcare",
+ "tag": "Scheme Of Arrangement · Privatisation · OUE Limited · OUE Healthcare · SGX:LJ3 · Catalist · First REIT · Take-overs Code · Minority Shareholders · Singapore",
+ "source": "OUE Limited",
+ "sentiment": "mixed",
+ "standfirst": "OUE Limited has moved to buy out the 10.32 per cent of OUE Healthcare it does not own, at S$0.050 per share in cash by way of a scheme of arrangement. The investor presentation leads with five upward arrows — premiums of 28.2 per cent over the last traded price and 37.5, 36.1, 42.1 and 51.1 per cent over the one-, three-, six- and twelve-month volume weighted averages, all comfortably ahead of precedent Catalist healthcare privatisations. The sixth bar on that same chart is the shortest: against the company’s own unaudited net asset value of S$0.0488 per share, the offer is a premium of 2.5 per cent. The offeror separately holds S$189,607,700 of convertible perpetual securities in OUE Healthcare struck at S$0.070 a share, a conversion right that becomes exercisable seven days after this announcement.",
+ "display_teaser": "Treasure International Holdings, wholly owned by OUE Limited, has proposed to take OUE Healthcare private at S$0.050 a share by scheme of arrangement. The offeror already holds 89.68 per cent. Five premium measures are quoted between 28.2 and 51.1 per cent against a stock that did not trade on sixteen days of the past year; the sixth, against net asset value, is 2.5 per cent. The Securities Industry Council has confirmed no chain offer is required for First REIT.",
+ "sourceLabel": "PropertyAtlas.sg Analysis · Joint Announcement, Joint Press Release and Joint Investor Presentation of OUE Healthcare Limited and Treasure International Holdings Pte. Ltd., all dated 24th August 2026",
+ "byline": "PropertyAtlas",
+ "read_time_min": 7,
+ "word_count": 1414,
+ "financial_headlines": [
+  {
+   "label": "Scheme consideration",
+   "value": "S$0.050",
+   "change": "in cash per scheme share · 28.2% over the last traded price of S$0.0390",
+   "change_dir": "up"
+  },
+  {
+   "label": "Premium to net asset value",
+   "value": "2.5%",
+   "change": "against unaudited NAV per share of S$0.0488 at 30th June 2026 · the shortest of six premium measures",
+   "change_dir": "up"
+  },
+  {
+   "label": "Premium to 12-month VWAP",
+   "value": "51.1%",
+   "change": "over S$0.0331 · precedent Catalist healthcare privatisations averaged 33.1%",
+   "change_dir": "up"
+  },
+  {
+   "label": "Offeror stake",
+   "value": "89.68%",
+   "change": "3,984,729,000 of 4,443,129,206 shares · float of 10.32%",
+   "change_dir": "neutral"
+  },
+  {
+   "label": "Convertible perpetual securities",
+   "value": "S$189.6m",
+   "change": "4.0% coupon, conversion price S$0.070 · exercisable from 31st August 2026",
+   "change_dir": "neutral"
+  },
+  {
+   "label": "Days the shares did not trade",
+   "value": "16",
+   "change": "over twelve months · average daily volume 0.05% of issued shares, against 0.22% for the STI",
+   "change_dir": "down"
+  }
+ ],
+ "summary": "<p class=\"lede\"><strong>Treasure International Holdings Pte. Ltd., a wholly owned subsidiary of OUE Limited, has proposed to acquire the 10.32 per cent of OUE Healthcare Limited it does not already hold, at S$0.050 per share in cash, by way of a scheme of arrangement under Section 210 of the Companies Act.</strong> The offeror and its concert parties hold 3,984,729,000 of 4,443,129,206 shares, or 89.68 per cent. Upon the scheme becoming effective, OUE Healthcare becomes a wholly owned subsidiary and is delisted from Catalist.</p>\n\n<h2>Five Premiums Point Up, And The Sixth Is Almost Flat</h2>\n\n<p>The investor presentation leads with a row of upward arrows. Against the last transacted price of S$0.0390 on 21st August 2026, the offer is a premium of 28.2 per cent. Against the one-month, three-month, six-month and twelve-month volume weighted average prices of S$0.0364, S$0.0367, S$0.0352 and S$0.0331, the premiums are 37.5, 36.1, 42.1 and 51.1 per cent respectively.</p>\n\n<p>Those are real, and they clear the field. The presentation benchmarks them against precedent Catalist healthcare privatisations, where the average premiums across the same five measures were 25.7, 26.6, 28.8, 30.0 and 33.1 per cent. This offer exceeds every one of them. The offer price is also above the closing price on any day in the preceding five years.</p>\n\n<p>The sixth bar on that chart is the shortest, and it is the one that matters. Against OUE Healthcare&rsquo;s latest unaudited net asset value per share of <strong>S$0.0488 as at 30th June 2026</strong>, the S$0.050 offer is a premium of <strong>2.5 per cent</strong>.</p>\n\n<p>The distance between 51.1 per cent and 2.5 per cent is the entire history of this share price. A stock that trades well below book for long enough will generate large premiums to its own trading record and almost none to its assets. Which of those two anchors the independent financial adviser adopts is the single most consequential judgement in the Scheme Document.</p>\n\n<h2>The Liquidity Argument Is True, And Circular</h2>\n\n<p>The second stated rationale is that shareholders may otherwise struggle to exit. The evidence is strong. Average daily trading volume was 0.05 per cent of issued shares over twelve months, ranging from 0.02 to 0.12 per cent across the shorter windows, against 0.22 per cent for the Straits Times Index. Over the same twelve months there were <strong>sixteen market days on which the shares did not trade at all</strong>.</p>\n\n<p>The presentation sets this beside six other Catalist healthcare issuers, all privatised in recent years: Singapore Medical Group at 0.12 per cent, Singapore O&amp;G at 0.03, Niks Professional, Econ Healthcare and Healthway Medical at 0.02, and Asian Healthcare Specialists at 0.01. OUE Healthcare sits second in that group.</p>\n\n<p>The argument is accurate on its own terms. It is also circular in a way worth naming plainly: an 89.68 per cent controlling stake is itself a principal reason a 10.32 per cent free float trades thinly. The illiquidity offered as the reason to accept is in part a product of the ownership structure making the offer.</p>\n\n<h2>The Offeror&rsquo;s Own Securities Carry A Higher Price</h2>\n\n<p>This is the detail that rewards reading the Joint Announcement rather than the press release.</p>\n\n<p>The offeror holds <strong>S$189,607,700</strong> in principal of convertible perpetual securities issued by OUE Healthcare, carrying a 4.0 per cent coupon, convertible into shares at <strong>S$0.070</strong> at the offeror&rsquo;s option, on or after <strong>31st August 2026</strong>. That date falls seven days after this announcement.</p>\n\n<p>The scheme price of S$0.050 is two cents below that conversion price. Converting at S$0.070 to acquire what is simultaneously being offered at S$0.050 has no economic logic, so the right will presumably go unexercised. The Securities Industry Council has confirmed that Rule 19 of the Take-overs Code does not apply to the offeror, so no offer or proposal is required in respect of these securities. They persist through the privatisation.</p>\n\n<p>For a minority shareholder weighing S$0.050, the controlling shareholder&rsquo;s own instrument carrying a S$0.070 conversion price is context rather than proof of value &mdash; the securities were issued under a conversion agreement dated 23rd February 2021, in materially different conditions. But it is context the Scheme Document will have to address.</p>\n\n<h2>First REIT Unitholders Are Offered Nothing, And That Is A Ruling</h2>\n\n<p>OUE Healthcare has a deemed interest in approximately <strong>43.40 per cent</strong> of First REIT&rsquo;s units and holds <strong>40.00 per cent</strong> of First REIT Management Limited. The remaining 60.00 per cent of the manager is held directly by OUE Limited.</p>\n\n<p>A change of control at OUE Healthcare therefore moves an entity sitting above a substantial First REIT stake. The Securities Industry Council has confirmed that the offeror would <strong>not</strong> be obliged to make a mandatory offer for First REIT under the chain offer principle in Note 7 on Rule 14.1 of the Code.</p>\n\n<p>For readers who followed First REIT through the S$471.5 million Indonesia divestment and its June extraordinary general meeting, the practical position is this: OUE Limited tightens its hold on the vehicle that holds First REIT, and First REIT unitholders are offered nothing and are owed nothing.</p>\n\n<h2>The Headcount Condition Is Where This Could Fail</h2>\n\n<p>The scheme requires two thresholds at the Scheme Meeting, and they are different in kind. More than 50 per cent <strong>by headcount</strong> of scheme shareholders present and voting must approve, and at least 75 per cent <strong>by value</strong> of the scheme shares held by those present and voting.</p>\n\n<p>The offeror and its concert parties, together with the common substantial shareholders, will abstain and will decline proxy appointments. The decision therefore rests entirely with holders of the 10.32 per cent float.</p>\n\n<p>Where a float is small and concentrated, the value test is usually the easier of the two. The headcount test has derailed Singapore schemes before, because it counts people rather than shares: a large number of very small holders voting against can defeat a scheme that comfortably clears 75 per cent by value. In a stock that has traded between two and four cents for five years, the holder count is likely to be substantial and retail-weighted.</p>\n\n<h2>Timetable</h2>\n\n<p>The indicative timetable runs from the Joint Announcement on 24th August 2026 to a first Court hearing in mid-October to convene the Scheme Meeting, despatch of the Scheme Document at end-October, the Scheme Meeting in mid-November, an expected effective date at end-December 2026, and delisting from Catalist in early January 2027. The long-stop date is six months from the Implementation Agreement, and the Scheme Meeting must be held within six months of the Joint Announcement unless the Securities Industry Council consents otherwise.</p>\n\n<p>Three things are worth watching. <strong>The independent financial adviser had not been appointed</strong> as at the Joint Announcement Date; whether it anchors on the 2.5 per cent premium to net asset value or the 28.2 to 51.1 per cent premiums to trading history will shape the recommendation. <strong>The Securities Industry Council has directed</strong> that directors of the company who are also directors of the offeror, or acting in concert with them, must abstain from making a recommendation, so the Recommending Directors will be a subset of the five-person board. And a <strong>competing offer</strong>, while unrealistic for the shares at 89.68 per cent held, is defined broadly enough to capture a sale of more than 5 per cent of any group company &mdash; which reaches down into the First REIT structure.</p>\n\n<h2>The Structural Read</h2>\n\n<p>Five days before this announcement, OUE Limited&rsquo;s first-half results described a group whose consolidated accounts flatter its economics: revenue and assets consolidate at 100 per cent while cash leaves to other people. Non-controlling interests took S$33.0 million of profit in a half when owners of the company took a S$114.6 million loss.</p>\n\n<p>This transaction closes one of those leaks. It does nothing about the larger one, the 51.1 per cent of OUE REIT that OUE Limited does not own. Directionally, though, it is the same trade: convert a consolidated-but-shared subsidiary into a wholly owned one.</p>\n\n<p>The question facing a minority holder is narrower. S$0.050 is more than this share has closed at on any day in five years. It is also 2.5 per cent above what the company itself says its assets are worth per share, offered by a controlling shareholder whose own convertible claim on the same company is struck at S$0.070.</p>\n\n<p><em>Maybank Securities Pte. Ltd. is financial adviser to the offeror. PrimePartners Corporate Finance Pte. Ltd. is OUE Healthcare&rsquo;s continuing sponsor. Scheme shareholders are advised to await the Scheme Document, which will contain the recommendation of the Recommending Directors and the advice of the independent financial adviser, before taking any action.</em></p>"
+},
+  {
     "id": 221,
     "slug": "weekly-landed-caveats-18-21-aug-2026-district-28-five-highest-rates-all-set-this-year",
     "image": "/images/news_221_landed_district28_record.jpg",
@@ -21829,7 +21891,7 @@ function formatNewsSummary(text, mode){
 // cover all visible static slots, not just the feed rows.
 // Static rows are authored HTML; the dynamic NEWS-array injector
 // must exclude exactly these IDs so each article appears once.
-var NR_STATIC_IDS = [220, 219, 218, 217, 216, 215, 214, 213, 212, 210];
+var NR_STATIC_IDS = [221, 220, 219, 218, 217, 216, 215, 214, 213, 212];
 var NR_PAGE_SIZE = 10;
 var NR_INJECTED_COUNT = 0;
 // L-CASCADE-9 (S241): month dividers for INJECTED rows. The static run carries its
