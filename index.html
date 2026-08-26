@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
-<script>(function(){try{var s=location.search,h=location.hash;if(/[?&]article=/.test(s)){location.replace('/newsroom/'+s+h);return;}if(h&&h.length>1){location.replace('/newsroom/'+s+h);}}catch(e){}})();</script>
+<script>(function(){try{var s=location.search,h=location.hash;if(/[?&](?:article|confirm|unsubscribe|view)=/.test(s)){location.replace('/newsroom/'+s+h);return;}if(h&&h.length>1){location.replace('/newsroom/'+s+h);}}catch(e){}})();</script>
 <link rel="preconnect" href="https://tiles.openfreemap.org" crossorigin/>
 <link rel="dns-prefetch" href="https://tiles.openfreemap.org"/>
 <title>PropertyAtlas — Singapore Commercial &amp; Industrial Property Intelligence</title>
@@ -2422,6 +2422,15 @@ function faTopRender(cavs){
   var el=document.getElementById('faTopTbl');if(el){el.innerHTML=html;el.style.maxHeight='560px';el.style.overflowY='auto';}
 }
 
+/* v9.9.8 (S337): newsletter double opt-in REPAIR. The confirmation link built by
+   newsletter-subscribe (SITE_BASE + '/?confirm=TOKEN') resolves to this apex map
+   page, which carries no nlHandleTokenActions - that handler lives only in
+   newsroom/index.html. Since v48.273 (10 Jul 2026, S159) moved the newsroom to
+   /newsroom/, every click landed here and did nothing: 9 consecutive confirmation
+   failures, last success 5 Jul 2026. The boot shim forwarded ?article= only; it now
+   also forwards ?confirm=, ?unsubscribe= and ?view=. Root's own params (tour, lens)
+   are untouched. newsletter-confirm has no token expiry, so every confirmation email
+   sent since 10 Jul becomes live again on deploy. */
 /* v9.9.7 (S266): SEED_CAVEATS re-bake - week of 3 Aug 2026 release, 60 caveats
    (8 Tue 4 Aug + 52 Fri 7 Aug), ids 82833-82893 less 82886. SEED_CAV_TOTAL 8 -> 60.
    82886 is the 9 Changi Business Park Crescent re-lodgement, is_aborted=true, and is
