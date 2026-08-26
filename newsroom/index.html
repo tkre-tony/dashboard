@@ -1,4 +1,5 @@
 <!DOCTYPE html>
+<!-- v48.413 (26 Aug 2026, S336): YoY pay badges suppressed where the prior year was prorated from an appointment date. paRemSeries() computed the badge from the two most recent rem_history entries with a truthy total, without regard to whether the base covered a full year — Gan Chee Yen and Ong Tze Guan (BHG Retail REIT) each rendered +622% against ~50 days of FY2024; also Quek See Tiat (FEHT) +144%, Penelope Ransom (LLREIT) +67%, Wilson Christopher Geoffrey (KOP) +57%, Lui Chong Chee (CLAS) +29%, George Quek (BHG) +15%. DATA-ONLY fix using the existing kore-id-* convention: prorated year total set to null with the figure preserved in the entry note, so the badge self-suppresses and the year still renders in the history table. NO RENDERER CHANGE. No annualised substitute figure is written — annualisation would be our assumption, not an issuer disclosure (L-SRC-1). kore-lid-25 excluded deliberately: full year of service, fee-composition change only, caveat already in rem_note. No NEWS, no cascade, no NR_STATIC_IDS, no sitemap, no reit_assets change. -->
 <!-- v48.412 (26 Aug 2026, S336): KOP Limited Human Capital pass from the Minutes of AGM held 31 July 2026 (filed 18 Aug 2026). Pass 1 assessed and declined — all seven resolutions carried 100.00% with zero votes against, no shareholder questions submitted by the 23 July cut-off and none from the floor; no article. Pass 2 closed as no-change — no acquisition, divestment or revaluation, L-AD-10 not triggered. Pass 3: kop-ined-ng-26 role enriched to Audit and Risk Committee Chairman with Nominating and Remuneration Committee membership and the Rule 704(7) independence determination; re-elections of Leny Suparman and Ng Hin Lee under Regulation 112 recorded; FY2027 approved aggregate Directors’ fees of S$197,808 recorded on the three non-executive directors, labelled as a Board aggregate. The derived year-on-year fee movement is deliberately NOT written — the FY2026 base is a carried extraction, not read at source (L-FACT-1). No NEWS, no cascade, no NR_STATIC_IDS, no sitemap, no reit_assets change. -->
 <!-- v48.411 (25 Aug 2026, S336): Asset Directory counts strip. New tally line above the card grid counting the FILTERED set, so it recalculates per entity and acts as a standing reconciliation check on the render tokens. ROOT-CAUSE: the L-AD-9 token predicates (DIVESTED / DISPOSAL / PENDING DIVESTMENT / PENDING ACQUISITION / NEW ACQUISITION / MANAGED) were duplicated across the table and card renderers; both now call a single reitClassify(p) helper, and the strip counts from that same helper. Renderer-only: no NEWS, no cascade, no NR_STATIC_IDS, no sitemap, no REIT_DATA change. -->
 <!-- v48.410 (id:221 weekly landed caveats, releases of 18 and 21 Aug 2026 - District 28 five highest rates all set this year. Landing cascade regenerated from NEWS. Static page + sitemap generated.) -->
@@ -9060,7 +9061,7 @@ var TALENT_DATA = [
     rem_band:null, rem_pct_fixed:78, rem_pct_bonus:null, rem_pct_other:22,
     rem_history:[
       {year:'FY2025', total:148500, pct_fixed:78, pct_bonus:null, pct_ltp:null, pct_other:22},
-      {year:'FY2024', total:114682, note:'Pro-rated — appointed 1 Feb 2024'},
+      {year:'FY2024', total:null, note:'Pro-rated — appointed 1 Feb 2024. Fees S$114,682 for a part year; total held null so no year-on-year percentage is shown against a non-comparable base.'},
     ],
     edu:'Advanced Management Program, Harvard Business School; MBA, New York University; BSc Business Administration, New York University',
     bio:'Non-Executive Independent Director and Chairman of CLAS since April 2024. NRC Chairman. Age 65. Also formerly director of CapitaLand Malaysia REIT Management. Extensive experience in real estate and capital markets.',
@@ -11037,7 +11038,7 @@ var TALENT_DATA = [
     ],
     linkedin_url:null, photo_url:null,
     rem_history:[
-      {year:'FY2024', total:48340, pct_fixed:100, pct_bonus:0, pct_ltp:0, pct_other:0, note:'Appointed 1 May 2024; prorated 8 months as ID'},
+      {year:'FY2024', total:null, pct_fixed:100, pct_bonus:0, pct_ltp:0, pct_other:0, note:'Appointed 1 May 2024; prorated 8 months as ID. Fees S$48,340 for a part year; total held null so no year-on-year percentage is shown against a non-comparable base.'},
       {year:'FY2025', total:118125, pct_fixed:100, pct_bonus:0, pct_ltp:0, pct_other:0, note:'Redesignated Chairman 1 May 2025'},
     ],
     tags:['Board Chair','Independent NED','FE H-Trust','PwC Alumni','Accounting','Public Service Medal','Temasek']
@@ -14067,7 +14068,7 @@ var TALENT_DATA = [
       {title:'Group Head of Investments', entity:'Lendlease Group', years:'2022–2024'},
     ],
     rem_history:[
-      {year:'FY2024', total:55563, pct_fixed:100, pct_bonus:0, pct_ltp:0, pct_other:0, note:'Prorated — appointed 8 Nov 2023'},
+      {year:'FY2024', total:null, pct_fixed:100, pct_bonus:0, pct_ltp:0, pct_other:0, note:'Prorated — appointed 8 Nov 2023. Fees S$55,563 for a part year; total held null so no year-on-year percentage is shown against a non-comparable base.'},
       {year:'FY2025', total:93000, pct_fixed:100, pct_bonus:0, pct_ltp:0, pct_other:0},
     ],
     cross_board_roles:[
@@ -17408,7 +17409,7 @@ var TALENT_DATA = [
     rem_exact:98000, rem_fixed:0, rem_bonus:0, rem_other:98000,
     rem_note:'FY2025 director fees S$98,000 (100% fees, cash). Chairman of ARC; Member of NRC. Age 66.',
     rem_band:null, rem_pct_fixed:0, rem_pct_bonus:0, rem_pct_other:100,
-    rem_history:[{year:'FY2025', total:98000, pct_fixed:0, pct_bonus:0, pct_ltp:0, pct_other:100}, {year:'FY2024', total:13582, pct_fixed:0, pct_bonus:0, pct_ltp:0, pct_other:100, note:'Prorated — appointed 11 Nov 2024 (∼50 days of FY2024); FY2025 is first full year'}],
+    rem_history:[{year:'FY2025', total:98000, pct_fixed:0, pct_bonus:0, pct_ltp:0, pct_other:100}, {year:'FY2024', total:null, pct_fixed:0, pct_bonus:0, pct_ltp:0, pct_other:100, note:'Prorated — appointed 11 Nov 2024 (∼50 days of FY2024); FY2025 is first full year. Fees S$13,582 for that part year; total held null so no year-on-year percentage is shown against a non-comparable base.'}],
     edu:'B.Acc, National University of Singapore; Chartered Accountant (Singapore), ISCA',
     bio:'Chairman & Independent Director of BHG Retail REIT since 11 Nov 2024. ARC Chairman; NRC Member. Chairman of V3 Capital Investments. Past: Co-President & Executive Director of Pacific International Lines; Senior Advisor V3 Fintech; CEO Fullerton Financial Holdings (International); Co-CIO, Senior MD Special Projects, Head of China Market at Temasek International.',
     prev_roles:[
@@ -17434,7 +17435,7 @@ var TALENT_DATA = [
     rem_exact:87000, rem_fixed:0, rem_bonus:0, rem_other:87000,
     rem_note:'FY2025 director fees S$87,000 (100% fees, cash). Chairman of NRC; Member of ARC. Age 69. Chairman of BreadTalk Group.',
     rem_band:null, rem_pct_fixed:0, rem_pct_bonus:0, rem_pct_other:100,
-    rem_history:[{year:'FY2025', total:87000, pct_fixed:0, pct_bonus:0, pct_ltp:0, pct_other:100}, {year:'FY2024', total:75703, pct_fixed:0, pct_bonus:0, pct_ltp:0, pct_other:100, note:'Prorated — appointed 11 Feb 2024 (∼10.5 months of FY2024); succeeded Lau Teck Sien as NRC Chair'}],
+    rem_history:[{year:'FY2025', total:87000, pct_fixed:0, pct_bonus:0, pct_ltp:0, pct_other:100}, {year:'FY2024', total:null, pct_fixed:0, pct_bonus:0, pct_ltp:0, pct_other:100, note:'Prorated — appointed 11 Feb 2024 (∼10.5 months of FY2024); succeeded Lau Teck Sien as NRC Chair. Fees S$75,703 for that part year; total held null so no year-on-year percentage is shown against a non-comparable base.'}],
     edu:'Honorary Doctorate of Philosophy in Business Administration, Wisconsin International University',
     bio:'Independent Director of BHG Retail REIT since 11 Feb 2024. NRC Chairman; ARC Member. Chairman of BreadTalk Group Pte Ltd. Multiple BreadTalk / Perennial / F&B group directorships.',
     prev_roles:[
@@ -17455,7 +17456,7 @@ var TALENT_DATA = [
     rem_exact:85000, rem_fixed:0, rem_bonus:0, rem_other:85000,
     rem_note:'FY2025 director fees S$85,000 (100% fees, cash). Member of ARC; Member of NRC. Age 59.',
     rem_band:null, rem_pct_fixed:0, rem_pct_bonus:0, rem_pct_other:100,
-    rem_history:[{year:'FY2025', total:85000, pct_fixed:0, pct_bonus:0, pct_ltp:0, pct_other:100}, {year:'FY2024', total:11780, pct_fixed:0, pct_bonus:0, pct_ltp:0, pct_other:100, note:'Prorated — appointed 11 Nov 2024 (∼50 days of FY2024); FY2025 is first full year'}],
+    rem_history:[{year:'FY2025', total:85000, pct_fixed:0, pct_bonus:0, pct_ltp:0, pct_other:100}, {year:'FY2024', total:null, pct_fixed:0, pct_bonus:0, pct_ltp:0, pct_other:100, note:'Prorated — appointed 11 Nov 2024 (∼50 days of FY2024); FY2025 is first full year. Fees S$11,780 for that part year; total held null so no year-on-year percentage is shown against a non-comparable base.'}],
     edu:'B.Sc Civil and Structural Engineering, National University of Singapore',
     bio:'Independent Director of BHG Retail REIT since 11 Nov 2024. ARC Member; NRC Member. CEO of Maxburgh Holdings Pte Ltd. Past: Director Ong & Ong Group; Director Nanyang International Education (Holdings); CEO Glowtec Bio; CEO Glowtec Environmental Corporation.',
     prev_roles:[
@@ -17843,7 +17844,7 @@ var TALENT_DATA = [
     rem_exact:46000, rem_fixed:46000, rem_bonus:0, rem_other:0,
     rem_note:'Directors\' fees S$46,000 for FY2026 (100% fees). FY2025: S$29,293 (appointed 1 August 2024, part year). Shareholders approved aggregate Directors\' fees of S$197,808 for the financial year ending 31 March 2027 at the AGM of 31 July 2026, payable quarterly in arrears — a Board-level aggregate across the non-executive directors, not an individual fee.',
     rem_band:null, rem_pct_fixed:100, rem_pct_bonus:0, rem_pct_other:0,
-    rem_history:[{year:'FY2026', total:46000, pct_fixed:100, pct_bonus:0, pct_other:0, note:'Directors\' fees, 100%.'},{year:'FY2025', total:29293, pct_fixed:100, pct_bonus:0, pct_other:0, note:'Directors\' fees, 100%; appointed 1 Aug 2024 (part year).'}],
+    rem_history:[{year:'FY2026', total:46000, pct_fixed:100, pct_bonus:0, pct_other:0, note:'Directors\' fees, 100%.'},{year:'FY2025', total:null, pct_fixed:100, pct_bonus:0, pct_other:0, note:'Directors\' fees, 100%; appointed 1 Aug 2024 (part year). Fees S$29,293 for that part year; total held null so no year-on-year percentage is shown against a non-comparable base.'}],
     edu:'The Royal Military Academy Sandhurst (1976, 1979)',
     bio:'Independent Director serving on several corporate boards in Singapore. Former officer in The Royal Regiment of Fusiliers with postings in Germany, Belfast and the Sultanate of Oman. Moved to fund management in the City of London in 1987; posted to Singapore in 1990 to establish GT Management\'s office, then based in Hong Kong from 1993 to 1997.',
     prev_roles:[{org:'GT Management', pos:'Head of Singapore office (from 1990)'},{org:'The Royal Regiment of Fusiliers', pos:'Officer'}],
