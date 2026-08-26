@@ -1,4 +1,5 @@
 <!DOCTYPE html>
+<!-- v48.411 (25 Aug 2026, S336): Asset Directory counts strip. New tally line above the card grid counting the FILTERED set, so it recalculates per entity and acts as a standing reconciliation check on the render tokens. ROOT-CAUSE: the L-AD-9 token predicates (DIVESTED / DISPOSAL / PENDING DIVESTMENT / PENDING ACQUISITION / NEW ACQUISITION / MANAGED) were duplicated across the table and card renderers; both now call a single reitClassify(p) helper, and the strip counts from that same helper. Renderer-only: no NEWS, no cascade, no NR_STATIC_IDS, no sitemap, no REIT_DATA change. -->
 <!-- v48.410 (id:221 weekly landed caveats, releases of 18 and 21 Aug 2026 - District 28 five highest rates all set this year. Landing cascade regenerated from NEWS. Static page + sitemap generated.) -->
 <!-- v48.409 (id:220 Elite UK REIT 1H 2026 results and the 18 Aug Rule 704(31) disclosure. Hero cascade 219 -> 220; cards/feed shift one slot; NR_STATIC_IDS rotate. Landing cascade regenerated from NEWS. Static page + sitemap generated.) -->
 <!-- v48.408 (id:219 ESR-REIT / ACFS Port Logistics administration drop. Hero cascade 218 -> 219; cards demote to 218,217,216; feed 215..208; NR_STATIC_IDS rotate.) -->
@@ -4725,6 +4726,8 @@ body.article-takeover .ed-foot{display:none!important}
     </div>
 
     <div id="reit-loading" style="display:none;text-align:center;padding:40px;color:var(--mut);font-size:13px">Loading REIT properties...</div>
+    <!-- v48.411: counts strip. Populated in reitSearch() from the FILTERED set. -->
+    <div id="reit-counts-strip" style="display:none;font-size:11px;font-family:'DM Mono',monospace;font-weight:600;color:var(--mut);padding:7px 11px;margin-bottom:11px;background:var(--srf2);border:1px solid var(--bdr);border-radius:7px;line-height:1.7"></div>
     <div id="reit-grid" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(310px,1fr));gap:14px;margin-bottom:14px"></div>
 
     <!-- Table view wrapper -->
@@ -25448,6 +25451,28 @@ function getEntityNewsPost(entity){
   return typeof NEWS!=='undefined'?(NEWS.find(function(n){return n.id===id;})||null):null;
 }
 
+/* v48.411 (L-AD-9) — SINGLE SOURCE OF TRUTH for reit_assets render tokens.
+   The vocabulary is closed, case-sensitive and undocumented. It was duplicated in the
+   table renderer and the card renderer; the counts strip would have been a third copy.
+   Every consumer now reads from here, so the strip can never disagree with the cards. */
+function reitClassify(p){
+  var st = p.status || '', nt = p.notes || '';
+  var divested   = st.indexOf('DIVESTED') >= 0;
+  var pending    = (st.indexOf('DISPOSAL') >= 0 || st.indexOf('PENDING DIVESTMENT') >= 0)
+                || (nt.indexOf('PENDING DISPOSAL') >= 0 || nt.indexOf('PENDING DIVESTMENT') >= 0);
+  var pendingAcq = st.indexOf('PENDING ACQUISITION') >= 0 || nt.indexOf('PENDING ACQUISITION') >= 0;
+  var newAcq     = !pendingAcq && nt.indexOf('NEW ACQUISITION') >= 0;
+  var managed    = !divested && !pending && !pendingAcq
+                && (st.indexOf('MANAGED') >= 0 || nt.indexOf('MANAGED') >= 0);
+  /* Operational = the residual. Divested and pending-divestment rows are NOT operational.
+     newAcq and managed are OVERLAYS on operational, not separate buckets — a newly
+     acquired asset is operational. That is why the strip separators differ: the first
+     three counts partition the set, the overlays are shown with a leading '+'. */
+  var operational = !divested && !pending;
+  return { divested:divested, pending:pending, pendingAcq:pendingAcq,
+           newAcq:newAcq, managed:managed, operational:operational };
+}
+
 function reitSetView(mode){
   reitViewMode = mode;
   var gBtn = document.getElementById('reit-vbtn-grid');
@@ -25531,10 +25556,11 @@ function reitRenderTable(data){
   var rowHtml='';
   data.forEach(function(p){
     var rc=ENTITY_COLORS[p.entity]||'#1a4f9c';
-    var isDivested=p.status&&p.status.indexOf('DIVESTED')>=0;
-    var isPending=(p.status&&(p.status.indexOf('DISPOSAL')>=0||p.status.indexOf('PENDING DIVESTMENT')>=0))||(p.notes&&(p.notes.indexOf('PENDING DISPOSAL')>=0||p.notes.indexOf('PENDING DIVESTMENT')>=0));
-    var isPendingAcq=(p.status&&p.status.indexOf('PENDING ACQUISITION')>=0)||(p.notes&&p.notes.indexOf('PENDING ACQUISITION')>=0);
-    var isNewAcq=!isPendingAcq&&p.notes&&p.notes.indexOf('NEW ACQUISITION')>=0;
+    var _cls=reitClassify(p);
+    var isDivested=_cls.divested;
+    var isPending=_cls.pending;
+    var isPendingAcq=_cls.pendingAcq;
+    var isNewAcq=_cls.newAcq;
     var rowBg=isDivested?'background:rgba(127,29,29,.06)':isPendingAcq?'background:rgba(166,124,58,.07)':isPending?'background:rgba(120,53,15,.06)':isNewAcq?'background:rgba(20,83,45,.06)':'';
 
     // YoY (hidden by default, available via column toggle)
@@ -26055,6 +26081,51 @@ function reitSearch(page){
   document.getElementById('reit-kpi-props').textContent = filtered.length;
   document.getElementById('reit-count').textContent = filtered.length + ' properties';
 
+  /* ── v48.411 counts strip ──────────────────────────────────────────────────────
+     Counts the FILTERED set, so it recalculates on every entity/geo/type change and
+     becomes a standing reconciliation check. Reads reitClassify(), the same helper the
+     cards read, so a token bug shows up here as a wrong number instead of hiding. */
+  (function(){
+    var stripEl = document.getElementById('reit-counts-strip');
+    if(!stripEl) return;
+    if(!filtered.length){ stripEl.style.display='none'; return; }
+    var c = { operational:0, vacant:0, pending:0, divested:0, newAcq:0, pendingAcq:0, managed:0 };
+    filtered.forEach(function(p){
+      var k = reitClassify(p);
+      /* PARTITION — these four are mutually exclusive and MUST sum to filtered.length.
+         Vacant is a data condition, not a render token: a numeric zero occupancy on a row
+         still held. occ==null means undisclosed and must NOT be read as zero. */
+      var isVacant = k.operational && !k.pendingAcq && typeof p.occ === 'number' && p.occ === 0;
+      /* PENDING ACQUISITION is not yet owned, so it cannot be operational. It gets its own
+         slot rather than inflating the operational count. */
+      if(k.divested)        c.divested++;
+      else if(k.pending)    c.pending++;
+      else if(k.pendingAcq) c.pendingAcq++;
+      else if(isVacant)     c.vacant++;
+      else                  c.operational++;
+      /* OVERLAYS — these sit on top of the partition and do not add to the total. */
+      if(k.newAcq)  c.newAcq++;
+      if(k.managed) c.managed++;
+    });
+    /* Self-check: if the partition ever stops summing, say so on the surface rather than
+       printing a quietly wrong tally. The whole point of this strip is to be noisy. */
+    var partSum = c.operational + c.vacant + c.pendingAcq + c.pending + c.divested;
+    var parts = [ filtered.length + (filtered.length===1?' property':' properties') ];
+    if(c.operational) parts.push(c.operational + ' operational');
+    if(c.vacant)      parts.push(c.vacant + ' vacant');
+    if(c.pendingAcq)  parts.push(c.pendingAcq + ' pending acquisition');
+    if(c.pending)     parts.push(c.pending + ' pending divestment');
+    if(c.divested)    parts.push(c.divested + ' divested');
+    var overlay = [];
+    if(c.newAcq)  overlay.push(c.newAcq + ' newly acquired');
+    if(c.managed) overlay.push(c.managed + ' managed');
+    var txt = parts.join(' \u00b7 ');
+    if(overlay.length) txt += '  \u2014  of which ' + overlay.join(' \u00b7 ');
+    if(partSum !== filtered.length) txt += '  \u26a0 partition ' + partSum + '/' + filtered.length;
+    stripEl.textContent = txt;
+    stripEl.style.display = 'block';
+  })();
+
   // ── Subtitle: canonical brand stat (total entries × distinct entities, both unfiltered)
   var sublineEl = document.getElementById('reit-kpi-subline');
   if(sublineEl){
@@ -26201,11 +26272,12 @@ function reitSearch(page){
       : (p.area ? p.area+', '+p.country : p.country);
     var entBadge = '<span style="font-size:9px;font-weight:700;background:rgba(255,255,255,.22);color:#fff;border-radius:3px;padding:1px 5px;letter-spacing:.04em">'+(isDev?'DEV':(et==='Operator'?'OPERATOR':'REIT'))+'</span>';
     // Status detection for callout banners
-    var isDivested    = p.status && p.status.indexOf('DIVESTED') >= 0;
-    var isPending     = (p.status && (p.status.indexOf('DISPOSAL') >= 0 || p.status.indexOf('PENDING DIVESTMENT') >= 0)) || (p.notes && (p.notes.indexOf('PENDING DISPOSAL') >= 0 || p.notes.indexOf('PENDING DIVESTMENT') >= 0));
-    var isPendingAcq  = (p.status && p.status.indexOf('PENDING ACQUISITION') >= 0) || (p.notes && p.notes.indexOf('PENDING ACQUISITION') >= 0);
-    var isNewAcq      = !isPendingAcq && p.notes && (p.notes.indexOf('NEW ACQUISITION') >= 0);
-    var isManaged     = !isDivested && !isPending && !isPendingAcq && ((p.status && p.status.indexOf('MANAGED') >= 0) || (p.notes && p.notes.indexOf('MANAGED') >= 0));
+    var _cls          = reitClassify(p);
+    var isDivested    = _cls.divested;
+    var isPending     = _cls.pending;
+    var isPendingAcq  = _cls.pendingAcq;
+    var isNewAcq      = _cls.newAcq;
+    var isManaged     = _cls.managed;
     var statusBadge = (isDev && p.status && !isDivested && !isPending && !isPendingAcq && !isManaged) ? '<span style="padding:2px 7px;border-radius:4px;font-size:9px;font-weight:600;background:#fff3cd;color:#7d5200;border:1px solid #f0c040">'+p.status.split(' — ').pop()+'</span>' : '';
     var countryFlag = p.country!=='Singapore' ? ' \uD83C\uDF10 '+p.country : '';
     // YoY delta badges
