@@ -1,0 +1,706 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8">
+<title>PropertyAtlas — Weekly Caveat Carousel · Week of 24th August 2026</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700;800&family=JetBrains+Mono:wght@400;700&display=swap');
+:root{
+  --navy:#0a1628; --navy2:#0c1c33; --card:#132339; --card-br:#1e3350;
+  --gold:#d9b04c; --white:#f7f4ee; --gray:#8fa3bd; --gray2:#5f7796;
+  --green:#4ec98a; --coral:#e8746c; --peri:#8b9fe8;
+  --font:'Poppins',system-ui,sans-serif;
+  --font-mono:'JetBrains Mono','Noto Sans Mono','DejaVu Sans Mono',ui-monospace,monospace;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:#222;font-family:var(--font);display:flex;flex-direction:column;align-items:center;gap:28px;padding:28px}
+.slide{position:relative;width:1920px;height:1080px;background:
+  radial-gradient(1200px 700px at 78% 12%, #12263f 0%, transparent 62%),
+  linear-gradient(160deg,var(--navy) 0%, var(--navy2) 100%);
+  color:var(--white);overflow:hidden;padding:70px 92px 104px;display:flex;flex-direction:column}
+.slide::before{content:'';position:absolute;inset:0;
+  background-image:linear-gradient(rgba(255,255,255,.022) 1px,transparent 1px),
+                   linear-gradient(90deg,rgba(255,255,255,.022) 1px,transparent 1px);
+  background-size:78px 78px;pointer-events:none}
+.slide::after{content:'';position:absolute;inset:0;box-shadow:inset 0 0 300px 80px rgba(0,0,0,.5);pointer-events:none}
+.slide>*{position:relative;z-index:2}
+
+.badge{position:absolute;top:40px;left:92px;z-index:3;font-family:var(--font-mono);font-weight:700;font-size:26px;
+  color:var(--gold);border:2px solid var(--gold);border-radius:9px;padding:6px 13px;letter-spacing:2px}
+.foot{position:absolute;left:92px;right:92px;bottom:44px;z-index:3;display:flex;justify-content:space-between;
+  font-family:var(--font-mono);font-size:20px;color:var(--gray2);letter-spacing:2px}
+
+.kicker{font-family:var(--font-mono);font-size:24px;letter-spacing:6px;color:var(--gold);text-transform:uppercase;margin:22px 0 12px}
+.title{font-weight:800;font-size:58px;line-height:1.05;letter-spacing:-1px}
+.subtag{font-family:var(--font-mono);font-size:24px;letter-spacing:4px;color:var(--gray);text-transform:uppercase;margin-top:12px}
+/* L-SLIDE-7 (landscape): note in FLOW, not absolute. Absolute positioning put
+   it on top of row 5 on every five-row slide. .rows absorbs the slack. */
+.rows{flex:1 1 auto;min-height:0}
+.note{flex:none;margin-top:auto;padding-top:16px;font-family:var(--font-mono);font-size:19px;
+  color:var(--gray2);letter-spacing:1.5px;line-height:1.4}
+
+/* intro */
+#s1{justify-content:center;align-items:center;text-align:center}
+#s1 .wk{font-weight:800;font-size:84px;margin-top:8px}
+#s1 .big{font-weight:800;font-size:208px;color:var(--gold);letter-spacing:-6px;line-height:1;margin:26px 0 18px}
+#s1 .cav{font-family:var(--font-mono);font-size:34px;letter-spacing:6px;color:var(--white)}
+#s1 .splitwrap{width:1180px;margin-top:56px}
+.splitbar{display:flex;height:16px;border-radius:8px;overflow:hidden;background:#16273f}
+.splitbar .ind{background:var(--peri)}.splitbar .com{background:var(--gold)}
+.splitlab{display:flex;justify-content:space-between;font-family:var(--font-mono);font-size:24px;letter-spacing:3px;margin-top:16px}
+.splitlab .l{color:var(--peri)}.splitlab .r{color:var(--gold)}
+
+/* stat grid */
+.statgrid{display:grid;grid-template-columns:repeat(4,1fr);gap:26px;margin-top:60px}
+.stat{background:linear-gradient(180deg,var(--card),#0c1728);border:1px solid var(--card-br);border-radius:18px;padding:38px 30px;text-align:center}
+.stat .n{font-weight:800;font-size:66px;color:var(--gold);letter-spacing:-2px;line-height:1}
+.stat .n.w{color:var(--white)} .stat .n.g{color:var(--green)} .stat .n.p{color:var(--peri)}
+.stat .lab{font-family:var(--font-mono);font-size:21px;letter-spacing:3px;color:var(--gray);margin-top:16px;text-transform:uppercase}
+.bar2{display:flex;flex-direction:column;gap:20px;margin-top:34px}
+.bigrow{display:flex;align-items:center;justify-content:space-between;background:linear-gradient(180deg,var(--card),#0c1728);
+  border:1px solid var(--card-br);border-radius:16px;padding:30px 38px}
+.bigrow .k{font-family:var(--font-mono);font-size:26px;letter-spacing:4px;color:var(--gray)}
+.bigrow .n{font-family:var(--font-mono);font-size:26px;color:var(--gray)}
+.bigrow .v{font-weight:800;font-size:44px}
+.bigrow .v.gold{color:var(--gold)}
+
+/* leaderboard + pnl rows — L-SLIDE-4/5/6, val pinned */
+.rows{margin-top:26px;display:flex;flex-direction:column;gap:12px}
+.row{display:flex;align-items:center;background:linear-gradient(180deg,var(--card),#0c1728);
+  border:1px solid var(--card-br);border-radius:14px;padding:11px 30px}
+.row .rank{font-family:var(--font-mono);font-weight:700;font-size:40px;color:var(--gold);width:70px;flex:none}
+.row .who{flex:1;min-width:0;padding-right:24px}
+.row .val{width:300px;flex:none;text-align:right}
+.row .proj{font-weight:700;font-size:29px;line-height:1.15;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.row .addr{font-family:var(--font-mono);font-size:22px;color:var(--white);margin-top:5px;line-height:1.3}
+.row .meta{font-family:var(--font-mono);font-size:19px;color:var(--gray);margin-top:3px;line-height:1.25;overflow-wrap:break-word}
+.row .meta .flag{color:var(--gold)} .row .meta .flag.warn{color:var(--coral)}
+.row .val .v1{font-weight:800;font-size:40px;color:var(--gold);letter-spacing:-1px}
+.row .val .v2{font-family:var(--font-mono);font-size:22px;color:var(--gray);margin-top:6px}
+.row .val .v1.g{color:var(--green)}.row .val .v1.l{color:var(--coral)}
+.row .val .v2.g{color:#7fd8a3}.row .val .v2.l{color:#e9a0a0}
+
+/* gate facts */
+.facts{margin-top:42px;display:flex;flex-direction:column;gap:20px}
+.fact{font-family:var(--font-mono);font-size:27px;color:var(--white);letter-spacing:.5px}
+.fact b{color:var(--gold);font-weight:700}
+
+/* tenure bars */
+.tbars{margin-top:52px;display:flex;flex-direction:column;gap:22px}
+.tbar{display:flex;align-items:center;gap:26px}
+.tbar .lab{font-family:var(--font-mono);font-size:25px;letter-spacing:3px;color:var(--gray);width:250px;flex:none}
+.tbar .track{flex:1;height:42px;background:#16273f;border-radius:8px;overflow:hidden}
+.tbar .fill{height:100%;border-radius:8px}
+.tbar .n{font-family:var(--font-mono);font-weight:700;font-size:30px;color:var(--white);width:62px;text-align:right;flex:none}
+
+/* outro */
+#outro{background:#f7f4ee;color:#0a1628;flex-direction:row;align-items:center;justify-content:center;gap:0}
+#outro::before,#outro::after{display:none}
+#outro .topbar{position:absolute;top:0;left:0;right:0;height:14px;background:var(--gold)}
+#outro .half{flex:1;text-align:center;padding:0 70px}
+#outro .divider{width:1px;height:560px;background:#d9d2c4}
+#outro .pa{font-family:var(--font-mono);font-weight:700;font-size:52px;color:var(--gold);
+  border:3px solid var(--gold);border-radius:14px;padding:12px 24px;display:inline-block}
+#outro .brand{font-weight:800;font-size:70px;letter-spacing:-1px;margin-top:34px}
+#outro .tag{font-size:31px;color:#4a5a70;margin-top:16px;line-height:1.45}
+#outro .rule{width:120px;height:3px;background:var(--gold);margin:32px auto}
+#outro .url{font-family:var(--font-mono);font-size:34px;color:var(--gold)}
+#outro .ask{font-weight:700;font-size:38px;line-height:1.4}
+#outro .co{font-family:var(--font-mono);font-size:28px;letter-spacing:3px;margin-top:26px;color:#4a5a70}
+#outro .nm{font-weight:800;font-size:40px;margin-top:12px}
+#outro .rl{font-family:var(--font-mono);font-size:26px;color:#4a5a70;margin-top:8px}
+#outro .ct{font-family:var(--font-mono);font-size:26px;color:var(--gold);margin-top:26px}
+#outro .foot{color:#9a9384}
+
+@page{size:1920px 1080px;margin:0}
+@media print{
+  body{background:#fff;gap:0;padding:0}
+  .slide{page-break-after:always;break-after:page}
+  .slide:last-child{page-break-after:auto}
+}
+</style></head><body>
+<div id="deck"></div>
+<script>
+const DATA = {
+  "meta": {
+    "week": "Week of 24th August 2026",
+    "total": 141.75,
+    "totalExact": 141749480,
+    "caveats": 48,
+    "matched": 28,
+    "unmatched": 20,
+    "ind": 40,
+    "com": 8,
+    "releases": "25 & 28 AUGUST 2026",
+    "resaleN": 41,
+    "resaleV": "S$134,826,480",
+    "newN": 7,
+    "newV": "S$6,923,000",
+    "netRealised": "+S$7.30M"
+  },
+  "gate": {
+    "name": "GATE+",
+    "addr": "9 TUKANG INNOVATION DRIVE \u00b7 D22",
+    "caveats": 7,
+    "totalM": 6.92,
+    "medPsf": 515,
+    "lo": 490,
+    "hi": 600,
+    "facts": [
+      "<b>7 caveats \u00b7 S$6.92M</b> this week \u2014 up from <b>2</b> last week",
+      "Three sale dates \u00b7 <b>18 and 24 June, 31 July</b> \u00b7 S$490\u2013600 psf",
+      "<b>Every new sale</b> in the week is this one project \u2014 all else resale"
+    ],
+    "title": "GATE+ JUMPS TO SEVEN"
+  },
+  "commPrice": [
+    {
+      "proj": "ARC 380",
+      "addr": "380 Jalan Besar #14-XX to XX",
+      "type": "Office",
+      "tenure": "Freehold",
+      "area": "3,724 sq ft",
+      "v1": "S$11.40M",
+      "v2": "S$3,060 psf"
+    },
+    {
+      "proj": "Lucky Plaza",
+      "addr": "304 Orchard Road #05-XX",
+      "type": "Retail",
+      "tenure": "Freehold",
+      "area": "657 sq ft",
+      "v1": "S$2.89M",
+      "v2": "S$4,403 psf"
+    },
+    {
+      "proj": "Peninsula Plaza",
+      "addr": "111 North Bridge Road #04-XX",
+      "type": "Retail",
+      "tenure": "999-yr from 1829",
+      "area": "463 sq ft",
+      "v1": "S$1.95M",
+      "v2": "S$4,213 psf"
+    },
+    {
+      "proj": "Sim Lim Square",
+      "addr": "1 Rochor Canal Road #03-XX",
+      "type": "Retail",
+      "tenure": "99-yr from 1983",
+      "area": "958 sq ft",
+      "v1": "S$1.45M",
+      "v2": "S$1,514 psf"
+    },
+    {
+      "proj": "The Adelphi",
+      "addr": "1 Coleman Street #04-XX",
+      "type": "Retail",
+      "tenure": "999-yr from 1828",
+      "area": "452 sq ft",
+      "v1": "S$1.29M",
+      "v2": "S$2,849 psf"
+    }
+  ],
+  "commPsf": [
+    {
+      "proj": "Burlington Square",
+      "addr": "175 Bencoolen Street #01-XX",
+      "type": "Retail",
+      "tenure": "99-yr from 1996",
+      "area": "269 sq ft",
+      "v1": "S$4,459",
+      "v2": "S$1.20M"
+    },
+    {
+      "proj": "Lucky Plaza",
+      "addr": "304 Orchard Road #05-XX",
+      "type": "Retail",
+      "tenure": "Freehold",
+      "area": "657 sq ft",
+      "v1": "S$4,403",
+      "v2": "S$2.89M"
+    },
+    {
+      "proj": "Peninsula Plaza",
+      "addr": "111 North Bridge Road #04-XX",
+      "type": "Retail",
+      "tenure": "999-yr from 1829",
+      "area": "463 sq ft",
+      "v1": "S$4,213",
+      "v2": "S$1.95M"
+    },
+    {
+      "proj": "Bugis Cube",
+      "addr": "470 North Bridge Road #05-XX",
+      "type": "Retail",
+      "tenure": "999-yr from 1827",
+      "area": "334 sq ft",
+      "v1": "S$3,177",
+      "v2": "S$1.06M"
+    },
+    {
+      "proj": "ARC 380",
+      "addr": "380 Jalan Besar #14-XX to XX",
+      "type": "Office",
+      "tenure": "Freehold",
+      "area": "3,724 sq ft",
+      "v1": "S$3,060",
+      "v2": "S$11.40M"
+    }
+  ],
+  "indPrice": [
+    {
+      "proj": "Lian Cheong Industrial Building",
+      "addr": "XX Little Road",
+      "type": "Multiple-User",
+      "tenure": "Freehold",
+      "area": "25,695 sq ft",
+      "v1": "S$63.00M",
+      "v2": "S$2,452 psf"
+    },
+    {
+      "addr": "XX Tuas View Square",
+      "type": "Single-User",
+      "tenure": "60-yr from 1996",
+      "area": "17,285 sq ft",
+      "v1": "S$8.90M",
+      "v2": "S$515 psf"
+    },
+    {
+      "addr": "XX Tuas View Square",
+      "type": "Single-User",
+      "tenure": "60-yr from 1996",
+      "area": "14,233 sq ft",
+      "v1": "S$8.30M",
+      "v2": "S$583 psf"
+    },
+    {
+      "proj": "Woodlands Bizhub",
+      "addr": "XX Woodlands Industrial Park E5",
+      "type": "Multiple-User",
+      "tenure": "57-yr from 2011",
+      "area": "6,092 sq ft",
+      "v1": "S$4.95M",
+      "v2": "S$812 psf"
+    },
+    {
+      "proj": "Noble Logistics",
+      "addr": "49 Tannery Lane #06-XX",
+      "type": "Warehouse",
+      "tenure": "Freehold",
+      "area": "2,960 sq ft",
+      "v1": "S$2.07M",
+      "v2": "S$700 psf"
+    }
+  ],
+  "indPsf": [
+    {
+      "proj": "Trivex",
+      "addr": "8 Burn Road #05-XX",
+      "type": "Multiple-User",
+      "tenure": "60-yr from 2008",
+      "area": "926 sq ft",
+      "v1": "S$852",
+      "v2": "S$789K"
+    },
+    {
+      "proj": "Northstar @ AMK",
+      "addr": "7030 Ang Mo Kio Avenue 5 #01-XX",
+      "type": "Multiple-User",
+      "tenure": "60-yr from 2007",
+      "area": "2,250 sq ft",
+      "v1": "S$849",
+      "v2": "S$1.91M"
+    },
+    {
+      "proj": "Woodlands Bizhub",
+      "addr": "XX Woodlands Industrial Park E5",
+      "type": "Multiple-User",
+      "tenure": "57-yr from 2011",
+      "area": "6,092 sq ft",
+      "v1": "S$812",
+      "v2": "S$4.95M"
+    },
+    {
+      "proj": "Oxley Bizhub",
+      "addr": "65 Ubi Road 1 #01-XX",
+      "type": "Warehouse",
+      "tenure": "60-yr from 2010",
+      "area": "2,347 sq ft",
+      "v1": "S$786",
+      "v2": "S$1.84M"
+    },
+    {
+      "proj": "Midview City",
+      "addr": "18 Sin Ming Lane #07-XX",
+      "type": "Multiple-User",
+      "tenure": "60-yr from 2008",
+      "area": "1,367 sq ft",
+      "v1": "S$745",
+      "v2": "S$1.02M"
+    }
+  ],
+  "pnl": {
+    "commTotal": 6,
+    "indTotal": 22,
+    "commGainsN": 6,
+    "commLossN": 0,
+    "indGainsN": 19,
+    "indLossN": 3,
+    "commGains": [
+      {
+        "proj": "The Adelphi",
+        "addr": "1 Coleman Street #04-XX",
+        "type": "Retail",
+        "tenure": "999-yr from 1828",
+        "area": "452 sq ft",
+        "hold": "13.8-yr hold",
+        "ann": "+1.9%/yr",
+        "v1": "+S$294K",
+        "v2": "+29.5%",
+        "cls": "g"
+      },
+      {
+        "proj": "Paya Lebar Square",
+        "addr": "60 Paya Lebar Road #05-XX",
+        "type": "Office",
+        "tenure": "99-yr from 2011",
+        "area": "538 sq ft",
+        "hold": "6.0-yr hold",
+        "ann": "+4.3%/yr",
+        "v1": "+S$283K",
+        "v2": "+28.3%",
+        "cls": "g"
+      },
+      {
+        "proj": "Burlington Square",
+        "addr": "175 Bencoolen Street #01-XX",
+        "type": "Retail",
+        "tenure": "99-yr from 1996",
+        "area": "269 sq ft",
+        "hold": "4.1-yr hold",
+        "ann": "+5.0%/yr",
+        "v1": "+S$220K",
+        "v2": "+22.4%",
+        "cls": "g"
+      },
+      {
+        "proj": "Peninsula Plaza",
+        "addr": "111 North Bridge Road #04-XX",
+        "type": "Retail",
+        "tenure": "999-yr from 1829",
+        "area": "463 sq ft",
+        "hold": "14.9-yr hold",
+        "ann": "+0.6%/yr",
+        "v1": "+S$170K",
+        "v2": "+9.6%",
+        "cls": "g"
+      },
+      {
+        "proj": "Bugis Cube",
+        "addr": "470 North Bridge Road #05-XX",
+        "type": "Retail",
+        "tenure": "999-yr from 1827",
+        "area": "334 sq ft",
+        "hold": "4.0-yr hold",
+        "ann": "+0.7%/yr",
+        "v1": "+S$30K",
+        "v2": "+2.9%",
+        "cls": "g"
+      }
+    ],
+    "indGains": [
+      {
+        "proj": "Woodlands Bizhub",
+        "addr": "XX Woodlands Industrial Park E5",
+        "type": "Multiple-User",
+        "tenure": "57-yr from 2011",
+        "area": "6,092 sq ft",
+        "hold": "10.4-yr hold",
+        "ann": "+5.1%/yr",
+        "v1": "+S$2.00M",
+        "v2": "+67.8%",
+        "cls": "g"
+      },
+      {
+        "proj": "Northstar @ AMK",
+        "addr": "7030 Ang Mo Kio Avenue 5 #01-XX",
+        "type": "Multiple-User",
+        "tenure": "60-yr from 2007",
+        "area": "2,250 sq ft",
+        "hold": "5.1-yr hold",
+        "ann": "+8.1%/yr",
+        "v1": "+S$630K",
+        "v2": "+49.2%",
+        "cls": "g"
+      },
+      {
+        "proj": "West Point Bizhub",
+        "addr": "XX Tuas South Avenue 2",
+        "type": "Multiple-User",
+        "tenure": "60-yr from 2000",
+        "area": "4,812 sq ft",
+        "hold": "16.5-yr hold",
+        "ann": "+3.7%/yr",
+        "v1": "+S$555K",
+        "v2": "+82.9%",
+        "cls": "g"
+      },
+      {
+        "proj": "WCEGA Plaza",
+        "addr": "1 Bukit Batok Crescent #09-XX",
+        "type": "Multiple-User",
+        "tenure": "60-yr from 1997",
+        "area": "2,411 sq ft",
+        "hold": "17.2-yr hold",
+        "ann": "+6.0%/yr",
+        "v1": "+S$538K",
+        "v2": "+172.7%",
+        "cls": "g"
+      },
+      {
+        "proj": "WCEGA Plaza",
+        "addr": "1 Bukit Batok Crescent #09-XX",
+        "type": "Multiple-User",
+        "tenure": "60-yr from 1997",
+        "area": "2,368 sq ft",
+        "hold": "17.1-yr hold",
+        "ann": "+6.0%/yr",
+        "v1": "+S$533K",
+        "v2": "+173.7%",
+        "cls": "g"
+      }
+    ],
+    "indLoss": [
+      {
+        "proj": "Westlink One",
+        "addr": "1 Tuas View Place #02-XX",
+        "type": "Warehouse",
+        "tenure": "60-yr from 1995",
+        "area": "2,756 sq ft",
+        "hold": "13.9-yr hold",
+        "ann": "\u22121.8%/yr",
+        "v1": "\u2212S$210K",
+        "v2": "\u221222.1%",
+        "cls": "l"
+      },
+      {
+        "proj": "Westlink One",
+        "addr": "1 Tuas View Place #02-XX",
+        "type": "Warehouse",
+        "tenure": "60-yr from 1995",
+        "area": "2,734 sq ft",
+        "hold": "13.9-yr hold",
+        "ann": "\u22121.8%/yr",
+        "v1": "\u2212S$210K",
+        "v2": "\u221222.1%",
+        "cls": "l"
+      },
+      {
+        "proj": "West Connect Building",
+        "addr": "10 Buroh Street #08-XX",
+        "type": "Multiple-User",
+        "tenure": "30-yr from 2013",
+        "area": "2,368 sq ft",
+        "hold": "6.5-yr hold",
+        "ann": "\u22121.9%/yr",
+        "v1": "\u2212S$66K",
+        "v2": "\u221211.9%",
+        "cls": "l"
+      }
+    ],
+    "commLoss": [],
+    "commGainsNote": "NO COMMERCIAL RESALE LOST MONEY THIS WEEK",
+    "commLossNote": "NO COMMERCIAL RESALE LOST MONEY THIS WEEK",
+    "gainsNote": "28 OF 48 CAVEATS MATCHED A PRIOR SALE \u00b7 20 DID NOT",
+    "lossNote": "EVERY LOSS THIS WEEK IS INDUSTRIAL AND IN THE WEST"
+  },
+  "notes": {
+    "commPrice": "ONE PLOT TOOK 44% OF THE WEEK \u00b7 27 CAVEATS UNDER S$1M",
+    "commPsf": "STRATA BASIS \u00b7 LAND-BASIS DEALS EXCLUDED",
+    "indPrice": "WHOLE-BUILDING PSF IS LAND-BASIS \u2014 NOT STRATA PSF",
+    "indPsf": "STRATA PER-UNIT BASIS \u00b7 LAND-BASIS DEALS EXCLUDED"
+  },
+  "tenure": [
+    {
+      "lab": "30-YR",
+      "n": 19
+    },
+    {
+      "lab": "60-YR",
+      "n": 16
+    },
+    {
+      "lab": "FREEHOLD",
+      "n": 4
+    },
+    {
+      "lab": "99-YR",
+      "n": 4
+    },
+    {
+      "lab": "999-YR",
+      "n": 3
+    },
+    {
+      "lab": "57-YR",
+      "n": 2
+    }
+  ]
+};
+
+
+/* tenure buckets — carousel only. Must sum to DATA.meta.caveats (L-SLIDE-2). */
+DATA.tenure = [
+  {lab:"30-33 YRS",    n:19},
+  {lab:"55-60 YRS",    n:18},
+  {lab:"FH / 999 YRS", n:7},
+  {lab:"99 YRS",       n:4}
+];
+
+/* ============================================================
+   CAROUSEL RENDERER — 1920x1080 landscape, print-to-PDF
+   Reads the SAME DATA object as the reel. L-SLIDE-1..6 apply.
+   The 27 Jul carousel kept its own copy of the numbers and drifted
+   from the reel by 10 caveats, S$5.35M and two whole pair counts.
+   ============================================================ */
+const WK = DATA.meta.week.toUpperCase();
+const FOOT = `<div class="foot"><span>@propertyatlassg &nbsp;·&nbsp; propertyatlas.sg</span>
+  <span>TK Real Estate Pte Ltd &nbsp;|&nbsp; Estate Agent Licence No : L3011027G</span></div>`;
+const BADGE = `<div class="badge">P|A</div>`;
+
+/* L-SLIDE-5: identical line packing to the reel */
+const FIT = 47;
+function metaLines(r){
+  let l2 = [r.type, r.area].filter(Boolean).join(' · ');
+  let l3 = [r.tenure, r.hold, r.ann].filter(Boolean).join(' · ');
+  if (l3.length > FIT && r.tenure && (r.hold || r.ann)) {
+    l2 = [r.type, r.area, r.tenure].filter(Boolean).join(' · ');
+    l3 = [r.hold, r.ann].filter(Boolean).join(' · ');
+    if (l2.length > FIT) { l2 = [r.type, r.area].filter(Boolean).join(' · ');
+                           l3 = [r.tenure, r.hold, r.ann].filter(Boolean).join(' · '); }
+  }
+  return [l2, l3];
+}
+/* LANDSCAPE ROW = 2 LINES (portrait uses 4).
+   1336px column holds 106 chars at 21px, but 1080px of height only fits five
+   two-line rows. So the wide axis absorbs what the tall axis cannot: address,
+   type, tenure, area, hold, ann and flag all share line 2.
+   Same DATA, same fields — different packing for a different aspect ratio. */
+const LFIT = 100;
+function rowsHTML(list){
+  return list.map((r,i)=>{
+    const head = r.proj ? r.proj : r.addr;
+    const segs = [];
+    if (r.proj) segs.push(r.addr);
+    [r.type, r.tenure, r.area, r.hold, r.ann].forEach(v=>{ if(v) segs.push(v); });
+    let line = segs.join(' \u00b7 ');
+    const flag = r.flag ? `<span class="flag${r.cls==='l'?' warn':''}">${r.flag}</span>` : '';
+    const withFlag = r.flag ? line + ' \u00b7 ' + r.flag : line;
+    const oneLine = withFlag.length <= LFIT;
+    return `<div class="row">
+      <div class="rank">${i+1}</div>
+      <div class="who">
+        <div class="proj">${head}</div>
+        <div class="meta">${line}${oneLine && flag ? ' \u00b7 '+flag : ''}</div>
+        ${!oneLine && flag ? `<div class="meta">${flag}</div>` : ''}
+      </div>
+      <div class="val"><div class="v1 ${r.cls||''}">${r.v1}</div><div class="v2 ${r.cls||''}">${r.v2}</div></div>
+    </div>`;
+  }).join('');
+}
+function slide(inner, id){ return `<div class="slide"${id?` id="${id}"`:''}>${BADGE}${inner}${FOOT}</div>`; }
+function board(title, seg, list, note){
+  return slide(`<div class="kicker">${WK}</div><div class="title">${title}</div>
+    <div class="subtag">${seg}</div><div class="rows">${rowsHTML(list)}</div>
+    ${note?`<div class="note">${note}</div>`:''}`);
+}
+/* L-SLIDE-1: every number below reads from DATA */
+const P = DATA.pnl, M = DATA.meta, G = DATA.gate;
+const lossSub = (list,a,t)=> list.length>=a
+  ? `All ${a} losses · ${a} of ${t} pairs`
+  : `Top ${list.length} of ${a} losses · ${a} of ${t} pairs`;
+const gainSub = (list,a,t,seg)=> list.length>=a
+  ? `All ${a} ${seg} pairs profitable`
+  : `Top ${list.length} of ${a} gains · ${a} of ${t} pairs`;
+
+const html = [
+  /* 1 — intro */
+  slide(`<div class="kicker">Weekly Caveat Wrap</div>
+    <div class="wk">${M.week}</div>
+    <div class="big">S$${M.total}M</div>
+    <div class="cav">${M.caveats} CAVEATS &nbsp;·&nbsp; ${M.matched} MATCHED RESALES</div>
+    <div class="splitwrap">
+      <div class="splitbar"><div class="ind" style="width:${M.ind/M.caveats*100}%"></div><div class="com" style="flex:1"></div></div>
+      <div class="splitlab"><span class="l">INDUSTRIAL ${M.ind}</span><span class="r">COMMERCIAL ${M.com}</span></div>
+    </div>`, 's1'),
+
+  /* 2 — week in numbers */
+  slide(`<div class="kicker">${WK}</div><div class="title">THE WEEK IN NUMBERS</div>
+    <div class="subtag">URA REALIS · RELEASES ${M.releases}</div>
+    <div class="statgrid">
+      <div class="stat"><div class="n">S$${M.total}M</div><div class="lab">Total value</div></div>
+      <div class="stat"><div class="n w">${M.caveats}</div><div class="lab">Caveats</div></div>
+      <div class="stat"><div class="n p">${M.matched}</div><div class="lab">Matched resales</div></div>
+      <div class="stat"><div class="n g">${M.matched-(P.indLossN+P.commLossN)} / ${P.indLossN+P.commLossN}</div><div class="lab">Gains / losses</div></div>
+    </div>
+    <div class="bar2">
+      <div class="bigrow"><span class="k">RESALE</span><span class="n">${M.resaleN} caveats</span><span class="v">${M.resaleV}</span></div>
+      <div class="bigrow"><span class="k">NEW SALE</span><span class="n">${M.newN} caveats</span><span class="v gold">${M.newV}</span></div>
+    </div>
+    <div class="note">${M.matched} OF ${M.caveats} CAVEATS MATCHED A PRIOR TRANSACTION · ${M.caveats-M.matched} UNMATCHED ·
+      NET REALISED ${M.netRealised} ACROSS ALL ${M.matched} PAIRS</div>`),
+
+  /* 3-6 — leaderboards */
+  board('TOP 5 — HIGHEST VALUE','INDUSTRIAL', DATA.indPrice, DATA.notes.indPrice),
+  board('TOP 5 — PRICE PSF','INDUSTRIAL', DATA.indPsf, DATA.notes.indPsf),
+  board('TOP 5 — HIGHEST VALUE','COMMERCIAL', DATA.commPrice, DATA.notes.commPrice),
+  board('TOP 5 — PRICE PSF','COMMERCIAL', DATA.commPsf, DATA.notes.commPsf),
+
+  /* 7 — GATE+ */
+  slide(`<div class="kicker">${WK} · LAUNCH TRACKER</div><div class="title">${G.title}</div>
+    <div class="subtag">${G.addr}</div>
+    <div class="statgrid">
+      <div class="stat"><div class="n w">${G.caveats}</div><div class="lab">New-sale caveats</div></div>
+      <div class="stat"><div class="n">S$${G.totalM}M</div><div class="lab">Total lodged</div></div>
+      <div class="stat"><div class="n w">S$${G.medPsf}</div><div class="lab">Median psf</div></div>
+      <div class="stat"><div class="n w">S$${G.lo}–${G.hi}</div><div class="lab">PSF range</div></div>
+    </div>
+    <div class="facts">${G.facts.map(f=>`<div class="fact">▸&nbsp; ${f}</div>`).join('')}</div>`),
+
+  /* 8-10 — P&L */
+  board('COMMERCIAL — P &amp; L', gainSub(P.commGains,P.commGainsN,P.commTotal,'commercial'), P.commGains, P.commGainsNote),
+  board('INDUSTRIAL — P &amp; L', gainSub(P.indGains,P.indGainsN,P.indTotal,'industrial'), P.indGains, P.gainsNote),
+  board('INDUSTRIAL — P &amp; L', lossSub(P.indLoss,P.indLossN,P.indTotal), P.indLoss, P.lossNote),
+
+  /* 11 — tenure */
+  (()=>{const T=DATA.tenure, mx=Math.max(...T.map(t=>t.n));
+    const col=l=>/FH|999/.test(l)?'var(--gold)':/^30/.test(l)?'var(--coral)':'var(--peri)';
+    return slide(`<div class="kicker">${WK} · LEASE TENURE</div>
+      <div class="title">${T.filter(t=>/^30|33/.test(t.lab)).reduce((a,t)=>a+t.n,0)} OF ${M.caveats} SIT ON 30–33 YR LEASES</div>
+      <div class="subtag">TENURE AT POINT OF SALE</div>
+      <div class="tbars">${T.map(t=>`<div class="tbar"><div class="lab">${t.lab}</div>
+        <div class="track"><div class="fill" style="width:${t.n/mx*100}%;background:${col(t.lab)}"></div></div>
+        <div class="n">${t.n}</div></div>`).join('')}</div>
+      <div class="note">BUCKETS SUM TO ${T.reduce((a,t)=>a+t.n,0)} — ALL ${M.caveats} CAVEATS</div>`);})(),
+
+  /* 12 — outro */
+  `<div class="slide" id="outro"><div class="topbar"></div>
+     <div class="half">
+       <div class="pa">P|A</div><div class="brand">PROPERTYATLAS</div>
+       <div class="tag">Singapore Commercial &amp; Industrial<br>Real Estate Intelligence</div>
+       <div class="rule"></div><div class="url">propertyatlas.sg</div>
+     </div>
+     <div class="divider"></div>
+     <div class="half">
+       <div class="ask">Looking to buy, sell or lease<br>commercial &amp; industrial space?</div>
+       <div class="rule"></div>
+       <div class="co">TK REAL ESTATE PTE LTD</div>
+       <div class="nm">Tony Koe</div>
+       <div class="rl">Founder, Key Executive Officer</div>
+       <div class="rl">CEA Licence R003757I</div>
+       <div class="ct">Mobile : (+65) 9797 1118 &nbsp;|&nbsp; Email : tony@tkre.sg</div>
+     </div>${FOOT}</div>`
+].join('\n');
+
+document.getElementById('deck').innerHTML = html;
+
+</script>
+</body></html>
