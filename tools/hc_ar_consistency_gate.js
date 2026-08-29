@@ -72,7 +72,12 @@ const parsed = v8Slice(/(?:var|const|let)\s+TALENT_DATA\s*=/g, 'TALENT_DATA');
 const T = parsed.val;
 
 const DEPARTED = /\b(until|retired|resigned|stepped down|ceased)\b/i;
-const yearKey = y => String(y || '').replace(/[^0-9]/g, '');   // FY25/26 and FY2025/26 -> comparable
+// Normalise FY labels to a comparable key. Issuers mix conventions: FPL writes
+// "FY25", Mapletree writes "FY25/26" and "FY2025/26". Digits-only is not enough —
+// FY25 and FY2025 are the same year but differ digit-for-digit. Reduce every
+// component to its last two digits and join.
+const yearKey = y => (String(y || '').match(/\d{2,4}/g) || [])
+  .map(n => n.slice(-2)).join('-');
 const errs = [], warns = [];
 const E = (e, c, m) => errs.push('[' + c + '] ' + e + ': ' + m);
 const W = (e, c, m) => warns.push('[' + c + '] ' + e + ': ' + m);
@@ -92,16 +97,20 @@ const entities = [...new Set(T.map(r => r.entity))].filter(e => !ONLY || e === O
 for (const ent of entities) {
   const rows = T.filter(r => r.entity === ent);
   const current = rows.filter(r => !DEPARTED.test(r.role || ''));
+  // A record with no remuneration figure carries no AR vintage — it is an
+  // appointment record, not an AR extract — so it cannot be "behind" a year.
+  // Including them produced a false MIXED AR YEAR on Frasers in S346.
+  const dated = current.filter(r => r.rem_exact != null || (r.rem_history || []).filter(Boolean).length > 0);
 
   /* B — entity_short */
   const shorts = [...new Set(rows.map(r => r.entity_short))];
   if (shorts.length > 1) E(ent, 'ENTITY_SHORT', 'multiple values: ' + shorts.join(', '));
 
   /* A + H — ar_year coherence among current people */
-  const years = [...new Set(current.map(r => r.ar_year))];
+  const years = [...new Set(dated.map(r => r.ar_year))];
   if (years.length > 1) {
     const newest = years.slice().sort((a, b) => yearKey(b).localeCompare(yearKey(a)))[0];
-    const stale = current.filter(r => r.ar_year !== newest);
+    const stale = dated.filter(r => r.ar_year !== newest);
     E(ent, 'MIXED AR YEAR', years.length + ' years among current people (' + years.join(' / ') +
       '). Newest is ' + newest + '; ' + stale.length + ' record(s) behind: ' +
       stale.map(r => r.name + ' [' + r.ar_year + ']').join(', '));
@@ -126,9 +135,12 @@ for (const ent of entities) {
       if (Math.abs(sum - r.rem_exact) > 1) E(ent, 'SUM MISMATCH', r.name + ': ' + parts.join(' + ') + ' = ' + sum + ' vs rem_exact ' + r.rem_exact);
     }
     /* G — percentages */
+    // rem_pct_ltp is a FOURTH component present on some records (long-term
+    // incentives). Omitting it produced 11 false positives in S346 — the data
+    // was correct and the gate was wrong. Always include it when present.
     const pcts = [r.rem_pct_fixed, r.rem_pct_bonus, r.rem_pct_other];
     if (pcts.every(p => typeof p === 'number')) {
-      const ps = pcts.reduce((a, b) => a + b, 0);
+      const ps = pcts.reduce((a, b) => a + b, 0) + (typeof r.rem_pct_ltp === 'number' ? r.rem_pct_ltp : 0);
       if (ps < 99 || ps > 101) W(ent, 'PCT', r.name + ': percentages sum to ' + ps);
     }
   }
@@ -146,7 +158,7 @@ if (allOpts.length === 0) {
   for (const [, val, label] of allOpts) {
     if (ONLY && val !== ONLY) continue;
     const rs = T.filter(r => r.entity === val);
-    const cur = rs.filter(r => !DEPARTED.test(r.role || ''));
+    const cur = rs.filter(r => !DEPARTED.test(r.role || '') && (r.rem_exact != null || (r.rem_history || []).filter(Boolean).length > 0));
     if (!cur.length) continue;
     const newest = [...new Set(cur.map(r => r.ar_year))].sort((a, b) => yearKey(b).localeCompare(yearKey(a)))[0];
     const lm = /\(([^)]*)\)/.exec(label);
