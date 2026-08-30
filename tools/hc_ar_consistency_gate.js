@@ -129,10 +129,25 @@ for (const ent of entities) {
       if (yearKey(h.year) > yearKey(r.ar_year)) E(ent, 'ORPHAN HISTORY', r.name + ': history year ' + h.year + ' is newer than ar_year ' + r.ar_year);
     }
     /* F — components vs total */
-    const parts = [r.rem_fixed, r.rem_bonus, r.rem_other];
-    if (r.rem_exact != null && parts.every(p => typeof p === 'number')) {
+    // rem_other is null on records where the component is a known zero, not
+    // unknown. The old guard required all three to be numeric, so a single
+    // null skipped the whole check and hid real mismatches. Coerce to 0.
+    const other = typeof r.rem_other === 'number' ? r.rem_other : 0;
+    const parts = [r.rem_fixed, r.rem_bonus, other];
+    // LTP has a percentage field (rem_pct_ltp) but NO absolute field, and the
+    // corpus uses two conventions: some records exclude the LTP amount from
+    // the components (GuocoLand, Digital Core REIT), others fold it in and sum
+    // exactly (Far East Hospitality, ESR-REIT, both Frasers). No arithmetic is
+    // correct for both, so do not raise an error either way — warn instead, so
+    // these stay visible without manufacturing the S346 false-positive class.
+    const hasLtp = typeof r.rem_pct_ltp === 'number' && r.rem_pct_ltp > 0;
+    if (r.rem_exact != null && typeof r.rem_fixed === 'number' && typeof r.rem_bonus === 'number') {
       const sum = parts.reduce((a, b) => a + b, 0);
-      if (Math.abs(sum - r.rem_exact) > 1) E(ent, 'SUM MISMATCH', r.name + ': ' + parts.join(' + ') + ' = ' + sum + ' vs rem_exact ' + r.rem_exact);
+      if (hasLtp) {
+        if (Math.abs(sum - r.rem_exact) > 1) W(ent, 'SUM (LTP)', r.name + ': ' + parts.join(' + ') + ' = ' + sum + ' vs rem_exact ' + r.rem_exact + ' with rem_pct_ltp ' + r.rem_pct_ltp + '% and no rem_ltp field — not checkable');
+      } else if (Math.abs(sum - r.rem_exact) > 1) {
+        E(ent, 'SUM MISMATCH', r.name + ': ' + parts.join(' + ') + ' = ' + sum + ' vs rem_exact ' + r.rem_exact);
+      }
     }
     /* G — percentages */
     // rem_pct_ltp is a FOURTH component present on some records (long-term
