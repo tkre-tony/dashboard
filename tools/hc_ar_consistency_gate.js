@@ -22,7 +22,7 @@
  *   C  DUP NAME         same person name twice within one entity
  *   D  DUP ID           any id repeated anywhere
  *   E  ORPHAN HISTORY   rem_history contains a year NEWER than ar_year
- *   F  SUM MISMATCH     rem_fixed + rem_bonus + rem_other != rem_exact
+ *   F  SUM MISMATCH     rem_fees + rem_fixed + rem_bonus + rem_other != rem_exact
  *   G  PCT MISMATCH     rem_pct_* present and summing outside 99-101
  *   H  STALE CURRENT    ar_year older than the newest ar_year seen for that
  *                       entity — the exact defect that shipped in S346
@@ -133,7 +133,13 @@ for (const ent of entities) {
     // unknown. The old guard required all three to be numeric, so a single
     // null skipped the whole check and hid real mismatches. Coerce to 0.
     const other = typeof r.rem_other === 'number' ? r.rem_other : 0;
-    const parts = [r.rem_fixed, r.rem_bonus, other];
+    // rem_fees is a FOURTH absolute component (S349). Issuers who pay a
+    // director BOTH a fee and a salary disclose them in separate columns; the
+    // three-part sum could never reconcile for those people and raised 4 false
+    // errors on Centurion alone, where every rem_exact matched the AR exactly.
+    // Absent on records with no fee component, so coerce to 0 like rem_other.
+    const fees = typeof r.rem_fees === 'number' ? r.rem_fees : 0;
+    const parts = [fees, r.rem_fixed, r.rem_bonus, other];
     // LTP has a percentage field (rem_pct_ltp) but NO absolute field, and the
     // corpus uses two conventions: some records exclude the LTP amount from
     // the components (GuocoLand, Digital Core REIT), others fold it in and sum
@@ -154,6 +160,7 @@ for (const ent of entities) {
     // incentives). Omitting it produced 11 false positives in S346 — the data
     // was correct and the gate was wrong. Always include it when present.
     const pcts = [r.rem_pct_fixed, r.rem_pct_bonus, r.rem_pct_other];
+    if (typeof r.rem_pct_fees === 'number') pcts.push(r.rem_pct_fees);
     if (pcts.every(p => typeof p === 'number')) {
       const ps = pcts.reduce((a, b) => a + b, 0) + (typeof r.rem_pct_ltp === 'number' ? r.rem_pct_ltp : 0);
       if (ps < 99 || ps > 101) W(ent, 'PCT', r.name + ': percentages sum to ' + ps);
