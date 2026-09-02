@@ -159,7 +159,7 @@ def build(headline, kicker, stat_pairs, credit, out, photo=None):
     if lines is None:
         raise SystemExit("L-SOCIAL-17: credit will not fit two lines; shorten landing_credit")
     joined = " ".join(lines)
-    if ("Credit:" not in joined) and (not joined.startswith("Photo:")):
+    if ("Credit:" not in joined) and (not joined.startswith(("Photo:", "Illustration:"))):
         raise SystemExit("L-SOCIAL-17: rendered credit attributes nothing")
     if joined.rstrip() != " ".join(credit.split()):
         raise SystemExit("L-SOCIAL-17: credit was truncated during wrap")
