@@ -226,14 +226,32 @@ const PROMO_SLOTS = {
       headline: 'S-REIT and developer portfolios, asset by asset.',
       body: '1,700+ assets across 60+ listed entities \u2014 occupancy, lease expiry and valuation in one place.',
       cta: 'Open directory', href: '/newsroom/#asset-directory', creative: 'rail_directory_default' },
-    { id: 'rail-sponsor', kind: 'reserved', tier: 5, active: true,
-      label: 'Reserved \u2014 future inventory' },
+    { id: 'rail-sponsor', kind: 'tkre', tier: 5, active: true,
+      label: 'From TK Real Estate',
+      eyebrow: 'TK Real Estate',
+      photo: '/images/tony_koe_headshot.jpg',
+      name: 'Tony Koe',
+      role: 'Founder \u00b7 Key Executive Officer',
+      // headline renders RAW (not esc'd) so the <em> highlight survives.
+      headline: 'Buying, selling or leasing <em>commercial &amp; industrial</em> space?',
+      body: 'Bespoke advisory from 25 years in Singapore real estate \u2014 built on the same transaction data you are reading.',
+      bullets: ['Acquisition &amp; disposal mandates', 'Landlord &amp; tenant representation'],
+      wa: 'https://wa.me/6597971118?text=Hi%20Tony%2C%20I%20read%20PropertyAtlas%20and%20would%20like%20to%20discuss%20a%20commercial%20or%20industrial%20requirement.',
+      email: 'mailto:tony@tkre.sg?subject=Commercial%20%2F%20industrial%20enquiry%20via%20PropertyAtlas',
+      li: 'https://www.linkedin.com/in/tonykoe/',
+      footLine1: 'TK Real Estate Pte Ltd',
+      footLine2: 'Estate Agent Licence L3011027G \u00b7 CEA Reg R003757I',
+      creative: 'tkre_bespoke_v1' },
   ],
 };
 
 const PROMO_ICONS = {
   pulse: '<svg viewBox="0 0 24 24" aria-hidden="true"><polyline points="2 13 7 13 10 5 14 19 17 13 22 13"/></svg>',
   bars:  '<svg viewBox="0 0 24 24" aria-hidden="true"><line x1="4" y1="20" x2="4" y2="12"/><line x1="10" y1="20" x2="10" y2="4"/><line x1="16" y1="20" x2="16" y2="9"/><line x1="22" y1="20" x2="22" y2="15"/></svg>',
+  tick:  '<svg viewBox="0 0 24 24" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>',
+  whatsapp: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M17.47 14.38c-.3-.15-1.75-.86-2.02-.96-.27-.1-.47-.15-.67.15-.2.3-.77.96-.94 1.16-.17.2-.35.22-.64.07-.3-.15-1.25-.46-2.38-1.47-.88-.78-1.47-1.75-1.65-2.05-.17-.3-.02-.46.13-.6.13-.13.3-.35.45-.52.15-.17.2-.3.3-.5.1-.2.05-.37-.02-.52-.08-.15-.67-1.6-.92-2.2-.24-.58-.49-.5-.67-.51h-.57c-.2 0-.52.07-.79.37-.27.3-1.04 1.01-1.04 2.47s1.06 2.86 1.21 3.06c.15.2 2.1 3.2 5.08 4.49.71.3 1.26.49 1.69.63.71.22 1.36.19 1.87.12.57-.09 1.75-.72 2-1.41.25-.69.25-1.28.17-1.41-.07-.12-.27-.2-.57-.35zM12.04 2C6.58 2 2.13 6.45 2.13 11.91c0 1.75.46 3.45 1.32 4.95L2 22l5.25-1.38a9.87 9.87 0 0 0 4.79 1.22h.01c5.46 0 9.91-4.45 9.91-9.91 0-2.65-1.03-5.14-2.9-7.01A9.82 9.82 0 0 0 12.04 2z"/></svg>',
+  mail:  '<svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="rgba(255,255,255,.86)" stroke-width="2"><rect x="2.5" y="4.5" width="19" height="15" rx="2"/><polyline points="3 6.5 12 13 21 6.5"/></svg>',
+  linkedin: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4.98 3.5a2.5 2.5 0 1 1-.02 5 2.5 2.5 0 0 1 .02-5zM3 9h4v12H3V9zm7 0h3.8v1.7h.05c.53-.95 1.83-1.95 3.77-1.95 4.03 0 4.78 2.5 4.78 5.76V21h-4v-5.6c0-1.34-.03-3.06-1.9-3.06-1.9 0-2.2 1.46-2.2 2.96V21h-4V9z"/></svg>',
 };
 
 const PROMO_CSS = [
@@ -289,6 +307,36 @@ const PROMO_CSS = [
 '.pa-slot-t1 .pa-slot-stat span{color:rgba(255,255,255,.78)}',
 // slot internals
 '.pa-slot-mpu{min-height:250px;padding:22px 20px 20px;display:flex;flex-direction:column}',
+// rail-sponsor 300x600 : TK Real Estate commercial promo (added S352)
+'.pa-slot-tk{position:relative;width:300px;min-height:600px;box-sizing:border-box;border:1px solid #0A0A0C;border-radius:6px;overflow:hidden;background:linear-gradient(168deg,#14161C 0%,#0C0E13 58%,#080A0E 100%);display:flex;flex-direction:column;padding:24px 20px 18px;font-family:"DM Sans",Arial,sans-serif}',
+'.pa-slot-tk::before{content:"";position:absolute;left:0;top:0;bottom:0;width:3px;background:var(--ed-bronze,#A67C3A)}',
+'.pa-slot-tk::after{content:"";position:absolute;inset:0;pointer-events:none;background:radial-gradient(120% 62% at 50% -6%,rgba(201,162,100,.16) 0%,rgba(201,162,100,0) 62%)}',
+'.pa-slot-tk > *{position:relative;z-index:1}',
+'.tk-eyebrow{font-size:9.5px;font-weight:700;letter-spacing:.18em;text-transform:uppercase;color:var(--ed-bronze-lt,#C9A264);text-align:center}',
+'.tk-rule{width:34px;height:2px;background:var(--ed-bronze,#A67C3A);margin:11px auto 0;border-radius:2px}',
+'.tk-photo{width:104px;height:104px;border-radius:50%;margin:20px auto 0;overflow:hidden;border:2px solid rgba(201,162,100,.55);box-shadow:0 0 0 5px rgba(201,162,100,.09),0 8px 22px rgba(0,0,0,.45);background:#fff}',
+'.tk-photo img{width:100%;height:100%;object-fit:cover;object-position:50% 18%;display:block}',
+'.tk-name{margin:14px 0 0;text-align:center;font-size:17px;font-weight:700;color:#fff;letter-spacing:-.01em}',
+'.tk-role{margin:3px 0 0;text-align:center;font-size:10.5px;font-weight:500;letter-spacing:.05em;text-transform:uppercase;color:rgba(255,255,255,.52)}',
+'.tk-h{margin:20px 0 0;font-size:18px;line-height:1.32;font-weight:700;color:#fff;text-align:center;letter-spacing:-.015em}',
+'.tk-h em{font-style:normal;color:var(--ed-bronze-lt,#C9A264)}',
+'.tk-p{margin:11px 0 0;font-size:12.5px;line-height:1.55;color:rgba(255,255,255,.66);text-align:center}',
+'.tk-list{margin:17px 0 0;padding:13px 0;list-style:none;border-top:1px solid rgba(255,255,255,.11);border-bottom:1px solid rgba(255,255,255,.11)}',
+'.tk-list li{display:flex;gap:9px;align-items:flex-start;font-size:11.5px;line-height:1.45;color:rgba(255,255,255,.76);padding:3.5px 0}',
+'.tk-list svg{flex:0 0 auto;width:12px;height:12px;margin-top:2px;stroke:var(--ed-bronze-lt,#C9A264);fill:none;stroke-width:2.4;stroke-linecap:round;stroke-linejoin:round}',
+'.tk-cta{margin-top:auto;padding-top:16px;display:flex;flex-direction:column;gap:8px}',
+'.tk-cta-row{display:grid;grid-template-columns:1fr 1fr;gap:8px}',
+'.tk-cta-row .tk-btn{font-size:11px;letter-spacing:.04em;padding:10px 6px;gap:6px}',
+'.tk-cta-row .tk-btn svg{width:13px;height:13px}',
+'.tk-btn{display:flex;align-items:center;justify-content:center;gap:8px;text-decoration:none;font-size:12px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;padding:11px 12px;border-radius:4px;transition:.15s}',
+'.tk-btn svg{width:14px;height:14px;flex:0 0 auto}',
+'.tk-wa{background:var(--ed-bronze,#A67C3A);color:#fff;border:1px solid var(--ed-bronze,#A67C3A)}',
+'.tk-wa:hover{background:#B98C46;border-color:#B98C46}',
+'.tk-wa svg{fill:#fff}',
+'.tk-em{background:transparent;color:rgba(255,255,255,.86);border:1px solid rgba(255,255,255,.26)}',
+'.tk-em:hover{background:rgba(255,255,255,.07);border-color:rgba(255,255,255,.42)}',
+'.tk-li svg{fill:rgba(255,255,255,.86);stroke:none}',
+'.tk-foot{margin-top:13px;text-align:center;font-size:8.5px;line-height:1.6;letter-spacing:.04em;color:rgba(255,255,255,.36)}',
 '.pa-slot-eyebrow{font-size:9.5px;font-weight:700;letter-spacing:.16em;text-transform:uppercase;color:var(--ed-navy,#0B2B5C);margin-bottom:10px}',
 '.pa-slot-h{font-family:Georgia,"Times New Roman",serif;font-size:19px;line-height:1.22;font-weight:700;color:var(--ed-navy-ink,#12233f);margin:0 0 10px}',
 '.pa-slot-p{font-size:12.5px;line-height:1.5;color:var(--ed-muted,#6B6157);margin:0 0 14px}',
@@ -369,6 +417,38 @@ function promoRailHtml() {
       out.push('<div><div class="pa-rail-label">' + esc(u.label) + '</div>' +
         '<div class="pa-slot pa-slot-hp"><div class="pa-slot-hp-in"><b>300 &times; 600</b>' +
         '<span>Half-page slot.</span></div></div></div>');
+    } else if (u.kind === 'tkre') {
+      // rail-sponsor 300x600. Commercial promo for TK Real Estate Pte Ltd.
+      // NOT an <a>: it carries three CTAs, each independently tracked. The
+      // container keeps data-promo so view_promotion still fires once.
+      out.push('<div><div class="pa-rail-label">' + esc(u.label) + '</div>' +
+        '<div class="pa-slot-tk"' + attrs + '>' +
+        '<div class="tk-eyebrow">' + esc(u.eyebrow) + '</div>' +
+        '<div class="tk-rule"></div>' +
+        '<div class="tk-photo"><img src="' + esc(u.photo) + '" alt="' + esc(u.name) +
+          ', Founder and Key Executive Officer, TK Real Estate Pte Ltd" ' +
+          'width="104" height="104" loading="lazy" decoding="async"></div>' +
+        '<h3 class="tk-name">' + esc(u.name) + '</h3>' +
+        '<div class="tk-role">' + esc(u.role) + '</div>' +
+        '<h4 class="tk-h">' + u.headline + '</h4>' +
+        '<p class="tk-p">' + u.body + '</p>' +
+        '<ul class="tk-list">' + (u.bullets || []).map(function (b) {
+          return '<li>' + PROMO_ICONS.tick + '<span>' + b + '</span></li>'; }).join('') + '</ul>' +
+        '<div class="tk-cta">' +
+          '<a class="tk-btn tk-wa" href="' + esc(u.wa) + '" target="_blank" rel="noopener" ' +
+            'data-promo="' + esc(u.id) + '-whatsapp" data-creative="' + esc(u.creative) + '">' +
+            PROMO_ICONS.whatsapp + 'WhatsApp Tony</a>' +
+          '<div class="tk-cta-row">' +
+            '<a class="tk-btn tk-em" href="' + esc(u.email) + '" ' +
+              'data-promo="' + esc(u.id) + '-email" data-creative="' + esc(u.creative) + '">' +
+              PROMO_ICONS.mail + 'Email</a>' +
+            '<a class="tk-btn tk-em tk-li" href="' + esc(u.li) + '" target="_blank" rel="noopener" ' +
+              'data-promo="' + esc(u.id) + '-linkedin" data-creative="' + esc(u.creative) + '">' +
+              PROMO_ICONS.linkedin + 'LinkedIn</a>' +
+          '</div>' +
+        '</div>' +
+        '<div class="tk-foot">' + esc(u.footLine1) + '<br>' + esc(u.footLine2) + '</div>' +
+        '</div></div>');
     }
   });
   out.push('</aside>');
