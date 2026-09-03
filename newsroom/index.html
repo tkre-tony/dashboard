@@ -1,4 +1,5 @@
 <!DOCTYPE html>
+<!-- v48.435 (P3(a) — ed-art-photo-credit conditional prefix: "Photo: " suppressed when imageCredit already leads with Photo: or Illustration:; matches licard.py L-SOCIAL-17 whitelist; 13 pages regenerated) -->
 <!-- v48.434 (id:239 EC World REIT — HZFH Judgement final and conclusive, RMB3.515bn contingent liability binding on Beigang, ~1.35x the whole portfolio) -->
 <!-- v48.433 (id:238 Landmark REIT perpetual consent solicitation passes — both Extraordinary Resolutions carried without amendment, Amendment Documents signed, Proposed Amendments undisclosed) -->
 <!-- v48.432 (id:237 CICT Asia Square Tower 2 call option exercised — conditions precedent satisfied, completion mid-September 2026) -->
@@ -34001,7 +34002,7 @@ html.article-takeover .ed-article-page,body.article-takeover .ed-article-page{di
     var dateStrip = dateObj && !isNaN(dateObj) ? dows[dateObj.getDay()]+' · '+formattedDate+' · Singapore' : 'Singapore';
     var photoBlock = article.image
       ? '<img src="'+article.image+'" class="ed-art-photo" alt="" />'
-        + (article.imageCredit||article.sourceLabel?'<div class="ed-art-photo-credit">Photo: '+(article.imageCredit||(article.sourceLabel?article.sourceLabel.split('·')[0].trim():''))+'</div>':'')
+        + (article.imageCredit||article.sourceLabel?(function(){var c=article.imageCredit||(article.sourceLabel?article.sourceLabel.split('·')[0].trim():'');return '<div class="ed-art-photo-credit">'+(/^(?:Photo|Illustration):/.test(c)?'':'Photo: ')+c+'</div>';})():'')
       : '';
     var fhPanel = '';
     if(article.financial_headlines && article.financial_headlines.length){
