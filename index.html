@@ -734,7 +734,7 @@ const CHIP_TO_DB = {
 function regionToDb(r){ return r ? (r + ' Region') : null; }   // DB stores 'Central Region' etc.
 const PERIOD_DAYS = {'30d':30,'90d':90,'1y':365,'5y':1825};
 function periodLabel(p){ return {this_week:'Release Week','30d':'Last 30 days','90d':'Last 90 days','1y':'Last 1 year','5y':'Last 5 years',since1995:'Since 1995'}[p]||p; }
-function weekOf(iso){ if(!iso) return '—'; const d=new Date(iso+'T00:00:00'); const dow=(d.getDay()+6)%7; d.setDate(d.getDate()-dow); return String(d.getDate()).padStart(2,'0')+' '+_MON[d.getMonth()]; }
+function weekOf(iso){ if(!iso) return '—'; const d=new Date(iso+'T00:00:00'); return String(d.getDate()).padStart(2,'0')+' '+_MON[d.getMonth()]; }
 
 function buildBody(){
   const body={limit:cavPageSize, offset:cavOffset, sort:cavSort};
@@ -950,14 +950,14 @@ function renderCaveats(){   // current page render; server paginates; fQ/fTenure
   const pages=Math.max(1,Math.ceil((cavTotal||items.length)/cavPageSize));
   const page=Math.min(pages,Math.floor(cavOffset/cavPageSize)+1);
   if(splitMode==='list') caveatTableHTML(items); else caveatListHTML(items);
-  const lbl=(cavMode==='release')?('Week of '+cavWeekLabel+' release'):periodLabel(cavPeriod);
+  const lbl=(cavMode==='release')?('Latest release '+cavWeekLabel):periodLabel(cavPeriod);
   document.getElementById('list').insertAdjacentHTML('afterbegin','<div class="list-banner">'+cavPagerHTML(page,pages)+'</div>');
   if(map&&map.getSource('cav')) map.getSource('cav').setData((fSeg==='landed'&&LANDED_PINS.length)?caveatGeojson(LANDED_PINS.map((c,i)=>({c,i,lp:1}))):caveatGeojson(items));
   [...document.querySelectorAll('.dchip')].forEach(x=>{const n=x.textContent.match(/^D(\d+)/);x.classList.toggle('on',n&&+n[1]===fDist);});
   renderMktVol();
 }
 function cavPagerHTML(page,pages){
-  const lbl=(cavMode==='release')?('Week of '+cavWeekLabel+' release'):periodLabel(cavPeriod);
+  const lbl=(cavMode==='release')?('Latest release '+cavWeekLabel):periodLabel(cavPeriod);
   const head='<span><span style="opacity:.6">'+(cavMode==='release'?'📅':'🔎')+'</span> '+lbl+' \u00b7 <b>'+(cavTotal||0).toLocaleString()+'</b> '+(fSeg==='landed'?('transactions'+(((cavTotal||0)>2000)?' \u00b7 map shows latest 2,000':'')):'caveats')+'</span>';
   if((cavTotal||0)<=cavPageSize) return '<div style="font-size:12px;color:var(--ink,#1a2332)">'+head+'</div>';
   const atFirst=cavOffset<=0, atLast=page>=pages;
