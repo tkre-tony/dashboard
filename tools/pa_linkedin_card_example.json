@@ -9,11 +9,23 @@
     "cleared from S$3,860 to S$4,150 psf — all above the S$3,780 launch floor."
   ],
   "stats": [
-    {"value": "3,860–4,150", "label": "psf across seven units"},
-    {"value": "40.3%",       "label": "of the week by value"},
-    {"value": "61",          "label": "caveats, S$203.34M"}
+    {
+      "value": "3,860–4,150",
+      "label": "psf across seven units"
+    },
+    {
+      "value": "40.3%",
+      "label": "of the week by value"
+    },
+    {
+      "value": "61",
+      "label": "caveats, S$203.34M"
+    }
   ],
-  "releases": ["2026-09-01", "2026-09-04"],
+  "releases": [
+    "2026-09-01",
+    "2026-09-04"
+  ],
   "source": "URA REALIS",
-  "logo": "logo.png"
+  "logo": "PROPERTYATLAS_LOCKUP.png"
 }

@@ -73,7 +73,7 @@ def render(spec, out):
     # ---- kicker + logo ----------------------------------------------
     f = sans(px(14.5), 700)
     track(d, (L, px(31)), spec["kicker"].upper(), f, (214, 213, 216), sp=px(1.5))
-    logo = Image.open(spec["logo"]).convert("RGBA")
+    logo = Image.open(spec.get("logo", "PROPERTYATLAS_LOCKUP.png")).convert("RGBA")
     lw = px(114); lh = round(logo.height * lw / logo.width)
     img.paste(logo.resize((lw, lh), Image.LANCZOS), (R - lw, px(29)), logo.resize((lw, lh), Image.LANCZOS))
 
