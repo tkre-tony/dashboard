@@ -196,70 +196,90 @@ def note(d, text):
     track(d, (68, H - 106), text.upper(), mono(16), DIM, 2)
 
 
+def head_meta(proj, addr, typ, tenure, area, extra=""):
+    """Head line and meta line for one row.
+
+    Shipped format: [address ·] type · tenure · area [· hold · ann].
+    With no project name the address becomes the head and is not repeated
+    in the meta.
+    """
+    head = proj if proj else disp(addr)
+    parts = ([disp(addr)] if proj else []) + [typ, tenure, "%s sq ft" % format(int(area), ",")]
+    return head, "  ·  ".join(parts) + extra
+
+
 # ================================================================== DATA
-WEEK = "Week of 18th August 2026"
-LODGED = "URA REALIS caveats lodged 18 and 21 August"
-TOTAL, N_CAV, N_PAIR = "S$215.01M", 41, 22
-IND_N, IND_V, COM_N, COM_V = 29, 149.88, 12, 65.13
-N_GAIN, N_LOSS = 17, 5
-SALE_ROWS = [("RESALE", 38, 208_541_642, WHITE),
-             ("NEW SALE  ·  ALL GATE+", 2, 1_666_000, GOLD),
-             ("SUB SALE", 1, 4_800_000, PERI)]
-S02_NOTE = "22 of 41 caveats matched a prior transaction  ·  19 unmatched  ·  net realised \u2212S$18,781,072"
+WEEK = "Week of 31st August 2026"
+LODGED = "URA REALIS caveats lodged 1 and 4 September"
+TOTAL, N_CAV, N_PAIR = "S$203.34M", 61, 41
+IND_N, IND_V, COM_N, COM_V = 39, 60.93, 22, 142.41
+N_GAIN, N_LOSS = 35, 6
+SALE_ROWS = [("RESALE", 53, 118814448, WHITE),
+             ("NEW SALE  \u00b7  7 OF 8 CECIL PLACE", 8, 84529596, GOLD)]
+S02_NOTE = "41 of 61 caveats matched a prior transaction  \u00b7  20 unmatched  \u00b7  net realised +S$44,921,643"
 
-IND_VALUE = [("Single-user Factory", "XX MANDAI ESTATE", 50_000_000, 1726, "land"),
-             ("ALOG Gul LogisCentre", "XX GUL WAY", 24_200_000, 119, "land"),
-             ("Multiple-user Factory", "XX CHANGI SOUTH AVENUE 2", 16_588_000, 296, "land"),
-             ("SRS Building", "XX KUNG CHONG ROAD", 14_000_000, 1726, "land"),
-             ("Liner", "1 TUAS BAY CLOSE #01-XX", 7_100_000, 267, "strata")]
-IND_PSF = [("SRS Building", "XX KUNG CHONG ROAD", 14_000_000, 1726, "land"),
-             ("Single-user Factory", "XX MANDAI ESTATE", 50_000_000, 1726, "land"),
-             ("CT Hub 2", "114 LAVENDER STREET #09-XX", 1_356_600, 1400, "strata"),
-             ("100 Pasir Panjang", "100 PASIR PANJANG ROAD #02-XX", 2_000_000, 1387, "strata"),
-             ("Eunos Techpark", "XX KAKI BUKIT PLACE", 6_300_000, 1311, "land")]
-COM_VALUE = [("Southpoint", "200 CANTONMENT ROAD #10-XX", "Office", 19_350_000, 3016, "strata"),
-             ("Shop House", "XX EAST COAST ROAD", "Shop House", 9_700_000, 7215, "land"),
-             ("Petain Rd/Tyrwhitt Rd Conservation Area", "XX FOCH ROAD", "Shop House", 8_550_000, 5990, "land"),
-             ("Shop House", "XX JOO CHIAT ROAD", "Shop House", 7_000_000, 7373, "land"),
-             ("Arc 380", "380 JALAN BESAR #14-XX", "Office", 5_320_300, 3070, "strata")]
-COM_PSF = [("Shop House", "XX JOO CHIAT ROAD", "Shop House", 7_000_000, 7373, "land"),
-             ("Shop House", "XX EAST COAST ROAD", "Shop House", 9_700_000, 7215, "land"),
-             ("Petain Rd/Tyrwhitt Rd Conservation Area", "XX FOCH ROAD", "Shop House", 8_550_000, 5990, "land"),
-             ("Lucky Plaza", "304 ORCHARD ROAD #02-XX", "Retail", 2_150_000, 5548, "strata"),
-             ("Solitaire On Cecil", "148 CECIL STREET #01-XX", "Retail", 4_800_000, 5126, "strata")]
-COM_GAIN = [("Shop House", "XX JOO CHIAT ROAD", "Shop House", 1_900_000, 37.3, 1.7, 20.2, ""),
-             ("Shop House", "XX EAST COAST ROAD", "Shop House", 1_700_000, 21.2, 3.2, 6.3, "")]
-COM_LOSS = [("Solitaire On Cecil", "148 CECIL STREET #01-XX", "Retail", -254_400, -5.0, 3.2, -1.6, "")]
-IND_GAIN = [("SRS Building", "XX KUNG CHONG ROAD", "Factory", 7_300_000, 109.0, 11.2, 6.8, ""),
-             ("Eunos Techpark", "XX KAKI BUKIT PLACE", "Factory", 1_320_000, 26.5, 29.7, 0.8, ""),
-             ("CT Hub", "2 KALLANG AVENUE #09-XX", "Factory", 426_727, 81.5, 15.2, 4.0, ""),
-             ("Pantech Business Hub", "192 PANDAN LOOP #06-XX", "Factory", 403_000, 42.2, 15.0, 2.4, ""),
-             ("Vertex", "33 UBI AVENUE 3 #07-XX", "Factory", 397_000, 70.5, 18.9, 2.9, "")]
-IND_LOSS = [("ALOG Gul LogisCentre", "XX GUL WAY", "Warehouse", -30_950_000, -56.1, 13.5, -5.9, ""),
-             ("Factory", "XX BUKIT BATOK STREET 22", "Factory", -3_011_112, -30.1, 10.7, -3.3, " *"),
-             ("Ark@Kb", "68 KAKI BUKIT AVENUE 6 #04-XX", "Factory", -143_467, -18.5, 13.1, -1.6, ""),
-             ("E9 Premium", "61 WOODLANDS INDUSTRIAL PARK E9 #02-XX", "Factory", -141_234, -13.8, 9.1, -1.6, "")]
+IND_VALUE = [('', '58 TUAS BASIN LINK', 'Single-User', '30-yr from 2023', 58974, 10800000, 183, 'land'),
+             ('Hillview Industrial Estate', '28 HILLVIEW TERRACE', 'Single-User', '999-yr from 1885', 5672, 8500000, 1499, 'land'),
+             ('Space 18', '18 LORONG AMPAS #02-05', 'Multiple-User', 'Freehold', 1787, 2600000, 1455, 'strata'),
+             ('Tong Lee Building', '37 KALLANG PUDDING ROAD #05-02', 'Multiple-User', 'Freehold', 2982, 2266320, 760, 'strata'),
+             ('West Spring', '71B TUAS BAY DRIVE', 'Multiple-User', '60-yr from 2006', 5457, 1948000, 357, 'strata')]
+IND_PSF = [('Space 18', '18 LORONG AMPAS #02-05', 'Multiple-User', 'Freehold', 1787, 2600000, 1455, 'strata'),
+             ('Solstice Business Center', '23 NEW INDUSTRIAL ROAD #04-03', 'Multiple-User', 'Freehold', 1518, 1750000, 1153, 'strata'),
+             ('M-Space', '6D MANDAI ESTATE #08-09', 'Multiple-User', 'Freehold', 1259, 1300000, 1032, 'strata'),
+             ('Perfect One', '1 GENTING LINK #03-06', 'Warehouse', 'Freehold', 1335, 1161450, 870, 'strata'),
+             ('E-Centre @ Redhill', '3791 JALAN BUKIT MERAH #09-06', 'Multiple-User', '99-yr from 1962', 1012, 780000, 771, 'strata')]
+COM_VALUE = [('Telok Ayer Conservation Area', '261 SOUTH BRIDGE ROAD', 'Shop House', '999-yr from 1823', 1352, 16800000, 12426, 'land'),
+             ('Boat Quay Conservation Area', '85 CIRCULAR ROAD', 'Shop House', '999-yr from 1831', 1075, 16200000, 15065, 'land'),
+             ('Cecil Place', '137 CECIL STREET #08-01', 'Office', 'Freehold', 3918, 15437314, 3940, 'strata'),
+             ('Cecil Place', '137 CECIL STREET #14-01', 'Office', 'Freehold', 3638, 15098659, 4150, 'strata'),
+             ('Cecil Place', '137 CECIL STREET #14-02', 'Office', 'Freehold', 2551, 10586940, 4150, 'strata')]
+COM_PSF = [('The Bencoolen', '180 BENCOOLEN STREET #01-70', 'Retail', '99-yr from 1995', 183, 1188000, 6492, 'strata'),
+             ('VisionCrest', '103 PENANG ROAD #04-03', 'Office', 'Freehold', 1744, 7600000, 4358, 'strata'),
+             ('Far East Shopping Centre', '545 ORCHARD ROAD #05-41', 'Office', '999-yr from 1871', 205, 850000, 4156, 'strata'),
+             ('Cecil Place', '137 CECIL STREET #14-01', 'Office', 'Freehold', 3638, 15098659, 4150, 'strata'),
+             ('Cecil Place', '137 CECIL STREET #14-02', 'Office', 'Freehold', 2551, 10586940, 4150, 'strata')]
+COM_GAIN = [('Telok Ayer Conservation Area', '261 SOUTH BRIDGE ROAD', 'Shop House', '999-yr from 1823', 1352, 14200000, 546.2, 19.5, 10.1, ''),
+             ('Boat Quay Conservation Area', '85 CIRCULAR ROAD', 'Shop House', '999-yr from 1831', 1075, 13550000, 511.3, 19.3, 9.8, ''),
+             ('', '463 BALESTIER ROAD', 'Shop House', 'Freehold', 1068, 3000000, 352.9, 17.7, 8.9, ''),
+             ('The Bencoolen', '180 BENCOOLEN STREET #01-70', 'Retail', '99-yr from 1995', 183, 653000, 122.1, 26.0, 3.1, ''),
+             ('Paya Lebar Square', '60 PAYA LEBAR ROAD #11-18', 'Office', '99-yr from 2011', 1324, 646820, 26.5, 14.3, 1.7, '')]
+COM_LOSS = [('NEWest', '1 WEST COAST DRIVE #01-36', 'Retail', '956-yr from 1928', 280, -1084000, -61.5, 13.2, -7.0, ''),
+             ('Centropod @ Changi', '80 CHANGI ROAD #05-19', 'Office', 'Freehold', 764, -508813, -34.9, 13.6, -3.1, ''),
+             ('East Village', '430 UPPER CHANGI ROAD #01-92', 'Retail', 'Freehold', 183, -303377, -31.4, 14.4, -2.6, ''),
+             ('Hexacube', '160 CHANGI ROAD #04-10', 'Office', 'Freehold', 506, -123000, -11.3, 12.4, -1.0, '')]
+IND_GAIN = [('', '58 TUAS BASIN LINK', 'Single-User', '30-yr from 2023', 58974, 3700000, 52.1, 15.4, 2.8, ' *'),
+             ('Hillview Industrial Estate', '28 HILLVIEW TERRACE', 'Single-User', '999-yr from 1885', 5672, 3500000, 70.0, 14.0, 3.9, ''),
+             ('Frontier', '52 UBI AVENUE 3 #05-45', 'Multiple-User', '60-yr from 1999', 4435, 1195510, 263.0, 20.3, 6.6, ' *'),
+             ('North Link Building', '10 ADMIRALTY STREET #02-83', 'Multiple-User', '60-yr from 1999', 5188, 832000, 124.6, 21.4, 3.8, ''),
+             ('North Link Building', '10 ADMIRALTY STREET #01-41', 'Multiple-User', '60-yr from 1999', 5188, 720000, 61.0, 15.2, 3.2, '')]
+IND_LOSS = [('T99', '9 TUAS SOUTH AVENUE 10 #03-22', 'Multiple-User', '30-yr from 2013', 2659, -554000, -46.4, 10.7, -5.7, ''),
+             ('North View Bizhub', '6 YISHUN INDUSTRIAL STREET 1 #04-02', 'Multiple-User', '30-yr from 2012', 1755, -15000, -3.0, 5.8, -0.5, '')]
 
-GATE = dict(n=2, value=1_666_000, med=516, lo=516, hi=516)
-GATE_HEAD = "GATE+ holds at two"
-GATE_BULLETS = [("2 caveats", "  ·  S$1.67M this week \u2014 down from 4 last week"),
-                ("", "Both printed at exactly S$516 psf \u2014 a developer price list"),
-                ("99 caveats", "  ·  S$114.17M since launch  ·  project median S$608 psf"),
-                ("", "265-unit ramp-up B2  ·  33-yr leasehold from Aug 2025")]
+GATE = dict(n=7, value=81929596, med=3920, lo=3860, hi=4150)
+GATE_HEAD = "Nine months in one release"
+GATE_SUB = "Cecil Place  \u00b7  D01"
+NOTE_S03 = "Whole-building PSF is land-basis \u2014 not comparable to strata PSF"
+NOTE_S04 = "Strata per-unit basis  \u00b7  land-basis deals excluded"
+NOTE_S05 = "Rows 1 and 2 are shophouses  \u00b7  PSF is land-basis, not strata"
+NOTE_S05B = "Strata basis  \u00b7  land-basis deals excluded"
+GATE_BULLETS = [("7 caveats", "  \u00b7  S$81.93M  \u2014  40.3% of the week by value"),
+                ("", "Sales dated 5 Dec 2025 to 22 May 2026  \u00b7  floors 6 to 14"),
+                ("", "Both fourteenth-floor units cleared at exactly S$4,150 psf"),
+                ("", "7 of the week's 8 new sales  \u00b7  everything else is resale")]
 
-TENURE = [("FH / 999 yrs", 15), ("60 yrs", 11), ("30 yrs", 7), ("99 yrs", 6), ("33 yrs", 2)]
-TENURE_HEAD = "9 of 41 sit on 30\u201333 yr leases"
-FEATURE = ("ALOG Gul LogisCentre  ·  15 Gul Way",
-           "S$24.2M  ·  S$119 PSF (LAND)  ·  203,274 SQFT  ·  30-YR LEASE FROM 2003, 7.3 YRS REMAINING")
+TENURE = [("FH / 999 yrs", 24), ("55-60 yrs", 23), ("30-33 yrs", 7), ("99 yrs", 5), ("20-26 yrs", 2)]
+TENURE_HEAD = "24 of 61 are freehold or 999-year"
+FEATURE = ("Cecil Place  \u00b7  137 Cecil Street",
+           "S$81.93M  \u00b7  S$3,860\u20134,150 PSF  \u00b7  20,613 SQFT ACROSS 7 UNITS  \u00b7  FREEHOLD STRATA OFFICE")
 
-COM_GAIN_SUB = "All 2 commercial gains (of 3 commercial pairs)"
-COM_LOSS_SUB = "The week's only commercial loss (of 3 commercial pairs)"
-IND_GAIN_SUB = "Top 5 of 15 gains (15 of 19 industrial pairs profitable)"
-IND_LOSS_SUB = "All 4 losses (of 19 industrial pairs)"
-COM_GAIN_FOOT = "Both commercial gains are freehold shophouses"
-COM_LOSS_FOOT = "The week's only sub sale  ·  sold before completion"
-IND_GAIN_FOOT = "All nine sixty-year leasehold pairs gained"
-IND_LOSS_FOOT = "All four industrial losses sit on 30-year leases  ·  * lease renewed mid-hold"
+COM_GAIN_SUB = "Top 5 of 9 gains (9 of 13 commercial pairs profitable)"
+COM_LOSS_SUB = "All 4 losses (of 13 commercial pairs)"
+IND_GAIN_SUB = "Top 5 of 26 gains (26 of 28 industrial pairs profitable)"
+IND_LOSS_SUB = "All 2 losses (of 28 industrial pairs)"
+COM_GAIN_FOOT = "Three shophouses carried S$30.75M of the S$44.92M in gains"
+COM_LOSS_FOOT = "Three of four commercial losses sit on Changi Road"
+IND_GAIN_FOOT = "* area or lease changed between buy and sell  \u00b7  not like-for-like"
+IND_LOSS_FOOT = "Only 2 of 28 industrial pairs lost money this week"
 
 
 # ================================================================== SLIDES
@@ -326,11 +346,12 @@ def s03():
     d = ImageDraw.Draw(img)
     header(d, WEEK, "Top 5 — highest value", "Industrial")
     y = 292
-    for i, (proj, addr, price, psf, basis) in enumerate(IND_VALUE, 1):
-        rank_card(img, d, y, i, proj, disp(addr), sgd(price),
+    for i, (proj, addr, typ, tenure, area, price, psf, basis) in enumerate(IND_VALUE, 1):
+        hd, mt = head_meta(proj, addr, typ, tenure, area)
+        rank_card(img, d, y, i, hd, mt, sgd(price),
                   "S$%s psf%s" % (format(psf, ","), " (land)" if basis == "land" else ""))
         y += 104
-    note(d, "Whole-building PSF is land-basis — not comparable to strata PSF")
+    note(d, NOTE_S03)
     return chrome(img)
 
 
@@ -339,11 +360,12 @@ def s04():
     d = ImageDraw.Draw(img)
     header(d, WEEK, "Top 5 — price PSF", "Industrial")
     y = 292
-    for i, (proj, addr, price, psf, basis) in enumerate(IND_PSF, 1):
-        rank_card(img, d, y, i, proj, disp(addr), "S$%s%s" % (format(psf, ","),
+    for i, (proj, addr, typ, tenure, area, price, psf, basis) in enumerate(IND_PSF, 1):
+        hd, mt = head_meta(proj, addr, typ, tenure, area)
+        rank_card(img, d, y, i, hd, mt, "S$%s%s" % (format(psf, ","),
                   " (land)" if basis == "land" else ""), sgd(price))
         y += 104
-    note(d, "Whole-site PSF is land-basis  ·  strata PSF is per-unit")
+    note(d, NOTE_S04)
     return chrome(img)
 
 
@@ -352,12 +374,13 @@ def s05():
     d = ImageDraw.Draw(img)
     header(d, WEEK, "Top 5 — highest value", "Commercial")
     y = 292
-    for i, (proj, addr, typ, price, psf, basis) in enumerate(COM_VALUE, 1):
-        rank_card(img, d, y, i, proj, "%s  ·  %s" % (disp(addr), typ),
+    for i, (proj, addr, typ, tenure, area, price, psf, basis) in enumerate(COM_VALUE, 1):
+        hd, mt = head_meta(proj, addr, typ, tenure, area)
+        rank_card(img, d, y, i, hd, mt,
                   sgd(price), "S$%s psf%s" % (format(psf, ","),
                   " (land)" if basis == "land" else ""))
         y += 104
-    note(d, "Whole-building PSF is land-basis — not comparable to strata PSF")
+    note(d, NOTE_S05)
     return chrome(img)
 
 
@@ -366,24 +389,24 @@ def s05b():
     d = ImageDraw.Draw(img)
     header(d, WEEK, "Top 5 — price PSF", "Commercial")
     y = 292
-    for i, (proj, addr, typ, price, psf, basis) in enumerate(COM_PSF, 1):
-        rank_card(img, d, y, i, proj, "%s  ·  %s" % (disp(addr), typ),
+    for i, (proj, addr, typ, tenure, area, price, psf, basis) in enumerate(COM_PSF, 1):
+        hd, mt = head_meta(proj, addr, typ, tenure, area)
+        rank_card(img, d, y, i, hd, mt,
                   "S$%s%s" % (format(psf, ","), " (land)" if basis == "land" else ""),
                   sgd(price))
         y += 104
-    note(d, "Top three are shophouses  ·  PSF is land-basis")
+    note(d, NOTE_S05B)
     return chrome(img)
 
 
 def s06():
     img = base_dark()
     d = ImageDraw.Draw(img)
-    header(d, WEEK + "  ·  New launch", GATE_HEAD,
-           "9 Tukang Innovation Drive  ·  D22")
+    header(d, WEEK + "  ·  New launch", GATE_HEAD, GATE_SUB)
     tiles = [(str(GATE["n"]), "NEW-SALE CAVEATS", WHITE),
              (sgd(GATE["value"]), "TOTAL LODGED", GOLD),
-             ("S$%d" % GATE["med"], "MEDIAN PSF", WHITE),
-             ("S$%d–%d" % (GATE["lo"], GATE["hi"]), "PSF RANGE", WHITE)]
+             ("S$%s" % format(GATE["med"], ","), "MEDIAN PSF", WHITE),
+             ("S$%s–%s" % (format(GATE["lo"], ","), format(GATE["hi"], ",")), "PSF RANGE", WHITE)]
     bw, gap = 404, 32
     x = (W - (bw * 4 + gap * 3)) / 2
     for val, lab, col in tiles:
@@ -413,10 +436,12 @@ def pnl_slide(kicker, head, sub, rows, col, foot):
     header(d, kicker, head, sub)
     y = 292
     for i, r in enumerate(rows, 1):
-        proj, addr, typ, profit, pct, yrs, ann = r[0], r[1], r[2], r[3], r[4], r[5], r[6]
-        flag = r[7] if len(r) > 7 else ""
-        meta = "%s%s  ·  %s  ·  %.1f-yr hold  ·  %+.1f%%/yr" % (disp(addr), flag, typ, yrs, ann)
-        rank_card(img, d, y, i, proj, meta,
+        proj, addr, typ, tenure, area = r[0], r[1], r[2], r[3], r[4]
+        profit, pct, yrs, ann = r[5], r[6], r[7], r[8]
+        flag = r[9] if len(r) > 9 else ""
+        hd, meta = head_meta(proj, addr, typ, tenure, area,
+                             "  ·  %.1f-yr hold  ·  %+.1f%%/yr%s" % (yrs, ann, flag))
+        rank_card(img, d, y, i, hd, meta,
                   "%+.0f%%" % pct if abs(pct) >= 1 else "%+.1f%%" % pct,
                   ("+" if profit > 0 else "−") + sgd(abs(profit))[2:].join(["S$", ""]),
                   col=col)
@@ -528,6 +553,6 @@ if __name__ == "__main__":
         im.save(os.path.join(OUT, "slide_%02d.png" % i))
         imgs.append(im.convert("RGB"))
         print("rendered slide_%02d.png" % i)
-    imgs[0].save("Week_of_18Aug2026_LinkedIn_Carousel.pdf",
+    imgs[0].save("Week_of_31Aug2026_LinkedIn_Carousel.pdf",
                  save_all=True, append_images=imgs[1:], resolution=150)
     print("PDF written")
