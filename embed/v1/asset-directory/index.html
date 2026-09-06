@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex,nofollow">
+<title>Asset Directory embed — PropertyAtlas</title>
+<style>
+  :root{
+    --ink:#1A1A1A; --mut:#5c5c5c; --line:#e3ded3;
+    --surface:#F7F3EB; --primary:#1A4F9C; --accent:#A67C3A;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{
+    font:15px/1.6 'DM Sans',system-ui,-apple-system,'Segoe UI',sans-serif;
+    color:var(--ink); background:#fff; padding:34px 20px 70px;
+  }
+  .wrap{max-width:1000px;margin:0 auto}
+  header{border-bottom:2px solid var(--ink);padding-bottom:14px;margin-bottom:26px}
+  .eyebrow{
+    font-size:11px;font-weight:700;letter-spacing:.13em;text-transform:uppercase;
+    color:var(--accent);margin-bottom:5px;
+  }
+  h1{font-size:26px;line-height:1.2;letter-spacing:-.02em;font-weight:700}
+  .sub{font-size:14px;color:var(--mut);margin-top:6px}
+  h2{font-size:16px;margin:32px 0 10px;letter-spacing:-.01em}
+  p{margin-bottom:11px;font-size:14px}
+  code{
+    font-family:'Space Mono',ui-monospace,SFMono-Regular,Menlo,monospace;
+    font-size:12.5px;background:var(--surface);padding:1px 5px;border-radius:4px;
+  }
+  pre{
+    font-family:'Space Mono',ui-monospace,SFMono-Regular,Menlo,monospace;
+    font-size:12.5px;line-height:1.65;background:#141a24;color:#e8e4dc;
+    padding:16px 18px;border-radius:9px;overflow-x:auto;margin:10px 0 16px;
+  }
+  table{border-collapse:collapse;width:100%;margin:10px 0 18px;font-size:13.5px}
+  th,td{text-align:left;padding:8px 10px;border-bottom:1px solid var(--line);vertical-align:top}
+  th{font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:var(--mut)}
+  td code{font-size:12px}
+  .stage{
+    border:1px dashed var(--line);border-radius:12px;padding:18px;
+    background:repeating-linear-gradient(45deg,#fbfaf7,#fbfaf7 9px,#fff 9px,#fff 18px);
+  }
+  .note{
+    border-left:3px solid var(--accent);background:var(--surface);
+    padding:12px 15px;border-radius:0 8px 8px 0;font-size:13.5px;margin:14px 0 18px;
+  }
+  footer{margin-top:44px;padding-top:14px;border-top:1px solid var(--line);
+    font-size:12px;color:var(--mut)}
+  a{color:var(--primary)}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header>
+    <div class="eyebrow">PropertyAtlas white-label</div>
+    <h1>Asset Directory &mdash; embed reference</h1>
+    <div class="sub">Integration guide and live preview for the <code>asset_directory</code> module.</div>
+  </header>
+
+  <h2>Installation</h2>
+  <p>Drop a container where the directory should appear, then load the script. Nothing else is required &mdash; no stylesheet, no build step, no framework.</p>
+
+<pre>&lt;div id="pa-asset-directory"&gt;&lt;/div&gt;
+&lt;script src="https://propertyatlas.sg/embed/v1/loader.js"
+        data-pa-key="pk_your_key_here"
+        data-pa-module="asset_directory"
+        data-pa-target="#pa-asset-directory"&gt;&lt;/script&gt;</pre>
+
+  <h2>Script attributes</h2>
+  <table>
+    <tr><th>Attribute</th><th>Required</th><th>Meaning</th></tr>
+    <tr>
+      <td><code>data-pa-key</code></td><td>Yes</td>
+      <td>The partner key issued by PropertyAtlas. Safe to publish &mdash; it is validated against a registered domain allowlist, so it is useless from any other site.</td>
+    </tr>
+    <tr>
+      <td><code>data-pa-module</code></td><td>No</td>
+      <td>Defaults to <code>asset_directory</code>.</td>
+    </tr>
+    <tr>
+      <td><code>data-pa-target</code></td><td>No</td>
+      <td>CSS selector for the container. If omitted or not found, the embed is inserted immediately after the script tag.</td>
+    </tr>
+  </table>
+
+  <h2>Domain registration</h2>
+  <p>Each key is bound to a fixed set of origins. A request from an unregistered domain is refused before any data is read, and the embed renders a short notice instead. Send PropertyAtlas every origin the embed will run on, including the <code>www</code> variant if you use one, and any staging domain.</p>
+
+  <div class="note">
+    Styling is taken from the partner theme held by PropertyAtlas &mdash; logo, four colour tokens and an optional font stack. The embed renders inside a shadow root, so it will not inherit or disturb surrounding site CSS. Attribution is part of the module and is not configurable at the page level.
+  </div>
+
+  <h2>Live preview</h2>
+  <p>The embed below runs with the TK Real Estate pilot key against production data.</p>
+
+  <div class="stage">
+    <div id="pa-preview"></div>
+  </div>
+
+  <footer>
+    PropertyAtlas &mdash; <a href="https://propertyatlas.sg">propertyatlas.sg</a>.
+    Internal reference page; not indexed.
+  </footer>
+
+</div>
+
+<script src="/embed/v1/loader.js"
+        data-pa-key="pk_tkre_live_7bfae1e03bac2b95cbca524e2a0431e0"
+        data-pa-module="asset_directory"
+        data-pa-target="#pa-preview"></script>
+</body>
+</html>
