@@ -36,7 +36,8 @@
   var CONFIG_ENDPOINT = SB_URL + "/functions/v1/wl-config";
   var HOME = "https://propertyatlas.sg";
   var PAGE_SIZE = 24;
-  var FETCH_CAP = 2000;
+  var PAGE_FETCH = 2000;
+  var HARD_CEILING = 50000;
 
   /* reit_assets.val is stored in MILLIONS and the table has no currency
    * column. The public site resolves currency from the entity name; this map
@@ -250,9 +251,9 @@
     return qs;
   }
 
-  function getRows(cfg) {
-    var lim = Math.min(Number(cfg.limit) || FETCH_CAP, FETCH_CAP);
-    var q = ["select=" + FIELDS, "order=id.asc", "limit=" + lim]
+  function fetchPage(cfg, offset, size) {
+    var q = ["select=" + FIELDS, "order=id.asc",
+             "limit=" + size, "offset=" + offset]
       .concat(buildFilter(cfg)).join("&");
     return fetch(SB_URL + "/rest/v1/reit_assets?" + q, {
       headers: { apikey: SB_ANON, Authorization: "Bearer " + SB_ANON }
@@ -260,6 +261,34 @@
       if (!r.ok) throw new Error("reit_assets HTTP " + r.status);
       return r.json();
     });
+  }
+
+  /* Rows are paged rather than fetched in one shot. A single request that
+   * hits the row cap returns a full page and no indication that more exists,
+   * so the directory would render truncated under a confident total — a
+   * silent failure on someone else's website. _reitFetchAll() in
+   * newsroom/index.html carries the same loop.
+   *
+   * An explicit config.limit is a deliberate ceiling set by PropertyAtlas and
+   * is honoured exactly; without one the loop runs to the end of the data. */
+  function getRows(cfg) {
+    var asked = Number(cfg.limit);
+    var hard = (asked > 0) ? Math.min(asked, HARD_CEILING) : HARD_CEILING;
+    var out = [];
+
+    function next(offset) {
+      var want = Math.min(PAGE_FETCH, hard - out.length);
+      if (want <= 0) return Promise.resolve(out);
+      return fetchPage(cfg, offset, want).then(function (batch) {
+        if (!batch || !batch.length) return out;
+        out = out.concat(batch);
+        if (batch.length < want) return out;   // short page: end of data
+        if (out.length >= hard) return out;
+        return next(offset + batch.length);
+      });
+    }
+
+    return next(0);
   }
 
   /* --------------------------------------------------------------- render */
