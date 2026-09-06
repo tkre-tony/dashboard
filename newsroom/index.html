@@ -1,4 +1,5 @@
 <!DOCTYPE html>
+<!-- v48.438 (6 Sep 2026, S362): Human Capital consistency repair (L-HC-1). hc_ar_consistency_gate 15 ERRORS -> 0 across 64 entities. (1) SUM MISMATCH x11: CDL Lee Jee Cheng Philip rem_fixed 272717->267534 (rem_other 5183 is a component of the 272717 total, not additive; confirmed by rem_pct 98.1/1.9) and doubled FY2024 clause removed from rem_note; CLAR William Tay rem_pct_other 35->2 with rem_pct_ltp:33 added (the S$505,537 deferred unit award has no absolute field - corpus LTP convention, downgrades to SUM (LTP) warning); Sing Holdings Lee Sze Hao rem_bonus 7192011->7192002 per AR p.25, sums to 8080901 exactly; SingLand eight non-executive records had rem_fixed carrying the PRIOR-YEAR (FY2024) fee - rem_fixed set to rem_exact on chair/lance/liam/chng/tan-kn/sim/ng/tan-tc; SingLand rem_history FY2025 totals corrected on Liam Wee Sin 90000->87500 and Peter Sim 105000->98750 (disagreed with rem_exact and rem_note; not gate-visible). (2) ESR-REIT Karen Lee ar_year FY2024->FY2025 (record is an FY2025 AR extract; cleared MIXED AR YEAR + ORPHAN HISTORY) and role wording "(departed Apr 2025)"->"(until 30 Apr 2025)" to match prev_roles/bio and the gate DEPARTED vocabulary. (3) entity_short backfilled on 45 records that carried no such key and therefore rendered the literal string "undefined" in both the Human Capital list cell and the grid card: Wee Hur 14 ('Wee Hur'), Heeton 9 ('Heeton'), Hiap Hoe 10 ('Hiap Hoe'), Manulife US REIT 9 ('MUST'), Keppel DC REIT Mgmt 3 ('KDC REIT Mgmt'). Only Wee Hur was gate-visible (mixed values); the other four were uniform-missing and silent. (4) Acrophyte option label "Acrophyte / AI-REIT (FY2025)" -> "Acrophyte (FY2024)": claimed a year the data does not hold and conflated Acrophyte with Alpha Integrated REIT, which has its own option. TALENT_DATA 629 records unchanged in count; 57 records amended. Warnings 34->40 (6 new cosmetic OPTION NAME + 1 intended SUM (LTP) downgrade, 1 removed). No NEWS, no cascade, no NR_STATIC_IDS, no sitemap, no reit_assets change. ACROPHYTE FY2025 AR PASS STILL OUTSTANDING - the only entity in the corpus behind on AR vintage.) -->
 <!-- v48.437 (id:240 corrections: literal backslash-n row separators removed; viewport breakout dropped and tables refitted to the article column - address and tenure on two lines, shortened type labels and headers, numeric cells nowrap; marketing-agent line dropped; v48.436 header de-duplicated) --> <!-- v48.436 (id:240 weekly caveats 1/4 Sep 2026 - Cecil Place surfaces nine months of sales at S$81.93M) -->
 <!-- v48.435 (P3(a) — ed-art-photo-credit conditional prefix: "Photo: " suppressed when imageCredit already leads with Photo: or Illustration:; matches licard.py L-SOCIAL-17 whitelist; 13 pages regenerated) -->
 <!-- v48.434 (id:239 EC World REIT — HZFH Judgement final and conclusive, RMB3.515bn contingent liability binding on Beigang, ~1.35x the whole portfolio) -->
@@ -5403,7 +5404,7 @@ body.article-takeover .ed-foot{display:none!important}
     <button class="talent-filter-btn role-mgmt" data-tfilter="Mgmt" onclick="talentSetFilter(this,'role','Mgmt')">Mgmt / KMP</button>
     <select class="talent-sort-sel" id="talent-entity-filter" onchange="talentRender()" style="max-width:160px">
       <option value="">All Entities</option>
-      <option value="Acrophyte Hospitality Trust">Acrophyte / AI-REIT (FY2025)</option>
+      <option value="Acrophyte Hospitality Trust">Acrophyte (FY2024)</option>
       <option value="Alpha Integrated REIT">AI-REIT (FY2025)</option>
       <option value="AIMS APAC REIT">AIMS APAC REIT (FY2026)</option>
       <option value="The Assembly Place">Assembly Place (FY2025)</option>
@@ -7941,8 +7942,8 @@ var TALENT_DATA = [
     id:'cdl-lead-id-25', initials:'PL', name:'Lee Jee Cheng Philip', role:'Lead Independent Director', role_type:'Board',
     entity:'City Developments Limited', entity_short:'CDL', ar_year:'FY2025',
     appointed:'4 Jan 2021', tenure_yrs:4.8,
-    rem_exact:272717, rem_fixed:272717, rem_bonus:0, rem_other:5183,
-    rem_note:'FY2025 total S$272,717 — highest board fee among Non-Executive Directors. Comprises base S$75K + ARC Chair S$105K + Lead ID fee S$15K + attendance fees + other S$5K. Subject to shareholder approval. FY2024: S$287,971 FY2024: S$287,971 (-5.3% YoY).',
+    rem_exact:272717, rem_fixed:267534, rem_bonus:0, rem_other:5183,
+    rem_note:'FY2025 total S$272,717 — highest board fee among Non-Executive Directors. Comprises base S$75K + ARC Chair S$105K + Lead ID fee S$15K + attendance fees + other S$5K. Subject to shareholder approval. FY2024: S$287,971 (-5.3% YoY).',
     rem_band:null, rem_pct_fixed:98.1, rem_pct_bonus:0, rem_pct_other:1.9,
     edu:'Not disclosed; 35+ years accounting and finance experience; former KPMG Singapore audit partner',
     bio:'Lead Independent Director of CDL since January 2021. Chairs the Audit & Risk Committee. More than 35 years of experience in accounting and finance. Former audit partner at KPMG Singapore. Highest-paid Non-Executive Director on the CDL board.',
@@ -10357,7 +10358,7 @@ var TALENT_DATA = [
     appointed:'Feb 2018', tenure_yrs:7.9,
     rem_exact:1513793, rem_fixed:499536, rem_bonus:478912, rem_other:29808,
     rem_note:'FY2025 exact from AR. Salary S$499,536 (33%) + cash bonus S$478,912 (32%) + benefits S$29,808 (2%) + deferred unit awards S$505,537 (33%). Total S$1,513,793 FY2024: S$1,367,044 (+10.7% YoY).',
-    rem_band:null, rem_pct_fixed:33, rem_pct_bonus:32, rem_pct_other:35,
+    rem_band:null, rem_pct_fixed:33, rem_pct_bonus:32, rem_pct_ltp:33, rem_pct_other:2,
     rem_history:[
       {year:'FY2025', total:1513793, pct_fixed:33, pct_bonus:32, pct_ltp:33, pct_other:2},
       {year:'FY2024', total:1367044, pct_fixed:36, pct_bonus:27, pct_ltp:35, pct_other:2},
@@ -11469,7 +11470,7 @@ var TALENT_DATA = [
     id:'sing-ceo-25', initials:'SH', name:'Lee Sze Hao', role:'MD & CEO, Executive Director', role_type:'CEO',
     entity:'Sing Holdings Limited', entity_short:'Sing Holdings', ar_year:'FY2025',
     appointed:'1 Apr 1997', tenure_yrs:29.0,
-    rem_exact:8080901, rem_fixed:808090, rem_bonus:7192011, rem_other:80809,
+    rem_exact:8080901, rem_fixed:808090, rem_bonus:7192002, rem_other:80809,
     rem_note:'Exact FY2025 total S$8,080,901 per AR p.25. Mix: Salary 10% (S$808,090) / Other Benefits 1% (S$80,809 — car + unutilised leave) / Performance Bonus 89% (S$7,192,002). FY2024: S$1,293,267 (59% salary / 5% other / 36% bonus). YoY: +525% — driven entirely by North Gaia TOP triggering massive performance bonus upon S$808M+ revenue recognition. No director fee for executive director. Highest single-year compensation in Sing Holdings history. KMP remuneration not separately disclosed (Board elected non-disclosure citing competitive conditions).',
     rem_band:null,
     rem_pct_fixed:10.0, rem_pct_bonus:89.0, rem_pct_ltp:0, rem_pct_other:1.0,
@@ -11960,8 +11961,8 @@ var TALENT_DATA = [
     tags:['Management','Capital Markets','Investor Relations','ESR-REIT','Standard Chartered Alumni','RBS Alumni']
   },
   {
-    id:'esr-dceo-24', initials:'KL', name:'Karen Lee', role:'Deputy CEO (departed Apr 2025)', role_type:'Mgmt',
-    entity:'ESR-REIT', entity_short:'ESR-REIT', ar_year:'FY2024',
+    id:'esr-dceo-24', initials:'KL', name:'Karen Lee', role:'Deputy CEO (until 30 Apr 2025)', role_type:'Mgmt',
+    entity:'ESR-REIT', entity_short:'ESR-REIT', ar_year:'FY2025',
     appointed:'Unknown', tenure_yrs:null,
     rem_exact:null, rem_fixed:null, rem_bonus:null, rem_other:null,
     rem_note:'FY2024: 64.3% fixed / 15.9% STI / 19.8% LTI. FY2025: 100% fixed / 0% STI / 0% LTI (ceased as Deputy CEO 30 Apr 2025 — only fixed compensation recorded in FY2025; included in KMP total as a partial-year figure). No longer in management team as at AR publication date.',
@@ -14092,7 +14093,7 @@ var TALENT_DATA = [
     id:'singland-chair-25', initials:'EL', name:'Wee Ee Lim', role:'Chairman, Non-Executive Director', role_type:'Board',
     entity:'SingLand', entity_short:'SingLand', ar_year:'FY2025',
     appointed:null, tenure_yrs:null,
-    rem_exact:130000, rem_fixed:90000, rem_bonus:0, rem_other:0,
+    rem_exact:130000, rem_fixed:130000, rem_bonus:0, rem_other:0,
     rem_note:'FY2025 Chairman fees S$130,000 (FY2024: S$90,000; +44%). Fee increase reflects Willis Towers Watson benchmark review. NED (non-independent) — UOL Group representative FY2024: S$90,000 (+44.4% YoY).',
     rem_band:null, rem_pct_fixed:100, rem_pct_bonus:0, rem_pct_other:0,
     edu:null, bio:'Chairman of Singapore Land Group. Also Chairman of UOL Group — SingLand\'s parent company. Wee family control via UOL Group.',
@@ -14109,7 +14110,7 @@ var TALENT_DATA = [
     id:'singland-dir-lance-25', initials:'LY', name:'Lance Yu Gokongwei', role:'Non-Executive Director', role_type:'Board',
     entity:'SingLand', entity_short:'SingLand', ar_year:'FY2025',
     appointed:null, tenure_yrs:null,
-    rem_exact:90000, rem_fixed:67500, rem_bonus:0, rem_other:0,
+    rem_exact:90000, rem_fixed:90000, rem_bonus:0, rem_other:0,
     rem_note:'FY2025 NED fees S$90,000 (FY2024: S$67,500). ARC member FY2024: S$67,500 (+33.3% YoY).',
     rem_band:null, rem_pct_fixed:100, rem_pct_bonus:0, rem_pct_other:0,
     edu:null, bio:'Non-Executive Director, Singapore Land Group.',
@@ -14122,12 +14123,12 @@ var TALENT_DATA = [
     id:'singland-dir-liam-25', initials:'LW', name:'Liam Wee Sin', role:'Non-Executive Director', role_type:'Board',
     entity:'SingLand', entity_short:'SingLand', ar_year:'FY2025',
     appointed:null, tenure_yrs:null,
-    rem_exact:87500, rem_fixed:67500, rem_bonus:0, rem_other:0,
+    rem_exact:87500, rem_fixed:87500, rem_bonus:0, rem_other:0,
     rem_note:'FY2025 NED fees S$87,500 (FY2024: S$67,500). RC member + NC member. Does not receive fees from SingLand subsidiaries/associates as nominee director FY2024: S$67,500 (+33.3% YoY).',
     rem_band:null, rem_pct_fixed:100, rem_pct_bonus:0, rem_pct_other:0,
     edu:null, bio:'Non-Executive Director, Singapore Land Group. Also Group CEO of UOL Group.',
     prev_roles:[],
-    rem_history:[{year:'FY2025', total:90000, pct_fixed:100, pct_bonus:0, pct_ltp:0, pct_other:0},
+    rem_history:[{year:'FY2025', total:87500, pct_fixed:100, pct_bonus:0, pct_ltp:0, pct_other:0},
       {year:'FY2024', total:67500, pct_fixed:100, pct_bonus:0, pct_ltp:0, pct_other:0}],
     cross_board_roles:[
       {entity:'UOL Group',role:'Group CEO & Executive Director',listed:true},
@@ -14139,7 +14140,7 @@ var TALENT_DATA = [
     id:'singland-dir-chng-25', initials:'HH', name:'Chng Hwee Hong', role:'Independent Non-Executive Director, RC Chair', role_type:'Board',
     entity:'SingLand', entity_short:'SingLand', ar_year:'FY2025',
     appointed:null, tenure_yrs:null,
-    rem_exact:123750, rem_fixed:101250, rem_bonus:0, rem_other:0,
+    rem_exact:123750, rem_fixed:123750, rem_bonus:0, rem_other:0,
     rem_note:'FY2025 RC Chair fees S$123,750 (FY2024: S$101,250; +22%) FY2024: S$101,250 (+22.2% YoY).',
     rem_band:null, rem_pct_fixed:100, rem_pct_bonus:0, rem_pct_other:0,
     edu:null, bio:'Independent Non-Executive Director and RC Chair, Singapore Land Group.',
@@ -14152,7 +14153,7 @@ var TALENT_DATA = [
     id:'singland-dir-tan-kn-25', initials:'KN', name:'Tan Khiaw Ngoh', role:'Independent Non-Executive Director, ARC Chair', role_type:'Board',
     entity:'SingLand', entity_short:'SingLand', ar_year:'FY2025',
     appointed:null, tenure_yrs:null,
-    rem_exact:105000, rem_fixed:78750, rem_bonus:0, rem_other:0,
+    rem_exact:105000, rem_fixed:105000, rem_bonus:0, rem_other:0,
     rem_note:'FY2025 ARC Chair fees S$105,000 (FY2024: S$78,750; +33%) FY2024: S$78,750 (+33.3% YoY).',
     rem_band:null, rem_pct_fixed:100, rem_pct_bonus:0, rem_pct_other:0,
     edu:null, bio:'Independent Non-Executive Director and ARC Chair, Singapore Land Group.',
@@ -14165,11 +14166,11 @@ var TALENT_DATA = [
     id:'singland-dir-sim-25', initials:'PS', name:'Peter Sim Swee Yam', role:'Independent Non-Executive Director, NC Chair', role_type:'Board',
     entity:'SingLand', entity_short:'SingLand', ar_year:'FY2025',
     appointed:null, tenure_yrs:null,
-    rem_exact:98750, rem_fixed:78750, rem_bonus:0, rem_other:0,
+    rem_exact:98750, rem_fixed:98750, rem_bonus:0, rem_other:0,
     rem_note:'FY2025 NC Chair fees S$98,750 (FY2024: S$78,750; +25%) FY2024: S$78,750 (+33.3% YoY).',
     rem_band:null, rem_pct_fixed:100, rem_pct_bonus:0, rem_pct_other:0,
     edu:null, bio:'Independent Non-Executive Director and NC Chair, Singapore Land Group.',
-    prev_roles:[], rem_history:[{year:'FY2025', total:105000, pct_fixed:100, pct_bonus:0, pct_ltp:0, pct_other:0},
+    prev_roles:[], rem_history:[{year:'FY2025', total:98750, pct_fixed:100, pct_bonus:0, pct_ltp:0, pct_other:0},
       {year:'FY2024', total:78750, pct_fixed:100, pct_bonus:0, pct_ltp:0, pct_other:0}],
     cross_board_roles:[], linkedin_url:null, photo_url:null,
     tags:['Independent Director','NC Chair','Developer Board']
@@ -14178,7 +14179,7 @@ var TALENT_DATA = [
     id:'singland-dir-ng-25', initials:'SE', name:'Ng Shin Ein', role:'Independent Non-Executive Director', role_type:'Board',
     entity:'SingLand', entity_short:'SingLand', ar_year:'FY2025',
     appointed:null, tenure_yrs:null,
-    rem_exact:65000, rem_fixed:45000, rem_bonus:0, rem_other:0,
+    rem_exact:65000, rem_fixed:65000, rem_bonus:0, rem_other:0,
     rem_note:'FY2025 director fees S$65,000 (FY2024: S$45,000; +44%) FY2024: S$45,000 (+44.4% YoY).',
     rem_band:null, rem_pct_fixed:100, rem_pct_bonus:0, rem_pct_other:0,
     edu:null, bio:'Independent Non-Executive Director, Singapore Land Group.',
@@ -14191,7 +14192,7 @@ var TALENT_DATA = [
     id:'singland-dir-tan-tc-25', initials:'TC', name:'Tan Tiong Cheng', role:'Independent Non-Executive Director', role_type:'Board',
     entity:'SingLand', entity_short:'SingLand', ar_year:'FY2025',
     appointed:null, tenure_yrs:null,
-    rem_exact:65000, rem_fixed:45000, rem_bonus:0, rem_other:0,
+    rem_exact:65000, rem_fixed:65000, rem_bonus:0, rem_other:0,
     rem_note:'FY2025 director fees S$65,000 (FY2024: S$45,000; +44%) FY2024: S$45,000 (+44.4% YoY).',
     rem_band:null, rem_pct_fixed:100, rem_pct_bonus:0, rem_pct_other:0,
     edu:null, bio:'Independent Non-Executive Director, Singapore Land Group.',
@@ -14966,7 +14967,7 @@ var TALENT_DATA = [
     linkedin_url:null, photo_url:null,
     tags:['Non-Executive Director','ESG Chair','Keppel Sponsored','Non-Independent','Data Centre REIT']
   },
-  {id:'kdc-dir-andrew-25', initials:'AT', name:'Andrew Tan Kok Kiong', entity:'Keppel DC REIT Management Pte. Ltd.', role:'Independent Director', role_type:'Board',
+  {id:'kdc-dir-andrew-25', initials:'AT', name:'Andrew Tan Kok Kiong', entity:'Keppel DC REIT Management Pte. Ltd.', entity_short:'KDC REIT Mgmt', role:'Independent Director', role_type:'Board',
     ar_year:'FY2025', source:'Keppel DC REIT AR 2025',
     rem_exact:83945, rem_band:null, rem_exact_flag:true,
     rem_note:'FY2025 fees include pro-rated appointment to ESGC (6 May 2025). 70% cash / 30% Units. FY2024: S$80,000 full year FY2024: S$80,000 (+4.9% YoY).',
@@ -14978,7 +14979,7 @@ var TALENT_DATA = [
       {year:'FY2024', total:80000, pct_fixed:100, pct_bonus:0, pct_ltp:0, pct_other:0},
     ],
     linkedin_url:null, photo_url:null},
-  {id:'kdc-dir-kwan-25', initials:'KK', name:'Kenny Kwan', entity:'Keppel DC REIT Management Pte. Ltd.', role:'Former Lead Independent Director (stepped down 6 May 2025)', role_type:'Board',
+  {id:'kdc-dir-kwan-25', initials:'KK', name:'Kenny Kwan', entity:'Keppel DC REIT Management Pte. Ltd.', entity_short:'KDC REIT Mgmt', role:'Former Lead Independent Director (stepped down 6 May 2025)', role_type:'Board',
     ar_year:'FY2025', source:'Keppel DC REIT AR 2025',
     rem_exact:29687, rem_band:null, rem_exact_flag:true,
     rem_note:'Pro-rated fees for partial FY2025 (stepped down 6 May 2025). Paid 100% in cash. FY2024: S$86,000 full year as Lead Independent Director FY2024: S$86,000 (-65.5% YoY).',
@@ -14990,7 +14991,7 @@ var TALENT_DATA = [
       {year:'FY2024', total:86000, pct_fixed:100, pct_bonus:0, pct_ltp:0, pct_other:0},
     ],
     linkedin_url:null, photo_url:null},
-  {id:'kdc-dir-chua-25', initials:'SG', name:'Chua Soon Ghee', entity:'Keppel DC REIT Management Pte. Ltd.', role:'Former Independent Director (stepped down 16 March 2026)', role_type:'Board',
+  {id:'kdc-dir-chua-25', initials:'SG', name:'Chua Soon Ghee', entity:'Keppel DC REIT Management Pte. Ltd.', entity_short:'KDC REIT Mgmt', role:'Former Independent Director (stepped down 16 March 2026)', role_type:'Board',
     ar_year:'FY2025', source:'Keppel DC REIT AR 2025',
     rem_exact:78000, rem_band:null, rem_exact_flag:true,
     rem_note:'Full year FY2025 fees. Stepped down as Independent Director effective 16 March 2026. Served on NRC and ESGC. 70% cash / 30% Units FY2024: S$78,000 (+0.0% YoY).',
@@ -15481,7 +15482,7 @@ var TALENT_DATA = [
   {
     id:'heeton-chair-25', initials:'GE',
     name:'Toh Giap Eng Vince',
-    entity:'Heeton Holdings Limited',
+    entity:'Heeton Holdings Limited', entity_short:'Heeton',
     role:'Executive Chairman',
     role_type:'Board',
     ar_year:'FY2025',
@@ -15511,7 +15512,7 @@ var TALENT_DATA = [
   {
     id:'heeton-ceo-25', initials:'CY',
     name:'Hoh Chin Yiep Ivan',
-    entity:'Heeton Holdings Limited',
+    entity:'Heeton Holdings Limited', entity_short:'Heeton',
     role:'Executive Director & CEO',
     role_type:'CEO',
     ar_year:'FY2025',
@@ -15540,7 +15541,7 @@ var TALENT_DATA = [
   {
     id:'heeton-cfo-25', initials:'CH',
     name:'Heng Lee Cheng Cheryl',
-    entity:'Heeton Holdings Limited',
+    entity:'Heeton Holdings Limited', entity_short:'Heeton',
     role:'Chief Financial Officer',
     role_type:'CFO',
     ar_year:'FY2025',
@@ -15564,7 +15565,7 @@ var TALENT_DATA = [
   {
     id:'heeton-cio-25', initials:'CB',
     name:'Liu Chun Bong Edwin',
-    entity:'Heeton Holdings Limited',
+    entity:'Heeton Holdings Limited', entity_short:'Heeton',
     role:'Chief Investment Officer & MD UK/Europe',
     role_type:'CIO',
     ar_year:'FY2025',
@@ -15588,7 +15589,7 @@ var TALENT_DATA = [
   {
     id:'heeton-gm-25', initials:'JS',
     name:'Sing Seet Wei Jeryl',
-    entity:'Heeton Holdings Limited',
+    entity:'Heeton Holdings Limited', entity_short:'Heeton',
     role:'Group General Manager',
     role_type:'Mgmt',
     ar_year:'FY2025',
@@ -15612,7 +15613,7 @@ var TALENT_DATA = [
   {
     id:'heeton-hrad-25', initials:'YX',
     name:'Loh Yi Xuan Eemin',
-    entity:'Heeton Holdings Limited',
+    entity:'Heeton Holdings Limited', entity_short:'Heeton',
     role:'Manager, Human Resources & Administration',
     role_type:'Mgmt',
     ar_year:'FY2025',
@@ -15636,7 +15637,7 @@ var TALENT_DATA = [
   {
     id:'heeton-lid-25', initials:'RT',
     name:'Tan Chuan Lye Richard',
-    entity:'Heeton Holdings Limited',
+    entity:'Heeton Holdings Limited', entity_short:'Heeton',
     role:'Lead Independent Director & Audit Committee Chairman',
     role_type:'Board',
     ar_year:'FY2025',
@@ -15658,7 +15659,7 @@ var TALENT_DATA = [
   {
     id:'heeton-ind1-25', initials:'BW',
     name:'Lee Bee Wah',
-    entity:'Heeton Holdings Limited',
+    entity:'Heeton Holdings Limited', entity_short:'Heeton',
     role:'Independent Director & Nominating Committee Chair',
     role_type:'Board',
     ar_year:'FY2025',
@@ -15689,7 +15690,7 @@ var TALENT_DATA = [
   {
     id:'heeton-ind2-25', initials:'HH',
     name:'Li Hiaw Ho',
-    entity:'Heeton Holdings Limited',
+    entity:'Heeton Holdings Limited', entity_short:'Heeton',
     role:'Independent Director & Remuneration Committee Chair',
     role_type:'Board',
     ar_year:'FY2025',
@@ -15721,7 +15722,7 @@ var TALENT_DATA = [
   {
     id:'wh-chr-25', initials:'YL',
     name:'Goh Yeow Lian',
-    entity:'Wee Hur Holdings',
+    entity:'Wee Hur Holdings', entity_short:'Wee Hur',
     role:'Executive Chairman and Managing Director',
     role_type:'CEO',
     appointed:'3 September 2007',ar_year:'FY2025',
@@ -15745,7 +15746,7 @@ var TALENT_DATA = [
   {
     id:'wh-ed1-25', initials:'YT',
     name:'Goh Yew Tee',
-    entity:'Wee Hur Holdings',
+    entity:'Wee Hur Holdings', entity_short:'Wee Hur',
     role:'Executive Director and Deputy Managing Director',
     role_type:'Board',
     appointed:'24 September 2007',ar_year:'FY2025',
@@ -15769,7 +15770,7 @@ var TALENT_DATA = [
   {
     id:'wh-ed2-25', initials:'YH',
     name:'Goh Yeo Hwa',
-    entity:'Wee Hur Holdings',
+    entity:'Wee Hur Holdings', entity_short:'Wee Hur',
     role:'Executive Director',
     role_type:'Board',
     appointed:'24 September 2007',ar_year:'FY2025',
@@ -15791,7 +15792,7 @@ var TALENT_DATA = [
   {
     id:'wh-ned-25', initials:'YG',
     name:'Goh Yew Gee',
-    entity:'Wee Hur Holdings',
+    entity:'Wee Hur Holdings', entity_short:'Wee Hur',
     role:'Non-Executive Director',
     role_type:'Board',
     appointed:'24 September 2007',ar_year:'FY2025',
@@ -15813,7 +15814,7 @@ var TALENT_DATA = [
   {
     id:'wh-lid-25', initials:'SM',
     name:'Foo Say Mui (Bill)',
-    entity:'Wee Hur Holdings',
+    entity:'Wee Hur Holdings', entity_short:'Wee Hur',
     role:'Lead Independent Director',
     role_type:'Board',
     appointed:'26 April 2024',ar_year:'FY2025',
@@ -15845,7 +15846,7 @@ var TALENT_DATA = [
   {
     id:'wh-id-25', initials:'RL',
     name:'Lye Hoong Yip Raymond',
-    entity:'Wee Hur Holdings',
+    entity:'Wee Hur Holdings', entity_short:'Wee Hur',
     role:'Independent Director',
     role_type:'Board',
     appointed:'26 April 2024',ar_year:'FY2025',
@@ -15872,7 +15873,7 @@ var TALENT_DATA = [
   {
     id:'wh-cio-25', initials:'WP',
     name:'Goh Wee Ping',
-    entity:'Wee Hur Holdings',ar_year:'FY2025',
+    entity:'Wee Hur Holdings', entity_short:'Wee Hur',ar_year:'FY2025',
     role:'Chief Investment Officer / CEO Wee Hur Capital',
     role_type:'CXO',
     appointed:null,
@@ -15894,7 +15895,7 @@ var TALENT_DATA = [
   {
     id:'wh-coo-25', initials:'CH',
     name:'Goh Cheng Huah',
-    entity:'Wee Hur Holdings',ar_year:'FY2025',
+    entity:'Wee Hur Holdings', entity_short:'Wee Hur',ar_year:'FY2025',
     role:'Key Executive',
     role_type:'CXO',
     appointed:null,
@@ -15916,7 +15917,7 @@ var TALENT_DATA = [
   {
     id:'wh-ceo-con-25', initials:'AL',
     name:'Lu Tze Chern, Andy',
-    entity:'Wee Hur Holdings',ar_year:'FY2025',
+    entity:'Wee Hur Holdings', entity_short:'Wee Hur',ar_year:'FY2025',
     role:'CEO, Wee Hur Construction Pte. Ltd.',
     role_type:'CXO',
     appointed:null,
@@ -15938,7 +15939,7 @@ var TALENT_DATA = [
   {
     id:'wh-ed-con-25', initials:'CS',
     name:'Sua Chen Shiua',
-    entity:'Wee Hur Holdings',ar_year:'FY2025',
+    entity:'Wee Hur Holdings', entity_short:'Wee Hur',ar_year:'FY2025',
     role:'Executive Director, Wee Hur Construction Pte. Ltd.',
     role_type:'CXO',
     appointed:null,
@@ -15960,7 +15961,7 @@ var TALENT_DATA = [
   {
     id:'wh-gm-au-25', initials:'PS',
     name:'Peter William Scott',
-    entity:'Wee Hur Holdings',ar_year:'FY2025',
+    entity:'Wee Hur Holdings', entity_short:'Wee Hur',ar_year:'FY2025',
     role:'Head of Property Development (Australia)',
     role_type:'CXO',
     appointed:null,
@@ -15982,7 +15983,7 @@ var TALENT_DATA = [
   {
     id:'wh-ceo-prop-25', initials:'CY',
     name:'Goh Cheng Yu',
-    entity:'Wee Hur Holdings',ar_year:'FY2025',
+    entity:'Wee Hur Holdings', entity_short:'Wee Hur',ar_year:'FY2025',
     role:'CEO, Wee Hur Property Pte. Ltd.',
     role_type:'CXO',
     appointed:null,
@@ -16004,7 +16005,7 @@ var TALENT_DATA = [
   {
     id:'wh-cfo-25', initials:'PC',
     name:'Lim Poh Choo Janet',
-    entity:'Wee Hur Holdings',ar_year:'FY2025',
+    entity:'Wee Hur Holdings', entity_short:'Wee Hur',ar_year:'FY2025',
     role:'Director, Finance',
     role_type:'CXO',
     appointed:null,
@@ -16026,7 +16027,7 @@ var TALENT_DATA = [
   {
     id:'wh-da-25', initials:'CL',
     name:'Gaw Chu Lan',
-    entity:'Wee Hur Holdings',ar_year:'FY2025',
+    entity:'Wee Hur Holdings', entity_short:'Wee Hur',ar_year:'FY2025',
     role:'Director, Administration and Finance',
     role_type:'CXO',
     appointed:null,
@@ -16051,7 +16052,7 @@ var TALENT_DATA = [
   // ── HIAP HOE LIMITED ──────────────────────────────
   {
     id:'hhl-chair-25', initials:'HB',
-    entity:'Hiap Hoe Limited',
+    entity:'Hiap Hoe Limited', entity_short:'Hiap Hoe',
     name:'Teo Ho Beng',
     role:'Executive Chairman',
     role_type:'Chairman',
@@ -16074,7 +16075,7 @@ var TALENT_DATA = [
   },
   {
     id:'hhl-ceo-25', initials:'MT',
-    entity:'Hiap Hoe Limited',
+    entity:'Hiap Hoe Limited', entity_short:'Hiap Hoe',
     name:'Teo Keng Joo, Marc',
     role:'Chief Executive Officer',
     role_type:'CXO',
@@ -16097,7 +16098,7 @@ var TALENT_DATA = [
   },
   {
     id:'hhl-ed-25', initials:'KS',
-    entity:'Hiap Hoe Limited',
+    entity:'Hiap Hoe Limited', entity_short:'Hiap Hoe',
     name:'Tan Kim Seng',
     role:'Executive Director',
     role_type:'Executive Director',
@@ -16120,7 +16121,7 @@ var TALENT_DATA = [
   },
   {
     id:'hhl-id1-25', initials:'RC',
-    entity:'Hiap Hoe Limited',
+    entity:'Hiap Hoe Limited', entity_short:'Hiap Hoe',
     name:'Chan Kum Onn Roger',
     role:'Non-Executive Independent Director (ARC Chairman)',
     role_type:'Independent Director',
@@ -16143,7 +16144,7 @@ var TALENT_DATA = [
   },
   {
     id:'hhl-id2-25', initials:'CL',
-    entity:'Hiap Hoe Limited',
+    entity:'Hiap Hoe Limited', entity_short:'Hiap Hoe',
     name:'Kwok Chui Lian',
     role:'Non-Executive Independent Director',
     role_type:'Independent Director',
@@ -16166,7 +16167,7 @@ var TALENT_DATA = [
   },
   {
     id:'hhl-id3-25', initials:'SJ',
-    entity:'Hiap Hoe Limited',
+    entity:'Hiap Hoe Limited', entity_short:'Hiap Hoe',
     name:'Ong Seet Joon Amos',
     role:'Non-Executive Independent Director (RC Chairman)',
     role_type:'Independent Director',
@@ -16189,7 +16190,7 @@ var TALENT_DATA = [
   },
   {
     id:'hhl-kmp1-25', initials:'RT',
-    entity:'Hiap Hoe Limited',
+    entity:'Hiap Hoe Limited', entity_short:'Hiap Hoe',
     name:'Roland Teo Ho Kang',
     role:'Executive Director of Subsidiaries',
     role_type:'CXO',
@@ -16212,7 +16213,7 @@ var TALENT_DATA = [
   },
   {
     id:'hhl-kmp2-25', initials:'PS',
-    entity:'Hiap Hoe Limited',
+    entity:'Hiap Hoe Limited', entity_short:'Hiap Hoe',
     name:'Teo Poh Sim Agnes',
     role:'Head, HR & Admin',
     role_type:'CXO',
@@ -16235,7 +16236,7 @@ var TALENT_DATA = [
   },
   {
     id:'hhl-cfo-25', initials:'IC',
-    entity:'Hiap Hoe Limited',
+    entity:'Hiap Hoe Limited', entity_short:'Hiap Hoe',
     name:'Irene Cheah Lan Kwee',
     role:'Chief Financial Officer',
     role_type:'CFO',
@@ -16260,7 +16261,7 @@ var TALENT_DATA = [
   },
   {
     id:'hhl-kmp4-25', initials:'AT',
-    entity:'Hiap Hoe Limited',
+    entity:'Hiap Hoe Limited', entity_short:'Hiap Hoe',
     name:'Teo Ho Kheong Andrew',
     role:'Executive Director of Subsidiaries',
     role_type:'Executive Director',
@@ -16285,7 +16286,7 @@ var TALENT_DATA = [
   // ── MANULIFE US REIT (MUST) ───────────────────────
   {
     id:'must-ceo-25', initials:'JC',
-    entity:'Manulife US REIT',
+    entity:'Manulife US REIT', entity_short:'MUST',
     name:'John Casasante',
     role:'Chief Executive Officer & Chief Investment Officer',
     role_type:'CXO',
@@ -16312,7 +16313,7 @@ var TALENT_DATA = [
   },
   {
     id:'must-chair-25', initials:'MF',
-    entity:'Manulife US REIT',
+    entity:'Manulife US REIT', entity_short:'MUST',
     name:'Marc Lawrence Feliciano',
     role:'Non-Independent Non-Executive Director & Chairman',
     role_type:'Chairman',
@@ -16335,7 +16336,7 @@ var TALENT_DATA = [
   },
   {
     id:'must-lid-25', initials:'CC',
-    entity:'Manulife US REIT',
+    entity:'Manulife US REIT', entity_short:'MUST',
     name:'Koh Cher Chiew Francis',
     role:'Independent Director (Lead ID / ARC Chairman)',
     role_type:'Independent Director',
@@ -16358,7 +16359,7 @@ var TALENT_DATA = [
   },
   {
     id:'must-id1-25', initials:'KT',
-    entity:'Manulife US REIT',
+    entity:'Manulife US REIT', entity_short:'MUST',
     name:'Karen Tay Koh',
     role:'Independent Director (NRC Chairman)',
     role_type:'Independent Director',
@@ -16381,7 +16382,7 @@ var TALENT_DATA = [
   },
   {
     id:'must-id2-25', initials:'VM',
-    entity:'Manulife US REIT',
+    entity:'Manulife US REIT', entity_short:'MUST',
     name:'Veronica Julia McCann',
     role:'Independent Director',
     role_type:'Independent Director',
@@ -16404,7 +16405,7 @@ var TALENT_DATA = [
   },
   {
     id:'must-id3-25', initials:'KK',
-    entity:'Manulife US REIT',
+    entity:'Manulife US REIT', entity_short:'MUST',
     name:'Choo Kian Koon',
     role:'Independent Director',
     role_type:'Independent Director',
@@ -16427,7 +16428,7 @@ var TALENT_DATA = [
   },
   {
     id:'must-cfo-25', initials:'MA',
-    entity:'Manulife US REIT',
+    entity:'Manulife US REIT', entity_short:'MUST',
     name:'Mushtaque Ali',
     role:'Chief Financial Officer',
     role_type:'CFO',
@@ -16453,7 +16454,7 @@ var TALENT_DATA = [
   },
   {
     id:'must-cco-25', initials:'DC',
-    entity:'Manulife US REIT',
+    entity:'Manulife US REIT', entity_short:'MUST',
     name:'Daphne Chua',
     role:'Chief Corporate Officer & Company Secretary',
     role_type:'CXO',
@@ -16480,7 +16481,7 @@ var TALENT_DATA = [
   },
   {
     id:'must-hof-25', initials:'CY',
-    entity:'Manulife US REIT',
+    entity:'Manulife US REIT', entity_short:'MUST',
     name:'Choong Chia Yee',
     role:'Head of Finance',
     role_type:'CXO',
