@@ -1,4 +1,5 @@
 <!DOCTYPE html>
+<!-- v48.440 (7 Sep 2026, S362): two fixes. (1) BUG-LIST-1 - Chrome credential autofill injected the saved account email into #inv-search without firing an input event; invRender() re-reads that box every render, so every listing filtered to zero regardless of REIT chip or any other filter, and with no cards on the page the Enquire buttons had nothing to bind to (this was also the whole of the supposed BUG-LIST-2 - the modal was never broken). Guarded with INV_SEARCH_TOUCHED, set only by oninput; untouched values ignored and blanked. (2) LEADS-1 - vacancy_listings.id now travels with the enquiry. data-vid added to all four listing call sites (REIT detail active + new tables via enqAttrs, Vacancy Inventory cards, Vacancy Inventory table); Clifton for-sale sends data-vid="" by design as it has no vacancy_listings row; rdetEnqOpen() aggregates several units so it also binds null. Delegated handler reads it, enqOpen(reit,addr,unit,vid) carries it, ENQ_CONTEXT.vacancy_id uses Number(vid)>0?Number(vid):null so junk becomes SQL NULL rather than an FK violation, and both the leads INSERT and the lead-capture call include it. Pairs with the S362 migration adding leads.vacancy_id -> vacancy_listings(id) and the leads_enriched view. Renderer-only: no NEWS, no TALENT_DATA, no cascade, no NR_STATIC_IDS, no sitemap.) -->
 <!-- v48.438 (6 Sep 2026, S362): Human Capital consistency repair (L-HC-1). hc_ar_consistency_gate 15 ERRORS -> 0 across 64 entities. (1) SUM MISMATCH x11: CDL Lee Jee Cheng Philip rem_fixed 272717->267534 (rem_other 5183 is a component of the 272717 total, not additive; confirmed by rem_pct 98.1/1.9) and doubled FY2024 clause removed from rem_note; CLAR William Tay rem_pct_other 35->2 with rem_pct_ltp:33 added (the S$505,537 deferred unit award has no absolute field - corpus LTP convention, downgrades to SUM (LTP) warning); Sing Holdings Lee Sze Hao rem_bonus 7192011->7192002 per AR p.25, sums to 8080901 exactly; SingLand eight non-executive records had rem_fixed carrying the PRIOR-YEAR (FY2024) fee - rem_fixed set to rem_exact on chair/lance/liam/chng/tan-kn/sim/ng/tan-tc; SingLand rem_history FY2025 totals corrected on Liam Wee Sin 90000->87500 and Peter Sim 105000->98750 (disagreed with rem_exact and rem_note; not gate-visible). (2) ESR-REIT Karen Lee ar_year FY2024->FY2025 (record is an FY2025 AR extract; cleared MIXED AR YEAR + ORPHAN HISTORY) and role wording "(departed Apr 2025)"->"(until 30 Apr 2025)" to match prev_roles/bio and the gate DEPARTED vocabulary. (3) entity_short backfilled on 45 records that carried no such key and therefore rendered the literal string "undefined" in both the Human Capital list cell and the grid card: Wee Hur 14 ('Wee Hur'), Heeton 9 ('Heeton'), Hiap Hoe 10 ('Hiap Hoe'), Manulife US REIT 9 ('MUST'), Keppel DC REIT Mgmt 3 ('KDC REIT Mgmt'). Only Wee Hur was gate-visible (mixed values); the other four were uniform-missing and silent. (4) Acrophyte option label "Acrophyte / AI-REIT (FY2025)" -> "Acrophyte (FY2024)": claimed a year the data does not hold and conflated Acrophyte with Alpha Integrated REIT, which has its own option. TALENT_DATA 629 records unchanged in count; 57 records amended. Warnings 34->40 (6 new cosmetic OPTION NAME + 1 intended SUM (LTP) downgrade, 1 removed). No NEWS, no cascade, no NR_STATIC_IDS, no sitemap, no reit_assets change. ACROPHYTE FY2025 AR PASS STILL OUTSTANDING - the only entity in the corpus behind on AR vintage.) -->
 <!-- v48.437 (id:240 corrections: literal backslash-n row separators removed; viewport breakout dropped and tables refitted to the article column - address and tenure on two lines, shortened type labels and headers, numeric cells nowrap; marketing-agent line dropped; v48.436 header de-duplicated) --> <!-- v48.436 (id:240 weekly caveats 1/4 Sep 2026 - Cecil Place surfaces nine months of sales at S$81.93M) -->
 <!-- v48.435 (P3(a) — ed-art-photo-credit conditional prefix: "Photo: " suppressed when imageCredit already leads with Photo: or Illustration:; matches licard.py L-SOCIAL-17 whitelist; 13 pages regenerated) -->
@@ -5102,7 +5103,7 @@ body.article-takeover .ed-foot{display:none!important}
   <div class="inv-controls">
     <div class="inv-search-wrap">
       <span class="inv-search-icon">🔍</span>
-      <input class="inv-search" id="inv-search" type="search" name="inv-filter" autocomplete="off" placeholder="Search address, unit, remarks…" oninput="invRender()">
+      <input class="inv-search" id="inv-search" type="search" name="inv-filter" autocomplete="off" placeholder="Search address, unit, remarks…" oninput="INV_SEARCH_TOUCHED=true;invRender()">
     </div>
     <select class="inv-sel" id="inv-zone" onchange="invRender()">
       <option value="">All zones</option>
@@ -27274,7 +27275,7 @@ function rdetLoadVacancy(p) {
   }
   document.getElementById('rdet-vac-active-tbody').innerHTML = active.map(function(v){
     var isNew = v.status === 'New';
-    var enqAttrs = 'data-reit="' + encodeURIComponent(v.reit || '') + '" data-addr="' + encodeURIComponent(v.addrFull || v.addr || '') + '" data-unit="' + encodeURIComponent(v.unit || '') + '"';
+    var enqAttrs = 'data-reit="' + encodeURIComponent(v.reit || '') + '" data-addr="' + encodeURIComponent(v.addrFull || v.addr || '') + '" data-unit="' + encodeURIComponent(v.unit || '') + '" data-vid="' + (v.id || '') + '"';
     return '<tr style="border-bottom:1px solid var(--bdr);' + (isNew ? 'background:#c47d0008' : '') + '">'
       + '<td style="padding:7px 10px;font-weight:600;white-space:nowrap">' + v.unit
         + (isNew ? ' <span style="background:#c47d00;color:#fff;font-size:9px;font-weight:700;padding:1px 6px;border-radius:4px;margin-left:4px">NEW</span>' : '')
@@ -27294,7 +27295,7 @@ function rdetLoadVacancy(p) {
   if (newList.length) {
     newSec.style.display = 'block';
     document.getElementById('rdet-vac-new-tbody').innerHTML = newList.map(function(v){
-      var enqAttrs = 'data-reit="' + encodeURIComponent(v.reit || '') + '" data-addr="' + encodeURIComponent(v.addrFull || v.addr || '') + '" data-unit="' + encodeURIComponent(v.unit || '') + '"';
+      var enqAttrs = 'data-reit="' + encodeURIComponent(v.reit || '') + '" data-addr="' + encodeURIComponent(v.addrFull || v.addr || '') + '" data-unit="' + encodeURIComponent(v.unit || '') + '" data-vid="' + (v.id || '') + '"';
       return '<tr style="border-bottom:1px solid #c47d0020">'
         + '<td style="padding:7px 10px;font-weight:600">' + v.unit + '</td>'
         + '<td style="padding:7px 10px;text-align:right;font-family:monospace">' + v.sqft.toLocaleString() + '</td>'
@@ -30683,7 +30684,7 @@ function cliftonRenderSale() {
       '</div>'+
       '<div style="display:flex;gap:6px;flex-wrap:wrap">'+
         '<a href="'+p.matterport+'" target="_blank" rel="noopener" style="flex:1;display:inline-flex;align-items:center;justify-content:center;gap:5px;height:32px;background:rgba(124,92,191,.1);border:1px solid rgba(124,92,191,.3);border-radius:6px;font-size:11px;font-weight:600;color:#9b7de0;text-decoration:none">🏠 3D Virtual Tour</a>'+
-        '<button class="enq-btn" data-reit="'+encodeURIComponent('Clifton Partners')+'" data-addr="'+encodeURIComponent(p.addr)+'" data-unit="'+encodeURIComponent('For Sale')+'" style="flex:1;height:32px;background:var(--g1);color:#fff;border:none;border-radius:6px;font-size:11px;font-weight:600;font-family:\'DM Sans\',sans-serif;cursor:pointer">📩 Enquire</button>'+
+        '<button class="enq-btn" data-reit="'+encodeURIComponent('Clifton Partners')+'" data-addr="'+encodeURIComponent(p.addr)+'" data-unit="'+encodeURIComponent('For Sale')+'" data-vid="" style="flex:1;height:32px;background:var(--g1);color:#fff;border:none;border-radius:6px;font-size:11px;font-weight:600;font-family:\'DM Sans\',sans-serif;cursor:pointer">📩 Enquire</button>'+
       '</div>'+
     '</div>';
   }).join('');
@@ -30714,12 +30715,22 @@ function invPopulateSpecFilters(){
     }
   } catch(e){}
 }
+// L-LIST-1 (S362): Chrome's password manager ignores autocomplete="off" on a
+// plain text/search input and injects the saved account email into #inv-search
+// WITHOUT firing an 'input' event. invRender() re-reads that box on every render,
+// so the injected email silently filtered every listing to zero and no chip, zone
+// or size filter could return a row. Honour the box only after the user has
+// actually typed in it. v48.279 tried type="search"/name/autocomplete="off";
+// Chrome ignores all three.
+var INV_SEARCH_TOUCHED = false;
 function invRender() {
   // Filter reads — null-guarded. Any of these elements may be null if
   // invRender is called before the inventory sub-view is fully rendered
   // (e.g. from a hidden-tab deep-link landing during the auth flow).
   function _v(id){ var el = document.getElementById(id); return el ? (el.value || '') : ''; }
-  var q  = _v('inv-search').toLowerCase();
+  var qEl = document.getElementById('inv-search');
+  if(qEl && !INV_SEARCH_TOUCHED && qEl.value) qEl.value = '';
+  var q  = (INV_SEARCH_TOUCHED ? _v('inv-search') : '').toLowerCase();
   var zf = _v('inv-zone');
   var cf = _v('inv-cluster');
   var af = _v('inv-avail');
@@ -30877,7 +30888,7 @@ function invRender() {
         couNote+
         matterportBtn+
         '<div class="inv-reit-tag" style="color:'+d.reit_color+'"><span class="inv-reit-dot" style="background:'+d.reit_color+'"></span>'+d.reit+' · '+d.month+'</div>'+
-        (!isAbsorbed ? '<div style="margin-top:10px"><button class="enq-btn" data-reit="'+encodeURIComponent(d.reit)+'" data-addr="'+encodeURIComponent(d.addr)+'" data-unit="'+encodeURIComponent(d.unit)+'" style="width:100%;height:32px;background:var(--g1);color:#fff;border:none;border-radius:6px;font-size:12px;font-weight:600;font-family:\'DM Sans\',sans-serif;cursor:pointer">📩 Enquire About This Space</button></div>' : '')+
+        (!isAbsorbed ? '<div style="margin-top:10px"><button class="enq-btn" data-reit="'+encodeURIComponent(d.reit)+'" data-addr="'+encodeURIComponent(d.addr)+'" data-unit="'+encodeURIComponent(d.unit)+'" data-vid="'+(d.id||'')+'" style="width:100%;height:32px;background:var(--g1);color:#fff;border:none;border-radius:6px;font-size:12px;font-weight:600;font-family:\'DM Sans\',sans-serif;cursor:pointer">📩 Enquire About This Space</button></div>' : '')+
       '</div>';
     }).join('');
   } else {
@@ -30921,7 +30932,7 @@ function invRender() {
           return d.rent+' psf/mth';
         })(d)+'</td>'+
         '<td style="font-size:11px;color:var(--mut);max-width:220px">'+d.remarks+'</td>'+
-        '<td style="padding:4px 8px">'+(!isAbsorbed ? '<button class="enq-btn" data-reit="'+encodeURIComponent(d.reit)+'" data-addr="'+encodeURIComponent(d.addr)+'" data-unit="'+encodeURIComponent(d.unit)+'" style="white-space:nowrap;height:28px;padding:0 10px;background:var(--g1);color:#fff;border:none;border-radius:5px;font-size:11px;font-weight:600;font-family:\'DM Sans\',sans-serif;cursor:pointer">📩 Enquire</button>' : '')+'</td>'+
+        '<td style="padding:4px 8px">'+(!isAbsorbed ? '<button class="enq-btn" data-reit="'+encodeURIComponent(d.reit)+'" data-addr="'+encodeURIComponent(d.addr)+'" data-unit="'+encodeURIComponent(d.unit)+'" data-vid="'+(d.id||'')+'" style="white-space:nowrap;height:28px;padding:0 10px;background:var(--g1);color:#fff;border:none;border-radius:5px;font-size:11px;font-weight:600;font-family:\'DM Sans\',sans-serif;cursor:pointer">📩 Enquire</button>' : '')+'</td>'+
       '</tr>';
     }).join('');
   }
@@ -32376,8 +32387,9 @@ function pulseExportCSV() {
 // ── Modal state ──────────────────────────────────────────────
 var ENQ_CONTEXT = { reit: '', addr: '', unit: '' };
 
-function enqOpen(reit, addr, unit) {
-  ENQ_CONTEXT = { reit: reit || '', addr: addr || '', unit: unit || '' };
+function enqOpen(reit, addr, unit, vid) {
+  ENQ_CONTEXT = { reit: reit || '', addr: addr || '', unit: unit || '',
+                  vacancy_id: (Number(vid) > 0 ? Number(vid) : null) };
 
   // Reset form
   ['enq-name','enq-company','enq-email','enq-phone','enq-message'].forEach(function(id){
@@ -32417,7 +32429,8 @@ document.addEventListener('click', function(e) {
   var reit = decodeURIComponent(btn.dataset.reit || '');
   var addr = decodeURIComponent(btn.dataset.addr || '');
   var unit = decodeURIComponent(btn.dataset.unit || '');
-  enqOpen(reit, addr, unit);
+  var vid  = btn.dataset.vid || '';
+  enqOpen(reit, addr, unit, vid);
 });
 
 // Close on Escape
@@ -32450,7 +32463,8 @@ async function enqSubmit() {
     lead_company: company || null,
     lead_email:   email,
     lead_phone:   phone || null,
-    lead_message: message || null
+    lead_message: message || null,
+    vacancy_id:   ENQ_CONTEXT.vacancy_id
   };
 
   try {
@@ -32487,7 +32501,8 @@ async function enqSubmit() {
           lead_company: company || null,
           lead_email:   email,
           lead_phone:   phone || null,
-          lead_message: message || null
+          lead_message: message || null,
+          vacancy_id:   ENQ_CONTEXT.vacancy_id
         })
       });
     } catch(emailErr) {
