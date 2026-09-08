@@ -4232,7 +4232,7 @@ body.article-takeover .ed-foot{display:none!important}
       <section class="hero" aria-labelledby="hero-h">
   <div class="wrap hero-grid">
 
-    <!-- Image — id:241 REITs hero. v48.445 cascade. -->
+    <!-- Image — id:241 REITs hero. v48.446 cascade. -->
     <div class="hero-image-col">
       <a class="hero-image" href="/news/ireit-global-bvg-berlin-reo-campus-25-year-lease/" data-article-id="241" aria-label="Read full story: Illustration: PropertyAtlas. Berlin Campus, Schreiberhauer Strasse, Berlin-Lichtenberg, carries €195.8 million — 43.4 per cent of IREIT Global's net assets attributable to unitholders at 31 December 2025 — and produced €0.1 million of gross rental income in FY2025, down from €14.0 million in FY2024. Source: IREIT Global Annual Report 2025 and SGX announcement dated 7th September 2026.">
         <img src="/images/news_241_ireit_berlin_bvg_43pc.jpg" alt="Illustration: PropertyAtlas. Berlin Campus, Schreiberhauer Strasse, Berlin-Lichtenberg, carries €195.8 million — 43.4 per cent of IREIT Global's net assets attributable to unitholders at 31 December 2025 — and produced €0.1 million of gross rental income in FY2025, down from €14.0 million in FY2024. Source: IREIT Global Annual Report 2025 and SGX announcement dated 7th September 2026." class="hero-image-photo" loading="eager" fetchpriority="high" />
@@ -32423,9 +32423,12 @@ function enqOpen(reit, addr, unit, vid) {
   document.getElementById('enq-submit-btn').textContent = 'Send Enquiry';
 
   // Header detail
+  // v48.446 (8 Sep 2026, S365): mask the unit in the modal header to match the card.
+  // DISPLAY ONLY - ENQ_CONTEXT.unit keeps the true value and still feeds unit_ref in
+  // the lead payload, so the enquiry Tony receives is unchanged.
   var parts = [];
   if (addr) parts.push(addr);
-  if (unit) parts.push(unit);
+  if (unit) parts.push(maskUnit(unit));
   if (reit) parts.push(reit);
   // v48.312 (S229, TOUR-1): generic enquiry framing when no space context is supplied.
   // Both pre-existing callers always pass a non-empty addr, so they cannot reach this branch.
