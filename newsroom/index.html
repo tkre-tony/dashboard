@@ -4232,7 +4232,7 @@ body.article-takeover .ed-foot{display:none!important}
       <section class="hero" aria-labelledby="hero-h">
   <div class="wrap hero-grid">
 
-    <!-- Image — id:241 REITs hero. v48.443 cascade. -->
+    <!-- Image — id:241 REITs hero. v48.445 cascade. -->
     <div class="hero-image-col">
       <a class="hero-image" href="/news/ireit-global-bvg-berlin-reo-campus-25-year-lease/" data-article-id="241" aria-label="Read full story: Illustration: PropertyAtlas. Berlin Campus, Schreiberhauer Strasse, Berlin-Lichtenberg, carries €195.8 million — 43.4 per cent of IREIT Global's net assets attributable to unitholders at 31 December 2025 — and produced €0.1 million of gross rental income in FY2025, down from €14.0 million in FY2024. Source: IREIT Global Annual Report 2025 and SGX announcement dated 7th September 2026.">
         <img src="/images/news_241_ireit_berlin_bvg_43pc.jpg" alt="Illustration: PropertyAtlas. Berlin Campus, Schreiberhauer Strasse, Berlin-Lichtenberg, carries €195.8 million — 43.4 per cent of IREIT Global's net assets attributable to unitholders at 31 December 2025 — and produced €0.1 million of gross rental income in FY2025, down from €14.0 million in FY2024. Source: IREIT Global Annual Report 2025 and SGX announcement dated 7th September 2026." class="hero-image-photo" loading="eager" fetchpriority="high" />
@@ -5053,14 +5053,15 @@ body.article-takeover .ed-foot{display:none!important}
        Brokerage tier (paid) sees full data incl. landlord; Free signed-in sees masked
        listings without landlord identification (same maskAddress() pattern). Until
        Brokerage tier is built, Listings stays Coming Soon for everyone except #dev. -->
-  <div class="pa-coming-soon-wrap" data-pa-cs="forsale" style="max-width:560px;margin:80px auto;padding:48px 36px;background:#F7F3EB;border:1px solid rgba(26,79,156,.18);border-radius:14px;text-align:center;font-family:Georgia,'Times New Roman',serif">
-    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" width="72" height="72" style="display:block;margin:0 auto 24px"><rect width="32" height="32" rx="5" fill="#0B2B5C"/><rect x="2.5" y="2.5" width="27" height="27" rx="3.5" fill="none" stroke="#C99B5A" stroke-width="0.7"/><text x="11" y="22" font-family="Georgia,'Times New Roman',serif" font-size="17" font-weight="700" fill="#F7F3EB" text-anchor="middle">P</text><g transform="translate(22 16)"><polygon points="0,-7 2,-1 0,0 -2,-1" fill="#C99B5A"/><polygon points="0,7 -2,1 0,0 2,1" fill="#C99B5A" opacity="0.55"/><polygon points="-7,0 -1,-2 0,0 -1,2" fill="#C99B5A" opacity="0.55"/><polygon points="7,0 1,2 0,0 1,-2" fill="#C99B5A" opacity="0.55"/></g></svg>
-    <h2 style="font-size:32px;color:#1A4F9C;margin:0 0 16px;font-weight:700;letter-spacing:-.01em">Coming Soon</h2>
-    <p style="font-size:15px;color:#666;line-height:1.6;margin:0">We’re building this.</p>
-  </div>
+  <!-- v48.444 (S365): Coming Soon overlay REMOVED - Listings is public.
+         Was: .pa-coming-soon-wrap[data-pa-cs="forsale"], gated by body.dev-mode
+         via v48.94 CSS rule (still present, still used by talent + pulse). -->
 
-    <!-- Sub-view selector -->
-    <div style="display:flex;align-items:center;gap:10px;margin-bottom:16px">
+    <!-- Sub-view selector - v48.444 (S365): HIDDEN. Sales inventory not built yet;
+         a one-option dropdown captioned "properties for sale" would be wrong.
+         Options left in the DOM so restoring is a single style edit.
+         forsale-inventory-panel is default-visible; the other two are display:none. -->
+    <div style="display:none;align-items:center;gap:10px;margin-bottom:16px">
       <select id="forsale-view" onchange="forsaleSwitch(this.value)" style="height:32px;padding:0 12px;border:1px solid var(--bdr);border-radius:7px;background:var(--srf2);color:var(--txt);font-size:13px;font-weight:600;font-family:'DM Sans',sans-serif;cursor:pointer">
         <option value="inventory">📋 Vacancy Inventory</option>
         <option value="projects">🏗 For Sale — One Sophia</option>
@@ -21264,7 +21265,23 @@ function atlasRenderSubscribeStub(panelEl, tabName) {
 //   2. Otherwise, if address starts with street number(s) -> mask the leading number(s)
 //      e.g. "123 Syed Alwi Road" -> "*** Syed Alwi Road"
 //   3. If neither pattern matches, return unchanged (no-op for company names, etc).
-function maskAddress(addr) {
+// v48.445 (8 Sep 2026, S365): unit masking for the public Listings tab.
+  // #03-01 -> #03-xx. Global replace so multi-unit strings work: '#05-03 & #06-01'
+  // -> '#05-xx & #06-xx'. Anything without a #floor-unit shape passes through
+  // unchanged (e.g. 'Whole building'), so it is safe by construction.
+  // Signed-in tiers see the real unit - that is the sign-up incentive.
+  // NOTE: display-layer only. The true unit is still in the JSON payload.
+  function maskUnit(u) {
+    if(!u || typeof u !== 'string') return u || '-';
+    if(window.currentUserTier === 'free' ||
+       window.currentUserTier === 'broker' ||
+       window.currentUserTier === 'salesperson' ||
+       window.currentUserTier === 'subscriber' ||
+       window.currentUserTier === 'master') return u;
+    return u.replace(/(#[A-Za-z0-9]+-)[A-Za-z0-9]+/g, '$1xx');
+  }
+
+  function maskAddress(addr) {
   if(!addr || typeof addr !== 'string') return addr || '-';
   // Unmask for any logged-in tier. Public (logged-out) sees masked addresses only.
   if(window.currentUserTier === 'free' ||
@@ -30520,9 +30537,10 @@ function _vacRenderLoaded(){
 }
 
 async function loadVacancyListings(cb){
-  // Master-only: non-master never fetches (RLS returns [] anyway; the Coming Soon
-  // overlay covers the panel for everyone below master).
-  if(window.currentUserTier !== 'master'){ if(cb) cb(); return; }
+  // v48.444 (8 Sep 2026, S365): LISTINGS PUBLIC. Master-only tier gate removed.
+  // Anon reads are served by RLS policy vacancy_listings_public_read
+  // (TO anon, USING reit <> 'Clifton Partners') + GRANT SELECT TO anon.
+  // To re-gate: restore the currentUserTier check here AND drop that policy.
   if(vacancyLoaded){ if(cb) cb(); return; }
   if(cb) _vacCbs.push(cb);
   if(vacancyLoading) return;
@@ -30871,7 +30889,7 @@ function invRender() {
         '<div class="inv-card-top">'+
           '<div>'+
             '<div class="'+addrClass+'">'+d.addr+'</div>'+
-            '<div class="inv-card-sub">'+d.unit+'</div>'+
+            '<div class="inv-card-sub">'+maskUnit(d.unit)+'</div>'+
             '<div class="inv-cluster-lbl">'+d.cluster+' cluster</div>'+
           '</div>'+
           '<div style="display:flex;flex-direction:column;align-items:flex-end;gap:4px">'+
@@ -30919,7 +30937,7 @@ function invRender() {
         : '<span class="inv-pill '+invAvailClass(d.avail)+'" style="font-size:10px">'+d.avail+'</span>';
       return '<tr style="'+rowStyle+'">'+
         '<td style="'+addrStyle+'">'+d.addr+badge+'</td>'+
-        '<td style="color:var(--mut);min-width:120px;font-size:11px">'+d.unit+'</td>'+
+        '<td style="color:var(--mut);min-width:120px;font-size:11px">'+maskUnit(d.unit)+'</td>'+
         '<td style="font-family:\'DM Mono\',monospace;white-space:nowrap">'+d.sqft.toLocaleString()+'<span style="color:var(--mut);font-size:10px"> sf</span></td>'+
         '<td><span class="inv-zone-badge '+invZoneBadge(d.zone)+'" style="font-size:10px">'+d.zone+'</span></td>'+
         '<td style="font-size:11px;color:var(--mut)">'+d.cluster+'</td>'+
