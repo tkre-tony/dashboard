@@ -343,6 +343,30 @@ body{background:var(--bg);color:var(--txt);font-family:Inter,system-ui,-apple-sy
     <a href="/about.html" class="hi">About</a>
     <a href="#" id="authlink" onclick="toggleTier();return false;">Sign in</a>
   </div>
+  <!-- MNAV-1 v1.0 (8 Sep 2026, S365): mobile nav. Below 760px .buckets and .pagenav
+       were overflow-x:auto with no scroll affordance, so Newsroom and Listings sat
+       off-screen (the S229 "Tour" label hack was the earlier stopgap). Mirrors the
+       newsroom navtabs-hamburger drawer so both surfaces behave the same. -->
+  <button class="pa-mnav-btn" id="pa-mnav-btn" type="button"
+          onclick="paMnavToggle(event)" aria-label="Open navigation menu"
+          aria-expanded="false" aria-controls="pa-mnav-drawer">
+    <span class="pa-mnav-icon" aria-hidden="true">☰</span>
+    <span class="pa-mnav-label">Menu</span>
+    <span class="pa-mnav-chev" aria-hidden="true">▾</span>
+  </button>
+</div>
+<div class="pa-mnav-drawer" id="pa-mnav-drawer" hidden>
+  <a href="#" class="pa-mnav-item on" onclick="paMnavGo('market');return false;">Market</a>
+  <a href="#" class="pa-mnav-item" onclick="paMnavGo('entities');return false;">Entities</a>
+  <a href="#" class="pa-mnav-item" onclick="paMnavGo('newsroom');return false;">Newsroom</a>
+  <a href="#" class="pa-mnav-item" onclick="paMnavGo('listings');return false;">Listings</a>
+  <div class="pa-mnav-sep"></div>
+  <a href="/?tour=1" class="pa-mnav-item pa-mnav-sub">Take the tour</a>
+  <a href="/about.html" class="pa-mnav-item pa-mnav-sub">About</a>
+  <a href="/terms.html" class="pa-mnav-item pa-mnav-sub">Terms</a>
+  <a href="/privacy.html" class="pa-mnav-item pa-mnav-sub">Privacy</a>
+  <a href="#" class="pa-mnav-item pa-mnav-sub" id="pa-mnav-auth"
+     onclick="paMnavAuth();return false;">Sign in</a>
 </div>
 
 <!-- LENS BAR -->
@@ -2738,6 +2762,62 @@ window.PA_TOUR_CLOSURE = {
     setTimeout(start, 900);
   }
 })();
+</script>
+<!-- MNAV-1 v1.0 (S365): mobile nav drawer. Desktop untouched - button and drawer
+     are display:none above 760px. Retires nothing; the S229 .pa-tour-short rule
+     still applies but is now moot below the breakpoint. -->
+<style>
+.pa-mnav-btn{display:none}
+.pa-mnav-drawer{display:none}
+@media(max-width:760px){
+  .topbar .buckets{display:none}
+  .topbar .pagenav{display:none}
+  .pa-mnav-btn{display:flex;align-items:center;gap:8px;margin-left:auto;background:none;
+    border:0;color:#fff;font-family:inherit;font-size:13px;font-weight:600;padding:6px 8px;cursor:pointer}
+  .pa-mnav-icon{font-size:17px;line-height:1;color:rgba(255,255,255,.85)}
+  .pa-mnav-label{color:#fff}
+  .pa-mnav-chev{font-size:10px;color:rgba(255,255,255,.55);transition:transform .2s}
+  .pa-mnav-btn[aria-expanded="true"] .pa-mnav-chev{transform:rotate(180deg)}
+  .pa-mnav-drawer{display:block;position:fixed;top:44px;left:0;right:0;background:var(--navy);
+    border-bottom:1px solid rgba(255,255,255,.08);z-index:799;max-height:calc(100vh - 44px);
+    overflow-y:auto;box-shadow:0 6px 18px rgba(0,0,0,.3)}
+  .pa-mnav-drawer[hidden]{display:none}
+  .pa-mnav-item{display:block;padding:13px 20px;color:rgba(255,255,255,.75);font-size:14px;
+    font-weight:600;text-decoration:none;border-bottom:1px solid rgba(255,255,255,.05);
+    border-left:3px solid transparent}
+  .pa-mnav-item.on{color:#fff;border-left-color:var(--gold);background:rgba(255,255,255,.05)}
+  .pa-mnav-sub{font-size:12px;font-weight:500;color:rgba(255,255,255,.55);padding:11px 20px}
+  .pa-mnav-sep{height:1px;background:rgba(255,255,255,.12);margin:4px 0;border:0}
+}
+</style>
+<script>
+function paMnavClose(){
+  var dr=document.getElementById("pa-mnav-drawer"),bt=document.getElementById("pa-mnav-btn");
+  if(!dr||!bt) return;
+  dr.setAttribute("hidden","");
+  bt.setAttribute("aria-expanded","false");
+}
+function paMnavToggle(ev){
+  if(ev&&ev.stopPropagation) ev.stopPropagation();
+  var dr=document.getElementById("pa-mnav-drawer"),bt=document.getElementById("pa-mnav-btn");
+  if(!dr||!bt) return;
+  var opening=dr.hasAttribute("hidden");
+  if(opening){
+    /* mirror the live auth label rather than duplicating #authlink's id */
+    var a=document.getElementById("authlink"),m=document.getElementById("pa-mnav-auth");
+    if(a&&m) m.textContent=a.textContent;
+    dr.removeAttribute("hidden");
+  } else { dr.setAttribute("hidden",""); }
+  bt.setAttribute("aria-expanded", opening?"true":"false");
+}
+function paMnavGo(b){ paMnavClose(); if(typeof showBucket==="function") showBucket(b); }
+function paMnavAuth(){ paMnavClose(); if(typeof toggleTier==="function") toggleTier(); }
+document.addEventListener("click",function(e){
+  var dr=document.getElementById("pa-mnav-drawer"),bt=document.getElementById("pa-mnav-btn");
+  if(!dr||!bt||dr.hasAttribute("hidden")) return;
+  if(!dr.contains(e.target)&&!bt.contains(e.target)) paMnavClose();
+});
+document.addEventListener("keydown",function(e){ if(e.key==="Escape") paMnavClose(); });
 </script>
 </body>
 </html>
