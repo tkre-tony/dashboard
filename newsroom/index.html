@@ -1,4 +1,5 @@
 <!DOCTYPE html>
+<!-- v48.447 (9 Sep 2026, S366): maskUnit slash fix. Compound unit references joined by a slash were only half-masked for logged-out visitors - '#04-51/52' rendered as '#04-xx/52', leaving the second unit number readable on the live public Listings tab. The replace pattern now absorbs slash-joined numeric continuations. Anchored to a leading digit so a non-numeric suffix ('#03-01/Tower A') is preserved rather than swallowed. Display layer only - ENQ_CONTEXT.unit and the unit_ref payload are untouched, exactly as at v48.446. No data, no NEWS, no cascade, no sitemap. -->
 <!-- v48.443 (id:241 IREIT Global / BVG Berlin RE(O Campus 25-year lease enters cascade as hero; id:230 rotates off the static feed.) -->
 <!-- v48.442 (7 Sep 2026, S363): Perennial label simplified on both Listings surfaces. Chip and hero pill dropped the "Business Park · " qualifier, leaving "Perennial <month>" to match the shape every other chip uses (AI REIT / AIMS APAC REIT / ESR-REIT / MIT). The chip span now carries data-reit-latest directly rather than wrapping a nested span, so the month still populates at runtime from data_month. Label only — no data, no filter, no NEWS, no cascade, no sitemap. -->
 <!-- v48.441 (7 Sep 2026, S363): Clifton Partners hidden from the Listings tab. Apr 2026 leasing data is five months stale and the cohort has no vacancy_listing_private sidecar rows, so an enquiry produced an internal alert with no landlord contact. Chip removed AND rows excluded at _vacFetchAll so the 8 stale listings do not surface under All REITs; four Clifton zone options removed (they would filter to nothing); hero pill removed. VAC_CACHE_KEY bumped v1 -> v2 so sessionStorage blobs written before this build are ignored rather than replaying Clifton rows. For Sale - Clifton Partners (Shophouses) panel and CLIFTON_SALE are untouched: separate view, separate inline array. Reversible - delete 'Clifton Partners' from VAC_HIDDEN_REITS and restore the chip. -->
@@ -21271,6 +21272,11 @@ function atlasRenderSubscribeStub(panelEl, tabName) {
   // unchanged (e.g. 'Whole building'), so it is safe by construction.
   // Signed-in tiers see the real unit - that is the sign-up incentive.
   // NOTE: display-layer only. The true unit is still in the JSON payload.
+  // v48.447 (9 Sep 2026, S366): slash-joined units were only half-masked.
+  // '#04-51/52' rendered as '#04-xx/52' on the live public page because the
+  // character class stopped at the slash. The continuation is anchored to a
+  // DIGIT ([0-9][A-Za-z0-9]*) so '#04-51/52' -> '#04-xx' while a non-numeric
+  // suffix such as '#03-01/Tower A' keeps its tower label.
   function maskUnit(u) {
     if(!u || typeof u !== 'string') return u || '-';
     if(window.currentUserTier === 'free' ||
@@ -21278,7 +21284,7 @@ function atlasRenderSubscribeStub(panelEl, tabName) {
        window.currentUserTier === 'salesperson' ||
        window.currentUserTier === 'subscriber' ||
        window.currentUserTier === 'master') return u;
-    return u.replace(/(#[A-Za-z0-9]+-)[A-Za-z0-9]+/g, '$1xx');
+    return u.replace(/(#[A-Za-z0-9]+-)[A-Za-z0-9]+(?:\s*\/\s*[0-9][A-Za-z0-9]*)*/g, '$1xx');
   }
 
   function maskAddress(addr) {
