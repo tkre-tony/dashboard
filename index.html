@@ -643,6 +643,13 @@ const PT_NORM = {
   'Business park':'Business Park'
 };
 function normType(t){ return PT_NORM[t] || t || '—'; }
+// v9.9.10 (S372): DISPLAY-ONLY short labels for the three landed types, so the
+// type pills match the chips above them (Terrace / Semi-D / Detached).
+// Deliberately NOT folded into PT_NORM: normType's output keys TYPE_COLORS and
+// shortening it there would grey every landed pill. Filters read the chip's raw
+// data-ltype (property_type=eq.<raw>) and are untouched.
+const PT_DISP = {'Detached House':'Detached','Semi-Detached House':'Semi-D','Terrace House':'Terrace'};
+function dispType(t){ return PT_DISP[t] || t || '—'; }
 const _MON=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
 function fmtSD(iso){ if(!iso) return '—'; const d=new Date(iso+'T00:00:00'); if(isNaN(d)) return iso;
   return String(d.getDate()).padStart(2,'0')+' '+_MON[d.getMonth()]+' '+d.getFullYear(); }
@@ -1303,7 +1310,7 @@ function caveatTableHTML(items){
       `<td class="proj">${projCell}${c.nomap?(' <span class="nopin" title="'+(fSeg==='landed'?landedNoMapNote(c):'Location not shown — building redeveloped or no postal on record')+'">📍</span>'):''}</td>`+
       `<td class="addr">${addrCell}${c.note?('<div style="color:var(--mut);font-size:10px">\u21b3 '+esc(maskNote(c.note))+'</div>'):''}</td>`+
       `<td class="sub">${esc(c.tos)||'—'}${(c.nu>1)?('<div style="color:#B5683E;font-size:10px;font-weight:700">Bulk · '+c.nu+' units</div>'):''}</td>`+
-      `<td><span class="tpill" style="background:${col}22;color:${col}">${c.t}</span></td>`+
+      `<td><span class="tpill" style="background:${col}22;color:${col}">${dispType(c.t)}</span></td>`+
       `<td class="sub">${esc(c.toa)||'—'}</td>`+
       `<td class="mono num">${price}${pnlBadge}${bPrice}</td>`+
       `<td class="mono num">${area}</td>`+
@@ -1576,7 +1583,7 @@ function renderBuildingFull(){
       `<td class="proj">${esc(maskAddress(c.n))}</td>`+
       `<td class="addr">${addrCell}</td>`+
       `<td class="sub">${esc(c.tos)||'\u2014'}</td>`+
-      `<td><span class="tpill" style="background:${col}22;color:${col}">${c.t}</span></td>`+
+      `<td><span class="tpill" style="background:${col}22;color:${col}">${dispType(c.t)}</span></td>`+
       `<td class="sub">${esc(c.toa)||'\u2014'}</td>`+
       `<td class="mono num">${price}${bPrice}</td>`+
       `<td class="mono num">${area}</td>`+
@@ -2088,7 +2095,7 @@ function fpTxnRender(){
       +'<td class="proj">'+projCell+(c.nomap?' <span class="nopin" title="'+(FP_SEG==='landed'?'Location not mapped':'Location not shown')+'">\ud83d\udccd</span>':'')+'</td>'
       +'<td class="addr">'+addrCell+(c.note?'<div style="color:var(--mut);font-size:10px">\u21b3 '+esc(maskNote(c.note))+'</div>':'')+'</td>'
       +'<td class="sub">'+(esc(c.tos)||'—')+((c.nu>1)?'<div style="color:#B5683E;font-size:10px;font-weight:700">Bulk \u00b7 '+c.nu+' units</div>':'')+'</td>'
-      +'<td><span class="tpill" style="background:'+col+'22;color:'+col+'">'+c.t+'</span></td>'
+      +'<td><span class="tpill" style="background:'+col+'22;color:'+col+'">'+dispType(c.t)+'</span></td>'
       +'<td class="sub">'+(esc(c.toa)||'—')+'</td>'
       +'<td class="mono num">'+price+pnlBadge+bPrice+'</td>'
       +'<td class="mono num">'+area+'</td>'
@@ -2334,7 +2341,7 @@ function faPnlRender(rows){
       +'<td class="mono">'+(r.postal_district?('D'+r.postal_district):'\u2014')+'</td>'
       +'<td class="proj">'+projCell+'</td>'
       +'<td class="addr">'+addrCell+'</td>'
-      +'<td><span class="tpill" style="background:'+col+'22;color:'+col+'">'+tDisp+'</span></td>'
+      +'<td><span class="tpill" style="background:'+col+'22;color:'+col+'">'+dispType(tDisp)+'</span></td>'
       +'<td class="mono nowrap">'+fmtSD(r.buy_date)+'</td>'
       +'<td class="mono num">S$'+Number(r.buy_price).toLocaleString()+'</td>'
       +'<td class="mono num">S$'+Number(r.sell_price).toLocaleString()+'</td>'
@@ -2445,7 +2452,7 @@ function faTopRender(cavs){
       +'<td class="proj">'+projCell+'</td>'
       +'<td class="addr">'+addrCell+'</td>'
       +'<td class="sub">'+(esc(c.tos)||'\u2014')+((c.nu>1)?'<div style="color:#B5683E;font-size:10px;font-weight:700">Bulk \u00b7 '+c.nu+' units</div>':'')+'</td>'
-      +'<td><span class="tpill" style="background:'+col+'22;color:'+col+'">'+c.t+'</span></td>'
+      +'<td><span class="tpill" style="background:'+col+'22;color:'+col+'">'+dispType(c.t)+'</span></td>'
       +'<td class="mono num">S$'+Number(c.pr).toLocaleString()+pnl+bought+'</td>'
       +'<td class="mono num">'+(c.area?Number(c.area).toLocaleString():'\u2014')+'</td>'
       +'<td class="mono num">'+(c.psf?'S$'+Math.round(c.psf).toLocaleString():'\u2014')+'</td>'
@@ -2464,6 +2471,11 @@ function faTopRender(cavs){
   var el=document.getElementById('faTopTbl');if(el){el.innerHTML=html;el.style.maxHeight='560px';el.style.overflowY='auto';}
 }
 
+/* v9.9.10 (S372): landed type pills read Terrace / Semi-D / Detached, matching the
+   chips and the article tables. New PT_DISP + dispType() applied at the five tpill
+   render sites (caveatTableHTML, renderBuildingFull, fpTxnRender, faPnlRender,
+   faTopRender). Display only - TYPE_COLORS still keys off normType and the landed
+   filter still posts the raw property_type, so no filter or colour behaviour moves. */
 /* v9.9.9 (S371): (1) SEED_CAVEATS re-bake - week of 8 & 11 Sep 2026 releases, 42 caveats
    (6 Tue 8 Sep + 36 Fri 11 Sep), ids 83089-83130. SEED_CAV_TOTAL 61 -> 42. Includes 83130, the
    26 Aug 2026 re-lodgement of the 24 Mar 2026 25 Loyang Crescent caveat (id 270): both kept per URA.
