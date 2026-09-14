@@ -82,15 +82,15 @@ def track_w(d, text, font, sp=0):
 
 
 # ------------------------------------------------------------------ address
-UNIT_RE = re.compile(r"#\d+-\w+")
-NUM_RE = re.compile(r"^\d+[A-Za-z]?\s+")
+UNIT_RE = re.compile(r"#[A-Z]?\d+-[\w,]+")          # S371: basement units (#B1-01) and multi-unit caveats (#33-10,10A)
+NUM_RE = re.compile(r"^\d[\dA-Za-z,]*\s+(?:ETC\s+)?")  # S371: "406,406A,406B JOO CHIAT ROAD", "25 ETC LOYANG CRESCENT"
 
 
 def mask(addr):
     """Strata (has unit): keep street no., mask unit -> 140 Paya Lebar Road #09-XX
        No unit (whole building / land): mask street no. -> XX Gul Avenue"""
     if "#" in addr:
-        return UNIT_RE.sub(lambda m: m.group(0).rsplit("-", 1)[0] + "-XX", addr)
+        return UNIT_RE.sub(lambda m: m.group(0).split("-", 1)[0] + "-XX", addr)
     return NUM_RE.sub("XX ", addr)
 
 
@@ -209,77 +209,54 @@ def head_meta(proj, addr, typ, tenure, area, extra=""):
 
 
 # ================================================================== DATA
-WEEK = "Week of 31st August 2026"
-LODGED = "URA REALIS caveats lodged 1 and 4 September"
-TOTAL, N_CAV, N_PAIR = "S$203.34M", 61, 41
-IND_N, IND_V, COM_N, COM_V = 39, 60.93, 22, 142.41
-N_GAIN, N_LOSS = 35, 6
-SALE_ROWS = [("RESALE", 53, 118814448, WHITE),
-             ("NEW SALE  \u00b7  7 OF 8 CECIL PLACE", 8, 84529596, GOLD)]
-S02_NOTE = "41 of 61 caveats matched a prior transaction  \u00b7  20 unmatched  \u00b7  net realised +S$44,921,643"
+WEEK = "Week of 7th September 2026"
+LODGED = "URA REALIS caveats lodged 8th and 11th September"
+TOTAL, N_CAV, N_PAIR = "S$551.52M", 42, 24
+IND_N, IND_V, COM_N, COM_V = 26, 497.15, 16, 54.36
+N_GAIN, N_LOSS = 16, 8
+SALE_ROWS = [("RESALE", 38, 536345503, WHITE),
+             ("NEW SALE  \u00b7  ARTISAN 8, CHUAN PARK, SPACE 18", 3, 8271983, GOLD),
+             ("SUB SALE  \u00b7  SKY EDEN@BEDOK", 1, 6900000, GOLD)]
+S02_NOTE = "24 of 42 caveats matched a prior transaction  \u00b7  18 unmatched  \u00b7  net realised +S$8,959,280"
 
-IND_VALUE = [('', '58 TUAS BASIN LINK', 'Single-User', '30-yr from 2023', 58974, 10800000, 183, 'land'),
-             ('Hillview Industrial Estate', '28 HILLVIEW TERRACE', 'Single-User', '999-yr from 1885', 5672, 8500000, 1499, 'land'),
-             ('Space 18', '18 LORONG AMPAS #02-05', 'Multiple-User', 'Freehold', 1787, 2600000, 1455, 'strata'),
-             ('Tong Lee Building', '37 KALLANG PUDDING ROAD #05-02', 'Multiple-User', 'Freehold', 2982, 2266320, 760, 'strata'),
-             ('West Spring', '71B TUAS BAY DRIVE', 'Multiple-User', '60-yr from 2006', 5457, 1948000, 357, 'strata')]
-IND_PSF = [('Space 18', '18 LORONG AMPAS #02-05', 'Multiple-User', 'Freehold', 1787, 2600000, 1455, 'strata'),
-             ('Solstice Business Center', '23 NEW INDUSTRIAL ROAD #04-03', 'Multiple-User', 'Freehold', 1518, 1750000, 1153, 'strata'),
-             ('M-Space', '6D MANDAI ESTATE #08-09', 'Multiple-User', 'Freehold', 1259, 1300000, 1032, 'strata'),
-             ('Perfect One', '1 GENTING LINK #03-06', 'Warehouse', 'Freehold', 1335, 1161450, 870, 'strata'),
-             ('E-Centre @ Redhill', '3791 JALAN BUKIT MERAH #09-06', 'Multiple-User', '99-yr from 1962', 1012, 780000, 771, 'strata')]
-COM_VALUE = [('Telok Ayer Conservation Area', '261 SOUTH BRIDGE ROAD', 'Shop House', '999-yr from 1823', 1352, 16800000, 12426, 'land'),
-             ('Boat Quay Conservation Area', '85 CIRCULAR ROAD', 'Shop House', '999-yr from 1831', 1075, 16200000, 15065, 'land'),
-             ('Cecil Place', '137 CECIL STREET #08-01', 'Office', 'Freehold', 3918, 15437314, 3940, 'strata'),
-             ('Cecil Place', '137 CECIL STREET #14-01', 'Office', 'Freehold', 3638, 15098659, 4150, 'strata'),
-             ('Cecil Place', '137 CECIL STREET #14-02', 'Office', 'Freehold', 2551, 10586940, 4150, 'strata')]
-COM_PSF = [('The Bencoolen', '180 BENCOOLEN STREET #01-70', 'Retail', '99-yr from 1995', 183, 1188000, 6492, 'strata'),
-             ('VisionCrest', '103 PENANG ROAD #04-03', 'Office', 'Freehold', 1744, 7600000, 4358, 'strata'),
-             ('Far East Shopping Centre', '545 ORCHARD ROAD #05-41', 'Office', '999-yr from 1871', 205, 850000, 4156, 'strata'),
-             ('Cecil Place', '137 CECIL STREET #14-01', 'Office', 'Freehold', 3638, 15098659, 4150, 'strata'),
-             ('Cecil Place', '137 CECIL STREET #14-02', 'Office', 'Freehold', 2551, 10586940, 4150, 'strata')]
-COM_GAIN = [('Telok Ayer Conservation Area', '261 SOUTH BRIDGE ROAD', 'Shop House', '999-yr from 1823', 1352, 14200000, 546.2, 19.5, 10.1, ''),
-             ('Boat Quay Conservation Area', '85 CIRCULAR ROAD', 'Shop House', '999-yr from 1831', 1075, 13550000, 511.3, 19.3, 9.8, ''),
-             ('', '463 BALESTIER ROAD', 'Shop House', 'Freehold', 1068, 3000000, 352.9, 17.7, 8.9, ''),
-             ('The Bencoolen', '180 BENCOOLEN STREET #01-70', 'Retail', '99-yr from 1995', 183, 653000, 122.1, 26.0, 3.1, ''),
-             ('Paya Lebar Square', '60 PAYA LEBAR ROAD #11-18', 'Office', '99-yr from 2011', 1324, 646820, 26.5, 14.3, 1.7, '')]
-COM_LOSS = [('NEWest', '1 WEST COAST DRIVE #01-36', 'Retail', '956-yr from 1928', 280, -1084000, -61.5, 13.2, -7.0, ''),
-             ('Centropod @ Changi', '80 CHANGI ROAD #05-19', 'Office', 'Freehold', 764, -508813, -34.9, 13.6, -3.1, ''),
-             ('East Village', '430 UPPER CHANGI ROAD #01-92', 'Retail', 'Freehold', 183, -303377, -31.4, 14.4, -2.6, ''),
-             ('Hexacube', '160 CHANGI ROAD #04-10', 'Office', 'Freehold', 506, -123000, -11.3, 12.4, -1.0, '')]
-IND_GAIN = [('', '58 TUAS BASIN LINK', 'Single-User', '30-yr from 2023', 58974, 3700000, 52.1, 15.4, 2.8, ' *'),
-             ('Hillview Industrial Estate', '28 HILLVIEW TERRACE', 'Single-User', '999-yr from 1885', 5672, 3500000, 70.0, 14.0, 3.9, ''),
-             ('Frontier', '52 UBI AVENUE 3 #05-45', 'Multiple-User', '60-yr from 1999', 4435, 1195510, 263.0, 20.3, 6.6, ' *'),
-             ('North Link Building', '10 ADMIRALTY STREET #02-83', 'Multiple-User', '60-yr from 1999', 5188, 832000, 124.6, 21.4, 3.8, ''),
-             ('North Link Building', '10 ADMIRALTY STREET #01-41', 'Multiple-User', '60-yr from 1999', 5188, 720000, 61.0, 15.2, 3.2, '')]
-IND_LOSS = [('T99', '9 TUAS SOUTH AVENUE 10 #03-22', 'Multiple-User', '30-yr from 2013', 2659, -554000, -46.4, 10.7, -5.7, ''),
-             ('North View Bizhub', '6 YISHUN INDUSTRIAL STREET 1 #04-02', 'Multiple-User', '30-yr from 2012', 1755, -15000, -3.0, 5.8, -0.5, '')]
+IND_VALUE = [('Loyang Offshore Supply Base', 'XX LOYANG CRESCENT', 'Single-User', '25+15-yr from 2013', 3569167, 457557966, 128, 'land'), ('', 'XX WOODLANDS TERRACE', 'Single-User', '30-yr from 2024', 13944, 5200000, 373, 'land'), ('Liner', '1 TUAS BAY CLOSE #05-XX', 'Multiple-User', '30-yr from 2018', 12239, 3375000, 276, 'strata'), ('Henderson Industrial Park', '203 HENDERSON ROAD #02-XX', 'Multiple-User', 'Freehold', 3122, 2970000, 951, 'strata'), ('Lam Soon Industrial Building', '63 HILLVIEW AVENUE #08-XX', 'Multiple-User', 'Freehold', 3369, 2850000, 846, 'strata')]
+IND_PSF = [('Space 18', '18 LORONG AMPAS #02-XX', 'Multiple-User', 'Freehold', 1787, 2568221, 1437, 'strata'), ('Biztech Centre', '627A ALJUNIED ROAD #04-XX', 'Multiple-User', 'Freehold', 958, 1149600, 1200, 'strata'), ('Solstice Business Center', '23 NEW INDUSTRIAL ROAD #07-XX', 'Multiple-User', 'Freehold', 1206, 1350000, 1120, 'strata'), ('Henderson Industrial Park', '203 HENDERSON ROAD #02-XX', 'Multiple-User', 'Freehold', 3122, 2970000, 951, 'strata'), ('Joo Seng Warehouse', '3 UPPER ALJUNIED LINK #08-XX', 'Warehouse', 'Freehold', 2110, 2000000, 948, 'strata')]
+COM_VALUE = [('', 'XX JOO CHIAT ROAD', 'Shop House', 'Freehold', 1886, 10080000, 5345, 'land'), ('', 'XX JOO CHIAT ROAD', 'Shop House', 'Freehold', 1510, 10000000, 6622, 'land'), ('Sky Eden@Bedok', '1 BEDOK CENTRAL #01-XX', 'Retail', '99-yr from 2022', 1313, 6900000, 5254, 'strata'), ('Kampong Glam', 'XX ARAB STREET', 'Shop House', '999-yr from 1828', 840, 6600000, 7861, 'land'), ('Chuan Park', '242 LORONG CHUAN #B1-XX', 'Retail', '99-yr from 2024', 1119, 4473762, 3996, 'strata')]
+COM_PSF = [('Thomson Plaza', '301 UPPER THOMSON ROAD #01-XX', 'Retail', '99-yr from 1976', 398, 2700000, 6779, 'strata'), ('28 RC Suites', '28 RACE COURSE LANE #01-XX', 'Retail', 'Freehold', 248, 1670000, 6746, 'strata'), ('Sky Eden@Bedok', '1 BEDOK CENTRAL #01-XX', 'Retail', '99-yr from 2022', 1313, 6900000, 5254, 'strata'), ('Artisan 8', '8 SIN MING ROAD #01-XX', 'Retail', 'Freehold', 280, 1230000, 4395, 'strata'), ('Chuan Park', '242 LORONG CHUAN #B1-XX', 'Retail', '99-yr from 2024', 1119, 4473762, 3996, 'strata')]
+COM_GAIN = [('Kampong Glam', 'XX ARAB STREET', 'Shop House', '999-yr from 1828', 840, 2700000, 69.2, 11.1, 4.9, ''), ('Thomson Plaza', '301 UPPER THOMSON ROAD #01-XX', 'Retail', '99-yr from 1976', 398, 1000000, 58.8, 1.5, 37.1, ''), ('28 RC Suites', '28 RACE COURSE LANE #01-XX', 'Retail', 'Freehold', 248, 419088, 33.5, 12.3, 2.4, ''), ('Sultan Plaza', '100 JALAN SULTAN #04-XX', 'Office', '99-yr from 1978', 452, 270000, 61.4, 14.3, 3.4, '')]
+COM_LOSS = [('City Gate', '371 BEACH ROAD #B1-XX', 'Retail', '99-yr from 2014', 484, -610000, -42.1, 7.3, -7.2, ''), ('Bugis Cube', '470 NORTH BRIDGE ROAD #05-XX', 'Retail', '999-yr from 1827', 291, -165790, -14.6, 14.1, -1.1, ''), ('High Park Residences', '21 FERNVALE ROAD #01-XX', 'Retail', '99-yr from 2014', 344, -113000, -13.1, 11.0, -1.3, ''), ('Centrium Square', '320 SERANGOON ROAD #15-XX', 'Office', 'Freehold', 570, -69850, -4.5, 6.0, -0.8, '')]
+IND_GAIN = [('Henderson Industrial Park', '203 HENDERSON ROAD #02-XX', 'Multiple-User', 'Freehold', 3122, 2370000, 395.0, 20.4, 8.1, ''), ('Joo Seng Warehouse', '3 UPPER ALJUNIED LINK #08-XX', 'Warehouse', 'Freehold', 2110, 1000000, 100.0, 14.4, 4.9, ''), ('', 'XX WOODLANDS TERRACE', 'Single-User', '30-yr from 2024', 13944, 700000, 15.6, 13.5, 1.1, ' *'), ('Ubi Techpark', '10 UBI CRESCENT #04-XX', 'Multiple-User', '60-yr from 1997', 2325, 588888, 89.2, 16.2, 4.0, ''), ('Innovation Place', '31 MANDAI ESTATE #03-XX', 'Multiple-User', 'Freehold', 1539, 512450, 74.0, 16.2, 3.5, '')]
+IND_LOSS = [('Liner', '1 TUAS BAY CLOSE #05-XX', 'Multiple-User', '30-yr from 2018', 12239, -1235000, -26.8, 3.9, -7.7, ''), ('CT Hub 2', '114 LAVENDER STREET #05-XX', 'Multiple-User', '63-yr from 2012', 1066, -215000, -18.7, 3.0, -6.7, ''), ('E-Centre @ Redhill', '3791 JALAN BUKIT MERAH #03-XX', 'Multiple-User', '99-yr from 1962', 1884, -111944, -7.4, 13.2, -0.6, ''), ('North Link Building', '10 ADMIRALTY STREET #06-XX', 'Multiple-User', '60-yr from 1999', 5199, -50000, -3.3, 3.1, -1.1, '')]
 
-GATE = dict(n=7, value=81929596, med=3920, lo=3860, hi=4150)
-GATE_HEAD = "Nine months in one release"
-GATE_SUB = "Cecil Place  \u00b7  D01"
-NOTE_S03 = "Whole-building PSF is land-basis \u2014 not comparable to strata PSF"
+GATE = dict(n=2, value=6900000, med=5254, lo=5254, hi=5500)
+GATE_KICKER = "District 16 retail"
+GATE_HEAD = "Second above S$5,000 psf"
+GATE_SUB = "Sky Eden@Bedok  \u00b7  1 Bedok Central  \u00b7  D16"
+GATE_TILES = [("2", "SKY EDEN ABOVE S$5,000", WHITE), ("S$6.90M", "THIS WEEK\u2019S CAVEAT", GOLD),
+              ("S$5,254", "THIS WEEK\u2019S PSF", WHITE), ("S$5,500", "MAY 2026 CAVEAT PSF", WHITE)]
+NOTE_S03 = "Whole-site PSF is land-basis  \u00b7  Loyang is a second caveat on CLAR\u2019s acquisition, not a new deal"
 NOTE_S04 = "Strata per-unit basis  \u00b7  land-basis deals excluded"
-NOTE_S05 = "Rows 1 and 2 are shophouses  \u00b7  PSF is land-basis, not strata"
+NOTE_S05 = "Rows 1, 2 and 4 are shophouses  \u00b7  PSF is land-basis, not strata"
 NOTE_S05B = "Strata basis  \u00b7  land-basis deals excluded"
-GATE_BULLETS = [("7 caveats", "  \u00b7  S$81.93M  \u2014  40.3% of the week by value"),
-                ("", "Sales dated 5 Dec 2025 to 22 May 2026  \u00b7  floors 6 to 14"),
-                ("", "Both fourteenth-floor units cleared at exactly S$4,150 psf"),
-                ("", "7 of the week's 8 new sales  \u00b7  everything else is resale")]
+GATE_BULLETS = [("D16 retail", "  \u00b7  only caveats at S$5,000+ psf since 18th June 2015"),
+                ("", "Last there: East Village, launched 2012 at up to S$5,956 psf"),
+                ("", "East Village launch buyers selling since 2017: 12 of 12 at a loss"),
+                ("", "Median East Village loss \u221240.6%  \u00b7  S$4.81M in total")]
 
-TENURE = [("FH / 999 yrs", 24), ("55-60 yrs", 23), ("30-33 yrs", 7), ("99 yrs", 5), ("20-26 yrs", 2)]
-TENURE_HEAD = "24 of 61 are freehold or 999-year"
-FEATURE = ("Cecil Place  \u00b7  137 Cecil Street",
-           "S$81.93M  \u00b7  S$3,860\u20134,150 PSF  \u00b7  20,613 SQFT ACROSS 7 UNITS  \u00b7  FREEHOLD STRATA OFFICE")
+TENURE = [("FH / 999 yrs", 14), ("99 yrs", 10), ("55-63 yrs", 9), ("30-33 yrs", 7), ("40-41 yrs", 2)]
+TENURE_HEAD = "14 of 42 are freehold or 999-year"
+FEATURE = ("Sky Eden@Bedok  \u00b7  1 Bedok Central",
+           "S$6.90M  \u00b7  S$5,254 PSF  \u00b7  1,313 SQFT  \u00b7  99-YR FROM 2022  \u00b7  SECOND D16 RETAIL CAVEAT ABOVE S$5,000")
 
-COM_GAIN_SUB = "Top 5 of 9 gains (9 of 13 commercial pairs profitable)"
-COM_LOSS_SUB = "All 4 losses (of 13 commercial pairs)"
-IND_GAIN_SUB = "Top 5 of 26 gains (26 of 28 industrial pairs profitable)"
-IND_LOSS_SUB = "All 2 losses (of 28 industrial pairs)"
-COM_GAIN_FOOT = "Three shophouses carried S$30.75M of the S$44.92M in gains"
-COM_LOSS_FOOT = "Three of four commercial losses sit on Changi Road"
-IND_GAIN_FOOT = "* area or lease changed between buy and sell  \u00b7  not like-for-like"
-IND_LOSS_FOOT = "Only 2 of 28 industrial pairs lost money this week"
+COM_GAIN_SUB = "All 4 gains (4 of 8 commercial pairs profitable)"
+COM_LOSS_SUB = "All 4 losses (of 8 commercial pairs)"
+IND_GAIN_SUB = "Top 5 of 12 gains (12 of 16 industrial pairs profitable)"
+IND_LOSS_SUB = "All 4 losses (of 16 industrial pairs)"
+COM_GAIN_FOOT = "The Kampong Glam shophouse carried S$2.70M of S$4.39M in commercial gains"
+COM_LOSS_FOOT = "City Gate unit bought new in 2019  \u00b7  down 42.1%"
+IND_GAIN_FOOT = "* lease re-granted between buy and sell  \u00b7  not like-for-like"
+IND_LOSS_FOOT = "Liner, Tuas: \u2212S$1.24M in under four years  \u00b7  the week\u2019s deepest loss"
+PDF_NAME = "Week_of_7th_Sep_2026_LinkedIn_Carousel.pdf"
 
 
 # ================================================================== SLIDES
@@ -334,8 +311,8 @@ def s02():
         nf = dm(34, 700)
         d.text((W - 102 - tw(d, money(v), nf), y + 26), money(v), font=nf, fill=col)
         cf = mono(19)
-        track(d, (W - 420 - track_w(d, "%d CAVEATS" % n, cf, 2), y + 36),
-              "%d CAVEATS" % n, cf, MUTE, 2)
+        track(d, (W - 420 - track_w(d, ("%d CAVEAT" % n + ("S" if n != 1 else "")), cf, 2), y + 36),
+              ("%d CAVEAT" % n + ("S" if n != 1 else "")), cf, MUTE, 2)
         y += 108
     note(d, S02_NOTE)
     return chrome(img)
@@ -402,11 +379,11 @@ def s05b():
 def s06():
     img = base_dark()
     d = ImageDraw.Draw(img)
-    header(d, WEEK + "  ·  New launch", GATE_HEAD, GATE_SUB)
-    tiles = [(str(GATE["n"]), "NEW-SALE CAVEATS", WHITE),
+    header(d, WEEK + "  ·  " + globals().get("GATE_KICKER", "New launch"), GATE_HEAD, GATE_SUB)
+    tiles = globals().get("GATE_TILES") or [(str(GATE["n"]), "NEW-SALE CAVEATS", WHITE),
              (sgd(GATE["value"]), "TOTAL LODGED", GOLD),
              ("S$%s" % format(GATE["med"], ","), "MEDIAN PSF", WHITE),
-             ("S$%s–%s" % (format(GATE["lo"], ","), format(GATE["hi"], ",")), "PSF RANGE", WHITE)]
+             ("S$%s–%s" % (format(GATE["lo"], ","), format(GATE["hi"], ",")), "PSF RANGE", WHITE)]   # S371: GATE_TILES overrides
     bw, gap = 404, 32
     x = (W - (bw * 4 + gap * 3)) / 2
     for val, lab, col in tiles:
@@ -419,7 +396,7 @@ def s06():
     bullets = GATE_BULLETS
     y = 580
     for hi, rest in bullets:
-        d.text((72, y), "▪", font=dm(20, 700), fill=GOLD)
+        d.rectangle([74, y + 11, 84, y + 21], fill=GOLD)   # S371: "▪" had no glyph in DM Sans (tofu box)
         x = 110
         if hi:
             f = mono(22, True)
@@ -553,6 +530,6 @@ if __name__ == "__main__":
         im.save(os.path.join(OUT, "slide_%02d.png" % i))
         imgs.append(im.convert("RGB"))
         print("rendered slide_%02d.png" % i)
-    imgs[0].save("Week_of_31Aug2026_LinkedIn_Carousel.pdf",
+    imgs[0].save(PDF_NAME,
                  save_all=True, append_images=imgs[1:], resolution=150)
     print("PDF written")
