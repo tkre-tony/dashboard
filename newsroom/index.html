@@ -1,4 +1,5 @@
 <!DOCTYPE html>
+<!-- v48.461 (S375: exact transaction prices now carry 3 decimals in millions, matching root v9.9.12. Two-decimal rounding showed S$3,875,000 as "S$3.88M" and S$27,473,280 as "S$27.47M". Changed: pnlFmtPrice (P&L table price columns), fmtPrice (top profit/loss tables) and _projModalFmtPrice (project modal). UNCHANGED on purpose: fmtVal (directory aggregates, 0dp), the weekly "Total S$" line and the chat-context aggregates, where 3dp on a total is noise; and fmtP/_projModalFmtPL, which format profit/loss AMOUNTS rather than transacted prices - flagged for Tony's call. The directory transaction list already used 3dp, which is the precedent this follows.) -->
 <!-- v48.460 (S375: aborted-caveat exposure fix. transactions_public does NOT filter is_aborted by design - the caveat table renders the red ABORTED badge, pink row tint and struck-through price from it - so the filter belongs at the callsites that must not see withdrawn caveats. Added &is_aborted=is.false to: ovEnrichBuyData (the P&L buy leg, and the serious one - a withdrawn caveat could become the prior leg, e.g. 25 ETC Loyang Crescent at S$455.0m against the S$457,557,966 re-lodgement), matchPendingDeals, initSliderBounds, sophiaLoadCaveats, and the chat-assistant sbFetch(path) helper, which hits base transactions and feeds PSF min/max/avg, top projects and the type breakdown (5 callsites covered by the one helper edit). The main caveat table (sbFetch(params)) is left UNFILTERED on purpose so aborted rows stay visible in red. Autocomplete callsites (initOvAutocomplete, fetchSuggestions) left as-is, project names only. Server-side surfaces already filter and need no change: chart_agg_daily_mv, pnl_pairs_mv, project_directory_mv, directory_txns, caveat_prev_caveats and every landed view. Data this session: 48 caveats ingested (ids 83131-83178); ids 270 and 82936 flagged aborted.) -->
 <!-- v48.459 (S375: id:216 computed distribution amounts removed per Tony, applying the id:248 ruling (L-SRC-2) retroactively. Removed: S$4.5326m / S$4.8576m per half, S$31.7m / S$34.0m / S$65.7m foregone, S$18.78m run-rate and 15.4% of annualised NPI. Standfirst, teaser, stopper-section paragraph, FH rows 3-4 (now 14 halves / 6.4751% / 8.0960%, as id:238) and sourceLabel amended; update sentence added to the 17 Sep clarification note; word_count 1817 -> 1827. Headlines, image, slug and sitemap unchanged. Separately, id:245 page rail card for id:244 corrected (withdrawn "Sixty-Six, Not Sixty-Seven" headline), no version.) -->
 <!-- v48.458 (S374: id:238 correction in place, approved by Tony 17 Sep 2026. Withdrawn: the claim that the substance of the Proposed Amendments was never placed on the public record and that the consent fees were never quantified; the 4th August 2026 commencement announcement and Notice of Separate Meetings described the amendments (reset rate from SOR to SORA-OIS plus Initial Spread, MAS/ABS fallbacks) and set the fees at 0.10% / 0.05%. Title, display_title, display_headline, landing_headline, standfirst, teaser, tag, sourceLabel, image (news_238_landmark_perpetual_consent_result_corrected.jpg), sections on the amendments, vote, reset and unitholders rewritten; computed FH rows removed (S$65.7m foregone, S$18.78m run-rate) per Tony's ruling on id:248; dated correction note appended. id:216: dated clarification note appended, sourceLabel extended. Slugs unchanged, sitemap unchanged.) -->
@@ -23642,7 +23643,7 @@ function pnlRenderSection(sec){
   // v48.105: 'abort' branch removed; PNL_FILTERED_ABORT remains populated for legacy callers but unused in UI
 }
 
-function pnlFmtPrice(v){ if(!v) return '—'; return 'S$'+(v/1e6>=1?(v/1e6).toFixed(2)+'M':(v/1000).toFixed(0)+'K'); }
+function pnlFmtPrice(v){ if(!v) return '—'; return 'S$'+(v/1e6>=1?(v/1e6).toFixed(3)+'M':(v/1000).toFixed(0)+'K'); }
 function pnlFmtReturn(v){ return (v>=0?'<span style="color:#1a6b3c">+'+v.toFixed(1)+'%</span>':'<span style="color:#b71c1c">'+v.toFixed(1)+'%</span>'); }
 
 function pnlExportCSV(){
@@ -23784,7 +23785,7 @@ function txRender(){
   var topLoss   = sortRows(lossRows, false);
 
   function fmtP(v){ var a=Math.abs(v); var s=v<0?'- ':'+ '; if(a>=1e6) return s+'S$'+(a/1e6).toFixed(2)+'M'; if(a>=1e3) return s+'S$'+(a/1e3).toFixed(0)+'K'; return s+'S$'+Math.round(a).toLocaleString(); }
-  function fmtPrice(v){ if(!v) return '—'; var a=Math.abs(v); if(a>=1e6) return 'S$'+(a/1e6).toFixed(2)+'M'; if(a>=1e3) return 'S$'+(a/1e3).toFixed(0)+'K'; return 'S$'+Math.round(a).toLocaleString(); }
+  function fmtPrice(v){ if(!v) return '—'; var a=Math.abs(v); if(a>=1e6) return 'S$'+(a/1e6).toFixed(3)+'M'; if(a>=1e3) return 'S$'+(a/1e3).toFixed(0)+'K'; return 'S$'+Math.round(a).toLocaleString(); }
   function fmtAnn2(v){ return (v>=0?'+':'')+v.toFixed(1)+'%'; }
   function fmtDt(d){ if(!d) return '—'; var p=d.split('-'); return p[2]+'/'+p[1]+'/'+p[0]; }
   function tShort(t){
@@ -24166,7 +24167,7 @@ function projOpenTxModal(idx, isProfitable){
 
 // v48.121: shared formatter helpers used by render + sort + filter cycle
 function _projModalFmtDt(d){ if(!d) return "—"; var p=String(d).split("-"); return p.length===3 ? p[2]+"/"+p[1]+"/"+p[0] : d; }
-function _projModalFmtPrice(v){ if(v==null||isNaN(v)) return "—"; var a=Math.abs(v); if(a>=1e6) return "S$"+(a/1e6).toFixed(2)+"M"; if(a>=1e3) return "S$"+(a/1e3).toFixed(0)+"K"; return "S$"+Math.round(a).toLocaleString(); }
+function _projModalFmtPrice(v){ if(v==null||isNaN(v)) return "—"; var a=Math.abs(v); if(a>=1e6) return "S$"+(a/1e6).toFixed(3)+"M"; if(a>=1e3) return "S$"+(a/1e3).toFixed(0)+"K"; return "S$"+Math.round(a).toLocaleString(); }
 function _projModalFmtPL(v){ if(v==null||isNaN(v)) return "—"; var a=Math.abs(v); var sign=v<0?"−":"+"; var col=v<0?"#b71c1c":"#1a6b3c"; var disp; if(a>=1e6) disp=sign+" S$"+(a/1e6).toFixed(2)+"M"; else if(a>=1e3) disp=sign+" S$"+(a/1e3).toFixed(0)+"K"; else disp=sign+" S$"+Math.round(a).toLocaleString(); return '<span style="color:'+col+';font-weight:700">'+disp+'</span>'; }
 function _projModalFmtAnn(v){ if(v==null||isNaN(v)) return "—"; var col=v<0?"#b71c1c":"#1a6b3c"; return '<span style="color:'+col+'">'+(v>=0?"+":"")+v.toFixed(1)+'%</span>'; }
 function _projModalFmtHold(v){ if(v==null||isNaN(v)) return "—"; return v.toFixed(1)+"y"; }

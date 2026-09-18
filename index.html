@@ -1038,6 +1038,8 @@ let lens='caveats';
 let acItems=[],acActive=-1;
 
 function fmtVal(v){if(!v)return'—';if(v>=1e9)return'S$'+(v/1e9).toFixed(1)+'b';if(v>=1e6)return'S$'+(v/1e6).toFixed(1)+'m';if(v>=1e3)return'S$'+Math.round(v/1e3)+'k';return'S$'+v;}
+  /* v9.9.12: exact transaction prices carry 3 decimals (S$3.875m, not S$3.9m). fmtVal stays 1dp for aggregates. */
+  function fmtPrice(v){if(!v)return'—';if(v>=1e9)return'S$'+(v/1e9).toFixed(3)+'b';if(v>=1e6)return'S$'+(v/1e6).toFixed(3)+'m';if(v>=1e3)return'S$'+Math.round(v/1e3)+'k';return'S$'+v;}
 function psf(p){return p?'S$'+p:'—';}
 function psfLab(p,sh){return (p&&p.tt===1)?(sh?'Land Med PSF':'Land Median PSF'):(sh?'Med PSF':'Median PSF');}
 function esc(s){return(s||'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));}
@@ -1241,7 +1243,7 @@ function caveatListHTML(items){
     return `<div class="lcard${selIdx===i?' sel':''}" style="border-left-color:${col}" onclick="selectCaveat(${i},true)">
       <div style="display:flex;justify-content:space-between;align-items:start">
         <h4 style="margin:0 0 2px;flex:1">${esc(maskAddress(cavTitle(c)))}</h4>
-        <span style="font-family:'DM Mono',monospace;font-size:14px;font-weight:700;color:var(--g1);white-space:nowrap">${fmtVal(c.pr)}</span>
+        <span style="font-family:'DM Mono',monospace;font-size:14px;font-weight:700;color:var(--g1);white-space:nowrap">${fmtPrice(c.pr)}</span>
       </div>
       <div class="str">${[cavSubName(c)?esc(maskAddress(cavSubName(c))):'',c.rg||'',c.di?('D'+c.di):''].filter(Boolean).join(' · ')}</div>
       ${c.nomap?('<div class="str" style="color:#B5683E;margin-top:2px">📍 '+(fSeg==='landed'?landedNoMapNote(c):'Location not shown — building redeveloped or no postal on record')+'</div>'):''}
@@ -1338,7 +1340,7 @@ function cavDetailHTML(c){
     <div class="badges"><span class="badge" style="background:${col}22;color:${col}">${c.t}</span>
       ${c.rg?`<span class="badge">${c.rg}</span>`:''}${c.ar?`<span class="badge">${esc(c.ar)}</span>`:''}
       ${c.di?`<span class="badge dist">D${c.di}</span>`:''}</div>
-    <div style="font-family:'DM Mono',monospace;font-size:22px;font-weight:700;color:var(--g1);margin:10px 0 4px">${fmtVal(c.pr)}</div>
+    <div style="font-family:'DM Mono',monospace;font-size:22px;font-weight:700;color:var(--g1);margin:10px 0 4px">${fmtPrice(c.pr)}</div>
     <div class="dstat">
       <div class="s"><b>${c.psf?'S$'+c.psf:'—'}</b><span>PSF</span></div>
       <div class="s"><b>${c.area?c.area.toLocaleString()+' sf':'—'}</b><span>Area</span></div>
@@ -1485,7 +1487,7 @@ function renderBldTxns(){
     const area=c.area?Number(c.area).toLocaleString()+' sf':'\u2014';
     const meta=[c.tos,c.toa].filter(Boolean).join(' \u00b7 ');
     return `<div class="txrow" style="border-left-color:${col}">
-      <div class="l1"><span>${c.sd}</span><span class="px">${fmtVal(c.pr)}</span></div>
+      <div class="l1"><span>${c.sd}</span><span class="px">${fmtPrice(c.pr)}</span></div>
       <div class="l2"><span>${addr||meta||'\u2014'}</span><span>${psfv} \u00b7 ${area}</span></div>
       ${addr&&meta?`<div class="l2"><span style="opacity:.85">${meta}</span><span></span></div>`:''}
     </div>`;
@@ -1900,7 +1902,7 @@ function init(){
     map.on('mouseenter','cav-pts',e=>{map.getCanvas().style.cursor='pointer';
       var p=e.features[0].properties;
       hoverPopup.setLngLat(e.features[0].geometry.coordinates)
-        .setHTML(`<b>${esc(maskAddress(p.n))}</b><br>${p.psf?'S$'+p.psf+' psf':'—'} · ${fmtVal(p.pr)}<br><span style="color:#888">${p.sd}</span>`).addTo(map);});
+        .setHTML(`<b>${esc(maskAddress(p.n))}</b><br>${p.psf?'S$'+p.psf+' psf':'—'} · ${fmtPrice(p.pr)}<br><span style="color:#888">${p.sd}</span>`).addTo(map);});
     map.on('mouseleave','cav-pts',()=>{map.getCanvas().style.cursor='';hoverPopup.remove();});
     map.on('mouseenter','dir-pts',e=>{map.getCanvas().style.cursor='pointer';
       var p=e.features[0].properties;
@@ -2471,6 +2473,12 @@ function faTopRender(cavs){
   var el=document.getElementById('faTopTbl');if(el){el.innerHTML=html;el.style.maxHeight='560px';el.style.overflowY='auto';}
 }
 
+/* v9.9.12 (S375): exact transaction prices now show 3 decimals in millions.
+   fmtVal's 1dp rounding turned S$3,875,000 into 'S$3.9m' on the caveat list, the
+   detail panel, the compact list and the map popup - a S$25,000 rounding error on a
+   single caveat. New fmtPrice() carries 3dp (S$3.875m, S$27.473m); fmtVal is unchanged
+   and still formats AGGREGATES (Total Value on district and project stat blocks) at 1dp,
+   where 3dp would be noise. Sub-million prices keep the 'k' form (S$970k). */
 /* v9.9.11 (S375): SEED_CAVEATS re-bake - week of 15 & 19 Sep 2026 releases, 48 caveats
    (4 Tue 15 Sep + 44 Fri 19 Sep), ids 83131-83178. SEED_CAV_TOTAL 42 -> 48. Coordinates joined
    from postal_building with BOTH sides lpad'd to 6 - transactions stores postal codes unpadded
