@@ -1,4 +1,5 @@
 <!DOCTYPE html>
+<!-- v48.460 (S375: aborted-caveat exposure fix. transactions_public does NOT filter is_aborted by design - the caveat table renders the red ABORTED badge, pink row tint and struck-through price from it - so the filter belongs at the callsites that must not see withdrawn caveats. Added &is_aborted=is.false to: ovEnrichBuyData (the P&L buy leg, and the serious one - a withdrawn caveat could become the prior leg, e.g. 25 ETC Loyang Crescent at S$455.0m against the S$457,557,966 re-lodgement), matchPendingDeals, initSliderBounds, sophiaLoadCaveats, and the chat-assistant sbFetch(path) helper, which hits base transactions and feeds PSF min/max/avg, top projects and the type breakdown (5 callsites covered by the one helper edit). The main caveat table (sbFetch(params)) is left UNFILTERED on purpose so aborted rows stay visible in red. Autocomplete callsites (initOvAutocomplete, fetchSuggestions) left as-is, project names only. Server-side surfaces already filter and need no change: chart_agg_daily_mv, pnl_pairs_mv, project_directory_mv, directory_txns, caveat_prev_caveats and every landed view. Data this session: 48 caveats ingested (ids 83131-83178); ids 270 and 82936 flagged aborted.) -->
 <!-- v48.459 (S375: id:216 computed distribution amounts removed per Tony, applying the id:248 ruling (L-SRC-2) retroactively. Removed: S$4.5326m / S$4.8576m per half, S$31.7m / S$34.0m / S$65.7m foregone, S$18.78m run-rate and 15.4% of annualised NPI. Standfirst, teaser, stopper-section paragraph, FH rows 3-4 (now 14 halves / 6.4751% / 8.0960%, as id:238) and sourceLabel amended; update sentence added to the 17 Sep clarification note; word_count 1817 -> 1827. Headlines, image, slug and sitemap unchanged. Separately, id:245 page rail card for id:244 corrected (withdrawn "Sixty-Six, Not Sixty-Seven" headline), no version.) -->
 <!-- v48.458 (S374: id:238 correction in place, approved by Tony 17 Sep 2026. Withdrawn: the claim that the substance of the Proposed Amendments was never placed on the public record and that the consent fees were never quantified; the 4th August 2026 commencement announcement and Notice of Separate Meetings described the amendments (reset rate from SOR to SORA-OIS plus Initial Spread, MAS/ABS fallbacks) and set the fees at 0.10% / 0.05%. Title, display_title, display_headline, landing_headline, standfirst, teaser, tag, sourceLabel, image (news_238_landmark_perpetual_consent_result_corrected.jpg), sections on the amendments, vote, reset and unitholders rewritten; computed FH rows removed (S$65.7m foregone, S$18.78m run-rate) per Tony's ruling on id:248; dated correction note appended. id:216: dated clarification note appended, sourceLabel extended. Slugs unchanged, sitemap unchanged.) -->
 <!-- v48.457 (S374: id:248 revision per Tony — computed amounts removed (S$4.53m half, S$4.86m, S$36.26m and S$70.26m foregone totals), as Landmark REIT disclosed none of them. Hero replaced: news_248_landmark_series02_sora_reset_v2.jpg (8th consecutive unpaid half). Per-half and foregone table rows dropped; standfirst, stopper paragraph, FH rows 3-4 and sourceLabel amended; word_count 1168 -> 1127. Slug and sitemap unchanged.) -->
@@ -22789,7 +22790,7 @@ function renderNewsroom(){
 async function matchPendingDeals(){
   // Pull recent caveats from Supabase and try to match pending deals
   try {
-    var url = SB_URL+"/rest/v1/transactions_public?select=project_name,transacted_price,area_sqft,sale_date&sale_date=gte.2026-01-01&order=sale_date.desc&limit=200";
+    var url = SB_URL+"/rest/v1/transactions_public?select=project_name,transacted_price,area_sqft,sale_date&sale_date=gte.2026-01-01&is_aborted=is.false&order=sale_date.desc&limit=200";
     var res = await fetch(url,{headers:{"apikey":SB_KEY,"Authorization":"Bearer "+SB_KEY}});
     if(!res.ok) return;
     var caveats = await res.json();
@@ -24821,7 +24822,7 @@ function ymToSliderPos(ym){
 // re-fire chart + Recent Transactions if the right edge moved.
 async function initSliderBounds(){
   try {
-    var url = SB_URL + "/rest/v1/transactions_public?select=sale_date&order=sale_date.desc&limit=1";
+    var url = SB_URL + "/rest/v1/transactions_public?select=sale_date&is_aborted=is.false&order=sale_date.desc&limit=1";
     var res = await fetch(url, {headers:{"apikey":SB_KEY,"Authorization":"Bearer "+SB_KEY}});
     if(!res.ok) return; // silent fail — keep hardcoded ceiling on network error
     var rows = await res.json();
@@ -25573,7 +25574,7 @@ async function ovEnrichBuyData(rows){
   var batchResults = await Promise.all(batches.map(function(batch){
     var inList = batch.map(function(a){ return '"'+a.replace(/"/g,'\\"')+'"'; }).join(',');
     var url = SB_URL + '/rest/v1/transactions_public?select=address,sale_date,transacted_price,unit_price_psf,type_of_sale,area_sqft'
-      + '&address=in.('+encodeURIComponent(inList)+')&order=sale_date.asc&limit=5000';
+      + '&is_aborted=is.false&address=in.('+encodeURIComponent(inList)+')&order=sale_date.asc&limit=5000';
     return fetch(url, {headers:hdr})
       .then(function(r){ return r.ok ? r.json() : []; })
       .catch(function(){ return []; });
@@ -27837,7 +27838,7 @@ async function sophiaLoadCaveats() {
       "/rest/v1/transactions_public" +
       "?or=(project_name.ilike.*sophia*,address.ilike.*sophia*)" +
       "&sale_date=gte.2024-01-01" +
-      "&select=sale_date,project_name,address,transacted_price,area_sqft,unit_price_psf,type_of_sale,tenure,property_type" +
+      "&is_aborted=is.false&select=sale_date,project_name,address,transacted_price,area_sqft,unit_price_psf,type_of_sale,tenure,property_type" +
       "&order=sale_date.asc&limit=1000";
 
     var res = await fetch(url, {
@@ -28493,6 +28494,7 @@ body:not(.dev-mode) #atlas-chat-panel { display: none !important; }
 
   // ── Data fetching helpers ──────────────────────────────────────────
   async function sbFetch(path){
+    if(path.indexOf('is_aborted') === -1) path += '&is_aborted=is.false';
     var r = await fetch(CHAT_SB_URL + '/rest/v1/' + path, {
       headers:{'apikey':CHAT_SB_KEY,'Authorization':'Bearer '+CHAT_SB_KEY,'Prefer':'count=none'}
     });
