@@ -120,11 +120,16 @@ def money(n):
 
 
 def sgd(n):
+    """S388: round half-up in decimal. '%.2f' and round() are float/banker's and
+    printed 1,505,000 as S$1.50M and 848,500 as S$848K against the reel's
+    S$1.51M / S$849K (same DATA, different rounding)."""
+    from decimal import Decimal, ROUND_HALF_UP
+    q = lambda v, e: Decimal(str(v)).quantize(Decimal(e), rounding=ROUND_HALF_UP)
     n = float(n)
     if abs(n) >= 1_000_000:
-        return "S$%.2fM" % (n / 1_000_000)
+        return "S$%sM" % q(n / 1_000_000, "0.01")
     if abs(n) >= 1_000:
-        return "S$%dK" % round(n / 1000)
+        return "S$%dK" % int(q(n / 1000, "1"))
     return "S$%d" % n
 
 
@@ -209,54 +214,55 @@ def head_meta(proj, addr, typ, tenure, area, extra=""):
 
 
 # ================================================================== DATA
-WEEK = "Week of 7th September 2026"
-LODGED = "URA REALIS caveats lodged 8th and 11th September"
-TOTAL, N_CAV, N_PAIR = "S$551.52M", 42, 24
-IND_N, IND_V, COM_N, COM_V = 26, 497.15, 16, 54.36
-N_GAIN, N_LOSS = 16, 8
-SALE_ROWS = [("RESALE", 38, 536345503, WHITE),
-             ("NEW SALE  \u00b7  ARTISAN 8, CHUAN PARK, SPACE 18", 3, 8271983, GOLD),
-             ("SUB SALE  \u00b7  SKY EDEN@BEDOK", 1, 6900000, GOLD)]
-S02_NOTE = "24 of 42 caveats matched a prior transaction  \u00b7  18 unmatched  \u00b7  net realised +S$8,959,280"
+# Week of 21st September 2026 · URA REALIS release 22 Sep 2026 · ids 83,179–83,247 · built S388 from the same
+# Tab A/B CSVs and row selection as weekly_caveat_reel_25Sep2026.html (gate-checked row-for-row against the reel DATA).
+# Flagged rows carry " *": Fook Hai area_caveat; Tuas Ave 6 / Loyang St lease extended; Ascent @ Gambas tenure restated.
+# TENURE is remaining lease at sale date (the slide subtitle), not original term.
+WEEK = 'Week of 21st September 2026'
+LODGED = 'URA REALIS caveats released 22nd September 2026'
+TOTAL, N_CAV, N_PAIR = 'S$155.40M', 69, 43
+IND_N, IND_V, COM_N, COM_V = 47, 106.66, 22, 48.74
+N_GAIN, N_LOSS = 36, 6
+SALE_ROWS = [('RESALE', 67, 151805961, WHITE),
+             ('NEW SALE  ·  SPACE 18, GATE+', 2, 3596823, GOLD)]
+S02_NOTE = '43 of 69 caveats matched a prior transaction  ·  26 unmatched  ·  1 flat  ·  net realised +S$21,684,249'
 
-IND_VALUE = [('Loyang Offshore Supply Base', 'XX LOYANG CRESCENT', 'Single-User', '25+15-yr from 2013', 3569167, 457557966, 128, 'land'), ('', 'XX WOODLANDS TERRACE', 'Single-User', '30-yr from 2024', 13944, 5200000, 373, 'land'), ('Liner', '1 TUAS BAY CLOSE #05-XX', 'Multiple-User', '30-yr from 2018', 12239, 3375000, 276, 'strata'), ('Henderson Industrial Park', '203 HENDERSON ROAD #02-XX', 'Multiple-User', 'Freehold', 3122, 2970000, 951, 'strata'), ('Lam Soon Industrial Building', '63 HILLVIEW AVENUE #08-XX', 'Multiple-User', 'Freehold', 3369, 2850000, 846, 'strata')]
-IND_PSF = [('Space 18', '18 LORONG AMPAS #02-XX', 'Multiple-User', 'Freehold', 1787, 2568221, 1437, 'strata'), ('Biztech Centre', '627A ALJUNIED ROAD #04-XX', 'Multiple-User', 'Freehold', 958, 1149600, 1200, 'strata'), ('Solstice Business Center', '23 NEW INDUSTRIAL ROAD #07-XX', 'Multiple-User', 'Freehold', 1206, 1350000, 1120, 'strata'), ('Henderson Industrial Park', '203 HENDERSON ROAD #02-XX', 'Multiple-User', 'Freehold', 3122, 2970000, 951, 'strata'), ('Joo Seng Warehouse', '3 UPPER ALJUNIED LINK #08-XX', 'Warehouse', 'Freehold', 2110, 2000000, 948, 'strata')]
-COM_VALUE = [('', 'XX JOO CHIAT ROAD', 'Shop House', 'Freehold', 1886, 10080000, 5345, 'land'), ('', 'XX JOO CHIAT ROAD', 'Shop House', 'Freehold', 1510, 10000000, 6622, 'land'), ('Sky Eden@Bedok', '1 BEDOK CENTRAL #01-XX', 'Retail', '99-yr from 2022', 1313, 6900000, 5254, 'strata'), ('Kampong Glam', 'XX ARAB STREET', 'Shop House', '999-yr from 1828', 840, 6600000, 7861, 'land'), ('Chuan Park', '242 LORONG CHUAN #B1-XX', 'Retail', '99-yr from 2024', 1119, 4473762, 3996, 'strata')]
-COM_PSF = [('Thomson Plaza', '301 UPPER THOMSON ROAD #01-XX', 'Retail', '99-yr from 1976', 398, 2700000, 6779, 'strata'), ('28 RC Suites', '28 RACE COURSE LANE #01-XX', 'Retail', 'Freehold', 248, 1670000, 6746, 'strata'), ('Sky Eden@Bedok', '1 BEDOK CENTRAL #01-XX', 'Retail', '99-yr from 2022', 1313, 6900000, 5254, 'strata'), ('Artisan 8', '8 SIN MING ROAD #01-XX', 'Retail', 'Freehold', 280, 1230000, 4395, 'strata'), ('Chuan Park', '242 LORONG CHUAN #B1-XX', 'Retail', '99-yr from 2024', 1119, 4473762, 3996, 'strata')]
-COM_GAIN = [('Kampong Glam', 'XX ARAB STREET', 'Shop House', '999-yr from 1828', 840, 2700000, 69.2, 11.1, 4.9, ''), ('Thomson Plaza', '301 UPPER THOMSON ROAD #01-XX', 'Retail', '99-yr from 1976', 398, 1000000, 58.8, 1.5, 37.1, ''), ('28 RC Suites', '28 RACE COURSE LANE #01-XX', 'Retail', 'Freehold', 248, 419088, 33.5, 12.3, 2.4, ''), ('Sultan Plaza', '100 JALAN SULTAN #04-XX', 'Office', '99-yr from 1978', 452, 270000, 61.4, 14.3, 3.4, '')]
-COM_LOSS = [('City Gate', '371 BEACH ROAD #B1-XX', 'Retail', '99-yr from 2014', 484, -610000, -42.1, 7.3, -7.2, ''), ('Bugis Cube', '470 NORTH BRIDGE ROAD #05-XX', 'Retail', '999-yr from 1827', 291, -165790, -14.6, 14.1, -1.1, ''), ('High Park Residences', '21 FERNVALE ROAD #01-XX', 'Retail', '99-yr from 2014', 344, -113000, -13.1, 11.0, -1.3, ''), ('Centrium Square', '320 SERANGOON ROAD #15-XX', 'Office', 'Freehold', 570, -69850, -4.5, 6.0, -0.8, '')]
-IND_GAIN = [('Henderson Industrial Park', '203 HENDERSON ROAD #02-XX', 'Multiple-User', 'Freehold', 3122, 2370000, 395.0, 20.4, 8.1, ''), ('Joo Seng Warehouse', '3 UPPER ALJUNIED LINK #08-XX', 'Warehouse', 'Freehold', 2110, 1000000, 100.0, 14.4, 4.9, ''), ('', 'XX WOODLANDS TERRACE', 'Single-User', '30-yr from 2024', 13944, 700000, 15.6, 13.5, 1.1, ' *'), ('Ubi Techpark', '10 UBI CRESCENT #04-XX', 'Multiple-User', '60-yr from 1997', 2325, 588888, 89.2, 16.2, 4.0, ''), ('Innovation Place', '31 MANDAI ESTATE #03-XX', 'Multiple-User', 'Freehold', 1539, 512450, 74.0, 16.2, 3.5, '')]
-IND_LOSS = [('Liner', '1 TUAS BAY CLOSE #05-XX', 'Multiple-User', '30-yr from 2018', 12239, -1235000, -26.8, 3.9, -7.7, ''), ('CT Hub 2', '114 LAVENDER STREET #05-XX', 'Multiple-User', '63-yr from 2012', 1066, -215000, -18.7, 3.0, -6.7, ''), ('E-Centre @ Redhill', '3791 JALAN BUKIT MERAH #03-XX', 'Multiple-User', '99-yr from 1962', 1884, -111944, -7.4, 13.2, -0.6, ''), ('North Link Building', '10 ADMIRALTY STREET #06-XX', 'Multiple-User', '60-yr from 1999', 5199, -50000, -3.3, 3.1, -1.1, '')]
+IND_VALUE = [('Cityneon Building', '25 TAI SENG AVENUE', 'Single-User', '30+29-yr from 2007', 27679, 28000000, 1012, 'land'), ('', '9 TUAS AVENUE 6', 'Single-User', '30+30-yr from 1990', 56376, 10500000, 186, 'land'), ('', '459 MACPHERSON ROAD', 'Single-User', '99-yr from 1965', 6490, 9500000, 1464, 'land'), ('', '20 LOYANG STREET', 'Single-User', '30+27-yr from 1995', 34256, 7180000, 210, 'land'), ('Woodlands Bizhub', '276 WOODLANDS INDUSTRIAL PARK E5', 'Multiple-User', '57-yr from 2011', 6103, 4050000, 664, 'strata')]
+IND_PSF = [('Space 18', '18 LORONG AMPAS #04-10', 'Multiple-User', 'Freehold', 1787, 2594023, 1452, 'strata'), ('Perfect One', '1 GENTING LINK #01-07', 'Multiple-User', 'Freehold', 1281, 1580000, 1233, 'strata'), ('ArcSphere', '124 LORONG 23 GEYLANG #03-02', 'Multiple-User', 'Freehold', 1130, 1288888, 1140, 'strata'), ('M-Space', '6D MANDAI ESTATE #04-09', 'Multiple-User', 'Freehold', 1313, 1420000, 1081, 'strata'), ('Novelty Bizcentre', '18 HOWARD ROAD #11-04', 'Multiple-User', 'Freehold', 1658, 1780000, 1074, 'strata')]
+COM_VALUE = [('Little India', '164 SERANGOON ROAD', 'Shop House', 'Freehold', 1228, 9800000, 7979, 'land'), ('Orchard Plaza', '150 ORCHARD ROAD #01-XX/XX/XX', 'Retail', '99-yr from 1977', 818, 4680000, 5721, 'strata'), ('Desker Road', '91 ROWELL ROAD', 'Shop House', '199-yr from 2013', 1107, 4600000, 4157, 'land'), ('', '375 BALESTIER ROAD', 'Shop House', 'Freehold', 1675, 2970000, 1773, 'land'), ('The Adelphi', '1 COLEMAN STREET #01-20', 'Retail', '999-yr from 1828', 398, 2399000, 6024, 'strata')]
+COM_PSF = [('The Adelphi', '1 COLEMAN STREET #01-20', 'Retail', '999-yr from 1828', 398, 2399000, 6024, 'strata'), ('Orchard Plaza', '150 ORCHARD ROAD #01-XX/XX/XX', 'Retail', '99-yr from 1977', 818, 4680000, 5721, 'strata'), ('EON Shenton', '70 SHENTON WAY #01-05', 'Retail', '99-yr from 2011', 172, 606666, 3523, 'strata'), ('Arc 380', '380 JALAN BESAR #10-XX/XX/XX', 'Office', 'Freehold', 2196, 6451800, 2938, 'strata'), ('Balestier Plaza', '400 BALESTIER ROAD #01-04', 'Office', 'Freehold', 506, 1175000, 2323, 'strata')]
+COM_GAIN = [('Fook Hai Building', '150 SOUTH BRIDGE ROAD #01-01', 'Retail', '99-yr from 1972', 1012, 1505000, 268.8, 25.2, 5.3, ' *'), ('Desker Road', '91 ROWELL ROAD', 'Shop House', '199-yr from 2013', 1107, 1175000, 34.3, 4.4, 6.9, ''), ('The Adelphi', '1 COLEMAN STREET #01-20', 'Retail', '999-yr from 1828', 398, 1045800, 77.3, 14.8, 4.0, ''), ('Regency Suites', '38 KIM TIAN ROAD #04-06', 'Office', 'Freehold', 1152, 887000, 63.7, 15.8, 3.2, ''), ('International Plaza', '10 ANSON ROAD #16-14', 'Office', '99-yr from 1970', 463, 462000, 110.5, 18.5, 4.1, '')]
+COM_LOSS = [('EON Shenton', '70 SHENTON WAY #01-05', 'Retail', '99-yr from 2011', 172, -623334, -50.7, 13.0, -5.3, ''), ('The Commerze@Irving', '1 IRVING PLACE #02-06', 'Retail', '60-yr from 2011', 431, -101850, -17.5, 14.5, -1.3, '')]
+IND_GAIN = [('', '9 TUAS AVENUE 6', 'Single-User', '30+30-yr from 1990', 56376, 5940000, 130.3, 16.1, 5.3, ' *'), ('', '20 LOYANG STREET', 'Single-User', '30+27-yr from 1995', 34256, 4080000, 131.6, 16.9, 5.1, ' *'), ('', '459 MACPHERSON ROAD', 'Single-User', '99-yr from 1965', 6490, 1000000, 11.8, 5.6, 2.0, ''), ("A'Posh Bizhub", '1 YISHUN INDUSTRIAL STREET 1 #08-18', 'Multiple-User', '60-yr from 2010', 2185, 782000, 85.2, 6.2, 10.5, ''), ('Premier @ Kaki Bukit', '8 KAKI BUKIT AVENUE 4 #02-17', 'Multiple-User', '60-yr from 2010', 3078, 542414, 52.5, 14.0, 3.1, '')]
+IND_LOSS = [('Pioneer Centre', '1 SOON LEE STREET #01-33', 'Multiple-User', '30-yr from 2010', 3197, -848500, -53.1, 13.5, -5.4, ''), ('Ascent @ Gambas', '6 GAMBAS WAY #02-20', 'Multiple-User', '26-yr from 2023', 3983, -205000, -17.3, 4.1, -4.5, ' *'), ('Sing Industrial Complex', '32 ANG MO KIO INDUSTRIAL PARK 2 #04-03', 'Multiple-User', '60-yr from 1982', 1227, -93100, -25.3, 11.8, -2.4, ''), ('Pioneer Junction', '3 SOON LEE STREET #06-17', 'Multiple-User', '30-yr from 2011', 1324, -92174, -20.6, 13.5, -1.7, '')]
 
-GATE = dict(n=2, value=6900000, med=5254, lo=5254, hi=5500)
-GATE_KICKER = "District 16 retail"
-GATE_HEAD = "Second above S$5,000 psf"
-GATE_SUB = "Sky Eden@Bedok  \u00b7  1 Bedok Central  \u00b7  D16"
-GATE_TILES = [("2", "SKY EDEN ABOVE S$5,000", WHITE), ("S$6.90M", "THIS WEEK\u2019S CAVEAT", GOLD),
-              ("S$5,254", "THIS WEEK\u2019S PSF", WHITE), ("S$5,500", "MAY 2026 CAVEAT PSF", WHITE)]
-NOTE_S03 = "Whole-site PSF is land-basis  \u00b7  Loyang is a second caveat on CLAR\u2019s acquisition, not a new deal"
-NOTE_S04 = "Strata per-unit basis  \u00b7  land-basis deals excluded"
-NOTE_S05 = "Rows 1, 2 and 4 are shophouses  \u00b7  PSF is land-basis, not strata"
-NOTE_S05B = "Strata basis  \u00b7  land-basis deals excluded"
-GATE_BULLETS = [("D16 retail", "  \u00b7  only caveats at S$5,000+ psf since 18th June 2015"),
-                ("", "Last there: East Village, launched 2012 at up to S$5,956 psf"),
-                ("", "East Village launch buyers selling since 2017: 12 of 12 at a loss"),
-                ("", "Median East Village loss \u221240.6%  \u00b7  S$4.81M in total")]
+GATE = dict(n=26, value=28000000, med=1012, lo=0, hi=0)
+GATE_KICKER = 'Feature'
+GATE_HEAD = 'Biggest deal, blank P&L'
+GATE_SUB = 'Cityneon Building  ·  XX Tai Seng Avenue  ·  Single-user factory'
+GATE_TILES = [('26', 'NO PRIOR CAVEAT', WHITE), ('S$28.00M', 'CITYNEON BUILDING', GOLD), ('S$1,012', 'CITYNEON PSF', WHITE), ('0.9%/yr', 'ON S$25.9M EFFECTIVE COST', WHITE)]
+NOTE_S03 = 'Whole-site PSF is land-basis  ·  4 single-user factories S$55.2M vs 42 strata units S$50.4M'
+NOTE_S04 = 'Strata per-unit basis  ·  land-basis deals excluded  ·  Space 18 is a new sale'
+NOTE_S05 = 'Rows 1, 3 and 4 are shophouses  ·  PSF is land-basis  ·  Orchard Plaza is three units in one caveat'
+NOTE_S05B = 'Strata basis  ·  land-basis deals excluded  ·  Arc 380 row is three adjacent units, same day'
+GATE_BULLETS = [('Dec 2017', '  ·  Cityneon bought Scorpio East Properties, the owner company, from KOP'),
+                ('', 'S$2.9M equity plus a S$23M assumed loan  ·  a share sale lodges no caveat'),
+                ('', 'On S$25.9M effective cost: +8% over 8.75 years, about 0.9% a year'),
+                ('', 'On the S$2.9M equity alone, the same deal reads +866%')]
 
-TENURE = [("FH / 999 yrs", 14), ("99 yrs", 10), ("55-63 yrs", 9), ("30-33 yrs", 7), ("40-41 yrs", 2)]
-TENURE_HEAD = "14 of 42 are freehold or 999-year"
-FEATURE = ("Sky Eden@Bedok  \u00b7  1 Bedok Central",
-           "S$6.90M  \u00b7  S$5,254 PSF  \u00b7  1,313 SQFT  \u00b7  99-YR FROM 2022  \u00b7  SECOND D16 RETAIL CAVEAT ABOVE S$5,000")
+TENURE = [('FH / 999 yrs', 18), ('60+ yrs left', 6), ('40-59 yrs left', 20), ('20-39 yrs left', 20), ('Under 20 yrs left', 5)]
+TENURE_HEAD = '3 of the 6 losses had under 20 years left'
+FEATURE = ('Pioneer Centre  ·  1 Soon Lee Street', 'S$750K  ·  30-YR FROM 2010  ·  13.5 YRS LEFT AT SALE  ·  −53.1% ON A 2013 PURCHASE')
 
-COM_GAIN_SUB = "All 4 gains (4 of 8 commercial pairs profitable)"
-COM_LOSS_SUB = "All 4 losses (of 8 commercial pairs)"
-IND_GAIN_SUB = "Top 5 of 12 gains (12 of 16 industrial pairs profitable)"
-IND_LOSS_SUB = "All 4 losses (of 16 industrial pairs)"
-COM_GAIN_FOOT = "The Kampong Glam shophouse carried S$2.70M of S$4.39M in commercial gains"
-COM_LOSS_FOOT = "City Gate unit bought new in 2019  \u00b7  down 42.1%"
-IND_GAIN_FOOT = "* lease re-granted between buy and sell  \u00b7  not like-for-like"
-IND_LOSS_FOOT = "Liner, Tuas: \u2212S$1.24M in under four years  \u00b7  the week\u2019s deepest loss"
-PDF_NAME = "Week_of_7th_Sep_2026_LinkedIn_Carousel.pdf"
+COM_GAIN_SUB = 'Top 5 of 8 gains (8 of 10 commercial pairs profitable)'
+COM_LOSS_SUB = 'All 2 losses (of 10 commercial pairs)'
+IND_GAIN_SUB = 'Top 5 of 28 gains (28 of 33 industrial pairs profitable)'
+IND_LOSS_SUB = 'All 4 losses (of 33 industrial pairs  ·  1 flat)'
+COM_GAIN_FOOT = '* Fook Hai: area 527 → 1,012 sq ft between the two sales  ·  not like-for-like'
+COM_LOSS_FOOT = 'EON Shenton bought 2013 at S$7,142 psf  ·  sold at S$3,523'
+IND_GAIN_FOOT = '* lease extended between buy and sell (30 yrs → 30+30, 30+27)  ·  not like-for-like'
+IND_LOSS_FOOT = '* tenure restated between legs  ·  flat: Ascent @ Gambas, S$686,000 in 2021 and 2026'
+PDF_NAME = 'Week_of_21st_Sep_2026_LinkedIn_Carousel.pdf'
 
 
 # ================================================================== SLIDES
