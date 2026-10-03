@@ -12,6 +12,9 @@ never be typed.** Pass `releases` as ISO dates; `{weekday}` in the body text
 is substituted from the last one.
 
 Usage:  python3 pa_linkedin_card.py spec.json out.png
+
+Optional spec key `credit` (S391): replaces the whole bottom credit line, for cards
+built from a single announcement rather than weekly releases.
 """
 import sys, json, datetime
 from PIL import Image, ImageDraw, ImageFont
@@ -115,6 +118,8 @@ def render(spec, out):
     else:
         when = " and ".join(f"{ord_(r.day)} {r.strftime('%B %Y')}" for r in rel)
     src = f'Illustration: PropertyAtlas. Source: {spec["source"]}, releases dated {when}.'
+    if spec.get('credit'):   # S391: optional override for single-announcement cards (no 'releases dated')
+        src = spec['credit']
     d.text((R - track_w(d, src, fsm), px(396)), src, font=fsm, fill=(159, 172, 193))
 
     img.save(out, quality=96)
