@@ -982,6 +982,7 @@ function setSegment(s,force){
   syncSegmentUI();
   if(typeof renderMktVol==='function') renderMktVol();
   searchCaveats();
+  if(lens==='directory'){ syncDirectoryUI(); apply(); }
 }
 document.querySelectorAll('#segments .chip,#mtSegments .chip').forEach(c=>c.onclick=()=>setSegment(c.dataset.seg));
 document.querySelectorAll('#typesLanded .chip,#mtChipsLanded .chip').forEach(c=>c.onclick=()=>{
@@ -1242,7 +1243,10 @@ function tenureCat(tn){
   return 'Other';
 }
 function filtered(){
+  if(fSeg==='landed') return [];   // v9.9.18: the Directory is a C&I building index
   return PINS.map((p,i)=>({p,i})).filter(({p})=>{
+    if(fSeg==='commercial'&&_SEG_C.indexOf(p.t)<0)return false;   // v9.9.18: segment chips now filter the Directory
+    if(fSeg==='industrial'&&_SEG_I.indexOf(p.t)<0)return false;
     if(fType!=='all'&&p.t!==fType)return false;
     if(fTenure.length&&fTenure.indexOf(tenureCat(p.tn))<0)return false;
     if(fRegion&&p.rg!==fRegion)return false;
@@ -1437,8 +1441,17 @@ function selectCaveat(i,fly){
   if(fly&&map&&!c.nomap)map.flyTo({center:[c.lng,c.lat],zoom:Math.max(map.getZoom(),15.5),speed:1.4});
 }
 
+/* v9.9.18 (S393): Directory-only filter UI. The Directory is a C&I building index, so Period chips
+   (caveat dates) and the Landed segment chip are hidden while it is open; arriving on Directory with
+   Landed already selected shows a note with a button back to Latest caveats. */
+function syncDirectoryUI(){
+  var dir=(lens==='directory');
+  ['periods','mtPeriods'].forEach(function(id){ var el=document.getElementById(id); var g=el&&el.closest('.fgroup'); if(g) g.style.display=dir?'none':''; });
+  document.querySelectorAll('#segments .chip[data-seg="landed"],#mtSegments .chip[data-seg="landed"]').forEach(function(c){ c.style.display=(dir&&fSeg!=='landed')?'none':''; });
+}
 function setLens(l){
   lens=l;selIdx=null;
+  syncDirectoryUI();
   document.querySelectorAll('.lens-tab[data-lens]').forEach(c=>c.classList.toggle('on',c.dataset.lens===l));
   closeDetail();closeAC();
   var isMap=l==='caveats'||l==='directory';
@@ -1702,6 +1715,11 @@ function apply(){
     pinsSetStatus();
     var _pl=document.getElementById('list');
     if(_pl) _pl.innerHTML='<div class="note" style="padding:20px">'+(PINS_SOURCE==='unavailable'?'Directory unavailable right now.':'Loading buildings\u2026')+'</div>';
+  } else if(fSeg==='landed'){
+    var _lc=document.getElementById('count'); if(_lc) _lc.textContent='Directory covers C&I buildings';
+    var _ll=document.getElementById('list');
+    if(_ll) _ll.innerHTML='<div class="note dir-landed-note" style="padding:20px;line-height:1.55">The Directory covers commercial and industrial buildings. Landed sales are listed by transaction under Latest caveats.<br><button class="btn" style="margin-top:12px" onclick="setLens(\'caveats\')">Open Latest caveats \u2192 Landed</button></div>';
+    if(map&&map.getSource('dir'))map.getSource('dir').setData(geojson([]));
   } else {
     const items=filtered();
     if(document.getElementById('count'))document.getElementById('count').textContent=items.length.toLocaleString()+' buildings';
@@ -2541,6 +2559,9 @@ function faTopRender(cavs){
   var el=document.getElementById('faTopTbl');if(el){el.innerHTML=html;el.style.maxHeight='560px';el.style.overflowY='auto';}
 }
 
+/* v9.9.18 (S393, 3 Oct 2026): Directory filters made honest. Commercial/Industrial segment chips now
+   filter the Directory (they were ignored); Period chips and the Landed chip are hidden in the Directory;
+   Directory + Landed shows a note and a button to Latest caveats instead of a blank map over a C&I list. */
 /* v9.9.17 (S393, 3 Oct 2026): PINS BAKE RETIRED. The 1.6 MB inline PINS array is gone; the Directory
    reads public.get_directory_pins() at runtime (loadPins(), near SUPA_ANON), with
    /assets/directory_pins_fallback.json if the live read fails. Root file 1,861,515 B -> ~0.24 MB.
