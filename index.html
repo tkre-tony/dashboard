@@ -1729,14 +1729,13 @@ function apply(){
   [...document.querySelectorAll('.dchip')].forEach(x=>{const n=x.textContent.match(/^D(\d+)/);x.classList.toggle('on',n&&+n[1]===fDist);});
   syncLocCur();
 }
-function clearAll(){fSeg='all';fLType='all';LANDED_PINS=[];fType='all';fRegion='';fDist=null;fQ='';fTenure=[];lens='caveats';cavPeriod='this_week';cavMode='release';
+function clearAll(){fSeg='all';fLType='all';LANDED_PINS=[];fType='all';fRegion='';fDist=null;fQ='';fTenure=[];var _keep=(lens==='directory')?'directory':'caveats';cavPeriod='this_week';cavMode='release';
   if(typeof syncSegmentUI==='function') syncSegmentUI();
   document.querySelectorAll('#periods .chip').forEach(x=>x.classList.toggle('on',x.dataset.period==='this_week'));
   document.getElementById('q').value='';document.querySelectorAll('#regions .chip').forEach(c=>c.classList.toggle('on',c.dataset.region===''));
   document.querySelectorAll('#types .chip').forEach(c=>c.classList.toggle('on',c.dataset.type==='all'));
   document.querySelectorAll('#tenures .chip').forEach(c=>c.classList.toggle('on',c.dataset.tenure==='all'));
-    document.querySelectorAll('.lens-tab[data-lens]').forEach(c=>c.classList.toggle('on',c.dataset.lens==='caveats'));
-  closeDetail();closeAC();buildDistricts();apply();if(map)map.flyTo({center:[103.82,1.345],zoom:10.6,speed:1.4});}
+  closeAC();setLens(_keep);}   // v9.9.20: full lens switch (layers + filter UI); Clear in Directory stays in Directory
 let splitMode='split';
 function setSplit(m){
   splitMode=m;
@@ -2559,6 +2558,10 @@ function faTopRender(cavs){
   var el=document.getElementById('faTopTbl');if(el){el.innerHTML=html;el.style.maxHeight='560px';el.style.overflowY='auto';}
 }
 
+/* v9.9.20 (S393, 3 Oct 2026): Clear set lens='caveats' directly instead of calling setLens(), so after Clear
+   from the Directory the Directory cluster layers stayed visible over Latest caveats (same bubbles whatever
+   was filtered) and the Period row / Landed chip stayed hidden. clearAll() now ends with setLens(), and
+   Clear in the Directory keeps you in the Directory. */
 /* v9.9.19 (S393, 3 Oct 2026): Directory map blank below zoom 14. The cluster-count and MRT-label layers asked
    OpenFreeMap for the combined font stack 'Noto Sans Bold,Open Sans Bold', which 404s; a failed glyph load
    fails the whole 'dir' source tile, so no clusters or pins drew until zoom > 14 (clusterMaxZoom), where no
