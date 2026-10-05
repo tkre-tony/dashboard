@@ -360,6 +360,43 @@ const PROMO_CSS = [
 '.pa-slot-hp-in span{font-size:11px;color:var(--ed-muted,#6B6157);line-height:1.5}',
 // rail collapses; mobile/tablet layout unchanged from pre-PROMO-1
 '@media (max-width:1103px){.pa-shell{display:block;max-width:none}.pa-shell > .ed-art-content{max-width:720px;margin:0 auto;padding-left:28px;padding-right:28px}.pa-rail{display:none}}',
+// PROMO-2 (S396): in-article units + end-of-article stack, < 1,104 px only. Desktop unchanged.
+'.pa-ia{display:none}',
+'@media (max-width:1103px){',
+'.pa-ia{display:block;margin:30px 0 34px;font-family:"DM Sans",Arial,sans-serif}',
+'.pa-ia-label{font-size:9px;font-weight:700;letter-spacing:.2em;text-transform:uppercase;color:var(--ed-muted,#6B6157);opacity:.7;margin-bottom:7px}',
+'.pa-ia .pa-ia-map{min-height:0;padding:20px 20px 18px}',
+'.pa-ia .pa-ia-map .pa-slot-btn{margin-top:4px}',
+'.pa-ia .pa-ia-tk{width:100%;min-height:0;padding:22px 22px 18px;display:flex;flex-direction:column}',
+'.pa-ia .pa-slot-h,.pa-ia .tk-name,.pa-ia .tk-h{margin-top:0}',
+'.pa-ia .pa-ia-map .pa-slot-eyebrow{margin-bottom:8px}',
+'.pa-ia .tk-name{color:#fff;font-family:"DM Sans",Arial,sans-serif;font-size:17px;margin-top:14px}',
+'.pa-ia .tk-h{margin-top:18px}',
+'.pa-ia .tk-list li{font-family:"DM Sans",Arial,sans-serif;font-size:11.5px;line-height:1.45;color:rgba(255,255,255,.76);margin:0;padding:3.5px 0}',
+'.pa-ia .tk-list li::marker{content:none}',
+'}',
+'@media (min-width:600px) and (max-width:1103px){',
+'.pa-ia .pa-ia-map{display:grid;grid-template-columns:1fr auto;column-gap:22px;align-items:center}',
+'.pa-ia .pa-ia-map .pa-slot-eyebrow,.pa-ia .pa-ia-map .pa-slot-h,.pa-ia .pa-ia-map .pa-slot-p{grid-column:1}',
+'.pa-ia .pa-ia-map .pa-slot-stats{grid-column:1;margin-bottom:0}',
+'.pa-ia .pa-ia-map .pa-slot-btn{grid-column:2;grid-row:1/5;align-self:center;padding:12px 22px;white-space:nowrap}',
+'.pa-ia .pa-ia-tk{display:grid;grid-template-columns:120px 1fr;column-gap:22px;text-align:left}',
+'.pa-ia .pa-ia-tk > *{grid-column:2}',
+'.pa-ia .pa-ia-tk .tk-photo{grid-column:1;grid-row:1/7;margin:6px 0 0;align-self:start}',
+'.pa-ia .pa-ia-tk .tk-eyebrow,.pa-ia .pa-ia-tk .tk-name,.pa-ia .pa-ia-tk .tk-role,.pa-ia .pa-ia-tk .tk-h,.pa-ia .pa-ia-tk .tk-p{text-align:left}',
+'.pa-ia .pa-ia-tk .tk-rule{margin:9px 0 0}',
+'.pa-ia .pa-ia-tk .tk-name{margin-top:10px}',
+'.pa-ia .pa-ia-tk .tk-h{margin-top:14px}',
+'.pa-ia .pa-ia-tk .tk-cta,.pa-ia .pa-ia-tk .tk-foot,.pa-ia .pa-ia-tk .tk-list{grid-column:1/3}',
+'.pa-ia .pa-ia-tk .tk-cta{display:grid;grid-template-columns:1.3fr 1fr;gap:8px}',
+'}',
+'@media (max-width:1103px){',
+'.pa-shell .pa-rail{display:flex;flex-direction:column;gap:12px;max-width:720px;margin:6px auto 10px;padding:0 28px;box-sizing:content-box}',
+'.pa-shell .pa-rail.pa-map-inarticle > .pa-rail-label:first-child,.pa-shell .pa-rail.pa-map-inarticle > [data-promo="rail-map"],.pa-shell .pa-rail.pa-tk-inarticle > div:last-child{display:none}',
+'.pa-shell .pa-rail .pa-rail-label{margin-bottom:0}',
+'.pa-shell .pa-rail .pa-slot-mpu,.pa-shell .pa-rail .pa-slot-compact,.pa-shell .pa-rail .pa-slot-native{width:100%;box-sizing:border-box}',
+'.pa-shell .pa-rail .pa-slot-tk{width:100%;min-height:0}',
+'}',
 ].join('\n');
 
 // GA4 — L-PROMO-1: static article pages carried NO analytics before S208.
@@ -384,10 +421,11 @@ function promoLeaderboardHtml() {
     '</div></div></div>';
 }
 
-function promoRailHtml() {
+function promoRailHtml(flags) {
+  flags = flags || {};
   const units = (PROMO_SLOTS.rail || []).filter(u => u.active);
   if (!units.length) return '';
-  const out = ['<aside class="pa-rail">'];
+  const out = ['<aside class="pa-rail' + (flags.map ? ' pa-map-inarticle' : '') + (flags.tk ? ' pa-tk-inarticle' : '') + '">'];
   units.forEach((u, i) => {
     const tier = ' pa-slot-t' + (u.tier || 1);
     const attrs = ' data-promo="' + esc(u.id) + '" data-creative="' + esc(u.creative || '') + '"';
@@ -455,15 +493,109 @@ function promoRailHtml() {
   return out.join('');
 }
 
+// ───────────────── PROMO-2 (S396): in-article units, < 1,104 px ─────────────────
+// Tony's approved design (S395): Map card before the <h2> nearest one-third of the
+// body's words; TK card before the last <h2> on articles over ~900 words. The end
+// stack (rail, shown below the article on < 1,104 px) hides whichever unit already
+// appeared in-article. Desktop is unchanged: .pa-ia is display:none at >= 1,104 px.
+const IA_MIN_WORDS_BEFORE = 120;   // never directly under the lede
+const IA_TK_MIN_WORDS = 900;
+const IA_MIN_GAP_WORDS = 150;      // slot 2 at least this far after slot 1
+
+function inArticleMapHtml() {
+  const u = (PROMO_SLOTS.rail || []).find(x => x.id === 'rail-map' && x.active);
+  if (!u) return '';
+  return '<div class="pa-ia" data-slot="inarticle-1"><div class="pa-ia-label">From PropertyAtlas</div>' +
+    '<a class="pa-slot pa-slot-mpu pa-ia-map pa-slot-t' + (u.tier || 1) + '" href="' + esc(u.href) + '" target="_blank" rel="noopener" ' +
+    'data-promo="inarticle-map" data-creative="' + esc(u.creative || '') + '">' +
+    '<div class="pa-slot-eyebrow">' + esc(u.eyebrow) + '</div>' +
+    '<h3 class="pa-slot-h">' + esc(u.headline) + '</h3>' +
+    '<p class="pa-slot-p">' + u.body + '</p>' +
+    '<div class="pa-slot-stats">' + (u.stats || []).map(st =>
+      '<div class="pa-slot-stat"><b>' + st.n + '</b><span>' + st.l + '</span></div>').join('') + '</div>' +
+    '<span class="pa-slot-btn">' + esc(u.cta) + '</span></a></div>';
+}
+
+function inArticleTkHtml() {
+  const u = (PROMO_SLOTS.rail || []).find(x => x.kind === 'tkre' && x.active);
+  if (!u) return '';
+  const c = esc(u.creative);
+  return '<div class="pa-ia" data-slot="inarticle-2"><div class="pa-ia-label">' + esc(u.label) + '</div>' +
+    '<div class="pa-slot-tk pa-ia-tk" data-promo="inarticle-tkre" data-creative="' + c + '">' +
+    '<div class="tk-eyebrow">' + esc(u.eyebrow) + '</div>' +
+    '<div class="tk-rule"></div>' +
+    '<div class="tk-photo"><img src="' + esc(u.photo) + '" alt="' + esc(u.name) +
+      ', Founder and Key Executive Officer, TK Real Estate Pte Ltd" ' +
+      'width="104" height="104" loading="lazy" decoding="async"></div>' +
+    '<h3 class="tk-name">' + esc(u.name) + '</h3>' +
+    '<div class="tk-role">' + esc(u.role) + '</div>' +
+    '<h4 class="tk-h">' + u.headline + '</h4>' +
+    '<p class="tk-p">' + u.body + '</p>' +
+    '<ul class="tk-list">' + (u.bullets || []).map(function (b) {
+      return '<li>' + PROMO_ICONS.tick + '<span>' + b + '</span></li>'; }).join('') + '</ul>' +
+    '<div class="tk-cta">' +
+      '<a class="tk-btn tk-wa" href="' + esc(u.wa) + '" target="_blank" rel="noopener" data-promo="inarticle-tkre-whatsapp" data-creative="' + c + '">' +
+        PROMO_ICONS.whatsapp + 'WhatsApp Tony</a>' +
+      '<div class="tk-cta-row">' +
+        '<a class="tk-btn tk-em" href="' + esc(u.email) + '" data-promo="inarticle-tkre-email" data-creative="' + c + '">' +
+          PROMO_ICONS.mail + 'Email</a>' +
+        '<a class="tk-btn tk-em tk-li" href="' + esc(u.li) + '" target="_blank" rel="noopener" data-promo="inarticle-tkre-linkedin" data-creative="' + c + '">' +
+          PROMO_ICONS.linkedin + 'LinkedIn</a>' +
+      '</div>' +
+    '</div>' +
+    '<div class="tk-foot">' + esc(u.footLine1) + '<br>' + esc(u.footLine2) + '</div>' +
+    '</div></div>';
+}
+
+function wordCount(html) { const t = stripTags(html); return t ? t.split(' ').length : 0; }
+
+// Returns { fragment, map, tk } — map/tk true when that unit was placed in-article.
+function placeInArticle(fragment) {
+  const bodyOpen = '<div class="ed-art-body">';
+  const bStart = fragment.indexOf(bodyOpen);
+  if (bStart < 0 || fragment.indexOf(bodyOpen, bStart + 1) >= 0) return { fragment, map: false, tk: false };
+  // body ends at the financial-headlines eyebrow or the source line, whichever comes first
+  let bEnd = fragment.length;
+  ['<div class="ed-art-section-eyebrow"', '<div class="ed-art-source'].forEach(m => {
+    const i = fragment.indexOf(m, bStart); if (i >= 0 && i < bEnd) bEnd = i;
+  });
+  const body = fragment.slice(bStart + bodyOpen.length, bEnd);
+  const total = wordCount(body);
+  const heads = [];
+  // <h2> subheads; bodies written with <h3> subheads only fall back to <h3>.
+  const re = /<h2[\s>]/.test(body) ? /<h2[\s>]/g : /<h3[\s>]/g; let m;
+  while ((m = re.exec(body))) heads.push({ pos: m.index, before: wordCount(body.slice(0, m.index)) });
+  const cands = heads.filter(h => h.before >= IA_MIN_WORDS_BEFORE);
+  if (!cands.length) return { fragment, map: false, tk: false };
+  const target = total / 3;
+  let s1 = cands[0];
+  cands.forEach(h => { if (Math.abs(h.before - target) < Math.abs(s1.before - target)) s1 = h; });
+  let s2 = null;
+  const last = heads[heads.length - 1];
+  if (total > IA_TK_MIN_WORDS && last.pos > s1.pos && last.before - s1.before >= IA_MIN_GAP_WORDS) s2 = last;
+  const mapHtml = inArticleMapHtml(), tkHtml = s2 ? inArticleTkHtml() : '';
+  let out = body;
+  if (s2 && tkHtml) out = out.slice(0, s2.pos) + tkHtml + out.slice(s2.pos);
+  if (mapHtml) out = out.slice(0, s1.pos) + mapHtml + out.slice(s1.pos);
+  return {
+    fragment: fragment.slice(0, bStart + bodyOpen.length) + out + fragment.slice(bEnd),
+    map: !!mapHtml, tk: !!(s2 && tkHtml),
+  };
+}
+
 // Promotion tracking (GA4 view_promotion / select_promotion). No UTMs on
 // internal links (ATLAS_UTM_tagging_convention.md). Degrades silently.
 const PROMO_JS =
 '<script>(function(){' +
 'var u=document.querySelectorAll("[data-promo]");if(!u.length)return;' +
 'function t(e,el){if(typeof window.gtag!=="function")return;' +
-'var s=el.getAttribute("data-promo");window.gtag("event",e,{promotion_id:s,' +
-'promotion_name:"propertyatlas_house_promo",creative_name:el.getAttribute("data-creative")||s,' +
-'creative_slot:s,location_id:"article_page"});}' +
+'var s=el.getAttribute("data-promo"),n="propertyatlas_house_promo",cs=s;' +
+// PROMO-2: in-article units name their placement; rail units seen below the article (< 1,104 px) are the end stack.
+'if(s.indexOf("inarticle-")===0){n=s.replace(/-(whatsapp|email|linkedin)$/,"");}' +
+'else if(s.indexOf("rail-")===0&&window.matchMedia&&window.matchMedia("(max-width:1103px)").matches){cs="endstack-"+s.slice(5);n=cs.replace(/-(whatsapp|email|linkedin)$/,"");}' +
+'window.gtag("event",e,{promotion_id:s,' +
+'promotion_name:n,creative_name:el.getAttribute("data-creative")||s,' +
+'creative_slot:cs,location_id:"article_page"});}' +
 'if("IntersectionObserver" in window){var seen={};var io=new IntersectionObserver(function(es){' +
 'es.forEach(function(en){var s=en.target.getAttribute("data-promo");' +
 'if(en.isIntersecting&&!seen[s]){seen[s]=1;t("view_promotion",en.target);}});},{threshold:.5});' +
@@ -795,8 +927,10 @@ function buildPage(a) {
   const artHits = fragment.split(artOpen).length - 1;
   const closeHits = fragment.split('</article>').length - 1;
   if (artHits !== 1 || closeHits !== 1) throw new Error('PROMO-1: expected exactly 1 ed-art-content article, found ' + artHits + '/' + closeHits + ' (id:' + a.id + ')');
+  const ia = placeInArticle(fragment);                         // PROMO-2 (S396)
+  fragment = ia.fragment;
   fragment = fragment.replace(artOpen, '<div class="pa-shell">' + artOpen);
-  fragment = fragment.replace('</article>', '</article>' + promoRailHtml() + '</div>');
+  fragment = fragment.replace('</article>', '</article>' + promoRailHtml({ map: ia.map, tk: ia.tk }) + '</div>');
   const usedClasses = new Set();
   (fragment.match(/class=["']([^"']*)["']/g) || []).forEach(m => {
     m.replace(/class=["']([^"']*)["']/, (x, cl) => cl.split(/\s+/).forEach(c => c && usedClasses.add(c)));
