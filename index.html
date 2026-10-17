@@ -322,6 +322,9 @@ body{background:var(--bg);color:var(--txt);font-family:Inter,system-ui,-apple-sy
 .pa-enq-err{display:none;margin-top:8px;font-size:12px;color:#b3261e}
 .pa-enq-ok{display:none;font-size:13px;color:var(--txt);padding:8px 0}
 .pa-enq-x{position:absolute;top:10px;right:14px;cursor:pointer;color:var(--mut);font-size:18px}
+.drange{display:flex;align-items:center;gap:6px;margin-top:8px;flex-wrap:wrap;font-size:12px;color:var(--mut,#5b6472)}
+.drange input[type=date]{font:inherit;font-size:12px;padding:4px 6px;border:1px solid var(--bd,#d6d9e0);border-radius:6px;background:var(--srf,#fff);color:var(--ink,#1a2332);min-width:0}
+.drange .btn{padding:4px 10px;font-size:12px}
 </style>
 </head>
 <body>
@@ -398,15 +401,19 @@ body{background:var(--bg);color:var(--txt);font-family:Inter,system-ui,-apple-sy
         <div class="chip" data-period="1y">1Y</div>
         <div class="chip" data-period="5y">5Y</div>
         <div class="chip" data-period="since1995">Since 1995</div>
-      </div></div>
-      <div class="fgroup"><div class="lbl">Segment</div>
-      <div class="chiprow" id="segments">
-        <div class="chip on" data-seg="all">All C&amp;I</div>
-        <div class="chip" data-seg="commercial">Commercial</div>
-        <div class="chip" data-seg="industrial">Industrial</div>
-        <div class="chip" data-seg="landed">Landed</div>
+      </div>
+      <div class="drange" id="drange" style="display:none"><input type="date" id="dFrom" min="1995-01-01" aria-label="From date"><span>to</span><input type="date" id="dTo" min="1995-01-01" aria-label="To date"><button class="btn sec" type="button" onclick="applyDateRange('d')">Apply</button></div></div>
+      <div class="fgroup"><div class="lbl">Market</div>
+      <div class="chiprow" id="mkts">
+        <div class="chip on" data-mkt="ci">C&amp;I</div>
+        <div class="chip" data-mkt="res">Residential</div>
       </div></div>
       <div class="fgroup"><div class="lbl">Property type</div>
+      <div class="chiprow" id="segmentsRes" style="display:none">
+        <div class="chip" data-seg="ec">Exec Condo</div>
+        <div class="chip" data-seg="landed">Landed</div>
+        <div class="chip" data-seg="nonlanded">Non-Landed</div>
+      </div>
       <div class="chiprow" id="types">
         <div class="chip on" data-type="all">All</div>
         <div class="chip" data-type="Office">Office</div>
@@ -422,6 +429,11 @@ body{background:var(--bg);color:var(--txt);font-family:Inter,system-ui,-apple-sy
         <div class="chip" data-ltype="Detached House">Detached</div>
         <div class="chip" data-ltype="Semi-Detached House">Semi-D</div>
         <div class="chip" data-ltype="Terrace House">Terrace</div>
+      </div>
+      <div class="chiprow" id="typesNonLanded" style="display:none">
+        <div class="chip on" data-ltype="all">All</div>
+        <div class="chip" data-ltype="Condominium">Condominium</div>
+        <div class="chip" data-ltype="Apartment">Apartment</div>
       </div></div>
       <div class="fgroup"><div class="lbl">Tenure</div>
       <div class="chiprow" id="tenures">
@@ -475,15 +487,19 @@ body{background:var(--bg);color:var(--txt);font-family:Inter,system-ui,-apple-sy
         <div class="chip" data-period="1y">1Y</div>
         <div class="chip" data-period="5y">5Y</div>
         <div class="chip" data-period="since1995">Since 1995</div>
-      </div></div>
-      <div class="fgroup"><div class="lbl">Segment</div>
-      <div class="mt-pchips" id="mtSegments">
-        <div class="chip on" data-seg="all">All C&amp;I</div>
-        <div class="chip" data-seg="commercial">Commercial</div>
-        <div class="chip" data-seg="industrial">Industrial</div>
-        <div class="chip" data-seg="landed">Landed</div>
+      </div>
+      <div class="drange" id="mdrange" style="display:none"><input type="date" id="mFrom" min="1995-01-01" aria-label="From date"><span>to</span><input type="date" id="mTo" min="1995-01-01" aria-label="To date"><button class="btn sec" type="button" onclick="applyDateRange('m')">Apply</button></div></div>
+      <div class="fgroup"><div class="lbl">Market</div>
+      <div class="mt-pchips" id="mtMkts">
+        <div class="chip on" data-mkt="ci">C&amp;I</div>
+        <div class="chip" data-mkt="res">Residential</div>
       </div></div>
       <div class="fgroup"><div class="lbl">Property type</div>
+      <div class="mt-pchips" id="mtSegmentsRes" style="display:none">
+        <div class="chip" data-seg="ec">Exec Condo</div>
+        <div class="chip" data-seg="landed">Landed</div>
+        <div class="chip" data-seg="nonlanded">Non-Landed</div>
+      </div>
       <div class="mt-chips" id="mtChips">
         <div class="chip on" data-type="all">All</div>
         <div class="chip" data-type="Office">Office</div>
@@ -499,6 +515,11 @@ body{background:var(--bg);color:var(--txt);font-family:Inter,system-ui,-apple-sy
         <div class="chip" data-ltype="Detached House">Detached</div>
         <div class="chip" data-ltype="Semi-Detached House">Semi-D</div>
         <div class="chip" data-ltype="Terrace House">Terrace</div>
+      </div>
+      <div class="mt-chips" id="mtChipsNonLanded" style="display:none">
+        <div class="chip on" data-ltype="all">All</div>
+        <div class="chip" data-ltype="Condominium">Condominium</div>
+        <div class="chip" data-ltype="Apartment">Apartment</div>
       </div></div>
       <div class="fgroup"><div class="lbl">Tenure</div>
       <div class="mt-pchips" id="mtTenures">
@@ -518,6 +539,8 @@ body{background:var(--bg);color:var(--txt);font-family:Inter,system-ui,-apple-sy
       <span><span class="dot" style="background:#7030A0"></span> Industrial</span>
       <span><span class="dot" style="background:#B5683E"></span> Shophouse</span>
       <span id="legLanded" style="display:none;gap:10px"><span><span class="dot" style="background:#1B5E20"></span> Detached</span><span><span class="dot" style="background:#2E9E63"></span> Semi-D</span><span><span class="dot" style="background:#7FC97F"></span> Terrace</span></span>
+      <span id="legNonLanded" style="display:none;gap:10px"><span><span class="dot" style="background:#C2185B"></span> Condominium</span><span><span class="dot" style="background:#E57399"></span> Apartment</span></span>
+      <span id="legEC" style="display:none;gap:10px"><span><span class="dot" style="background:#00897B"></span> Exec Condo</span></span>
         <label class="mrt-leg"><input type="checkbox" id="mrtChk" checked onchange="toggleMRT(this.checked)"><span class="mrt-pin"></span> MRT</label>
     </div>
     <div class="detail" id="detail"></div>
@@ -720,7 +743,7 @@ function normType(t){ return PT_NORM[t] || t || '—'; }
 // Deliberately NOT folded into PT_NORM: normType's output keys TYPE_COLORS and
 // shortening it there would grey every landed pill. Filters read the chip's raw
 // data-ltype (property_type=eq.<raw>) and are untouched.
-const PT_DISP = {'Detached House':'Detached','Semi-Detached House':'Semi-D','Terrace House':'Terrace'};
+const PT_DISP = {'Detached House':'Detached','Semi-Detached House':'Semi-D','Terrace House':'Terrace','Executive Condominium':'Exec Condo'};
 function dispType(t){ return PT_DISP[t] || t || '—'; }
 const _MON=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
 function fmtSD(iso){ if(!iso) return '—'; const d=new Date(iso+'T00:00:00'); if(isNaN(d)) return iso;
@@ -810,7 +833,7 @@ function mktVolSVG(W){
 function renderMktVol(){
   const el=document.getElementById('mktVol'); if(!el) return;
   if(lens!=='caveats'){ el.style.display='none'; mvTipHide(); return; }
-  if(typeof fSeg!=='undefined' && fSeg==='landed'){ el.style.display='none'; mvTipHide(); return; }
+  if(typeof fSeg!=='undefined' && isRes(fSeg)){ el.style.display='none'; mvTipHide(); return; }
   el.style.display='block';
   const type=mvType(), gran=mvGran(), W=Math.max(320,(el.clientWidth||720)-20);
   const arr=(type==='all')?mvArr('all'):mvArr(type);
@@ -836,7 +859,7 @@ const CHIP_TO_DB = {
 };
 function regionToDb(r){ return r ? (r + ' Region') : null; }   // DB stores 'Central Region' etc.
 const PERIOD_DAYS = {'30d':30,'90d':90,'1y':365,'5y':1825};
-function periodLabel(p){ return {this_week:'Release Week','30d':'Last 30 days','90d':'Last 90 days','1y':'Last 1 year','5y':'Last 5 years',since1995:'Since 1995'}[p]||p; }
+function periodLabel(p){ if(p==='custom'){ const f=cavFrom?fmtSD(cavFrom):'1995', t=cavTo?fmtSD(cavTo):'today'; return f+' \u2013 '+t; } return {this_week:'Release Week','30d':'Last 30 days','90d':'Last 90 days','1y':'Last 1 year','5y':'Last 5 years',since1995:'Since 1995'}[p]||p; }
 function weekOf(iso){ if(!iso) return '—'; const d=new Date(iso+'T00:00:00'); return String(d.getDate()).padStart(2,'0')+' '+_MON[d.getMonth()]; }
 
 function buildBody(){
@@ -848,6 +871,7 @@ function buildBody(){
   if(fDist)   body.district = fDist;
   if(cavMode==='release'){ body.latest_release=true; }
   else if(cavPeriod==='since1995'){ body.date_from='1995-01-01'; }
+  else if(cavPeriod==='custom'){ body.date_from=cavFrom||'1995-01-01'; if(cavTo) body.date_to=cavTo; }
   else if(PERIOD_DAYS[cavPeriod]){ body.date_from=new Date(Date.now()-PERIOD_DAYS[cavPeriod]*864e5).toISOString().slice(0,10); }
   if(fQ) body.q=fQ;
   return body;
@@ -857,6 +881,17 @@ function buildBody(){
 const SEG_TO_DB={commercial:['Office','Retail','Shop House'],
   industrial:['Multiple-user Factory','Multi-user Factory','Single-user Factory','Business park','Business Park','Warehouse']};
 const LANDED_REST=SUPA_REST+'/landed_transactions_geo';
+// RES-1 (S402): one residential lens for Landed, Non-Landed and Exec Condo.
+const RES_CFG={landed:{rest:'/landed_transactions_geo',pairs:'/landed_pnl_pairs_mv',types:null},
+  nonlanded:{rest:'/nonlanded_transactions_geo',pairs:'/nonlanded_pnl_pairs_mv',types:['Condominium','Apartment']},
+  ec:{rest:'/nonlanded_transactions_geo',pairs:'/nonlanded_pnl_pairs_mv',types:['Executive Condominium']}};
+function isRes(s){ s=(s===undefined)?fSeg:s; return s==='landed'||s==='nonlanded'||s==='ec'; }
+function resRest(){ return SUPA_REST+(RES_CFG[fSeg]||RES_CFG.landed).rest; }
+function resTypes(){ if(fLType&&fLType!=='all') return [fLType]; return (RES_CFG[fSeg]||{}).types||null; }
+function resWeekStart(){ if(!LANDED_MAX_REL) return null; const _d=new Date(LANDED_MAX_REL+'T00:00:00Z'), _dow=(_d.getUTCDay()+6)%7;
+  return new Date(_d.getTime()-_dow*864e5).toISOString().slice(0,10); }
+let cavFrom=null, cavTo=null;   // custom date range (RES-1)
+const CI_RANGE_OK=false;        // flip to true once the transactions-search Edge Function accepts date_to
 let LANDED_MAX_REL=null;
 function landedNoMapNote(c){
   if(/\bENBLOC\b/i.test(c.addr||'')) return 'Location not mappable \u2014 en bloc sale spanning multiple properties';
@@ -865,10 +900,12 @@ function landedNoMapNote(c){
 }
 function buildLandedURL(forPins){
   const P=['select=id,project_name,transacted_price,area_sqft,unit_price_psf,sale_date,address,type_of_sale,type_of_area,property_type,tenure,postal_district,planning_region,planning_area,postal_code,number_of_units,nett_price,lat,lng,side_note'];
-  if(fLType!=='all') P.push('property_type=eq.'+encodeURIComponent(fLType));
+  const _rt=resTypes();
+  if(_rt) P.push('property_type=in.('+_rt.map(t=>'"'+encodeURIComponent(t)+'"').join(',')+')');
   if(fRegion) P.push('planning_region=eq.'+encodeURIComponent(regionToDb(fRegion)));
   if(fDist)   P.push('postal_district=eq.'+fDist);
   if(cavPeriod==='since1995'){ /* no date filter */ }
+  else if(cavPeriod==='custom'){ if(cavFrom) P.push('sale_date=gte.'+cavFrom); if(cavTo) P.push('sale_date=lte.'+cavTo); }
   else if(cavPeriod==='this_week'){
     if(LANDED_MAX_REL){
       const _d=new Date(LANDED_MAX_REL+'T00:00:00Z'), _dow=(_d.getUTCDay()+6)%7;
@@ -884,14 +921,14 @@ function buildLandedURL(forPins){
   P.push('order=sale_date.'+dir+',id.'+dir);
   if(forPins){ P.push('limit=2000'); }
   else { P.push('limit='+cavPageSize); P.push('offset='+cavOffset); }
-  return LANDED_REST+'?'+P.join('&');
+  return resRest()+'?'+P.join('&');
 }
 async function runLandedSearch(){
   try{
     if(document.getElementById('count'))document.getElementById('count').textContent='Loading\u2026';
     const _t0=performance.now(); const _seq=++cavSeq;
     if(cavPeriod==='this_week'&&!LANDED_MAX_REL){
-      try{ const rr=await fetch(LANDED_REST+'?select=release_date&order=release_date.desc.nullslast&limit=1',{headers:{'apikey':SUPA_ANON,'Authorization':'Bearer '+SUPA_ANON}});
+      try{ const rr=await fetch(resRest()+'?select=release_date&order=release_date.desc.nullslast&limit=1',{headers:{'apikey':SUPA_ANON,'Authorization':'Bearer '+SUPA_ANON}});
            if(rr.ok){ const jj=await rr.json(); LANDED_MAX_REL=(jj&&jj[0]&&jj[0].release_date)||null; } }catch(e){}
     }
     const res=await fetch(buildLandedURL(),{headers:{'apikey':SUPA_ANON,'Authorization':'Bearer '+SUPA_ANON,'Prefer':'count=exact'}});
@@ -907,6 +944,7 @@ async function runLandedSearch(){
     selIdx=null; closeDetail();
     buildDistricts(); renderCaveats();
     loadLandedPairs(_seq);   // BOUGHT pairing — async, non-blocking
+    if(fSeg!=='landed'){ loadResBuildingPins(_seq); return; }   // non-landed / EC: one pin per building
     if(cavTotal<=CAVEATS.length){ LANDED_PINS=CAVEATS.slice(); landedPinsToMap(); }
     else{
       fetch(buildLandedURL(true),{headers:{'apikey':SUPA_ANON,'Authorization':'Bearer '+SUPA_ANON}})
@@ -926,7 +964,7 @@ async function loadLandedPairs(seq){
     for(let i=0;i<ids.length;i+=CHUNK){
       if(seq!==cavSeq) return;
       const slice=ids.slice(i,i+CHUNK);
-      const url=SUPA_REST+'/landed_pnl_pairs_mv?select=sell_id,buy_date,buy_price,buy_area_sqft&sell_id=in.('+slice.join(',')+')';
+      const url=SUPA_REST+(RES_CFG[fSeg]||RES_CFG.landed).pairs+'?select=sell_id,buy_date,buy_price,buy_area_sqft&sell_id=in.('+slice.join(',')+')';
       const res=await fetch(url,{headers:{'apikey':SUPA_ANON,'Authorization':'Bearer '+SUPA_ANON}});
       if(!res.ok) return;
       const rows=await res.json();
@@ -939,7 +977,50 @@ async function loadLandedPairs(seq){
   }catch(e){ /* enhancement only */ }
 }
 function landedPinsToMap(){
-  if(map&&map.getSource('cav')) map.getSource('cav').setData(caveatGeojson(LANDED_PINS.map((c,i)=>({c,i,lp:1}))));
+  if(map&&map.getSource('cav')) map.getSource('cav').setData(caveatGeojson(LANDED_PINS.map((c,i)=>({c,i,lp:(c.bld?2:1)}))));
+}
+// RES-1: building pins for Non-Landed / Exec Condo from nonlanded_pins() — one pin per block, any date range.
+async function loadResBuildingPins(seq){
+  try{
+    const base=SUPA_REST.replace('/rest/v1','');
+    const body={p_types:resTypes()};
+    if(cavPeriod==='custom'){ if(cavFrom) body.p_from=cavFrom; if(cavTo) body.p_to=cavTo; }
+    else if(cavPeriod==='this_week'){ const ws=resWeekStart(); if(ws) body.p_release_from=ws; else body.p_from=new Date(Date.now()-7*864e5).toISOString().slice(0,10); }
+    else if(cavPeriod!=='since1995'){ body.p_from=new Date(Date.now()-(PERIOD_DAYS[cavPeriod]||365)*864e5).toISOString().slice(0,10); }
+    if(fRegion) body.p_region=regionToDb(fRegion);
+    if(fDist) body.p_district=fDist;
+    if(fQ){ const q=fQ.replace(/[%_\\]/g,' ').trim(); if(q) body.p_q=q; }
+    const r=await fetch(base+'/rest/v1/rpc/nonlanded_pins',{method:'POST',headers:{'Content-Type':'application/json','apikey':SUPA_ANON,'Authorization':'Bearer '+SUPA_ANON},body:JSON.stringify(body)});
+    if(!r.ok || seq!==cavSeq) return;
+    const rows=await r.json();
+    if(seq!==cavSeq) return;
+    const bt=(fSeg==='ec')?'Executive Condominium':(fLType!=='all'?fLType:'Condominium');
+    LANDED_PINS=(rows||[]).map(b=>({bld:1,lat:Number(b.lat),lng:Number(b.lng),nomap:false,n:(b.project_name&&b.project_name!=='N.A.')?b.project_name:'N.A.',
+      addr:b.address||'',blk:String(b.address||'').replace(/\s*#.*$/,''),pc:b.postal_code,t:bt,pr:b.latest_price,psf:b.median_psf,maxp:b.max_price,
+      cnt:Number(b.n)||0,sd:fmtSD(b.latest_date),sdRaw:b.latest_date}));
+    landedPinsToMap();
+  }catch(e){ /* map enhancement only */ }
+}
+function selectResPin(i){
+  const b=LANDED_PINS[i]; if(!b) return;
+  selIdx=null;
+  const fm=v=>(v!=null?('S$'+Math.round(v).toLocaleString()):'\u2014');
+  const col=TYPE_COLORS[b.t]||'#888';
+  document.getElementById('detail').innerHTML='<span class="x" onclick="closeDetail()">×</span>'
+    +'<h3>'+esc(b.n)+'</h3>'
+    +'<div class="badges"><span class="badge" style="background:'+col+'22;color:'+col+'">'+esc(dispType(b.t))+'</span><span class="badge">'+esc(b.blk)+'</span></div>'
+    +'<div style="font-family:DM Mono,monospace;font-size:22px;font-weight:700;color:var(--g1);margin:10px 0 4px">'+b.cnt.toLocaleString()+' caveat'+(b.cnt===1?'':'s')+'</div>'
+    +'<div class="dstat"><div class="s"><b>'+fm(b.pr)+'</b><span>LATEST · '+esc(b.sd)+'</span></div>'
+    +'<div class="s"><b>'+(b.psf!=null?('S$'+Math.round(b.psf).toLocaleString()):'—')+'</b><span>MEDIAN PSF</span></div>'
+    +'<div class="s"><b>'+fm(b.maxp)+'</b><span>HIGHEST</span></div></div>'
+    +'<button class="btn" style="margin-top:12px" onclick="resShowBuilding('+i+')">List these caveats</button>';
+  document.getElementById('detail').classList.add('show');
+  if(map&&map.getSource('sel'))map.getSource('sel').setData({type:'FeatureCollection',features:[{type:'Feature',geometry:{type:'Point',coordinates:[b.lng,b.lat]},properties:{}}]});
+}
+function resShowBuilding(i){
+  const b=LANDED_PINS[i]; if(!b) return;
+  const qi=document.getElementById('q'); if(qi) qi.value=b.blk;
+  cavOffset=0; fQ=String(b.blk||'').trim().toLowerCase(); closeDetail(); searchCaveats();
 }
 function selectLandedPin(i){
   const c=LANDED_PINS[i]; if(!c) return;
@@ -949,15 +1030,26 @@ function selectLandedPin(i){
   if(map&&map.getSource('sel'))map.getSource('sel').setData({type:'FeatureCollection',features:c.nomap?[]:[{type:'Feature',geometry:{type:'Point',coordinates:[c.lng,c.lat]},properties:{}}]});
 }
 const _SEG_C=['Office','Retail','Shophouse'], _SEG_I=['Multi-User Factory','Single-User Factory','Business Park','Warehouse'];
+const RES_TENURES=['all','Freehold','999-yr','99-yr','Other'];
 function syncSegmentUI(){
-  const landed=(fSeg==='landed');
-  document.querySelectorAll('#segments .chip,#mtSegments .chip').forEach(x=>x.classList.toggle('on',x.dataset.seg===fSeg));
+  const res=isRes(fSeg), landed=(fSeg==='landed'), nland=(fSeg==='nonlanded');
+  document.querySelectorAll('#mkts .chip,#mtMkts .chip').forEach(x=>x.classList.toggle('on',x.dataset.mkt===(res?'res':'ci')));
+  ['segmentsRes','mtSegmentsRes'].forEach(id=>{const e=document.getElementById(id); if(e) e.style.display=res?'':'none';});
+  // tenure chips follow the market: residential has no 60-yr / 30-yr leases
+  document.querySelectorAll('#tenures .chip,#mtTenures .chip').forEach(x=>{ x.style.display=(!res||RES_TENURES.indexOf(x.dataset.tenure)>=0)?'':'none'; });
+  if(res && fTenure.length){ fTenure=fTenure.filter(t=>RES_TENURES.indexOf(t)>=0);
+    document.querySelectorAll('#tenures .chip,#mtTenures .chip').forEach(x=>x.classList.toggle('on',x.dataset.tenure==='all'?fTenure.length===0:fTenure.indexOf(x.dataset.tenure)>=0)); }
+  document.querySelectorAll('#segmentsRes .chip,#mtSegmentsRes .chip').forEach(x=>x.classList.toggle('on',x.dataset.seg===fSeg));
   const tRow=document.getElementById('types'), lRow=document.getElementById('typesLanded');
   const mtT=document.getElementById('mtChips'), mtL=document.getElementById('mtChipsLanded');
-  if(tRow) tRow.style.display=landed?'none':'';
+  const nRow=document.getElementById('typesNonLanded'), mtN=document.getElementById('mtChipsNonLanded');
+  if(tRow) tRow.style.display=res?'none':'';
   if(lRow) lRow.style.display=landed?'':'none';
-  if(mtT)  mtT.style.display=landed?'none':'';
+  if(nRow) nRow.style.display=nland?'':'none';
+  if(mtT)  mtT.style.display=res?'none':'';
   if(mtL)  mtL.style.display=landed?'':'none';
+  if(mtN)  mtN.style.display=nland?'':'none';
+
   document.querySelectorAll('#types .chip,#mtChips .chip').forEach(x=>{
     const t=x.dataset.type;
     x.classList.toggle('on',t===fType);
@@ -968,26 +1060,38 @@ function syncSegmentUI(){
     }
     x.style.display=show?'':'none';
   });
-  document.querySelectorAll('#typesLanded .chip,#mtChipsLanded .chip').forEach(x=>x.classList.toggle('on',x.dataset.ltype===fLType));
+  document.querySelectorAll('#typesLanded .chip,#mtChipsLanded .chip,#typesNonLanded .chip,#mtChipsNonLanded .chip').forEach(x=>x.classList.toggle('on',x.dataset.ltype===fLType));
   document.querySelectorAll('#periods .chip[data-period="this_week"],#mtPeriods .chip[data-period="this_week"]').forEach(x=>x.classList.remove('ghost'));
   const lg=document.getElementById('legLanded'); if(lg) lg.style.display=landed?'':'none';
+  const ln=document.getElementById('legNonLanded'); if(ln) ln.style.display=nland?'':'none';
+  const le=document.getElementById('legEC'); if(le) le.style.display=(fSeg==='ec')?'':'none';
+  const _rangeOn=res||CI_RANGE_OK;
+  ['drange','mdrange'].forEach(id=>{const e=document.getElementById(id); if(e) e.style.display=_rangeOn?'':'none';});
+  if(!_rangeOn && cavPeriod==='custom'){ cavPeriod='1y'; cavFrom=null; cavTo=null; cavMode='master';
+    document.querySelectorAll('#periods .chip,#mtPeriods .chip').forEach(x=>x.classList.toggle('on',x.dataset.period==='1y')); }
 }
 function setSegment(s,force){
   if(fSeg===s && !force) return;
   fSeg=s; fType='all'; fLType='all'; cavOffset=0; LANDED_PINS=[];
-  if(fSeg==='landed'){
-    cavPeriod='this_week'; cavMode='master'; LANDED_MAX_REL=null;
-    document.querySelectorAll('#periods .chip,#mtPeriods .chip').forEach(x=>x.classList.toggle('on',x.dataset.period==='this_week'));
+  LANDED_MAX_REL=null;
+  if(isRes(fSeg)){
+    cavMode='master';
   } else { cavMode=(cavPeriod==='this_week')?'release':'master'; }
   syncSegmentUI();
   if(typeof renderMktVol==='function') renderMktVol();
   searchCaveats();
   if(lens==='directory'){ syncDirectoryUI(); apply(); }
 }
-document.querySelectorAll('#segments .chip,#mtSegments .chip').forEach(c=>c.onclick=()=>setSegment(c.dataset.seg));
-document.querySelectorAll('#typesLanded .chip,#mtChipsLanded .chip').forEach(c=>c.onclick=()=>{
+document.querySelectorAll('#segmentsRes .chip,#mtSegmentsRes .chip').forEach(c=>c.onclick=()=>setSegment(c.dataset.seg));
+// Market row: C&I (default) or Residential. Residential opens on Landed; the second row then switches sub-segment.
+function setMarket(m){
+  if(m==='res'){ if(!isRes(fSeg)) setSegment('landed'); }
+  else { if(isRes(fSeg)) setSegment('all'); }
+}
+document.querySelectorAll('#mkts .chip,#mtMkts .chip').forEach(c=>c.onclick=()=>setMarket(c.dataset.mkt));
+document.querySelectorAll('#typesLanded .chip,#mtChipsLanded .chip,#typesNonLanded .chip,#mtChipsNonLanded .chip').forEach(c=>c.onclick=()=>{
   fLType=c.dataset.ltype; cavOffset=0;
-  document.querySelectorAll('#typesLanded .chip,#mtChipsLanded .chip').forEach(x=>x.classList.toggle('on',x.dataset.ltype===fLType));
+  document.querySelectorAll('#typesLanded .chip,#mtChipsLanded .chip,#typesNonLanded .chip,#mtChipsNonLanded .chip').forEach(x=>x.classList.toggle('on',x.dataset.ltype===fLType));
   apply();
 });
 
@@ -1035,7 +1139,7 @@ async function loadPairsForCaveats(seq){
   }catch(e){ /* BOUGHT is an enhancement; ignore on failure */ }
 }
 async function runCaveatSearch(){
-  if(fSeg==='landed'){ return runLandedSearch(); }
+  if(isRes(fSeg)){ return runLandedSearch(); }
   try{
     if(document.getElementById('count'))document.getElementById('count').textContent='Loading…';
     const _t0=performance.now();
@@ -1074,13 +1178,13 @@ function renderCaveats(){   // current page render; server paginates; fQ/fTenure
   if(splitMode==='list') caveatTableHTML(items); else caveatListHTML(items);
   const lbl=(cavMode==='release')?('Latest release '+cavWeekLabel):periodLabel(cavPeriod);
   document.getElementById('list').insertAdjacentHTML('afterbegin','<div class="list-banner">'+cavPagerHTML(page,pages)+'</div>');
-  if(map&&map.getSource('cav')) map.getSource('cav').setData((fSeg==='landed'&&LANDED_PINS.length)?caveatGeojson(LANDED_PINS.map((c,i)=>({c,i,lp:1}))):caveatGeojson(items));
+  if(map&&map.getSource('cav')) map.getSource('cav').setData((isRes(fSeg)&&LANDED_PINS.length)?caveatGeojson(LANDED_PINS.map((c,i)=>({c,i,lp:(c.bld?2:1)}))):(isRes(fSeg)&&fSeg!=='landed')?caveatGeojson([]):caveatGeojson(items));
   [...document.querySelectorAll('.dchip')].forEach(x=>{const n=x.textContent.match(/^D(\d+)/);x.classList.toggle('on',n&&+n[1]===fDist);});
   renderMktVol();
 }
 function cavPagerHTML(page,pages){
   const lbl=(cavMode==='release')?('Latest release '+cavWeekLabel):periodLabel(cavPeriod);
-  const head='<span><span style="opacity:.6">'+(cavMode==='release'?'📅':'🔎')+'</span> '+lbl+' \u00b7 <b>'+(cavTotal||0).toLocaleString()+'</b> '+(fSeg==='landed'?('transactions'+(((cavTotal||0)>2000)?' \u00b7 map shows latest 2,000':'')):'caveats')+'</span>';
+  const head='<span><span style="opacity:.6">'+(cavMode==='release'?'📅':'🔎')+'</span> '+lbl+' \u00b7 <b>'+(cavTotal||0).toLocaleString()+'</b> '+(fSeg==='landed'?('transactions'+(((cavTotal||0)>2000)?' \u00b7 map shows latest 2,000':'')):isRes(fSeg)?'transactions \u00b7 map shows one pin per building':'caveats')+'</span>';
   if((cavTotal||0)<=cavPageSize) return '<div style="font-size:12px;color:var(--ink,#1a2332)">'+head+'</div>';
   const atFirst=cavOffset<=0, atLast=page>=pages;
   const bs='display:inline-flex;align-items:center;padding:3px 8px;margin:0 1px;border:1px solid var(--bd,#d6d9e0);border-radius:6px;background:var(--srf,#fff);color:var(--ink,#1a2332);font:inherit;font-size:12px;cursor:pointer;';
@@ -1103,7 +1207,7 @@ function cavNext(){ if(cavOffset+cavPageSize<cavTotal){ cavOffset+=cavPageSize; 
 function cavLast(){ cavOffset=Math.max(0,(Math.ceil(cavTotal/cavPageSize)-1)*cavPageSize); searchCaveats(); }
 function cavSetSort(s){ if(s!==cavSort){ cavSort=s; cavOffset=0; searchCaveats(); } }
 function cavSetPageSize(n){ n=parseInt(n,10)||100; if(n!==cavPageSize){ cavPageSize=n; cavOffset=0; searchCaveats(); } }
-const TYPE_COLORS={'Office':'#0000CD','Retail':'#0000CD','Shophouse':'#B5683E','Multi-User Factory':'#7030A0','Single-User Factory':'#7030A0','Business Park':'#7030A0','Warehouse':'#7030A0','Detached House':'#1B5E20','Semi-Detached House':'#2E9E63','Terrace House':'#7FC97F','—':'#888888'};
+const TYPE_COLORS={'Office':'#0000CD','Retail':'#0000CD','Shophouse':'#B5683E','Multi-User Factory':'#7030A0','Single-User Factory':'#7030A0','Business Park':'#7030A0','Warehouse':'#7030A0','Detached House':'#1B5E20','Semi-Detached House':'#2E9E63','Terrace House':'#7FC97F','Condominium':'#C2185B','Apartment':'#E57399','Executive Condominium':'#00897B','—':'#888888'};
 let fType='all',fRegion='',fDist=null,fQ='',fTenure=[],selIdx=null,map,hoverPopup;
 let fSeg='all',fLType='all';
 let LANDED_PINS=[];   // full filtered pin universe for landed (capped 2,000); list stays server-paginated
@@ -1243,7 +1347,7 @@ function tenureCat(tn){
   return 'Other';
 }
 function filtered(){
-  if(fSeg==='landed') return [];   // v9.9.18: the Directory is a C&I building index
+  if(isRes(fSeg)) return [];   // v9.9.18: the Directory is a C&I building index
   return PINS.map((p,i)=>({p,i})).filter(({p})=>{
     if(fSeg==='commercial'&&_SEG_C.indexOf(p.t)<0)return false;   // v9.9.18: segment chips now filter the Directory
     if(fSeg==='industrial'&&_SEG_I.indexOf(p.t)<0)return false;
@@ -1322,14 +1426,14 @@ function caveatListHTML(items){
         <span style="font-family:'DM Mono',monospace;font-size:14px;font-weight:700;color:var(--g1);white-space:nowrap">${fmtPrice(c.pr)}</span>
       </div>
       <div class="str">${[cavSubName(c)?esc(maskAddress(cavSubName(c))):'',c.rg||'',c.di?('D'+c.di):''].filter(Boolean).join(' · ')}</div>
-      ${c.nomap?('<div class="str" style="color:#B5683E;margin-top:2px">📍 '+(fSeg==='landed'?landedNoMapNote(c):'Location not shown — building redeveloped or no postal on record')+'</div>'):''}
+      ${c.nomap?('<div class="str" style="color:#B5683E;margin-top:2px">📍 '+(isRes(fSeg)?landedNoMapNote(c):'Location not shown — building redeveloped or no postal on record')+'</div>'):''}
       ${c.note?('<div class="str" style="color:var(--mut);margin-top:2px">\u21b3 '+esc(maskNote(c.note))+'</div>'):''}
       <div style="display:flex;gap:4px;flex-wrap:wrap;margin-bottom:6px">
         <span class="pill" style="background:${col}22;color:${col}">${c.t}</span>
         ${c.tos?`<span class="pill" style="background:var(--srf2);color:var(--mut)">${c.tos}</span>`:''}
         ${c.toa?`<span class="pill" style="background:var(--srf2);color:var(--mut)">${c.toa}</span>`:''}
         ${(c.nu>1)?`<span class="pill" style="background:#B5683E22;color:#B5683E;font-weight:700">Bulk · ${c.nu} units</span>`:''}
-        ${(fSeg==='landed'&&c.tn)?`<span class="pill" style="background:var(--srf2);color:var(--mut)">${esc(tenureCat(c.tn))}</span>`:''}
+        ${(isRes(fSeg)&&c.tn)?`<span class="pill" style="background:var(--srf2);color:var(--mut)">${esc(tenureCat(c.tn))}</span>`:''}
       </div>
       <div class="stats">
         <div class="stat"><b>${c.psf?'S$'+c.psf:'—'}</b><span>PSF</span></div>
@@ -1382,7 +1486,7 @@ function caveatTableHTML(items){
     return `<tr>`+
       `<td class="mono nowrap">${c.sd}${bDate}</td>`+
       `<td class="mono">${c.di?('D'+c.di):'—'}</td>`+
-      `<td class="proj">${projCell}${c.nomap?(' <span class="nopin" title="'+(fSeg==='landed'?landedNoMapNote(c):'Location not shown — building redeveloped or no postal on record')+'">📍</span>'):''}</td>`+
+      `<td class="proj">${projCell}${c.nomap?(' <span class="nopin" title="'+(isRes(fSeg)?landedNoMapNote(c):'Location not shown — building redeveloped or no postal on record')+'">📍</span>'):''}</td>`+
       `<td class="addr">${addrCell}${c.note?('<div style="color:var(--mut);font-size:10px">\u21b3 '+esc(maskNote(c.note))+'</div>'):''}</td>`+
       `<td class="sub">${esc(c.tos)||'—'}${(c.nu>1)?('<div style="color:#B5683E;font-size:10px;font-weight:700">Bulk · '+c.nu+' units</div>'):''}</td>`+
       `<td><span class="tpill" style="background:${col}22;color:${col}">${dispType(c.t)}</span></td>`+
@@ -1425,14 +1529,14 @@ function cavDetailHTML(c){
     ${cavSubName(c)?`<div class="kv">${(typeof fSeg!=='undefined'&&fSeg==='landed')?'Project':'Address'} · <b>${esc(maskAddress(cavSubName(c)))}</b></div>`:''}
     ${(c.nu>1)?`<div class="kv">Bulk deal · <b>${c.nu} units</b></div>`:''}
     ${c.note?`<div class="kv" style="color:var(--mut)">\u21b3 ${esc(maskNote(c.note))}</div>`:''}
-    ${(c.nomap&&fSeg==='landed')?`<div class="kv" style="color:#B5683E">📍 ${landedNoMapNote(c)}</div>`:''}
+    ${(c.nomap&&isRes(fSeg))?`<div class="kv" style="color:#B5683E">📍 ${landedNoMapNote(c)}</div>`:''}
     ${lockNote()}
     ${detailCTA()}
     ${enqBlock('cav')}`;
 }
 function selectCaveat(i,fly){
   const _c0=CAVEATS[i];
-  if(fSeg!=='landed' && _c0 && _c0.n && _c0.n!=='N.A.'){ gotoDirectory(_c0.n); return; }   // unified panel via directory lens (landed stays on caveat card)
+  if(!isRes(fSeg) && _c0 && _c0.n && _c0.n!=='N.A.'){ gotoDirectory(_c0.n); return; }   // unified panel via directory lens (landed stays on caveat card)
   selIdx=i;const c=CAVEATS[i];
   document.getElementById('detail').innerHTML=cavDetailHTML(c);
   document.getElementById('detail').classList.add('show');
@@ -1447,7 +1551,7 @@ function selectCaveat(i,fly){
 function syncDirectoryUI(){
   var dir=(lens==='directory');
   ['periods','mtPeriods'].forEach(function(id){ var el=document.getElementById(id); var g=el&&el.closest('.fgroup'); if(g) g.style.display=dir?'none':''; });
-  document.querySelectorAll('#segments .chip[data-seg="landed"],#mtSegments .chip[data-seg="landed"]').forEach(function(c){ c.style.display=(dir&&fSeg!=='landed')?'none':''; });
+  document.querySelectorAll('#mkts .chip[data-mkt="res"],#mtMkts .chip[data-mkt="res"]').forEach(function(c){ c.style.display=(dir&&!isRes(fSeg))?'none':''; });
 }
 function setLens(l){
   lens=l;selIdx=null;
@@ -1715,7 +1819,7 @@ function apply(){
     pinsSetStatus();
     var _pl=document.getElementById('list');
     if(_pl) _pl.innerHTML='<div class="note" style="padding:20px">'+(PINS_SOURCE==='unavailable'?'Directory unavailable right now.':'Loading buildings\u2026')+'</div>';
-  } else if(fSeg==='landed'){
+  } else if(isRes(fSeg)){
     var _lc=document.getElementById('count'); if(_lc) _lc.textContent='Directory covers C&I buildings';
     var _ll=document.getElementById('list');
     if(_ll) _ll.innerHTML='<div class="note dir-landed-note" style="padding:20px;line-height:1.55">The Directory covers commercial and industrial buildings. Landed sales are listed by transaction under Latest caveats.<br><button class="btn" style="margin-top:12px" onclick="setLens(\'caveats\')">Open Latest caveats \u2192 Landed</button></div>';
@@ -1729,7 +1833,7 @@ function apply(){
   [...document.querySelectorAll('.dchip')].forEach(x=>{const n=x.textContent.match(/^D(\d+)/);x.classList.toggle('on',n&&+n[1]===fDist);});
   syncLocCur();
 }
-function clearAll(){fSeg='all';fLType='all';LANDED_PINS=[];fType='all';fRegion='';fDist=null;fQ='';fTenure=[];var _keep=(lens==='directory')?'directory':'caveats';cavPeriod='this_week';cavMode='release';
+function clearAll(){fSeg='all';fLType='all';LANDED_PINS=[];cavFrom=null;cavTo=null;['dFrom','dTo','mFrom','mTo'].forEach(function(id){var e=document.getElementById(id); if(e) e.value='';});fType='all';fRegion='';fDist=null;fQ='';fTenure=[];var _keep=(lens==='directory')?'directory':'caveats';cavPeriod='this_week';cavMode='release';
   if(typeof syncSegmentUI==='function') syncSegmentUI();
   document.querySelectorAll('#periods .chip').forEach(x=>x.classList.toggle('on',x.dataset.period==='this_week'));
   document.getElementById('q').value='';document.querySelectorAll('#regions .chip').forEach(c=>c.classList.toggle('on',c.dataset.region===''));
@@ -1858,7 +1962,20 @@ document.querySelectorAll('#tenures .chip').forEach(c=>c.onclick=()=>{
 });
 document.getElementById('list').addEventListener('click',function(e){ var el=e.target.closest('.proj-link'); if(el) gotoDirectory(el.getAttribute('data-proj')); });
 document.getElementById('fpTxn').addEventListener('click',function(e){ var el=e.target.closest('.proj-link'); if(el) gotoDirectory(el.getAttribute('data-proj')); });
-document.querySelectorAll('#periods .chip').forEach(c=>c.onclick=()=>{document.querySelectorAll('#periods .chip').forEach(x=>x.classList.remove('on'));c.classList.add('on');cavPeriod=c.dataset.period;cavMode=(cavPeriod==='this_week')?'release':'master';cavOffset=0;searchCaveats();});
+document.querySelectorAll('#periods .chip').forEach(c=>c.onclick=()=>{document.querySelectorAll('#periods .chip').forEach(x=>x.classList.remove('on'));c.classList.add('on');cavPeriod=c.dataset.period;cavFrom=null;cavTo=null;['dFrom','dTo','mFrom','mTo'].forEach(id=>{const e=document.getElementById(id); if(e) e.value='';});cavMode=(cavPeriod==='this_week'&&!isRes(fSeg))?'release':'master';cavOffset=0;searchCaveats();});
+// RES-1: user-selected date range (From / To) — works for every segment.
+function applyDateRange(w){
+  const f=document.getElementById(w==='m'?'mFrom':'dFrom'), t=document.getElementById(w==='m'?'mTo':'dTo');
+  let a=(f&&f.value)||null, b=(t&&t.value)||null;
+  if(!a&&!b) return;
+  if(a&&b&&a>b){ const x=a; a=b; b=x; }
+  cavFrom=a; cavTo=b; cavPeriod='custom'; cavMode='master'; cavOffset=0;
+  ['dFrom','mFrom'].forEach(id=>{const e=document.getElementById(id); if(e) e.value=a||'';});
+  ['dTo','mTo'].forEach(id=>{const e=document.getElementById(id); if(e) e.value=b||'';});
+  document.querySelectorAll('#periods .chip,#mtPeriods .chip').forEach(x=>x.classList.remove('on'));
+  if(lens!=='caveats' && typeof setLens==='function') setLens('caveats');
+  searchCaveats();
+}
 
 // ===== REUSABLE TYPEAHEAD (in-memory, lens-aware, dedup-by-building) =====
 function acData(){return PINS;}
@@ -1934,7 +2051,8 @@ function init(){
   map.on('load',()=>{
     var typeColor=['match',['get','t'],'Office','#0000CD','Retail','#0000CD','Shophouse','#B5683E',
       'Multi-User Factory','#7030A0','Single-User Factory','#7030A0','Business Park','#7030A0','Warehouse','#7030A0',
-      'Detached House','#1B5E20','Semi-Detached House','#2E9E63','Terrace House','#7FC97F','#888'];
+      'Detached House','#1B5E20','Semi-Detached House','#2E9E63','Terrace House','#7FC97F',
+      'Condominium','#C2185B','Apartment','#E57399','Executive Condominium','#00897B','#888'];
 
     // CAVEAT source — unclustered points (proven 3a render path)
     map.addSource('cav',{type:'geojson',data:caveatGeojson([])});
@@ -1981,7 +2099,7 @@ function init(){
       window.toggleMRT=function(on){var v=on?'visible':'none';['mrt-dot','mrt-label'].forEach(function(id){if(map.getLayer(id))map.setLayoutProperty(id,'visibility',v);});};
 
     // Click handlers for both layers
-    map.on('click','cav-pts',e=>{var p=e.features[0].properties; if(p.lp){selectLandedPin(p.i);}else{selectCaveat(p.i,false);}});
+    map.on('click','cav-pts',e=>{var p=e.features[0].properties; if(p.lp==2){selectResPin(p.i);}else if(p.lp){selectLandedPin(p.i);}else{selectCaveat(p.i,false);}});
     map.on('click','dir-pts',e=>{select(e.features[0].properties.i,false);});
     map.on('click','dir-clusters',e=>{
       var f=map.queryRenderedFeatures(e.point,{layers:['dir-clusters']})[0];
@@ -2582,6 +2700,9 @@ function faTopRender(cavs){
    retired: it had last-sale dates that were not the latest sale (~20%), tenures truncated to 22 chars
    (787), mixed address/postal grouping, and stopped at 11 May 2026. Unknown title_type (4) -> tt 0.
    Shophouse pins now gated by tools/pins_freshness_gate.js. 7,440 -> 7,482 pins. */
+/* v9.9.22 (S402, RES-1): Residential row (Landed / Non-Landed / Exec Condo) on the Market tab, From/To date
+   range for every segment, Non-Landed + EC from nonlanded_transactions_geo with one map pin per building via
+   nonlanded_pins(); P&L badges from nonlanded_pnl_pairs_mv. C&I custom range sends date_to to the EF. */
 /* v9.9.21 (S402): SEED_CAVEATS re-bake - week of 16 Oct 2026 release, 48 caveats, ids 83342-83389,
    S$126,555,625 (all stamped Fri 16 Oct per Tony's release file). SEED_CAV_TOTAL 35 -> 48. No aborts in
    the batch. Coordinates joined from postal_building, both sides lpad'd; C&I Gate B 0 (188986 and 088527
@@ -2727,9 +2848,9 @@ window.PA_TOUR_STEPS = [
   { selector: '.lens-tab[data-lens="analysis"]',
     title: 'Market Analysis',
     copy:  'Who is making money and where: live profit-and-loss pairs, most-active projects and top transactions.' },
-  { selector: '#segments',
-    title: 'Commercial \u00b7 Industrial \u00b7 Landed',
-    copy:  'Switch the whole map between segments \u2014 including 80,000+ landed transactions with P&L on every resale.' },
+  { selector: '#mkts',
+    title: 'C&I \u00b7 Residential',
+    copy:  'Switch the whole map between commercial & industrial and residential \u2014 landed, non-landed and executive condos, with P&L on every resale.' },
   { selector: '#periods',
     title: 'Time Travel',
     copy:  'Rewind the map to any window since 1995 \u2014 thirty years of caveats, one tap.' },
