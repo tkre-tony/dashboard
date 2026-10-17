@@ -891,7 +891,7 @@ function resTypes(){ if(fLType&&fLType!=='all') return [fLType]; return (RES_CFG
 function resWeekStart(){ if(!LANDED_MAX_REL) return null; const _d=new Date(LANDED_MAX_REL+'T00:00:00Z'), _dow=(_d.getUTCDay()+6)%7;
   return new Date(_d.getTime()-_dow*864e5).toISOString().slice(0,10); }
 let cavFrom=null, cavTo=null;   // custom date range (RES-1)
-const CI_RANGE_OK=false;        // flip to true once the transactions-search Edge Function accepts date_to
+const CI_RANGE_OK=true;         // EF passes date_to through to search_transactions_paged(p_date_to) — verified S402
 let LANDED_MAX_REL=null;
 function landedNoMapNote(c){
   if(/\bENBLOC\b/i.test(c.addr||'')) return 'Location not mappable \u2014 en bloc sale spanning multiple properties';
