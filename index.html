@@ -435,6 +435,13 @@ body{background:var(--bg);color:var(--txt);font-family:Inter,system-ui,-apple-sy
         <div class="chip" data-ltype="Condominium">Condominium</div>
         <div class="chip" data-ltype="Apartment">Apartment</div>
       </div></div>
+      <div class="fgroup" id="saleGrp" style="display:none"><div class="lbl">Sale type</div>
+      <div class="chiprow" id="sales">
+        <div class="chip on" data-sale="all">All</div>
+        <div class="chip" data-sale="New Sale">New Sale</div>
+        <div class="chip" data-sale="Sub Sale">Sub Sale</div>
+        <div class="chip" data-sale="Resale">Resale</div>
+      </div></div>
       <div class="fgroup"><div class="lbl">Tenure</div>
       <div class="chiprow" id="tenures">
         <div class="chip on" data-tenure="all">All</div>
@@ -520,6 +527,13 @@ body{background:var(--bg);color:var(--txt);font-family:Inter,system-ui,-apple-sy
         <div class="chip on" data-ltype="all">All</div>
         <div class="chip" data-ltype="Condominium">Condominium</div>
         <div class="chip" data-ltype="Apartment">Apartment</div>
+      </div></div>
+      <div class="fgroup" id="mtSaleGrp" style="display:none"><div class="lbl">Sale type</div>
+      <div class="mt-pchips" id="mtSales">
+        <div class="chip on" data-sale="all">All</div>
+        <div class="chip" data-sale="New Sale">New Sale</div>
+        <div class="chip" data-sale="Sub Sale">Sub Sale</div>
+        <div class="chip" data-sale="Resale">Resale</div>
       </div></div>
       <div class="fgroup"><div class="lbl">Tenure</div>
       <div class="mt-pchips" id="mtTenures">
@@ -906,6 +920,7 @@ function buildLandedURL(forPins){
   const P=['select=id,project_name,transacted_price,area_sqft,unit_price_psf,sale_date,address,type_of_sale,type_of_area,property_type,tenure,postal_district,planning_region,planning_area,postal_code,number_of_units,nett_price,lat,lng,side_note'];
   const _rt=resTypes();
   if(_rt) P.push('property_type=in.('+_rt.map(t=>'"'+encodeURIComponent(t)+'"').join(',')+')');
+  if(fSale&&fSale!=='all') P.push('type_of_sale=eq.'+encodeURIComponent(fSale));
   if(fRegion) P.push('planning_region=eq.'+encodeURIComponent(regionToDb(fRegion)));
   if(fDist)   P.push('postal_district=eq.'+fDist);
   if(cavPeriod==='since1995'){ /* no date filter */ }
@@ -988,6 +1003,7 @@ async function loadResBuildingPins(seq){
   try{
     const base=SUPA_REST.replace('/rest/v1','');
     const body={p_types:resTypes()};
+    if(fSale&&fSale!=='all') body.p_sale=fSale;
     if(cavPeriod==='custom'){ if(cavFrom) body.p_from=cavFrom; if(cavTo) body.p_to=cavTo; }
     else if(cavPeriod==='this_week'){ const ws=resWeekStart(); if(ws) body.p_release_from=ws; else body.p_from=new Date(Date.now()-7*864e5).toISOString().slice(0,10); }
     else if(cavPeriod!=='since1995'){ body.p_from=new Date(Date.now()-(PERIOD_DAYS[cavPeriod]||365)*864e5).toISOString().slice(0,10); }
@@ -1053,6 +1069,8 @@ function syncSegmentUI(){
   if(mtT)  mtT.style.display=res?'none':'';
   if(mtL)  mtL.style.display=landed?'':'none';
   if(mtN)  mtN.style.display=nland?'':'none';
+  ['saleGrp','mtSaleGrp'].forEach(id=>{const e=document.getElementById(id); if(e) e.style.display=res?'':'none';});
+  document.querySelectorAll('#sales .chip,#mtSales .chip').forEach(x=>x.classList.toggle('on',x.dataset.sale===fSale));
 
   document.querySelectorAll('#types .chip,#mtChips .chip').forEach(x=>{
     const t=x.dataset.type;
@@ -1076,7 +1094,7 @@ function syncSegmentUI(){
 }
 function setSegment(s,force){
   if(fSeg===s && !force) return;
-  fSeg=s; fType='all'; fLType='all'; cavOffset=0; LANDED_PINS=[];
+  fSeg=s; fType='all'; fLType='all'; fSale='all'; cavOffset=0; LANDED_PINS=[];
   LANDED_MAX_REL=null;
   if(isRes(fSeg)){
     cavMode='master';
@@ -1093,6 +1111,11 @@ function setMarket(m){
   else { if(isRes(fSeg)) setSegment('all'); }
 }
 document.querySelectorAll('#mkts .chip,#mtMkts .chip').forEach(c=>c.onclick=()=>setMarket(c.dataset.mkt));
+document.querySelectorAll('#sales .chip,#mtSales .chip').forEach(c=>c.onclick=()=>{
+  fSale=c.dataset.sale; cavOffset=0;
+  document.querySelectorAll('#sales .chip,#mtSales .chip').forEach(x=>x.classList.toggle('on',x.dataset.sale===fSale));
+  apply();
+});
 document.querySelectorAll('#typesLanded .chip,#mtChipsLanded .chip,#typesNonLanded .chip,#mtChipsNonLanded .chip').forEach(c=>c.onclick=()=>{
   fLType=c.dataset.ltype; cavOffset=0;
   document.querySelectorAll('#typesLanded .chip,#mtChipsLanded .chip,#typesNonLanded .chip,#mtChipsNonLanded .chip').forEach(x=>x.classList.toggle('on',x.dataset.ltype===fLType));
@@ -1213,7 +1236,7 @@ function cavSetSort(s){ if(s!==cavSort){ cavSort=s; cavOffset=0; searchCaveats()
 function cavSetPageSize(n){ n=parseInt(n,10)||100; if(n!==cavPageSize){ cavPageSize=n; cavOffset=0; searchCaveats(); } }
 const TYPE_COLORS={'Office':'#0000CD','Retail':'#0000CD','Shophouse':'#B5683E','Multi-User Factory':'#7030A0','Single-User Factory':'#7030A0','Business Park':'#7030A0','Warehouse':'#7030A0','Detached House':'#1B5E20','Semi-Detached House':'#2E9E63','Terrace House':'#7FC97F','Condominium':'#C2185B','Apartment':'#E57399','Executive Condominium':'#00897B','—':'#888888'};
 let fType='all',fRegion='',fDist=null,fQ='',fTenure=[],selIdx=null,map,hoverPopup;
-let fSeg='all',fLType='all';
+let fSeg='all',fLType='all',fSale='all';
 let LANDED_PINS=[];   // full filtered pin universe for landed (capped 2,000); list stays server-paginated
 let lens='caveats';
 let acItems=[],acActive=-1;
@@ -1837,7 +1860,7 @@ function apply(){
   [...document.querySelectorAll('.dchip')].forEach(x=>{const n=x.textContent.match(/^D(\d+)/);x.classList.toggle('on',n&&+n[1]===fDist);});
   syncLocCur();
 }
-function clearAll(){fSeg='all';fLType='all';LANDED_PINS=[];cavFrom=null;cavTo=null;['dFrom','dTo','mFrom','mTo'].forEach(function(id){var e=document.getElementById(id); if(e) e.value='';});fType='all';fRegion='';fDist=null;fQ='';fTenure=[];var _keep=(lens==='directory')?'directory':'caveats';cavPeriod='this_week';cavMode='release';
+function clearAll(){fSeg='all';fLType='all';fSale='all';LANDED_PINS=[];cavFrom=null;cavTo=null;['dFrom','dTo','mFrom','mTo'].forEach(function(id){var e=document.getElementById(id); if(e) e.value='';});fType='all';fRegion='';fDist=null;fQ='';fTenure=[];var _keep=(lens==='directory')?'directory':'caveats';cavPeriod='this_week';cavMode='release';
   if(typeof syncSegmentUI==='function') syncSegmentUI();
   document.querySelectorAll('#periods .chip').forEach(x=>x.classList.toggle('on',x.dataset.period==='this_week'));
   document.getElementById('q').value='';document.querySelectorAll('#regions .chip').forEach(c=>c.classList.toggle('on',c.dataset.region===''));
@@ -2140,7 +2163,7 @@ var FP_COLORS={office:'#1a4f9c',retail:'#2563bc',shophouse:'#3b82d4',multiUser:'
 var FP_LABELS={office:'Office',retail:'Retail',shophouse:'Shophouse',multiUser:'Multi-User',singleUser:'Single-User',bizPark:'Biz Park',warehouse:'Warehouse',detached:'Detached',semiDetached:'Semi-D',terrace:'Terrace',newSale:'New Sale',subSale:'Sub Sale',resale:'Resale',other:'Other'};
 /* v9.9.23 (S403): Non-Landed + Exec Condo on Market pulse / Market analysis. */
 function resNL(s){return s==='nonlanded'||s==='ec';}
-function resTypes(s){return s==='ec'?['Executive Condominium']:s==='nonlanded'?['Condominium','Apartment']:null;}
+function segResTypes(s){return s==='ec'?['Executive Condominium']:s==='nonlanded'?['Condominium','Apartment']:null;} /* v9.9.25: renamed — 'resTypes' already exists for the Market map (v9.9.23 overwrote it) */
 function segLbl(s){return s==='commercial'?'Commercial':s==='industrial'?'Industrial':s==='landed'?'Landed':s==='nonlanded'?'Non-Landed':s==='ec'?'Exec Condo':'C&I';}
 function fpSetSeg(el,s){FP_SEG=s;el.parentNode.querySelectorAll('.chip[data-fpseg]').forEach(function(c){c.classList.remove('on')});el.classList.add('on');FP_CACHE=null;FP_TXN_OFFSET=0;FP_TXN_PAIRS={};fpLoad();fpTxnLoad();}
 function fpSetDisplay(el,m){FP_DISPLAY=m;el.parentNode.querySelectorAll('.chip[data-fpd]').forEach(function(c){c.classList.remove('on')});el.classList.add('on');fpRender();}
@@ -2224,7 +2247,7 @@ async function fpTxnLoad(){
   try{
     var rows;
     if(FP_SEG==='landed'||resNL(FP_SEG)){
-      var _tf=resTypes(FP_SEG);
+      var _tf=segResTypes(FP_SEG);
       var url=SUPA_REST+(resNL(FP_SEG)?'/nonlanded_transactions_geo':'/landed_transactions_geo')+'?select=id,project_name,address,property_type,transacted_price,unit_price_psf,area_sqft,sale_date,tenure,type_of_sale,type_of_area,postal_district,planning_region,number_of_units,lat,lng,release_date,side_note&order=sale_date.'+(FP_TXN_SORT==='asc'?'asc':'desc')+',id.'+(FP_TXN_SORT==='asc'?'asc':'desc')+'&limit='+FP_TXN_PSIZE+'&offset='+FP_TXN_OFFSET+(_tf?'&property_type=in.('+_tf.map(function(t){return '%22'+encodeURIComponent(t)+'%22';}).join(',')+')':'');
       var res=await fetch(url,{headers:{'apikey':SUPA_ANON,'Authorization':'Bearer '+SUPA_ANON,'Prefer':'count=exact'}});
       var ct=res.headers.get('content-range');
@@ -2440,7 +2463,7 @@ function faTypesDb(seg){
   if(seg==='commercial')return SEG_TO_DB.commercial;
   if(seg==='industrial')return SEG_TO_DB.industrial;
   if(seg==='landed')return null; /* landed fns take null = all landed types */
-  if(resNL(seg))return resTypes(seg);
+  if(resNL(seg))return segResTypes(seg);
   return null; /* all C&I -> CI tables unfiltered */
 }
 function faFrom(){if(FA_PERIOD===0)return null;var d=new Date();d.setMonth(d.getMonth()-FA_PERIOD);return d.toISOString().slice(0,10);}
@@ -2734,6 +2757,10 @@ function faTopRender(cavs){
    retired: it had last-sale dates that were not the latest sale (~20%), tenures truncated to 22 chars
    (787), mixed address/postal grouping, and stopped at 11 May 2026. Unknown title_type (4) -> tt 0.
    Shophouse pins now gated by tools/pins_freshness_gate.js. 7,440 -> 7,482 pins. */
+/* v9.9.25 (S403): FIX — v9.9.23 declared a second resTypes(s) that silently replaced the Market map's
+   resTypes(), so Non-Landed / EC lists lost their type filter and nonlanded_pins got p_types=null (no pins).
+   Renamed to segResTypes(). NEW — Sale type chips (All / New Sale / Sub Sale / Resale) on Latest caveats for
+   Landed, Non-Landed and Exec Condo; list filters type_of_sale, pins pass p_sale (S403c SQL). */
 /* v9.9.24 (S403): Market pulse showed the previous segment's list (and an empty chart) when a slow
    response (Landed / Non-Landed counts) arrived after a faster one for the newly picked segment.
    fpLoad / fpTxnLoad / fpTxnLoadPairs now drop any response that is not from the latest request.
