@@ -1476,8 +1476,70 @@ function addrSplit(a){
   if(i<0) return esc(a);
   return esc(a.slice(0,i).trim())+'<span class="addr-unit">'+esc(a.slice(i).trim())+'</span>';
 }
+/* v9.9.26 (S403): residential project panel — Landed / Non-Landed / Exec Condo project names open the same
+   map + panel view as a C&I building (Caveats tab, Project tab, Full list & charts), fed from the residential
+   tables. Project + district, so same-name projects in different estates stay apart. */
+async function openResProject(name){
+  const cfg=RES_CFG[fSeg]||RES_CFG.landed;
+  const row=(CAVEATS||[]).find(c=>c.n===name)||{};
+  const di=row.di||null;
+  const seq=++_bldSeq;
+  if(splitMode!=='map'){ _preDetailSplit=splitMode; setSplit('map'); }
+  const det=document.getElementById('detail');
+  det.innerHTML='<span class="x" onclick="closeDetail()">\u00d7</span><h3>'+esc(maskAddress(name))+'</h3><div class="note" style="padding:14px 4px;color:var(--mut)">Loading caveats\u2026</div>';
+  det.classList.add('show');
+  try{
+    const sel='select=id,project_name,transacted_price,area_sqft,unit_price_psf,sale_date,address,type_of_sale,type_of_area,property_type,tenure,postal_district,planning_region,planning_area,postal_code,number_of_units,lat,lng,side_note';
+    const base=SUPA_REST+cfg.rest+'?'+sel+'&project_name=eq.'+encodeURIComponent(name)+(di?'&postal_district=eq.'+di:'')+'&order=sale_date.desc,id.desc';
+    let rows=[], total=0;
+    for(let off=0; off<5000; off+=1000){
+      const res=await fetch(base+'&limit=1000&offset='+off,{headers:{'apikey':SUPA_ANON,'Authorization':'Bearer '+SUPA_ANON,'Prefer':'count=exact'}});
+      if(!res.ok) throw new Error('HTTP '+res.status);
+      const ct=res.headers.get('content-range'); total=ct?(parseInt(ct.split('/')[1])||0):total;
+      const part=await res.json(); rows=rows.concat(part||[]);
+      if(seq!==_bldSeq) return;
+      if(!part||part.length<1000||rows.length>=total) break;
+    }
+    if(seq!==_bldSeq) return;
+    const cavs=rows.map(rowToCaveat);
+    const mode=a=>{const m={};a.forEach(x=>{if(x)m[x]=(m[x]||0)+1;});let b=null,n=0;Object.keys(m).forEach(k=>{if(m[k]>n){n=m[k];b=k;}});return b;};
+    const cut=new Date(); cut.setFullYear(cut.getFullYear()-1); const cs=cut.toISOString().slice(0,10);
+    let ps=rows.filter(r=>r.sale_date>=cs&&r.unit_price_psf>0).map(r=>Number(r.unit_price_psf));
+    if(!ps.length) ps=rows.filter(r=>r.unit_price_psf>0).map(r=>Number(r.unit_price_psf));
+    ps.sort((a,b)=>a-b);
+    const med=ps.length?(ps.length%2?ps[(ps.length-1)/2]:(ps[ps.length/2-1]+ps[ps.length/2])/2):null;
+    const g=rows.find(r=>r.lat!=null&&r.lng!=null)||{};
+    const p={res:1,n:name,t:normType(mode(rows.map(r=>r.property_type))||''),rg:(rows[0]||{}).planning_region||'',ar:(rows[0]||{}).planning_area||'',
+      di:di||((rows[0]||{}).postal_district)||null,d:total||rows.length,p:med,v:rows.reduce((a,r)=>a+(Number(r.transacted_price)||0),0),
+      ls:(rows[0]||{}).sale_date||null,tn:mode(rows.map(r=>r.tenure))||'',lat:(g.lat!=null?Number(g.lat):null),lng:(g.lng!=null?Number(g.lng):null)};
+    BLD_TXNS=cavs; BLD_TXN_KEY='res:'+fSeg+':'+name+':'+(di||''); BLD_SHOWN=BLD_PAGE; BLD_PAIRS={};
+    renderBuildingPanel(p);
+    if(p.lat!=null&&map){
+      if(map.getSource('sel'))map.getSource('sel').setData({type:'FeatureCollection',features:[{type:'Feature',geometry:{type:'Point',coordinates:[p.lng,p.lat]},properties:{}}]});
+      map.flyTo({center:[p.lng,p.lat],zoom:Math.max(map.getZoom(),15.5),speed:1.4});
+    }
+  }catch(e){ if(seq!==_bldSeq) return;
+    det.innerHTML='<span class="x" onclick="closeDetail()">\u00d7</span><h3>'+esc(maskAddress(name))+'</h3><div class="note" style="padding:12px 4px;color:var(--mut)">Could not load caveats \u2014 retry.</div>'; }
+}
+async function loadResProjectPairs(seq){
+  try{
+    const cfg=RES_CFG[fSeg]||RES_CFG.landed;
+    const ids=(BLD_TXNS||[]).map(c=>c.id).filter(x=>x!=null); if(!ids.length) return;
+    const m={};
+    for(let i=0;i<ids.length;i+=200){
+      if(seq!==_bldSeq) return;
+      const res=await fetch(SUPA_REST+cfg.pairs+'?select=sell_id,buy_date,buy_price,buy_area_sqft&sell_id=in.('+ids.slice(i,i+200).join(',')+')',{headers:{'apikey':SUPA_ANON,'Authorization':'Bearer '+SUPA_ANON}});
+      if(!res.ok) return;
+      const rows=await res.json();
+      if(Array.isArray(rows)) rows.forEach(r=>{ m[r.sell_id]={buy_date:r.buy_date,buy_price:r.buy_price,psf_buy:(r.buy_price!=null&&r.buy_area_sqft>0)?Math.round(r.buy_price/r.buy_area_sqft):null}; });
+    }
+    if(seq!==_bldSeq) return;
+    BLD_PAIRS=m; if(BF_OPEN) renderBuildingFull();
+  }catch(e){ /* enhancement only */ }
+}
 function gotoDirectory(name){
   if(!name || name==='N.A.') return;
+  if(isRes(fSeg) && lens!=='directory'){ openResProject(name); return; }   // v9.9.26
   setLens('directory');
   if(!PINS_READY){ _pinsPendingGoto=name; return; }
   var t=name.toUpperCase().replace(/\s+/g,' ').trim();
@@ -1629,7 +1691,7 @@ function select(i,fly){
 }
 function closeDetail(){document.getElementById('detail').classList.remove('show');selIdx=null;
   BF_OPEN=false; var _df=document.getElementById('detailFull'); if(_df)_df.classList.remove('show');
-  if(map&&map.getSource('sel'))map.getSource('sel').setData({type:'FeatureCollection',features:[]});listHTML(filtered());
+  if(map&&map.getSource('sel'))map.getSource('sel').setData({type:'FeatureCollection',features:[]});if(lens==='directory')listHTML(filtered());
   if(_preDetailSplit&&_preDetailSplit!=='map'){ const _m=_preDetailSplit; _preDetailSplit=null; setSplit(_m); }}
 
 // ===== Detail Lens — unified tabbed building panel (S140 inc1) =====
@@ -1661,7 +1723,7 @@ function renderBuildingPanel(p){
       ${detailCTA()}
     </div>
     ${enqBlock('pin')}`;
-  loadBuildingTxns(p.n);
+  if(p.res){ renderBldTxns(); loadResProjectPairs(_bldSeq); } else loadBuildingTxns(p.n);
 }
 function setDetailTab(t){
   if(t!=='caveats'&&t!=='proj')return;
@@ -2757,6 +2819,10 @@ function faTopRender(cavs){
    retired: it had last-sale dates that were not the latest sale (~20%), tenures truncated to 22 chars
    (787), mixed address/postal grouping, and stopped at 11 May 2026. Unknown title_type (4) -> tt 0.
    Shophouse pins now gated by tools/pins_freshness_gate.js. 7,440 -> 7,482 pins. */
+/* v9.9.26 (S403): Residential project names (Latest caveats, Landed / Non-Landed / Exec Condo) open a project
+   panel on the map like a C&I building: Caveats tab, Project tab (deals, median psf last 12 months, total value,
+   last deal, tenure), Full list & charts with BOUGHT pairs. closeDetail() only redraws the Directory list when the
+   Directory is open. */
 /* v9.9.25 (S403): FIX — v9.9.23 declared a second resTypes(s) that silently replaced the Market map's
    resTypes(), so Non-Landed / EC lists lost their type filter and nonlanded_pins got p_types=null (no pins).
    Renamed to segResTypes(). NEW — Sale type chips (All / New Sale / Sub Sale / Resale) on Latest caveats for
