@@ -2152,7 +2152,9 @@ function fpDateRange(){
   var fr=new Date(now);fr.setMonth(fr.getMonth()-FP_PERIOD);
   return{from:fr.toISOString().slice(0,10),to:to};
 }
+var FP_CHART_SEQ=0,FP_TXN_SEQ=0; /* v9.9.24: drop responses from a segment/period the user has already left */
 async function fpLoad(){
+  var _seq=++FP_CHART_SEQ;
   var isLanded=(FP_SEG==='landed'),isNL=resNL(FP_SEG);
   var fn=isNL?'nonlanded_chart_agg':isLanded?'landed_chart_agg':'chart_agg';
   fpLoadScore(fn);
@@ -2165,7 +2167,7 @@ async function fpLoad(){
   else if(!isLanded)body.p_inv_mode='exclude';
   try{
     var r=await fetch(url,{method:'POST',headers:{'Content-Type':'application/json','apikey':SUPA_ANON,'Authorization':'Bearer '+SUPA_ANON},body:JSON.stringify(body)});
-    FP_CACHE=await r.json();fpRender();
+    var _j=await r.json();if(_seq!==FP_CHART_SEQ)return;FP_CACHE=_j;fpRender();
   }catch(e){console.error('fpLoad',e);}
 }
 function fpTypesFor(seg){
@@ -2186,7 +2188,7 @@ async function fpLoadScore(fn){
   if(fn==='nonlanded_chart_agg')body.p_seg=FP_SEG;
   try{
     var r=await fetch(base+'/rest/v1/rpc/'+fn,{method:'POST',headers:{'Content-Type':'application/json','apikey':SUPA_ANON,'Authorization':'Bearer '+SUPA_ANON},body:JSON.stringify(body)});
-    var j=await r.json();if(key!==fn+(resNL(FP_SEG)?':'+FP_SEG:''))return;
+    var j=await r.json();var _cf=resNL(FP_SEG)?'nonlanded_chart_agg':(FP_SEG==='landed')?'landed_chart_agg':'chart_agg';if(key!==_cf+(resNL(FP_SEG)?':'+FP_SEG:''))return;
     FP_SCORE_CACHE=j;FP_SCORE_FN=key;fpRenderScore();
   }catch(e){console.error('fpLoadScore',e);}
 }
@@ -2216,6 +2218,7 @@ function fpRenderScore(){
 }
 var FP_TXN_CACHE=null,FP_TXN_SEG='',FP_TXN_TOTAL=0,FP_TXN_OFFSET=0,FP_TXN_PAIRS={},FP_TXN_PSIZE=50,FP_TXN_SORT='desc';
 async function fpTxnLoad(){
+  var _seq=++FP_TXN_SEQ;
   var el=document.getElementById('fpTxn');
   if(el)el.innerHTML='<div style="font-size:11px;color:var(--mut);padding:12px">Loading transactions...</div>';
   try{
@@ -2236,12 +2239,14 @@ async function fpTxnLoad(){
       rows=j.rows||[];
       FP_TXN_TOTAL=(typeof j.total==='number')?j.total:rows.length;
     }
+    if(_seq!==FP_TXN_SEQ)return;
     FP_TXN_CACHE=(rows||[]).map(rowToCaveat);FP_TXN_SEG=FP_SEG;
     fpTxnRender();
     fpTxnLoadPairs();
   }catch(e){console.error('fpTxnLoad',e);if(el)el.innerHTML='<div style="color:var(--red);font-size:11px;padding:12px">Failed to load transactions.</div>';}
 }
 async function fpTxnLoadPairs(){
+  var _seq=FP_TXN_SEQ;
   if(!FP_TXN_CACHE||!FP_TXN_CACHE.length)return;
   try{
     var ids=FP_TXN_CACHE.map(function(c){return c.id}).filter(function(x){return x!=null});
@@ -2257,6 +2262,7 @@ async function fpTxnLoadPairs(){
       if(_r){map[r.sell_id]={buy_date:r.buy_date,buy_price:r.buy_price,psf_buy:(r.buy_price!=null&&r.buy_area_sqft>0)?Math.round(r.buy_price/r.buy_area_sqft):null};}
       else{map[r.sell_id]=r;}
     });
+    if(_seq!==FP_TXN_SEQ)return;
     FP_TXN_PAIRS=map;
     fpTxnRender();
   }catch(e){/* enhancement only */}
@@ -2485,7 +2491,7 @@ async function faPnlLoad(){
     var wr=tot>0?Math.round(g/tot*100):0;
     var html=faCard(tot.toLocaleString(),'Matched pairs',faSegLbl()+' \u00b7 '+faPeriodLbl());
     html+=faCard(g.toLocaleString(),'Gains','+'+faMoney(s.sum_gains)+' total \u00b7 top +'+faMoney(s.top_gain),'var(--grn)','#e9f7ee','#cde8d6');
-    html+=faCard(l2.toLocaleString(),'Losses','\u2212'+faMoney(s.sum_losses)+' total \u00b7 worst \u2212'+faMoney(s.top_loss),'var(--red)','#fdeaee','#f2cdd3');
+    html+=faCard(l2.toLocaleString(),'Losses',(l2>0?'\u2212'+faMoney(s.sum_losses)+' total \u00b7 worst \u2212'+faMoney(s.top_loss):'none in this period'),'var(--red)','#fdeaee','#f2cdd3');
     html+=faCard(wr+'%','Win rate',g.toLocaleString()+' of '+tot.toLocaleString()+' resold higher');
     html+=faCard((s.avg_ann!=null?(Number(s.avg_ann)>=0?'+':'')+Number(s.avg_ann).toFixed(1)+'%':'\u2014'),'Avg ann. return','per matched pair');
     html+=faCard((s.avg_yrs!=null?Number(s.avg_yrs).toFixed(1)+' yrs':'\u2014'),'Avg holding period','buy to sell');
@@ -2498,6 +2504,12 @@ async function faPnlTable(){
   var tbl=document.getElementById('faPnlTbl');
   try{
     var from=faFrom();
+    if(isNL){ /* v9.9.24: RPC, the direct MV read with count=exact hit anon's 3 s timeout */
+      var nr=await faRpc('nonlanded_ma_pnl_pairs',{p_from:from,p_types:faTypesDb(FA_SEG),p_sort:FA_PNL_SORT,p_lim:FA_PNL_PSIZE,p_off:FA_PNL_OFFSET});
+      if(req!==FA_REQ)return;
+      FA_PNL_TOTAL=(nr&&nr.length)?Number(nr[0].total_count)||0:0;
+      faPnlRender(nr||[]);return;
+    }
     var sel=isNL
       ?'sell_id,sell_date,buy_date,project_name,address,property_type,sell_price,buy_price,gain,hold_days,ann_return,postal_district,pair_flag'
       :isL
@@ -2516,7 +2528,7 @@ async function faPnlTable(){
     var rows=await res.json();
     if(req!==FA_REQ)return;
     faPnlRender(rows||[]);
-  }catch(e){console.error('faPnlTable',e);if(tbl)tbl.innerHTML='<div style="color:var(--red);font-size:11px;padding:12px">Failed to load matched pairs.</div>';}
+  }catch(e){console.error('faPnlTable',e);var _pg=document.getElementById('faPnlPager');if(_pg)_pg.innerHTML='';if(tbl)tbl.innerHTML='<div style="color:var(--red);font-size:11px;padding:12px">Failed to load matched pairs.</div>';}
 }
 function faPnlPagerHtml(){
   var pages=Math.max(1,Math.ceil(FA_PNL_TOTAL/FA_PNL_PSIZE));
@@ -2722,6 +2734,12 @@ function faTopRender(cavs){
    retired: it had last-sale dates that were not the latest sale (~20%), tenures truncated to 22 chars
    (787), mixed address/postal grouping, and stopped at 11 May 2026. Unknown title_type (4) -> tt 0.
    Shophouse pins now gated by tools/pins_freshness_gate.js. 7,440 -> 7,482 pins. */
+/* v9.9.24 (S403): Market pulse showed the previous segment's list (and an empty chart) when a slow
+   response (Landed / Non-Landed counts) arrived after a faster one for the newly picked segment.
+   fpLoad / fpTxnLoad / fpTxnLoadPairs now drop any response that is not from the latest request.
+   Non-Landed / EC matched-pairs list now reads nonlanded_ma_pnl_pairs() (S403b): the direct MV read with
+   count=exact exceeded anon's 3 s statement_timeout. Zero-loss card reads "none in this period"; the pairs
+   pager clears when the list fails. */
 /* v9.9.23 (S403, RES-1 phase 2): Non-Landed and Exec Condo chips on Market pulse and Market analysis.
    Pulse chart buckets by sale type (New Sale / Sub Sale / Resale) via nonlanded_chart_agg(); recent
    transactions from nonlanded_transactions_geo; P&L, Most active (by project + district) and Top
