@@ -1486,6 +1486,9 @@ var PA_LU=[["Agriculture","#8A875C"],["Beach Area","#F7F7C5"],["Business 1","#C5
 function toggleMP(on){
   if(!map||!map.getLayer('mp-fill')) return;
   ['mp-fill','mp-line','mp-gpr'].forEach(function(id){map.setLayoutProperty(id,'visibility',on?'visible':'none');});
+  /* v9.9.36: with zoning on, building footprints become outline-only so the zoning colour shows through (URA Space look) */
+  if(map.getLayer('pa-bldg-fill')) map.setPaintProperty('pa-bldg-fill','fill-opacity',on?0:['interpolate',['linear'],['zoom'],14,0,15,0.85]);
+  if(map.getLayer('pa-bldg-line')) map.setPaintProperty('pa-bldg-line','line-color',on?'#5b5650':'#9c968b');
   var pn=document.getElementById('mpPanel'); if(pn) pn.classList.toggle('show',!!on);
   var k=document.getElementById('mpKey');
   if(k&&!k.innerHTML){ k.innerHTML=PA_LU.filter(function(x){return x[1];}).sort(function(a,b){return a[0].localeCompare(b[0]);}).map(function(x){return '<span><i style="background:'+x[1]+'"></i>'+esc(x[0])+'</span>';}).join(''); }
@@ -2423,7 +2426,7 @@ function init(){
   map=new maplibregl.Map({
     container:'map',
     style:'https://tiles.openfreemap.org/styles/positron',
-    center:[103.82,1.345],zoom:10.6,attributionControl:{customAttribution:'Stations &amp; exits: LTA · Schools: MOE · Zoning &amp; school plots: URA MP2025 · Places: OneMap/SLA'}
+    center:[103.82,1.345],zoom:10.6,attributionControl:{customAttribution:'Stations &amp; exits: LTA · Schools: MOE · Places: OneMap/SLA'}
   });
   map.addControl(new maplibregl.NavigationControl({showCompass:false}),'top-left');
   var _is3D=false;
@@ -2506,7 +2509,7 @@ function init(){
           'text-size':['interpolate',['linear'],['zoom'],12.5,9,16,12],
           'text-offset':[0,0.85],'text-anchor':'top','text-optional':true,'text-allow-overlap':false},
         paint:{'text-color':'#33425a','text-halo-color':'#ffffff','text-halo-width':1.4}});
-      /* v9.9.35 (S404): plain z10-15 tile folder assets/mp25/{z}/{x}/{y}.pbf replaces the pmtiles file (range requests failed on our host). v9.9.34: URA Master Plan 2025 land use ( layer 'lu': u = zoning index, g = GPR). Off by default. */
+      /* v9.9.36 (S404): zoning on => building fill off (outlines only); single 'Zoning: URA MP2025' credit. v9.9.35 (S404): plain z10-15 tile folder assets/mp25/{z}/{x}/{y}.pbf replaces the pmtiles file (range requests failed on our host). v9.9.34: URA Master Plan 2025 land use ( layer 'lu': u = zoning index, g = GPR). Off by default. */
       try{
         map.addSource('mp25',{type:'vector',tiles:[location.origin+'/assets/mp25/{z}/{x}/{y}.pbf'],minzoom:10,maxzoom:15,bounds:[103.6057,1.1586,104.4104,1.4708],attribution:'Zoning: URA MP2025'});
         var _mpCol=['match',['get','u']]; PA_LU.forEach(function(x,i){ if(x[1]){_mpCol.push(i,x[1]);} }); _mpCol.push('rgba(0,0,0,0)');
