@@ -833,6 +833,8 @@ function dispType(t){ return PT_DISP[t] || t || '—'; }
 const _MON=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
 function fmtSD(iso){ if(!iso) return '—'; const d=new Date(iso+'T00:00:00'); if(isNaN(d)) return iso;
   return String(d.getDate()).padStart(2,'0')+' '+_MON[d.getMonth()]+' '+d.getFullYear(); }
+/* v9.9.42 (S405): Near rings filter the list. NEAR is declared further down, so check it safely. */
+function nearOn(){ return (typeof NEAR!=='undefined')&&NEAR&&NEAR.sel&&NEAR.sel.length>0; }
 function rowToCaveat(r){
   const noMap = (r.lat==null || r.lng==null);
   const name  = (r.project_name && r.project_name!=='N.A.') ? r.project_name : 'N.A.';
@@ -1103,6 +1105,7 @@ function resPinsDraw(rows){
   LANDED_PINS=(rows||[]).map(b=>({bld:1,lat:Number(b.lat),lng:Number(b.lng),nomap:false,n:(b.project_name&&b.project_name!=='N.A.')?b.project_name:'N.A.',
     addr:b.address||'',blk:String(b.address||'').replace(/\s*#.*$/,''),pc:b.postal_code,t:bt,pr:b.latest_price,psf:b.median_psf,maxp:b.max_price,
     cnt:Number(b.n)||0,sd:fmtSD(b.latest_date),sdRaw:b.latest_date}));
+  if(nearOn()) LANDED_PINS=LANDED_PINS.filter(b=>nearInside(b.lng,b.lat));
   landedPinsToMap();
 }
 /* v9.9.37 (S404): a failed pin load used to leave the previous search's pins on the map. Clear them and say so. */
@@ -1255,6 +1258,7 @@ async function loadPairsForCaveats(seq){
   }catch(e){ /* BOUGHT is an enhancement; ignore on failure */ }
 }
 async function runCaveatSearch(){
+  if(nearOn()){ return runNearSearch(); }
   if(isRes(fSeg)){ return runLandedSearch(); }
   try{
     if(document.getElementById('count'))document.getElementById('count').textContent='Loading…';
@@ -1293,14 +1297,14 @@ function renderCaveats(){   // current page render; server paginates; fQ/fTenure
   const page=Math.min(pages,Math.floor(cavOffset/cavPageSize)+1);
   if(splitMode==='list') caveatTableHTML(items); else caveatListHTML(items);
   const lbl=(cavMode==='release')?('Latest release '+cavWeekLabel):periodLabel(cavPeriod);
-  document.getElementById('list').insertAdjacentHTML('afterbegin','<div class="list-banner">'+cavPagerHTML(page,pages)+'</div>');
+  document.getElementById('list').insertAdjacentHTML('afterbegin','<div class="list-banner">'+cavPagerHTML(page,pages)+(nearOn()?nearStripHTML():'')+'</div>');
   if(map&&map.getSource('cav')) map.getSource('cav').setData((isRes(fSeg)&&LANDED_PINS.length)?caveatGeojson(LANDED_PINS.map((c,i)=>({c,i,lp:(c.bld?2:1)}))):(isRes(fSeg)&&fSeg!=='landed')?caveatGeojson([]):caveatGeojson(items));
   [...document.querySelectorAll('.dchip')].forEach(x=>{const n=x.textContent.match(/^D(\d+)/);x.classList.toggle('on',n&&+n[1]===fDist);});
   renderMktVol();
 }
 function cavPagerHTML(page,pages){
   const lbl=(cavMode==='release')?('Latest release '+cavWeekLabel):periodLabel(cavPeriod);
-  const head='<span><span style="opacity:.6">'+(cavMode==='release'?'📅':'🔎')+'</span> '+lbl+' \u00b7 <b>'+(cavTotal||0).toLocaleString()+'</b> '+(fSeg==='landed'?('transactions'+(((cavTotal||0)>2000)?' \u00b7 map shows latest 2,000':'')):isRes(fSeg)?'transactions \u00b7 map shows one pin per building':'caveats')+'</span>';
+  const head='<span><span style="opacity:.6">'+(cavMode==='release'?'📅':'🔎')+'</span> '+lbl+(nearOn()?' \u00b7 near '+esc(NEAR.sel.map(x=>x.name).join(', ')):'')+' \u00b7 <b>'+(cavTotal||0).toLocaleString()+'</b> '+(fSeg==='landed'?('transactions'+(((cavTotal||0)>2000)?' \u00b7 map shows latest 2,000':'')):isRes(fSeg)?'transactions \u00b7 map shows one pin per building':'caveats')+'</span>';
   if((cavTotal||0)<=cavPageSize) return '<div style="font-size:12px;color:var(--ink,#1a2332)">'+head+'</div>';
   const atFirst=cavOffset<=0, atLast=page>=pages;
   const bs='display:inline-flex;align-items:center;padding:3px 8px;margin:0 1px;border:1px solid var(--bd,#d6d9e0);border-radius:6px;background:var(--srf,#fff);color:var(--ink,#1a2332);font:inherit;font-size:12px;cursor:pointer;';
@@ -1700,12 +1704,108 @@ function nearSync(){
   ['sNearCur','mNearCur'].forEach(function(id){var e=document.getElementById(id); if(e) e.textContent=t;});
   var b=document.getElementById('mtNear'); if(b) b.textContent=NEAR.sel.length?'Near \u00b7 '+NEAR.sel.length:'Near';
 }
-function nearAfter(){ nearRender(); nearDraw(); nearSync(); nearFit(); }
+function nearAfter(){ nearRender(); nearDraw(); nearSync(); nearFit(); nearListSync(); }
+/* v9.9.42 (S405): Near filters the list. Each landmark goes to near_search() as polygon rings: a circle of the
+   chosen radius, or a primary school's MP2025 P1 zone (1 km zone at 500 m / 1 km, 2 km zone at 2 km). One call
+   returns the page, the total and a per-ring summary (count, median psf, latest deal, P&L). */
+var NEAR_SUM=null, NEAR_SIG='';
+function nearShapes(){
+  return NEAR.sel.map(function(it,i){
+    var rings=it.zone?(NEAR.r<=1000?it.zone.z1:it.zone.z2):[nearCircle(it.lng,it.lat,NEAR.r)];
+    return {i:i,rings:rings.map(function(r){return r.map(function(p){return [Math.round(p[0]*1e6)/1e6,Math.round(p[1]*1e6)/1e6];});})};
+  });
+}
+function nearInside(lng,lat){
+  if(lng==null||lat==null) return false;
+  if(!NEAR._sh) NEAR._sh=nearShapes().map(function(s){return s.rings.map(function(r){return {r:r,b:nearBox([r])};});});
+  return NEAR._sh.some(function(rs){return rs.some(function(o){var b=o.b;
+    return lng>=b[0]&&lng<=b[2]&&lat>=b[1]&&lat<=b[3]&&nearPip(lng,lat,o.r);});});
+}
+function nearListSync(){
+  var sig=NEAR.sel.length?(NEAR.sel.map(function(x){return x.key;}).join('|')+'@'+NEAR.r):'';
+  if(sig===NEAR_SIG) return;
+  NEAR_SIG=sig; NEAR_SUM=null; NEAR._sh=null; cavOffset=0; searchCaveats();
+}
+function nearBody(lim,off,sum){
+  var b={p_kind:isRes(fSeg)?(fSeg==='landed'?'landed':'nonlanded'):'ci',p_shapes:nearShapes(),
+         p_limit:lim,p_offset:off,p_asc:cavSort==='asc',p_summary:sum};
+  if(isRes(fSeg)){ Object.assign(b,resRpcBody()); }
+  else{
+    var c=buildBody();
+    if(c.types) b.p_types=c.types;
+    if(c.region) b.p_region=c.region;
+    if(c.district) b.p_district=c.district;
+    if(c.latest_release) b.p_latest_release=true;
+    if(c.date_from&&c.date_from!=='1995-01-01') b.p_from=c.date_from;
+    if(c.date_to) b.p_to=c.date_to;
+    if(c.q){ var q=String(c.q).replace(/[%_\\]/g,' ').trim(); if(q) b.p_q=q; }
+  }
+  return b;
+}
+async function runNearSearch(){
+  var cnt=document.getElementById('count'); if(cnt) cnt.textContent='Loading\u2026';
+  var _seq=++cavSeq, _t0=performance.now(), res_=isRes(fSeg);
+  var H={'Content-Type':'application/json','apikey':SUPA_ANON,'Authorization':'Bearer '+SUPA_ANON};
+  try{
+    if(res_&&cavPeriod==='this_week'&&!LANDED_MAX_REL){
+      try{ var rr=await fetch(resRest()+'?select=release_date&order=release_date.desc.nullslast&limit=1',{headers:H});
+           if(rr.ok){ var jj=await rr.json(); LANDED_MAX_REL=(jj&&jj[0]&&jj[0].release_date)||null; } }catch(e){}
+    }
+    var want=(cavOffset===0)||!NEAR_SUM;
+    var r=await fetch(SUPA_REST+'/rpc/near_search',{method:'POST',headers:H,body:JSON.stringify(nearBody(cavPageSize,cavOffset,want))});
+    if(_seq!==cavSeq) return;
+    if(!r.ok) throw new Error('HTTP '+r.status);
+    var j=await r.json();
+    if(_seq!==cavSeq) return;
+    _tLoad=Math.round(performance.now()-_t0);
+    PAIR_BY_SELL={};
+    CAVEATS=(j&&j.rows||[]).map(rowToCaveat);
+    cavCapped=false; cavTotal=Number(j&&j.total)||0;
+    if(want) NEAR_SUM=(j&&j.rings)||[];
+    if(res_){ cavMode='master'; LANDED_PINS=[]; }
+    else if(cavMode==='release'&&CAVEATS.length) cavWeekLabel=weekOf(CAVEATS[0].rel);
+    selIdx=null; closeDetail();
+    buildDistricts(); renderCaveats();
+    if(!res_){ loadPairsForCaveats(_seq); return; }
+    loadLandedPairs(_seq);
+    if(fSeg!=='landed'){ loadResBuildingPins(_seq); return; }
+    if(cavTotal<=CAVEATS.length){ LANDED_PINS=CAVEATS.slice(); landedPinsToMap(); return; }
+    var r2=await fetch(SUPA_REST+'/rpc/near_search',{method:'POST',headers:H,body:JSON.stringify(nearBody(2000,0,false))});
+    if(_seq!==cavSeq||!r2.ok) return;
+    var j2=await r2.json();
+    if(_seq!==cavSeq) return;
+    LANDED_PINS=(j2&&j2.rows||[]).map(rowToCaveat); landedPinsToMap();
+  }catch(e){ console.error('near search failed:',e); if(cnt) cnt.textContent='Could not load \u2014 retry'; }
+}
+function nearQ(v){ if(v==null) return '\u2014'; v=Number(v); return v>=1e6?('S$'+(v/1e6).toFixed(2)+'m'):('S$'+Math.round(v).toLocaleString()); }
+function nearStripHTML(){
+  var S=NEAR_SUM, h='';
+  NEAR.sel.forEach(function(it,i){
+    var col=it.zone?(NEAR.r<=1000?'#2F55D4':'#C02FBF'):it.col;
+    var lab=it.zone?((NEAR.r<=1000?'1 km':'2 km')+' P1 zone'):(NEAR.r>=1000?(NEAR.r/1000)+' km':NEAR.r+' m');
+    var x=S?(S.find(function(z){return z.i===i;})||{n:0}):null, body;
+    if(!S) body='<span style="opacity:.6">summing\u2026</span>';
+    else if(!x.n) body='<span style="opacity:.6">no transactions in this ring for these filters</span>';
+    else{
+      var L=x.latest||{};
+      var gp=(x.median_gain_pct!=null)?Number(x.median_gain_pct):null;
+      body='<span><b>'+Number(x.n).toLocaleString()+'</b> '+(isRes(fSeg)?'transactions':'caveats')+'</span>'
+        +'<span>median <b>'+(x.median_psf!=null?('S$'+Math.round(x.median_psf).toLocaleString()):'\u2014')+'</b> psf</span>'
+        +'<span>latest '+esc(fmtSD(L.date))+' \u00b7 <b>'+nearQ(L.price)+'</b>'+((L.project&&L.project!=='N.A.')?' \u00b7 '+esc(nearTitle(L.project)):'')+'</span>'
+        +(x.pairs?('<span>P&amp;L <b>'+Number(x.pairs).toLocaleString()+'</b> resale'+(x.pairs===1?'':'s')+' \u00b7 median <b style="color:'+(gp!=null&&gp<0?'#C62828':'#2E7D32')+'">'
+          +(gp==null?'\u2014':((gp>=0?'+':'\u2212')+Math.abs(gp).toFixed(1)+'%'))+'</b> \u00b7 '+Number(x.gains).toLocaleString()+' gains / '+Number(x.losses).toLocaleString()+' losses</span>'):'');
+    }
+    h+='<div style="display:flex;flex-wrap:wrap;align-items:center;gap:3px 12px;font-size:12px;margin-top:6px;padding-top:6px;border-top:1px solid var(--bd,#d6d9e0);color:var(--ink,#1a2332)">'
+      +'<span style="display:inline-flex;align-items:center;gap:6px"><span style="width:9px;height:9px;border-radius:50%;background:'+col+';flex:none"></span><b>'+esc(it.name)+'</b><span style="opacity:.65">'+lab+'</span></span>'+body+'</div>';
+  });
+  if(NEAR.sel.length>1) h+='<div style="font-size:11px;opacity:.65;margin-top:4px">Rings that overlap count a transaction in each ring; the list shows it once.</div>';
+  return h;
+}
 function nearClear(){ NEAR.sel=[]; nearAfter(); }
 (function(){
   var d=document.getElementById('nearDrawer'); if(!d) return;
   document.getElementById('ndTabs').addEventListener('click',function(e){var b=e.target.closest('button'); if(!b) return; NEAR.tab=b.dataset.t; NEAR.q=''; NEAR.plc=[]; nearRender();});
-  document.getElementById('ndRad').addEventListener('click',function(e){var b=e.target.closest('button'); if(!b||!b.dataset.r) return; NEAR.r=+b.dataset.r; nearRender(); if(NEAR.sel.length){nearDraw();nearFit();}});
+  document.getElementById('ndRad').addEventListener('click',function(e){var b=e.target.closest('button'); if(!b||!b.dataset.r) return; NEAR.r=+b.dataset.r; nearRender(); if(NEAR.sel.length){nearDraw();nearFit();} nearListSync();});
   document.getElementById('ndLv').addEventListener('click',function(e){var b=e.target.closest('button'); if(!b) return; NEAR.lv=b.dataset.l; nearRender();});
   document.getElementById('ndSel').addEventListener('click',function(e){var b=e.target.closest('button[data-rm]'); if(!b) return; NEAR.sel.splice(+b.dataset.rm,1); nearAfter();});
   document.getElementById('ndBody').addEventListener('click',function(e){
@@ -2531,7 +2631,7 @@ function init(){
           'text-size':['interpolate',['linear'],['zoom'],12.5,9,16,12],
           'text-offset':[0,0.85],'text-anchor':'top','text-optional':true,'text-allow-overlap':false},
         paint:{'text-color':'#33425a','text-halo-color':'#ffffff','text-halo-width':1.4}});
-      /* v9.9.41 (S404): non-landed list without exact count + nonlanded_count RPC; pins start in parallel. v9.9.40 (S404): condo pins in one call via nonlanded_pins_json. v9.9.39 (S404): Since 1995 pin pages fetched in parallel; live periods draw progressively. v9.9.38 (S404): non-landed pins paged 1,000 at a time (API row cap left only postal 0x-3x on the map). v9.9.37 (S404): failed residential pin load clears stale pins + note. v9.9.36 (S404): zoning on => building fill off (outlines only); single 'Zoning: URA MP2025' credit. v9.9.35 (S404): plain z10-15 tile folder assets/mp25/{z}/{x}/{y}.pbf replaces the pmtiles file (range requests failed on our host). v9.9.34: URA Master Plan 2025 land use ( layer 'lu': u = zoning index, g = GPR). Off by default. */
+      /* v9.9.42 (S405): Near rings filter the list via near_search() + per-ring summary strip; condo/EC pins kept inside the rings. v9.9.41 (S404): non-landed list without exact count + nonlanded_count RPC; pins start in parallel. v9.9.40 (S404): condo pins in one call via nonlanded_pins_json. v9.9.39 (S404): Since 1995 pin pages fetched in parallel; live periods draw progressively. v9.9.38 (S404): non-landed pins paged 1,000 at a time (API row cap left only postal 0x-3x on the map). v9.9.37 (S404): failed residential pin load clears stale pins + note. v9.9.36 (S404): zoning on => building fill off (outlines only); single 'Zoning: URA MP2025' credit. v9.9.35 (S404): plain z10-15 tile folder assets/mp25/{z}/{x}/{y}.pbf replaces the pmtiles file (range requests failed on our host). v9.9.34: URA Master Plan 2025 land use ( layer 'lu': u = zoning index, g = GPR). Off by default. */
       try{
         map.addSource('mp25',{type:'vector',tiles:[location.origin+'/assets/mp25/{z}/{x}/{y}.pbf'],minzoom:10,maxzoom:15,bounds:[103.6057,1.1586,104.4104,1.4708],attribution:'Zoning: URA MP2025'});
         var _mpCol=['match',['get','u']]; PA_LU.forEach(function(x,i){ if(x[1]){_mpCol.push(i,x[1]);} }); _mpCol.push('rgba(0,0,0,0)');
