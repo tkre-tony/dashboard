@@ -1532,7 +1532,7 @@ function nearRender(){
     });
     h=h||'<div class="nd-note">No school matches.</div>';
     if(n>250) h+='<div class="nd-note">Showing 250 of '+n+'. Type to narrow.</div>';
-    h+='<div class="nd-note">Rings are drawn from the school\u2019s location and are <b>indicative</b>. For Primary 1 registration, MOE measures from the school\u2019s land boundary to the home\u2019s building \u2014 confirm on <a href="https://www.onemap.gov.sg/" target="_blank" rel="noopener">OneMap SchoolQuery</a>. Schools: MOE, data.gov.sg.</div>';
+    h+='<div class="nd-note">Primary schools: 1 km and 2 km zones are drawn from the school\u2019s land plot (URA Master Plan 2019), the way MOE measures home-school distance, and blocks touching each zone are shaded when you zoom in. Other schools and new campuses use a circle from the school\u2019s location. For a block right on the line, confirm on <a href="https://www.onemap.gov.sg/" target="_blank" rel="noopener">OneMap SchoolQuery</a>. Schools: MOE, data.gov.sg.</div>';
   } else {
     if(!q) h='<div class="nd-note">Type a building, mall, park or 6-digit postal code.</div>';
     else if(NEAR.plc===null) h='<div class="nd-note">Places search is unavailable right now. Stations and schools still work.</div>';
@@ -1551,36 +1551,96 @@ async function nearToggle(key){
     var lng=sc[2],lat=sc[3];
     if(lng==null){ var om=await nearOneMap(sc[4]); if(om&&om.length){lng=om[0].lng;lat=om[0].lat;sc[2]=lng;sc[3]=lat;} }
     if(lng==null){ var nt2=document.getElementById('ndNote'); if(nt2) nt2.textContent='Location for this school is not available yet'; return; }
-    it={key:key,name:sc[0],lng:lng,lat:lat,col:'#2E7D32',school:1,sub:(NEAR_LVN[sc[1]]||'')+(sc[5]?' \u00b7 '+sc[5]:'')}; }
+    var zn=(sc[1].indexOf('P')>=0)?(await nearZones())[sc[0]]:null;
+    it={key:key,name:sc[0],lng:lng,lat:lat,col:'#2E7D32',school:1,zone:zn||null,sub:(NEAR_LVN[sc[1]]||'')+(sc[5]?' \u00b7 '+sc[5]:'')}; }
   else { var x=NEAR.plc[+key.split('|').pop()]; if(!x) return; it={key:key,name:x.name,lng:x.lng,lat:x.lat,col:'#C8912A',sub:x.sub}; }
   NEAR.sel.push(it); nearAfter();
+}
+var NEAR_Z=null;
+async function nearZones(){
+  if(NEAR_Z) return NEAR_Z;
+  try{ var r=await fetch('/assets/p1_zones.json'); NEAR_Z=r.ok?await r.json():{}; }catch(e){ NEAR_Z={}; }
+  return NEAR_Z;
 }
 function nearLayers(){
   if(map.getSource('near')) return;
   map.addSource('near',{type:'geojson',data:{type:'FeatureCollection',features:[]}});
+  map.addSource('near-bldg',{type:'geojson',data:{type:'FeatureCollection',features:[]}});
   var before=map.getLayer('cav-pts')?'cav-pts':undefined;
-  map.addLayer({id:'near-fill',type:'fill',source:'near',filter:['==',['geometry-type'],'Polygon'],paint:{'fill-color':['get','col'],'fill-opacity':0.06}},before);
-  map.addLayer({id:'near-ring',type:'line',source:'near',filter:['==',['geometry-type'],'Polygon'],paint:{'line-color':['get','col'],'line-width':1.6,'line-opacity':0.85,'line-dasharray':[3,2]}},before);
+  map.addLayer({id:'near-bldg',type:'fill',source:'near-bldg',paint:{'fill-color':['match',['get','t'],1,'#2E7D32','#7FBF7F'],'fill-opacity':['match',['get','t'],1,0.55,0.35]}},before);
+  map.addLayer({id:'near-fill',type:'fill',source:'near',filter:['==',['geometry-type'],'Polygon'],
+    paint:{'fill-color':['get','col'],'fill-opacity':['match',['get','k'],'b',0.35,'z2',0.025,0.06]}},before);
+  map.addLayer({id:'near-ring',type:'line',source:'near',filter:['all',['==',['geometry-type'],'Polygon'],['!=',['get','k'],'b']],
+    paint:{'line-color':['get','col'],'line-width':['match',['get','k'],'z2',1.2,1.6],'line-opacity':['match',['get','k'],'z2',0.6,0.85],'line-dasharray':[3,2]}},before);
+  map.addLayer({id:'near-plot',type:'line',source:'near',filter:['==',['get','k'],'b'],paint:{'line-color':['get','col'],'line-width':1.6}},before);
   map.addLayer({id:'near-lbl',type:'symbol',source:'near',filter:['==',['geometry-type'],'Point'],
     layout:{'text-field':['get','label'],'text-font':['Noto Sans Bold'],'text-size':11,'text-allow-overlap':true},
     paint:{'text-color':'#15233f','text-halo-color':'#ffffff','text-halo-width':1.5}});
+  map.on('idle',nearBlocksSoon);
 }
+function nearTop(ring){var t=ring[0];ring.forEach(function(p){if(p[1]>t[1])t=p;});return t;}
 function nearDraw(){
   if(!map) return; nearLayers();
   var feats=[], lab=NEAR.r>=1000?(NEAR.r/1000)+' km':NEAR.r+' m';
   NEAR.markers.forEach(function(m){m.remove();}); NEAR.markers=[];
   NEAR.sel.forEach(function(it){
-    var c=nearCircle(it.lng,it.lat,NEAR.r);
-    feats.push({type:'Feature',geometry:{type:'Polygon',coordinates:[c]},properties:{col:it.col}});
-    feats.push({type:'Feature',geometry:{type:'Point',coordinates:c[0]},properties:{label:it.school?lab+' \u00b7 indicative':lab}});
+    if(it.zone){
+      [['z2','2 km \u00b7 P1'],['z1','1 km \u00b7 P1'],['b','']].forEach(function(z){
+        it.zone[z[0]].forEach(function(r){
+          feats.push({type:'Feature',geometry:{type:'Polygon',coordinates:[r]},properties:{col:it.col,k:z[0]}});
+          if(z[1]) feats.push({type:'Feature',geometry:{type:'Point',coordinates:nearTop(r)},properties:{label:z[1]}});
+        });
+      });
+    } else {
+      var c=nearCircle(it.lng,it.lat,NEAR.r);
+      feats.push({type:'Feature',geometry:{type:'Polygon',coordinates:[c]},properties:{col:it.col,k:'c'}});
+      feats.push({type:'Feature',geometry:{type:'Point',coordinates:c[0]},properties:{label:it.school?lab+' \u00b7 indicative':lab}});
+    }
     NEAR.markers.push(new maplibregl.Marker({color:it.col}).setLngLat([it.lng,it.lat])
-      .setPopup(new maplibregl.Popup({offset:24,closeButton:false}).setHTML('<b>'+esc(it.name)+'</b>'+(it.sub?'<br><span style="font-size:11px">'+esc(it.sub)+'</span>':'')+(it.school?'<br><span style="font-size:11px">Home-school distance: <a href="https://www.onemap.gov.sg/" target="_blank" rel="noopener">check OneMap SchoolQuery</a></span>':''))).addTo(map));
+      .setPopup(new maplibregl.Popup({offset:24,closeButton:false}).setHTML('<b>'+esc(it.name)+'</b>'+(it.sub?'<br><span style="font-size:11px">'+esc(it.sub)+'</span>':'')
+        +(it.zone?'<br><span style="font-size:11px">1 km and 2 km zones from the school\u2019s land plot (URA Master Plan 2019). Blocks touching each zone are shaded when zoomed in.</span>':'')
+        +(it.school?'<br><span style="font-size:11px">Home-school distance: <a href="https://www.onemap.gov.sg/" target="_blank" rel="noopener">check OneMap SchoolQuery</a></span>':''))).addTo(map));
   });
   map.getSource('near').setData({type:'FeatureCollection',features:feats});
+  nearBlocks();
+}
+/* Shade building footprints touching each selected primary school's 1 km zone (dark) or 1-2 km band (light).
+   Runs on loaded tiles (buildings exist from zoom 13-14); re-runs when the map goes idle. Vertex test:
+   a block counts if any corner of its outline falls inside the zone. */
+var _nbT=null;
+function nearBlocksSoon(){ clearTimeout(_nbT); _nbT=setTimeout(nearBlocks,120); }
+function nearPip(x,y,r){var c=false;for(var i=0,j=r.length-1;i<r.length;j=i++){var a=r[i],b=r[j];if(((a[1]>y)!==(b[1]>y))&&(x<(b[0]-a[0])*(y-a[1])/(b[1]-a[1])+a[0]))c=!c;}return c;}
+function nearBox(rs){var b=[1e9,1e9,-1e9,-1e9];rs.forEach(function(r){r.forEach(function(p){if(p[0]<b[0])b[0]=p[0];if(p[1]<b[1])b[1]=p[1];if(p[0]>b[2])b[2]=p[0];if(p[1]>b[3])b[3]=p[1];});});return b;}
+function nearBlocks(){
+  if(!map||!map.getSource('near-bldg')) return;
+  var zs=NEAR.sel.filter(function(it){return it.zone;}).map(function(it){
+    if(!it._bx){it._bx1=nearBox(it.zone.z1);it._bx=nearBox(it.zone.z2);} return it;});
+  var out=[];
+  if(zs.length&&map.getZoom()>=13){
+    var L=map.getLayer('pa-bldg-fill'), src=L&&L.source;
+    var fs=src?map.querySourceFeatures(src,{sourceLayer:'building'}):[];
+    for(var n=0;n<fs.length&&out.length<25000;n++){
+      var g=fs[n].geometry; if(!g) continue;
+      var polys=g.type==='Polygon'?[g.coordinates]:g.type==='MultiPolygon'?g.coordinates:null; if(!polys) continue;
+      var t=0;
+      for(var q=0;q<zs.length&&t!==1;q++){
+        var z=zs[q], bx=z._bx;
+        polys.forEach(function(pl){ pl[0].forEach(function(pt){
+          if(t===1||pt[0]<bx[0]||pt[0]>bx[2]||pt[1]<bx[1]||pt[1]>bx[3]) return;
+          if(z.zone.z1.some(function(r){return nearPip(pt[0],pt[1],r);})) t=1;
+          else if(!t&&z.zone.z2.some(function(r){return nearPip(pt[0],pt[1],r);})) t=2;
+        });});
+      }
+      if(t) out.push({type:'Feature',geometry:g,properties:{t:t}});
+    }
+  }
+  map.getSource('near-bldg').setData({type:'FeatureCollection',features:out});
 }
 function nearFit(){
   if(!map||!NEAR.sel.length) return;
-  var xs=[],ys=[]; NEAR.sel.forEach(function(it){nearCircle(it.lng,it.lat,NEAR.r).forEach(function(p){xs.push(p[0]);ys.push(p[1]);});});
+  var xs=[],ys=[]; NEAR.sel.forEach(function(it){
+    var pts=it.zone?[].concat.apply([],it.zone.z2):nearCircle(it.lng,it.lat,NEAR.r);
+    pts.forEach(function(p){xs.push(p[0]);ys.push(p[1]);});});
   var open=document.getElementById('nearDrawer').classList.contains('show')&&window.innerWidth>700;
   map.fitBounds([[Math.min.apply(null,xs),Math.min.apply(null,ys)],[Math.max.apply(null,xs),Math.max.apply(null,ys)]],
     {padding:{top:60,bottom:40,left:40,right:open?370:40},maxZoom:16,duration:800});
@@ -2338,7 +2398,7 @@ function init(){
   map=new maplibregl.Map({
     container:'map',
     style:'https://tiles.openfreemap.org/styles/positron',
-    center:[103.82,1.345],zoom:10.6,attributionControl:{customAttribution:'Stations &amp; exits: LTA · Schools: MOE · Places: OneMap/SLA'}
+    center:[103.82,1.345],zoom:10.6,attributionControl:{customAttribution:'Stations &amp; exits: LTA · Schools: MOE · School plots: URA MP2019 · Places: OneMap/SLA'}
   });
   map.addControl(new maplibregl.NavigationControl({showCompass:false}),'top-left');
   var _is3D=false;
@@ -2346,6 +2406,7 @@ function init(){
   map.addControl(pitchCtrl,'top-left');
   hoverPopup=new maplibregl.Popup({closeButton:false,closeOnClick:false,offset:10});
   map.on('load',()=>{
+    /* v9.9.33 (S404): primary-school P1 zones (1 km / 2 km from URA MP2019 school plots, /assets/p1_zones.json) + block shading. */
     /* v9.9.32 (S404): school rings labelled indicative + OneMap SchoolQuery pointer; 'Landmark' renamed 'MRT, school or place'. */
     /* v9.9.31 (S404): Near drawer (MRT by line / Schools / Places) + LTA station exits at z16+. */
     /* v9.9.30 (S404): Near a landmark (Filters) — see NEAR module. */
