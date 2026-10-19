@@ -491,7 +491,7 @@ body{background:var(--bg);color:var(--txt);font-family:Inter,system-ui,-apple-sy
         <div class="chip" data-tenure="30-yr">30-yr</div>
         <div class="chip" data-tenure="Other">Other</div>
       </div></div>
-      <div class="fgroup"><div class="lbl">Near</div><button class="loc-tog" type="button" onclick="nearOpen()">Landmark<span class="loc-cur" id="sNearCur"></span><span class="loc-car">&#9656;</span></button></div>
+      <div class="fgroup"><div class="lbl">Near</div><button class="loc-tog" type="button" onclick="nearOpen()">MRT, school or place<span class="loc-cur" id="sNearCur"></span><span class="loc-car">&#9656;</span></button></div>
       <div class="fgroup"><div class="lbl">Location</div>
       <div class="loc-row">
         <button class="loc-tog" id="regTog" onclick="toggleLoc('reg')">Region<span class="loc-cur" id="regCur"></span><span class="loc-car">&#9656;</span></button>
@@ -586,7 +586,7 @@ body{background:var(--bg);color:var(--txt);font-family:Inter,system-ui,-apple-sy
         <div class="chip" data-tenure="30-yr">30-yr</div>
         <div class="chip" data-tenure="Other">Other</div>
       </div></div>
-      <div class="fgroup"><div class="lbl">Near</div><button class="loc-tog" type="button" onclick="nearOpen()">Landmark<span class="loc-cur" id="mNearCur"></span><span class="loc-car">&#9656;</span></button></div>
+      <div class="fgroup"><div class="lbl">Near</div><button class="loc-tog" type="button" onclick="nearOpen()">MRT, school or place<span class="loc-cur" id="mNearCur"></span><span class="loc-car">&#9656;</span></button></div>
       <div class="fgroup"><div class="lbl">Location</div>
       <button class="mt-morelink" id="mtMoreLink">Region &amp; District →</button></div>
     </div>
@@ -1532,7 +1532,7 @@ function nearRender(){
     });
     h=h||'<div class="nd-note">No school matches.</div>';
     if(n>250) h+='<div class="nd-note">Showing 250 of '+n+'. Type to narrow.</div>';
-    h+='<div class="nd-note">Schools: MOE, data.gov.sg. 1 km and 2 km are the Primary 1 registration distances.</div>';
+    h+='<div class="nd-note">Rings are drawn from the school\u2019s location and are <b>indicative</b>. For Primary 1 registration, MOE measures from the school\u2019s land boundary to the home\u2019s building \u2014 confirm on <a href="https://www.onemap.gov.sg/" target="_blank" rel="noopener">OneMap SchoolQuery</a>. Schools: MOE, data.gov.sg.</div>';
   } else {
     if(!q) h='<div class="nd-note">Type a building, mall, park or 6-digit postal code.</div>';
     else if(NEAR.plc===null) h='<div class="nd-note">Places search is unavailable right now. Stations and schools still work.</div>';
@@ -1551,7 +1551,7 @@ async function nearToggle(key){
     var lng=sc[2],lat=sc[3];
     if(lng==null){ var om=await nearOneMap(sc[4]); if(om&&om.length){lng=om[0].lng;lat=om[0].lat;sc[2]=lng;sc[3]=lat;} }
     if(lng==null){ var nt2=document.getElementById('ndNote'); if(nt2) nt2.textContent='Location for this school is not available yet'; return; }
-    it={key:key,name:sc[0],lng:lng,lat:lat,col:'#2E7D32',sub:(NEAR_LVN[sc[1]]||'')+(sc[5]?' \u00b7 '+sc[5]:'')}; }
+    it={key:key,name:sc[0],lng:lng,lat:lat,col:'#2E7D32',school:1,sub:(NEAR_LVN[sc[1]]||'')+(sc[5]?' \u00b7 '+sc[5]:'')}; }
   else { var x=NEAR.plc[+key.split('|').pop()]; if(!x) return; it={key:key,name:x.name,lng:x.lng,lat:x.lat,col:'#C8912A',sub:x.sub}; }
   NEAR.sel.push(it); nearAfter();
 }
@@ -1572,9 +1572,9 @@ function nearDraw(){
   NEAR.sel.forEach(function(it){
     var c=nearCircle(it.lng,it.lat,NEAR.r);
     feats.push({type:'Feature',geometry:{type:'Polygon',coordinates:[c]},properties:{col:it.col}});
-    feats.push({type:'Feature',geometry:{type:'Point',coordinates:c[0]},properties:{label:lab}});
+    feats.push({type:'Feature',geometry:{type:'Point',coordinates:c[0]},properties:{label:it.school?lab+' \u00b7 indicative':lab}});
     NEAR.markers.push(new maplibregl.Marker({color:it.col}).setLngLat([it.lng,it.lat])
-      .setPopup(new maplibregl.Popup({offset:24,closeButton:false}).setHTML('<b>'+esc(it.name)+'</b>'+(it.sub?'<br><span style="font-size:11px">'+esc(it.sub)+'</span>':''))).addTo(map));
+      .setPopup(new maplibregl.Popup({offset:24,closeButton:false}).setHTML('<b>'+esc(it.name)+'</b>'+(it.sub?'<br><span style="font-size:11px">'+esc(it.sub)+'</span>':'')+(it.school?'<br><span style="font-size:11px">Home-school distance: <a href="https://www.onemap.gov.sg/" target="_blank" rel="noopener">check OneMap SchoolQuery</a></span>':''))).addTo(map));
   });
   map.getSource('near').setData({type:'FeatureCollection',features:feats});
 }
@@ -2346,6 +2346,7 @@ function init(){
   map.addControl(pitchCtrl,'top-left');
   hoverPopup=new maplibregl.Popup({closeButton:false,closeOnClick:false,offset:10});
   map.on('load',()=>{
+    /* v9.9.32 (S404): school rings labelled indicative + OneMap SchoolQuery pointer; 'Landmark' renamed 'MRT, school or place'. */
     /* v9.9.31 (S404): Near drawer (MRT by line / Schools / Places) + LTA station exits at z16+. */
     /* v9.9.30 (S404): Near a landmark (Filters) — see NEAR module. */
     /* v9.9.29 (S404): building footprints visible at street level, URA-Space style; 3D button extrudes them. */
