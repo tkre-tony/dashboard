@@ -1078,7 +1078,8 @@ async function loadResBuildingPins(seq){
     if(fDist) body.p_district=fDist;
     if(fQ){ const q=fQ.replace(/[%_\\]/g,' ').trim(); if(q) body.p_q=q; }
     const r=await fetch(base+'/rest/v1/rpc/nonlanded_pins',{method:'POST',headers:{'Content-Type':'application/json','apikey':SUPA_ANON,'Authorization':'Bearer '+SUPA_ANON},body:JSON.stringify(body)});
-    if(!r.ok || seq!==cavSeq) return;
+    if(seq!==cavSeq) return;
+    if(!r.ok){ resPinsFailed(); return; }
     const rows=await r.json();
     if(seq!==cavSeq) return;
     const bt=(fSeg==='ec')?'Executive Condominium':(fLType!=='all'?fLType:'Condominium');
@@ -1086,7 +1087,12 @@ async function loadResBuildingPins(seq){
       addr:b.address||'',blk:String(b.address||'').replace(/\s*#.*$/,''),pc:b.postal_code,t:bt,pr:b.latest_price,psf:b.median_psf,maxp:b.max_price,
       cnt:Number(b.n)||0,sd:fmtSD(b.latest_date),sdRaw:b.latest_date}));
     landedPinsToMap();
-  }catch(e){ /* map enhancement only */ }
+  }catch(e){ if(seq===cavSeq) resPinsFailed(); }
+}
+/* v9.9.37 (S404): a failed pin load used to leave the previous search's pins on the map. Clear them and say so. */
+function resPinsFailed(){
+  LANDED_PINS=[]; landedPinsToMap();
+  var c=document.getElementById('count'); if(c&&c.textContent.indexOf('map pins')<0) c.textContent+=' \u00b7 map pins unavailable for this period \u2014 try a shorter one';
 }
 function selectResPin(i){
   const b=LANDED_PINS[i]; if(!b) return;
@@ -2509,7 +2515,7 @@ function init(){
           'text-size':['interpolate',['linear'],['zoom'],12.5,9,16,12],
           'text-offset':[0,0.85],'text-anchor':'top','text-optional':true,'text-allow-overlap':false},
         paint:{'text-color':'#33425a','text-halo-color':'#ffffff','text-halo-width':1.4}});
-      /* v9.9.36 (S404): zoning on => building fill off (outlines only); single 'Zoning: URA MP2025' credit. v9.9.35 (S404): plain z10-15 tile folder assets/mp25/{z}/{x}/{y}.pbf replaces the pmtiles file (range requests failed on our host). v9.9.34: URA Master Plan 2025 land use ( layer 'lu': u = zoning index, g = GPR). Off by default. */
+      /* v9.9.37 (S404): failed residential pin load clears stale pins + note. v9.9.36 (S404): zoning on => building fill off (outlines only); single 'Zoning: URA MP2025' credit. v9.9.35 (S404): plain z10-15 tile folder assets/mp25/{z}/{x}/{y}.pbf replaces the pmtiles file (range requests failed on our host). v9.9.34: URA Master Plan 2025 land use ( layer 'lu': u = zoning index, g = GPR). Off by default. */
       try{
         map.addSource('mp25',{type:'vector',tiles:[location.origin+'/assets/mp25/{z}/{x}/{y}.pbf'],minzoom:10,maxzoom:15,bounds:[103.6057,1.1586,104.4104,1.4708],attribution:'Zoning: URA MP2025'});
         var _mpCol=['match',['get','u']]; PA_LU.forEach(function(x,i){ if(x[1]){_mpCol.push(i,x[1]);} }); _mpCol.push('rgba(0,0,0,0)');
