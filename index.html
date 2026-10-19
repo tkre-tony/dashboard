@@ -1077,11 +1077,18 @@ async function loadResBuildingPins(seq){
     if(fRegion) body.p_region=regionToDb(fRegion);
     if(fDist) body.p_district=fDist;
     if(fQ){ const q=fQ.replace(/[%_\\]/g,' ').trim(); if(q) body.p_q=q; }
-    const r=await fetch(base+'/rest/v1/rpc/nonlanded_pins',{method:'POST',headers:{'Content-Type':'application/json','apikey':SUPA_ANON,'Authorization':'Bearer '+SUPA_ANON},body:JSON.stringify(body)});
-    if(seq!==cavSeq) return;
-    if(!r.ok){ resPinsFailed(); return; }
-    const rows=await r.json();
-    if(seq!==cavSeq) return;
+    /* v9.9.38 (S404): the API returns at most 1,000 rows per call, so page through the pins (ordered by postal code). */
+    let rows=[];
+    for(let off=0, pg=0; pg<20; pg++, off+=1000){
+      const r=await fetch(base+'/rest/v1/rpc/nonlanded_pins?order=postal_code&limit=1000&offset='+off,{method:'POST',headers:{'Content-Type':'application/json','apikey':SUPA_ANON,'Authorization':'Bearer '+SUPA_ANON},body:JSON.stringify(body)});
+      if(seq!==cavSeq) return;
+      if(!r.ok){ if(!rows.length){ resPinsFailed(); return; } break; }
+      const part=await r.json();
+      if(seq!==cavSeq) return;
+      if(!Array.isArray(part)||!part.length) break;
+      rows=rows.concat(part);
+      if(part.length<1000) break;
+    }
     const bt=(fSeg==='ec')?'Executive Condominium':(fLType!=='all'?fLType:'Condominium');
     LANDED_PINS=(rows||[]).map(b=>({bld:1,lat:Number(b.lat),lng:Number(b.lng),nomap:false,n:(b.project_name&&b.project_name!=='N.A.')?b.project_name:'N.A.',
       addr:b.address||'',blk:String(b.address||'').replace(/\s*#.*$/,''),pc:b.postal_code,t:bt,pr:b.latest_price,psf:b.median_psf,maxp:b.max_price,
@@ -2515,7 +2522,7 @@ function init(){
           'text-size':['interpolate',['linear'],['zoom'],12.5,9,16,12],
           'text-offset':[0,0.85],'text-anchor':'top','text-optional':true,'text-allow-overlap':false},
         paint:{'text-color':'#33425a','text-halo-color':'#ffffff','text-halo-width':1.4}});
-      /* v9.9.37 (S404): failed residential pin load clears stale pins + note. v9.9.36 (S404): zoning on => building fill off (outlines only); single 'Zoning: URA MP2025' credit. v9.9.35 (S404): plain z10-15 tile folder assets/mp25/{z}/{x}/{y}.pbf replaces the pmtiles file (range requests failed on our host). v9.9.34: URA Master Plan 2025 land use ( layer 'lu': u = zoning index, g = GPR). Off by default. */
+      /* v9.9.38 (S404): non-landed pins paged 1,000 at a time (API row cap left only postal 0x-3x on the map). v9.9.37 (S404): failed residential pin load clears stale pins + note. v9.9.36 (S404): zoning on => building fill off (outlines only); single 'Zoning: URA MP2025' credit. v9.9.35 (S404): plain z10-15 tile folder assets/mp25/{z}/{x}/{y}.pbf replaces the pmtiles file (range requests failed on our host). v9.9.34: URA Master Plan 2025 land use ( layer 'lu': u = zoning index, g = GPR). Off by default. */
       try{
         map.addSource('mp25',{type:'vector',tiles:[location.origin+'/assets/mp25/{z}/{x}/{y}.pbf'],minzoom:10,maxzoom:15,bounds:[103.6057,1.1586,104.4104,1.4708],attribution:'Zoning: URA MP2025'});
         var _mpCol=['match',['get','u']]; PA_LU.forEach(function(x,i){ if(x[1]){_mpCol.push(i,x[1]);} }); _mpCol.push('rgba(0,0,0,0)');
