@@ -34,6 +34,20 @@
 </script>
 <link rel="stylesheet" href="./maplibre-gl.css"/>
 <style>
+/* v9.9.30 (S404): Near a landmark */
+.near-g{flex-wrap:nowrap!important}
+.near-wrap{position:relative;flex:1 1 auto;min-width:0}
+.near-wrap input{width:100%;padding:6px 26px 6px 9px;border:1px solid var(--bdr);border-radius:7px;background:var(--srf);color:var(--txt);font:inherit;font-size:13px}
+.near-wrap input:focus{outline:none;border-color:var(--g1)}
+.near-x{position:absolute;right:5px;top:50%;transform:translateY(-50%);border:0;background:none;cursor:pointer;color:var(--mut);font-size:15px;line-height:1;padding:2px 4px;display:none}
+.near-wrap.has .near-x{display:block}
+.near-list{position:absolute;left:0;right:0;top:calc(100% + 3px);background:var(--srf);border:1px solid var(--bdr);border-radius:8px;box-shadow:0 8px 22px rgba(0,0,0,.14);max-height:300px;overflow:auto;z-index:700;display:none}
+.near-list.show{display:block}
+.near-item{padding:7px 10px;cursor:pointer;font-size:13px;line-height:1.3;border-bottom:1px solid var(--srf2)}
+.near-item:last-child{border-bottom:0}
+.near-item small{display:block;color:var(--mut);font-size:11px;margin-top:1px}
+.near-item:hover,.near-item.on{background:var(--srf2)}
+.near-note{padding:8px 10px;font-size:12px;color:var(--mut)}
 :root{--bg:#FAF7F0;--srf:#FFFCF5;--srf2:#F5EFE0;--bdr:#E8DFC8;--txt:#111827;--mut:#6B5B3E;--g1:#1a4f9c;--gold:#C8912A;--serif:Georgia,"Times New Roman",serif;--navy:#15233f;}
 *{box-sizing:border-box;margin:0}
 body{background:var(--bg);color:var(--txt);font-family:Inter,system-ui,-apple-system,sans-serif;font-size:14px}
@@ -452,6 +466,7 @@ body{background:var(--bg);color:var(--txt);font-family:Inter,system-ui,-apple-sy
         <div class="chip" data-tenure="30-yr">30-yr</div>
         <div class="chip" data-tenure="Other">Other</div>
       </div></div>
+      <div class="fgroup near-g"><div class="lbl">Near</div><div class="near-wrap" id="sNearWrap"><input id="sNearQ" placeholder="MRT, school, building or postal code" autocomplete="off" aria-label="Near a landmark"/><button class="near-x" type="button" aria-label="Clear landmark" onclick="nearClear()">×</button><div class="near-list" id="sNearList"></div></div></div>
       <div class="fgroup"><div class="lbl">Location</div>
       <div class="loc-row">
         <button class="loc-tog" id="regTog" onclick="toggleLoc('reg')">Region<span class="loc-cur" id="regCur"></span><span class="loc-car">&#9656;</span></button>
@@ -545,6 +560,7 @@ body{background:var(--bg);color:var(--txt);font-family:Inter,system-ui,-apple-sy
         <div class="chip" data-tenure="30-yr">30-yr</div>
         <div class="chip" data-tenure="Other">Other</div>
       </div></div>
+      <div class="fgroup near-g"><div class="lbl">Near</div><div class="near-wrap" id="mNearWrap"><input id="mNearQ" placeholder="MRT, school, building or postal code" autocomplete="off" aria-label="Near a landmark"/><button class="near-x" type="button" aria-label="Clear landmark" onclick="nearClear()">×</button><div class="near-list" id="mNearList"></div></div></div>
       <div class="fgroup"><div class="lbl">Location</div>
       <button class="mt-morelink" id="mtMoreLink">Region &amp; District →</button></div>
     </div>
@@ -1410,6 +1426,91 @@ function toggleLoc(which){
   if(which==='reg'){const open=rp.style.display==='none';rp.style.display=open?'flex':'none';rt.classList.toggle('open',open);dp.style.display='none';dt.classList.remove('open');}
   else{const open=dp.style.display==='none';dp.style.display=open?'flex':'none';dt.classList.toggle('open',open);rp.style.display='none';rt.classList.remove('open');}
 }
+/* v9.9.30 (S404): Near a landmark. Stations from PA_MRT; everything else (schools, buildings, malls, parks,
+   postal codes) from OneMap search (SLA). Picking one flies the map there with 500 m and 1 km rings.
+   Map-only: it does not filter the caveat list (step 2 needs a radius parameter on the search RPC). */
+var NEAR={seq:0,items:[],act:-1,marker:null,cur:null,box:null};
+function nearCircle(lng,lat,r){var c=[],k=Math.cos(lat*Math.PI/180);for(var i=0;i<=64;i++){var a=i/64*2*Math.PI;c.push([lng+r*Math.sin(a)/(111320*k),lat+r*Math.cos(a)/110574]);}return c;}
+function nearTitle(t){return String(t||'').toLowerCase().replace(/\b([a-z])/g,function(m){return m.toUpperCase();}).replace(/\bMrt\b/g,'MRT').replace(/\bLrt\b/g,'LRT');}
+function nearStations(q){
+  var rows=window.PA_MRT||[],out=[];
+  rows.forEach(function(r){var n=r[0].toLowerCase(),i=n.indexOf(q);if(i<0&&(n+' mrt').indexOf(q)<0)return;
+    out.push({rank:i===0?0:1,name:r[0]+(/^(BP|SK|PW|PE)$/.test(r[3])?' LRT':' MRT'),sub:'Station \u00b7 '+r[3],lng:r[1],lat:r[2]});});
+  out.sort(function(a,b){return a.rank-b.rank||a.name.localeCompare(b.name);});
+  return out.slice(0,5);
+}
+async function nearOneMap(q){
+  try{
+    var r=await fetch('https://www.onemap.gov.sg/api/common/elastic/search?searchVal='+encodeURIComponent(q)+'&returnGeom=Y&getAddrDetails=Y&pageNum=1');
+    if(!r.ok) return null; var j=await r.json();
+    return (j.results||[]).filter(function(x){return !/ MRT STATION| LRT STATION/.test(x.SEARCHVAL||'');}).slice(0,8).map(function(x){
+      var b=(x.BUILDING&&x.BUILDING!=='NIL')?x.BUILDING:x.SEARCHVAL;
+      return {name:nearTitle(b),sub:nearTitle(x.ADDRESS||''),lat:+x.LATITUDE,lng:+x.LONGITUDE};});
+  }catch(e){ return null; }
+}
+function nearRender(note){
+  var el=document.getElementById(NEAR.box+'NearList'); if(!el) return;
+  if(!NEAR.items.length){el.innerHTML=note?'<div class="near-note">'+note+'</div>':'';el.classList.toggle('show',!!note);return;}
+  el.innerHTML=NEAR.items.map(function(it,i){return '<div class="near-item'+(i===NEAR.act?' on':'')+'" data-i="'+i+'">'+esc(it.name)+(it.sub?'<small>'+esc(it.sub)+'</small>':'')+'</div>';}).join('')+(note?'<div class="near-note">'+note+'</div>':'');
+  el.classList.add('show');
+  el.querySelectorAll('.near-item').forEach(function(d){d.onmousedown=function(e){e.preventDefault();nearGo(NEAR.items[+d.dataset.i]);};});
+}
+function nearHide(){['s','m'].forEach(function(p){var el=document.getElementById(p+'NearList');if(el)el.classList.remove('show');});}
+async function nearSearch(pre,q){
+  NEAR.box=pre; q=q.trim().toLowerCase(); var seq=++NEAR.seq; NEAR.act=-1;
+  if(q.length<2){NEAR.items=[];nearRender('');return;}
+  NEAR.items=nearStations(q); nearRender('Searching\u2026');
+  var om=await nearOneMap(q); if(seq!==NEAR.seq) return;
+  var seen={}; NEAR.items.forEach(function(x){seen[x.name.toLowerCase()]=1;});
+  (om||[]).forEach(function(x){var k=x.name.toLowerCase();if(!seen[k]&&isFinite(x.lat)&&isFinite(x.lng)){seen[k]=1;NEAR.items.push(x);}});
+  NEAR.items=NEAR.items.slice(0,10);
+  nearRender(om===null?'Places search unavailable \u2014 showing stations only.':(NEAR.items.length?'Places by OneMap \u00a9 Singapore Land Authority':'No match. Try a building name or a 6-digit postal code.'));
+}
+function nearLayers(){
+  if(map.getSource('near')) return;
+  map.addSource('near',{type:'geojson',data:{type:'FeatureCollection',features:[]}});
+  var before=map.getLayer('cav-pts')?'cav-pts':undefined;
+  map.addLayer({id:'near-ring',type:'line',source:'near',filter:['==',['geometry-type'],'LineString'],
+    paint:{'line-color':'#15233f','line-width':1.4,'line-opacity':0.7,'line-dasharray':[3,2]}},before);
+  map.addLayer({id:'near-lbl',type:'symbol',source:'near',filter:['==',['geometry-type'],'Point'],
+    layout:{'text-field':['get','label'],'text-font':['Noto Sans Bold'],'text-size':11,'text-allow-overlap':true},
+    paint:{'text-color':'#15233f','text-halo-color':'#ffffff','text-halo-width':1.5}});
+}
+function nearGo(it){
+  if(!it||!map) return; nearHide(); NEAR.cur=it;
+  ['s','m'].forEach(function(p){var i=document.getElementById(p+'NearQ'),w=document.getElementById(p+'NearWrap');if(i)i.value=it.name;if(w)w.classList.add('has');});
+  nearLayers();
+  var feats=[];
+  [[500,'500 m'],[1000,'1 km']].forEach(function(r){var c=nearCircle(it.lng,it.lat,r[0]);
+    feats.push({type:'Feature',geometry:{type:'LineString',coordinates:c},properties:{}});
+    feats.push({type:'Feature',geometry:{type:'Point',coordinates:c[0]},properties:{label:r[1]}});});
+  map.getSource('near').setData({type:'FeatureCollection',features:feats});
+  if(NEAR.marker) NEAR.marker.remove();
+  NEAR.marker=new maplibregl.Marker({color:'#C8912A'}).setLngLat([it.lng,it.lat])
+    .setPopup(new maplibregl.Popup({offset:24,closeButton:false}).setHTML('<b>'+esc(it.name)+'</b>'+(it.sub?'<br><span style="font-size:11px">'+esc(it.sub)+'</span>':''))).addTo(map);
+  var c=nearCircle(it.lng,it.lat,1000),xs=c.map(function(p){return p[0];}),ys=c.map(function(p){return p[1];});
+  map.fitBounds([[Math.min.apply(null,xs),Math.min.apply(null,ys)],[Math.max.apply(null,xs),Math.max.apply(null,ys)]],{padding:40,maxZoom:16,duration:900});
+}
+function nearClear(){
+  NEAR.cur=null; NEAR.items=[]; nearHide();
+  if(NEAR.marker){NEAR.marker.remove();NEAR.marker=null;}
+  if(map&&map.getSource('near')) map.getSource('near').setData({type:'FeatureCollection',features:[]});
+  ['s','m'].forEach(function(p){var i=document.getElementById(p+'NearQ'),w=document.getElementById(p+'NearWrap');if(i)i.value='';if(w)w.classList.remove('has');});
+}
+(function(){
+  ['s','m'].forEach(function(pre){
+    var inp=document.getElementById(pre+'NearQ'); if(!inp) return; var t;
+    inp.addEventListener('input',function(){var w=document.getElementById(pre+'NearWrap');if(w)w.classList.toggle('has',!!inp.value);clearTimeout(t);t=setTimeout(function(){nearSearch(pre,inp.value);},250);});
+    inp.addEventListener('keydown',function(e){
+      if(NEAR.box!==pre) return;
+      if(e.key==='ArrowDown'&&NEAR.items.length){e.preventDefault();NEAR.act=(NEAR.act+1)%NEAR.items.length;nearRender();}
+      else if(e.key==='ArrowUp'&&NEAR.items.length){e.preventDefault();NEAR.act=(NEAR.act-1+NEAR.items.length)%NEAR.items.length;nearRender();}
+      else if(e.key==='Enter'){e.preventDefault();nearGo(NEAR.items[NEAR.act>=0?NEAR.act:0]);}
+      else if(e.key==='Escape'){nearHide();}
+    });
+    inp.addEventListener('blur',function(){setTimeout(nearHide,150);});
+  });
+})();
 function syncLocCur(){
   document.getElementById('regCur').textContent=fRegion?(' \u00b7 '+fRegion):'';
   document.getElementById('distCur').textContent=fDist?(' \u00b7 D'+fDist):'';
@@ -2143,6 +2244,7 @@ function init(){
   map.addControl(pitchCtrl,'top-left');
   hoverPopup=new maplibregl.Popup({closeButton:false,closeOnClick:false,offset:10});
   map.on('load',()=>{
+    /* v9.9.30 (S404): Near a landmark (Filters) — see NEAR module. */
     /* v9.9.29 (S404): building footprints visible at street level, URA-Space style; 3D button extrudes them. */
     try{
       var _bl=map.getStyle().layers, _bsrc=null, _firstSym=null;
@@ -2198,6 +2300,7 @@ function init(){
 
       // MRT/LRT reference layer (189 stations, baked) — context beneath the data dots
       const MRT_ROWS=[["Admiralty",103.801,1.4406,"NS"],["Aljunied",103.8827,1.3163,"EW"],["Ang Mo Kio",103.8495,1.3701,"NS"],["Bakau",103.9055,1.388,"SK"],["Bangkit",103.7726,1.3801,"BP"],["Bartley",103.8804,1.3424,"CC"],["Bayfront",103.8597,1.2825,"CC/DT"],["Bayshore",103.9423,1.3131,"TE"],["Beauty World",103.7759,1.3417,"DT"],["Bedok",103.93,1.3239,"EW"],["Bedok North",103.918,1.3348,"DT"],["Bedok Reservoir",103.9319,1.3363,"DT"],["Bencoolen",103.8504,1.2989,"DT"],["Bendemeer",103.8631,1.3136,"DT"],["Bishan",103.8483,1.3515,"NS/CC"],["Boon Keng",103.8615,1.3198,"NE"],["Boon Lay",103.7058,1.3385,"EW"],["Botanic Gardens",103.8157,1.3226,"CC/DT"],["Braddell",103.8468,1.3406,"NS"],["Bras Basah",103.8505,1.2969,"CC"],["Bright Hill",103.8328,1.3634,"TE"],["Buangkok",103.8931,1.3831,"NE"],["Bugis",103.8561,1.3005,"EW/DT"],["Bukit Batok",103.7496,1.3491,"NS"],["Bukit Gombak",103.7518,1.3589,"NS"],["Bukit Panjang",103.7621,1.3783,"DT/BP"],["Buona Vista",103.7907,1.3073,"EW/CC"],["Caldecott",103.84,1.3377,"CC/TE"],["Canberra",103.8295,1.4434,"NS"],["Cantonment",103.837,1.2731,"CC"],["Cashew",103.7645,1.3697,"DT"],["Changi Airport",103.9886,1.3573,"CG"],["Cheng Lim",103.8937,1.3963,"SK"],["Chinatown",103.844,1.285,"NE/DT"],["Chinese Garden",103.7326,1.3425,"EW"],["Choa Chu Kang",103.7445,1.3847,"NS/BP"],["City Hall",103.8518,1.2932,"NS/EW"],["Clarke Quay",103.8469,1.289,"NE"],["Clementi",103.7652,1.3151,"EW"],["Commonwealth",103.7983,1.3024,"EW"],["Compassvale",103.9004,1.3945,"SK"],["Coral Edge",103.9126,1.3939,"PE"],["Cove",103.9059,1.3995,"PE"],["Dakota",103.8883,1.3084,"CC"],["Damai",103.9086,1.4053,"PE"],["Dhoby Ghaut",103.845,1.2988,"NS/NE/CC"],["Dover",103.7786,1.3114,"EW"],["Downtown",103.8533,1.2792,"DT"],["Esplanade",103.856,1.2933,"CC"],["Eunos",103.9031,1.3198,"EW"],["Expo",103.9622,1.3356,"DT/CG"],["Fajar",103.7708,1.3845,"BP"],["Farmway",103.8892,1.3972,"SK"],["Farrer Park",103.8544,1.3127,"NE"],["Farrer Road",103.8078,1.3176,"CC"],["Fernvale",103.8763,1.3919,"SK"],["Fort Canning",103.8442,1.2924,"DT"],["Gardens by the Bay",103.8681,1.2795,"TE"],["Geylang Bahru",103.872,1.3216,"DT"],["Great World",103.8335,1.2946,"TE"],["Gul Circle",103.6604,1.3194,"EW"],["HarbourFront",103.8224,1.2654,"NE/CC"],["Havelock",103.8337,1.2875,"TE"],["Haw Par Villa",103.7818,1.2827,"CC"],["Hillview",103.7671,1.3625,"DT"],["Holland Village",103.7957,1.3121,"CC"],["Hougang",103.8928,1.3719,"NE"],["Hume",103.7692,1.3543,"DT"],["Jalan Besar",103.8552,1.3051,"DT"],["Jelapang",103.7645,1.3867,"BP"],["Joo Koon",103.6783,1.3277,"EW"],["Jurong East",103.7423,1.3331,"NS/EW"],["Kadaloor",103.9164,1.3996,"PE"],["Kaki Bukit",103.9086,1.335,"DT"],["Kallang",103.8713,1.3114,"EW"],["Kangkar",103.9022,1.3839,"SK"],["Katong Park",103.8862,1.2978,"TE"],["Keat Hong",103.749,1.3786,"BP"],["Kembangan",103.9128,1.3211,"EW"],["Kent Ridge",103.7844,1.2933,"CC"],["Keppel",103.8307,1.2704,"CC"],["Khatib",103.833,1.4173,"NS"],["King Albert Park",103.7842,1.3357,"DT"],["Kovan",103.8849,1.36,"NE"],["Kranji",103.762,1.4252,"NS"],["Kupang",103.8812,1.3982,"SK"],["Labrador Park",103.8028,1.2723,"CC"],["Lakeside",103.7208,1.3443,"EW"],["Lavender",103.863,1.3074,"EW"],["Layar",103.8801,1.3921,"SK"],["Lentor",103.8366,1.3847,"TE"],["Little India",103.8493,1.3066,"NE/DT"],["Lorong Chuan",103.8634,1.3515,"CC"],["MacPherson",103.8901,1.3267,"CC/DT"],["Marina Bay",103.8548,1.2752,"NS/CC/TE"],["Marina South Pier",103.8627,1.2717,"NS"],["Marine Parade",103.905,1.3026,"TE"],["Marine Terrace",103.9151,1.3067,"TE"],["Marsiling",103.7742,1.4325,"NS"],["Marymount",103.8392,1.3486,"CC"],["Mattar",103.883,1.327,"DT"],["Maxwell",103.844,1.2807,"TE"],["Mayflower",103.8368,1.3722,"TE"],["Meridian",103.9089,1.397,"PE"],["Mountbatten",103.8825,1.3062,"CC"],["Napier",103.819,1.3071,"TE"],["Newton",103.8389,1.313,"NS/DT"],["Nibong",103.9003,1.4118,"PW"],["Nicoll Highway",103.8635,1.2997,"CC"],["Novena",103.8435,1.3201,"NS"],["Oasis",103.9127,1.4023,"PE"],["Orchard",103.832,1.3032,"NS/TE"],["Orchard Boulevard",103.824,1.3024,"TE"],["Outram Park",103.8402,1.2807,"EW/NE/TE"],["Pasir Panjang",103.7916,1.2762,"CC"],["Pasir Ris",103.9493,1.373,"EW"],["Paya Lebar",103.8923,1.318,"EW/CC"],["Pending",103.7713,1.3762,"BP"],["Petir",103.7666,1.3778,"BP"],["Phoenix",103.758,1.3786,"BP"],["Pioneer",103.6974,1.3376,"EW"],["Potong Pasir",103.8691,1.3313,"NE"],["Prince Edward Road",103.8474,1.2733,"CC"],["Promenade",103.8602,1.2939,"CC/DT"],["Punggol",103.9024,1.4053,"NE/PW/PE"],["Punggol Coast",103.9103,1.415,"NE"],["Punggol Point",103.9067,1.4168,"PW"],["Queenstown",103.8061,1.2946,"EW"],["Raffles Place",103.8515,1.2844,"NS/EW"],["Ranggung",103.8973,1.384,"SK"],["Redhill",103.8168,1.2897,"EW"],["Renjong",103.8905,1.3867,"SK"],["Riviera",103.9161,1.3946,"PE"],["Rochor",103.8526,1.304,"DT"],["Rumbia",103.9059,1.3915,"SK"],["Sam Kee",103.9046,1.4098,"PW"],["Samudera",103.9022,1.416,"PW"],["Segar",103.7696,1.3878,"BP"],["Sembawang",103.8201,1.4491,"NS"],["Sengkang",103.8953,1.3913,"NE/SK"],["Senja",103.7624,1.3827,"BP"],["Serangoon",103.8738,1.3498,"NE/CC"],["Shenton Way",103.8505,1.2777,"TE"],["Siglap",103.93,1.31,"TE"],["Simei",103.9534,1.3432,"EW"],["Sixth Avenue",103.7972,1.3306,"DT"],["Somerset",103.8385,1.3003,"NS"],["Soo Teck",103.8972,1.4054,"PW"],["South View",103.7453,1.3803,"BP"],["Springleaf",103.8179,1.3978,"TE"],["Stadium",103.8754,1.3029,"CC"],["Stevens",103.8255,1.3202,"DT/TE"],["Sumang",103.8985,1.4085,"PW"],["Tai Seng",103.8881,1.3349,"CC"],["Tampines",103.9451,1.3534,"EW/DT"],["Tampines East",103.955,1.3561,"DT"],["Tampines West",103.9386,1.3455,"DT"],["Tan Kah Kee",103.8078,1.3257,"DT"],["Tanah Merah",103.9465,1.3273,"EW/CG"],["Tanjong Katong",103.8974,1.2993,"TE"],["Tanjong Pagar",103.8459,1.2766,"EW"],["Tanjong Rhu",103.8735,1.2973,"TE"],["Teck Lee",103.9067,1.4127,"PW"],["Teck Whye",103.7536,1.3767,"BP"],["Telok Ayer",103.8487,1.2821,"DT"],["Telok Blangah",103.8099,1.2706,"CC"],["Thanggam",103.8756,1.3974,"SK"],["Tiong Bahru",103.8276,1.2861,"EW"],["Toa Payoh",103.8473,1.3323,"NS"],["Tongkang",103.8858,1.3894,"SK"],["Tuas Crescent",103.6496,1.3208,"EW"],["Tuas Link",103.637,1.3404,"EW"],["Tuas West Road",103.6401,1.3295,"EW"],["Ubi",103.8994,1.3298,"DT"],["Upper Changi",103.9613,1.3417,"DT"],["Upper Thomson",103.8328,1.3545,"TE"],["Woodlands",103.787,1.4372,"NS/TE"],["Woodlands North",103.7855,1.4486,"TE"],["Woodlands South",103.7943,1.4271,"TE"],["Woodleigh",103.8708,1.3392,"NE"],["Yew Tee",103.7474,1.3975,"NS"],["Yio Chu Kang",103.845,1.3818,"NS"],["Yishun",103.835,1.4294,"NS"],["one-north",103.7872,1.2996,"CC"]];
+      window.PA_MRT=MRT_ROWS;
       const MRT_GEOJSON={type:'FeatureCollection',features:MRT_ROWS.map(function(r){
         return {type:'Feature',geometry:{type:'Point',coordinates:[r[1],r[2]]},properties:{name:r[0],lines:r[3]}};
       })};
