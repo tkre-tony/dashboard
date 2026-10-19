@@ -1009,6 +1009,18 @@ function buildLandedURL(forPins){
   else { P.push('limit='+cavPageSize); P.push('offset='+cavOffset); }
   return resRest()+'?'+P.join('&');
 }
+/* v9.9.41 (S404): shared request body for the non-landed / EC RPCs (pins, count). */
+function resRpcBody(){
+  const body={p_types:resTypes()};
+  if(fSale&&fSale!=='all') body.p_sale=fSale;
+  if(cavPeriod==='custom'){ if(cavFrom) body.p_from=cavFrom; if(cavTo) body.p_to=cavTo; }
+  else if(cavPeriod==='this_week'){ const ws=resWeekStart(); if(ws) body.p_release_from=ws; else body.p_from=new Date(Date.now()-7*864e5).toISOString().slice(0,10); }
+  else if(cavPeriod!=='since1995'){ body.p_from=new Date(Date.now()-(PERIOD_DAYS[cavPeriod]||365)*864e5).toISOString().slice(0,10); }
+  if(fRegion) body.p_region=regionToDb(fRegion);
+  if(fDist) body.p_district=fDist;
+  if(fQ){ const q=fQ.replace(/[%_\\]/g,' ').trim(); if(q) body.p_q=q; }
+  return body;
+}
 async function runLandedSearch(){
   try{
     if(document.getElementById('count'))document.getElementById('count').textContent='Loading\u2026';
@@ -1017,7 +1029,12 @@ async function runLandedSearch(){
       try{ const rr=await fetch(resRest()+'?select=release_date&order=release_date.desc.nullslast&limit=1',{headers:{'apikey':SUPA_ANON,'Authorization':'Bearer '+SUPA_ANON}});
            if(rr.ok){ const jj=await rr.json(); LANDED_MAX_REL=(jj&&jj[0]&&jj[0].release_date)||null; } }catch(e){}
     }
-    const res=await fetch(buildLandedURL(),{headers:{'apikey':SUPA_ANON,'Authorization':'Bearer '+SUPA_ANON,'Prefer':'count=exact'}});
+    /* v9.9.41 (S404): non-landed / EC lists skip the exact count (573k rows timed out -> HTTP 500); the header total
+       comes from nonlanded_count (precomputed for whole-history views), and the map pins start immediately. */
+    const _nl=(fSeg!=='landed');
+    if(_nl) loadResBuildingPins(_seq);
+    const _cnt=_nl?fetch(SUPA_REST+'/rpc/nonlanded_count',{method:'POST',headers:{'Content-Type':'application/json','apikey':SUPA_ANON,'Authorization':'Bearer '+SUPA_ANON},body:JSON.stringify(resRpcBody())}).then(r=>r.ok?r.json():null).catch(()=>null):null;
+    const res=await fetch(buildLandedURL(),{headers:_nl?{'apikey':SUPA_ANON,'Authorization':'Bearer '+SUPA_ANON}:{'apikey':SUPA_ANON,'Authorization':'Bearer '+SUPA_ANON,'Prefer':'count=exact'}});
     if(!res.ok) throw new Error('HTTP '+res.status);
     const rows=await res.json();
     _tLoad=Math.round(performance.now()-_t0);
@@ -1025,12 +1042,13 @@ async function runLandedSearch(){
     PAIR_BY_SELL={};                       // CI P&L pairs must never badge landed ids (id collision guard)
     CAVEATS=(rows||[]).map(rowToCaveat);
     cavCapped=false; cavMode='master';
-    const cr=res.headers.get('content-range');
-    cavTotal=(cr&&cr.indexOf('/')>=0)?(parseInt(cr.split('/')[1],10)||CAVEATS.length):CAVEATS.length;
+    if(_nl){ const n=await _cnt; if(_seq!==cavSeq) return; cavTotal=(typeof n==='number')?n:(Number(n)||CAVEATS.length); }
+    else { const cr=res.headers.get('content-range');
+      cavTotal=(cr&&cr.indexOf('/')>=0)?(parseInt(cr.split('/')[1],10)||CAVEATS.length):CAVEATS.length; }
     selIdx=null; closeDetail();
     buildDistricts(); renderCaveats();
     loadLandedPairs(_seq);   // BOUGHT pairing — async, non-blocking
-    if(fSeg!=='landed'){ loadResBuildingPins(_seq); return; }   // non-landed / EC: one pin per building
+    if(_nl) return;   // non-landed / EC pins already requested above
     if(cavTotal<=CAVEATS.length){ LANDED_PINS=CAVEATS.slice(); landedPinsToMap(); }
     else{
       fetch(buildLandedURL(true),{headers:{'apikey':SUPA_ANON,'Authorization':'Bearer '+SUPA_ANON}})
@@ -1069,14 +1087,7 @@ function landedPinsToMap(){
 async function loadResBuildingPins(seq){
   try{
     const base=SUPA_REST.replace('/rest/v1','');
-    const body={p_types:resTypes()};
-    if(fSale&&fSale!=='all') body.p_sale=fSale;
-    if(cavPeriod==='custom'){ if(cavFrom) body.p_from=cavFrom; if(cavTo) body.p_to=cavTo; }
-    else if(cavPeriod==='this_week'){ const ws=resWeekStart(); if(ws) body.p_release_from=ws; else body.p_from=new Date(Date.now()-7*864e5).toISOString().slice(0,10); }
-    else if(cavPeriod!=='since1995'){ body.p_from=new Date(Date.now()-(PERIOD_DAYS[cavPeriod]||365)*864e5).toISOString().slice(0,10); }
-    if(fRegion) body.p_region=regionToDb(fRegion);
-    if(fDist) body.p_district=fDist;
-    if(fQ){ const q=fQ.replace(/[%_\\]/g,' ').trim(); if(q) body.p_q=q; }
+    const body=resRpcBody();
     /* v9.9.40 (S404): one call to nonlanded_pins_json (a single json value is not subject to the API's 1,000-row cap),
        replacing the 8-page fetch of v9.9.38/39, whose parallel calls drew HTTP 500s. */
     const r=await fetch(base+'/rest/v1/rpc/nonlanded_pins_json',{method:'POST',headers:{'Content-Type':'application/json','apikey':SUPA_ANON,'Authorization':'Bearer '+SUPA_ANON},body:JSON.stringify(body)});
@@ -2520,7 +2531,7 @@ function init(){
           'text-size':['interpolate',['linear'],['zoom'],12.5,9,16,12],
           'text-offset':[0,0.85],'text-anchor':'top','text-optional':true,'text-allow-overlap':false},
         paint:{'text-color':'#33425a','text-halo-color':'#ffffff','text-halo-width':1.4}});
-      /* v9.9.40 (S404): condo pins in one call via nonlanded_pins_json. v9.9.39 (S404): Since 1995 pin pages fetched in parallel; live periods draw progressively. v9.9.38 (S404): non-landed pins paged 1,000 at a time (API row cap left only postal 0x-3x on the map). v9.9.37 (S404): failed residential pin load clears stale pins + note. v9.9.36 (S404): zoning on => building fill off (outlines only); single 'Zoning: URA MP2025' credit. v9.9.35 (S404): plain z10-15 tile folder assets/mp25/{z}/{x}/{y}.pbf replaces the pmtiles file (range requests failed on our host). v9.9.34: URA Master Plan 2025 land use ( layer 'lu': u = zoning index, g = GPR). Off by default. */
+      /* v9.9.41 (S404): non-landed list without exact count + nonlanded_count RPC; pins start in parallel. v9.9.40 (S404): condo pins in one call via nonlanded_pins_json. v9.9.39 (S404): Since 1995 pin pages fetched in parallel; live periods draw progressively. v9.9.38 (S404): non-landed pins paged 1,000 at a time (API row cap left only postal 0x-3x on the map). v9.9.37 (S404): failed residential pin load clears stale pins + note. v9.9.36 (S404): zoning on => building fill off (outlines only); single 'Zoning: URA MP2025' credit. v9.9.35 (S404): plain z10-15 tile folder assets/mp25/{z}/{x}/{y}.pbf replaces the pmtiles file (range requests failed on our host). v9.9.34: URA Master Plan 2025 land use ( layer 'lu': u = zoning index, g = GPR). Off by default. */
       try{
         map.addSource('mp25',{type:'vector',tiles:[location.origin+'/assets/mp25/{z}/{x}/{y}.pbf'],minzoom:10,maxzoom:15,bounds:[103.6057,1.1586,104.4104,1.4708],attribution:'Zoning: URA MP2025'});
         var _mpCol=['match',['get','u']]; PA_LU.forEach(function(x,i){ if(x[1]){_mpCol.push(i,x[1]);} }); _mpCol.push('rgba(0,0,0,0)');
