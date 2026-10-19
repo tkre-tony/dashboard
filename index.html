@@ -735,7 +735,6 @@ body{background:var(--bg);color:var(--txt);font-family:Inter,system-ui,-apple-sy
   <div class="pa-enq-ok" id="pa-enq-ok">✅ Thank you — your enquiry has been sent. TK Real Estate will respond within the day.</div>
 </div>
 
-<script src="/assets/pmtiles.js"></script>
 <script src="./maplibre-gl.js"></script>
 <script>
 /* v9.9.17 (S393): Directory PINS are read at RUNTIME (no more bake). See loadPins() below. */
@@ -2421,7 +2420,6 @@ qEl.addEventListener('keydown',e=>{
 qEl.addEventListener('blur',()=>setTimeout(closeAC,120));
 
 function init(){
-  try{ if(window.pmtiles&&!window._pmProto){ window._pmProto=new pmtiles.Protocol(); maplibregl.addProtocol('pmtiles',window._pmProto.tile); } }catch(e){ console.warn('pmtiles',e); }
   map=new maplibregl.Map({
     container:'map',
     style:'https://tiles.openfreemap.org/styles/positron',
@@ -2508,9 +2506,9 @@ function init(){
           'text-size':['interpolate',['linear'],['zoom'],12.5,9,16,12],
           'text-offset':[0,0.85],'text-anchor':'top','text-optional':true,'text-allow-overlap':false},
         paint:{'text-color':'#33425a','text-halo-color':'#ffffff','text-halo-width':1.4}});
-      /* v9.9.34 (S404): URA Master Plan 2025 land use (assets/mp25_landuse.pmtiles, layer 'lu': u = zoning index, g = GPR). Off by default. */
+      /* v9.9.35 (S404): plain z10-15 tile folder assets/mp25/{z}/{x}/{y}.pbf replaces the pmtiles file (range requests failed on our host). v9.9.34: URA Master Plan 2025 land use ( layer 'lu': u = zoning index, g = GPR). Off by default. */
       try{
-        map.addSource('mp25',{type:'vector',url:'pmtiles://'+location.origin+'/assets/mp25_landuse.pmtiles',attribution:'Zoning: URA MP2025'});
+        map.addSource('mp25',{type:'vector',tiles:[location.origin+'/assets/mp25/{z}/{x}/{y}.pbf'],minzoom:10,maxzoom:15,bounds:[103.6057,1.1586,104.4104,1.4708],attribution:'Zoning: URA MP2025'});
         var _mpCol=['match',['get','u']]; PA_LU.forEach(function(x,i){ if(x[1]){_mpCol.push(i,x[1]);} }); _mpCol.push('rgba(0,0,0,0)');
         var _mpFill=PA_LU.map(function(x,i){return x[1]?i:-1;}).filter(function(i){return i>=0;});
         var _mpBefore=map.getLayer('pa-bldg-fill')?'pa-bldg-fill':(map.getLayer('cav-pts')?'cav-pts':undefined);
