@@ -2139,10 +2139,32 @@ function init(){
   });
   map.addControl(new maplibregl.NavigationControl({showCompass:false}),'top-left');
   var _is3D=false;
-  var pitchCtrl={onAdd:function(m){var d=document.createElement('div');d.className='maplibregl-ctrl maplibregl-ctrl-group';var btn=document.createElement('button');btn.type='button';btn.title='Toggle 2D / 3D view';btn.textContent='3D';btn.style.cssText='font:700 11px/1 Inter,system-ui,sans-serif;letter-spacing:.03em';btn.onclick=function(){_is3D=!_is3D;m.easeTo({pitch:_is3D?55:0,duration:500});btn.textContent=_is3D?'2D':'3D';};d.appendChild(btn);this._c=d;return d;},onRemove:function(){this._c.parentNode.removeChild(this._c);}};
+  var pitchCtrl={onAdd:function(m){var d=document.createElement('div');d.className='maplibregl-ctrl maplibregl-ctrl-group';var btn=document.createElement('button');btn.type='button';btn.title='Toggle 2D / 3D view';btn.textContent='3D';btn.style.cssText='font:700 11px/1 Inter,system-ui,sans-serif;letter-spacing:.03em';btn.onclick=function(){_is3D=!_is3D;m.easeTo({pitch:_is3D?55:0,duration:500});btn.textContent=_is3D?'2D':'3D';if(m.getLayer('pa-bldg-3d')){m.setLayoutProperty('pa-bldg-3d','visibility',_is3D?'visible':'none');m.setLayoutProperty('pa-bldg-fill','visibility',_is3D?'none':'visible');}};d.appendChild(btn);this._c=d;return d;},onRemove:function(){this._c.parentNode.removeChild(this._c);}};
   map.addControl(pitchCtrl,'top-left');
   hoverPopup=new maplibregl.Popup({closeButton:false,closeOnClick:false,offset:10});
   map.on('load',()=>{
+    /* v9.9.29 (S404): building footprints visible at street level, URA-Space style; 3D button extrudes them. */
+    try{
+      var _bl=map.getStyle().layers, _bsrc=null, _firstSym=null;
+      _bl.forEach(function(l){
+        if(!_firstSym && l.type==='symbol') _firstSym=l.id;
+        if(l['source-layer']==='building'){ _bsrc=l.source; map.setLayoutProperty(l.id,'visibility','none'); }
+      });
+      if(!_bsrc){ var _ss=map.getStyle().sources; for(var k in _ss){ if(_ss[k].type==='vector'){ _bsrc=k; break; } } }
+      if(_bsrc){
+        map.addLayer({id:'pa-bldg-fill',type:'fill',source:_bsrc,'source-layer':'building',minzoom:14,
+          paint:{'fill-color':'#dedad2','fill-opacity':['interpolate',['linear'],['zoom'],14,0,15,0.85]}},_firstSym||undefined);
+        map.addLayer({id:'pa-bldg-line',type:'line',source:_bsrc,'source-layer':'building',minzoom:14,
+          paint:{'line-color':'#9c968b','line-width':['interpolate',['linear'],['zoom'],15,0.5,18,1.2],
+                 'line-opacity':['interpolate',['linear'],['zoom'],14,0,15,0.9]}},_firstSym||undefined);
+        map.addLayer({id:'pa-bldg-3d',type:'fill-extrusion',source:_bsrc,'source-layer':'building',minzoom:14,
+          layout:{visibility:'none'},
+          paint:{'fill-extrusion-color':'#d6d1c7',
+                 'fill-extrusion-height':['coalesce',['get','render_height'],['get','height'],8],
+                 'fill-extrusion-base':['coalesce',['get','render_min_height'],['get','min_height'],0],
+                 'fill-extrusion-opacity':0.85}},_firstSym||undefined);
+      }
+    }catch(e){ console.warn('building layer',e); }
     var typeColor=['match',['get','t'],'Office','#0000CD','Retail','#0000CD','Shophouse','#B5683E',
       'Multi-User Factory','#7030A0','Single-User Factory','#7030A0','Business Park','#7030A0','Warehouse','#7030A0',
       'Detached House','#1B5E20','Semi-Detached House','#2E9E63','Terrace House','#7FC97F',
