@@ -983,6 +983,20 @@ function resWeekStart(){ if(!LANDED_MAX_REL) return null; const _d=new Date(LAND
 let cavFrom=null, cavTo=null;   // custom date range (RES-1)
 const CI_RANGE_OK=true;         // EF passes date_to through to search_transactions_paged(p_date_to) — verified S402
 let LANDED_MAX_REL=null;
+/* v9.9.44 (S405): latest residential release date from res_max_release() (indexed max() on the base table).
+   The old ?order=release_date.desc&limit=1 sort over the 637k-row geo view could time out, and the page then fell back
+   to "sale date in the last 7 days", so Release Week showed the wrong caveats (Non-Landed 13 / 390, EC 0). */
+async function resMaxRelease(){
+  var seg=fSeg;
+  for(var attempt=0; attempt<2 && !LANDED_MAX_REL; attempt++){
+    try{
+      var r=await fetch(SUPA_REST+'/rpc/res_max_release',{method:'POST',
+        headers:{'Content-Type':'application/json','apikey':SUPA_ANON,'Authorization':'Bearer '+SUPA_ANON},
+        body:JSON.stringify({p_kind:seg})});
+      if(r.ok){ var v=await r.json(); if(seg===fSeg && typeof v==='string' && v) LANDED_MAX_REL=v.slice(0,10); }
+    }catch(e){}
+  }
+}
 function landedNoMapNote(c){
   if(/\bENBLOC\b/i.test(c.addr||'')) return 'Location not mappable \u2014 en bloc sale spanning multiple properties';
   if(!c.pc) return 'Location not mappable \u2014 no postal code in caveat record';
@@ -1030,10 +1044,7 @@ async function runLandedSearch(){
   try{
     if(document.getElementById('count'))document.getElementById('count').textContent='Loading\u2026';
     const _t0=performance.now(); const _seq=++cavSeq;
-    if(cavPeriod==='this_week'&&!LANDED_MAX_REL){
-      try{ const rr=await fetch(resRest()+'?select=release_date&order=release_date.desc.nullslast&limit=1',{headers:{'apikey':SUPA_ANON,'Authorization':'Bearer '+SUPA_ANON}});
-           if(rr.ok){ const jj=await rr.json(); LANDED_MAX_REL=(jj&&jj[0]&&jj[0].release_date)||null; } }catch(e){}
-    }
+    if(cavPeriod==='this_week'&&!LANDED_MAX_REL){ await resMaxRelease(); }
     /* v9.9.41 (S404): non-landed / EC lists skip the exact count (573k rows timed out -> HTTP 500); the header total
        comes from nonlanded_count (precomputed for whole-history views), and the map pins start immediately. */
     const _nl=(fSeg!=='landed');
@@ -1750,10 +1761,7 @@ async function runNearSearch(){
   var _seq=++cavSeq, _t0=performance.now(), res_=isRes(fSeg);
   var H={'Content-Type':'application/json','apikey':SUPA_ANON,'Authorization':'Bearer '+SUPA_ANON};
   try{
-    if(res_&&cavPeriod==='this_week'&&!LANDED_MAX_REL){
-      try{ var rr=await fetch(resRest()+'?select=release_date&order=release_date.desc.nullslast&limit=1',{headers:H});
-           if(rr.ok){ var jj=await rr.json(); LANDED_MAX_REL=(jj&&jj[0]&&jj[0].release_date)||null; } }catch(e){}
-    }
+    if(res_&&cavPeriod==='this_week'&&!LANDED_MAX_REL){ await resMaxRelease(); }
     var want=(cavOffset===0)||!NEAR_SUM;
     var r=await fetch(SUPA_REST+'/rpc/near_search',{method:'POST',headers:H,body:JSON.stringify(nearBody(cavPageSize,cavOffset,want))});
     if(_seq!==cavSeq) return;
@@ -2634,7 +2642,7 @@ function init(){
           'text-size':['interpolate',['linear'],['zoom'],12.5,9,16,12],
           'text-offset':[0,0.85],'text-anchor':'top','text-optional':true,'text-allow-overlap':false},
         paint:{'text-color':'#33425a','text-halo-color':'#ffffff','text-halo-width':1.4}});
-      /* v9.9.43 (S405): Near summary strip moved under the banner. v9.9.42 (S405): Near rings filter the list via near_search() + per-ring summary strip; condo/EC pins kept inside the rings. v9.9.41 (S404): non-landed list without exact count + nonlanded_count RPC; pins start in parallel. v9.9.40 (S404): condo pins in one call via nonlanded_pins_json. v9.9.39 (S404): Since 1995 pin pages fetched in parallel; live periods draw progressively. v9.9.38 (S404): non-landed pins paged 1,000 at a time (API row cap left only postal 0x-3x on the map). v9.9.37 (S404): failed residential pin load clears stale pins + note. v9.9.36 (S404): zoning on => building fill off (outlines only); single 'Zoning: URA MP2025' credit. v9.9.35 (S404): plain z10-15 tile folder assets/mp25/{z}/{x}/{y}.pbf replaces the pmtiles file (range requests failed on our host). v9.9.34: URA Master Plan 2025 land use ( layer 'lu': u = zoning index, g = GPR). Off by default. */
+      /* v9.9.44 (S405): Release Week reads res_max_release() (geo-view sort could time out). v9.9.43 (S405): Near summary strip moved under the banner. v9.9.42 (S405): Near rings filter the list via near_search() + per-ring summary strip; condo/EC pins kept inside the rings. v9.9.41 (S404): non-landed list without exact count + nonlanded_count RPC; pins start in parallel. v9.9.40 (S404): condo pins in one call via nonlanded_pins_json. v9.9.39 (S404): Since 1995 pin pages fetched in parallel; live periods draw progressively. v9.9.38 (S404): non-landed pins paged 1,000 at a time (API row cap left only postal 0x-3x on the map). v9.9.37 (S404): failed residential pin load clears stale pins + note. v9.9.36 (S404): zoning on => building fill off (outlines only); single 'Zoning: URA MP2025' credit. v9.9.35 (S404): plain z10-15 tile folder assets/mp25/{z}/{x}/{y}.pbf replaces the pmtiles file (range requests failed on our host). v9.9.34: URA Master Plan 2025 land use ( layer 'lu': u = zoning index, g = GPR). Off by default. */
       try{
         map.addSource('mp25',{type:'vector',tiles:[location.origin+'/assets/mp25/{z}/{x}/{y}.pbf'],minzoom:10,maxzoom:15,bounds:[103.6057,1.1586,104.4104,1.4708],attribution:'Zoning: URA MP2025'});
         var _mpCol=['match',['get','u']]; PA_LU.forEach(function(x,i){ if(x[1]){_mpCol.push(i,x[1]);} }); _mpCol.push('rgba(0,0,0,0)');
