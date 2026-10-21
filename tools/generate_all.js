@@ -912,6 +912,73 @@ function buildHead(a, canonical) {
   ].filter(Boolean).join('\n');
 }
 
+// ───────────────── IDX-1 (S406): crawlable archive + prev/next ─────────────────
+// Google found most articles only via sitemap.xml (GSC 21 Oct 2026: 57 of 252 not
+// indexed; 23 article pages had zero inbound links). Every article now links to
+// its chronological neighbours and to /news/archive/, and the archive pages list
+// every article as a plain <a href>. Whole-site artifacts, rebuilt on every run.
+const ARCHIVE_PER_PAGE = 50;
+const ARCHIVE_CSS = [
+'.pa-artnav{max-width:1180px;margin:8px auto 28px;padding:18px 28px;border-top:1px solid var(--ed-hairline,#E4DCC8);display:flex;flex-wrap:wrap;gap:14px 28px;justify-content:space-between;font-family:"DM Sans",Arial,sans-serif}',
+'.pa-artnav-link{flex:1 1 280px;text-decoration:none;color:var(--ed-ink,#1F2A44);font-size:14px;line-height:1.4}',
+'.pa-artnav-link span{display:block;font-size:10px;font-weight:700;letter-spacing:.16em;text-transform:uppercase;color:var(--ed-bronze,#A67C3A);margin-bottom:4px}',
+'.pa-artnav-next{text-align:right}',
+'.pa-artnav-all{flex:1 1 100%;text-align:center;font-size:12px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--ed-bronze,#A67C3A);text-decoration:none}',
+'.pa-arch{max-width:900px;margin:0 auto;padding:28px 24px 48px;font-family:"DM Sans",Arial,sans-serif;color:var(--ed-ink,#1F2A44)}',
+'.pa-arch-h1{font-family:Georgia,"Times New Roman",serif;font-size:30px;margin:0 0 6px}',
+'.pa-arch-sub{color:var(--ed-muted,#6B6157);font-size:14px;margin:0 0 22px}',
+'.pa-arch-list{list-style:none;margin:0;padding:0}',
+'.pa-arch-item{padding:14px 0;border-bottom:1px solid var(--ed-hairline,#E4DCC8)}',
+'.pa-arch-meta{font-size:11px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--ed-bronze,#A67C3A);margin-bottom:4px}',
+'.pa-arch-link{font-family:Georgia,"Times New Roman",serif;font-size:18px;line-height:1.35;color:var(--ed-ink,#1F2A44);text-decoration:none}',
+'.pa-arch-link:hover{text-decoration:underline}',
+'.pa-arch-pages{display:flex;flex-wrap:wrap;gap:8px;margin-top:24px}',
+'.pa-arch-page{padding:6px 12px;border:1px solid var(--ed-hairline,#E4DCC8);border-radius:3px;text-decoration:none;color:var(--ed-ink,#1F2A44);font-size:13px}',
+'.pa-arch-cur{background:var(--ed-ink,#1F2A44);color:#fff}',
+'body{margin:0;background:#FBF8F1}',
+].join('\n');
+function archOrder() {
+  return publicArticles.slice().sort((x, y) => (String(y.date).localeCompare(String(x.date))) || (Number(y.id) - Number(x.id)));
+}
+function cardTitle(a) { return stripTags(a.display_title || a.title || a.display_headline); }
+function fmtDate(d) {
+  const m = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+  const p = String(d || '').split('-'); return p.length === 3 ? (+p[2]) + ' ' + m[+p[1] - 1] + ' ' + p[0] : '';
+}
+function archivePath(n) { return n === 1 ? '/news/archive/' : '/news/archive/' + n + '/'; }
+function artNavHtml(a) {
+  const ord = archOrder(); const i = ord.findIndex(x => x.id === a.id);
+  const newer = i > 0 ? ord[i - 1] : null, older = i >= 0 && i < ord.length - 1 ? ord[i + 1] : null;
+  const pg = i >= 0 ? Math.floor(i / ARCHIVE_PER_PAGE) + 1 : 1;
+  return '<nav class="pa-artnav" aria-label="More articles">' +
+    (older ? '<a class="pa-artnav-link" href="/news/' + older.slug + '/"><span>Previous article</span>' + esc(cardTitle(older)) + '</a>' : '') +
+    (newer ? '<a class="pa-artnav-link pa-artnav-next" href="/news/' + newer.slug + '/"><span>Next article</span>' + esc(cardTitle(newer)) + '</a>' : '') +
+    '<a class="pa-artnav-all" href="' + archivePath(pg) + '">All PropertyAtlas articles &rarr;</a></nav>';
+}
+function buildArchivePages() {
+  const ord = archOrder(); const pages = Math.max(1, Math.ceil(ord.length / ARCHIVE_PER_PAGE)); const out = [];
+  for (let n = 1; n <= pages; n++) {
+    const slice = ord.slice((n - 1) * ARCHIVE_PER_PAGE, n * ARCHIVE_PER_PAGE);
+    const canonical = SITE + archivePath(n);
+    const title = 'PropertyAtlas Newsroom Archive' + (n > 1 ? ' — Page ' + n : '');
+    const desc = 'Every PropertyAtlas article on Singapore REITs, developers and URA REALIS commercial, industrial and landed caveats, newest first' + (n > 1 ? ' (page ' + n + ' of ' + pages + ')' : '') + '.';
+    const items = slice.map(a => '<li class="pa-arch-item"><div class="pa-arch-meta">' + esc(fmtDate(a.date)) + ' &middot; ' + esc(a.category || 'PropertyAtlas') + '</div>' +
+      '<a class="pa-arch-link" href="/news/' + a.slug + '/">' + esc(cardTitle(a)) + '</a></li>').join('\n');
+    const nav = [];
+    for (let k = 1; k <= pages; k++) nav.push(k === n ? '<span class="pa-arch-page pa-arch-cur">' + k + '</span>' : '<a class="pa-arch-page" href="' + archivePath(k) + '">' + k + '</a>');
+    const head = ['<meta charset="utf-8">','<meta name="viewport" content="width=device-width,initial-scale=1">',
+      '<link rel="icon" href="/favicon.ico" sizes="any">',
+      '<title>' + esc(title) + ' | PropertyAtlas</title>','<meta name="description" content="' + esc(desc) + '">',
+      '<link rel="canonical" href="' + canonical + '">','<meta name="robots" content="index,follow">',
+      (n > 1 ? '<link rel="prev" href="' + SITE + archivePath(n - 1) + '">' : ''),
+      (n < pages ? '<link rel="next" href="' + SITE + archivePath(n + 1) + '">' : ''), GA4_SNIPPET].filter(Boolean).join('\n');
+    const html = '<!DOCTYPE html>\n<html lang="en">\n<head>\n' + head + '\n<style>\n' + NAVY_TOPBAR_CSS + '\n' + ARCHIVE_CSS + '\n</style>\n</head>\n<body>\n' + NAVY_TOPBAR_HTML +
+      '\n<main class="pa-arch"><h1 class="pa-arch-h1">' + esc(title) + '</h1><p class="pa-arch-sub">' + ord.length + ' articles &middot; page ' + n + ' of ' + pages + '</p>\n<ul class="pa-arch-list">\n' + items + '\n</ul>\n<nav class="pa-arch-pages" aria-label="Archive pages">' + nav.join('') + '</nav></main>\n</body>\n</html>\n';
+    out.push({ n, path: archivePath(n), html });
+  }
+  return out;
+}
+
 // ───────────────── assemble one page ─────────────────
 function buildPage(a) {
   const canonical = SITE + '/news/' + a.slug + '/';
@@ -939,10 +1006,10 @@ function buildPage(a) {
   // SOP-required rule absent from the index's article CSS: grey, no-direction
   // deltas. The index ships only .up/.down; injecting .neutral keeps neutral
   // financial-headline deltas covered (L-SEO-8) and correctly coloured.
-  const injected = '.ed-art-fh-delta.neutral{color:var(--ed-muted)}' + '\n' + NAVY_TOPBAR_CSS + '\n' + PROMO_CSS;
+  const injected = '.ed-art-fh-delta.neutral{color:var(--ed-muted)}' + '\n' + NAVY_TOPBAR_CSS + '\n' + PROMO_CSS + '\n' + ARCHIVE_CSS;
   const head = buildHead(a, canonical);
   return '<!DOCTYPE html>\n<html lang="en" data-ready>\n<head>\n' + head +
-    '\n<style>\n' + css + '\n' + injected + '\n' + SUBSCRIBE_CSS + '\n</style>\n</head>\n<body>\n' + fragment + '\n' + SUBSCRIBE_BODY + '\n' + PROMO_JS + '\n</body>\n</html>\n';
+    '\n<style>\n' + css + '\n' + injected + '\n' + SUBSCRIBE_CSS + '\n</style>\n</head>\n<body>\n' + fragment + '\n' + artNavHtml(a) + '\n' + SUBSCRIBE_BODY + '\n' + PROMO_JS + '\n</body>\n</html>\n';
 }
 
 // ───────────────── per-page gates ─────────────────
@@ -974,7 +1041,7 @@ function gatePage(a, htmlOut, filePath) {
   const slugSet = new Set(NEWS.filter(x => x.slug).map(x => x.slug));
   (htmlOut.match(/\/news\/([a-z0-9-]+)\//g) || []).forEach(u => {
     const s = u.replace(/^\/news\//, '').replace(/\/$/, '');
-    if (s !== a.slug && !slugSet.has(s)) errs.push('LINK: unresolved /news/' + s + '/');
+    if (s !== a.slug && s !== 'archive' && !slugSet.has(s)) errs.push('LINK: unresolved /news/' + s + '/');
   });
 
   // 3. L282 balance (shell out to the canonical checker)
@@ -1032,7 +1099,8 @@ function writeSitemap(articles) {
   const today = new Date().toISOString().slice(0, 10);
   const artUrls = articles.map(a =>
     `  <url><loc>${SITE}/news/${a.slug}/</loc><lastmod>${a.date || today}</lastmod>` +
-    `<changefreq>monthly</changefreq><priority>0.7</priority></url>`).join('\n');
+    `<changefreq>monthly</changefreq><priority>0.7</priority></url>`).join('\n') + '\n' +
+    buildArchivePages().map(p => `  <url><loc>${SITE}${p.path}</loc><lastmod>${today}</lastmod><changefreq>daily</changefreq><priority>0.8</priority></url>`).join('\n');
   let preserved = [];
   if (fs.existsSync(SITEMAP)) {
     const cur = fs.readFileSync(SITEMAP, 'utf8');
@@ -1072,6 +1140,11 @@ function runCheck() {
     }
     if (probs.length) { fail++; console.log(`[FAIL] id:${a.id}  news/${a.slug}/`); probs.forEach(e => console.log('        - ' + e)); }
   }
+  for (const p of buildArchivePages()) {                         // IDX-1: archive pages present and current
+    const f = path.join(OUTDIR, p.path.replace(/^\//, ''), 'index.html');
+    if (!fs.existsSync(f) || fs.readFileSync(f, 'utf8') !== p.html) { fail++; console.log('[FAIL] archive ' + p.path + ' missing or stale'); }
+    if (sitemap && sitemap.indexOf(SITE + p.path + '<') === -1) { fail++; console.log('[FAIL] archive ' + p.path + ' not in sitemap.xml'); }
+  }
   console.log(`\nPRE-PUSH GATE: ${publicArticles.length} public article(s), ${fail} failed.`);
   process.exit(fail ? 1 : 0);
 }
@@ -1102,6 +1175,14 @@ async function runGenerate() {
   // Sitemap is a whole-site artifact: always written over the FULL public set,
   // never just `targets` — otherwise a single-article (--only) regen would
   // clobber every other article URL. (Caught by the Stage 3 gate in testing.)
+  if (!flags.only && !flags.dry) {                               // IDX-1: archive pages
+    for (const p of buildArchivePages()) {
+      const f = path.join(OUTDIR, p.path.replace(/^\//, ''), 'index.html');
+      fs.mkdirSync(path.dirname(f), { recursive: true }); fs.writeFileSync(f, p.html);
+      try { execFileSync('node', [L282, f], { stdio: 'pipe' }); console.log('[OK  ] archive ' + p.path); }
+      catch (e) { failures++; console.log('[FAIL] archive ' + p.path + ' L282: ' + ((e.stdout && e.stdout.toString().trim()) || e.message)); }
+    }
+  }
   const n = writeSitemap(publicArticles);                       // Stage 4
   console.log(`\n${targets.length} page(s), ${failures} failed. Sitemap: ${n} article URL(s)${flags.dry ? ' (dry, not written)' : ''}.`);
   process.exit(failures ? 1 : 0);
