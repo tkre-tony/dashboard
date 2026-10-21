@@ -62,18 +62,23 @@ def tracked_width(d, text, font, track):
 
 
 def draw_tracked(d, xy, text, font, fill, track):
+    """Draw text with letter-spacing; return the right edge of the last glyph.
+    S406: no longer includes the trailing track after the last character, so the
+    returned edge is the same quantity fit() measures (x0 + tracked_width)."""
     x, y = xy
     for c in text:
         d.text((x, y), c, font=font, fill=fill)
         x += d.textlength(c, font=font) + track
-    return x
+    return x - track if text else x
 
 
-def fit(d, lines, make_font, start, floor, track, limit):
-    """Largest size from start down to floor at which every line fits within limit."""
+def fit(d, lines, make_font, start, floor, track, limit, x0=LEFT):
+    """Largest size from start down to floor at which every line, drawn from x0,
+    ends at or before limit. S406: x0 matches the draw position (detail lines start
+    at LEFT + 2), so fit() and the panel gate measure the same edge."""
     for sz in range(start, floor - 1, -2):
         f = make_font(sz)
-        if all(LEFT + tracked_width(d, ln, f, track(sz)) <= limit for ln in lines):
+        if all(x0 + tracked_width(d, ln, f, track(sz)) <= limit for ln in lines):
             return sz, f
     return floor, make_font(floor)
 
@@ -126,7 +131,7 @@ def main(spec_path, out_path):
 
     tsz, tf = fit(d, title, lambda z: serif(z), 116, 64, lambda z: max(4, z // 12), PANEL_MAX)
     ssz, sf = fit(d, sub, lambda z: serif(z), 56, 36, lambda z: 0, PANEL_MAX)
-    dsz, df = fit(d, detail, lambda z: sans(z), 24, 18, lambda z: 5, PANEL_MAX)
+    dsz, df = fit(d, detail, lambda z: sans(z), 24, 18, lambda z: 5, PANEL_MAX, x0=LEFT + 2)
     bf = sans(24)
 
     # ---- vertical layout, centred in the band between 110 and the footer (W-150)
@@ -156,7 +161,7 @@ def main(spec_path, out_path):
             y += d_lh
     if button:
         y += 46
-        bw = int(tracked_width(d, button, bf, 6)) + 96
+        bw = int(tracked_width(d, button, bf, 6)) + 96   # 48 px padding each side
         d.rectangle([LEFT, y, LEFT + bw, y + 74], outline=GOLD, width=2)
         draw_tracked(d, (LEFT + 48, y + 22), button, bf, CREAM, 6)
         rights.append(LEFT + bw)
