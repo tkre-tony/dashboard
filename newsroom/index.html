@@ -1,4 +1,5 @@
 <!DOCTYPE html>
+<!-- v48.558 (S414: Organization/Person JSON-LD (sameAs LinkedIn company page, founder, parentOrganization TK Real Estate) to disambiguate from US 'Property Atlas') -->
 <!-- v48.557 (S414: NEWS id:316 MPACT 2Q FY26/27 results (VivoCity footfall down, spend per visit up); hero 316, NR_STATIC_IDS 315..306) -->
 <!-- v48.556 (S413: NEWS id:315 CLAR 3Q 2026 business update (divests 17 CBP Central 1, 9 Serangoon North Ave 5; leverage 41.8%); hero 315, NR_STATIC_IDS 314..305) -->
 <!-- v48.555 (S413: NEWS id:314 Starhill Global REIT 1Q FY2026/27 business update + AGM; hero 314, cards 313/312/311, feed 310..304, NR_STATIC_IDS 313..304) -->
@@ -1411,8 +1412,46 @@ html.article-takeover{background:#FAF7F0}
       "@type": "Organization",
       "@id": "https://propertyatlas.sg/#organization",
       "name": "PropertyAtlas",
+      "alternateName": [
+        "Property Atlas",
+        "PropertyAtlas.sg"
+      ],
       "url": "https://propertyatlas.sg/",
-      "description": "Singapore commercial property intelligence — REIT and developer asset data, URA transaction tracking, and editorial analysis."
+      "logo": {
+        "@type": "ImageObject",
+        "url": "https://propertyatlas.sg/assets/pa_logo_tile.png"
+      },
+      "description": "Singapore commercial and industrial property intelligence: URA caveat tracking on a live map, the S-REIT and developer asset directory, and a daily newsroom on Singapore REITs and property.",
+      "areaServed": {
+        "@type": "Country",
+        "name": "Singapore"
+      },
+      "address": {
+        "@type": "PostalAddress",
+        "addressCountry": "SG"
+      },
+      "founder": {
+        "@id": "https://propertyatlas.sg/#tonykoe"
+      },
+      "parentOrganization": {
+        "@type": "Organization",
+        "name": "TK Real Estate"
+      },
+      "sameAs": [
+        "https://www.linkedin.com/company/sgpropertyatlas"
+      ]
+    },
+    {
+      "@type": "Person",
+      "@id": "https://propertyatlas.sg/#tonykoe",
+      "name": "Tony Koe",
+      "jobTitle": "Founder",
+      "worksFor": {
+        "@id": "https://propertyatlas.sg/#organization"
+      },
+      "sameAs": [
+        "https://www.linkedin.com/in/tonykoe/"
+      ]
     },
     {
       "@type": "WebSite",
@@ -1420,7 +1459,9 @@ html.article-takeover{background:#FAF7F0}
       "name": "PropertyAtlas",
       "url": "https://propertyatlas.sg/",
       "description": "Commercial property intelligence for Singapore — REIT-analyst-grade data, the full S-REIT and developer asset directory, URA transaction tracking, and daily editorial.",
-      "publisher": { "@id": "https://propertyatlas.sg/#organization" },
+      "publisher": {
+        "@id": "https://propertyatlas.sg/#organization"
+      },
       "inLanguage": "en"
     }
   ]
@@ -4343,7 +4384,7 @@ body.article-takeover .ed-foot{display:none!important}
       <section class="hero" aria-labelledby="hero-h">
   <div class="wrap hero-grid">
 
-    <!-- Image — id:316 REITs hero. v48.557 cascade. -->
+    <!-- Image — id:316 REITs hero. v48.558 cascade. -->
     <div class="hero-image-col">
       <a class="hero-image" href="/news/mapletree-pan-asia-commercial-trust-2q-fy26-27-dpu-1-94-cents-vivocity-footfall-down-spend-per-visit-up/" data-article-id="316" aria-label="Read full story: VivoCity's waterfront promenade">
         <img src="/images/news_316_mpact_vivocity_waterfront.jpg" alt="VivoCity's waterfront promenade" class="hero-image-photo" loading="eager" fetchpriority="high" />
