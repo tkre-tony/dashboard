@@ -1,4 +1,5 @@
 <!DOCTYPE html>
+<!-- v48.573 (Listings: absorbed-card ‘Removed in’ pill shows the next sheet month after last active, not the latest month; banner label Sqft (’000) stray backslash removed) -->
 <!-- v48.572 (id:329 Centurion Accommodation REIT 3Q 2026 business update) -->
 <!-- v48.571 (id:328 Starhill Global REIT David Jones Building update) -->
 <!-- v48.570 (id:327 hero image to house figure-card style) -->
@@ -5254,7 +5255,7 @@ body.article-takeover .ed-foot{display:none!important}
     </div>
     <div class="inv-hero-stats">
       <div class="inv-hs"><div class="inv-hs-val" id="inv-total-units">—</div><div class="inv-hs-lbl">Listings</div></div>
-      <div class="inv-hs"><div class="inv-hs-val" id="inv-total-sqft" style="color:#4ade80">—</div><div class="inv-hs-lbl">Sqft (\'000)</div></div>
+      <div class="inv-hs"><div class="inv-hs-val" id="inv-total-sqft" style="color:#4ade80">—</div><div class="inv-hs-lbl">Sqft (’000)</div></div>
       <div class="inv-hs"><div class="inv-hs-val" id="inv-total-props" style="color:#93c5fd">—</div><div class="inv-hs-lbl">Properties</div></div>
     </div>
   </div>
@@ -30639,13 +30640,21 @@ function invLatestMonthFor(reit){
   return best;
 }
 function invLatestMonth(reit, fromMonth){
-  // For absorbed-entry chip: return the next non-absorbed month for that
-  // REIT (i.e. the listing where the unit went missing). Falls back to
-  // fromMonth if no newer month is on file.
+  // For absorbed-entry chip: return the month of the refresh that removed the
+  // unit, i.e. the calendar month after its last active month (tombstones keep
+  // their last-active data_month; refreshes are monthly), capped at the REIT's
+  // latest month on file. v48.573 (S421): the old version returned the latest
+  // month for every tombstone because active rows roll forward each refresh, so
+  // a July take-up read 'Removed in Nov 2026'.
+  var MON = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+  var fromKey = invMonthKey(fromMonth);
   var latest = invLatestMonthFor(reit);
-  if(!latest) return fromMonth || '';
-  if(invMonthKey(latest) > invMonthKey(fromMonth)) return latest;
-  return fromMonth || latest;
+  if(!fromKey) return fromMonth || latest || '';
+  var y = parseInt(fromKey.slice(0,4),10), m = parseInt(fromKey.slice(5,7),10);
+  if(m === 12){ y += 1; m = 1; } else { m += 1; }
+  var next = MON[m-1] + ' ' + y;
+  if(latest && invMonthKey(next) > invMonthKey(latest)) return latest;
+  return next;
 }
 function invFillReitLatestSpans(){
   try {
