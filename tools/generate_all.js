@@ -862,6 +862,38 @@ function socialImage(a, img) {
     : SITE + '/images/og-default.png';
 }
 
+// v48.575 (S422): full ISO timestamps (SGT) + BreadcrumbList.
+// A date-only datePublished gives Google no time for "X hours ago" on news
+// searches. Optional NEWS fields: pub_time "HH:MM" (SGT, publish time) and
+// updated "YYYY-MM-DD" or "YYYY-MM-DDTHH:MM" (SGT, last substantive update).
+// Absent pub_time falls back to 00:00 SGT, i.e. the publish date in Singapore.
+function isoSgt(v, id, field) {
+  const s = String(v || '');
+  let m = s.match(/^(\d{4}-\d{2}-\d{2})$/);
+  if (m) return m[1] + 'T00:00:00+08:00';
+  m = s.match(/^(\d{4}-\d{2}-\d{2})T(\d{2}):(\d{2})$/);
+  if (m && +m[2] < 24 && +m[3] < 60) return m[1] + 'T' + m[2] + ':' + m[3] + ':00+08:00';
+  throw new Error('TS-1: bad ' + field + ' "' + s + '" (id:' + id + ')');
+}
+function pubIso(a) {
+  if (a.pub_time != null && !/^\d{2}:\d{2}$/.test(String(a.pub_time))) throw new Error('TS-1: bad pub_time "' + a.pub_time + '" (id:' + a.id + ')');
+  return isoSgt(a.pub_time ? a.date + 'T' + a.pub_time : a.date, a.id, 'date');
+}
+function modIso(a) {
+  const pub = pubIso(a);
+  if (!a.updated) return pub;
+  const mod = isoSgt(a.updated, a.id, 'updated');
+  if (mod < pub) throw new Error('TS-1: updated before publish (id:' + a.id + ')');
+  return mod;
+}
+function breadcrumbLd(title, canonical) {
+  return { '@context': 'https://schema.org', '@type': 'BreadcrumbList', itemListElement: [
+    { '@type': 'ListItem', position: 1, name: 'PropertyAtlas', item: SITE + '/' },
+    { '@type': 'ListItem', position: 2, name: 'Newsroom', item: SITE + '/newsroom/' },
+    { '@type': 'ListItem', position: 3, name: title, item: canonical },
+  ] };
+}
+
 function buildHead(a, canonical) {
   const title = stripTags(a.display_headline || a.display_title || a.title);
   // v48.336 (S262): word-boundary-aware meta description.
@@ -877,7 +909,7 @@ function buildHead(a, canonical) {
   const social = socialImage(a, img);
   const ld = {
     '@context': 'https://schema.org', '@type': 'NewsArticle',
-    headline: title, datePublished: a.date, dateModified: a.date,
+    headline: title, datePublished: pubIso(a), dateModified: modIso(a),
     image: [social],
     author: { '@type': 'Organization', name: 'PropertyAtlas' },
     publisher: { '@type': 'Organization', name: 'PropertyAtlas',
@@ -903,11 +935,14 @@ function buildHead(a, canonical) {
     '<meta property="og:description" content="' + esc(desc) + '">',
     '<meta property="og:url" content="' + esc(canonical) + '">',
     '<meta property="og:image" content="' + esc(social) + '">',
+    '<meta property="article:published_time" content="' + pubIso(a) + '">',
+    '<meta property="article:modified_time" content="' + modIso(a) + '">',
     '<meta name="twitter:card" content="summary_large_image">',
     '<meta name="twitter:title" content="' + esc(title) + '">',
     '<meta name="twitter:description" content="' + esc(desc) + '">',
     '<meta name="twitter:image" content="' + esc(social) + '">',
     '<script type="application/ld+json">' + JSON.stringify(ld) + '</script>',
+    '<script type="application/ld+json">' + JSON.stringify(breadcrumbLd(title, canonical)) + '</script>',
     GA4_SNIPPET,
   ].filter(Boolean).join('\n');
 }
@@ -984,6 +1019,15 @@ function buildPage(a) {
   const canonical = SITE + '/news/' + a.slug + '/';
   let fragment = sandbox.edRenderArticlePage(a);
   fragment = rewriteLinks(fragment);
+  // v48.575 (S422): key-figures panel separators. Label, value and delta spans
+  // were emitted back-to-back, so Google read "Capacity1,800 pupilsages 2–18".
+  // Spaces between rows (grid) and between label and value (flex row) are
+  // layout-neutral; the space
+  // before the delta is offset by trimming its margin (see FH_SEP_CSS).
+  fragment = fragment
+    .split('</span><span class="ed-art-fh-val">').join('</span> <span class="ed-art-fh-val">')
+    .split('<span class="ed-art-fh-delta').join(' <span class="ed-art-fh-delta')
+    .split('</div><div class="ed-art-fh-row">').join('</div> <div class="ed-art-fh-row">');
   // NAV-1 Phase 1: replace legacy ed-art-masthead with the navy global topbar.
   const mastRe = /<header class="ed-art-masthead">[\s\S]*?<\/header>/;
   const mastHits = (fragment.match(new RegExp(mastRe.source, 'g')) || []).length;
@@ -1006,7 +1050,8 @@ function buildPage(a) {
   // SOP-required rule absent from the index's article CSS: grey, no-direction
   // deltas. The index ships only .up/.down; injecting .neutral keeps neutral
   // financial-headline deltas covered (L-SEO-8) and correctly coloured.
-  const injected = '.ed-art-fh-delta.neutral{color:var(--ed-muted)}' + '\n' + NAVY_TOPBAR_CSS + '\n' + PROMO_CSS + '\n' + ARCHIVE_CSS;
+  const injected = '.ed-art-fh-delta.neutral{color:var(--ed-muted)}' + '\n' +
+    (fragment.indexOf('ed-art-fh-delta') !== -1 ? '.ed-art-fh-val>.ed-art-fh-delta{margin-left:4px}' + '\n' : '') + NAVY_TOPBAR_CSS + '\n' + PROMO_CSS + '\n' + ARCHIVE_CSS;
   const head = buildHead(a, canonical);
   return '<!DOCTYPE html>\n<html lang="en" data-ready>\n<head>\n' + head +
     '\n<style>\n' + css + '\n' + injected + '\n' + SUBSCRIBE_CSS + '\n</style>\n</head>\n<body>\n' + fragment + '\n' + artNavHtml(a) + '\n' + SUBSCRIBE_BODY + '\n' + PROMO_JS + '\n</body>\n</html>\n';
