@@ -2573,19 +2573,32 @@ async function resAcLoad(seg){
       var rows=await r.json(); all=all.concat(rows||[]);
       if(!rows||rows.length<page) break; off+=page;
     }
-    if(all.length) RES_AC[seg]=all.map(function(x){return {n:x.project_name||'',
+    RES_AC[seg]=all.map(function(x){return {n:x.project_name||'',
       st:'D'+String(x.district==null?'':x.district).padStart(2,'0'),ar:x.planning_area||'',d:Number(x.n)||0};});
   }catch(e){ /* suggestions stay off; Search still works */ }
   RES_AC_LOADING[seg]=false;
   var qe=document.getElementById('q');
-  if(qe&&document.activeElement===qe&&lens==='caveats'&&fSeg===seg){acItems=buildSuggest(qe.value);acActive=-1;renderAC();}
+  if(qe&&document.activeElement===qe&&lens==='caveats'){acItems=buildSuggest(qe.value);acActive=-1;renderAC();}
 }
+/* v9.9.51 (S423): one search box for every segment. On the caveats lens the suggestions merge C&I buildings
+   (PINS) with Landed, Non-Landed and Exec Condo projects, whatever segment is selected; each row names its
+   segment, and picking one switches the segment before searching. The Directory lens keeps PINS only. */
+var AC_MERGED=null, AC_MERGED_KEY='';
 function acData(){
-  if(lens==='caveats'&&isRes()){ var a=RES_AC[fSeg]; if(!a) resAcLoad(fSeg); return a||[]; }
-  return PINS;
+  if(lens!=='caveats') return PINS;
+  ['landed','nonlanded','ec'].forEach(function(g){ if(!RES_AC[g]) resAcLoad(g); });
+  var key=PINS.length+'|'+['landed','nonlanded','ec'].map(function(g){return RES_AC[g]?RES_AC[g].length:0;}).join('|');
+  if(AC_MERGED&&AC_MERGED_KEY===key) return AC_MERGED;
+  var out=[];
+  for(var i=0;i<PINS.length;i++){ var o=PINS[i]; out.push({n:o.n||'',st:o.st||'',ar:o.ar||'',d:o.d||0,seg:'ci',pi:i}); }
+  ['landed','nonlanded','ec'].forEach(function(g){ (RES_AC[g]||[]).forEach(function(o){ out.push({n:o.n,st:o.st,ar:o.ar,d:o.d,seg:g}); }); });
+  AC_MERGED=out; AC_MERGED_KEY=key; return out;
 }
-function acFields(o){ // unified: suggestions always come from PINS (building index)
-  return {name:o.n||'',sub:o.st||o.ar||'',area:o.ar||''};
+const AC_SEG_LABEL={ci:'C&I',landed:'Landed',nonlanded:'Condo / Apt',ec:'Exec Condo'};
+function acFields(o){ // C&I rows come from PINS; residential rows from res_project_index_mv (v9.9.51: segment-tagged)
+  if(o.seg&&o.seg!=='ci') return {name:o.n||'',sub:AC_SEG_LABEL[o.seg]+' \u00b7 '+(o.st||''),area:o.ar||'',seg:o.seg};
+  var sub=o.st||o.ar||''; if(o.seg==='ci') sub='C&I'+(sub?' \u00b7 '+sub:'');
+  return {name:o.n||'',sub:sub,area:(o.st?o.ar:'')||'',seg:o.seg||''};
 }
 function buildSuggest(raw){
   const q=(raw||'').trim().toLowerCase();
@@ -2597,11 +2610,11 @@ function buildSuggest(raw){
     const hay=(f.name+' '+f.sub+' '+f.area).toLowerCase();
     if(!hay.includes(q))continue;
     let tier=2; if(nameLC.startsWith(q))tier=0; else if(nameLC.includes(q))tier=1;
-    const key=nameLC, ex=byName[key];
-    if(!ex){byName[key]={idx:i,name:f.name,sub:f.sub,area:f.area,tier:tier,count:1};}
-    else{ex.count++; if(tier<ex.tier){ex.tier=tier;ex.idx=i;ex.sub=f.sub;ex.area=f.area;}}
+    const key=(f.seg||'')+'|'+nameLC, ex=byName[key];
+    if(!ex){byName[key]={idx:i,name:f.name,sub:f.sub,area:f.area,tier:tier,count:1,d:Number(data[i].d)||0};}
+    else{ex.count++; ex.d+=Number(data[i].d)||0; if(tier<ex.tier){ex.tier=tier;ex.idx=i;ex.sub=f.sub;ex.area=f.area;}}
   }
-  return Object.values(byName).sort((a,b)=>a.tier-b.tier||a.name.localeCompare(b.name)).slice(0,8);
+  return Object.values(byName).sort((a,b)=>a.tier-b.tier||b.d-a.d||a.name.localeCompare(b.name)).slice(0,8);
 }
 function acHL(text,raw){
   const t=text||'', q=(raw||'').trim();
@@ -2614,7 +2627,7 @@ function renderAC(){
   if(!acItems.length){box.classList.remove('show');box.innerHTML='';return;}
   const q=document.getElementById('q').value;
   box.innerHTML=acItems.map((s,k)=>{
-    const badge=((acData()[s.idx].d||0)+' deals');
+    const badge=((s.d||0)+' deals');
     const sub=esc(s.sub||'')+(s.area?' · '+esc(s.area):'');
     return `<div class="ac-row${k===acActive?' on':''}" data-k="${k}" onmousedown="event.preventDefault();pickAC(${k})" onmouseenter="acActive=${k};paintAC()">
       <div class="ac-main"><div class="ac-name">${acHL(s.name,q)}</div><div class="ac-sub">${sub}</div></div>
@@ -2626,7 +2639,10 @@ function paintAC(){document.querySelectorAll('#ac .ac-row').forEach((r,k)=>r.cla
 function pickAC(k){
   const s=acItems[k]; if(!s)return;
   document.getElementById('q').value=s.name.replace(/\s*#.*$/,'');
+  var _it=(lens==='caveats')?acData()[s.idx]:null;
   closeAC();
+  if(_it&&_it.seg){ var _to=(_it.seg==='ci')?'all':_it.seg;
+    if(_to!==fSeg && !(_to==='all'&&!isRes(fSeg))){ fQ=document.getElementById('q').value.trim().toLowerCase(); setSegment(_to); } }
   apply();
   if(lens==='directory')select(s.idx,true);
 }
@@ -3410,6 +3426,9 @@ function faTopRender(cavs){
    transactions from nonlanded_transactions_geo; P&L, Most active (by project + district) and Top
    transactions via nonlanded_ma_* RPCs and nonlanded_pnl_pairs_mv. Residential project names render as
    plain text (the C&I Directory link does not apply). Needs S403_res_pulse_analysis.sql committed first. */
+/* v9.9.51 (S423): one search box across all segments - suggestions merge C&I buildings with Landed, Non-Landed and
+   Exec Condo projects regardless of the segment selected; each row is labelled (C&I / Landed / Condo / Apt / Exec Condo)
+   and picking one switches the segment, then searches. Same-tier matches rank by deal count. Directory lens: PINS only. */
 /* v9.9.50 (S423): residential typeahead - search-box suggestions follow the segment. Landed / Non-Landed / Exec Condo
    suggest named projects from res_project_index_mv (S423 SQL; refreshed at the close of each residential ingest);
    C&I and the Directory still suggest from PINS. Picking a suggestion runs the search as before. */
