@@ -503,7 +503,7 @@ body{background:var(--bg);color:var(--txt);font-family:Inter,system-ui,-apple-sy
     <div class="sb-filters">
       <div class="sb-search">
         <input id="q" placeholder="Search building or address…"/>
-        <button class="btn" onclick="apply()">Search</button>
+        <button class="btn" onclick="acAutoSeg();apply()">Search</button>
         <button class="btn sec" onclick="clearAll()">Clear</button>
         <div class="ac" id="ac"></div>
       </div>
@@ -1451,7 +1451,7 @@ function cavSubName(c){
 function refreshTier(){var a=document.getElementById('authlink');if(!a)return;
   if(isMember()){a.textContent='Sign out';a.classList.remove('authcta');}
   else{a.textContent='Sign in';a.classList.add('authcta');}}
-function toggleTier(){ // v9.9.51: round trip - newsroom opens the sign-in modal and returns here once signed in
+function toggleTier(){ // v9.9.52: round trip - newsroom opens the sign-in modal and returns here once signed in
   location.href='/newsroom/?return='+encodeURIComponent(location.pathname+location.search+location.hash); }
 function detectSession(){
   try{
@@ -1460,7 +1460,7 @@ function detectSession(){
     var tok=JSON.parse(raw);
     var sess=tok&&tok.currentSession?tok.currentSession:tok;
     var exp=sess&&sess.expires_at, acc=sess&&sess.access_token;
-    // v9.9.51: an expired access token with a refresh token is still a signed-in user (the newsroom client
+    // v9.9.52: an expired access token with a refresh token is still a signed-in user (the newsroom client
     // refreshes it on its next load); only a missing session or a sign-out counts as signed out.
     if(acc&&exp&&(exp*1000>Date.now() || (sess&&sess.refresh_token))){
       window.currentUserTier='free';
@@ -1525,9 +1525,18 @@ async function paEnqSubmit(){
   }
 }
 detectSession();
-function detailCTA(){return isMember()
-  ?'<button class="cta">View full building →</button>'
+function detailCTA(kind){return isMember()   // v9.9.52: the member button now opens something (it had no handler)
+  ?'<button class="cta" onclick="'+(kind==='pin'?'openBuildingFull()':'ctaCaveatBuilding()')+'">View full building →</button>'
   :'<button class="cta" onclick="toggleTier()">🔒 Sign in (free) to view full address →</button>';}
+/* v9.9.52 (S423): caveat card -> the whole building. Named project: the project panel (residential) or the Directory
+   building (C&I) via gotoDirectory. No project name (landed houses, N.A. blocks): list every caveat at that block. */
+function ctaCaveatBuilding(){
+  var c=(selIdx!=null&&CAVEATS)?CAVEATS[selIdx]:null; if(!c) return;
+  if(c.n&&c.n!=='N.A.'){ gotoDirectory(c.n); return; }
+  var blk=String(c.addr||'').replace(/\s*#.*$/,'').trim(); if(!blk) return;
+  var qi=document.getElementById('q'); if(qi) qi.value=blk;
+  cavOffset=0; fQ=blk.toLowerCase(); closeDetail(); searchCaveats();
+}
 function lockNote(){return isMember()?''
   :'<div class="lock-note">🔒 <span>Street &amp; unit numbers are <b>masked</b>. Sign in (free) to view full details.</span></div>';}
 
@@ -2113,7 +2122,7 @@ function cavDetailHTML(c){
     ${c.note?`<div class="kv" style="color:var(--mut)">\u21b3 ${esc(maskNote(c.note))}</div>`:''}
     ${(c.nomap&&isRes(fSeg))?`<div class="kv" style="color:#B5683E">📍 ${landedNoMapNote(c)}</div>`:''}
     ${lockNote()}
-    ${detailCTA()}
+    ${detailCTA('cav')}
     ${enqBlock('cav')}`;
 }
 function selectCaveat(i,fly){
@@ -2213,7 +2222,7 @@ function renderBuildingPanel(p){
       ${p.tn?`<div class="kv">Tenure \u00b7 <b>${esc(p.tn)}</b></div>`:''}
       ${isMember()&&p.lat!=null?`<div class="kv">Lat/Lng \u00b7 <b>${p.lat}, ${p.lng}</b> <span style="opacity:.7">(OneMap)</span></div>`:''}
       ${lockNote()}
-      ${detailCTA()}
+      ${detailCTA('pin')}
     </div>
     ${enqBlock('pin')}`;
   if(p.res){ renderBldTxns(); loadResProjectPairs(_bldSeq); } else loadBuildingTxns(p.n);
@@ -2598,6 +2607,23 @@ function acData(){
   AC_MERGED=out; AC_MERGED_KEY=key; return out;
 }
 const AC_SEG_LABEL={ci:'C&I',landed:'Landed',nonlanded:'Condo / Apt',ec:'Exec Condo'};
+/* v9.9.52 (S423): move to a suggestion's segment (C&I = 'all'); no-op if already there. */
+function acGoSeg(seg){
+  var to=(seg==='ci')?'all':seg;
+  if(to===fSeg || (to==='all'&&!isRes(fSeg))) return;
+  fQ=document.getElementById('q').value.trim().toLowerCase(); setSegment(to);
+}
+/* v9.9.52 (S423): typed name + Search/Enter. If the text is exactly a project or building name that exists in another
+   segment but not the current one, move there first (Thomson Reserve typed on the C&I page opens Non-Landed). */
+function acAutoSeg(){
+  if(lens!=='caveats') return;
+  var q=(document.getElementById('q').value||'').trim().toLowerCase(); if(q.length<2) return;
+  var cur=isRes(fSeg)?fSeg:'ci', segs={}, data=acData();
+  for(var i=0;i<data.length;i++){ if((data[i].n||'').toLowerCase()===q) segs[data[i].seg]=(segs[data[i].seg]||0)+(Number(data[i].d)||0); }
+  if(segs[cur]!==undefined) return;
+  var best=null; Object.keys(segs).forEach(function(g){ if(best===null||segs[g]>segs[best]) best=g; });
+  if(best) acGoSeg(best);
+}
 function acFields(o){ // C&I rows come from PINS; residential rows from res_project_index_mv (v9.9.51: segment-tagged)
   if(o.seg&&o.seg!=='ci') return {name:o.n||'',sub:AC_SEG_LABEL[o.seg]+' \u00b7 '+(o.st||''),area:o.ar||'',seg:o.seg};
   var sub=o.st||o.ar||''; if(o.seg==='ci') sub='C&I'+(sub?' \u00b7 '+sub:'');
@@ -2614,7 +2640,7 @@ function buildSuggest(raw){
     if(!hay.includes(q))continue;
     let tier=2; if(nameLC.startsWith(q))tier=0; else if(nameLC.includes(q))tier=1;
     const key=(f.seg||'')+'|'+nameLC, ex=byName[key];
-    if(!ex){byName[key]={idx:i,name:f.name,sub:f.sub,area:f.area,tier:tier,count:1,d:Number(data[i].d)||0};}
+    if(!ex){byName[key]={idx:i,name:f.name,sub:f.sub,area:f.area,tier:tier,count:1,d:Number(data[i].d)||0,seg:f.seg||''};}
     else{ex.count++; ex.d+=Number(data[i].d)||0; if(tier<ex.tier){ex.tier=tier;ex.idx=i;ex.sub=f.sub;ex.area=f.area;}}
   }
   return Object.values(byName).sort((a,b)=>a.tier-b.tier||b.d-a.d||a.name.localeCompare(b.name)).slice(0,8);
@@ -2642,10 +2668,9 @@ function paintAC(){document.querySelectorAll('#ac .ac-row').forEach((r,k)=>r.cla
 function pickAC(k){
   const s=acItems[k]; if(!s)return;
   document.getElementById('q').value=s.name.replace(/\s*#.*$/,'');
-  var _it=(lens==='caveats')?acData()[s.idx]:null;
+  var _seg=(lens==='caveats')?(s.seg||''):'';
   closeAC();
-  if(_it&&_it.seg){ var _to=(_it.seg==='ci')?'all':_it.seg;
-    if(_to!==fSeg && !(_to==='all'&&!isRes(fSeg))){ fQ=document.getElementById('q').value.trim().toLowerCase(); setSegment(_to); } }
+  if(_seg) acGoSeg(_seg);
   apply();
   if(lens==='directory')select(s.idx,true);
 }
@@ -2656,7 +2681,7 @@ qEl.addEventListener('input',()=>{acItems=buildSuggest(qEl.value);acActive=-1;re
 qEl.addEventListener('keydown',e=>{
   if(e.key==='ArrowDown'){if(acItems.length){e.preventDefault();acActive=(acActive+1)%acItems.length;paintAC();}}
   else if(e.key==='ArrowUp'){if(acItems.length){e.preventDefault();acActive=(acActive-1+acItems.length)%acItems.length;paintAC();}}
-  else if(e.key==='Enter'){if(acActive>=0&&acItems[acActive]){e.preventDefault();pickAC(acActive);}else{closeAC();apply();}}
+  else if(e.key==='Enter'){if(acActive>=0&&acItems[acActive]){e.preventDefault();pickAC(acActive);}else{closeAC();acAutoSeg();apply();}}
   else if(e.key==='Escape'){closeAC();}
 });
 qEl.addEventListener('blur',()=>setTimeout(closeAC,120));
@@ -3429,11 +3454,15 @@ function faTopRender(cavs){
    transactions from nonlanded_transactions_geo; P&L, Most active (by project + district) and Top
    transactions via nonlanded_ma_* RPCs and nonlanded_pnl_pairs_mv. Residential project names render as
    plain text (the C&I Directory link does not apply). Needs S403_res_pulse_analysis.sql committed first. */
+/* v9.9.52 (S423): picking a suggestion now switches segment from the suggestion itself (v9.9.51 looked it up by index,
+   which could miss when a residential list finished loading in between); typing an exact project name and pressing
+   Search or Enter also moves to that project's segment. Sign in (free) returns to the Market after signing in on the
+   newsroom (newsroom v48.580); a stored session whose access token has lapsed but still holds a refresh token counts
+   as signed in. "View full building" (signed-in members) now works: caveat card -> project panel / Directory building
+   (or every caveat at the block when there is no project name); building panel -> full-width building view. */
 /* v9.9.51 (S423): one search box across all segments - suggestions merge C&I buildings with Landed, Non-Landed and
    Exec Condo projects regardless of the segment selected; each row is labelled (C&I / Landed / Condo / Apt / Exec Condo)
-   and picking one switches the segment, then searches. Same-tier matches rank by deal count. Directory lens: PINS only.
-   Also: Sign in (free) now returns to the Market after signing in on the newsroom (newsroom v48.580), and a stored
-   session whose access token has lapsed but still holds a refresh token counts as signed in. */
+   and picking one switches the segment, then searches. Same-tier matches rank by deal count. Directory lens: PINS only. */
 /* v9.9.50 (S423): residential typeahead - search-box suggestions follow the segment. Landed / Non-Landed / Exec Condo
    suggest named projects from res_project_index_mv (S423 SQL; refreshed at the close of each residential ingest);
    C&I and the Directory still suggest from PINS. Picking a suggestion runs the search as before. */

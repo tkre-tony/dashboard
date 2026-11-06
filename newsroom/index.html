@@ -1,4 +1,5 @@
 <!DOCTYPE html>
+<!-- v48.580 (6 Nov 2026, S423: sign-in round trip from the Market page - /newsroom/?return=/ opens the login modal when signed out and returns to the Market once signed in (or at once if already signed in). No cascade change.) -->
 <!-- v48.579 (6 Nov 2026, S423: id:273 dated Update, 6th November 2026 — NTT DC REIT Management Fee Supplement approved at EGM, 97.24% for (430,602,105 / 12,218,200), sponsor, manager and two individuals abstained; EGM deck: 7,959,880 units at NAV vs 8,932,009 issued; "updated" 2026-11-06 for article:modified_time. No cascade change.) -->
 <!-- v48.578 (6 Nov 2026, S422: NEWS id:333 weekly C&I caveats 3 & 6 Nov 2026 (Kallang Distripark S$196.04M) added as newest; cascade regenerated; /news/kallang-distripark-s196m-suntec-tower-three-s11-2m-30-year-lease-losses-weekly-caveats-3-6-nov-2026/ + sitemap) -->
 <!-- v48.577 (6 Nov 2026, S422: NEWS id:332 Starhill Global REIT David Jones voluntary administration added as newest; cascade regenerated; /news/starhill-global-reit-david-jones-voluntary-administration-perth-dpu-3-29-cents-occupancy-86-1/ + sitemap) -->
@@ -29615,6 +29616,15 @@ body:not(.tier-authed) #atlas-wish-overlay { display: none !important; }
 // State variables for the modal. Mode: 'signin' | 'signup'. Method: 'password' | 'magic'.
 window.atlasAuthState = window.atlasAuthState || { mode: 'signin', method: 'password' };
 
+// v48.580 (S423): sign-in round trip from the Market page. /newsroom/?return=/ stores the path, opens the
+// login modal if nobody is signed in, and atlasHandleSignedIn sends the user back once signed in.
+(function(){try{var q=new URLSearchParams(location.search),r=q.get('return');
+  if(r&&/^\/(?!\/)/.test(r)){sessionStorage.setItem('pa_return_to',r);
+    try{history.replaceState(null,'',location.pathname+location.hash);}catch(_){}
+    window.addEventListener('load',function(){setTimeout(function(){
+      if(!window.atlasCurrentUser&&sessionStorage.getItem('pa_return_to')&&typeof atlasOpenLoginModal==='function') atlasOpenLoginModal('signin');
+    },1200);});}}catch(e){}})();
+
 function atlasOpenLoginModal(initialMode) {
   var overlay = document.getElementById('atlas-auth-overlay');
   if(!overlay) return;
@@ -29650,6 +29660,7 @@ function atlasOpenLoginModal(initialMode) {
 }
 
 function atlasCloseLoginModal() {
+  try{ sessionStorage.removeItem('pa_return_to'); }catch(_){}
   var overlay = document.getElementById('atlas-auth-overlay');
   if(overlay) overlay.classList.remove('open');
 }
@@ -29937,6 +29948,8 @@ function atlasCurrentTabId() {
 
 async function atlasHandleSignedIn(session) {
   if(!session || !session.user) return;
+  try{ var _ret=sessionStorage.getItem('pa_return_to');
+    if(_ret&&/^\/(?!\/)/.test(_ret)){ sessionStorage.removeItem('pa_return_to'); location.replace(_ret); return; } }catch(_){}
   var profile = await atlasFetchOwnProfile();
   var tier = (profile && profile.user_tier) || 'free';
   window.atlasCurrentUser = {
