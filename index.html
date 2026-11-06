@@ -1451,7 +1451,8 @@ function cavSubName(c){
 function refreshTier(){var a=document.getElementById('authlink');if(!a)return;
   if(isMember()){a.textContent='Sign out';a.classList.remove('authcta');}
   else{a.textContent='Sign in';a.classList.add('authcta');}}
-function toggleTier(){ location.href='/newsroom/'; }
+function toggleTier(){ // v9.9.51: round trip - newsroom opens the sign-in modal and returns here once signed in
+  location.href='/newsroom/?return='+encodeURIComponent(location.pathname+location.search+location.hash); }
 function detectSession(){
   try{
     var raw=localStorage.getItem('sb-xywgocvjuygudzrduvwr-auth-token');
@@ -1459,7 +1460,9 @@ function detectSession(){
     var tok=JSON.parse(raw);
     var sess=tok&&tok.currentSession?tok.currentSession:tok;
     var exp=sess&&sess.expires_at, acc=sess&&sess.access_token;
-    if(acc&&exp&&(exp*1000>Date.now())){
+    // v9.9.51: an expired access token with a refresh token is still a signed-in user (the newsroom client
+    // refreshes it on its next load); only a missing session or a sign-out counts as signed out.
+    if(acc&&exp&&(exp*1000>Date.now() || (sess&&sess.refresh_token))){
       window.currentUserTier='free';
       var a=document.getElementById('authlink');
       if(a){a.textContent='Signed in ✓';a.removeAttribute('onclick');a.setAttribute('href','/newsroom/');}
@@ -3428,7 +3431,9 @@ function faTopRender(cavs){
    plain text (the C&I Directory link does not apply). Needs S403_res_pulse_analysis.sql committed first. */
 /* v9.9.51 (S423): one search box across all segments - suggestions merge C&I buildings with Landed, Non-Landed and
    Exec Condo projects regardless of the segment selected; each row is labelled (C&I / Landed / Condo / Apt / Exec Condo)
-   and picking one switches the segment, then searches. Same-tier matches rank by deal count. Directory lens: PINS only. */
+   and picking one switches the segment, then searches. Same-tier matches rank by deal count. Directory lens: PINS only.
+   Also: Sign in (free) now returns to the Market after signing in on the newsroom (newsroom v48.580), and a stored
+   session whose access token has lapsed but still holds a refresh token counts as signed in. */
 /* v9.9.50 (S423): residential typeahead - search-box suggestions follow the segment. Landed / Non-Landed / Exec Condo
    suggest named projects from res_project_index_mv (S423 SQL; refreshed at the close of each residential ingest);
    C&I and the Directory still suggest from PINS. Picking a suggestion runs the search as before. */
