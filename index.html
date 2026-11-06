@@ -2557,7 +2557,33 @@ function applyDateRange(w){
 }
 
 // ===== REUSABLE TYPEAHEAD (in-memory, lens-aware, dedup-by-building) =====
-function acData(){return PINS;}
+/* v9.9.50 (S423): residential typeahead. With Landed / Non-Landed / Exec Condo selected on the caveats lens,
+   suggestions come from res_project_index_mv (named projects per segment, district, planning area, caveat count),
+   loaded once per segment on first use (paged, 1,000 rows a request). C&I and the Directory keep PINS. */
+const RES_AC={landed:null,nonlanded:null,ec:null}, RES_AC_LOADING={};
+async function resAcLoad(seg){
+  if(RES_AC[seg]||RES_AC_LOADING[seg]) return;
+  RES_AC_LOADING[seg]=true;
+  try{
+    var all=[], off=0, page=1000;
+    for(var k=0;k<20;k++){
+      var r=await fetch(SUPA_REST+'/res_project_index_mv?select=project_name,district,planning_area,n&seg=eq.'+seg+'&order=n.desc,project_name.asc&limit='+page+'&offset='+off,
+        {headers:{'apikey':SUPA_ANON,'Authorization':'Bearer '+SUPA_ANON}});
+      if(!r.ok) break;
+      var rows=await r.json(); all=all.concat(rows||[]);
+      if(!rows||rows.length<page) break; off+=page;
+    }
+    if(all.length) RES_AC[seg]=all.map(function(x){return {n:x.project_name||'',
+      st:'D'+String(x.district==null?'':x.district).padStart(2,'0'),ar:x.planning_area||'',d:Number(x.n)||0};});
+  }catch(e){ /* suggestions stay off; Search still works */ }
+  RES_AC_LOADING[seg]=false;
+  var qe=document.getElementById('q');
+  if(qe&&document.activeElement===qe&&lens==='caveats'&&fSeg===seg){acItems=buildSuggest(qe.value);acActive=-1;renderAC();}
+}
+function acData(){
+  if(lens==='caveats'&&isRes()){ var a=RES_AC[fSeg]; if(!a) resAcLoad(fSeg); return a||[]; }
+  return PINS;
+}
 function acFields(o){ // unified: suggestions always come from PINS (building index)
   return {name:o.n||'',sub:o.st||o.ar||'',area:o.ar||''};
 }
@@ -3384,6 +3410,9 @@ function faTopRender(cavs){
    transactions from nonlanded_transactions_geo; P&L, Most active (by project + district) and Top
    transactions via nonlanded_ma_* RPCs and nonlanded_pnl_pairs_mv. Residential project names render as
    plain text (the C&I Directory link does not apply). Needs S403_res_pulse_analysis.sql committed first. */
+/* v9.9.50 (S423): residential typeahead - search-box suggestions follow the segment. Landed / Non-Landed / Exec Condo
+   suggest named projects from res_project_index_mv (S423 SQL; refreshed at the close of each residential ingest);
+   C&I and the Directory still suggest from PINS. Picking a suggestion runs the search as before. */
 /* v9.9.49 (S422): SEED_CAVEATS re-bake - week of 2 Nov 2026 complete: Tue 3 Nov 4 caveats (S$27,265,000, ids 83472-83475) + Fri 6 Nov
    34 caveats (S$302,286,153, ids 83476-83509) = 38. SEED_CAV_TOTAL 39 -> 38. Aborted id 295 (2 Venture Drive #06-22, 19 Mar 2026)
    is outside the seed window. C&I Gate B 0. File returned to LF line endings (v9.9.48 interim was CRLF). */
