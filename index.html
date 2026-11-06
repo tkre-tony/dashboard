@@ -1531,7 +1531,7 @@ function detailCTA(kind){return isMember()   // v9.9.52: the member button now o
 /* v9.9.52 (S423): caveat card -> the whole building. Named project: the project panel (residential) or the Directory
    building (C&I) via gotoDirectory. No project name (landed houses, N.A. blocks): list every caveat at that block. */
 function ctaCaveatBuilding(){
-  var c=(selIdx!=null&&CAVEATS)?CAVEATS[selIdx]:null; if(!c) return;
+  var c=CUR_CAV; if(!c) return;
   if(c.n&&c.n!=='N.A.'){ gotoDirectory(c.n); return; }
   var blk=String(c.addr||'').replace(/\s*#.*$/,'').trim(); if(!blk) return;
   var qi=document.getElementById('q'); if(qi) qi.value=blk;
@@ -2101,7 +2101,9 @@ function caveatTableHTML(items){
     `</tr></thead><tbody>`+rows+`</tbody></table>`;
 }
 
+var CUR_CAV=null;   // v9.9.53: the caveat shown on the card (set for list clicks and residential map clicks alike)
 function cavDetailHTML(c){
+  CUR_CAV=c;
   const col=TYPE_COLORS[c.t]||'#888';
   return `<span class="x" onclick="closeDetail()">×</span>
     <h3>${esc(maskAddress(cavTitle(c)))}</h3>
@@ -3454,6 +3456,8 @@ function faTopRender(cavs){
    transactions from nonlanded_transactions_geo; P&L, Most active (by project + district) and Top
    transactions via nonlanded_ma_* RPCs and nonlanded_pnl_pairs_mv. Residential project names render as
    plain text (the C&I Directory link does not apply). Needs S403_res_pulse_analysis.sql committed first. */
+/* v9.9.53 (S423): "View full building" on residential caveat cards - v9.9.52 read the card from selIdx, which the
+   residential list/map path leaves empty, so the button did nothing; the card now remembers its caveat (CUR_CAV). */
 /* v9.9.52 (S423): picking a suggestion now switches segment from the suggestion itself (v9.9.51 looked it up by index,
    which could miss when a residential list finished loading in between); typing an exact project name and pressing
    Search or Enter also moves to that project's segment. Sign in (free) returns to the Market after signing in on the

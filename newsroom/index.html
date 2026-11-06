@@ -1,4 +1,5 @@
 <!DOCTYPE html>
+<!-- v48.581 (6 Nov 2026, S423: sign-in round trip - the login box opens as soon as the page is parsed when no session is stored, instead of after a 1.2 s wait on the newsroom. No cascade change.) -->
 <!-- v48.580 (6 Nov 2026, S423: sign-in round trip from the Market page - /newsroom/?return=/ opens the login modal when signed out and returns to the Market once signed in (or at once if already signed in). No cascade change.) -->
 <!-- v48.579 (6 Nov 2026, S423: id:273 dated Update, 6th November 2026 — NTT DC REIT Management Fee Supplement approved at EGM, 97.24% for (430,602,105 / 12,218,200), sponsor, manager and two individuals abstained; EGM deck: 7,959,880 units at NAV vs 8,932,009 issued; "updated" 2026-11-06 for article:modified_time. No cascade change.) -->
 <!-- v48.578 (6 Nov 2026, S422: NEWS id:333 weekly C&I caveats 3 & 6 Nov 2026 (Kallang Distripark S$196.04M) added as newest; cascade regenerated; /news/kallang-distripark-s196m-suntec-tower-three-s11-2m-30-year-lease-losses-weekly-caveats-3-6-nov-2026/ + sitemap) -->
@@ -29621,9 +29622,12 @@ window.atlasAuthState = window.atlasAuthState || { mode: 'signin', method: 'pass
 (function(){try{var q=new URLSearchParams(location.search),r=q.get('return');
   if(r&&/^\/(?!\/)/.test(r)){sessionStorage.setItem('pa_return_to',r);
     try{history.replaceState(null,'',location.pathname+location.hash);}catch(_){}
-    window.addEventListener('load',function(){setTimeout(function(){
-      if(!window.atlasCurrentUser&&sessionStorage.getItem('pa_return_to')&&typeof atlasOpenLoginModal==='function') atlasOpenLoginModal('signin');
-    },1200);});}}catch(e){}})();
+    // v48.581: no stored session -> open the sign-in box as soon as the page is parsed (no newsroom flash);
+    // a stored session -> wait for the auth client, which sends the user straight back.
+    var _has=false; try{_has=!!localStorage.getItem('sb-xywgocvjuygudzrduvwr-auth-token');}catch(_){}
+    var _open=function(){ if(!window.atlasCurrentUser&&sessionStorage.getItem('pa_return_to')&&typeof atlasOpenLoginModal==='function') atlasOpenLoginModal('signin'); };
+    if(!_has){ if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',_open); else _open(); }
+    else window.addEventListener('load',function(){setTimeout(_open,2500);});}}catch(e){}})();
 
 function atlasOpenLoginModal(initialMode) {
   var overlay = document.getElementById('atlas-auth-overlay');
