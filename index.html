@@ -313,6 +313,20 @@ body{background:var(--bg);color:var(--txt);font-family:Inter,system-ui,-apple-sy
 .bf-chip.on{background:var(--g1);color:#fff;border-color:var(--g1)}
 .bf-cnt{font-weight:600;color:var(--mut);text-transform:none;letter-spacing:0;font-size:11.5px}
 .bf-chart{width:100%;height:auto;display:block;background:var(--srf2);border:1px solid var(--bdr);border-radius:10px;padding:6px}
+.rb-card{background:var(--srf2);border:1px solid var(--bdr);border-radius:10px;padding:14px 16px}
+.rb-row{display:flex;align-items:baseline;gap:14px;flex-wrap:wrap;padding:6px 0;border-bottom:1px dashed var(--bdr)}
+.rb-row:last-of-type{border-bottom:none}
+.rb-lbl{min-width:170px;font-size:12px;font-weight:700;color:var(--txt)}
+.rb-val{font-family:ui-monospace,Menlo,Consolas,monospace;font-size:15px;font-weight:700;color:var(--g1)}
+.rb-sub{font-size:11.5px;color:var(--mut)}
+.rb-spark{width:150px;height:34px;vertical-align:middle}
+.rb-tbl{border-collapse:collapse;font-size:12px;margin-top:4px}
+.rb-tbl th,.rb-tbl td{padding:4px 12px 4px 0;text-align:right;white-space:nowrap}
+.rb-tbl th:first-child,.rb-tbl td:first-child{text-align:left}
+.rb-tbl th{font-size:10.5px;color:var(--mut);font-weight:700;text-transform:uppercase;letter-spacing:.03em}
+.rb-tbl td{font-family:ui-monospace,Menlo,Consolas,monospace}
+.rb-tbl td.hit{color:var(--g1);font-weight:700}
+.rb-note{font-size:10.5px;color:var(--mut);margin-top:9px;line-height:1.45}
 .mktvol{flex:none;padding:9px 12px 6px;border-bottom:1px solid var(--bdr);background:var(--srf)}
 .mv-h{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:6px;flex-wrap:wrap}
 .mv-tog{border:none;background:none;padding:0;margin:0;font:inherit;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.04em;color:var(--mut);cursor:pointer;display:inline-flex;align-items:center;gap:6px}
@@ -1000,6 +1014,7 @@ function renderMktVol(){
 window.addEventListener('resize',function(){ clearTimeout(_mvRz); _mvRz=setTimeout(function(){ if(typeof lens!=='undefined'&&lens==='caveats'&&MV_OPEN&&document.getElementById('mktVol')) renderMktVol(); },160); });
 let detailTab='caveats', BLD_TXNS=null, BLD_TXN_KEY=null, BLD_SHOWN=0, _bldSeq=0, _preDetailSplit=null; const BLD_PAGE=25;
 let CUR_PIN=null, BF_OPEN=false, BF_PAGE=0, BF_SIZE=25, BF_PERIOD='all'; let BF_SORT={k:'sd',dir:'desc'}; let BLD_PAIRS={};
+let BF_RENT=null, BF_RENT_KEY=null;   // v9.9.54: JTC rent benchmark for the open industrial building (pa_rent_benchmark RPC)
 
 // chip display value -> the URA property_type strings stored in the DB (for server-side filter)
 const CHIP_TO_DB = {
@@ -2333,6 +2348,91 @@ async function loadBuildingPairs(seq){
     if(BF_OPEN) renderBuildingFull();
   }catch(e){ /* BOUGHT pairing is an enhancement; ignore */ }
 }
+// ===== v9.9.54 (S427): JTC rent benchmark on the full building view (industrial only) =====
+const RENT_TYPES={'Multi-User Factory':1,'Single-User Factory':1,'Warehouse':1};
+const RB_SQM_PER_SQFT=10.7639;
+const RB_BANDS=[['lt100','Under 100 sqm'],['100_200','100\u2013199 sqm'],['200_300','200\u2013299 sqm'],['300_1000','300\u2013999 sqm'],['ge1000','1,000 sqm +']];
+function rentStreet(addr){
+  return (addr||'').toUpperCase().replace(/\s*#.*$/,'').replace(/^[0-9]+[A-Z]?(\s*[,\/&-]\s*[0-9]+[A-Z]?)*\s+/,'').replace(/\s+/g,' ').trim();
+}
+function rentLatestCaveat(){
+  const rows=(BLD_TXNS||[]).filter(c=>c.sdRaw);
+  return rows.slice().sort((a,b)=>(b.sdRaw||'').localeCompare(a.sdRaw||''))[0]||null;
+}
+function rentKey(){
+  const p=CUR_PIN; if(!p||!RENT_TYPES[p.t]||!BLD_TXNS||!BLD_TXNS.length) return null;
+  const lc=rentLatestCaveat(); const st=rentStreet(lc?lc.addr:'');
+  if(!st) return null;
+  return st+'|'+(p.di||'');
+}
+async function loadRentBenchmark(){
+  const key=rentKey(); if(!key||BF_RENT_KEY===key) return;
+  BF_RENT_KEY=key; BF_RENT=null;
+  const parts=key.split('|');
+  try{
+    const res=await fetch(SUPA_REST+'/rpc/pa_rent_benchmark',{method:'POST',
+      headers:{'Content-Type':'application/json','apikey':SUPA_ANON,'Authorization':'Bearer '+SUPA_ANON},
+      body:JSON.stringify({p_street:parts[0],p_district:parts[1]?Number(parts[1]):null})});
+    if(!res.ok) return;
+    const j=await res.json();
+    if(BF_RENT_KEY!==key) return;
+    BF_RENT=Object.assign({_key:key,_street:parts[0]},j||{});
+    if(BF_OPEN) renderBuildingFull();
+  }catch(e){ /* rent benchmark is an enhancement; ignore */ }
+}
+function rbQ(q){ return q&&/^\d{4}Q[1-4]$/.test(q)?q.slice(5)+'Q'+q.slice(0,4):(q||''); }
+function rbPsf(v){ return v==null?null:Number(v)/RB_SQM_PER_SQFT; }
+function rbFmt(v){ return v==null?'\u2014':'S$'+v.toFixed(2); }
+function rbTitle(s){ return (s||'').toLowerCase().replace(/\b([a-z])/g,m=>m.toUpperCase()); }
+function rbSpark(series){
+  const v=series.map(r=>rbPsf(r.median)); if(v.length<2) return '';
+  const W=150,H=34,pad=3, mn=Math.min.apply(null,v), mx=Math.max.apply(null,v), rg=(mx-mn)||1;
+  const pts=v.map((y,i)=>(pad+i*(W-2*pad)/(v.length-1)).toFixed(1)+','+(H-pad-((y-mn)/rg)*(H-2*pad)).toFixed(1)).join(' ');
+  const tip=series.map(r=>rbQ(r.quarter)+' '+rbFmt(rbPsf(r.median))).join(' \u00b7 ');
+  return `<svg class="rb-spark" viewBox="0 0 ${W} ${H}"><title>${tip}</title><polyline points="${pts}" fill="none" stroke="var(--g1)" stroke-width="1.8"/></svg>`;
+}
+function rentSectionHTML(){
+  const p=CUR_PIN; if(!p||!RENT_TYPES[p.t]) return '';
+  const key=rentKey(); if(!key||!BF_RENT||BF_RENT._key!==key) return '';
+  const ss=Array.isArray(BF_RENT.street_series)?BF_RENT.street_series:[];
+  const dist=BF_RENT.district||null, cells=dist&&Array.isArray(dist.cells)?dist.cells:[];
+  const isMuf=p.t==='Multi-User Factory', distOk=isMuf&&cells.some(c=>c.median!=null);
+  if(!ss.length&&!distOk) return '';
+  const lc=rentLatestCaveat();
+  const lcFloor=lc&&lc.addr?((m=>m?(Number(m[1])<=1?'L1':'L2+'):(/#B/i.test(lc.addr)?'L1':null))(/#0*(\d+)-/.exec(lc.addr))):null;
+  const lcSqm=lc&&lc.area?Number(lc.area)/RB_SQM_PER_SQFT:null;
+  const lcBand=lcSqm==null?null:(lcSqm<100?'lt100':lcSqm<200?'100_200':lcSqm<300?'200_300':lcSqm<1000?'300_1000':'ge1000');
+  let html='';
+  let streetPsf=null;
+  if(ss.length){
+    const last=ss[ss.length-1]; streetPsf=rbPsf(last.median);
+    const dated=BF_RENT.latest_quarter&&last.quarter!==BF_RENT.latest_quarter;
+    html+=`<div class="rb-row"><span class="rb-lbl">${esc(rbTitle(BF_RENT._street))}</span>`+
+      `<span class="rb-val">${rbFmt(streetPsf)} psf pm</span>`+
+      `<span class="rb-sub">median \u00b7 middle half ${rbFmt(rbPsf(last.p25))}\u2013${rbFmt(rbPsf(last.p75))} \u00b7 ${rbQ(last.quarter)}${dated?' (latest published for this street)':''}</span>`+
+      `${rbSpark(ss)}</div>`;
+  }
+  if(distOk){
+    const get=(fb,ab)=>cells.find(c=>c.floor_band===fb&&c.area_band===ab);
+    const rowsH=RB_BANDS.map(([ab,lbl])=>{
+      const c1=get('L1',ab), c2=get('L2+',ab);
+      if(!(c1&&c1.median!=null)&&!(c2&&c2.median!=null)) return '';
+      const td=(c,fb)=>`<td class="${lcBand===ab&&lcFloor===fb?'hit':''}">${c&&c.median!=null?rbFmt(rbPsf(c.median)):'\u2014'}</td>`;
+      return `<tr><td>${lbl}</td>${td(c1,'L1')}${td(c2,'L2+')}</tr>`;
+    }).join('');
+    html+=`<div class="rb-row"><span class="rb-lbl">District ${esc(String(p.di))} \u00b7 multi-user factory</span>`+
+      `<span class="rb-sub">median psf pm by floor and unit size \u00b7 ${rbQ(dist.quarter)}</span>`+
+      `<table class="rb-tbl"><thead><tr><th>Unit size</th><th>Level 1</th><th>Level 2+</th></tr></thead><tbody>${rowsH}</tbody></table></div>`;
+  }
+  if(streetPsf&&lc&&lc.psf&&(lc.toa||'').toLowerCase()==='strata'){
+    const y=streetPsf*12/Number(lc.psf)*100;
+    html+=`<div class="rb-row"><span class="rb-lbl">Implied gross yield</span>`+
+      `<span class="rb-val">\u2248${y.toFixed(1)}%</span>`+
+      `<span class="rb-sub">street median rent on the latest caveat (S$${Math.round(lc.psf).toLocaleString()} psf, ${lc.sd})</span></div>`;
+  }
+  return `<div class="bf-sec"><div class="bf-h">Rent Benchmark <span class="bf-cnt">JTC \u00b7 contracted gross rents</span></div>`+
+    `<div class="rb-card">${html}<div class="rb-note">Source: JTC J-Space, contracted gross rent per month declared to IRAS (e-Stamping), all industrial leases on the street; may include rent-free periods. Indicative only, not a valuation. Gross yield before costs, property tax and vacancy.</div></div></div>`;
+}
 function renderBuildingFull(){
   const el=document.getElementById('detailFull'); if(!el||!CUR_PIN) return;
   const p=CUR_PIN, hcol=TYPE_COLORS[p.t]||'#888';
@@ -2379,6 +2479,7 @@ function renderBuildingFull(){
       <div class="bf-h">Transaction Volume <span class="bf-periods">${pchips}</span></div>
       ${volumeChartSVG(all)}
     </div>
+    ${rentSectionHTML()}
     <div class="bf-sec">
       <div class="bf-h">All Caveats <span class="bf-cnt">${total.toLocaleString()} record${total===1?'':'s'}${isMember()?'':' \u00b7 masked'}</span></div>
       <div class="bf-tablewrap"><table class="mptbl"><thead><tr>`+
@@ -2398,6 +2499,7 @@ function renderBuildingFull(){
       ${lockNote()}
     </div>
   </div>`;
+  loadRentBenchmark();
 }
 
 function apply(){
@@ -3456,6 +3558,11 @@ function faTopRender(cavs){
    transactions from nonlanded_transactions_geo; P&L, Most active (by project + district) and Top
    transactions via nonlanded_ma_* RPCs and nonlanded_pnl_pairs_mv. Residential project names render as
    plain text (the C&I Directory link does not apply). Needs S403_res_pulse_analysis.sql committed first. */
+/* v9.9.54 (S427): Rent Benchmark section on the full building view for industrial buildings (Multi-User Factory,
+   Single-User Factory, Warehouse). Street = latest caveat's address with house numbers and unit stripped; reads
+   pa_rent_benchmark(street, district) (S427 SQL, SECURITY DEFINER over rental_quartiles). Shows the JTC street median
+   rent (psf pm, middle half, quarter, 7-quarter sparkline), the district MUF floor x size medians (MUF only, the latest
+   caveat's cell highlighted), and an implied gross yield on the latest strata caveat. Hidden when there is no data. */
 /* v9.9.53 (S423): "View full building" on residential caveat cards - v9.9.52 read the card from selIdx, which the
    residential list/map path leaves empty, so the button did nothing; the card now remembers its caveat (CUR_CAV). */
 /* v9.9.52 (S423): picking a suggestion now switches segment from the suggestion itself (v9.9.51 looked it up by index,
