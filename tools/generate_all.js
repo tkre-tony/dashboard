@@ -985,7 +985,7 @@ function artNavHtml(a) {
   const ord = archOrder(); const i = ord.findIndex(x => x.id === a.id);
   const newer = i > 0 ? ord[i - 1] : null, older = i >= 0 && i < ord.length - 1 ? ord[i + 1] : null;
   const pg = i >= 0 ? Math.floor(i / ARCHIVE_PER_PAGE) + 1 : 1;
-  return '<nav class="pa-artnav" aria-label="More articles">' +
+  return '<nav class="pa-artnav" data-nosnippet aria-label="More articles">' +
     (older ? '<a class="pa-artnav-link" href="/news/' + older.slug + '/"><span>Previous article</span>' + esc(cardTitle(older)) + '</a>' : '') +
     (newer ? '<a class="pa-artnav-link pa-artnav-next" href="/news/' + newer.slug + '/"><span>Next article</span>' + esc(cardTitle(newer)) + '</a>' : '') +
     '<a class="pa-artnav-all" href="' + archivePath(pg) + '">All PropertyAtlas articles &rarr;</a></nav>';
@@ -1042,6 +1042,10 @@ function buildPage(a) {
   fragment = ia.fragment;
   fragment = fragment.replace(artOpen, '<div class="pa-shell">' + artOpen);
   fragment = fragment.replace('</article>', '</article>' + promoRailHtml({ map: ia.map, tk: ia.tk }) + '</div>');
+  // SEO-2 (S431): keep neighbour headlines out of Google snippets. Rails and the article
+  // nav carry other articles' titles; Google was lifting them as this page's snippet
+  // (CDL id:339 / Starhill id:341 showed Prime US REIT id:338 text). Indexing unaffected.
+  fragment = fragment.replace(/<aside class="(ed-art-related|pa-rail)\b/g, '<aside data-nosnippet class="$1');
   const usedClasses = new Set();
   (fragment.match(/class=["']([^"']*)["']/g) || []).forEach(m => {
     m.replace(/class=["']([^"']*)["']/, (x, cl) => cl.split(/\s+/).forEach(c => c && usedClasses.add(c)));
