@@ -1,4 +1,5 @@
 <!DOCTYPE html>
+<!-- v48.597 (HC renderer: tenure badge stops at ceased - records with a ceased date show exact tenure to one decimal, no '+' (Wu Geng 8.7 yrs, Gu/Cheng 9.0, Russell Ng 4.4); active records unchanged) -->
 <!-- v48.596 (id:347 IREIT Global 3Q2026 business update - interest cover 1.7x, leverage 45.8%, BVG lifts Berlin Campus to ~75%; cascade hero 347, cards 346-344, feed 343-337) -->
 <!-- v48.595 (id:346 Bukit Sembawang 1H FY2026/27 - net profit -50.7%, gross margin 27.3%, cash S$525.1M; cascade hero 346, cards 345-343, feed 342-336) -->
 <!-- v48.594 (id:345 Wee Hur Lowood groundbreaking - Woodline 358-lot subdivision, first titles 2H2027; cascade hero 345, cards 344-342, feed 341-335) -->
@@ -19174,8 +19175,9 @@ function talentRemTagClass(p){
   return 'rem-low';
 }
 
-function talentTenureTag(yrs){
+function talentTenureTag(yrs, ceased){
   if(yrs===null||yrs===undefined) return {cls:'rem-low',label:'—'};
+  if(ceased) return {cls:(yrs<1?'tenure-new':(yrs<4?'tenure-mid':'tenure-long')),label:(+yrs).toFixed(1)+' yrs'};
   if(yrs<1) return {cls:'tenure-new',label:'<1 yr'};
   if(yrs<4) return {cls:'tenure-mid',label:Math.round(yrs)+' yrs'};
   return {cls:'tenure-long',label:Math.round(yrs)+'+ yrs'};
@@ -19243,7 +19245,7 @@ function talentRender(){
   grid.innerHTML = filtered.map(function(p){
     var remLbl = talentRemLabel(p);
     var remCls = talentRemTagClass(p);
-    var ten = talentTenureTag(p.tenure_yrs);
+    var ten = talentTenureTag(p.tenure_yrs, p.ceased);
     var avatar = talentAvatarColor(p.role_type);
     var remBarPct = p.rem_exact ? Math.min(100, Math.round(p.rem_exact/25000)) : (p.rem_band?35:0);
     var fixedPct = p.rem_pct_fixed||0;
@@ -19321,7 +19323,7 @@ function talentOpenDrawer(id){
   if(!p) return;
   talentOpenId = id;
   var avatar = talentAvatarColor(p.role_type);
-  var ten = talentTenureTag(p.tenure_yrs);
+  var ten = talentTenureTag(p.tenure_yrs, p.ceased);
 
   var remSection = '';
   if(p.rem_exact){
