@@ -1,4 +1,5 @@
 <!DOCTYPE html>
+<!-- v48.600 (Asset Directory callout ribbon: price shown in its own currency via reitPriceMatch() - US$34.0M not S$34.0 (BJ's Quincy); JPY/A$/EUR/KRW handled; three call sites.) -->
 <!-- v48.599 (NEWS id:349 United Hampshire US REIT 3Q 2026 operational update added as newest; landing cascade + sitemap.) -->
 <!-- v48.598 (NEWS id:348 Daiwa House Logistics Trust 3Q 2026 business update added as newest; landing cascade + sitemap.) -->
 <!-- v48.597 (HC renderer: tenure badge stops at ceased - records with a ceased date show exact tenure to one decimal, no '+' (Wu Geng 8.7 yrs, Gu/Cheng 9.0, Russell Ng 4.4); active records unchanged) -->
@@ -26478,6 +26479,16 @@ function reitClassify(p){
            newAcq:newAcq, managed:managed, operational:operational };
 }
 
+/* Price tag for the callout ribbon (v48.600). Reads the first money figure in the row's
+   status in its own currency: US$34.0 million -> US$34.0M, JPY13,500M, A$52.5M, S$108.0M.
+   The old /S\$[\d,.]+/ picked the S$ out of US$ and showed every overseas price as S$. */
+function reitPriceMatch(st){
+  var m=(st||'').match(/(?:^|[^A-Za-z])(US\$|NZ\$|HK\$|A\$|C\$|S\$|€|£|JPY ?|KRW ?|RMB ?|VND ?|INR ?|RM ?)([0-9][0-9,]*(?:\.[0-9]+)?)(?:\s?(billion|million|bn|[BMK]))?(?![A-Za-z])/);
+  if(!m) return null;
+  var u=m[3]||''; u=/^b/i.test(u)?'B':(/^m/i.test(u)?'M':u.toUpperCase());
+  return [m[1].replace(/ $/,'')+m[2]+u];
+}
+
 function reitSetView(mode){
   reitViewMode = mode;
   var gBtn = document.getElementById('reit-vbtn-grid');
@@ -27310,15 +27321,15 @@ function reitSearch(page){
     var calloutBanner = '';
     var priceMatch, priceStr;
     if(isDivested){
-      priceMatch = (p.status||'').match(/S\$[\d,.]+[MBK]?/);
+      priceMatch = reitPriceMatch(p.status);
       priceStr = priceMatch ? ' · '+priceMatch[0] : '';
       calloutBanner = '<div style="background:#7f1d1d;color:#fca5a5;font-size:10px;font-weight:700;text-align:center;padding:5px 10px;letter-spacing:.06em;text-transform:uppercase">⚓ Divested'+priceStr+'</div>';
     } else if(isPendingAcq){
-      priceMatch = (p.status||'').match(/S\$[\d,.]+[MBK]?/);
+      priceMatch = reitPriceMatch(p.status);
       priceStr = priceMatch ? ' · '+priceMatch[0] : '';
       calloutBanner = '<div style="background:#A67C3A;color:#fef3c7;font-size:10px;font-weight:700;text-align:center;padding:5px 10px;letter-spacing:.06em;text-transform:uppercase">◎ Pending Acquisition'+priceStr+'</div>';
     } else if(isPending){
-      priceMatch = (p.status||'').match(/S\$[\d,.]+[MBK]?/);
+      priceMatch = reitPriceMatch(p.status);
       priceStr = priceMatch ? ' · '+priceMatch[0] : '';
       calloutBanner = '<div style="background:#78350f;color:#fcd34d;font-size:10px;font-weight:700;text-align:center;padding:5px 10px;letter-spacing:.06em;text-transform:uppercase">⏳ Pending Divestment'+priceStr+'</div>';
     } else if(isNewAcq){
