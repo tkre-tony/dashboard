@@ -2796,10 +2796,40 @@ function init(){
     style:'https://tiles.openfreemap.org/styles/positron',
     center:[103.82,1.345],zoom:10.6,attributionControl:{customAttribution:'Stations &amp; exits: LTA · Schools: MOE · Places: OneMap/SLA'}
   });
-  map.addControl(new maplibregl.NavigationControl({showCompass:false}),'top-left');
-  var _is3D=false;
-  var pitchCtrl={onAdd:function(m){var d=document.createElement('div');d.className='maplibregl-ctrl maplibregl-ctrl-group';var btn=document.createElement('button');btn.type='button';btn.title='Toggle 2D / 3D view';btn.textContent='3D';btn.style.cssText='font:700 11px/1 Inter,system-ui,sans-serif;letter-spacing:.03em';btn.onclick=function(){_is3D=!_is3D;m.easeTo({pitch:_is3D?55:0,duration:500});btn.textContent=_is3D?'2D':'3D';if(m.getLayer('pa-bldg-3d')){m.setLayoutProperty('pa-bldg-3d','visibility',_is3D?'visible':'none');m.setLayoutProperty('pa-bldg-fill','visibility',_is3D?'none':'visible');}};d.appendChild(btn);this._c=d;return d;},onRemove:function(){this._c.parentNode.removeChild(this._c);}};
+  map.addControl(new maplibregl.NavigationControl({showCompass:true,visualizePitch:true}),'top-left');
+  /* v9.9.57 (S437): 3D view upgrade - 3D button flies to street level when zoomed out, tilts and turns the view,
+     buildings shaded by height under a soft light, the selected building lights up gold, compass to reset north. */
+  var _is3D=false, _paSelLL=null, _paSelDone=true;
+  window.paSet3D=function(on){
+    _is3D=!!on; var m=map, opt={pitch:_is3D?58:0,bearing:_is3D?-17:0,duration:800};
+    if(_is3D&&m.getZoom()<15.5){ opt.zoom=16.3; if(_paSelLL) opt.center=_paSelLL; }
+    m.easeTo(opt);
+    var b=document.getElementById('paBtn3D'); if(b){ b.textContent=_is3D?'2D':'3D'; b.title=_is3D?'Back to the flat 2D map':'3D buildings (street level)'; }
+    [['pa-bldg-3d',_is3D],['pa-bldg-sel-3d',_is3D],['pa-bldg-fill',!_is3D],['pa-bldg-line',!_is3D]].forEach(function(x){ if(m.getLayer(x[0])) m.setLayoutProperty(x[0],'visibility',x[1]?'visible':'none'); });
+  };
+  var pitchCtrl={onAdd:function(m){var d=document.createElement('div');d.className='maplibregl-ctrl maplibregl-ctrl-group';var btn=document.createElement('button');btn.type='button';btn.id='paBtn3D';btn.title='3D buildings (street level)';btn.textContent='3D';btn.style.cssText='font:700 11px/1 Inter,system-ui,sans-serif;letter-spacing:.03em';btn.onclick=function(){window.paSet3D(!_is3D);};d.appendChild(btn);this._c=d;return d;},onRemove:function(){this._c.parentNode.removeChild(this._c);}};
   map.addControl(pitchCtrl,'top-left');
+  /* v9.9.57: selected building highlight - footprint under the selected pin, from the vector tiles */
+  var _paEmpty={type:'FeatureCollection',features:[]};
+  function paScaleRing(r,k){ var cx=0,cy=0,n=r.length; r.forEach(function(p){cx+=p[0];cy+=p[1];}); cx/=n; cy/=n;
+    return r.map(function(p){ return [cx+(p[0]-cx)*k, cy+(p[1]-cy)*k]; }); }
+  function paBldgSel(){
+    var src=map.getSource('pa-bldg-sel'), L=map.getLayer('pa-bldg-fill'); if(!src||!L) return;
+    if(!_paSelLL){ src.setData(_paEmpty); _paSelDone=true; return; }
+    if(map.getZoom()<14){ src.setData(_paEmpty); return; }
+    var fs=map.querySourceFeatures(L.source,{sourceLayer:'building'}), x=_paSelLL[0], y=_paSelLL[1], out=[];
+    for(var i=0;i<fs.length&&out.length<8;i++){
+      var g=fs[i].geometry; if(!g) continue;
+      var polys=g.type==='Polygon'?[g.coordinates]:g.type==='MultiPolygon'?g.coordinates:null; if(!polys) continue;
+      for(var j=0;j<polys.length;j++){
+        if(!polys[j][0]||!nearPip(x,y,polys[j][0])) continue;
+        var pr=fs[i].properties||{}, h=+(pr.render_height||pr.height||8), b=+(pr.render_min_height||pr.min_height||0);
+        out.push({type:'Feature',geometry:{type:'Polygon',coordinates:[paScaleRing(polys[j][0],1.006)]},properties:{h:h+0.6,b:b}});
+      }
+    }
+    src.setData({type:'FeatureCollection',features:out}); _paSelDone=true;
+  }
+
   hoverPopup=new maplibregl.Popup({closeButton:false,closeOnClick:false,offset:10});
   map.on('load',()=>{
     /* v9.9.34 (S404): URA MP2025 zoning layer (pmtiles) + SchoolQuery blue/magenta + P1 zones rebuilt on MP2025. */
@@ -2823,10 +2853,57 @@ function init(){
                  'line-opacity':['interpolate',['linear'],['zoom'],14,0,15,0.9]}},_firstSym||undefined);
         map.addLayer({id:'pa-bldg-3d',type:'fill-extrusion',source:_bsrc,'source-layer':'building',minzoom:14,
           layout:{visibility:'none'},
-          paint:{'fill-extrusion-color':'#d6d1c7',
+          paint:{'fill-extrusion-color':['interpolate',['linear'],['coalesce',['get','render_height'],['get','height'],8],
+                   0,'#efe9de',30,'#e7e0d3',80,'#dad1c1',160,'#c8bdaa'],
                  'fill-extrusion-height':['coalesce',['get','render_height'],['get','height'],8],
                  'fill-extrusion-base':['coalesce',['get','render_min_height'],['get','min_height'],0],
-                 'fill-extrusion-opacity':0.85}},_firstSym||undefined);
+                 'fill-extrusion-vertical-gradient':true,
+                 'fill-extrusion-opacity':1}},_firstSym||undefined);
+        try{ map.setLight({anchor:'viewport',color:'#ffffff',intensity:0.38,position:[1.2,215,35]}); }catch(e){}
+        /* v9.9.57: selected building - gold footprint (2D) and gold block (3D) */
+        map.addSource('pa-bldg-sel',{type:'geojson',data:_paEmpty});
+        map.addLayer({id:'pa-bldg-sel-fill',type:'fill',source:'pa-bldg-sel',paint:{'fill-color':'#C8912A','fill-opacity':0.28}},_firstSym||undefined);
+        map.addLayer({id:'pa-bldg-sel-line',type:'line',source:'pa-bldg-sel',paint:{'line-color':'#C8912A','line-width':2.4}},_firstSym||undefined);
+        map.addLayer({id:'pa-bldg-sel-3d',type:'fill-extrusion',source:'pa-bldg-sel',layout:{visibility:_is3D?'visible':'none'},
+          paint:{'fill-extrusion-color':'#D9A441','fill-extrusion-height':['get','h'],'fill-extrusion-base':['get','b'],
+                 'fill-extrusion-vertical-gradient':true,'fill-extrusion-opacity':0.96}},_firstSym||undefined);
+        map.on('idle',function(){ if(_paSelLL&&!_paSelDone) paBldgSel(); });
+        /* v9.9.57: street-level places (z16+) from the base-map tiles - bus stops, carparks, food, shops and malls,
+           schools, clinics and hospitals, banks. Own icons drawn here (no sprite needed); names from z17. */
+        try{
+          var _ic=function(id,bg,round,draw){
+            var c=document.createElement('canvas'); c.width=c.height=48; var x=c.getContext('2d'); x.scale(2,2);
+            x.beginPath(); if(round){ x.arc(12,12,10.5,0,Math.PI*2); } else if(x.roundRect){ x.roundRect(1.5,1.5,21,21,5); } else { x.rect(1.5,1.5,21,21); }
+            x.fillStyle=bg; x.fill(); x.lineWidth=1.6; x.strokeStyle='#ffffff'; x.stroke();
+            x.fillStyle='#ffffff'; x.strokeStyle='#ffffff'; x.lineCap='round'; x.lineJoin='round'; draw(x,bg);
+            if(!map.hasImage(id)) map.addImage(id,x.getImageData(0,0,48,48),{pixelRatio:2});
+          };
+          var _P=function(x,d){ x.fill(new Path2D(d)); }, _S=function(x,d,w){ x.lineWidth=w||1.6; x.stroke(new Path2D(d)); };
+          var _T=function(x,t,sz){ x.font='800 '+sz+'px Inter,Arial,sans-serif'; x.textAlign='center'; x.textBaseline='middle'; x.fillText(t,12,12.6); };
+          _ic('pa-poi-bus','#1f6fd1',false,function(x,bg){ _P(x,'M8 6h8a2 2 0 0 1 2 2v8.5a1 1 0 0 1-1 1h-.5v1a1 1 0 0 1-2 0v-1h-5v1a1 1 0 0 1-2 0v-1H7a1 1 0 0 1-1-1V8a2 2 0 0 1 2-2z');
+            x.fillStyle=bg; x.fillRect(7.6,8,8.8,4.4); x.beginPath(); x.arc(8.9,14.9,0.9,0,7); x.arc(15.1,14.9,0.9,0,7); x.fill(); });
+          _ic('pa-poi-park','#2f5aa8',false,function(x){ _T(x,'P',14); });
+          _ic('pa-poi-food','#e07b2e',true,function(x){ _S(x,'M8.5 6.5v4.5M10.5 6.5v4.5M12.5 6.5v4.5M8.5 11h4M10.5 11v6.5'); _S(x,'M16 6.5c-1.6.8-1.8 4.9 0 5.7v5.3'); });
+          _ic('pa-poi-shop','#8a56b8',true,function(x){ _P(x,'M7.5 10h9l-.9 8H8.4z'); _S(x,'M10 10V8.6a2 2 0 0 1 4 0V10',1.5); });
+          _ic('pa-poi-school','#2e8b57',true,function(x){ _P(x,'M12 6.5l7.5 3.6L12 13.7 4.5 10.1z'); _S(x,'M8.2 12.2v3c0 1.6 7.6 1.6 7.6 0v-3',1.5); });
+          _ic('pa-poi-health','#d34848',true,function(x){ _P(x,'M10.3 6.5h3.4v3.8h3.8v3.4h-3.8v3.8h-3.4v-3.8H6.5v-3.4h3.8z'); });
+          _ic('pa-poi-bank','#4a7787',true,function(x){ _T(x,'$',13); });
+          var _food=['restaurant','fast_food','cafe','ice_cream','bar','beer','food_court'],
+              _shop=['shop','grocery','clothing_store','department_store','alcohol_shop','mall'],
+              _sch=['school','college','kindergarten'], _hlt=['hospital','doctors','dentist','pharmacy','clinic'];
+          var _all=['bus','parking','bank'].concat(_food,_shop,_sch,_hlt);
+          map.addLayer({id:'pa-poi',type:'symbol',source:_bsrc,'source-layer':'poi',minzoom:16,
+            filter:['match',['get','class'],_all,true,false],
+            layout:{'icon-image':['match',['get','class'],'bus','pa-poi-bus','parking','pa-poi-park','bank','pa-poi-bank',
+                       _food,'pa-poi-food',_shop,'pa-poi-shop',_sch,'pa-poi-school',_hlt,'pa-poi-health','pa-poi-shop'],
+                    'icon-size':['interpolate',['linear'],['zoom'],16,0.8,19,1.05],
+                    'symbol-sort-key':['coalesce',['get','rank'],50],
+                    'text-field':['step',['zoom'],'',17,['coalesce',['get','name:en'],['get','name_en'],['get','name'],'']],
+                    'text-font':['Noto Sans Regular'],'text-size':10.5,'text-offset':[0,1.25],'text-anchor':'top',
+                    'text-max-width':8,'text-optional':true},
+            paint:{'text-color':'#6a5f4d','text-halo-color':'#ffffff','text-halo-width':1.3,
+                   'icon-opacity':['interpolate',['linear'],['zoom'],16,0,16.4,1]}});
+        }catch(e){ console.warn('places layer',e); }
       }
     }catch(e){ console.warn('building layer',e); }
     var typeColor=['match',['get','t'],'Office','#0000CD','Retail','#0000CD','Shophouse','#B5683E',
@@ -2859,6 +2936,9 @@ function init(){
       paint:{'circle-radius':16,'circle-color':'rgba(200,145,42,0.0)','circle-stroke-width':3,'circle-stroke-color':'#C8912A'}});
     map.addLayer({id:'sel-dot',type:'circle',source:'sel',
       paint:{'circle-radius':9,'circle-color':'#C8912A','circle-stroke-width':2,'circle-stroke-color':'#fff'}});
+    /* v9.9.57: every selection (caveat, landed, residential, directory) also lights up its building */
+    (function(){ var s=map.getSource('sel'), o=s.setData.bind(s);
+      s.setData=function(d){ var r=o(d); try{ var f=d&&d.features&&d.features[0]; _paSelLL=f?f.geometry.coordinates.slice():null; _paSelDone=false; paBldgSel(); }catch(e){} return r; }; })();
 
       // MRT/LRT reference layer (189 stations, baked) — context beneath the data dots
       const MRT_ROWS=[["Admiralty",103.801,1.4406,"NS"],["Aljunied",103.8827,1.3163,"EW"],["Ang Mo Kio",103.8495,1.3701,"NS"],["Bakau",103.9055,1.388,"SK"],["Bangkit",103.7726,1.3801,"BP"],["Bartley",103.8804,1.3424,"CC"],["Bayfront",103.8597,1.2825,"CC/DT"],["Bayshore",103.9423,1.3131,"TE"],["Beauty World",103.7759,1.3417,"DT"],["Bedok",103.93,1.3239,"EW"],["Bedok North",103.918,1.3348,"DT"],["Bedok Reservoir",103.9319,1.3363,"DT"],["Bencoolen",103.8504,1.2989,"DT"],["Bendemeer",103.8631,1.3136,"DT"],["Bishan",103.8483,1.3515,"NS/CC"],["Boon Keng",103.8615,1.3198,"NE"],["Boon Lay",103.7058,1.3385,"EW"],["Botanic Gardens",103.8157,1.3226,"CC/DT"],["Braddell",103.8468,1.3406,"NS"],["Bras Basah",103.8505,1.2969,"CC"],["Bright Hill",103.8328,1.3634,"TE"],["Buangkok",103.8931,1.3831,"NE"],["Bugis",103.8561,1.3005,"EW/DT"],["Bukit Batok",103.7496,1.3491,"NS"],["Bukit Gombak",103.7518,1.3589,"NS"],["Bukit Panjang",103.7621,1.3783,"DT/BP"],["Buona Vista",103.7907,1.3073,"EW/CC"],["Caldecott",103.84,1.3377,"CC/TE"],["Canberra",103.8295,1.4434,"NS"],["Cantonment",103.837,1.2731,"CC"],["Cashew",103.7645,1.3697,"DT"],["Changi Airport",103.9886,1.3573,"CG"],["Cheng Lim",103.8937,1.3963,"SK"],["Chinatown",103.844,1.285,"NE/DT"],["Chinese Garden",103.7326,1.3425,"EW"],["Choa Chu Kang",103.7445,1.3847,"NS/BP"],["City Hall",103.8518,1.2932,"NS/EW"],["Clarke Quay",103.8469,1.289,"NE"],["Clementi",103.7652,1.3151,"EW"],["Commonwealth",103.7983,1.3024,"EW"],["Compassvale",103.9004,1.3945,"SK"],["Coral Edge",103.9126,1.3939,"PE"],["Cove",103.9059,1.3995,"PE"],["Dakota",103.8883,1.3084,"CC"],["Damai",103.9086,1.4053,"PE"],["Dhoby Ghaut",103.845,1.2988,"NS/NE/CC"],["Dover",103.7786,1.3114,"EW"],["Downtown",103.8533,1.2792,"DT"],["Esplanade",103.856,1.2933,"CC"],["Eunos",103.9031,1.3198,"EW"],["Expo",103.9622,1.3356,"DT/CG"],["Fajar",103.7708,1.3845,"BP"],["Farmway",103.8892,1.3972,"SK"],["Farrer Park",103.8544,1.3127,"NE"],["Farrer Road",103.8078,1.3176,"CC"],["Fernvale",103.8763,1.3919,"SK"],["Fort Canning",103.8442,1.2924,"DT"],["Gardens by the Bay",103.8681,1.2795,"TE"],["Geylang Bahru",103.872,1.3216,"DT"],["Great World",103.8335,1.2946,"TE"],["Gul Circle",103.6604,1.3194,"EW"],["HarbourFront",103.8224,1.2654,"NE/CC"],["Havelock",103.8337,1.2875,"TE"],["Haw Par Villa",103.7818,1.2827,"CC"],["Hillview",103.7671,1.3625,"DT"],["Holland Village",103.7957,1.3121,"CC"],["Hougang",103.8928,1.3719,"NE"],["Hume",103.7692,1.3543,"DT"],["Jalan Besar",103.8552,1.3051,"DT"],["Jelapang",103.7645,1.3867,"BP"],["Joo Koon",103.6783,1.3277,"EW"],["Jurong East",103.7423,1.3331,"NS/EW"],["Kadaloor",103.9164,1.3996,"PE"],["Kaki Bukit",103.9086,1.335,"DT"],["Kallang",103.8713,1.3114,"EW"],["Kangkar",103.9022,1.3839,"SK"],["Katong Park",103.8862,1.2978,"TE"],["Keat Hong",103.749,1.3786,"BP"],["Kembangan",103.9128,1.3211,"EW"],["Kent Ridge",103.7844,1.2933,"CC"],["Keppel",103.8307,1.2704,"CC"],["Khatib",103.833,1.4173,"NS"],["King Albert Park",103.7842,1.3357,"DT"],["Kovan",103.8849,1.36,"NE"],["Kranji",103.762,1.4252,"NS"],["Kupang",103.8812,1.3982,"SK"],["Labrador Park",103.8028,1.2723,"CC"],["Lakeside",103.7208,1.3443,"EW"],["Lavender",103.863,1.3074,"EW"],["Layar",103.8801,1.3921,"SK"],["Lentor",103.8366,1.3847,"TE"],["Little India",103.8493,1.3066,"NE/DT"],["Lorong Chuan",103.8634,1.3515,"CC"],["MacPherson",103.8901,1.3267,"CC/DT"],["Marina Bay",103.8548,1.2752,"NS/CC/TE"],["Marina South Pier",103.8627,1.2717,"NS"],["Marine Parade",103.905,1.3026,"TE"],["Marine Terrace",103.9151,1.3067,"TE"],["Marsiling",103.7742,1.4325,"NS"],["Marymount",103.8392,1.3486,"CC"],["Mattar",103.883,1.327,"DT"],["Maxwell",103.844,1.2807,"TE"],["Mayflower",103.8368,1.3722,"TE"],["Meridian",103.9089,1.397,"PE"],["Mountbatten",103.8825,1.3062,"CC"],["Napier",103.819,1.3071,"TE"],["Newton",103.8389,1.313,"NS/DT"],["Nibong",103.9003,1.4118,"PW"],["Nicoll Highway",103.8635,1.2997,"CC"],["Novena",103.8435,1.3201,"NS"],["Oasis",103.9127,1.4023,"PE"],["Orchard",103.832,1.3032,"NS/TE"],["Orchard Boulevard",103.824,1.3024,"TE"],["Outram Park",103.8402,1.2807,"EW/NE/TE"],["Pasir Panjang",103.7916,1.2762,"CC"],["Pasir Ris",103.9493,1.373,"EW"],["Paya Lebar",103.8923,1.318,"EW/CC"],["Pending",103.7713,1.3762,"BP"],["Petir",103.7666,1.3778,"BP"],["Phoenix",103.758,1.3786,"BP"],["Pioneer",103.6974,1.3376,"EW"],["Potong Pasir",103.8691,1.3313,"NE"],["Prince Edward Road",103.8474,1.2733,"CC"],["Promenade",103.8602,1.2939,"CC/DT"],["Punggol",103.9024,1.4053,"NE/PW/PE"],["Punggol Coast",103.9103,1.415,"NE"],["Punggol Point",103.9067,1.4168,"PW"],["Queenstown",103.8061,1.2946,"EW"],["Raffles Place",103.8515,1.2844,"NS/EW"],["Ranggung",103.8973,1.384,"SK"],["Redhill",103.8168,1.2897,"EW"],["Renjong",103.8905,1.3867,"SK"],["Riviera",103.9161,1.3946,"PE"],["Rochor",103.8526,1.304,"DT"],["Rumbia",103.9059,1.3915,"SK"],["Sam Kee",103.9046,1.4098,"PW"],["Samudera",103.9022,1.416,"PW"],["Segar",103.7696,1.3878,"BP"],["Sembawang",103.8201,1.4491,"NS"],["Sengkang",103.8953,1.3913,"NE/SK"],["Senja",103.7624,1.3827,"BP"],["Serangoon",103.8738,1.3498,"NE/CC"],["Shenton Way",103.8505,1.2777,"TE"],["Siglap",103.93,1.31,"TE"],["Simei",103.9534,1.3432,"EW"],["Sixth Avenue",103.7972,1.3306,"DT"],["Somerset",103.8385,1.3003,"NS"],["Soo Teck",103.8972,1.4054,"PW"],["South View",103.7453,1.3803,"BP"],["Springleaf",103.8179,1.3978,"TE"],["Stadium",103.8754,1.3029,"CC"],["Stevens",103.8255,1.3202,"DT/TE"],["Sumang",103.8985,1.4085,"PW"],["Tai Seng",103.8881,1.3349,"CC"],["Tampines",103.9451,1.3534,"EW/DT"],["Tampines East",103.955,1.3561,"DT"],["Tampines West",103.9386,1.3455,"DT"],["Tan Kah Kee",103.8078,1.3257,"DT"],["Tanah Merah",103.9465,1.3273,"EW/CG"],["Tanjong Katong",103.8974,1.2993,"TE"],["Tanjong Pagar",103.8459,1.2766,"EW"],["Tanjong Rhu",103.8735,1.2973,"TE"],["Teck Lee",103.9067,1.4127,"PW"],["Teck Whye",103.7536,1.3767,"BP"],["Telok Ayer",103.8487,1.2821,"DT"],["Telok Blangah",103.8099,1.2706,"CC"],["Thanggam",103.8756,1.3974,"SK"],["Tiong Bahru",103.8276,1.2861,"EW"],["Toa Payoh",103.8473,1.3323,"NS"],["Tongkang",103.8858,1.3894,"SK"],["Tuas Crescent",103.6496,1.3208,"EW"],["Tuas Link",103.637,1.3404,"EW"],["Tuas West Road",103.6401,1.3295,"EW"],["Ubi",103.8994,1.3298,"DT"],["Upper Changi",103.9613,1.3417,"DT"],["Upper Thomson",103.8328,1.3545,"TE"],["Woodlands",103.787,1.4372,"NS/TE"],["Woodlands North",103.7855,1.4486,"TE"],["Woodlands South",103.7943,1.4271,"TE"],["Woodleigh",103.8708,1.3392,"NE"],["Yew Tee",103.7474,1.3975,"NS"],["Yio Chu Kang",103.845,1.3818,"NS"],["Yishun",103.835,1.4294,"NS"],["one-north",103.7872,1.2996,"CC"]];
@@ -3558,6 +3638,10 @@ function faTopRender(cavs){
    transactions from nonlanded_transactions_geo; P&L, Most active (by project + district) and Top
    transactions via nonlanded_ma_* RPCs and nonlanded_pnl_pairs_mv. Residential project names render as
    plain text (the C&I Directory link does not apply). Needs S403_res_pulse_analysis.sql committed first. */
+/* v9.9.57 (S437): Map upgrade. 3D button now flies to street level (z16.3) when zoomed out, tilts 58 deg and turns
+   -17 deg; 2D resets north. 3D buildings shaded by height with a soft light; compass shown. Selected building lights
+   up (gold footprint in 2D, gold block in 3D) for any selected pin. Street-level places at z16+ from the base-map poi
+   layer: bus stops, carparks, food, shops/malls, schools, clinics/hospitals, banks (own canvas icons, names z17+). */
 /* v9.9.56 (S434): SEED_CAVEATS re-bake - week of 9 Nov 2026 complete: Tue 10 Nov 8 caveats (S$35,965,000, ids 83510-83517) + Fri 13 Nov
    39 caveats (S$209,936,901, ids 83518-83556) = 47. SEED_CAV_TOTAL 8 -> 47. No aborts or withdrawals in the batch; C&I Gate B 0
    (all 47 carry lat/lng). Largest: KHL Building, 25 New Industrial Road S$103.88M. Frozen cut for the C&I Quarterly 3Q dry run. */
