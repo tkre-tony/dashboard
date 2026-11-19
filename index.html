@@ -1596,7 +1596,7 @@ function showBucket(b){
   if(b==='market') return;
   const urls={entities:'/newsroom/#asset-directory',
               newsroom:'/newsroom/',
-              listings:'/newsroom/#listings'};
+              listings:'/listings/'}; /* v9.9.58 (S439): Listings bucket -> standalone /listings/ hub (featured sale/lease write-ups + link to REIT vacancy inventory) */
   if(urls[b]) location.href=urls[b];
 }
 function toggleLoc(which){

@@ -1,4 +1,5 @@
 <!DOCTYPE html>
+<!-- v48.610 (19 Nov 2026, S439: Listings split - navtab forsale relabelled Vacancy (data-tab, #listings hash and loadVacancyListings untouched; tour step title Vacancy); new navtab-maplink Listings -> /listings/ standalone hub after Map. No data, no NEWS, no cascade.) -->
 <!-- v48.609 (17 Nov 2026, S438: NEWS id:356 The Assembly Place appointed manager and operator of a Handy Road building (xx Handy Road, D9) for an ICHAM affiliate, 100-plus-key serviced residence and co-living plan; price, owner and fees not disclosed; no URA caveat in PA records + landing cascade) -->
 <!-- v48.608 (16 Nov 2026, S437: Human Capital — NEW ENTITY Goodland Group Limited (SGX:5PC), 10 TALENT_DATA records from Annual Report FY2025 (year to 30 Sep 2025) plus Thomas Siah Han Ling appointed 1 Aug 2026; HC entity option, ENTITY_COLORS and two short-name maps (Goodland). Asset Directory rows 1949–1962 via SQL. No NEWS or landing change.) -->
 <!-- v48.607 (16 Nov 2026, S437: NEWS id:355 Centurion acquires Goodland Group Building, Kim Chuan Lane, S$61.0M (51:49 JV with MKC; Goodland c.15% indirect; = JLL valuation; completion 31 Mar 2027); id:353 display_headline shortened (SEO-1); id:354 FY26 dividend timetable added; landing cascade hero 355, cards 354-352, feed 351-345, NR_STATIC_IDS 354..345) -->
@@ -3493,6 +3494,7 @@ body.article-takeover .ed-foot{display:none!important}
        navtab-hidden class removed (was already no-op CSS per v48.28). Gating now lives
        entirely in ATLAS_GATED_TABS (↓ trimmed to talent+pulse only). -->
   <a class="navtab-maplink" href="/"><span class="navtab-icon">🗺️</span>Map</a>
+  <a class="navtab-maplink" href="/listings/"><span class="navtab-icon">🏷️</span>Listings</a>
   <div class="navtab on" data-tab="news"><span class="navtab-icon">📰</span>Newsroom</div>
   <!-- v48.288 (S185): Market Pulse + Market Analysis navtabs removed — retired to map-root lenses. -->
   <div class="navtab" data-tab="directory"><span class="navtab-icon">🏢</span>Directory</div>
@@ -3500,7 +3502,7 @@ body.article-takeover .ed-foot{display:none!important}
     <span class="navtab-icon">🗂</span>Asset Directory
   </div>
   <div class="navtab" data-tab="forsale" style="display:flex;align-items:center;gap:6px">
-    <span class="navtab-icon">🏗</span>Listings
+    <span class="navtab-icon">🏗</span>Vacancy
   </div>
   <div class="navtab" data-tab="talent" style="display:flex;align-items:center;gap:6px">
     <span class="navtab-icon">👤</span>Human Capital
@@ -34834,7 +34836,7 @@ window.PA_TOUR_STEPS = [
     title: 'Asset Directory',
     copy:  'Every S-REIT and developer asset \u2014 valuations, occupancy and NLA straight from annual reports. Subscriber module.' },
   { selector: '.navtab[data-tab="forsale"]',
-    title: 'Listings',
+    title: 'Vacancy',
     copy:  'Live vacancy across the REIT portfolios we track \u2014 space you will not find on the portals.' },
   { selector: '.navtab[data-tab="talent"]',
     title: 'Human Capital',
