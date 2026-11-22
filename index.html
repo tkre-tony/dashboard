@@ -345,6 +345,12 @@ body{background:var(--bg);color:var(--txt);font-family:Inter,system-ui,-apple-sy
 .rb-seg{font-size:10.5px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;color:var(--mut);padding:8px 0 2px}
 .rb-seg:first-child{padding-top:0}
 .rb-tblwrap{width:100%;overflow-x:auto}
+.cr-chart{background:var(--srf);border:1px solid var(--bdr);border-radius:8px;padding:6px 8px 8px;margin:4px 0 6px}
+.cr-chart svg{width:100%;height:auto;display:block}
+.cr-legend{display:flex;flex-wrap:wrap;gap:14px;font-size:11px;color:var(--mut);padding:2px 4px 0}
+.cr-legend i{display:inline-block;width:16px;height:3px;margin-right:6px;vertical-align:middle}
+.cr-legend i.dash{height:0;border-top:2px dashed}
+.cr-legend i.bar{width:10px;height:10px;background:var(--g1);opacity:.16}
 .rb-note{font-size:10.5px;color:var(--mut);margin-top:9px;line-height:1.45}
 .mktvol{flex:none;padding:9px 12px 6px;border-bottom:1px solid var(--bdr);background:var(--srf)}
 .mv-h{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:6px;flex-wrap:wrap}
@@ -2508,7 +2514,7 @@ function crRow(label,ser){
     chg=` · ${crMon(prev.month)} ${rbFmt(Number(prev.psf))} (${pc>=0?'+':'−'}${Math.abs(pc).toFixed(1)}%, ${prev.n} lease${prev.n==1?'':'s'})`; }
   return `<div class="rb-row"><span class="rb-lbl">${esc(label)}</span>`+
     `<span class="rb-val">${rbFmt(Number(last.psf))} psf pm</span>`+
-    `<span class="rb-sub">median · ${last.n} lease${last.n==1?'':'s'} · ${crMon(last.month)}${chg}</span>${crSpark(ser)}</div>`;
+    `<span class="rb-sub">median · ${last.n} lease${last.n==1?'':'s'} · ${crMon(last.month)}${chg}</span></div>`;
 }
 function crRetailBand(c){
   if(!c) return [null,null];
@@ -2518,6 +2524,41 @@ function crRetailBand(c){
   const sqm=c.area?Number(c.area)/RB_SQM_PER_SQFT:null;
   const ab=sqm==null?null:(sqm<=30?'le30':sqm<=100?'30_100':sqm<=300?'100_300':'gt300');
   return [fb,ab];
+}
+/* v9.9.65: monthly lease-count bars with street + district median rent lines overlaid */
+function crAllMonths(){
+  const m={}; ['street','district'].forEach(k=>(Array.isArray(BF_CRENT[k])?BF_CRENT[k]:[]).forEach(r=>{ m[String(r.month).slice(0,10)]=1; }));
+  return Object.keys(m).sort();
+}
+function crChart(seg,ss,ds,stLbl,dLbl){
+  const months=crAllMonths(); if(months.length<2||(!ss.length&&!ds.length)) return '';
+  const byM=a=>{ const o={}; a.forEach(r=>{ o[String(r.month).slice(0,10)]=r; }); return o; };
+  const S=byM(ss), Dd=byM(ds), barSrc=ss.length?S:Dd, barLbl=ss.length?('leases on '+stLbl):('leases in '+dLbl);
+  const W=760,H=210,pl=40,pr=56,pt=24,pb=34, cw=W-pl-pr, ch=H-pt-pb;
+  const nMax=Math.max(1,...months.map(m=>barSrc[m]?Number(barSrc[m].n):0)), nTop=Math.max(2,Math.ceil(nMax*1.15));
+  const vals=[]; months.forEach(m=>{ if(S[m]) vals.push(Number(S[m].psf)); if(Dd[m]) vals.push(Number(Dd[m].psf)); });
+  let lo=Math.min(...vals), hi=Math.max(...vals); const pad=Math.max(0.5,(hi-lo)*0.25); lo=Math.max(0,Math.floor(lo-pad)); hi=Math.ceil(hi+pad);
+  const bw=cw/months.length, barw=Math.max(6,Math.min(46,bw*0.55));
+  const xc=i=>pl+i*bw+bw/2, yN=v=>pt+ch-(v/nTop)*ch, yP=v=>pt+ch-((v-lo)/((hi-lo)||1))*ch;
+  let g='';
+  [lo,(lo+hi)/2,hi].forEach(t=>{ g+=`<line x1="${pl}" x2="${W-pr}" y1="${yP(t)}" y2="${yP(t)}" stroke="var(--bdr)"/><text x="${W-pr+6}" y="${yP(t)+3}" font-size="10" fill="var(--mut)">S$${t.toFixed(t%1?2:0)}</text>`; });
+  g+=`<text x="${pl-6}" y="${pt+ch+3}" text-anchor="end" font-size="10" fill="var(--mut)">0</text><text x="${pl-6}" y="${yN(nTop)+3}" text-anchor="end" font-size="10" fill="var(--mut)">${nTop}</text>`;
+  g+=`<text x="${pl-6}" y="12" text-anchor="end" font-size="9.5" fill="var(--mut)">Leases</text><text x="${W-pr+6}" y="12" font-size="9.5" fill="var(--mut)">psf pm</text>`;
+  const step=Math.ceil(months.length/12);
+  months.forEach((m,i)=>{
+    const r=barSrc[m], n=r?Number(r.n):0;
+    if(n>0) g+=`<rect x="${xc(i)-barw/2}" y="${yN(n)}" width="${barw}" height="${pt+ch-yN(n)}" rx="2" fill="var(--g1)" opacity=".16"><title>${crMon(m)}: ${n} ${barLbl}</title></rect>`;
+    if(i%step===0) g+=`<text x="${xc(i)}" y="${H-pb+16}" text-anchor="middle" font-size="10" fill="var(--mut)">${crMon(m)}</text>`;
+  });
+  const line=(O,col,dash)=>{ const pts=[]; months.forEach((m,i)=>{ if(O[m]) pts.push([xc(i),yP(Number(O[m].psf)),m]); });
+    if(!pts.length) return '';
+    let h=pts.length>1?`<polyline points="${pts.map(p=>p[0].toFixed(1)+','+p[1].toFixed(1)).join(' ')}" fill="none" stroke="${col}" stroke-width="2.2"${dash?' stroke-dasharray="5 4"':''}/>`:'';
+    pts.forEach(p=>{ const r=O[p[2]]; h+=`<circle cx="${p[0]}" cy="${p[1]}" r="3.6" fill="${col}"><title>${crMon(p[2])}: ${rbFmt(Number(r.psf))} psf pm \u00b7 ${r.n} lease${r.n==1?'':'s'}</title></circle>`; });
+    const L=pts[pts.length-1]; h+=`<text x="${L[0]}" y="${L[1]-8}" text-anchor="middle" font-size="10.5" font-weight="700" fill="${col}">${rbFmt(Number(O[L[2]].psf))}</text>`;
+    return h; };
+  g+=line(Dd,'var(--g1)',true)+line(S,'var(--gold)',false);
+  const lg=`<div class="cr-legend"><span><i style="background:var(--gold)"></i>${esc(stLbl)} median</span><span><i class="dash" style="border-color:var(--g1)"></i>${esc(dLbl)} median</span><span><i class="bar"></i>${esc(barLbl)}</span></div>`;
+  return `<div class="cr-chart"><svg viewBox="0 0 ${W} ${H}" preserveAspectRatio="xMidYMid meet">${g}</svg>${lg}</div>`;
 }
 function commercialRentSectionHTML(){
   const p=CUR_PIN; const segs=crentSegs(); if(!p||!segs.length) return '';
@@ -2529,8 +2570,14 @@ function commercialRentSectionHTML(){
     const ss=crSeries(BF_CRENT.street,g), ds=crSeries(BF_CRENT.district,g);
     if(ss.length||ds.length) any=true;
     html+=`<div class="rb-seg">${CRENT_LBL[g]}</div>`;
-    html+=crRow(rbTitle(BF_CRENT._street),ss);
-    html+=crRow(dLbl,ds);
+    const stL=rbTitle(BF_CRENT._street), mm=crAllMonths();
+    if(!ss.length&&!ds.length){
+      html+=`<div class="rb-row"><span class="rb-sub">No ${CRENT_LBL[g].toLowerCase()} leases recorded on ${esc(stL)} or in ${dLbl}${mm.length?' in '+crMon(mm[0])+(mm.length>1?'\u2013'+crMon(mm[mm.length-1]):''):''}.</span></div>`;
+    } else {
+      html+=crChart(g,ss,ds,stL,dLbl);
+      html+=crRow(stL,ss);
+      html+=crRow(dLbl,ds);
+    }
     const v=vac.find(x=>x.type===g);
     if(v&&v.pct!=null) html+=`<div class="rb-row"><span class="rb-lbl">${dLbl} vacancy</span><span class="rb-val">${Number(v.pct).toFixed(1)}%</span><span class="rb-sub">private-sector ${CRENT_LBL[g].toLowerCase()} space · ${esc(String(v.as_at||''))}</span></div>`;
   });
@@ -3849,6 +3896,7 @@ function faTopRender(cavs){
    transactions from nonlanded_transactions_geo; P&L, Most active (by project + district) and Top
    transactions via nonlanded_ma_* RPCs and nonlanded_pnl_pairs_mv. Residential project names render as
    plain text (the C&I Directory link does not apply). Needs S403_res_pulse_analysis.sql committed first. */
+/* v9.9.65 (S443, PROJ-RENT-2): each segment of the Rent Benchmark card opens with a monthly chart - street lease counts as bars, street (gold) and district (navy, dashed) median rents as lines on a second axis, hover for values; row sparklines removed; a segment with no street or district leases collapses to one line. */
 /* v9.9.64 (S443, PROJ-RENT): full building view of commercial projects gets a Rent Benchmark card (REALIS street + district monthly medians with lease counts and month-on-month change, URA district vacancy, URA retail rent grid by floor x size with the latest retail caveat's band highlighted; RPC pa_commercial_rent). Volume chart now shows empty years as gaps. */
 /* v9.9.63 (S442, PULSE-MTD): the current month (QTD/YTD in other modes) is hatched and tagged MTD; no % change is shown against the previous full period. */
 /* v9.9.62 (S442, CI-LOC-2): Street / District filter now also drives the Market pulse chart + scorecard (chart_agg p_district/p_query) and the Market analysis P&L cards (new RPC ma_pnl_summary_loc). Tightened row height when a context strip follows. */
