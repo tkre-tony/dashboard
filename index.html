@@ -210,7 +210,7 @@ body{background:var(--bg);color:var(--txt);font-family:Inter,system-ui,-apple-sy
 .ci-loc-in{font:inherit;font-size:12px;padding:5px 9px;border:1px solid var(--bdr);border-radius:8px;width:190px;background:var(--srf,#fff);color:var(--txt)}
 .ci-loc-in:focus{outline:2px solid var(--g1);outline-offset:0}
 .ci-ctx{margin-top:4px;font-size:10px;line-height:1.45;color:var(--mut)}
-.mptbl tbody tr.ci-has td{border-bottom:none}
+.mptbl tbody tr.ci-has td{border-bottom:none;height:auto;padding-bottom:2px}
 .mptbl tbody tr.ci-ctx-tr td{height:auto;padding:0 8px 7px 150px}
 .mptbl tbody tr.ci-ctx-tr .ci-ctx{margin-top:0;white-space:normal}
 .mptbl.ci-t tbody tr.ci-r td,.mptbl.ci-t tbody tr.ci-ctx-tr td{background:transparent}
@@ -3125,7 +3125,7 @@ async function fpLoad(){
   var url=base+'/rest/v1/rpc/'+fn;
   var body={p_from:dr.from,p_to:dr.to};
   if(isNL)body.p_seg=FP_SEG;
-  else if(!isLanded)body.p_inv_mode='exclude';
+  else if(!isLanded){body.p_inv_mode='exclude';fpLocBody(body);}
   try{
     var r=await fetch(url,{method:'POST',headers:{'Content-Type':'application/json','apikey':SUPA_ANON,'Authorization':'Bearer '+SUPA_ANON},body:JSON.stringify(body)});
     var _j=await r.json();if(_seq!==FP_CHART_SEQ)return;FP_CACHE=_j;fpRender();
@@ -3139,17 +3139,17 @@ function fpTypesFor(seg){
   return null;
 }
 async function fpLoadScore(fn){
-  var key=fn+(resNL(FP_SEG)?':'+FP_SEG:'');
+  var key=fn+(resNL(FP_SEG)?':'+FP_SEG:'')+fpLocKey(fn);
   if(FP_SCORE_CACHE&&FP_SCORE_FN===key){fpRenderScore();return;}
   var now=new Date();
   var from=(now.getFullYear()-1)+'-01-01',to=now.toISOString().slice(0,10);
   var base=SUPA_REST.replace('/rest/v1','');
   var body={p_from:from,p_to:to};
-  if(fn==='chart_agg')body.p_inv_mode='exclude';
+  if(fn==='chart_agg'){body.p_inv_mode='exclude';fpLocBody(body);}
   if(fn==='nonlanded_chart_agg')body.p_seg=FP_SEG;
   try{
     var r=await fetch(base+'/rest/v1/rpc/'+fn,{method:'POST',headers:{'Content-Type':'application/json','apikey':SUPA_ANON,'Authorization':'Bearer '+SUPA_ANON},body:JSON.stringify(body)});
-    var j=await r.json();var _cf=resNL(FP_SEG)?'nonlanded_chart_agg':(FP_SEG==='landed')?'landed_chart_agg':'chart_agg';if(key!==_cf+(resNL(FP_SEG)?':'+FP_SEG:''))return;
+    var j=await r.json();var _cf=resNL(FP_SEG)?'nonlanded_chart_agg':(FP_SEG==='landed')?'landed_chart_agg':'chart_agg';if(key!==_cf+(resNL(FP_SEG)?':'+FP_SEG:'')+fpLocKey(_cf))return;
     FP_SCORE_CACHE=j;FP_SCORE_FN=key;fpRenderScore();
   }catch(e){console.error('fpLoadScore',e);}
 }
@@ -3168,7 +3168,7 @@ function fpRenderScore(){
   var yoy=sameV>0?((ytdV-sameV)/sameV*100):0;
   var MN=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
   var sL=segLbl(FP_SEG);
-  var sc='<div class="fw-score-hdr">'+sL+' market intelligence</div>';
+  var sc='<div class="fw-score-hdr">'+sL+fpLocLbl()+' market intelligence</div>';
   sc+='<div class="fw-score-row"><div class="fw-score-cell"><div class="fw-score-val">S$'+(ytdV>=1000?(ytdV/1000).toFixed(1)+'B':Math.round(ytdV)+'M')+'</div><div class="fw-score-lbl">'+curYr+' YTD value</div><div class="fw-score-sub">'+ytdC+' txns</div></div>';
   sc+='<div class="fw-score-cell"><div class="fw-score-val">'+ytdC+'</div><div class="fw-score-lbl">'+curYr+' YTD deals</div></div></div>';
   sc+='<div class="fw-score-row"><div class="fw-score-cell"><div class="fw-score-val">S$'+(fyV>=1000?(fyV/1000).toFixed(1)+'B':Math.round(fyV)+'M')+'</div><div class="fw-score-lbl">'+prevYr+' FY value</div><div class="fw-score-sub">'+fyC+' deals</div></div>';
@@ -3179,8 +3179,13 @@ function fpRenderScore(){
 }
 var FP_TXN_CACHE=null,FP_TXN_SEG='',FP_TXN_TOTAL=0,FP_TXN_OFFSET=0,FP_TXN_PAIRS={},FP_TXN_PSIZE=50,FP_TXN_SORT='desc';
 var FP_LOC=null;
-function fpSetLoc(v){var n=ciLocParse(v);if(JSON.stringify(n)===JSON.stringify(FP_LOC))return;FP_LOC=n;FP_TXN_OFFSET=0;fpTxnLoad();}
+function fpSetLoc(v){var n=ciLocParse(v);if(JSON.stringify(n)===JSON.stringify(FP_LOC))return;FP_LOC=n;FP_TXN_OFFSET=0;fpTxnLoad();if(ciIsCI(FP_SEG)){FP_CACHE=null;FP_SCORE_CACHE=null;fpLoad();}}
 function fpClearLoc(){var i=document.getElementById('fpLoc');if(i)i.value='';fpSetLoc('');}
+/* v9.9.62 CI-LOC-2: chart + scorecard follow the Street / District filter (chart_agg slow path: p_district / p_query) */
+function fpLocOn(){return !!(FP_LOC&&ciIsCI(FP_SEG));}
+function fpLocBody(b){if(!fpLocOn())return;if(FP_LOC.district)b.p_district=String(FP_LOC.district);else b.p_query=FP_LOC.street;}
+function fpLocKey(fn){return (fn==='chart_agg'&&fpLocOn())?'|'+FP_LOC.label:'';}
+function fpLocLbl(){return fpLocOn()?' \u00b7 '+ciTitle(FP_LOC.label).replace(/^D(\d)/,'D$1'):'';}
 async function fpTxnLoad(){
   var _seq=++FP_TXN_SEQ;
   var el=document.getElementById('fpTxn');
@@ -3307,7 +3312,7 @@ function fpTxnRender(){
     +'<th style="width:78px;text-align:right">PSF</th>'
     +'<th style="width:110px">Tenure</th>'
     +'</tr></thead><tbody>'+rows+'</tbody></table>';
-  var _ln=(FP_LOC&&_ci)?ciLocNote(FP_LOC,'fpClearLoc()','Transactions list'):(FP_LOC?'<div class="ci-loc-note">Street / district filter applies to C&amp;I segments only.<button onclick="fpClearLoc()">Clear \u00d7</button></div>':'');
+  var _ln=(FP_LOC&&_ci)?ciLocNote(FP_LOC,'fpClearLoc()','Chart and transactions'):(FP_LOC?'<div class="ci-loc-note">Street / district filter applies to C&amp;I segments only.<button onclick="fpClearLoc()">Clear \u00d7</button></div>':'');
   var el=document.getElementById('fpTxn');if(el){el.innerHTML=_ln+html;el.style.maxHeight='500px';el.style.overflowY='auto';}
 }
 function fpRender(){
@@ -3397,7 +3402,7 @@ function fpRender(){
   var sL=segLbl(seg);
   var dL=FP_DISPLAY==='val'?'S$ Millions':'# Deals';
   var rangeL=keys.length>1?(' \u00b7 '+bkTipLabel(keys[0])+' to '+bkTipLabel(keys[keys.length-1])):'';
-  document.getElementById('fpChartSub').textContent=sL+' \u00b7 '+dL+rangeL;
+  document.getElementById('fpChartSub').textContent=sL+fpLocLbl()+' \u00b7 '+dL+rangeL;
 }
 
 /* ===== MARKET ANALYSIS LENS (S185) ===== */
@@ -3405,7 +3410,7 @@ var FA_TAB='pnl',FA_SEG='all',FA_PERIOD=12;
 var FA_PNL_OFFSET=0,FA_PNL_PSIZE=50,FA_PNL_TOTAL=0,FA_PNL_SORT='date';
 var FA_TOP_PAIRS={},FA_REQ=0;
 var FA_LOC=null,FA_PNL_ROWS=[];
-function faSetLoc(v){var n=ciLocParse(v);if(JSON.stringify(n)===JSON.stringify(FA_LOC))return;FA_LOC=n;FA_PNL_OFFSET=0;if(FA_TAB==='pnl')faPnlTable();}
+function faSetLoc(v){var n=ciLocParse(v);if(JSON.stringify(n)===JSON.stringify(FA_LOC))return;FA_LOC=n;FA_PNL_OFFSET=0;if(FA_TAB==='pnl'){FA_REQ++;faPnlLoad();}}
 function faClearLoc(){var i=document.getElementById('faLoc');if(i)i.value='';faSetLoc('');}
 function faLocParam(){
   if(!FA_LOC||!ciIsCI(FA_SEG))return '';
@@ -3460,12 +3465,14 @@ async function faPnlLoad(){
   if(tbl)tbl.innerHTML='<div style="font-size:11px;color:var(--mut);padding:12px">Loading matched pairs...</div>';
   try{
     var body={p_from:faFrom(),p_types:faTypesDb(FA_SEG)};
-    var rows=await faRpc(faFn('ma_pnl_summary','landed_ma_pnl_summary','nonlanded_ma_pnl_summary'),body);
+    var _fl=(FA_LOC&&ciIsCI(FA_SEG));
+    if(_fl){if(FA_LOC.district)body.p_district=FA_LOC.district;else body.p_street=FA_LOC.street;}
+    var rows=await faRpc(_fl?'ma_pnl_summary_loc':faFn('ma_pnl_summary','landed_ma_pnl_summary','nonlanded_ma_pnl_summary'),body);
     if(req!==FA_REQ)return;
     var s=(rows&&rows[0])||{};
     var tot=Number(s.total_pairs)||0,g=Number(s.gain_count)||0,l2=Number(s.loss_count)||0;
     var wr=tot>0?Math.round(g/tot*100):0;
-    var html=faCard(tot.toLocaleString(),'Matched pairs',faSegLbl()+' \u00b7 '+faPeriodLbl());
+    var html=faCard(tot.toLocaleString(),'Matched pairs',faSegLbl()+(_fl?' \u00b7 '+esc(ciTitle(FA_LOC.label)):'')+' \u00b7 '+faPeriodLbl());
     html+=faCard(g.toLocaleString(),'Gains','+'+faMoney(s.sum_gains)+' total \u00b7 top +'+faMoney(s.top_gain),'var(--grn)','#e9f7ee','#cde8d6');
     html+=faCard(l2.toLocaleString(),'Losses',(l2>0?'\u2212'+faMoney(s.sum_losses)+' total \u00b7 worst \u2212'+faMoney(s.top_loss):'none in this period'),'var(--red)','#fdeaee','#f2cdd3');
     html+=faCard(wr+'%','Win rate',g.toLocaleString()+' of '+tot.toLocaleString()+' resold higher');
@@ -3574,7 +3581,7 @@ function faPnlRender(rows){
     +'<th style="width:120px;text-align:right">P&amp;L</th>'
     +'<th style="width:92px">Hold</th>'
     +'</tr></thead><tbody>'+body+'</tbody></table>';
-  var _ln=(FA_LOC&&_ci)?ciLocNote(FA_LOC,'faClearLoc()','Matched pairs (summary cards above cover the whole segment)'):(FA_LOC?'<div class="ci-loc-note">Street / district filter applies to C&amp;I segments only.<button onclick="faClearLoc()">Clear \u00d7</button></div>':'');
+  var _ln=(FA_LOC&&_ci)?ciLocNote(FA_LOC,'faClearLoc()','Summary cards and matched pairs'):(FA_LOC?'<div class="ci-loc-note">Street / district filter applies to C&amp;I segments only.<button onclick="faClearLoc()">Clear \u00d7</button></div>':'');
   var el=document.getElementById('faPnlTbl');if(el){el.innerHTML=_ln+html;el.style.maxHeight='520px';el.style.overflowY='auto';}
 }
 /* ---------- Most Active sub-tab ---------- */
@@ -3733,6 +3740,7 @@ function faTopRender(cavs){
    transactions from nonlanded_transactions_geo; P&L, Most active (by project + district) and Top
    transactions via nonlanded_ma_* RPCs and nonlanded_pnl_pairs_mv. Residential project names render as
    plain text (the C&I Directory link does not apply). Needs S403_res_pulse_analysis.sql committed first. */
+/* v9.9.62 (S442, CI-LOC-2): Street / District filter now also drives the Market pulse chart + scorecard (chart_agg p_district/p_query) and the Market analysis P&L cards (new RPC ma_pnl_summary_loc). Tightened row height when a context strip follows. */
 /* v9.9.61 (S442, CI-LOC-1b): 📍 context moved from the Address cell to a full-width strip under each C&I row (one line on desktop); paired-row striping and hover. */
 /* v9.9.60 (S442, CI-LOC-1): Market pulse + Market analysis (C&I) show a street/district context line under each
    address - latest REALIS street & district rent, URA district vacancy (office/retail), JTC street & district rent
