@@ -210,6 +210,13 @@ body{background:var(--bg);color:var(--txt);font-family:Inter,system-ui,-apple-sy
 .ci-loc-in{font:inherit;font-size:12px;padding:5px 9px;border:1px solid var(--bdr);border-radius:8px;width:190px;background:var(--srf,#fff);color:var(--txt)}
 .ci-loc-in:focus{outline:2px solid var(--g1);outline-offset:0}
 .ci-ctx{margin-top:4px;font-size:10px;line-height:1.45;color:var(--mut)}
+.mptbl tbody tr.ci-has td{border-bottom:none}
+.mptbl tbody tr.ci-ctx-tr td{height:auto;padding:0 8px 7px 150px}
+.mptbl tbody tr.ci-ctx-tr .ci-ctx{margin-top:0;white-space:normal}
+.mptbl.ci-t tbody tr.ci-r td,.mptbl.ci-t tbody tr.ci-ctx-tr td{background:transparent}
+.mptbl.ci-t tbody tr.ci-alt td{background:rgba(245,239,224,.4)}
+.mptbl.ci-t tbody tr.ci-hov td{background:var(--srf2)}
+@media(max-width:760px){.mptbl tbody tr.ci-ctx-tr td{padding-left:8px}}
 .ci-ctx b{color:var(--txt);font-weight:700}
 .ci-ctx .ci-st{display:inline-block;font-weight:700;color:var(--g1);letter-spacing:.02em}
 .ci-loc-note{font-size:11px;color:var(--mut);margin:0 0 6px}
@@ -3076,6 +3083,13 @@ function ciCtxLine(id){
   if(parts.length===1)parts.push(esc(c.district||''));
   return '<div class="ci-ctx" title="Latest official rents and vacancy for this street and district (URA REALIS, JTC). Not the rent at the sale date. URA and JTC do not publish C&amp;I data by project.">'+parts.join(' \u00b7 ')+'</div>';
 }
+function ciCtxRow(rowHtml,id,i,cols){
+  var alt=(i%2===1)?' ci-alt':'',ln=ciCtxLine(id);
+  if(!ln)return rowHtml.replace('<tr>','<tr class="ci-r'+alt+'">');
+  return rowHtml.replace('<tr>','<tr class="ci-r ci-has'+alt+'" onmouseenter="ciHov(this,1)" onmouseleave="ciHov(this,0)">')
+    +'<tr class="ci-ctx-tr'+alt+'" onmouseenter="ciHov(this.previousSibling,1)" onmouseleave="ciHov(this.previousSibling,0)"><td colspan="'+cols+'">'+ln+'</td></tr>';
+}
+function ciHov(tr,on){if(!tr)return;var n=tr.nextSibling;[tr,(n&&n.classList&&n.classList.contains('ci-ctx-tr'))?n:null].forEach(function(x){if(x)x.classList.toggle('ci-hov',!!on);});}
 function ciLocNote(loc,fnClear,scope){
   if(!loc)return '';
   return '<div class="ci-loc-note">'+scope+' filtered to <b>'+esc(loc.label)+'</b><button onclick="'+fnClear+'">Clear \u00d7</button></div>';
@@ -3249,7 +3263,7 @@ function fpTxnRender(){
   var cnt=document.getElementById('fpTxnCount');
   if(cnt)cnt.innerHTML=fpTxnPager();
   var _ci=ciIsCI(FP_SEG);
-  var rows=FP_TXN_CACHE.map(function(c){
+  var rows=FP_TXN_CACHE.map(function(c,_i){
     var col=TYPE_COLORS[c.t]||'#888';
     var price=c.pr?'S$'+Number(c.pr).toLocaleString():'—';
     var area=c.area?Number(c.area).toLocaleString():'—';
@@ -3273,7 +3287,7 @@ function fpTxnRender(){
       +'<td class="mono nowrap">'+c.sd+bDate+'</td>'
       +'<td class="mono">'+(c.di?('D'+c.di):'—')+'</td>'
       +'<td class="proj">'+projCell+(c.nomap?' <span class="nopin" title="'+((FP_SEG==='landed'||resNL(FP_SEG))?'Location not mapped':'Location not shown')+'">\ud83d\udccd</span>':'')+'</td>'
-      +'<td class="addr">'+addrCell+(c.note?'<div style="color:var(--mut);font-size:10px">\u21b3 '+esc(maskNote(c.note))+'</div>':'')+(_ci?ciCtxLine(c.id):'')+'</td>'
+      +'<td class="addr">'+addrCell+(c.note?'<div style="color:var(--mut);font-size:10px">\u21b3 '+esc(maskNote(c.note))+'</div>':'')+'</td>'
       +'<td class="sub">'+(esc(c.tos)||'—')+((c.nu>1)?'<div style="color:#B5683E;font-size:10px;font-weight:700">Bulk \u00b7 '+c.nu+' units</div>':'')+'</td>'
       +'<td><span class="tpill" style="background:'+col+'22;color:'+col+'">'+dispType(c.t)+'</span></td>'
       +'<td class="sub">'+(esc(c.toa)||'—')+'</td>'
@@ -3282,8 +3296,8 @@ function fpTxnRender(){
       +'<td class="mono num">'+psfv+bPsf+'</td>'
       +'<td class="ten">'+(esc(c.tn)||'—')+'</td>'
       +'</tr>';
-  }).join('')||'<tr><td colspan="11" style="padding:22px;text-align:center;color:var(--mut)">No transactions found.</td></tr>';
-  var html='<table class="mptbl"><thead><tr>'
+  }).map(function(h,_i){return _ci?ciCtxRow(h,FP_TXN_CACHE[_i].id,_i,11):h;}).join('')||'<tr><td colspan="11" style="padding:22px;text-align:center;color:var(--mut)">No transactions found.</td></tr>';
+  var html='<table class="mptbl'+(_ci?' ci-t':'')+'"><thead><tr>'
     +'<th style="width:92px">Date</th><th style="width:50px">Dist.</th>'
     +'<th style="width:150px">Project</th><th style="width:150px">Address</th>'
     +'<th style="width:78px">Sale Type</th><th style="width:92px">Type</th>'
@@ -3542,7 +3556,7 @@ function faPnlRender(rows){
       +'<td class="mono nowrap">'+fmtSD(r.sell_date)+'</td>'
       +'<td class="mono">'+(r.postal_district?('D'+r.postal_district):'\u2014')+'</td>'
       +'<td class="proj">'+projCell+'</td>'
-      +'<td class="addr">'+addrCell+(_ci?ciCtxLine(r.sell_id):'')+'</td>'
+      +'<td class="addr">'+addrCell+'</td>'
       +'<td><span class="tpill" style="background:'+col+'22;color:'+col+'">'+dispType(tDisp)+'</span></td>'
       +'<td class="mono nowrap">'+fmtSD(r.buy_date)+'</td>'
       +'<td class="mono num">S$'+Number(r.buy_price).toLocaleString()+'</td>'
@@ -3550,8 +3564,8 @@ function faPnlRender(rows){
       +'<td class="mono num">'+pnl+'</td>'
       +'<td class="mono nowrap">'+hold+'</td>'
       +'</tr>';
-  }).join('')||'<tr><td colspan="10" style="padding:22px;text-align:center;color:var(--mut)">No matched pairs found.</td></tr>';
-  var html='<table class="mptbl"><thead><tr>'
+  }).map(function(h,_i){return _ci?ciCtxRow(h,rows[_i].sell_id,_i,10):h;}).join('')||'<tr><td colspan="10" style="padding:22px;text-align:center;color:var(--mut)">No matched pairs found.</td></tr>';
+  var html='<table class="mptbl'+(_ci?' ci-t':'')+'"><thead><tr>'
     +'<th style="width:92px">Sold</th><th style="width:46px">Dist.</th>'
     +'<th style="width:150px">Project</th><th style="width:150px">Address</th>'
     +'<th style="width:100px">Type</th><th style="width:92px">Bought</th>'
@@ -3719,6 +3733,7 @@ function faTopRender(cavs){
    transactions from nonlanded_transactions_geo; P&L, Most active (by project + district) and Top
    transactions via nonlanded_ma_* RPCs and nonlanded_pnl_pairs_mv. Residential project names render as
    plain text (the C&I Directory link does not apply). Needs S403_res_pulse_analysis.sql committed first. */
+/* v9.9.61 (S442, CI-LOC-1b): 📍 context moved from the Address cell to a full-width strip under each C&I row (one line on desktop); paired-row striping and hover. */
 /* v9.9.60 (S442, CI-LOC-1): Market pulse + Market analysis (C&I) show a street/district context line under each
    address - latest REALIS street & district rent, URA district vacancy (office/retail), JTC street & district rent
    (industrial) - via RPC ci_context_for(ids). New "Street / District" filter (street text -> EF q / address ilike;
