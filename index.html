@@ -207,6 +207,13 @@ body{background:var(--bg);color:var(--txt);font-family:Inter,system-ui,-apple-sy
 .near-strip>div:first-child{border-top:0!important;margin-top:4px!important;padding-top:0!important}
 .list-banner .sep{color:var(--bdr);font-weight:400}.list-banner .cnt{color:var(--mut)}
 /* List-mode Market Pulse table (caveats lens) — render-mode swap, mirrors production .ptable */
+.ci-loc-in{font:inherit;font-size:12px;padding:5px 9px;border:1px solid var(--bdr);border-radius:8px;width:190px;background:var(--srf,#fff);color:var(--txt)}
+.ci-loc-in:focus{outline:2px solid var(--g1);outline-offset:0}
+.ci-ctx{margin-top:4px;font-size:10px;line-height:1.45;color:var(--mut)}
+.ci-ctx b{color:var(--txt);font-weight:700}
+.ci-ctx .ci-st{display:inline-block;font-weight:700;color:var(--g1);letter-spacing:.02em}
+.ci-loc-note{font-size:11px;color:var(--mut);margin:0 0 6px}
+.ci-loc-note button{font:inherit;font-size:11px;border:1px solid var(--bdr);border-radius:6px;background:var(--srf,#fff);padding:1px 7px;margin-left:6px;cursor:pointer}
 .mptbl{width:100%;min-width:1000px;border-collapse:collapse;font-size:11px;margin-top:2px}
 /* S316: caveat list view only — header pins below the sticky .list-banner (banner bottom edge = 25px). */
 .mptbl.cav-tbl thead th{position:sticky;top:25px;z-index:2}
@@ -734,6 +741,9 @@ body{background:var(--bg);color:var(--txt);font-family:Inter,system-ui,-apple-sy
     <div class="chip on" data-fpm="mom" onclick="fpSetMode(this,'mom')">MoM</div>
     <div class="chip" data-fpm="qoq" onclick="fpSetMode(this,'qoq')">QoQ</div>
     <div class="chip" data-fpm="yoy" onclick="fpSetMode(this,'yoy')">YoY</div>
+    <span class="sep"></span>
+    <span class="lbl">Street / District</span>
+    <input id="fpLoc" class="ci-loc-in" type="search" placeholder="e.g. Ubi Road 1 or D14" title="Filters the transactions list (C&amp;I). URA and JTC publish rents by street and district, not by project." onkeydown="if(event.key==='Enter')fpSetLoc(this.value)" onsearch="fpSetLoc(this.value)">
   </div>
   <div class="fw-chart-zone">
     <div class="fw-chart-main">
@@ -777,6 +787,9 @@ body{background:var(--bg);color:var(--txt);font-family:Inter,system-ui,-apple-sy
     <div class="chip" data-fap="60" onclick="faSetPeriod(this,60)">5Y</div>
     <div class="chip" data-fap="120" onclick="faSetPeriod(this,120)">10Y</div>
     <div class="chip" data-fap="0" onclick="faSetPeriod(this,0)">All</div>
+    <span class="sep"></span>
+    <span class="lbl">Street / District</span>
+    <input id="faLoc" class="ci-loc-in" type="search" placeholder="e.g. Ubi Road 1 or D14" title="Filters the matched-pairs list (C&amp;I). URA and JTC publish rents by street and district, not by project." onkeydown="if(event.key==='Enter')faSetLoc(this.value)" onsearch="faSetLoc(this.value)">
   </div>
   <div id="faPnl" style="padding:14px 20px 24px">
     <div id="faPnlCards" style="display:flex;flex-wrap:wrap;gap:10px;margin-bottom:14px"></div>
@@ -3019,6 +3032,55 @@ window.addEventListener('load',()=>{
   else{document.getElementById('map').innerHTML='<div style="padding:30px;color:#6B5B3E">MapLibre failed to load — confirm maplibre-gl.js and maplibre-gl.css are in the same folder as this page. List, filters and district browse still work.</div>';buildDistricts();seedCaveats();}
 });
 
+/* ===== CI-LOC-1 v9.9.60 (S442): street + district context on Market pulse / Market analysis =====
+   URA and JTC publish C&I rents and vacancy by street and postal district, never by project. Each C&I
+   caveat on screen gets a context line from ci_context_for(ids) (SECURITY DEFINER RPC over the
+   ci_location_context view; returns id + street/district stats only, no address/unit/price).
+   Rents are the LATEST official figures (REALIS month / JTC quarter / URA as-at), not at the sale date. */
+var CI_CTX={};
+function ciIsCI(seg){return seg==='all'||seg==='commercial'||seg==='industrial';}
+function ciLocParse(v){
+  v=String(v||'').trim();if(!v)return null;
+  var m=v.match(/^d\s*0?(\d{1,2})$/i)||v.match(/^0?(\d{1,2})$/);
+  if(m){var d=parseInt(m[1],10);if(d>=1&&d<=28)return{district:d,label:'D'+(d<10?'0':'')+d};}
+  return{street:v.toUpperCase().replace(/\s+/g,' '),label:v.toUpperCase().replace(/\s+/g,' ')};
+}
+async function ciCtxLoad(ids){
+  var need=(ids||[]).filter(function(x){return x!=null&&!(x in CI_CTX);});
+  if(!need.length)return false;
+  try{
+    var rows=await faRpc('ci_context_for',{p_ids:need.slice(0,200)});
+    need.forEach(function(x){CI_CTX[x]=null;});
+    (rows||[]).forEach(function(r){CI_CTX[r.id]=r;});
+    return true;
+  }catch(e){return false;/* enhancement only */}
+}
+function ciTitle(s){return String(s||'').toLowerCase().split(' ').map(function(w){return /^\d+[a-z]$/.test(w)?w.toUpperCase():w.charAt(0).toUpperCase()+w.slice(1);}).join(' ');}
+function ciMon(d){if(!d)return'';var MN=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];var p=String(d).split('-');return MN[parseInt(p[1],10)-1]+" '"+p[0].slice(2);}
+function ciQtr(q){if(!q)return'';q=String(q);return q.slice(5)+q.slice(4,5)+q.slice(2,4);}
+function ciPsm2Psf(v){return v==null?null:Number(v)/10.7639;}
+function ciMoney(v){return 'S$'+Number(v).toFixed(2);}
+var CI_BAND={lt100:'<100',  '100_200':'100\u2013200','200_300':'200\u2013300','300_1000':'300\u20131,000',ge1000:'\u22651,000'};
+function ciCtxLine(id){
+  var c=CI_CTX[id];if(!c||!c.street_name)return '';
+  var parts=['<span class="ci-st">\ud83d\udccd '+esc(ciTitle(c.street_name))+'</span>'];
+  if(c.rent_segment==='office'||c.rent_segment==='retail'||c.rent_segment==='shophouse'){
+    var lab=c.rent_segment==='shophouse'?'Shophouse':c.rent_segment==='office'?'Office':'Retail';
+    if(c.street_rent_psf!=null)parts.push(lab+' rent on street '+ciMon(c.street_rent_month)+': <b>'+ciMoney(c.street_rent_psf)+'</b> psf/mo ('+c.street_rent_leases+' lease'+(c.street_rent_leases==1?'':'s')+')');
+    if(c.district_rent_psf!=null)parts.push(esc(c.district)+': <b>'+ciMoney(c.district_rent_psf)+'</b> psf/mo');
+    if(c.district_vacancy_pct!=null)parts.push(esc(c.district)+' '+lab.toLowerCase()+' vacancy <b>'+Number(c.district_vacancy_pct).toFixed(1)+'%</b> ('+ciQtr(c.vacancy_as_at)+')');
+  }else if(c.rent_segment==='muf'||c.rent_segment==='industrial'){
+    if(c.jtc_street_rent_psm!=null)parts.push('JTC rent on street '+ciQtr(c.jtc_street_quarter)+': <b>'+ciMoney(ciPsm2Psf(c.jtc_street_rent_psm))+'</b> psf/mo');
+    if(c.jtc_district_rent_psm!=null)parts.push(esc(c.district)+' '+(c.jtc_floor_band==='L1'?'ground floor':'upper floors')+', '+(CI_BAND[c.jtc_area_band]||'')+' sqm: <b>'+ciMoney(ciPsm2Psf(c.jtc_district_rent_psm))+'</b> psf/mo');
+  }
+  if(parts.length===1)parts.push(esc(c.district||''));
+  return '<div class="ci-ctx" title="Latest official rents and vacancy for this street and district (URA REALIS, JTC). Not the rent at the sale date. URA and JTC do not publish C&amp;I data by project.">'+parts.join(' \u00b7 ')+'</div>';
+}
+function ciLocNote(loc,fnClear,scope){
+  if(!loc)return '';
+  return '<div class="ci-loc-note">'+scope+' filtered to <b>'+esc(loc.label)+'</b><button onclick="'+fnClear+'">Clear \u00d7</button></div>';
+}
+
 /* ===== MARKET PULSE LENS (S183) ===== */
 var FP_CACHE=null,FP_DISPLAY='val',FP_PERIOD=12,FP_MODE='mom',FP_SEG='all',FP_SCORE_CACHE=null,FP_SCORE_FN='';
 var FP_COLORS={office:'#1a4f9c',retail:'#2563bc',shophouse:'#3b82d4',multiUser:'#52c98a',singleUser:'#7dd9a8',bizPark:'#a8e8c8',warehouse:'#c8e8d8',detached:'#7c6e4e',semiDetached:'#a08c5c',terrace:'#c4aa6a',newSale:'#C2185B',subSale:'#E57399',resale:'#F2B8CC',other:'#aaa'};
@@ -3102,6 +3164,9 @@ function fpRenderScore(){
   document.getElementById('fpScore').innerHTML=sc;
 }
 var FP_TXN_CACHE=null,FP_TXN_SEG='',FP_TXN_TOTAL=0,FP_TXN_OFFSET=0,FP_TXN_PAIRS={},FP_TXN_PSIZE=50,FP_TXN_SORT='desc';
+var FP_LOC=null;
+function fpSetLoc(v){var n=ciLocParse(v);if(JSON.stringify(n)===JSON.stringify(FP_LOC))return;FP_LOC=n;FP_TXN_OFFSET=0;fpTxnLoad();}
+function fpClearLoc(){var i=document.getElementById('fpLoc');if(i)i.value='';fpSetLoc('');}
 async function fpTxnLoad(){
   var _seq=++FP_TXN_SEQ;
   var el=document.getElementById('fpTxn');
@@ -3119,6 +3184,7 @@ async function fpTxnLoad(){
       var body={limit:FP_TXN_PSIZE,offset:FP_TXN_OFFSET,sort:FP_TXN_SORT};
       if(FP_SEG==='commercial')body.types=SEG_TO_DB.commercial;
       else if(FP_SEG==='industrial')body.types=SEG_TO_DB.industrial;
+      if(FP_LOC){if(FP_LOC.district)body.district=FP_LOC.district;else body.q=FP_LOC.street.toLowerCase();}
       var res=await fetch(SUPA_FN,{method:'POST',headers:{'Content-Type':'application/json','Authorization':'Bearer '+SUPA_ANON},body:JSON.stringify(body)});
       var j=await res.json();
       rows=j.rows||[];
@@ -3128,6 +3194,7 @@ async function fpTxnLoad(){
     FP_TXN_CACHE=(rows||[]).map(rowToCaveat);FP_TXN_SEG=FP_SEG;
     fpTxnRender();
     fpTxnLoadPairs();
+    if(ciIsCI(FP_SEG)){var _cs=FP_TXN_SEQ;ciCtxLoad(FP_TXN_CACHE.map(function(c){return c.id;})).then(function(ch){if(ch&&_cs===FP_TXN_SEQ)fpTxnRender();});}
   }catch(e){console.error('fpTxnLoad',e);if(el)el.innerHTML='<div style="color:var(--red);font-size:11px;padding:12px">Failed to load transactions.</div>';}
 }
 async function fpTxnLoadPairs(){
@@ -3181,6 +3248,7 @@ function fpTxnRender(){
   if(!FP_TXN_CACHE)return;
   var cnt=document.getElementById('fpTxnCount');
   if(cnt)cnt.innerHTML=fpTxnPager();
+  var _ci=ciIsCI(FP_SEG);
   var rows=FP_TXN_CACHE.map(function(c){
     var col=TYPE_COLORS[c.t]||'#888';
     var price=c.pr?'S$'+Number(c.pr).toLocaleString():'—';
@@ -3205,7 +3273,7 @@ function fpTxnRender(){
       +'<td class="mono nowrap">'+c.sd+bDate+'</td>'
       +'<td class="mono">'+(c.di?('D'+c.di):'—')+'</td>'
       +'<td class="proj">'+projCell+(c.nomap?' <span class="nopin" title="'+((FP_SEG==='landed'||resNL(FP_SEG))?'Location not mapped':'Location not shown')+'">\ud83d\udccd</span>':'')+'</td>'
-      +'<td class="addr">'+addrCell+(c.note?'<div style="color:var(--mut);font-size:10px">\u21b3 '+esc(maskNote(c.note))+'</div>':'')+'</td>'
+      +'<td class="addr">'+addrCell+(c.note?'<div style="color:var(--mut);font-size:10px">\u21b3 '+esc(maskNote(c.note))+'</div>':'')+(_ci?ciCtxLine(c.id):'')+'</td>'
       +'<td class="sub">'+(esc(c.tos)||'—')+((c.nu>1)?'<div style="color:#B5683E;font-size:10px;font-weight:700">Bulk \u00b7 '+c.nu+' units</div>':'')+'</td>'
       +'<td><span class="tpill" style="background:'+col+'22;color:'+col+'">'+dispType(c.t)+'</span></td>'
       +'<td class="sub">'+(esc(c.toa)||'—')+'</td>'
@@ -3225,7 +3293,8 @@ function fpTxnRender(){
     +'<th style="width:78px;text-align:right">PSF</th>'
     +'<th style="width:110px">Tenure</th>'
     +'</tr></thead><tbody>'+rows+'</tbody></table>';
-  var el=document.getElementById('fpTxn');if(el){el.innerHTML=html;el.style.maxHeight='500px';el.style.overflowY='auto';}
+  var _ln=(FP_LOC&&_ci)?ciLocNote(FP_LOC,'fpClearLoc()','Transactions list'):(FP_LOC?'<div class="ci-loc-note">Street / district filter applies to C&amp;I segments only.<button onclick="fpClearLoc()">Clear \u00d7</button></div>':'');
+  var el=document.getElementById('fpTxn');if(el){el.innerHTML=_ln+html;el.style.maxHeight='500px';el.style.overflowY='auto';}
 }
 function fpRender(){
   if(!FP_CACHE||!FP_CACHE.length)return;
@@ -3321,6 +3390,14 @@ function fpRender(){
 var FA_TAB='pnl',FA_SEG='all',FA_PERIOD=12;
 var FA_PNL_OFFSET=0,FA_PNL_PSIZE=50,FA_PNL_TOTAL=0,FA_PNL_SORT='date';
 var FA_TOP_PAIRS={},FA_REQ=0;
+var FA_LOC=null,FA_PNL_ROWS=[];
+function faSetLoc(v){var n=ciLocParse(v);if(JSON.stringify(n)===JSON.stringify(FA_LOC))return;FA_LOC=n;FA_PNL_OFFSET=0;if(FA_TAB==='pnl')faPnlTable();}
+function faClearLoc(){var i=document.getElementById('faLoc');if(i)i.value='';faSetLoc('');}
+function faLocParam(){
+  if(!FA_LOC||!ciIsCI(FA_SEG))return '';
+  if(FA_LOC.district)return '&postal_district=eq.'+FA_LOC.district;
+  return '&address=ilike.'+encodeURIComponent('*'+FA_LOC.street.replace(/[*,()]/g,' ')+'*');
+}
 function faTypesDb(seg){
   if(seg==='commercial')return SEG_TO_DB.commercial;
   if(seg==='industrial')return SEG_TO_DB.industrial;
@@ -3405,6 +3482,7 @@ async function faPnlTable(){
     var url=SUPA_REST+'/'+(isNL?'nonlanded_pnl_pairs_mv':isL?'landed_pnl_pairs_mv':'pnl_pairs_mv')+'?select='+sel
       +(from?'&sell_date=gte.'+from:'')
       +faTypesParam(faTypesDb(FA_SEG))
+      +((isL||isNL)?'':faLocParam())
       +'&order='+ord+',sell_id.desc&limit='+FA_PNL_PSIZE+'&offset='+FA_PNL_OFFSET;
     var res=await fetch(url,{headers:{'apikey':SUPA_ANON,'Authorization':'Bearer '+SUPA_ANON,'Prefer':'count=exact'}});
     if(!res.ok)throw new Error('MV HTTP '+res.status);
@@ -3413,6 +3491,7 @@ async function faPnlTable(){
     var rows=await res.json();
     if(req!==FA_REQ)return;
     faPnlRender(rows||[]);
+    if(!isL&&!isNL){FA_PNL_ROWS=rows||[];ciCtxLoad(FA_PNL_ROWS.map(function(r){return r.sell_id;})).then(function(ch){if(ch&&req===FA_REQ)faPnlRender(FA_PNL_ROWS);});}
   }catch(e){console.error('faPnlTable',e);var _pg=document.getElementById('faPnlPager');if(_pg)_pg.innerHTML='';if(tbl)tbl.innerHTML='<div style="color:var(--red);font-size:11px;padding:12px">Failed to load matched pairs.</div>';}
 }
 function faPnlPagerHtml(){
@@ -3439,6 +3518,7 @@ function faPnlSort(s){if(s!==FA_PNL_SORT){FA_PNL_SORT=s;FA_PNL_OFFSET=0;faPnlTab
 function faPnlRender(rows){
   var pg=document.getElementById('faPnlPager');if(pg)pg.innerHTML=faPnlPagerHtml();
   var isNL=resNL(FA_SEG),isL=(FA_SEG==='landed'||isNL);
+  var _ci=ciIsCI(FA_SEG);
   var body=rows.map(function(r){
     var pj=(FA_SEG==='landed')?null:r.project_name;
     var pf=Number(isL?r.gain:r.profit);
@@ -3462,7 +3542,7 @@ function faPnlRender(rows){
       +'<td class="mono nowrap">'+fmtSD(r.sell_date)+'</td>'
       +'<td class="mono">'+(r.postal_district?('D'+r.postal_district):'\u2014')+'</td>'
       +'<td class="proj">'+projCell+'</td>'
-      +'<td class="addr">'+addrCell+'</td>'
+      +'<td class="addr">'+addrCell+(_ci?ciCtxLine(r.sell_id):'')+'</td>'
       +'<td><span class="tpill" style="background:'+col+'22;color:'+col+'">'+dispType(tDisp)+'</span></td>'
       +'<td class="mono nowrap">'+fmtSD(r.buy_date)+'</td>'
       +'<td class="mono num">S$'+Number(r.buy_price).toLocaleString()+'</td>'
@@ -3480,7 +3560,8 @@ function faPnlRender(rows){
     +'<th style="width:120px;text-align:right">P&amp;L</th>'
     +'<th style="width:92px">Hold</th>'
     +'</tr></thead><tbody>'+body+'</tbody></table>';
-  var el=document.getElementById('faPnlTbl');if(el){el.innerHTML=html;el.style.maxHeight='520px';el.style.overflowY='auto';}
+  var _ln=(FA_LOC&&_ci)?ciLocNote(FA_LOC,'faClearLoc()','Matched pairs (summary cards above cover the whole segment)'):(FA_LOC?'<div class="ci-loc-note">Street / district filter applies to C&amp;I segments only.<button onclick="faClearLoc()">Clear \u00d7</button></div>':'');
+  var el=document.getElementById('faPnlTbl');if(el){el.innerHTML=_ln+html;el.style.maxHeight='520px';el.style.overflowY='auto';}
 }
 /* ---------- Most Active sub-tab ---------- */
 async function faActiveLoad(){
@@ -3638,6 +3719,10 @@ function faTopRender(cavs){
    transactions from nonlanded_transactions_geo; P&L, Most active (by project + district) and Top
    transactions via nonlanded_ma_* RPCs and nonlanded_pnl_pairs_mv. Residential project names render as
    plain text (the C&I Directory link does not apply). Needs S403_res_pulse_analysis.sql committed first. */
+/* v9.9.60 (S442, CI-LOC-1): Market pulse + Market analysis (C&I) show a street/district context line under each
+   address - latest REALIS street & district rent, URA district vacancy (office/retail), JTC street & district rent
+   (industrial) - via RPC ci_context_for(ids). New "Street / District" filter (street text -> EF q / address ilike;
+   D1-D28 -> district). URA/JTC publish C&I data by street and district, not by project. */
 /* v9.9.59 (S440): SEED_CAVEATS re-bake - week of 16 Nov 2026 complete: Tue 17 Nov 1 caveat (S$1,375,500, id 83557) + Fri 20 Nov
    38 caveats (S$56,414,280, ids 83558-83595) = 39. SEED_CAV_TOTAL 47 -> 39. No aborts or withdrawals in the batch; C&I Gate B 0
    (all 39 carry lat/lng). Largest: 4 Tuas Link 2 S$4.4M (lease-extension resale). */
