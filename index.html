@@ -342,6 +342,9 @@ body{background:var(--bg);color:var(--txt);font-family:Inter,system-ui,-apple-sy
 .rb-tbl th{font-size:10.5px;color:var(--mut);font-weight:700;text-transform:uppercase;letter-spacing:.03em}
 .rb-tbl td{font-family:ui-monospace,Menlo,Consolas,monospace}
 .rb-tbl td.hit{color:var(--g1);font-weight:700}
+.rb-seg{font-size:10.5px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;color:var(--mut);padding:8px 0 2px}
+.rb-seg:first-child{padding-top:0}
+.rb-tblwrap{width:100%;overflow-x:auto}
 .rb-note{font-size:10.5px;color:var(--mut);margin-top:9px;line-height:1.45}
 .mktvol{flex:none;padding:9px 12px 6px;border-bottom:1px solid var(--bdr);background:var(--srf)}
 .mv-h{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:6px;flex-wrap:wrap}
@@ -1036,7 +1039,8 @@ function renderMktVol(){
 window.addEventListener('resize',function(){ clearTimeout(_mvRz); _mvRz=setTimeout(function(){ if(typeof lens!=='undefined'&&lens==='caveats'&&MV_OPEN&&document.getElementById('mktVol')) renderMktVol(); },160); });
 let detailTab='caveats', BLD_TXNS=null, BLD_TXN_KEY=null, BLD_SHOWN=0, _bldSeq=0, _preDetailSplit=null; const BLD_PAGE=25;
 let CUR_PIN=null, BF_OPEN=false, BF_PAGE=0, BF_SIZE=25, BF_PERIOD='all'; let BF_SORT={k:'sd',dir:'desc'}; let BLD_PAIRS={};
-let BF_RENT=null, BF_RENT_KEY=null;   // v9.9.54: JTC rent benchmark for the open industrial building (pa_rent_benchmark RPC)
+let BF_RENT=null, BF_RENT_KEY=null;
+let BF_CRENT=null, BF_CRENT_KEY=null;   // v9.9.64: REALIS street/district rents for the open commercial building (pa_commercial_rent RPC)   // v9.9.54: JTC rent benchmark for the open industrial building (pa_rent_benchmark RPC)
 
 // chip display value -> the URA property_type strings stored in the DB (for server-side filter)
 const CHIP_TO_DB = {
@@ -2336,8 +2340,10 @@ function bfSetSize(n){ BF_SIZE=+n; BF_PAGE=0; renderBuildingFull(); }
 function bfPage(d){ BF_PAGE+=d; renderBuildingFull(); }
 function volumeChartSVG(rows){
   const by={}; (rows||[]).forEach(c=>{ const y=(c.sdRaw||'').slice(0,4); if(/^\d{4}$/.test(y)) by[y]=(by[y]||0)+1; });
-  const years=Object.keys(by).sort();
-  if(!years.length) return '<div class="note" style="padding:18px;color:var(--mut)">No dated caveats to chart.</div>';
+  const yk=Object.keys(by).sort();
+  if(!yk.length) return '<div class="note" style="padding:18px;color:var(--mut)">No dated caveats to chart.</div>';
+  /* v9.9.64: every year from first to last caveat, empty years as zero (no bar), so gaps are not hidden */
+  const years=[]; for(let yy=+yk[0]; yy<=+yk[yk.length-1]; yy++){ years.push(String(yy)); if(!by[yy]) by[yy]=0; }
   const W=760,H=240,padL=42,padB=30,padT=14,padR=12, cw=W-padL-padR, ch=H-padT-padB;
   const max=Math.max.apply(null,years.map(y=>by[y])), niceMax=Math.max(1,Math.ceil(max/5)*5);
   const bw=cw/years.length, barw=Math.max(2,Math.min(34,bw*0.66));
@@ -2455,6 +2461,99 @@ function rentSectionHTML(){
   return `<div class="bf-sec"><div class="bf-h">Rent Benchmark <span class="bf-cnt">JTC \u00b7 contracted gross rents</span></div>`+
     `<div class="rb-card">${html}<div class="rb-note">Source: JTC J-Space, contracted gross rent per month declared to IRAS (e-Stamping), all industrial leases on the street; may include rent-free periods. Indicative only, not a valuation. Gross yield before costs, property tax and vacancy.</div></div></div>`;
 }
+// ===== v9.9.64 (S443): REALIS street + district rents on the full building view (commercial) =====
+const CRENT_SEG={'Office':'office','Retail':'retail','Shophouse':'shophouse','Shop House':'shophouse'};
+const CRENT_LBL={office:'Office',retail:'Retail',shophouse:'Shophouse'};
+const CR_FLOORS=[['B1-','B1 & below'],['L1','Level 1'],['L2-3','Levels 2–3'],['L4+','Level 4 +']];
+const CR_AREAS=[['le30','30 sqm & below'],['30_100','30–100 sqm'],['100_300','100–300 sqm'],['gt300','Above 300 sqm']];
+function crentSegs(){
+  const n={}; (BLD_TXNS||[]).forEach(c=>{ const g=CRENT_SEG[c.t]; if(g) n[g]=(n[g]||0)+1; });
+  return Object.keys(n).sort((a,b)=>n[b]-n[a]);
+}
+function crentKey(){
+  const p=CUR_PIN; if(!p||!BLD_TXNS||!BLD_TXNS.length||!crentSegs().length) return null;
+  const lc=rentLatestCaveat(); const st=rentStreet(lc?lc.addr:'');
+  if(!st) return null;
+  return st+'|'+(p.di||'');
+}
+async function loadCommercialRent(){
+  const key=crentKey(); if(!key||BF_CRENT_KEY===key) return;
+  BF_CRENT_KEY=key; BF_CRENT=null;
+  const parts=key.split('|');
+  try{
+    const res=await fetch(SUPA_REST+'/rpc/pa_commercial_rent',{method:'POST',
+      headers:{'Content-Type':'application/json','apikey':SUPA_ANON,'Authorization':'Bearer '+SUPA_ANON},
+      body:JSON.stringify({p_street:parts[0],p_district:parts[1]?Number(parts[1]):null})});
+    if(!res.ok) return;
+    const j=await res.json();
+    if(BF_CRENT_KEY!==key) return;
+    BF_CRENT=Object.assign({_key:key,_street:parts[0]},j||{});
+    if(BF_OPEN) renderBuildingFull();
+  }catch(e){ /* rent benchmark is an enhancement; ignore */ }
+}
+function crMon(m){ const d=new Date(String(m).slice(0,10)+'T00:00:00'); return isNaN(d)?String(m):(_MON[d.getMonth()]+' '+d.getFullYear()); }
+function crSeries(arr,seg){ return (Array.isArray(arr)?arr:[]).filter(r=>r.type===seg&&r.psf!=null).sort((a,b)=>String(a.month).localeCompare(String(b.month))); }
+function crSpark(ser){
+  if(ser.length<3) return '';
+  const v=ser.map(r=>Number(r.psf)), W=150,H=34,pad=3, mn=Math.min.apply(null,v), mx=Math.max.apply(null,v), rg=(mx-mn)||1;
+  const pts=v.map((y,i)=>(pad+i*(W-2*pad)/(v.length-1)).toFixed(1)+','+(H-pad-((y-mn)/rg)*(H-2*pad)).toFixed(1)).join(' ');
+  const tip=ser.map(r=>crMon(r.month)+' '+rbFmt(Number(r.psf))).join(' · ');
+  return `<svg class="rb-spark" viewBox="0 0 ${150} ${34}"><title>${tip}</title><polyline points="${pts}" fill="none" stroke="var(--g1)" stroke-width="1.8"/></svg>`;
+}
+function crRow(label,ser){
+  if(!ser.length) return `<div class="rb-row"><span class="rb-lbl">${esc(label)}</span><span class="rb-sub">no leases recorded in the months loaded</span></div>`;
+  const last=ser[ser.length-1], prev=ser.length>1?ser[ser.length-2]:null;
+  let chg='';
+  if(prev&&Number(prev.psf)>0){ const pc=(Number(last.psf)/Number(prev.psf)-1)*100;
+    chg=` · ${crMon(prev.month)} ${rbFmt(Number(prev.psf))} (${pc>=0?'+':'−'}${Math.abs(pc).toFixed(1)}%, ${prev.n} lease${prev.n==1?'':'s'})`; }
+  return `<div class="rb-row"><span class="rb-lbl">${esc(label)}</span>`+
+    `<span class="rb-val">${rbFmt(Number(last.psf))} psf pm</span>`+
+    `<span class="rb-sub">median · ${last.n} lease${last.n==1?'':'s'} · ${crMon(last.month)}${chg}</span>${crSpark(ser)}</div>`;
+}
+function crRetailBand(c){
+  if(!c) return [null,null];
+  const a=c.addr||''; let fb=null;
+  if(/#\s*B/i.test(a)) fb='B1-';
+  else { const m=/#\s*0*(\d+)-/.exec(a); if(m){ const f=Number(m[1]); fb=f<=1?'L1':f<=3?'L2-3':'L4+'; } }
+  const sqm=c.area?Number(c.area)/RB_SQM_PER_SQFT:null;
+  const ab=sqm==null?null:(sqm<=30?'le30':sqm<=100?'30_100':sqm<=300?'100_300':'gt300');
+  return [fb,ab];
+}
+function commercialRentSectionHTML(){
+  const p=CUR_PIN; const segs=crentSegs(); if(!p||!segs.length) return '';
+  const key=crentKey(); if(!key||!BF_CRENT||BF_CRENT._key!==key) return '';
+  const dLbl='District '+String(p.di||'').padStart(2,'0');
+  const vac=Array.isArray(BF_CRENT.vacancy)?BF_CRENT.vacancy:[];
+  let html='', any=false;
+  segs.forEach(g=>{
+    const ss=crSeries(BF_CRENT.street,g), ds=crSeries(BF_CRENT.district,g);
+    if(ss.length||ds.length) any=true;
+    html+=`<div class="rb-seg">${CRENT_LBL[g]}</div>`;
+    html+=crRow(rbTitle(BF_CRENT._street),ss);
+    html+=crRow(dLbl,ds);
+    const v=vac.find(x=>x.type===g);
+    if(v&&v.pct!=null) html+=`<div class="rb-row"><span class="rb-lbl">${dLbl} vacancy</span><span class="rb-val">${Number(v.pct).toFixed(1)}%</span><span class="rb-sub">private-sector ${CRENT_LBL[g].toLowerCase()} space · ${esc(String(v.as_at||''))}</span></div>`;
+  });
+  const cells=Array.isArray(BF_CRENT.retail)?BF_CRENT.retail:[];
+  if(segs.indexOf('retail')>=0&&cells.length){
+    any=true;
+    const lr=(BLD_TXNS||[]).filter(c=>CRENT_SEG[c.t]==='retail'&&c.sdRaw).sort((a,b)=>(b.sdRaw||'').localeCompare(a.sdRaw||''))[0];
+    const hit=crRetailBand(lr);
+    const get=(f,a)=>cells.find(c=>c.floor===f&&c.area===a);
+    const fl=CR_FLOORS.filter(([f])=>cells.some(c=>c.floor===f));
+    const rowsH=CR_AREAS.map(([a,lbl])=>{
+      if(!fl.some(([f])=>get(f,a))) return '';
+      return `<tr><td>${esc(lbl)}</td>`+fl.map(([f])=>{ const c=get(f,a);
+        return `<td class="${hit[0]===f&&hit[1]===a?'hit':''}">${c?rbFmt(rbPsf(c.median)):'—'}</td>`; }).join('')+`</tr>`;
+    }).join('');
+    html+=`<div class="rb-row"><span class="rb-lbl">${dLbl} · retail by floor and size</span>`+
+      `<span class="rb-sub">median psf pm · ${rbQ(BF_CRENT.retail_quarter)}${hit[0]&&hit[1]?' · highlighted: band of the latest retail caveat':''}</span>`+
+      `<div class="rb-tblwrap"><table class="rb-tbl"><thead><tr><th>Unit size</th>${fl.map(([,l])=>`<th>${esc(l)}</th>`).join('')}</tr></thead><tbody>${rowsH}</tbody></table></div></div>`;
+  }
+  if(!any) return '';
+  return `<div class="bf-sec"><div class="bf-h">Rent Benchmark <span class="bf-cnt">URA REALIS · official street and district rents</span></div>`+
+    `<div class="rb-card">${html}<div class="rb-note">Source: URA REALIS rental contracts (monthly median, S$ psf per month, with the number of leases) and URA retail rental analysis by postal district, floor and unit size (quarterly). These are official street and district figures, not rents for this building: URA does not publish rents by project. A month with few leases can swing; read the lease count with the median. Indicative only, not a valuation.</div></div></div>`;
+}
 function renderBuildingFull(){
   const el=document.getElementById('detailFull'); if(!el||!CUR_PIN) return;
   const p=CUR_PIN, hcol=TYPE_COLORS[p.t]||'#888';
@@ -2502,6 +2601,7 @@ function renderBuildingFull(){
       ${volumeChartSVG(all)}
     </div>
     ${rentSectionHTML()}
+    ${commercialRentSectionHTML()}
     <div class="bf-sec">
       <div class="bf-h">All Caveats <span class="bf-cnt">${total.toLocaleString()} record${total===1?'':'s'}${isMember()?'':' \u00b7 masked'}</span></div>
       <div class="bf-tablewrap"><table class="mptbl"><thead><tr>`+
@@ -2522,6 +2622,7 @@ function renderBuildingFull(){
     </div>
   </div>`;
   loadRentBenchmark();
+  loadCommercialRent();
 }
 
 function apply(){
@@ -3748,6 +3849,7 @@ function faTopRender(cavs){
    transactions from nonlanded_transactions_geo; P&L, Most active (by project + district) and Top
    transactions via nonlanded_ma_* RPCs and nonlanded_pnl_pairs_mv. Residential project names render as
    plain text (the C&I Directory link does not apply). Needs S403_res_pulse_analysis.sql committed first. */
+/* v9.9.64 (S443, PROJ-RENT): full building view of commercial projects gets a Rent Benchmark card (REALIS street + district monthly medians with lease counts and month-on-month change, URA district vacancy, URA retail rent grid by floor x size with the latest retail caveat's band highlighted; RPC pa_commercial_rent). Volume chart now shows empty years as gaps. */
 /* v9.9.63 (S442, PULSE-MTD): the current month (QTD/YTD in other modes) is hatched and tagged MTD; no % change is shown against the previous full period. */
 /* v9.9.62 (S442, CI-LOC-2): Street / District filter now also drives the Market pulse chart + scorecard (chart_agg p_district/p_query) and the Market analysis P&L cards (new RPC ma_pnl_summary_loc). Tightened row height when a context strip follows. */
 /* v9.9.61 (S442, CI-LOC-1b): 📍 context moved from the Address cell to a full-width strip under each C&I row (one line on desktop); paired-row striping and hover. */
