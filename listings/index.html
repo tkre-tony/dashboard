@@ -3,13 +3,13 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Listings: Commercial & Industrial Property For Sale | PropertyAtlas</title>
+<title>Listings: Commercial & Industrial Property For Sale and Lease | PropertyAtlas</title>
 <meta name="description" content="Commercial and industrial properties for sale and lease in Singapore, written up with URA caveat data: comparable sales, resale history and rents.">
 <meta name="robots" content="index,follow,max-image-preview:large">
 <link rel="canonical" href="https://propertyatlas.sg/listings/">
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="PropertyAtlas">
-<meta property="og:title" content="Listings: Commercial & Industrial Property For Sale | PropertyAtlas">
+<meta property="og:title" content="Listings: Commercial & Industrial Property For Sale and Lease | PropertyAtlas">
 <meta property="og:description" content="Commercial and industrial properties for sale and lease in Singapore, written up with URA caveat data: comparable sales, resale history and rents.">
 <meta property="og:url" content="https://propertyatlas.sg/listings/">
 <meta property="og:image" content="https://propertyatlas.sg/images/listings/central-link-01-01-frontage.jpg">
@@ -21,7 +21,7 @@
 <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-Z2Z6HM2P8M"></script>
 <script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag("js",new Date());gtag("config","G-Z2Z6HM2P8M");</script>
-<script type="application/ld+json">{"@context": "https://schema.org", "@type": "CollectionPage", "name": "PropertyAtlas Listings", "url": "https://propertyatlas.sg/listings/", "mainEntity": {"@type": "ItemList", "itemListElement": [{"@type": "ListItem", "position": 1, "url": "https://propertyatlas.sg/listings/central-link-01-01/", "name": "Central-Link #01-01: A First-Hand Ground-Floor Unit Priced Below Its Own Building's Resales"}]}}</script>
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "CollectionPage", "name": "PropertyAtlas Listings", "url": "https://propertyatlas.sg/listings/", "mainEntity": {"@type": "ItemList", "itemListElement": [{"@type": "ListItem", "position": 1, "url": "https://propertyatlas.sg/listings/central-link-01-01/", "name": "Central-Link #01-01: A First-Hand Ground-Floor Unit Priced Below Its Own Building's Resales"}, {"@type": "ListItem", "position": 2, "url": "https://propertyatlas.sg/listings/central-link-01-01/#lease", "name": "Central-Link #01-01 For Lease: Ground-Floor Corner B1 With Approx. 7.5m Ceiling"}]}}</script>
 <style>
 html:not([data-ready]) > body{visibility:hidden!important}
 :root{
@@ -544,12 +544,12 @@ body{background:var(--l-cream-lt);margin:0}
 <div class="lst-kick">On the Market</div>
 <h1>Listings, read through the data</h1>
 <p>Commercial and industrial property for sale and lease in Singapore. Every listing comes with the caveats around it: what comparable units sold for, how resales have fared, and what the space rents for.</p>
-
+<div class="lst-filters" role="group" aria-label="Filter listings"><button class="on" data-f="all">All</button><button data-f="lease">For lease</button><button data-f="sale">For sale</button></div>
 </div></section>
 <div class="lst-wrap">
 <section class="lst-sec" id="lst-open">
-<div class="lst-kick">Featured listing</div>
-<h2>For sale</h2>
+<div class="lst-kick">2 listings</div>
+<h2>On the market</h2>
 <a class="lst-feat" href="/listings/central-link-01-01/" data-deal="sale">
 <img src="/images/listings/central-link-01-01-frontage.jpg" alt="Central-Link #01-01 glass frontage, 8 Jalan Kilang Barat">
 <div class="lst-feat-body"><span class="lst-tag gold">For sale</span><span class="lst-tag">Industrial · B1</span><span class="lst-tag">Alexandra</span>
@@ -558,6 +558,9 @@ body{background:var(--l-cream-lt);margin:0}
 <div class="lst-facts"><div><b>S$1,699,999</b>Asking</div><div><b>S$568 psf</b>On strata area</div><div><b>2,993 sq ft</b>Strata area</div><div><b>Approx. 7.5m</b>Ceiling height</div></div>
 <span class="lst-btn">Read the full listing</span>
 </div></a>
+<div class="lst-lgrid"><a class="lst-lcard" href="/listings/central-link-01-01/#lease" data-deal="lease">
+<div class="ph"><img src="/images/listings/central-link-01-01-interior.jpg" alt="Central-Link #01-01 ground level with mezzanine and staircase" loading="lazy"></div>
+<div class="bd"><span class="lst-tag gold">For lease</span><span class="lst-tag">Industrial · B1</span><span class="lst-tag">Alexandra</span><h4>Central-Link #01-01 For Lease: Ground-Floor Corner B1 With Approx. 7.5m Ceiling</h4><div class="lst-facts sm"><div><b>S$8,800/mth</b>Asking rent</div><div><b>S$2.94 psf</b>On strata area</div><div><b>2,993 sq ft</b>Strata area</div><div><b>Approx. 7.5m</b>Ceiling height</div></div></div></a></div>
 <p id="lst-empty" class="lst-note" hidden>No listings in this category right now.</p>
 </section>
 
@@ -572,6 +575,6 @@ body{background:var(--l-cream-lt);margin:0}
 </section>
 <p class="lst-note">Listings marked as marketed by TK Real Estate Pte Ltd, the parent of PropertyAtlas, are disclosed on each page. Figures are PropertyAtlas calculations from URA REALIS caveats and JTC rental data.</p>
 </div>
-<footer class="ed-art-footer">© 2026 PropertyAtlas · TK Real Estate Pte Ltd (CEA L3011027G) · <a href="/">Back to the map</a></footer>
+<script>(function(){var g=document.querySelector('.lst-filters');if(!g)return;g.addEventListener('click',function(e){var b=e.target.closest('button');if(!b)return;g.querySelectorAll('button').forEach(function(x){x.classList.toggle('on',x===b)});var f=b.dataset.f,n=0;document.querySelectorAll('#lst-open [data-deal]').forEach(function(c){var s=f==='all'||c.dataset.deal===f;c.hidden=!s;if(s)n++});document.getElementById('lst-empty').hidden=n>0;});})();</script><footer class="ed-art-footer">© 2026 PropertyAtlas · TK Real Estate Pte Ltd (CEA L3011027G) · <a href="/">Back to the map</a></footer>
 </body>
 </html>
