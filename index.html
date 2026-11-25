@@ -240,6 +240,14 @@ body{background:var(--bg);color:var(--txt);font-family:Inter,system-ui,-apple-sy
 .rbadge.hi{background:#e3f4e8;color:#17703a}.rbadge.lo{background:#fdeaea;color:#b4232a}.rbadge.tie{background:#eef1f5;color:#4a5568}
 .rbadge .rbx{opacity:.7;font-weight:600;margin-left:3px}
 .rbline{display:flex;gap:4px;flex-wrap:wrap;margin:-2px 0 6px}
+/* v9.9.68: badge detail panel (hover on desktop, tap on touch) */
+#rbPop{position:fixed;z-index:9999;max-width:340px;background:#fff;color:#1a2332;border:1px solid #d6d9e0;border-radius:8px;box-shadow:0 8px 24px rgba(16,24,40,.16);padding:10px 12px;font:12px/1.45 Inter,system-ui,-apple-system,sans-serif;display:none}
+#rbPop .rbh{font-size:10px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:#667085;margin-bottom:6px}
+#rbPop .rbi{padding:5px 0;border-top:1px solid #eef0f3}#rbPop .rbi:first-of-type{border-top:0;padding-top:0}
+#rbPop .rbt{font-weight:700}#rbPop .rbt.hi{color:#17703a}#rbPop .rbt.lo{color:#b4232a}#rbPop .rbt.tie{color:#4a5568}
+#rbPop .rbg{color:#475467}#rbPop .rbv{font-variant-numeric:tabular-nums}
+#rbPop .rbf{margin-top:7px;padding-top:6px;border-top:1px solid #eef0f3;font-size:10.5px;color:#667085}
+
 .recf{display:inline-flex;align-items:center;gap:2px}
 
 .mptbl .bought-val{font-size:11px;color:var(--mut);font-weight:400}
@@ -1269,9 +1277,7 @@ function badgeSpan(c,metric,prefix){
   const b=rbBest(all), lv=RB_LEVEL_NAME[b.level]||b.level, hi=b.direction==='high', tie=b.event_type==='tie';
   const txt=tie?('= Ties '+lv.toLowerCase()+(hi?' high':' low since 2020')):((hi?'▲ ':'▼ ')+lv+(hi?' high':' low since 2020'));
   const more=all.length>1?'<span class="rbx">+'+(all.length-1)+'</span>':'';
-  const tip=(metric==='psf'?'PSF':'Price')+'\n'+all.sort((a,z)=>(RB_LEVEL_RANK[z.level]||0)-(RB_LEVEL_RANK[a.level]||0)).map(rbLine).join('\n')
-    +'\n\nHighs compare with every earlier caveat on record; lows with caveats from 1 Jan 2020. Order is by sale date.';
-  return '<span class="rbadge '+(tie?'tie':hi?'hi':'lo')+'" title="'+esc(tip)+'">'+(prefix||'')+txt+more+'</span>';
+  return '<span class="rbadge '+(tie?'tie':hi?'hi':'lo')+'" data-rbid="'+c.id+'" data-rbm="'+metric+'" tabindex="0">'+(prefix||'')+txt+more+'</span>';
 }
 function badgeHTML(c,metric){ const s=badgeSpan(c,metric,''); return s?'<div>'+s+'</div>':''; }
 function badgeLineHTML(c){
@@ -1291,6 +1297,58 @@ function recFilterHTML(){
   const b=(v,t)=>'<button style="'+bs+(fRec===v?on:'')+'" onclick="setRecFilter(\''+v+'\')">'+t+'</button>';
   return '<span class="recf" title="New highs and lows on this page">'+b('all','All')+b('records','Records')+b('highs','▲ Highs')+b('lows','▼ Lows')+'</span>';
 }
+/* v9.9.68: badge detail panel — hover (desktop) or tap (touch); one shared element */
+function rbPanelHTML(id,metric){
+  const all=(BADGE_BY_ID[id]||[]).filter(b=>b.metric===metric)
+    .sort((a,z)=>(RB_LEVEL_RANK[z.level]||0)-(RB_LEVEL_RANK[a.level]||0));
+  if(!all.length) return '';
+  const items=all.map(b=>{
+    const lv=RB_LEVEL_NAME[b.level]||b.level, hi=b.direction==='high', tie=b.event_type==='tie', x=rbVal(b);
+    const head=tie?('= Ties '+lv.toLowerCase()+(hi?' high':' low since 2020')):((hi?'▲ ':'▼ ')+lv+(hi?' high':' low since 2020'));
+    const j=(!tie&&b.jump_pct!=null)?(' · '+(Number(b.jump_pct)>=0?'+':'−')+Math.abs(Number(b.jump_pct)).toFixed(1)+'%'):'';
+    const line=tie?('Equals '+x.pv+', set '+fmtSD(b.prev_sale_date))
+                  :('<b>'+x.v+'</b> vs previous '+(hi?'high':'low')+' '+x.pv+' ('+fmtSD(b.prev_sale_date)+')'+j);
+    return '<div class="rbi"><div class="rbt '+(tie?'tie':hi?'hi':'lo')+'">'+head+'</div>'
+      +'<div class="rbg">'+esc(rbGroupName(b))+'</div><div class="rbv">'+line+'</div></div>';
+  }).join('');
+  return '<div class="rbh">'+(metric==='psf'?'PSF':'Price')+' · new '+(all.length>1?'records':'record')+'</div>'+items
+    +'<div class="rbf">Highs: compared with every earlier caveat on record. Lows: with caveats from 1 Jan 2020. Compared by sale date.</div>';
+}
+let rbPopT=null, rbPinned=false;
+function rbPop(){ let el=document.getElementById('rbPop');
+  if(!el){ el=document.createElement('div'); el.id='rbPop'; document.body.appendChild(el);
+    el.addEventListener('mouseenter',()=>clearTimeout(rbPopT));
+    el.addEventListener('mouseleave',()=>{ if(!rbPinned) rbHide(); }); }
+  return el; }
+function rbShow(badge,pin){
+  const k=badge.getAttribute('data-rbid')+'|'+badge.getAttribute('data-rbm');
+  const html=rbPanelHTML(badge.getAttribute('data-rbid'),badge.getAttribute('data-rbm'));
+  if(!html) return;
+  clearTimeout(rbPopT); rbPinned=!!pin;
+  const el=rbPop(); el.innerHTML=html; el.dataset.k=k; el.style.display='block';
+  const r=badge.getBoundingClientRect(), w=el.offsetWidth, h=el.offsetHeight, vw=window.innerWidth, vh=window.innerHeight;
+  const left=Math.min(Math.max(8, r.right-w), vw-w-8);
+  let top=r.bottom+6; if(top+h>vh-8) top=Math.max(8, r.top-h-6);
+  el.style.left=left+'px'; el.style.top=top+'px';
+}
+function rbHide(){ rbPinned=false; const el=document.getElementById('rbPop'); if(el) el.style.display='none'; }
+(function(){
+  const hoverable=!!(window.matchMedia&&window.matchMedia('(hover: hover)').matches);
+  document.addEventListener('mouseover',e=>{ if(!hoverable||rbPinned) return; const b=e.target.closest&&e.target.closest('.rbadge'); if(b) rbShow(b,false); });
+  document.addEventListener('mouseout',e=>{ if(!hoverable||rbPinned) return; const b=e.target.closest&&e.target.closest('.rbadge');
+    if(b){ clearTimeout(rbPopT); rbPopT=setTimeout(rbHide,180); } });
+  document.addEventListener('click',e=>{
+    const b=e.target.closest&&e.target.closest('.rbadge');
+    if(b){ e.stopPropagation(); e.preventDefault(); const el=document.getElementById('rbPop');
+      const k=b.getAttribute('data-rbid')+'|'+b.getAttribute('data-rbm');
+      if(rbPinned&&el&&el.style.display==='block'&&el.dataset.k===k){ rbHide(); return; }
+      rbShow(b,true); return; }
+    if(!(e.target.closest&&e.target.closest('#rbPop'))) rbHide();
+  }, true);
+  document.addEventListener('keydown',e=>{ if(e.key==='Escape') rbHide(); });
+  window.addEventListener('scroll',()=>{ if(!rbPinned) rbHide(); }, true);
+  window.addEventListener('resize',rbHide);
+})();
 function landedPinsToMap(){
   if(map&&map.getSource('cav')) map.getSource('cav').setData(caveatGeojson(LANDED_PINS.map((c,i)=>({c,i,lp:(c.bld?2:1)}))));
 }
@@ -3987,6 +4045,8 @@ function faTopRender(cavs){
    transactions from nonlanded_transactions_geo; P&L, Most active (by project + district) and Top
    transactions via nonlanded_ma_* RPCs and nonlanded_pnl_pairs_mv. Residential project names render as
    plain text (the C&I Directory link does not apply). Needs S403_res_pulse_analysis.sql committed first. */
+/* v9.9.68 (S445): badge details open in a small panel instead of the browser tooltip: hover on desktop, tap on
+   phones (tap again or elsewhere to close; Esc closes). Same content: every level, previous record, date, jump %. */
 /* v9.9.67 (S445, REC-BADGE-1): new high / new low badges under Price and PSF on the caveat list (C&I, Landed,
    Non-Landed, Exec Condo; table and card views) from pa_record_badges in 500-id chunks; badge shows the widest level
    (record before tie, high before low), tooltip lists every level with previous record, date and jump %; lows print
