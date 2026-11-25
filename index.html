@@ -235,6 +235,13 @@ body{background:var(--bg);color:var(--txt);font-family:Inter,system-ui,-apple-sy
 .mptbl .num{text-align:right;font-weight:700;color:var(--g1)}
 .mptbl .proj{font-weight:700;word-break:break-word}
 .mptbl .bought-lbl{font-size:9px;color:var(--mut);text-transform:uppercase;letter-spacing:.04em;margin-top:5px;font-weight:600}
+/* v9.9.67 REC-BADGE-1: new high / new low badges */
+.rbadge{display:inline-block;margin-top:4px;padding:1px 6px;border-radius:4px;font-size:9.5px;font-weight:700;line-height:1.45;white-space:nowrap;cursor:help;font-family:Inter,system-ui,-apple-system,sans-serif;letter-spacing:.01em}
+.rbadge.hi{background:#e3f4e8;color:#17703a}.rbadge.lo{background:#fdeaea;color:#b4232a}.rbadge.tie{background:#eef1f5;color:#4a5568}
+.rbadge .rbx{opacity:.7;font-weight:600;margin-left:3px}
+.rbline{display:flex;gap:4px;flex-wrap:wrap;margin:-2px 0 6px}
+.recf{display:inline-flex;align-items:center;gap:2px}
+
 .mptbl .bought-val{font-size:11px;color:var(--mut);font-weight:400}
 .mptbl .addr{word-break:break-word}
 .mptbl .sub{color:var(--mut);font-size:10px}
@@ -1183,9 +1190,11 @@ async function runLandedSearch(){
   }catch(e){ console.error('landed search failed:',e); if(document.getElementById('count'))document.getElementById('count').textContent='Could not load \u2014 retry'; }
 }
 async function loadLandedPairs(seq){
+  loadBadgesForCaveats(seq);   // v9.9.67 record badges, parallel
   // BOUGHT enrichment for landed — mirrors loadPairsForCaveats, sourced from landed_pnl_pairs_mv.
   // New Sale never pairs and bulk deals are excluded at MV level; psf_buy derived from buy area.
   try{
+    BADGE_BY_ID={};
     const ids=CAVEATS.map(c=>c.id).filter(x=>x!=null);
     if(!ids.length) return;
     const map={}, CHUNK=200;
@@ -1203,6 +1212,84 @@ async function loadLandedPairs(seq){
     PAIR_BY_SELL=map;
     renderCaveats();
   }catch(e){ /* enhancement only */ }
+}
+/* v9.9.67 (S445, REC-BADGE-1): new high / new low badges on the caveat list.
+   Read from pa_record_badges(class, ids) (anon, max 500 ids per call), which serves record_badges_hist:
+   each caveat compared with every earlier caveat in its group by sale date. Highs: everything on record,
+   badged from 2020 sales. Lows: from 1 Jan 2020, badged from 2021 sales. Levels: project / street
+   (street + property type + tenure group) / district. Enhancement only: fails silent. */
+let BADGE_BY_ID = {};      // caveat id -> [badge rows]
+let fRec = 'all';          // 'all' | 'records' | 'highs' | 'lows' (page-local, like the tenure chips)
+const RB_LEVEL_RANK = {district:3, street:2, project:1};
+const RB_LEVEL_NAME = {district:'District', street:'Street', project:'Project'};
+function badgeClass(){ return fSeg==='landed'?'landed':fSeg==='nonlanded'?'private_nl':fSeg==='ec'?'ec':'ci'; }
+async function loadBadgesForCaveats(seq){
+  try{
+    const ids=CAVEATS.map(c=>c.id).filter(x=>x!=null);
+    const cls=badgeClass(), out={}, CHUNK=500;
+    for(let i=0;i<ids.length;i+=CHUNK){
+      if(seq!==cavSeq) return;
+      const res=await fetch(SUPA_REST+'/rpc/pa_record_badges',{method:'POST',
+        headers:{'Content-Type':'application/json','apikey':SUPA_ANON,'Authorization':'Bearer '+SUPA_ANON},
+        body:JSON.stringify({p_class:cls,p_ids:ids.slice(i,i+CHUNK)})});
+      if(!res.ok) return;
+      const rows=await res.json();
+      if(Array.isArray(rows)) rows.forEach(r=>{ (out[r.id]=out[r.id]||[]).push(r); });
+    }
+    if(seq!==cavSeq) return;
+    BADGE_BY_ID=out;
+    if(Object.keys(out).length||fRec!=='all') renderCaveats();
+  }catch(e){ /* badges are an enhancement */ }
+}
+function rbGroupName(b){
+  const g=String(b.group_value||'');
+  if(b.level==='project') return g.replace(/ \| D\d+$/,'');
+  if(b.level==='street'){ const p=g.split(' | '); return p[0]+(p[1]&&p[1]!=='Other'?' ('+p[1]+')':''); }
+  return g;   // 'D09'
+}
+function rbVal(b){ const v=Number(b.value), pv=Number(b.prev_value);
+  const f=x=>'S$'+Math.round(x).toLocaleString()+(b.metric==='psf'?' psf':'');
+  return {v:f(v), pv:(b.prev_value!=null?f(pv):'—')}; }
+function rbLine(b){
+  const lv=RB_LEVEL_NAME[b.level]||b.level, hi=b.direction==='high', x=rbVal(b);
+  const what=lv+' '+(hi?'high':'low since 2020')+' · '+rbGroupName(b);
+  if(b.event_type==='tie') return what+': ties '+x.pv+' set '+fmtSD(b.prev_sale_date);
+  const j=(b.jump_pct!=null)?(' ('+(Number(b.jump_pct)>=0?'+':'−')+Math.abs(Number(b.jump_pct)).toFixed(1)+'%)'):'';
+  return what+': '+x.v+', previous '+(hi?'high ':'low ')+x.pv+' set '+fmtSD(b.prev_sale_date)+j;
+}
+// best badge for one metric: record before tie, high before low, then the widest level
+function rbBest(list){
+  return list.slice().sort((a,b)=>((a.event_type==='record'?0:1)-(b.event_type==='record'?0:1))
+    ||((a.direction==='high'?0:1)-(b.direction==='high'?0:1))
+    ||((RB_LEVEL_RANK[b.level]||0)-(RB_LEVEL_RANK[a.level]||0)))[0];
+}
+function badgeSpan(c,metric,prefix){
+  const all=(BADGE_BY_ID[c.id]||[]).filter(b=>b.metric===metric);
+  if(!all.length) return '';
+  const b=rbBest(all), lv=RB_LEVEL_NAME[b.level]||b.level, hi=b.direction==='high', tie=b.event_type==='tie';
+  const txt=tie?('= Ties '+lv.toLowerCase()+(hi?' high':' low since 2020')):((hi?'▲ ':'▼ ')+lv+(hi?' high':' low since 2020'));
+  const more=all.length>1?'<span class="rbx">+'+(all.length-1)+'</span>':'';
+  const tip=(metric==='psf'?'PSF':'Price')+'\n'+all.sort((a,z)=>(RB_LEVEL_RANK[z.level]||0)-(RB_LEVEL_RANK[a.level]||0)).map(rbLine).join('\n')
+    +'\n\nHighs compare with every earlier caveat on record; lows with caveats from 1 Jan 2020. Order is by sale date.';
+  return '<span class="rbadge '+(tie?'tie':hi?'hi':'lo')+'" title="'+esc(tip)+'">'+(prefix||'')+txt+more+'</span>';
+}
+function badgeHTML(c,metric){ const s=badgeSpan(c,metric,''); return s?'<div>'+s+'</div>':''; }
+function badgeLineHTML(c){
+  const a=badgeSpan(c,'price','Price '), b=badgeSpan(c,'psf','PSF ');
+  return (a||b)?'<div class="rbline">'+a+b+'</div>':'';
+}
+function recMatch(c){
+  if(fRec==='all') return true;
+  const l=BADGE_BY_ID[c.id]||[];
+  if(fRec==='records') return l.length>0;
+  return l.some(b=>b.direction===(fRec==='highs'?'high':'low'));
+}
+function setRecFilter(v){ fRec=v; renderCaveats(); }
+function recFilterHTML(){
+  const bs='display:inline-flex;align-items:center;padding:3px 8px;margin:0 1px;border:1px solid var(--bd,#d6d9e0);border-radius:6px;background:var(--srf,#fff);color:var(--ink,#1a2332);font:inherit;font-size:12px;cursor:pointer;';
+  const on='background:var(--g1,#1f6feb);color:#fff;border-color:var(--g1,#1f6feb);';
+  const b=(v,t)=>'<button style="'+bs+(fRec===v?on:'')+'" onclick="setRecFilter(\''+v+'\')">'+t+'</button>';
+  return '<span class="recf" title="New highs and lows on this page">'+b('all','All')+b('records','Records')+b('highs','▲ Highs')+b('lows','▼ Lows')+'</span>';
 }
 function landedPinsToMap(){
   if(map&&map.getSource('cav')) map.getSource('cav').setData(caveatGeojson(LANDED_PINS.map((c,i)=>({c,i,lp:(c.bld?2:1)}))));
@@ -1339,11 +1426,13 @@ document.querySelectorAll('#typesLanded .chip,#mtChipsLanded .chip,#typesNonLand
 let _cavTimer=null;
 function searchCaveats(){ clearTimeout(_cavTimer); _cavTimer=setTimeout(runCaveatSearch,250); }
 async function loadPairsForCaveats(seq){
+  loadBadgesForCaveats(seq);   // v9.9.67 record badges, parallel
   // Progressive enhancement: enrich the List with BOUGHT pairing from pnl_pairs_mv,
   // matched by caveat.id === pnl_pairs_mv.sell_id. Anon-readable; inherits MV-level
   // suppression (e.g. ESR/Brookfield) automatically. Fails silent — list works without it.
   try{
     PAIR_BY_SELL={};
+    BADGE_BY_ID={};
     const ids=CAVEATS.map(c=>c.id).filter(x=>x!=null);
     if(!ids.length) return;
     const map={}, CHUNK=200;
@@ -1415,6 +1504,7 @@ function renderCaveats(){   // current page render; server paginates; fQ/fTenure
   let items=CAVEATS.map((c,i)=>({c,i}));
   if(fQ) items=items.filter(({c})=>((c.n+' '+c.addr+' '+c.ar).toLowerCase().includes(fQ)));
   if(fTenure.length) items=items.filter(({c})=>fTenure.indexOf(tenureCat(c.tn))>=0);
+  if(fRec!=='all') items=items.filter(({c})=>recMatch(c));
   const pages=Math.max(1,Math.ceil((cavTotal||items.length)/cavPageSize));
   const page=Math.min(pages,Math.floor(cavOffset/cavPageSize)+1);
   if(splitMode==='list') caveatTableHTML(items); else caveatListHTML(items);
@@ -1427,7 +1517,7 @@ function renderCaveats(){   // current page render; server paginates; fQ/fTenure
 function cavPagerHTML(page,pages){
   const lbl=(cavMode==='release')?('Latest release '+cavWeekLabel):periodLabel(cavPeriod);
   const head='<span><span style="opacity:.6">'+(cavMode==='release'?'📅':'🔎')+'</span> '+lbl+(nearOn()?' \u00b7 near '+esc(NEAR.sel.map(x=>x.name).join(', ')):'')+' \u00b7 <b>'+(cavTotal||0).toLocaleString()+'</b> '+(fSeg==='landed'?('transactions'+(((cavTotal||0)>2000)?' \u00b7 map shows latest 2,000':'')):isRes(fSeg)?'transactions \u00b7 map shows one pin per building':'caveats')+'</span>';
-  if((cavTotal||0)<=cavPageSize) return '<div style="font-size:12px;color:var(--ink,#1a2332)">'+head+'</div>';
+  if((cavTotal||0)<=cavPageSize) return '<div style="display:flex;flex-wrap:wrap;align-items:center;gap:6px 10px;font-size:12px;color:var(--ink,#1a2332)">'+head+recFilterHTML()+'</div>';
   const atFirst=cavOffset<=0, atLast=page>=pages;
   const bs='display:inline-flex;align-items:center;padding:3px 8px;margin:0 1px;border:1px solid var(--bd,#d6d9e0);border-radius:6px;background:var(--srf,#fff);color:var(--ink,#1a2332);font:inherit;font-size:12px;cursor:pointer;';
   const dis='opacity:.38;pointer-events:none;';
@@ -1441,6 +1531,7 @@ function cavPagerHTML(page,pages){
     +'<span style="display:inline-flex;align-items:center;gap:4px">Show '
       +'<select style="'+bs+'padding:3px 4px" onchange="cavSetPageSize(this.value)">'+[50,100,200].map(n=>'<option value="'+n+'"'+(n===cavPageSize?' selected':'')+'>'+n+'</option>').join('')+'</select></span>'
     +'<span style="display:inline-flex">'+sb('desc','Newest')+sb('asc','Oldest')+'</span>'
+    +recFilterHTML()
   +'</div>';
 }
 function cavFirst(){ cavOffset=0; searchCaveats(); }
@@ -2010,7 +2101,7 @@ function caveatListHTML(items){
         <div class="stat"><b>${c.psf?'S$'+c.psf:'—'}</b><span>PSF</span></div>
         <div class="stat"><b>${c.area?c.area.toLocaleString()+' sf':'—'}</b><span>Area</span></div>
         <div class="stat"><b>${c.sd}</b><span>Sale date</span></div>
-      </div></div>`;
+      </div>${badgeLineHTML(c)}</div>`;
   }).join('')||'<div class="note" style="padding:20px">No caveats match these filters.</div>';
 }
 
@@ -2129,12 +2220,12 @@ function caveatTableHTML(items){
       `<td class="sub">${esc(c.tos)||'—'}${(c.nu>1)?('<div style="color:#B5683E;font-size:10px;font-weight:700">Bulk · '+c.nu+' units</div>'):''}</td>`+
       `<td><span class="tpill" style="background:${col}22;color:${col}">${dispType(c.t)}</span></td>`+
       `<td class="sub">${esc(c.toa)||'—'}</td>`+
-      `<td class="mono num">${price}${pnlBadge}${bPrice}</td>`+
+      `<td class="mono num">${price}${badgeHTML(c,'price')}${pnlBadge}${bPrice}</td>`+
       `<td class="mono num">${area}</td>`+
-      `<td class="mono num">${psfv}${bPsf}</td>`+
+      `<td class="mono num">${psfv}${badgeHTML(c,'psf')}${bPsf}</td>`+
       `<td class="ten">${esc(c.tn)||'—'}</td>`+
     `</tr>`;
-  }).join('')||`<tr><td colspan="11" style="padding:22px;text-align:center;color:var(--mut)">No caveats match these filters.</td></tr>`;
+  }).join('')||`<tr><td colspan="11" style="padding:22px;text-align:center;color:var(--mut)">${fRec!=='all'?'No new highs or lows on this page.':'No caveats match these filters.'}</td></tr>`;
   document.getElementById('list').innerHTML=
     `<table class="mptbl cav-tbl"><thead><tr>`+
       `<th style="width:92px">Date</th><th style="width:50px">Dist.</th>`+
@@ -3896,6 +3987,10 @@ function faTopRender(cavs){
    transactions from nonlanded_transactions_geo; P&L, Most active (by project + district) and Top
    transactions via nonlanded_ma_* RPCs and nonlanded_pnl_pairs_mv. Residential project names render as
    plain text (the C&I Directory link does not apply). Needs S403_res_pulse_analysis.sql committed first. */
+/* v9.9.67 (S445, REC-BADGE-1): new high / new low badges under Price and PSF on the caveat list (C&I, Landed,
+   Non-Landed, Exec Condo; table and card views) from pa_record_badges in 500-id chunks; badge shows the widest level
+   (record before tie, high before low), tooltip lists every level with previous record, date and jump %; lows print
+   "since 2020". All / Records / Highs / Lows filter in the list banner (page-local, like Tenure). Fails silent. */
 /* v9.9.66 (S444): SEED_CAVEATS re-bake - week of 23 Nov 2026 (so far): Tue 24 Nov 9 caveats (S$27,173,888, ids 83596-83604).
    SEED_CAV_TOTAL 39 -> 9. No aborts or withdrawals; C&I Gate B 0 (all 9 carry lat/lng). Largest: 12,12A Maju Avenue S$10.0M shophouse. */
 /* v9.9.65 (S443, PROJ-RENT-2): each segment of the Rent Benchmark card opens with a monthly chart - street lease counts as bars, street (gold) and district (navy, dashed) median rents as lines on a second axis, hover for values; row sparklines removed; a segment with no street or district leases collapses to one line. */
