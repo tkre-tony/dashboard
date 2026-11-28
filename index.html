@@ -159,6 +159,9 @@ body{background:var(--bg);color:var(--txt);font-family:Inter,system-ui,-apple-sy
 .rec-disc{background:var(--srf2);border:1px solid var(--bdr);border-radius:10px;padding:13px 17px;font-size:13px;line-height:1.6;color:#4a4f5c}
 .rec-disc b{color:var(--navy)}
 .rec-foot{margin:0;font-size:12px;line-height:1.6;color:var(--mut)}
+.rec-since{display:block;font-size:11px;font-weight:400;color:var(--mut);white-space:nowrap}
+.rec-tip{position:relative;border-bottom:1px dotted var(--mut);cursor:help;outline:none}
+.rec-tip:hover::after,.rec-tip:focus::after{content:attr(data-tip);position:absolute;right:0;bottom:calc(100% + 6px);z-index:20;width:max-content;max-width:320px;white-space:normal;text-align:left;padding:7px 10px;border-radius:6px;background:var(--navy);color:#fff;font-size:12px;font-weight:400;line-height:1.45;box-shadow:0 6px 18px rgba(0,0,0,.18)}
 @media (max-width:700px){.rec-wrap{padding:16px 12px 48px}.rec-title{font-size:24px}.rec-tw{padding:6px 12px 14px}.rec-seg-h{padding:13px 12px}.rec-more{margin:10px 12px 16px}}
 .fw-filters{padding:10px 20px;display:flex;flex-wrap:wrap;align-items:center;gap:6px;border-bottom:1px solid var(--bdr);background:var(--srf)}
 .fw-filters .lbl{font-size:10px;color:var(--mut);text-transform:uppercase;letter-spacing:.5px;margin-right:2px}
@@ -4716,7 +4719,7 @@ function recVal(r,v){ if(v==null) return '—'; return r.metric==='psf'?('S$'+re
 function recChange(r){
   if(r.jump_pct==null) return '<span class="mu">—</span>';
   const p=Math.abs(Number(r.jump_pct)).toFixed(1), hi=r.direction==='high';
-  return hi?`<span class="rec-up">▲ +${p}%</span>`:`<span class="rec-dn">▼ −${p}%</span>`;
+  return hi?`<span class="rec-up">▲ +${p}%</span>`:`<span class="rec-dn">▼ −${p}%</span><small class="rec-since">low since 2020</small>`;
 }
 function recTenure(t){
   t=String(t||'').trim(); if(!t) return '—';
@@ -4775,8 +4778,9 @@ function recDistName(d){ return d===999?'District not stated':'District '+d; }
 function recSummary(j){
   if(!j) return '';
   const n=x=>recNum(x||0);
-  return `${n(j.caveats)} caveats · ${recMoney(j.value||0)} · ${n(j.resales)} resales / ${n(j.new_sales)} new sales`+
-    (Number(j.sub_sales)?` / ${n(j.sub_sales)} sub sales`:'');
+  const pl=(x,w)=>n(x)+' '+w+(Number(x)===1?'':'s');
+  return `${pl(j.caveats,'caveat')} · ${recMoney(j.value||0)} · ${pl(j.resales,'resale')} / ${pl(j.new_sales,'new sale')}`+
+    (Number(j.sub_sales)?` / ${pl(j.sub_sales,'sub sale')}`:'');
 }
 const REC_HEAD=['Sale','Caveat date','REALIS date','Area sq ft','Tenure','Price ($)','Last record ($)','Last record caveat date','Change (%)'];
 function recRowHTML(r,pdf){
@@ -4784,10 +4788,23 @@ function recRowHTML(r,pdf){
   let h=`<tr><td class="pl"><b>${esc(p.place)}</b>${p.detail?'<small>'+esc(p.detail)+'</small>':''}</td>`+
     `<td class="nw">${fmtSD(r.sale_date)}</td><td class="nw mu">${fmtSD(r.release_date)}</td>`+
     `<td class="r">${recArea(r)}</td><td class="nw">${esc(recTenure(r.tenure))}</td>`+
-    `<td class="r nw v">${recVal(r,r.value)}</td><td class="r nw">${recVal(r,r.prev_value)}</td>`+
+    `<td class="r nw v">${recVal(r,r.value)}</td><td class="r nw">${recLast(r,pdf)}</td>`+
     `<td class="nw mu">${r.prev_sale_date?fmtSD(r.prev_sale_date):'—'}</td><td class="r nw">${recChange(r)}</td>`;
   if(!pdf){ REC_ROWS.push(r); h+=`<td><button class="rec-map" onclick="recGoMap(${REC_ROWS.length-1})" aria-label="Show ${esc(p.place)} on the map">Map ›</button></td>`; }
   return h+'</tr>';
+}
+/* v9.9.70: where the last record was set - hover / tap on screen; printed under the value in the PDF (street and district records) */
+function recPrevName(r,pdf){
+  const pp=String(r.prev_project||'').trim(), pa=r.prev_address?recAddr(r.prev_address,pdf):'';
+  const named=pp&&!/^(N\.?A\.?|-)$/i.test(pp)&&r.asset_class!=='landed';
+  return named?(recTitle(pp)+(pa?' · '+pa:'')):pa;
+}
+function recLast(r,pdf){
+  const v=recVal(r,r.prev_value), nm=(r.prev_address||r.prev_project)?recPrevName(r,pdf):'';
+  if(!nm) return v;
+  if(pdf) return (r.level==='project')?v:v+'<small class="rec-pv">'+esc(nm)+'</small>';
+  const tip='Last '+(r.direction==='low'?'low (since 2020)':'high')+': '+nm+(r.prev_sale_date?' · caveat '+fmtSD(r.prev_sale_date):'');
+  return `<span class="rec-tip" tabindex="0" data-tip="${esc(tip)}" aria-label="${esc(v+'. '+tip)}">${v}</span>`;
 }
 function recDistrictsHTML(groups,pdf){
   const cols=pdf?9:10; let h='';
@@ -4831,7 +4848,7 @@ function recFootText(asAt,pdf){
   return 'Source: URA REALIS caveats, grouped by caveat date'+(asAt?', as released to '+fmtSD(asAt):'')+'; the REALIS date is the release that carried each caveat. '+
     'Within each district, records are grouped by level (district, project, street), then price record and psf record. '+
     'Project records compare a caveat with every earlier caveat in the same project; street records compare it only with the same property type and tenure, on streets with at least two such projects (non-strata landed: the same house type and tenure on the street); district records compare it with the same property type across the district. '+
-    'Records shown: price highs, psf highs and psf lows; price lows are left out because they mostly reflect a smaller unit. Change (%) is the move against the last record. Within each list, the largest change comes first. '+
+    'Hover over (or tap) a last record to see where it was set. Records shown: price highs, psf highs and psf lows; price lows are left out because they mostly reflect a smaller unit. Change (%) is the move against the last record. Within each list, the largest change comes first. '+
     'For gains and losses on resales, see Market analysis › Profit & Loss. '+
     (pdf?'Unit numbers and house numbers are masked (#floor-XX, xx).':'The PDF masks unit numbers and house numbers.');
 }
@@ -4902,6 +4919,7 @@ tr.rec-b em{font-style:normal;font-weight:400;color:#4a4f5c}
 tr.rec-m td{padding:3pt 0 1pt;border:0;font-weight:700}
 tr.rec-d,tr.rec-b,tr.rec-m{break-after:avoid}
 .rec-up{color:#1f6b44;font-weight:700}.rec-dn{color:#b3261e;font-weight:700}
+.rec-since,.rec-pv{display:block;font-size:6.5pt;font-weight:400;color:#555a66;white-space:normal}
 .none{color:#555a66;margin:4pt 0}
 .disc{margin-top:12pt;padding:6pt 8pt;background:#fbf8ef;border:.6pt solid #e6e0cf;font-size:7.5pt;line-height:1.5;color:#4a4f5c;break-inside:avoid}.disc b{color:#15233f}
 .ft{margin-top:6pt;font-size:7pt;line-height:1.5;color:#555a66}`;
