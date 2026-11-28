@@ -4866,8 +4866,8 @@ function recSegHTML(c){
   let h=`<section class="rec-seg" id="rec-seg-${c.k}"><div class="rec-seg-h"><h2>${c.name}</h2><div class="rec-sum">${cnt}</div></div>`;
   if(REC.err[key]) return h+`<div class="rec-load">Could not load ${esc(c.name.toLowerCase())} records.<button onclick="recRetry('${c.k}')">Retry</button></div></section>`;
   if(!j) return h+'<div class="rec-load">Loading records…</div></section>';
-  if(!all.length) return h+'<div class="rec-empty">No new highs or lows set by caveats dated in this period.</div></section>';
-  if(!recs.length) return h+'<div class="rec-empty">No records in this segment match the filters.</div></section>';
+  if(!all.length) return fon?'':h+'<div class="rec-empty">No new highs or lows set by caveats dated in this period.</div></section>';
+  if(!recs.length) return '';  /* v9.9.71b: a filter that leaves a segment empty hides it (chip still shows 0 of N) */
   let groups=recGroup(recs), hidden=[];
   if(c.k==='private_nl'&&!fon&&groups.length>5&&!REC.open[key]){
     const top=groups.slice().sort((a,b)=>b.n-a.n||a.d-b.d).slice(0,5).map(g=>g.d);
@@ -4974,7 +4974,8 @@ function recClearF(){ REC.f=Object.assign({},REC_F0); recRender(); }
 function recRenderSegs(){
   const box=document.getElementById('recSegs'); if(!box) return;
   REC_ROWS=[];
-  box.innerHTML=REC_CLASSES.map(recSegHTML).join('');
+  const segH=REC_CLASSES.map(recSegHTML).join('');
+  box.innerHTML=segH||'<section class="rec-seg"><div class="rec-empty">No records match the filters for this period. Try another period or <button class="rec-clr" style="height:28px;margin-left:4px" onclick="recClearF()">Clear filters</button></div></section>';
   const fon=recFiltersOn(); let tot=0, shown=0;
   const chips=REC_CLASSES.map(c=>{ const j=REC.cache[recKey(c.k)], all=j&&Array.isArray(j.records)?j.records:null;
     const off=!!(REC.f.cls&&REC.f.cls!==c.k); let lbl;
@@ -5051,11 +5052,13 @@ function recPdf(){
   let body='';
   recShownClasses().forEach(c=>{
     const j=REC.cache[recKey(c.k)], all=Array.isArray(j.records)?j.records:[], recs=all.filter(r=>recPass(c,r));
+    if(fon&&!recs.length) return;
     body+=`<section class="seg"><div class="sh"><h2>${c.name}</h2><span>${fon?recs.length+' of '+all.length:recs.length} record${(fon?all.length:recs.length)===1?'':'s'}</span></div>`;
     body+=recs.length?`<table>${recHeadHTML(true)}<tbody>${recDistrictsHTML(recGroup(recs),true)}</tbody></table>`:
       `<p class="none">${all.length?'No records in this segment match the filters.':'No new highs or lows set by caveats dated in this period.'}</p>`;
     body+='</section>';
   });
+  if(!body) body='<p class="none">No records match the filters for this period.</p>';
   const css=`@page{size:A4 portrait;margin:13mm 11mm 15mm;@bottom-left{content:"PropertyAtlas Records · ${title.replace(/"/g,'')} · propertyatlas.sg";font:7.5pt Arial,sans-serif;color:#6b6f7a}@bottom-right{content:"Page " counter(page) " of " counter(pages);font:7.5pt Arial,sans-serif;color:#6b6f7a}}
 *{box-sizing:border-box}body{margin:0;font:8pt/1.35 Arial,Helvetica,sans-serif;color:#1b1f2a;-webkit-print-color-adjust:exact;print-color-adjust:exact}
 .hd{display:flex;justify-content:space-between;align-items:flex-end;border-bottom:2.5pt solid #15233f;padding-bottom:6pt;margin-bottom:8pt}
