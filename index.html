@@ -111,6 +111,55 @@ body{background:var(--bg);color:var(--txt);font-family:Inter,system-ui,-apple-sy
 /* FULL-WIDTH LENS */
 .fw-lens{display:none;height:calc(100vh - 84px);overflow-y:auto;background:var(--bg)}
 .fw-lens.show{display:block}
+/* v9.9.70 (S450, REC-PAGE-1): Market > Records */
+.rec-wrap{max-width:1280px;margin:0 auto;padding:22px 20px 56px;display:flex;flex-direction:column;gap:18px}
+.rec-top{display:flex;flex-wrap:wrap;align-items:flex-end;justify-content:space-between;gap:14px}
+.rec-eyebrow{font-size:11px;font-weight:700;letter-spacing:.09em;color:var(--mut)}
+.rec-title{margin:4px 0 4px;font-family:var(--serif);font-size:30px;line-height:1.15;color:var(--navy)}
+.rec-stamp{font-size:13px;color:var(--mut)}
+.rec-ctl{display:flex;flex-wrap:wrap;align-items:center;gap:8px}
+.rec-mode{display:flex;background:var(--srf2);border:1px solid var(--bdr);border-radius:8px;padding:3px}
+.rec-mode button{height:34px;padding:0 16px;border:0;border-radius:6px;background:transparent;color:var(--navy);font:inherit;font-size:13px;font-weight:600;cursor:pointer}
+.rec-mode button.on{background:var(--navy);color:#fff}
+.rec-per{display:flex;align-items:center;gap:4px;flex-wrap:wrap}
+.rec-per button{height:38px;min-width:38px;padding:0 12px;border:1px solid var(--bdr);border-radius:8px;background:var(--srf);color:var(--navy);font:inherit;font-size:13px;cursor:pointer}
+.rec-per button.on{background:var(--navy);border-color:var(--navy);color:#fff;font-weight:600}
+.rec-per button:disabled{opacity:.35;cursor:default}
+.rec-pdf{display:inline-flex;align-items:center;gap:7px;height:38px;padding:0 16px;border:0;border-radius:8px;background:var(--navy);color:#fff;font:inherit;font-size:13px;font-weight:600;cursor:pointer}
+.rec-pdf:disabled{opacity:.45;cursor:default}
+.rec-chips{display:flex;flex-wrap:wrap;gap:7px}
+.rec-chips a{padding:6px 12px;border:1px solid var(--bdr);border-radius:999px;background:var(--srf);font-size:12.5px;font-weight:600;color:var(--navy);text-decoration:none}
+.rec-chips a:hover{border-color:var(--navy)}
+.rec-seg{background:#fff;border:1px solid var(--bdr);border-radius:12px;overflow:hidden;scroll-margin-top:12px}
+.rec-seg-h{display:flex;flex-wrap:wrap;align-items:baseline;justify-content:space-between;gap:10px;padding:15px 20px;border-bottom:1px solid var(--srf2);background:var(--srf)}
+.rec-seg-h h2{margin:0;font-family:var(--serif);font-size:21px;color:var(--navy)}
+.rec-sum{font-size:13px;color:var(--mut)}
+.rec-tw{overflow-x:auto;padding:6px 20px 16px}
+.rec-tbl{width:100%;min-width:1080px;table-layout:fixed;border-collapse:collapse;font-size:13px}
+.rec-tbl th{padding:8px 8px 7px;border-bottom:2px solid var(--navy);font-size:10.5px;font-weight:700;letter-spacing:.04em;color:var(--mut);text-align:left;white-space:nowrap;vertical-align:bottom}
+.rec-tbl td{padding:7px 8px;overflow-wrap:anywhere;border-bottom:1px solid #f0ebde;vertical-align:top}
+.rec-tbl .r{text-align:right}
+.rec-tbl .nw{white-space:nowrap}
+.rec-tbl .mu{color:var(--mut)}
+.rec-tbl tr.rec-d td{padding:16px 0 6px;border-bottom:1px solid var(--bdr);font-size:15px;font-weight:700;color:var(--navy)}
+.rec-tbl tr.rec-b td{padding:9px 0 0;border:0}
+.rec-tbl tr.rec-b span{display:block;padding:5px 10px;background:#f6e7a8;border-radius:4px;font-size:12.5px;font-weight:700;color:var(--navy)}
+.rec-tbl tr.rec-b em{font-style:normal;font-weight:400;color:#4a4f5c}
+.rec-tbl tr.rec-m td{padding:9px 0 2px;border:0;font-size:12.5px;font-weight:700;color:var(--txt)}
+.rec-tbl .pl b{font-weight:600}
+.rec-tbl .pl small{display:block;font-size:11.5px;color:var(--mut);margin-top:2px}
+.rec-tbl .v{font-weight:700}
+.rec-up{color:#1f6b44;font-weight:700}
+.rec-dn{color:#b3261e;font-weight:700}
+.rec-map{border:0;background:none;padding:0;color:var(--g1);font:inherit;font-size:12.5px;font-weight:600;cursor:pointer;white-space:nowrap}
+.rec-map:hover{text-decoration:underline}
+.rec-more{margin:12px 20px 18px;height:40px;padding:0 15px;border:1px solid var(--bdr);border-radius:8px;background:var(--srf);color:var(--g1);font:inherit;font-size:12.5px;font-weight:600;cursor:pointer}
+.rec-empty,.rec-load{padding:18px 20px;font-size:13px;color:var(--mut)}
+.rec-load button{margin-left:8px;border:1px solid var(--bdr);background:var(--srf);border-radius:6px;padding:3px 10px;font:inherit;font-size:12px;cursor:pointer}
+.rec-disc{background:var(--srf2);border:1px solid var(--bdr);border-radius:10px;padding:13px 17px;font-size:13px;line-height:1.6;color:#4a4f5c}
+.rec-disc b{color:var(--navy)}
+.rec-foot{margin:0;font-size:12px;line-height:1.6;color:var(--mut)}
+@media (max-width:700px){.rec-wrap{padding:16px 12px 48px}.rec-title{font-size:24px}.rec-tw{padding:6px 12px 14px}.rec-seg-h{padding:13px 12px}.rec-more{margin:10px 12px 16px}}
 .fw-filters{padding:10px 20px;display:flex;flex-wrap:wrap;align-items:center;gap:6px;border-bottom:1px solid var(--bdr);background:var(--srf)}
 .fw-filters .lbl{font-size:10px;color:var(--mut);text-transform:uppercase;letter-spacing:.5px;margin-right:2px}
 .fw-filters .sep{width:1px;height:20px;background:var(--bdr);margin:0 4px}
@@ -546,6 +595,7 @@ body{background:var(--bg);color:var(--txt);font-family:Inter,system-ui,-apple-sy
   <button class="lens-tab" data-lens="directory" onclick="setLens('directory')">Directory</button>
   <button class="lens-tab" data-lens="pulse" onclick="setLens('pulse')">Market pulse</button>
   <button class="lens-tab" data-lens="analysis" onclick="setLens('analysis')">Market analysis</button>
+  <button class="lens-tab" data-lens="records" onclick="setLens('records')">Records</button>
   <div class="spacer"></div>
 </div>
 
@@ -841,6 +891,8 @@ body{background:var(--bg);color:var(--txt);font-family:Inter,system-ui,-apple-sy
     <div id="faTopTbl" style="overflow-x:auto"><div style="font-size:11px;color:var(--mut)">Loading...</div></div>
   </div>
 </div>
+<!-- v9.9.70 (S450): Market > Records -->
+<div class="fw-lens" id="fwRecords"><div id="recBody"></div></div>
 
 <div class="pa-enq-overlay" id="pa-enq-overlay" onclick="paEnqClose()"></div>
 <div class="pa-enq-modal" id="pa-enq-modal">
@@ -2352,6 +2404,8 @@ function setLens(l){
   var fwP=document.getElementById('fwPulse'),fwA=document.getElementById('fwAnalysis');
   if(fwP)fwP.classList.toggle('show',l==='pulse');
   if(fwA)fwA.classList.toggle('show',l==='analysis');
+  var fwR=document.getElementById('fwRecords'); if(fwR)fwR.classList.toggle('show',l==='records');
+  if(l==='records'&&typeof recInit==='function') recInit();
   if(isMap){
     if(map)map.resize();
     buildDistricts();
@@ -2699,9 +2753,12 @@ function crChart(seg,ss,ds,stLbl,dLbl){
     if(n>0) g+=`<rect x="${xc(i)-barw/2}" y="${yN(n)}" width="${barw}" height="${pt+ch-yN(n)}" rx="2" fill="var(--g1)" opacity=".16"><title>${crMon(m)}: ${n} ${barLbl}</title></rect>`;
     if(i%step===0) g+=`<text x="${xc(i)}" y="${H-pb+16}" text-anchor="middle" font-size="10" fill="var(--mut)">${crMon(m)}</text>`;
   });
-  const line=(O,col,dash)=>{ const pts=[]; months.forEach((m,i)=>{ if(O[m]) pts.push([xc(i),yP(Number(O[m].psf)),m]); });
+  /* v9.9.70: break the line at months with no leases (no straight line across a gap); lone months stay as dots */
+  const line=(O,col,dash)=>{ const runs=[]; let run=[]; months.forEach((m,i)=>{ if(O[m]) run.push([xc(i),yP(Number(O[m].psf)),m]); else if(run.length){ runs.push(run); run=[]; } });
+    if(run.length) runs.push(run);
+    const pts=[].concat.apply([],runs);
     if(!pts.length) return '';
-    let h=pts.length>1?`<polyline points="${pts.map(p=>p[0].toFixed(1)+','+p[1].toFixed(1)).join(' ')}" fill="none" stroke="${col}" stroke-width="2.2"${dash?' stroke-dasharray="5 4"':''}/>`:'';
+    let h=runs.filter(rn=>rn.length>1).map(rn=>`<polyline points="${rn.map(p=>p[0].toFixed(1)+','+p[1].toFixed(1)).join(' ')}" fill="none" stroke="${col}" stroke-width="2.2"${dash?' stroke-dasharray="5 4"':''}/>`).join('');
     pts.forEach(p=>{ const r=O[p[2]]; h+=`<circle cx="${p[0]}" cy="${p[1]}" r="3.6" fill="${col}"><title>${crMon(p[2])}: ${rbFmt(Number(r.psf))} psf pm \u00b7 ${r.n} lease${r.n==1?'':'s'}</title></circle>`; });
     const L=pts[pts.length-1]; h+=`<text x="${L[0]}" y="${L[1]-8}" text-anchor="middle" font-size="10.5" font-weight="700" fill="${col}">${rbFmt(Number(O[L[2]].psf))}</text>`;
     return h; };
@@ -4045,6 +4102,11 @@ function faTopRender(cavs){
    transactions from nonlanded_transactions_geo; P&L, Most active (by project + district) and Top
    transactions via nonlanded_ma_* RPCs and nonlanded_pnl_pairs_mv. Residential project names render as
    plain text (the C&I Directory link does not apply). Needs S403_res_pulse_analysis.sql committed first. */
+/* v9.9.70 (S450, REC-PAGE-1): Market > Records tab (fifth lens). Month | Quarter period bar, segments C&I -> Non-landed -> Landed -> EC,
+   district -> level band (District / Project / Street) -> Price record / PSF record, from pa_period_summary (one RPC per class).
+   Price lows left out; no min-history filter (matches the badges). Non-landed shows the top 5 districts by record count, rest on demand.
+   Download PDF = A4 print layout, all districts, unit numbers #floor-XX and house numbers xx. Rent Benchmark chart lines now break at
+   months with no leases instead of joining across the gap. */
 /* v9.9.69 (S447): SEED_CAVEATS re-bake - week of 23 Nov 2026: Tue 24 Nov 9 + Fri 27 Nov 24 = 33 caveats (S$69,807,788, ids 83596-83628). SEED_CAV_TOTAL 9 -> 33. No aborts or withdrawals; C&I Gate B 0 (all 33 carry lat/lng).
    Largest Fri: Peninsula Plaza #02-20 to 24 S$6.33M (5 units), 77 Tuas View Walk 1 S$6.25M, Tuas South Connection S$6.028M. */
 /* v9.9.68 (S445): badge details open in a small panel instead of the browser tooltip: hover on desktop, tap on
@@ -4546,6 +4608,316 @@ document.addEventListener("click",function(e){
   if(!dr.contains(e.target)&&!bt.contains(e.target)) paMnavClose();
 });
 document.addEventListener("keydown",function(e){ if(e.key==="Escape") paMnavClose(); });
+</script>
+<script>
+/* v9.9.70 (S450, REC-PAGE-1): Market > Records. Every new high / low set by a caveat dated in the chosen
+   month or quarter, by segment (C&I, Non-landed, Landed, EC) -> district -> level band (District, Project,
+   Street) -> Price record / PSF record. One pa_period_summary RPC per class (four calls, in parallel).
+   Price lows are left out by the RPC; no min-history filter, so the tab matches the map badges.
+   Download PDF prints an A4 layout of the same structure, all districts, with unit and house numbers masked. */
+const REC_CLASSES=[
+  {k:'ci',name:'Commercial & industrial',chip:'C&I'},
+  {k:'private_nl',name:'Non-landed',chip:'Non-landed'},
+  {k:'landed',name:'Landed',chip:'Landed'},
+  {k:'ec',name:'Executive condominiums',chip:'EC'}];
+const REC_MONTHS=['January','February','March','April','May','June','July','August','September','October','November','December'];
+const REC_LEVEL={district:'District',project:'Project',street:'Street'};
+const REC_MIN={y:2020,m:0};
+let REC=null, REC_ROWS=[];
+function recToday(){ const d=new Date(Date.now()+8*3600e3); return {y:d.getUTCFullYear(),m:d.getUTCMonth()}; }
+function recInit(){
+  if(!REC){ const t=recToday();
+    REC={mode:'month',y:t.y,m:t.m,q:Math.floor(t.m/3),winEnd:t.y*12+t.m,cache:{},open:{},err:{}}; }
+  recLoad();
+}
+function recIso(y,m){ const d=new Date(Date.UTC(y,m,1)); return d.toISOString().slice(0,10); }
+function recRange(){
+  if(REC.mode==='month') return [recIso(REC.y,REC.m),recIso(REC.y,REC.m+1)];
+  return [recIso(REC.y,REC.q*3),recIso(REC.y,REC.q*3+3)];
+}
+function recIsCurrent(){ const t=recToday();
+  return REC.mode==='month'?(REC.y===t.y&&REC.m===t.m):(REC.y===t.y&&REC.q===Math.floor(t.m/3)); }
+function recPeriodLabel(){
+  const cur=recIsCurrent();
+  if(REC.mode==='month') return REC_MONTHS[REC.m]+' '+REC.y+(cur?', month to date':'');
+  return 'Q'+(REC.q+1)+' '+REC.y+(cur?', quarter to date':'');
+}
+function recKey(k){ const r=recRange(); return k+'|'+r[0]+'|'+r[1]; }
+async function recFetch(k){
+  const key=recKey(k), r=recRange();
+  if(REC.cache[key]&&!REC.err[key]) return;
+  REC.err[key]=false; REC.cache[key]=REC.cache[key]||null;
+  try{
+    const res=await fetch(SUPA_REST+'/rpc/pa_period_summary',{method:'POST',
+      headers:{'Content-Type':'application/json','apikey':SUPA_ANON,'Authorization':'Bearer '+SUPA_ANON},
+      body:JSON.stringify({p_class:k,p_start:r[0],p_end:r[1]})});
+    if(!res.ok) throw new Error('HTTP '+res.status);
+    const j=await res.json();
+    REC.cache[key]=(j&&typeof j==='object')?j:{records:[]};
+  }catch(e){ REC.err[key]=true; REC.cache[key]=null; }
+  if(lens==='records') recRender();
+}
+function recLoad(){ recRender(); REC_CLASSES.forEach(c=>recFetch(c.k)); }
+function recRetry(k){ REC.err[recKey(k)]=false; recLoad(); }
+function recSetMode(md){
+  if(REC.mode===md) return;
+  const t=recToday();
+  if(md==='quarter'){ REC.q=Math.floor(REC.m/3); }
+  else { const last=REC.q*3+2, cap=(REC.y===t.y)?Math.min(last,t.m):last; REC.m=cap; REC.winEnd=REC.y*12+REC.m; }
+  REC.mode=md; recLoad();
+}
+function recCanStep(d){
+  const t=recToday();
+  if(REC.mode==='month'){ const v=REC.y*12+REC.m+d; return v>=REC_MIN.y*12+REC_MIN.m && v<=t.y*12+t.m; }
+  const v=REC.y*4+REC.q+d; return v>=REC_MIN.y*4 && v<=t.y*4+Math.floor(t.m/3);
+}
+function recStep(d){
+  if(!recCanStep(d)) return;
+  if(REC.mode==='month'){ const v=REC.y*12+REC.m+d; REC.y=Math.floor(v/12); REC.m=v%12;
+    if(v>REC.winEnd) REC.winEnd=v; if(v<REC.winEnd-3) REC.winEnd=v+3;
+    const t=recToday(); REC.winEnd=Math.min(REC.winEnd,t.y*12+t.m); }
+  else { const v=REC.y*4+REC.q+d; REC.y=Math.floor(v/4); REC.q=v%4; }
+  recLoad();
+}
+function recPick(v){
+  if(REC.mode==='month'){ REC.y=Math.floor(v/12); REC.m=v%12; }
+  else { REC.q=v; }
+  recLoad();
+}
+function recPeriodBar(){
+  const t=recToday(); let chips='';
+  if(REC.mode==='month'){
+    const sel=REC.y*12+REC.m, lo=Math.max(REC.winEnd-3,REC_MIN.y*12+REC_MIN.m);
+    for(let v=lo; v<=REC.winEnd; v++){
+      const y=Math.floor(v/12), m=v%12, lbl=_MON[m]+((v===REC.winEnd||m===0)?' '+y:'');
+      chips+=`<button class="${v===sel?'on':''}" onclick="recPick(${v})" aria-pressed="${v===sel}">${lbl}</button>`;
+    }
+  } else {
+    const tq=Math.floor(t.m/3);
+    for(let q=0;q<4;q++){
+      const fut=REC.y>t.y||(REC.y===t.y&&q>tq);
+      chips+=`<button class="${q===REC.q?'on':''}" onclick="recPick(${q})" ${fut?'disabled':''} aria-pressed="${q===REC.q}">Q${q+1}${q===3?' '+REC.y:''}</button>`;
+    }
+  }
+  return `<div class="rec-mode" role="group" aria-label="Period">`+
+    `<button class="${REC.mode==='month'?'on':''}" onclick="recSetMode('month')">Month</button>`+
+    `<button class="${REC.mode==='quarter'?'on':''}" onclick="recSetMode('quarter')">Quarter</button></div>`+
+    `<div class="rec-per"><button aria-label="Previous period" onclick="recStep(-1)" ${recCanStep(-1)?'':'disabled'}>‹</button>${chips}`+
+    `<button aria-label="Next period" onclick="recStep(1)" ${recCanStep(1)?'':'disabled'}>›</button></div>`;
+}
+/* ---------- formatting ---------- */
+function recTitle(s){ return String(s||'').toLowerCase().split(/(\s+)/).map(w=>/\d/.test(w)?w.toUpperCase():w.replace(/(^|[^a-z'’])([a-z])/g,(a,b,c)=>b+c.toUpperCase())).join(''); }
+function recNum(x){ return Math.round(Number(x)).toLocaleString('en-SG'); }
+function recMoney(v){ v=Number(v); if(!isFinite(v)) return '—';
+  if(Math.abs(v)>=1e9) return 'S$'+(v/1e9).toFixed(2)+'B';
+  if(Math.abs(v)>=1e6) return 'S$'+(v/1e6).toFixed(2)+'M';
+  return 'S$'+recNum(v); }
+function recVal(r,v){ if(v==null) return '—'; return r.metric==='psf'?('S$'+recNum(v)+' psf'):recMoney(v); }
+function recChange(r){
+  if(r.jump_pct==null) return '<span class="mu">—</span>';
+  const p=Math.abs(Number(r.jump_pct)).toFixed(1), hi=r.direction==='high';
+  return hi?`<span class="rec-up">▲ +${p}%</span>`:`<span class="rec-dn">▼ −${p}%</span>`;
+}
+function recTenure(t){
+  t=String(t||'').trim(); if(!t) return '—';
+  if(/freehold/i.test(t)) return 'Freehold';
+  const m=/(\d+)\s*yrs?(?:\s*from\s*\d{1,2}\/\d{1,2}\/(\d{4}))?/i.exec(t);
+  if(m) return m[1]+'-yr'+(m[2]?' from '+m[2]:'');
+  return t;
+}
+function recArea(r){ return r.area_sqft!=null&&Number(r.area_sqft)>0?recNum(r.area_sqft):'—'; }
+function recProj(r){ const p=String(r.project_name||'').trim(); return (p&&!/^(N\.?A\.?|-)$/i.test(p))?p:''; }
+/* PDF masking (house rule): strata units keep block and floor, unit masked #05-XX; whole assets mask the
+   street number(s) as xx. */
+function recMaskPdf(a){
+  a=recTitle(a); if(!a) return a;
+  if(/#\s*[A-Za-z0-9]+-[A-Za-z0-9]+/.test(a)) return a.replace(/(#\s*[A-Za-z0-9]+-)[A-Za-z0-9]+/g,'$1XX');
+  return a.replace(/^\s*\d+[A-Za-z]?(?:\s*(?:,|&|\/|-|and)\s*\d+[A-Za-z]?)*\s+/i,'xx ');
+}
+function recAddr(a,pdf){ return pdf?recMaskPdf(a):((typeof maskAddress==='function')?maskAddress(recTitle(a)):recTitle(a)); }
+function recSegType(s){ return String(s||'').split(' / ')[0].trim(); }
+function recStreetOf(r){ const g=String(r.group_value||''); return r.level==='street'?recTitle(g.split(' | ')[0]):''; }
+function recPlace(r,pdf){
+  const pn=recProj(r), addr=recAddr(r.address||'',pdf), ty=recSegType(r.segment), bits=[];
+  let place;
+  if(pn&&r.asset_class!=='landed'){ place=recTitle(pn); if(addr) bits.push(addr); }
+  else { place=addr||recTitle(pn)||'—'; if(pn&&r.asset_class==='landed'&&r.level!=='street') bits.push(recTitle(pn)); }
+  if(ty) bits.push(ty);
+  if(r.type_of_sale) bits.push(r.type_of_sale);
+  return {place,detail:bits.join(' · ')};
+}
+function recBasis(r){
+  const d=r.district!=null?'D'+String(r.district).padStart(2,'0'):'the district';
+  if(r.level==='project') return 'against every earlier caveat in the project';
+  if(r.level==='district') return 'same property type across '+d;
+  const st=recStreetOf(r);
+  if(r.asset_class==='landed') return (st?st+' · ':'')+'same house type and tenure on the street';
+  return (st?st+' · ':'')+'same property type and tenure · at least two projects on the street';
+}
+/* group records: district -> level -> metric -> rows (largest change first) */
+function recGroup(recs){
+  const D={};
+  (recs||[]).forEach(r=>{
+    const dk=r.district==null?999:Number(r.district);
+    const d=D[dk]=D[dk]||{d:dk,n:0,lv:{}}; d.n++;
+    const lk=r.level+'|'+(r.level==='street'?r.group_value:'');
+    const L=d.lv[lk]=d.lv[lk]||{level:r.level,first:r,m:{price:[],psf:[]}};
+    (L.m[r.metric==='psf'?'psf':'price']).push(r);
+  });
+  const ord={district:1,project:2,street:3};
+  return Object.values(D).sort((a,b)=>a.d-b.d).map(d=>({d:d.d,n:d.n,levels:Object.values(d.lv)
+    .sort((a,b)=>(ord[a.level]||9)-(ord[b.level]||9)||String(a.first.group_value).localeCompare(String(b.first.group_value)))
+    .map(L=>({level:L.level,basis:recBasis(L.first),metrics:[['price','Price record'],['psf','PSF record']]
+      .filter(([k])=>L.m[k].length)
+      .map(([k,nm])=>({name:nm,rows:L.m[k].slice().sort((a,b)=>Math.abs(Number(b.jump_pct)||0)-Math.abs(Number(a.jump_pct)||0))}))}))}));
+}
+function recDistName(d){ return d===999?'District not stated':'District '+d; }
+function recSummary(j){
+  if(!j) return '';
+  const n=x=>recNum(x||0);
+  return `${n(j.caveats)} caveats · ${recMoney(j.value||0)} · ${n(j.resales)} resales / ${n(j.new_sales)} new sales`+
+    (Number(j.sub_sales)?` / ${n(j.sub_sales)} sub sales`:'');
+}
+const REC_HEAD=['Sale','Caveat date','REALIS date','Area sq ft','Tenure','Price ($)','Last record ($)','Last record caveat date','Change (%)'];
+function recRowHTML(r,pdf){
+  const p=recPlace(r,pdf);
+  let h=`<tr><td class="pl"><b>${esc(p.place)}</b>${p.detail?'<small>'+esc(p.detail)+'</small>':''}</td>`+
+    `<td class="nw">${fmtSD(r.sale_date)}</td><td class="nw mu">${fmtSD(r.release_date)}</td>`+
+    `<td class="r">${recArea(r)}</td><td class="nw">${esc(recTenure(r.tenure))}</td>`+
+    `<td class="r nw v">${recVal(r,r.value)}</td><td class="r nw">${recVal(r,r.prev_value)}</td>`+
+    `<td class="nw mu">${r.prev_sale_date?fmtSD(r.prev_sale_date):'—'}</td><td class="r nw">${recChange(r)}</td>`;
+  if(!pdf){ REC_ROWS.push(r); h+=`<td><button class="rec-map" onclick="recGoMap(${REC_ROWS.length-1})" aria-label="Show ${esc(p.place)} on the map">Map ›</button></td>`; }
+  return h+'</tr>';
+}
+function recDistrictsHTML(groups,pdf){
+  const cols=pdf?9:10; let h='';
+  groups.forEach(g=>{
+    h+=`<tr class="rec-d"><td colspan="${cols}">${recDistName(g.d)}</td></tr>`;
+    g.levels.forEach(L=>{
+      h+=`<tr class="rec-b"><td colspan="${cols}"><span>${REC_LEVEL[L.level]||L.level}<em> · ${esc(L.basis)}</em></span></td></tr>`;
+      L.metrics.forEach(M=>{
+        h+=`<tr class="rec-m"><td colspan="${cols}">${M.name}</td></tr>`;
+        M.rows.forEach(r=>{ h+=recRowHTML(r,pdf); });
+      });
+    });
+  });
+  return h;
+}
+function recHeadHTML(pdf){ const w=pdf?[21.6,9.4,9.4,6.2,11.6,11,10.3,9.5,11]:[24,8.5,8.5,6.5,9,9.5,9.5,10,8,6.5]; return '<colgroup>'+w.map(x=>'<col style="width:'+x+'%">').join('')+'</colgroup><thead><tr>'+REC_HEAD.map((t,i)=>`<th class="${i>=5&&i<=6||i===3||i===8?'r':''}">${t}</th>`).join('')+(pdf?'':'<th>Location</th>')+'</tr></thead>'; }
+function recSegHTML(c){
+  const key=recKey(c.k), j=REC.cache[key];
+  let h=`<section class="rec-seg" id="rec-seg-${c.k}"><div class="rec-seg-h"><h2>${c.name}</h2><div class="rec-sum">${j?recSummary(j):''}</div></div>`;
+  if(REC.err[key]) return h+`<div class="rec-load">Could not load ${esc(c.name.toLowerCase())} records.<button onclick="recRetry('${c.k}')">Retry</button></div></section>`;
+  if(!j) return h+'<div class="rec-load">Loading records…</div></section>';
+  const recs=Array.isArray(j.records)?j.records:[];
+  if(!recs.length) return h+'<div class="rec-empty">No new highs or lows set by caveats dated in this period.</div></section>';
+  let groups=recGroup(recs), hidden=[];
+  if(c.k==='private_nl'&&groups.length>5&&!REC.open[key]){
+    const top=groups.slice().sort((a,b)=>b.n-a.n||a.d-b.d).slice(0,5).map(g=>g.d);
+    hidden=groups.filter(g=>top.indexOf(g.d)<0); groups=groups.filter(g=>top.indexOf(g.d)>=0);
+  }
+  h+=`<div class="rec-tw"><table class="rec-tbl">${recHeadHTML(false)}<tbody>${recDistrictsHTML(groups,false)}</tbody></table></div>`;
+  if(hidden.length) h+=`<button class="rec-more" onclick="recOpenAll('${c.k}')">Show ${hidden.length} more district${hidden.length>1?'s':''}: ${hidden.map(g=>g.d===999?'n/a':g.d).join(', ')}</button>`;
+  return h+'</section>';
+}
+function recOpenAll(k){ REC.open[recKey(k)]=true; recRender(); }
+function recAsAt(){
+  let best=null; REC_CLASSES.forEach(c=>{ const j=REC.cache[recKey(c.k)]; if(j&&j.as_at_release&&(!best||j.as_at_release>best)) best=j.as_at_release; });
+  return best;
+}
+function recAllLoaded(){ return REC_CLASSES.every(c=>REC.cache[recKey(c.k)]); }
+const REC_DISC='<b>About these records.</b> A record is measured only against caveats lodged with URA REALIS: highs against every earlier caveat on record, lows against caveats from 1 January 2020. Some projects and streets have only a few earlier caveats, so a record there rests on a short history. Sales without a caveat, such as many off-market deals, are not included, and a later release can add earlier-dated caveats that change a record. Records are shown for information only and are not a valuation.';
+function recFootText(asAt,pdf){
+  return 'Source: URA REALIS caveats, grouped by caveat date'+(asAt?', as released to '+fmtSD(asAt):'')+'; the REALIS date is the release that carried each caveat. '+
+    'Within each district, records are grouped by level (district, project, street), then price record and psf record. '+
+    'Project records compare a caveat with every earlier caveat in the same project; street records compare it only with the same property type and tenure, on streets with at least two such projects (non-strata landed: the same house type and tenure on the street); district records compare it with the same property type across the district. '+
+    'Records shown: price highs, psf highs and psf lows; price lows are left out because they mostly reflect a smaller unit. Change (%) is the move against the last record. Within each list, the largest change comes first. '+
+    'For gains and losses on resales, see Market analysis › Profit & Loss. '+
+    (pdf?'Unit numbers and house numbers are masked (#floor-XX, xx).':'The PDF masks unit numbers and house numbers.');
+}
+function recRender(){
+  const el=document.getElementById('recBody'); if(!el||!REC) return;
+  REC_ROWS=[];
+  const asAt=recAsAt();
+  const chips=REC_CLASSES.map(c=>{ const j=REC.cache[recKey(c.k)]; const n=j&&Array.isArray(j.records)?j.records.length:null;
+    return `<a href="#rec-seg-${c.k}" onclick="recJump('${c.k}');return false;">${c.chip} · ${n==null?'…':n+' record'+(n===1?'':'s')}</a>`; }).join('');
+  el.innerHTML=`<div class="rec-wrap">`+
+    `<section class="rec-top"><div><div class="rec-eyebrow">RECORDS</div><h1 class="rec-title">${recPeriodLabel()}</h1>`+
+    `<div class="rec-stamp">Grouped by caveat date${asAt?' · as at URA REALIS release of '+fmtSD(asAt):''}</div></div>`+
+    `<div class="rec-ctl">${recPeriodBar()}<button class="rec-pdf" onclick="recPdf()" ${recAllLoaded()?'':'disabled'}>`+
+    `<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M12 3v12m0 0l-5-5m5 5l5-5M4 19h16"/></svg>Download PDF</button></div></section>`+
+    `<nav class="rec-chips" aria-label="Segments">${chips}</nav>`+
+    REC_CLASSES.map(recSegHTML).join('')+
+    `<div class="rec-disc">${REC_DISC}</div><p class="rec-foot">${esc(recFootText(asAt,false))}</p></div>`;
+}
+function recJump(k){ const s=document.getElementById('rec-seg-'+k); if(s) s.scrollIntoView({behavior:'smooth',block:'start'}); }
+/* Map >: C&I buildings open in the Directory; residential projects open their caveat panel; landed houses
+   and unnamed C&I land search the street within the caveat's own date and select the caveat. */
+let _recSelTimer=null;
+function recGoMap(i){
+  const r=REC_ROWS[i]; if(!r) return;
+  const seg={ci:'all',landed:'landed',private_nl:'nonlanded',ec:'ec'}[r.asset_class]||'all';
+  const pn=recProj(r);
+  if(seg==='all'){
+    if(isRes(fSeg)) setSegment('all',true);
+    if(pn&&r.segment&&!/\/\s*Land$/i.test(r.segment)){ gotoDirectory(pn); return; }
+  }
+  if(lens!=='caveats') setLens('caveats');
+  if(seg!=='all'){ if(fSeg!==seg) setSegment(seg,true); if(pn&&seg!=='landed'){ openResProject(pn); return; } }
+  const st=String(r.address||'').replace(/#.*$/,'').replace(/^\s*\d+[A-Za-z]?(?:\s*[,&/-]\s*\d+[A-Za-z]?)*\s+/,'').trim();
+  const qel=document.getElementById('q'); if(qel) qel.value=st; fQ=st.toLowerCase();
+  ['dFrom','mFrom','dTo','mTo'].forEach(id=>{ const e=document.getElementById(id); if(e) e.value=r.sale_date; });
+  applyDateRange('d');
+  clearTimeout(_recSelTimer); let tries=0;
+  const pick=()=>{ const k=(CAVEATS||[]).findIndex(c=>Number(c.id)===Number(r.holder_id));
+    if(k>=0){ selectCaveat(k,true); return; } if(++tries<25) _recSelTimer=setTimeout(pick,400); };
+  _recSelTimer=setTimeout(pick,600);
+}
+/* ---------- A4 PDF (print to PDF; vector text) ---------- */
+function recPdf(){
+  if(!recAllLoaded()) return;
+  const asAt=recAsAt(), title=recPeriodLabel();
+  let body='';
+  REC_CLASSES.forEach(c=>{
+    const j=REC.cache[recKey(c.k)], recs=Array.isArray(j.records)?j.records:[];
+    body+=`<section class="seg"><div class="sh"><h2>${c.name}</h2><span>${recs.length} record${recs.length===1?'':'s'} · ${esc(recSummary(j))}</span></div>`;
+    body+=recs.length?`<table>${recHeadHTML(true)}<tbody>${recDistrictsHTML(recGroup(recs),true)}</tbody></table>`:'<p class="none">No new highs or lows set by caveats dated in this period.</p>';
+    body+='</section>';
+  });
+  const css=`@page{size:A4 portrait;margin:13mm 11mm 15mm;@bottom-left{content:"PropertyAtlas Records · ${title.replace(/"/g,'')} · propertyatlas.sg";font:7.5pt Arial,sans-serif;color:#6b6f7a}@bottom-right{content:"Page " counter(page) " of " counter(pages);font:7.5pt Arial,sans-serif;color:#6b6f7a}}
+*{box-sizing:border-box}body{margin:0;font:8pt/1.35 Arial,Helvetica,sans-serif;color:#1b1f2a;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+.hd{display:flex;justify-content:space-between;align-items:flex-end;border-bottom:2.5pt solid #15233f;padding-bottom:6pt;margin-bottom:8pt}
+.lg{font:700 17pt Georgia,serif;color:#15233f}.lg i{font-style:normal;color:#b0862c}
+.hd .t{text-align:right;font-size:8.5pt;color:#4a4f5c}.hd .t b{display:block;font:700 12.5pt Georgia,serif;color:#15233f}
+.seg{margin-top:10pt}.sh{display:flex;justify-content:space-between;align-items:baseline;gap:10pt;break-after:avoid}
+h2{margin:0;font:700 13pt Georgia,serif;color:#15233f}.sh span{font-size:8pt;color:#4a4f5c}
+table{width:100%;table-layout:fixed;border-collapse:collapse;margin-top:3pt}thead{display:table-header-group}
+th{padding:3pt 3pt;border-bottom:1.2pt solid #15233f;font-size:6.8pt;font-weight:700;color:#4a4f5c;text-align:left;vertical-align:bottom}
+td{padding:2.5pt 3pt;border-bottom:.5pt solid #dcd6c6;vertical-align:top}tr{break-inside:avoid}
+.r{text-align:right}.nw{white-space:nowrap}.mu{color:#555a66}.v{font-weight:700}
+.pl b{font-weight:700}.pl small{display:block;font-size:6.8pt;color:#555a66}
+tr.rec-d td{padding:7pt 0 2pt;border-bottom:.8pt solid #c9c2ae;font-size:9pt;font-weight:700;color:#15233f}
+tr.rec-b td{padding:4pt 0 0;border:0}tr.rec-b span{display:block;padding:2pt 5pt;background:#f6e7a8;font-weight:700;color:#15233f}
+tr.rec-b em{font-style:normal;font-weight:400;color:#4a4f5c}
+tr.rec-m td{padding:3pt 0 1pt;border:0;font-weight:700}
+tr.rec-d,tr.rec-b,tr.rec-m{break-after:avoid}
+.rec-up{color:#1f6b44;font-weight:700}.rec-dn{color:#b3261e;font-weight:700}
+.none{color:#555a66;margin:4pt 0}
+.disc{margin-top:12pt;padding:6pt 8pt;background:#fbf8ef;border:.6pt solid #e6e0cf;font-size:7.5pt;line-height:1.5;color:#4a4f5c;break-inside:avoid}.disc b{color:#15233f}
+.ft{margin-top:6pt;font-size:7pt;line-height:1.5;color:#555a66}`;
+  const doc=`<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><title>PropertyAtlas Records ${esc(title)}</title><style>${css}</style></head><body>`+
+    `<div class="hd"><div class="lg">Property<i>Atlas</i></div><div class="t"><b>Records · ${esc(title)}</b>Grouped by caveat date${asAt?' · as at URA REALIS release of '+fmtSD(asAt):''}</div></div>`+
+    body+`<div class="disc">${REC_DISC}</div><p class="ft">${esc(recFootText(asAt,true))}</p></body></html>`;
+  const old=document.getElementById('recPrintFrame'); if(old) old.remove();
+  const f=document.createElement('iframe'); f.id='recPrintFrame'; f.setAttribute('aria-hidden','true');
+  f.style.cssText='position:fixed;right:0;bottom:0;width:0;height:0;border:0;visibility:hidden';
+  document.body.appendChild(f);
+  const w=f.contentWindow, d=w.document; d.open(); d.write(doc); d.close();
+  const t0=document.title, fname='PropertyAtlas_Records_'+title.replace(/,.*$/,'').replace(/\s+/g,'_');
+  const restore=()=>{ document.title=t0; };
+  setTimeout(()=>{ try{ document.title=fname; w.focus(); w.print(); }catch(e){ const nw=window.open('','_blank'); if(nw){ nw.document.write(doc); nw.document.close(); nw.focus(); nw.print(); } } setTimeout(restore,1500); },350);
+  try{ if(typeof gtag==='function') gtag('event','pa_records_pdf',{period:title}); }catch(e){}
+}
 </script>
 </body>
 </html>
