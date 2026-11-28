@@ -4646,22 +4646,36 @@ function recPeriodLabel(){
   return 'Q'+(REC.q+1)+' '+REC.y+(cur?', quarter to date':'');
 }
 function recKey(k){ const r=recRange(); return k+'|'+r[0]+'|'+r[1]; }
-async function recFetch(k){
+/* v9.9.70e: one class at a time (EC, C&I, landed, non-landed), each retried twice before "Retry" shows,
+   so the four calls do not pile onto the database while the map is still loading. */
+const REC_ORDER=['ec','ci','landed','private_nl'];
+async function recFetch(k,gen){
   const key=recKey(k), r=recRange();
   if(REC.cache[key]&&!REC.err[key]) return;
-  REC.err[key]=false; REC.cache[key]=REC.cache[key]||null;
-  try{
-    const res=await fetch(SUPA_REST+'/rpc/pa_period_summary',{method:'POST',
-      headers:{'Content-Type':'application/json','apikey':SUPA_ANON,'Authorization':'Bearer '+SUPA_ANON},
-      body:JSON.stringify({p_class:k,p_start:r[0],p_end:r[1]})});
-    if(!res.ok) throw new Error('HTTP '+res.status);
-    const j=await res.json();
-    REC.cache[key]=(j&&typeof j==='object')?j:{records:[]};
-  }catch(e){ REC.err[key]=true; REC.cache[key]=null; }
+  REC.err[key]=false;
+  for(let a=0;a<3;a++){
+    if(gen!==REC.gen) return;
+    if(a) await new Promise(res=>setTimeout(res,1200*a));
+    try{
+      const res=await fetch(SUPA_REST+'/rpc/pa_period_summary',{method:'POST',
+        headers:{'Content-Type':'application/json','apikey':SUPA_ANON,'Authorization':'Bearer '+SUPA_ANON},
+        body:JSON.stringify({p_class:k,p_start:r[0],p_end:r[1]})});
+      if(!res.ok) throw new Error('HTTP '+res.status);
+      const j=await res.json();
+      REC.cache[key]=(j&&typeof j==='object')?j:{records:[]};
+      if(lens==='records') recRender();
+      return;
+    }catch(e){ /* try again */ }
+  }
+  REC.err[key]=true; REC.cache[key]=null;
   if(lens==='records') recRender();
 }
-function recLoad(){ recRender(); REC_CLASSES.forEach(c=>recFetch(c.k)); }
-function recRetry(k){ REC.err[recKey(k)]=false; recLoad(); }
+async function recLoad(){
+  const gen=REC.gen=(REC.gen||0)+1;
+  recRender();
+  for(const k of REC_ORDER){ if(gen!==REC.gen) return; await recFetch(k,gen); }
+}
+function recRetry(k){ REC.err[recKey(k)]=false; recFetch(k,REC.gen); recRender(); }
 function recSetMode(md){
   if(REC.mode===md) return;
   const t=recToday();
@@ -4825,7 +4839,8 @@ function recDistrictsHTML(groups,pdf){
 function recHeadHTML(pdf){ const w=pdf?[21.6,9.4,9.4,6.2,11.6,11,10.3,9.5,11]:[24,8.5,8.5,6.5,9,9.5,9.5,10,8,6.5]; return '<colgroup>'+w.map(x=>'<col style="width:'+x+'%">').join('')+'</colgroup><thead><tr>'+REC_HEAD.map((t,i)=>`<th class="${i>=5&&i<=6||i===3||i===8?'r':''}">${t}</th>`).join('')+(pdf?'':'<th>Location</th>')+'</tr></thead>'; }
 function recSegHTML(c){
   const key=recKey(c.k), j=REC.cache[key];
-  let h=`<section class="rec-seg" id="rec-seg-${c.k}"><div class="rec-seg-h"><h2>${c.name}</h2><div class="rec-sum">${j?recSummary(j):''}</div></div>`;
+  const nrec=j&&Array.isArray(j.records)?j.records.length:null;
+  let h=`<section class="rec-seg" id="rec-seg-${c.k}"><div class="rec-seg-h"><h2>${c.name}</h2><div class="rec-sum">${nrec==null?'':nrec+' record'+(nrec===1?'':'s')}</div></div>`;
   if(REC.err[key]) return h+`<div class="rec-load">Could not load ${esc(c.name.toLowerCase())} records.<button onclick="recRetry('${c.k}')">Retry</button></div></section>`;
   if(!j) return h+'<div class="rec-load">Loading records…</div></section>';
   const recs=Array.isArray(j.records)?j.records:[];
@@ -4876,6 +4891,9 @@ function recJump(k){ const s=document.getElementById('rec-seg-'+k); if(s) s.scro
 let _recSelTimer=null;
 function recGoMap(i){
   const r=REC_ROWS[i]; if(!r) return;
+  try{ const fw=document.getElementById('fwRecords');
+       history.replaceState({paLens:'records',top:fw?fw.scrollTop:0},'');
+       history.pushState({paLens:'map'},''); }catch(e){}
   const seg={ci:'all',landed:'landed',private_nl:'nonlanded',ec:'ec'}[r.asset_class]||'all';
   const pn=recProj(r);
   if(seg==='all'){
@@ -4893,6 +4911,14 @@ function recGoMap(i){
     if(k>=0){ selectCaveat(k,true); return; } if(++tries<25) _recSelTimer=setTimeout(pick,400); };
   _recSelTimer=setTimeout(pick,600);
 }
+window.addEventListener('popstate',function(e){
+  const st=e.state||{};
+  if(st.paLens==='records'&&typeof setLens==='function'){
+    if(typeof closeDetail==='function') closeDetail();
+    setLens('records');
+    const fw=document.getElementById('fwRecords'); if(fw) setTimeout(()=>{ fw.scrollTop=st.top||0; },60);
+  }
+});
 /* ---------- A4 PDF (print to PDF; vector text) ---------- */
 function recPdf(){
   if(!recAllLoaded()) return;
@@ -4900,7 +4926,7 @@ function recPdf(){
   let body='';
   REC_CLASSES.forEach(c=>{
     const j=REC.cache[recKey(c.k)], recs=Array.isArray(j.records)?j.records:[];
-    body+=`<section class="seg"><div class="sh"><h2>${c.name}</h2><span>${recs.length} record${recs.length===1?'':'s'} · ${esc(recSummary(j))}</span></div>`;
+    body+=`<section class="seg"><div class="sh"><h2>${c.name}</h2><span>${recs.length} record${recs.length===1?'':'s'}</span></div>`;
     body+=recs.length?`<table>${recHeadHTML(true)}<tbody>${recDistrictsHTML(recGroup(recs),true)}</tbody></table>`:'<p class="none">No new highs or lows set by caveats dated in this period.</p>';
     body+='</section>';
   });
