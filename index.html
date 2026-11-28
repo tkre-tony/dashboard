@@ -4753,9 +4753,11 @@ function recBasis(r){
   const d=r.district!=null?'D'+String(r.district).padStart(2,'0'):'the district';
   if(r.level==='project') return 'against every earlier caveat in the project';
   if(r.level==='district') return 'same property type across '+d;
-  const st=recStreetOf(r);
-  if(r.asset_class==='landed') return (st?st+' · ':'')+'same house type and tenure on the street';
-  return (st?st+' · ':'')+'same property type and tenure · at least two projects on the street';
+  const st=recStreetOf(r), tg=String(r.group_value||'').split(' | ')[1]||'';
+  const tl=tg==='Freehold'?'freehold (incl. 999-yr)':/^\d+ Yrs$/.test(tg)?tg.replace(' Yrs','-yr tenure group'):'same tenure group';
+  const land=/\/\s*Land$/i.test(String(r.segment||''));
+  if(r.asset_class==='landed'&&land) return (st?st+' \u00b7 ':'')+'same house type \u00b7 '+tl;
+  return (st?st+' \u00b7 ':'')+'same property type \u00b7 '+tl+(land?'':' \u00b7 at least two projects on the street');
 }
 /* group records: district -> level -> metric -> rows (largest change first) */
 function recGroup(recs){
@@ -4847,7 +4849,8 @@ const REC_DISC='<b>About these records.</b> A record is measured only against ca
 function recFootText(asAt,pdf){
   return 'Source: URA REALIS caveats, grouped by caveat date'+(asAt?', as released to '+fmtSD(asAt):'')+'; the REALIS date is the release that carried each caveat. '+
     'Within each district, records are grouped by level (district, project, street), then price record and psf record. '+
-    'Project records compare a caveat with every earlier caveat in the same project; street records compare it only with the same property type and tenure, on streets with at least two such projects (non-strata landed: the same house type and tenure on the street); district records compare it with the same property type across the district. '+
+    'Records compare single-unit caveats; multi-unit (bulk) and en-bloc caveats are left out. '+
+    'Project records compare a caveat with every earlier caveat in the same project; street records compare it only with the same property type and tenure group (freehold including leases of 800 years or more; 99, 60 or 30-year leases), and for strata only on streets with at least two such projects; district records compare it with the same property type across the district. '+
     'Hover over (or tap) a last record to see where it was set. Records shown: price highs, psf highs and psf lows; price lows are left out because they mostly reflect a smaller unit. Change (%) is the move against the last record. Within each list, the largest change comes first. '+
     'For gains and losses on resales, see Market analysis › Profit & Loss. '+
     (pdf?'Unit numbers and house numbers are masked (#floor-XX, xx).':'The PDF masks unit numbers and house numbers.');
